@@ -361,11 +361,14 @@ sakai.changepic = function(tuid, showSettings){
     // This will make the widget popup as a layover.
     $(container).jqm({
         modal: true,
-        trigger: containerTrigger,
         overlay: 20,
         toTop: true,
         onHide: hideArea,
         onShow: showArea
+    });
+
+    $(containerTrigger).live("click", function(){
+        $(container).jqmShow();
     });
 };
 
@@ -464,4 +467,4 @@ var AIM = {
     }
 };
 
-sdata.widgets.WidgetLoader.informOnLoad("changepic");
+sakai.api.Widgets.widgetLoader.informOnLoad("changepic");
