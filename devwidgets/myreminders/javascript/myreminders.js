@@ -19,36 +19,47 @@
 
 var sakai = sakai || {};
 
-var doInit = function(){
-    var supernote = new SuperNote('supernote', {});
-    
-    // Optional custom note "close" button handler extension used in this example.
-    // This picks up click on CLASS="note-close" elements within CLASS="snb-pinned"
-    // notes, and closes the note when they are clicked.
-    // It can be deleted if you're not using it.
-    addEvent(document, 'click', function(evt){
-        var elm = evt.target || evt.srcElement, closeBtn, note;
-        
-        while (elm) {
-            if ((/note-close/).test(elm.className)) 
-                closeBtn = elm;
-            if ((/snb-pinned/).test(elm.className)) {
-                note = elm;
-                break;
-            }
-            elm = elm.parentNode;
-        }
-        
-        if (closeBtn && note) {
-            var noteData = note.id.match(/([a-z_\-0-9]+)-note-([a-z_\-0-9]+)/i);
-            for (var i = 0; i < SuperNote.instances.length; i++) 
-                if (SuperNote.instances[i].myName == noteData[1]) {
-                    setTimeout('SuperNote.instances[' + i + '].setVis("' + noteData[2] +
-                    '", false, true)', 100);
-                    cancelEvent(evt);
-                }
-        }
-    });
+sakai.myreminders = function(tuid,showSettings){
+
+    /////////////////////////////
+    // Configuration variables //
+    /////////////////////////////
+
+    var rootel = $("#" + tuid);
+
+    var doInit = function(){
+        //var supernote = new SuperNote('supernote', {});
+        //
+        //// Optional custom note "close" button handler extension used in this example.
+        //// This picks up click on CLASS="note-close" elements within CLASS="snb-pinned"
+        //// notes, and closes the note when they are clicked.
+        //// It can be deleted if you're not using it.
+        //addEvent(document, 'click', function(evt){
+        //    var elm = evt.target || evt.srcElement, closeBtn, note;
+        //
+        //    while (elm) {
+        //        if ((/note-close/).test(elm.className))
+        //            closeBtn = elm;
+        //        if ((/snb-pinned/).test(elm.className)) {
+        //            note = elm;
+        //            break;
+        //        }
+        //        elm = elm.parentNode;
+        //    }
+        //
+        //    if (closeBtn && note) {
+        //        var noteData = note.id.match(/([a-z_\-0-9]+)-note-([a-z_\-0-9]+)/i);
+        //        for (var i = 0; i < SuperNote.instances.length; i++)
+        //            if (SuperNote.instances[i].myName == noteData[1]) {
+        //                setTimeout('SuperNote.instances[' + i + '].setVis("' + noteData[2] +
+        //                '", false, true)', 100);
+        //                cancelEvent(evt);
+        //            }
+        //    }
+        //});
+    };
+    doInit();
 };
-doInit();
+
+sakai.api.Widgets.widgetLoader.informOnLoad("myreminders");
 

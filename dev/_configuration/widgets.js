@@ -306,6 +306,18 @@ var Widgets = {
             },
             "url":"/devwidgets/myprofile/myprofile.html"
         },
+        "myreminders": {
+            "description":"My Reminders",
+            "name":"My Reminders",
+            "id":"myreminders",
+            "personalportal":true,
+            "i18n": {
+                "default": "/devwidgets/myprofile/bundles/default.json",
+                "en_US": "/devwidgets/myprofile/bundles/en_US.json",
+                "zh_CN": "/devwidgets/myprofile/bundles/zh_CN.json"
+            },
+            "url":"/devwidgets/myreminders/myreminders.html"
+        },
         "navigation": {
             "ca":true,
             "description":"Navigation Widgets",
