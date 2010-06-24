@@ -1,5 +1,5 @@
 /*!
- * jQuery UI 1.8
+ * jQuery UI 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -11,7 +11,7 @@
 
 //Helper functions and ui object
 $.ui = {
-	version: "1.8",
+	version: "1.8.1",
 
 	// $.ui.plugin is deprecated.  Use the proxy pattern instead.
 	plugin: {
@@ -70,6 +70,7 @@ $.ui = {
 	},
 
 	keyCode: {
+		ALT: 18,
 		BACKSPACE: 8,
 		CAPS_LOCK: 20,
 		COMMA: 188,
@@ -117,15 +118,13 @@ $.fn.extend({
 	enableSelection: function() {
 		return this
 			.attr('unselectable', 'off')
-			.css('MozUserSelect', '')
-			.unbind('selectstart.ui');
+			.css('MozUserSelect', '');
 	},
 
 	disableSelection: function() {
 		return this
 			.attr('unselectable', 'on')
-			.css('MozUserSelect', 'none')
-			.bind('selectstart.ui', function() { return false; });
+			.css('MozUserSelect', 'none');
 	},
 
 	scrollParent: function() {
@@ -202,7 +201,7 @@ $.extend($.expr[':'], {
 
 })(jQuery);
 /*!
- * jQuery UI Widget 1.8
+ * jQuery UI Widget 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -358,7 +357,7 @@ $.Widget.prototype = {
 			.removeAttr( "aria-disabled" )
 			.removeClass(
 				this.widgetBaseClass + "-disabled " +
-				this.namespace + "-state-disabled" );
+				"ui-state-disabled" );
 	},
 
 	widget: function() {
@@ -395,7 +394,7 @@ $.Widget.prototype = {
 			this.widget()
 				[ value ? "addClass" : "removeClass"](
 					this.widgetBaseClass + "-disabled" + " " +
-					this.namespace + "-state-disabled" )
+					"ui-state-disabled" )
 				.attr( "aria-disabled", value );
 		}
 
@@ -438,7 +437,7 @@ $.Widget.prototype = {
 
 })( jQuery );
 /*!
- * jQuery UI Mouse 1.8
+ * jQuery UI Mouse 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -589,7 +588,7 @@ $.widget("ui.mouse", {
 
 })(jQuery);
 /*
- * jQuery UI Position 1.8
+ * jQuery UI Position 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -702,6 +701,10 @@ $.fn.position = function( options ) {
 		} else if ( options.my[1] === verticalDefault ) {
 			position.top -= elemHeight / 2;
 		}
+
+		// prevent fractions (see #5280)
+		position.left = parseInt( position.left );
+		position.top = parseInt( position.top );
 
 		$.each( [ "left", "top" ], function( i, dir ) {
 			if ( $.ui.position[ collision[i] ] ) {
@@ -818,7 +821,7 @@ if ( !$.offset.setOffset ) {
 
 }( jQuery ));
 /*
- * jQuery UI Draggable 1.8
+ * jQuery UI Draggable 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -1278,7 +1281,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 });
 
 $.extend($.ui.draggable, {
-	version: "1.8"
+	version: "1.8.1"
 });
 
 $.ui.plugin.add("draggable", "connectToSortable", {
@@ -1615,7 +1618,7 @@ $.ui.plugin.add("draggable", "zIndex", {
 
 })(jQuery);
 /*
- * jQuery UI Droppable 1.8
+ * jQuery UI Droppable 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -1763,7 +1766,7 @@ $.widget("ui.droppable", {
 });
 
 $.extend($.ui.droppable, {
-	version: "1.8"
+	version: "1.8.1"
 });
 
 $.ui.intersect = function(draggable, droppable, toleranceMode) {
@@ -1900,7 +1903,7 @@ $.ui.ddmanager = {
 
 })(jQuery);
 /*
- * jQuery UI Resizable 1.8
+ * jQuery UI Resizable 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -2420,7 +2423,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 });
 
 $.extend($.ui.resizable, {
-	version: "1.8"
+	version: "1.8.1"
 });
 
 /*
@@ -2699,7 +2702,7 @@ var isNumber = function(value) {
 
 })(jQuery);
 /*
- * jQuery UI Selectable 1.8
+ * jQuery UI Selectable 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -2955,12 +2958,12 @@ $.widget("ui.selectable", $.ui.mouse, {
 });
 
 $.extend($.ui.selectable, {
-	version: "1.8"
+	version: "1.8.1"
 });
 
 })(jQuery);
 /*
- * jQuery UI Sortable 1.8
+ * jQuery UI Sortable 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -3032,6 +3035,18 @@ $.widget("ui.sortable", $.ui.mouse, {
 			this.items[i].item.removeData("sortable-item");
 
 		return this;
+	},
+
+	_setOption: function(key, value){
+		if ( key === "disabled" ) {
+			this.options[ key ] = value;
+	
+			this.widget()
+				[ value ? "addClass" : "removeClass"]( "ui-sortable-disabled" );
+		} else {
+			// Don't call widget base _setOption for disable as it adds ui-state-disabled class
+			$.Widget.prototype._setOption.apply(self, arguments);
+		}
 	},
 
 	_mouseCapture: function(event, overrideHandle) {
@@ -4010,12 +4025,12 @@ $.widget("ui.sortable", $.ui.mouse, {
 });
 
 $.extend($.ui.sortable, {
-	version: "1.8"
+	version: "1.8.1"
 });
 
 })(jQuery);
 /*
- * jQuery UI Accordion 1.8
+ * jQuery UI Accordion 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -4090,11 +4105,6 @@ $.widget("ui.accordion", {
 		//Append icon elements
 		this._createIcons();
 
-		// IE7-/Win - Extra vertical space in lists fixed
-		if ($.browser.msie) {
-			this.element.find('a').css('zoom', '1');
-		}
-
 		this.resize();
 
 		//ARIA
@@ -4161,9 +4171,9 @@ $.widget("ui.accordion", {
 		this.headers
 			.unbind(".accordion")
 			.removeClass("ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-state-active ui-corner-top")
-			.removeAttr("role").removeAttr("aria-expanded").removeAttr("tabindex");
+			.removeAttr("role").removeAttr("aria-expanded").removeAttr("tabIndex");
 
-		this.headers.find("a").removeAttr("tabindex");
+		this.headers.find("a").removeAttr("tabIndex");
 		this._destroyIcons();
 		var contents = this.headers.next().css("display", "").removeAttr("role").removeClass("ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content ui-accordion-content-active");
 		if (o.autoHeight || o.fillHeight) {
@@ -4454,7 +4464,7 @@ $.widget("ui.accordion", {
 
 
 $.extend($.ui.accordion, {
-	version: "1.8",
+	version: "1.8.1",
 	animations: {
 		slide: function(options, additions) {
 			options = $.extend({
@@ -4526,7 +4536,7 @@ $.extend($.ui.accordion, {
 
 })(jQuery);
 /*
- * jQuery UI Autocomplete 1.8
+ * jQuery UI Autocomplete 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -4587,15 +4597,17 @@ $.widget( "ui.autocomplete", {
 					if ( !self.menu.active ) {
 						return;
 					}
-					self.menu.select();
+					self.menu.select( event );
 					break;
 				case keyCode.ESCAPE:
 					self.element.val( self.term );
 					self.close( event );
 					break;
+				case keyCode.LEFT:
+				case keyCode.RIGHT:
 				case keyCode.SHIFT:
 				case keyCode.CONTROL:
-				case 18:
+				case keyCode.ALT:
 					// ignore metakeys (shift, ctrl, alt)
 					break;
 				default:
@@ -4608,6 +4620,7 @@ $.widget( "ui.autocomplete", {
 				}
 			})
 			.bind( "focus.autocomplete", function() {
+				self.selectedItem = null;
 				self.previous = self.element.val();
 			})
 			.bind( "blur.autocomplete", function( event ) {
@@ -4616,6 +4629,7 @@ $.widget( "ui.autocomplete", {
 				// TODO try to implement this without a timeout, see clearTimeout in search()
 				self.closing = setTimeout(function() {
 					self.close( event );
+					self._change( event );
 				}, 150 );
 			});
 		this._initSource();
@@ -4629,8 +4643,10 @@ $.widget( "ui.autocomplete", {
 				focus: function( event, ui ) {
 					var item = ui.item.data( "item.autocomplete" );
 					if ( false !== self._trigger( "focus", null, { item: item } ) ) {
-						// use value to match what will end up in the input
-						self.element.val( item.value );
+						// use value to match what will end up in the input, if it was a key event
+						if ( /^key/.test(event.originalEvent.type) ) {
+							self.element.val( item.value );
+						}
 					}
 				},
 				selected: function( event, ui ) {
@@ -4639,11 +4655,13 @@ $.widget( "ui.autocomplete", {
 						self.element.val( item.value );
 					}
 					self.close( event );
-					self.previous = self.element.val();
 					// only trigger when focus was lost (click on menu)
+					var previous = self.previous;
 					if ( self.element[0] !== doc.activeElement ) {
 						self.element.focus();
+						self.previous = previous;
 					}
+					self.selectedItem = item;
 				},
 				blur: function( event, ui ) {
 					if ( self.menu.element.is(":visible") ) {
@@ -4663,7 +4681,7 @@ $.widget( "ui.autocomplete", {
 
 	destroy: function() {
 		this.element
-			.removeClass( "ui-autocomplete-input ui-widget ui-widget-content" )
+			.removeClass( "ui-autocomplete-input" )
 			.removeAttr( "autocomplete" )
 			.removeAttr( "role" )
 			.removeAttr( "aria-autocomplete" )
@@ -4685,11 +4703,7 @@ $.widget( "ui.autocomplete", {
 		if ( $.isArray(this.options.source) ) {
 			array = this.options.source;
 			this.source = function( request, response ) {
-				// escape regex characters
-				var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-				response( $.grep( array, function(value) {
-					return matcher.test( value.label || value.value || value );
-				}) );
+				response( $.ui.autocomplete.filter(array, request.term) );
 			};
 		} else if ( typeof this.options.source === "string" ) {
 			url = this.options.source;
@@ -4742,8 +4756,11 @@ $.widget( "ui.autocomplete", {
 			this.menu.element.hide();
 			this.menu.deactivate();
 		}
+	},
+	
+	_change: function( event ) {
 		if ( this.previous !== this.element.val() ) {
-			this._trigger( "change", event );
+			this._trigger( "change", event, { item: this.selectedItem } );
 		}
 	},
 
@@ -4813,7 +4830,7 @@ $.widget( "ui.autocomplete", {
 			this.menu.deactivate();
 			return;
 		}
-		this.menu[ direction ]();
+		this.menu[ direction ]( event );
 	},
 
 	widget: function() {
@@ -4824,6 +4841,12 @@ $.widget( "ui.autocomplete", {
 $.extend( $.ui.autocomplete, {
 	escapeRegex: function( value ) {
 		return value.replace( /([\^\$\(\)\[\]\{\}\*\.\+\?\|\\])/gi, "\\$1" );
+	},
+	filter: function(array, term) {
+		var matcher = new RegExp( $.ui.autocomplete.escapeRegex(term), "i" );
+		return $.grep( array, function(value) {
+			return matcher.test( value.label || value.value || value );
+		});
 	}
 });
 
@@ -4857,10 +4880,13 @@ $.widget("ui.menu", {
 				role: "listbox",
 				"aria-activedescendant": "ui-active-menuitem"
 			})
-			.click(function(e) {
+			.click(function( event ) {
+				if ( !$( event.target ).closest( ".ui-menu-item a" ).length ) {
+					return;
+				}
 				// temporary
-				e.preventDefault();
-				self.select();
+				event.preventDefault();
+				self.select( event );
 			});
 		this.refresh();
 	},
@@ -4877,15 +4903,15 @@ $.widget("ui.menu", {
 			.addClass("ui-corner-all")
 			.attr("tabindex", -1)
 			// mouseenter doesn't work with event delegation
-			.mouseenter(function() {
-				self.activate($(this).parent());
+			.mouseenter(function( event ) {
+				self.activate( event, $(this).parent() );
 			})
 			.mouseleave(function() {
 				self.deactivate();
 			});
 	},
 
-	activate: function(item) {
+	activate: function( event, item ) {
 		this.deactivate();
 		if (this.hasScroll()) {
 			var offset = item.offset().top - this.element.offset().top,
@@ -4902,7 +4928,7 @@ $.widget("ui.menu", {
 				.addClass("ui-state-hover")
 				.attr("id", "ui-active-menuitem")
 			.end();
-		this._trigger("focus", null, { item: item });
+		this._trigger("focus", event, { item: item });
 	},
 
 	deactivate: function() {
@@ -4915,12 +4941,12 @@ $.widget("ui.menu", {
 		this.active = null;
 	},
 
-	next: function() {
-		this.move("next", "li:first");
+	next: function(event) {
+		this.move("next", ".ui-menu-item:first", event);
 	},
 
-	previous: function() {
-		this.move("prev", "li:last");
+	previous: function(event) {
+		this.move("prev", ".ui-menu-item:last", event);
 	},
 
 	first: function() {
@@ -4931,25 +4957,25 @@ $.widget("ui.menu", {
 		return this.active && !this.active.next().length;
 	},
 
-	move: function(direction, edge) {
+	move: function(direction, edge, event) {
 		if (!this.active) {
-			this.activate(this.element.children(edge));
+			this.activate(event, this.element.children(edge));
 			return;
 		}
-		var next = this.active[direction]();
+		var next = this.active[direction + "All"](".ui-menu-item").eq(0);
 		if (next.length) {
-			this.activate(next);
+			this.activate(event, next);
 		} else {
-			this.activate(this.element.children(edge));
+			this.activate(event, this.element.children(edge));
 		}
 	},
 
 	// TODO merge with previousPage
-	nextPage: function() {
+	nextPage: function(event) {
 		if (this.hasScroll()) {
 			// TODO merge with no-scroll-else
 			if (!this.active || this.last()) {
-				this.activate(this.element.children(":first"));
+				this.activate(event, this.element.children(":first"));
 				return;
 			}
 			var base = this.active.offset().top,
@@ -4964,18 +4990,18 @@ $.widget("ui.menu", {
 			if (!result.length) {
 				result = this.element.children(":last");
 			}
-			this.activate(result);
+			this.activate(event, result);
 		} else {
-			this.activate(this.element.children(!this.active || this.last() ? ":first" : ":last"));
+			this.activate(event, this.element.children(!this.active || this.last() ? ":first" : ":last"));
 		}
 	},
 
 	// TODO merge with nextPage
-	previousPage: function() {
+	previousPage: function(event) {
 		if (this.hasScroll()) {
 			// TODO merge with no-scroll-else
 			if (!this.active || this.first()) {
-				this.activate(this.element.children(":last"));
+				this.activate(event, this.element.children(":last"));
 				return;
 			}
 
@@ -4991,9 +5017,9 @@ $.widget("ui.menu", {
 			if (!result.length) {
 				result = this.element.children(":first");
 			}
-			this.activate(result);
+			this.activate(event, result);
 		} else {
-			this.activate(this.element.children(!this.active || this.first() ? ":last" : ":first"));
+			this.activate(event, this.element.children(!this.active || this.first() ? ":last" : ":first"));
 		}
 	},
 
@@ -5001,14 +5027,14 @@ $.widget("ui.menu", {
 		return this.element.height() < this.element.attr("scrollHeight");
 	},
 
-	select: function() {
-		this._trigger("selected", null, { item: this.active });
+	select: function( event ) {
+		this._trigger("selected", event, { item: this.active });
 	}
 });
 
 }(jQuery));
 /*
- * jQuery UI Button 1.8
+ * jQuery UI Button 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -5373,7 +5399,7 @@ $.widget( "ui.buttonset", {
 
 }( jQuery ) );
 /*
- * jQuery UI Dialog 1.8
+ * jQuery UI Dialog 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -5996,8 +6022,11 @@ $.widget("ui.dialog", {
 
 		// reset content sizing
 		// hide for non content measurement because height: 0 doesn't work in IE quirks mode (see #4350)
-		this.element.css('width', 'auto')
-			.hide();
+		this.element.css({
+			width: 'auto',
+			minHeight: 0,
+			height: 0
+		});
 
 		// reset wrapper sizing
 		// determine the height of all the non-content elements
@@ -6024,7 +6053,7 @@ $.widget("ui.dialog", {
 });
 
 $.extend($.ui.dialog, {
-	version: "1.8",
+	version: "1.8.1",
 
 	uuid: 0,
 	maxZ: 0,
@@ -6193,7 +6222,7 @@ $.extend($.ui.dialog.overlay.prototype, {
 
 }(jQuery));
 /*
- * jQuery UI Slider 1.8
+ * jQuery UI Slider 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -6207,28 +6236,32 @@ $.extend($.ui.dialog.overlay.prototype, {
  *	jquery.ui.widget.js
  */
 
-(function($) {
+(function( $ ) {
 
 // number of pages in a slider
 // (how many times can you page up/down to go through the whole range)
 var numPages = 5;
 
-$.widget("ui.slider", $.ui.mouse, {
+$.widget( "ui.slider", $.ui.mouse, {
+
 	widgetEventPrefix: "slide",
+
 	options: {
 		animate: false,
 		distance: 0,
 		max: 100,
 		min: 0,
-		orientation: 'horizontal',
+		orientation: "horizontal",
 		range: false,
 		step: 1,
 		value: 0,
 		values: null
 	},
-	_create: function() {
 
-		var self = this, o = this.options;
+	_create: function() {
+		var self = this,
+			o = this.options;
+
 		this._keySliding = false;
 		this._mouseSliding = false;
 		this._animateOff = true;
@@ -6237,197 +6270,218 @@ $.widget("ui.slider", $.ui.mouse, {
 		this._mouseInit();
 
 		this.element
-			.addClass("ui-slider"
-				+ " ui-slider-" + this.orientation
-				+ " ui-widget"
-				+ " ui-widget-content"
-				+ " ui-corner-all");
+			.addClass( "ui-slider" +
+				" ui-slider-" + this.orientation +
+				" ui-widget" +
+				" ui-widget-content" +
+				" ui-corner-all" );
 		
-		if (o.disabled) {
-			this.element.addClass('ui-slider-disabled ui-disabled');
+		if ( o.disabled ) {
+			this.element.addClass( "ui-slider-disabled ui-disabled" );
 		}
 
 		this.range = $([]);
 
-		if (o.range) {
-
-			if (o.range === true) {
-				this.range = $('<div></div>');
-				if (!o.values) o.values = [this._valueMin(), this._valueMin()];
-				if (o.values.length && o.values.length != 2) {
-					o.values = [o.values[0], o.values[0]];
+		if ( o.range ) {
+			if ( o.range === true ) {
+				this.range = $( "<div></div>" );
+				if ( !o.values ) {
+					o.values = [ this._valueMin(), this._valueMin() ];
+				}
+				if ( o.values.length && o.values.length !== 2 ) {
+					o.values = [ o.values[0], o.values[0] ];
 				}
 			} else {
-				this.range = $('<div></div>');
+				this.range = $( "<div></div>" );
 			}
 
 			this.range
-				.appendTo(this.element)
-				.addClass("ui-slider-range");
+				.appendTo( this.element )
+				.addClass( "ui-slider-range" );
 
-			if (o.range == "min" || o.range == "max") {
-				this.range.addClass("ui-slider-range-" + o.range);
+			if ( o.range === "min" || o.range === "max" ) {
+				this.range.addClass( "ui-slider-range-" + o.range );
 			}
 
 			// note: this isn't the most fittingly semantic framework class for this element,
 			// but worked best visually with a variety of themes
-			this.range.addClass("ui-widget-header");
-
+			this.range.addClass( "ui-widget-header" );
 		}
 
-		if ($(".ui-slider-handle", this.element).length == 0)
-			$('<a href="#"></a>')
-				.appendTo(this.element)
-				.addClass("ui-slider-handle");
-
-		if (o.values && o.values.length) {
-			while ($(".ui-slider-handle", this.element).length < o.values.length)
-				$('<a href="#"></a>')
-					.appendTo(this.element)
-					.addClass("ui-slider-handle");
+		if ( $( ".ui-slider-handle", this.element ).length === 0 ) {
+			$( "<a href='#'></a>" )
+				.appendTo( this.element )
+				.addClass( "ui-slider-handle" );
 		}
 
-		this.handles = $(".ui-slider-handle", this.element)
-			.addClass("ui-state-default"
-				+ " ui-corner-all");
+		if ( o.values && o.values.length ) {
+			while ( $(".ui-slider-handle", this.element).length < o.values.length ) {
+				$( "<a href='#'></a>" )
+					.appendTo( this.element )
+					.addClass( "ui-slider-handle" );
+			}
+		}
 
-		this.handle = this.handles.eq(0);
+		this.handles = $( ".ui-slider-handle", this.element )
+			.addClass( "ui-state-default" +
+				" ui-corner-all" );
 
-		this.handles.add(this.range).filter("a")
-			.click(function(event) {
+		this.handle = this.handles.eq( 0 );
+
+		this.handles.add( this.range ).filter( "a" )
+			.click(function( event ) {
 				event.preventDefault();
 			})
 			.hover(function() {
-				if (!o.disabled) {
-					$(this).addClass('ui-state-hover');
+				if ( !o.disabled ) {
+					$( this ).addClass( "ui-state-hover" );
 				}
 			}, function() {
-				$(this).removeClass('ui-state-hover');
+				$( this ).removeClass( "ui-state-hover" );
 			})
 			.focus(function() {
-				if (!o.disabled) {
-					$(".ui-slider .ui-state-focus").removeClass('ui-state-focus'); $(this).addClass('ui-state-focus');
+				if ( !o.disabled ) {
+					$( ".ui-slider .ui-state-focus" ).removeClass( "ui-state-focus" );
+					$( this ).addClass( "ui-state-focus" );
 				} else {
-					$(this).blur();
+					$( this ).blur();
 				}
 			})
 			.blur(function() {
-				$(this).removeClass('ui-state-focus');
+				$( this ).removeClass( "ui-state-focus" );
 			});
 
-		this.handles.each(function(i) {
-			$(this).data("index.ui-slider-handle", i);
+		this.handles.each(function( i ) {
+			$( this ).data( "index.ui-slider-handle", i );
 		});
 
-		this.handles.keydown(function(event) {
-
-			var ret = true;
-
-			var index = $(this).data("index.ui-slider-handle");
-
-			if (self.options.disabled)
-				return;
-
-			switch (event.keyCode) {
-				case $.ui.keyCode.HOME:
-				case $.ui.keyCode.END:
-				case $.ui.keyCode.PAGE_UP:
-				case $.ui.keyCode.PAGE_DOWN:
-				case $.ui.keyCode.UP:
-				case $.ui.keyCode.RIGHT:
-				case $.ui.keyCode.DOWN:
-				case $.ui.keyCode.LEFT:
-					ret = false;
-					if (!self._keySliding) {
-						self._keySliding = true;
-						$(this).addClass("ui-state-active");
-						self._start(event, index);
-					}
-					break;
-			}
-
-			var curVal, newVal, step = self._step();
-			if (self.options.values && self.options.values.length) {
-				curVal = newVal = self.values(index);
-			} else {
-				curVal = newVal = self.value();
-			}
-
-			switch (event.keyCode) {
-				case $.ui.keyCode.HOME:
-					newVal = self._valueMin();
-					break;
-				case $.ui.keyCode.END:
-					newVal = self._valueMax();
-					break;
-				case $.ui.keyCode.PAGE_UP:
-					newVal = curVal + ((self._valueMax() - self._valueMin()) / numPages);
-					break;
-				case $.ui.keyCode.PAGE_DOWN:
-					newVal = curVal - ((self._valueMax() - self._valueMin()) / numPages);
-					break;
-				case $.ui.keyCode.UP:
-				case $.ui.keyCode.RIGHT:
-					if(curVal == self._valueMax()) return;
-					newVal = curVal + step;
-					break;
-				case $.ui.keyCode.DOWN:
-				case $.ui.keyCode.LEFT:
-					if(curVal == self._valueMin()) return;
-					newVal = curVal - step;
-					break;
-			}
-
-			self._slide(event, index, newVal);
-
-			return ret;
-
-		}).keyup(function(event) {
-
-			var index = $(this).data("index.ui-slider-handle");
-
-			if (self._keySliding) {
-				self._keySliding = false;
-				self._stop(event, index);
-				self._change(event, index);
-				$(this).removeClass("ui-state-active");
-			}
-
-		});
+		this.handles
+			.keydown(function( event ) {
+				var ret = true,
+					index = $( this ).data( "index.ui-slider-handle" ),
+					allowed,
+					curVal,
+					newVal,
+					step;
+	
+				if ( self.options.disabled ) {
+					return;
+				}
+	
+				switch ( event.keyCode ) {
+					case $.ui.keyCode.HOME:
+					case $.ui.keyCode.END:
+					case $.ui.keyCode.PAGE_UP:
+					case $.ui.keyCode.PAGE_DOWN:
+					case $.ui.keyCode.UP:
+					case $.ui.keyCode.RIGHT:
+					case $.ui.keyCode.DOWN:
+					case $.ui.keyCode.LEFT:
+						ret = false;
+						if ( !self._keySliding ) {
+							self._keySliding = true;
+							$( this ).addClass( "ui-state-active" );
+							allowed = self._start( event, index );
+							if ( allowed === false ) {
+								return;
+							}
+						}
+						break;
+				}
+	
+				step = self.options.step;
+				if ( self.options.values && self.options.values.length ) {
+					curVal = newVal = self.values( index );
+				} else {
+					curVal = newVal = self.value();
+				}
+	
+				switch ( event.keyCode ) {
+					case $.ui.keyCode.HOME:
+						newVal = self._valueMin();
+						break;
+					case $.ui.keyCode.END:
+						newVal = self._valueMax();
+						break;
+					case $.ui.keyCode.PAGE_UP:
+						newVal = curVal + ( (self._valueMax() - self._valueMin()) / numPages );
+						break;
+					case $.ui.keyCode.PAGE_DOWN:
+						newVal = curVal - ( (self._valueMax() - self._valueMin()) / numPages );
+						break;
+					case $.ui.keyCode.UP:
+					case $.ui.keyCode.RIGHT:
+						if ( curVal === self._valueMax() ) {
+							return;
+						}
+						newVal = curVal + step;
+						break;
+					case $.ui.keyCode.DOWN:
+					case $.ui.keyCode.LEFT:
+						if ( curVal === self._valueMin() ) {
+							return;
+						}
+						newVal = curVal - step;
+						break;
+				}
+	
+				self._slide( event, index, newVal );
+	
+				return ret;
+	
+			})
+			.keyup(function( event ) {
+				var index = $( this ).data( "index.ui-slider-handle" );
+	
+				if ( self._keySliding ) {
+					self._keySliding = false;
+					self._stop( event, index );
+					self._change( event, index );
+					$( this ).removeClass( "ui-state-active" );
+				}
+	
+			});
 
 		this._refreshValue();
 
 		this._animateOff = false;
-
 	},
 
 	destroy: function() {
-
 		this.handles.remove();
 		this.range.remove();
 
 		this.element
-			.removeClass("ui-slider"
-				+ " ui-slider-horizontal"
-				+ " ui-slider-vertical"
-				+ " ui-slider-disabled"
-				+ " ui-widget"
-				+ " ui-widget-content"
-				+ " ui-corner-all")
-			.removeData("slider")
-			.unbind(".slider");
+			.removeClass( "ui-slider" +
+				" ui-slider-horizontal" +
+				" ui-slider-vertical" +
+				" ui-slider-disabled" +
+				" ui-widget" +
+				" ui-widget-content" +
+				" ui-corner-all" )
+			.removeData( "slider" )
+			.unbind( ".slider" );
 
 		this._mouseDestroy();
 
 		return this;
 	},
 
-	_mouseCapture: function(event) {
+	_mouseCapture: function( event ) {
+		var o = this.options,
+			position,
+			normValue,
+			distance,
+			closestHandle,
+			self,
+			index,
+			allowed,
+			offset,
+			mouseOverHandle;
 
-		var o = this.options;
-
-		if (o.disabled)
+		if ( o.disabled ) {
 			return false;
+		}
 
 		this.elementSize = {
 			width: this.element.outerWidth(),
@@ -6435,16 +6489,15 @@ $.widget("ui.slider", $.ui.mouse, {
 		};
 		this.elementOffset = this.element.offset();
 
-		var position = { x: event.pageX, y: event.pageY };
-		var normValue = this._normValueFromMouse(position);
-
-		var distance = this._valueMax() - this._valueMin() + 1, closestHandle;
-		var self = this, index;
-		this.handles.each(function(i) {
-			var thisDistance = Math.abs(normValue - self.values(i));
-			if (distance > thisDistance) {
+		position = { x: event.pageX, y: event.pageY };
+		normValue = this._normValueFromMouse( position );
+		distance = this._valueMax() - this._valueMin() + 1;
+		self = this;
+		this.handles.each(function( i ) {
+			var thisDistance = Math.abs( normValue - self.values(i) );
+			if ( distance > thisDistance ) {
 				distance = thisDistance;
-				closestHandle = $(this);
+				closestHandle = $( this );
 				index = i;
 			}
 		});
@@ -6452,216 +6505,218 @@ $.widget("ui.slider", $.ui.mouse, {
 		// workaround for bug #3736 (if both handles of a range are at 0,
 		// the first is always used as the one with least distance,
 		// and moving it is obviously prevented by preventing negative ranges)
-		if(o.range == true && this.values(1) == o.min) {
-			closestHandle = $(this.handles[++index]);
+		if( o.range === true && this.values(1) === o.min ) {
+			index += 1;
+			closestHandle = $( this.handles[index] );
 		}
 
-		this._start(event, index);
+		allowed = this._start( event, index );
+		if ( allowed === false ) {
+			return false;
+		}
 		this._mouseSliding = true;
 
 		self._handleIndex = index;
 
 		closestHandle
-			.addClass("ui-state-active")
+			.addClass( "ui-state-active" )
 			.focus();
 		
-		var offset = closestHandle.offset();
-		var mouseOverHandle = !$(event.target).parents().andSelf().is('.ui-slider-handle');
+		offset = closestHandle.offset();
+		mouseOverHandle = !$( event.target ).parents().andSelf().is( ".ui-slider-handle" );
 		this._clickOffset = mouseOverHandle ? { left: 0, top: 0 } : {
-			left: event.pageX - offset.left - (closestHandle.width() / 2),
-			top: event.pageY - offset.top
-				- (closestHandle.height() / 2)
-				- (parseInt(closestHandle.css('borderTopWidth'),10) || 0)
-				- (parseInt(closestHandle.css('borderBottomWidth'),10) || 0)
-				+ (parseInt(closestHandle.css('marginTop'),10) || 0)
+			left: event.pageX - offset.left - ( closestHandle.width() / 2 ),
+			top: event.pageY - offset.top -
+				( closestHandle.height() / 2 ) -
+				( parseInt( closestHandle.css("borderTopWidth"), 10 ) || 0 ) -
+				( parseInt( closestHandle.css("borderBottomWidth"), 10 ) || 0) +
+				( parseInt( closestHandle.css("marginTop"), 10 ) || 0)
 		};
 
-		normValue = this._normValueFromMouse(position);
-		this._slide(event, index, normValue);
+		normValue = this._normValueFromMouse( position );
+		this._slide( event, index, normValue );
 		this._animateOff = true;
 		return true;
-
 	},
 
-	_mouseStart: function(event) {
+	_mouseStart: function( event ) {
 		return true;
 	},
 
-	_mouseDrag: function(event) {
-
-		var position = { x: event.pageX, y: event.pageY };
-		var normValue = this._normValueFromMouse(position);
+	_mouseDrag: function( event ) {
+		var position = { x: event.pageX, y: event.pageY },
+			normValue = this._normValueFromMouse( position );
 		
-		this._slide(event, this._handleIndex, normValue);
+		this._slide( event, this._handleIndex, normValue );
 
 		return false;
-
 	},
 
-	_mouseStop: function(event) {
-
-		this.handles.removeClass("ui-state-active");
+	_mouseStop: function( event ) {
+		this.handles.removeClass( "ui-state-active" );
 		this._mouseSliding = false;
-		this._stop(event, this._handleIndex);
-		this._change(event, this._handleIndex);
+
+		this._stop( event, this._handleIndex );
+		this._change( event, this._handleIndex );
+
 		this._handleIndex = null;
 		this._clickOffset = null;
-
 		this._animateOff = false;
-		return false;
 
+		return false;
 	},
 	
 	_detectOrientation: function() {
-		this.orientation = this.options.orientation == 'vertical' ? 'vertical' : 'horizontal';
+		this.orientation = ( this.options.orientation === "vertical" ) ? "vertical" : "horizontal";
 	},
 
-	_normValueFromMouse: function(position) {
+	_normValueFromMouse: function( position ) {
+		var pixelTotal,
+			pixelMouse,
+			percentMouse,
+			valueTotal,
+			valueMouse;
 
-		var pixelTotal, pixelMouse;
-		if ('horizontal' == this.orientation) {
+		if ( this.orientation === "horizontal" ) {
 			pixelTotal = this.elementSize.width;
-			pixelMouse = position.x - this.elementOffset.left - (this._clickOffset ? this._clickOffset.left : 0);
+			pixelMouse = position.x - this.elementOffset.left - ( this._clickOffset ? this._clickOffset.left : 0 );
 		} else {
 			pixelTotal = this.elementSize.height;
-			pixelMouse = position.y - this.elementOffset.top - (this._clickOffset ? this._clickOffset.top : 0);
+			pixelMouse = position.y - this.elementOffset.top - ( this._clickOffset ? this._clickOffset.top : 0 );
 		}
 
-		var percentMouse = (pixelMouse / pixelTotal);
-		if (percentMouse > 1) percentMouse = 1;
-		if (percentMouse < 0) percentMouse = 0;
-		if ('vertical' == this.orientation)
+		percentMouse = ( pixelMouse / pixelTotal );
+		if ( percentMouse > 1 ) {
+			percentMouse = 1;
+		}
+		if ( percentMouse < 0 ) {
+			percentMouse = 0;
+		}
+		if ( this.orientation === "vertical" ) {
 			percentMouse = 1 - percentMouse;
+		}
 
-		var valueTotal = this._valueMax() - this._valueMin(),
-			valueMouse = percentMouse * valueTotal,
-			valueMouseModStep = valueMouse % this.options.step,
-			normValue = this._valueMin() + valueMouse - valueMouseModStep;
+		valueTotal = this._valueMax() - this._valueMin();
+		valueMouse = this._valueMin() + percentMouse * valueTotal;
 
-		if (valueMouseModStep > (this.options.step / 2))
-			normValue += this.options.step;
-
-		// Since JavaScript has problems with large floats, round
-		// the final value to 5 digits after the decimal point (see #4124)
-		return parseFloat(normValue.toFixed(5));
-
+		return this._trimAlignValue( valueMouse );
 	},
 
-	_start: function(event, index) {
+	_start: function( event, index ) {
 		var uiHash = {
-			handle: this.handles[index],
+			handle: this.handles[ index ],
 			value: this.value()
 		};
-		if (this.options.values && this.options.values.length) {
-			uiHash.value = this.values(index);
+		if ( this.options.values && this.options.values.length ) {
+			uiHash.value = this.values( index );
 			uiHash.values = this.values();
 		}
-		this._trigger("start", event, uiHash);
+		return this._trigger( "start", event, uiHash );
 	},
 
-	_slide: function(event, index, newVal) {
+	_slide: function( event, index, newVal ) {
+		var otherVal,
+			newValues,
+			allowed;
 
-		var handle = this.handles[index];
+		if ( this.options.values && this.options.values.length ) {
+			otherVal = this.values( index ? 0 : 1 );
 
-		if (this.options.values && this.options.values.length) {
-
-			var otherVal = this.values(index ? 0 : 1);
-
-			if ((this.options.values.length == 2 && this.options.range === true) && 
-				((index == 0 && newVal > otherVal) || (index == 1 && newVal < otherVal))){
- 				newVal = otherVal;
+			if ( ( this.options.values.length === 2 && this.options.range === true ) && 
+					( ( index === 0 && newVal > otherVal) || ( index === 1 && newVal < otherVal ) )
+				) {
+				newVal = otherVal;
 			}
 
-			if (newVal != this.values(index)) {
-				var newValues = this.values();
-				newValues[index] = newVal;
+			if ( newVal !== this.values( index ) ) {
+				newValues = this.values();
+				newValues[ index ] = newVal;
 				// A slide can be canceled by returning false from the slide callback
-				var allowed = this._trigger("slide", event, {
-					handle: this.handles[index],
+				allowed = this._trigger( "slide", event, {
+					handle: this.handles[ index ],
 					value: newVal,
 					values: newValues
-				});
-				var otherVal = this.values(index ? 0 : 1);
-				if (allowed !== false) {
-					this.values(index, newVal, true);
+				} );
+				otherVal = this.values( index ? 0 : 1 );
+				if ( allowed !== false ) {
+					this.values( index, newVal, true );
 				}
 			}
-
 		} else {
-
-			if (newVal != this.value()) {
+			if ( newVal !== this.value() ) {
 				// A slide can be canceled by returning false from the slide callback
-				var allowed = this._trigger("slide", event, {
-					handle: this.handles[index],
+				allowed = this._trigger( "slide", event, {
+					handle: this.handles[ index ],
 					value: newVal
-				});
-				if (allowed !== false) {
-					this.value(newVal);
+				} );
+				if ( allowed !== false ) {
+					this.value( newVal );
 				}
-					
 			}
-
 		}
-
 	},
 
-	_stop: function(event, index) {
+	_stop: function( event, index ) {
 		var uiHash = {
-			handle: this.handles[index],
+			handle: this.handles[ index ],
 			value: this.value()
 		};
-		if (this.options.values && this.options.values.length) {
-			uiHash.value = this.values(index);
+		if ( this.options.values && this.options.values.length ) {
+			uiHash.value = this.values( index );
 			uiHash.values = this.values();
 		}
-		this._trigger("stop", event, uiHash);
+
+		this._trigger( "stop", event, uiHash );
 	},
 
-	_change: function(event, index) {
-		if (!this._keySliding && !this._mouseSliding) {
+	_change: function( event, index ) {
+		if ( !this._keySliding && !this._mouseSliding ) {
 			var uiHash = {
-				handle: this.handles[index],
+				handle: this.handles[ index ],
 				value: this.value()
 			};
-			if (this.options.values && this.options.values.length) {
-				uiHash.value = this.values(index);
+			if ( this.options.values && this.options.values.length ) {
+				uiHash.value = this.values( index );
 				uiHash.values = this.values();
 			}
-			this._trigger("change", event, uiHash);
+
+			this._trigger( "change", event, uiHash );
 		}
 	},
 
-	value: function(newValue) {
-
-		if (arguments.length) {
-			this.options.value = this._trimValue(newValue);
+	value: function( newValue ) {
+		if ( arguments.length ) {
+			this.options.value = this._trimAlignValue( newValue );
 			this._refreshValue();
-			this._change(null, 0);
+			this._change( null, 0 );
 		}
 
 		return this._value();
-
 	},
 
-	values: function(index, newValue) {
+	values: function( index, newValue ) {
+		var vals,
+			newValues,
+			i;
 
-		if (arguments.length > 1) {
-			this.options.values[index] = this._trimValue(newValue);
+		if ( arguments.length > 1 ) {
+			this.options.values[ index ] = this._trimAlignValue( newValue );
 			this._refreshValue();
-			this._change(null, index);
+			this._change( null, index );
 		}
 
-		if (arguments.length) {
-			if ($.isArray(arguments[0])) {
-				var vals = this.options.values, newValues = arguments[0];
-				for (var i = 0, l = vals.length; i < l; i++) {
-					vals[i] = this._trimValue(newValues[i]);
-					this._change(null, i);
+		if ( arguments.length ) {
+			if ( $.isArray( arguments[ 0 ] ) ) {
+				vals = this.options.values;
+				newValues = arguments[ 0 ];
+				for ( i = 0; i < vals.length; i += 1 ) {
+					vals[ i ] = this._trimAlignValue( newValues[ i ] );
+					this._change( null, i );
 				}
 				this._refreshValue();
 			} else {
-				if (this.options.values && this.options.values.length) {
-					return this._values(index);
+				if ( this.options.values && this.options.values.length ) {
+					return this._values( index );
 				} else {
 					return this.value();
 				}
@@ -6669,160 +6724,187 @@ $.widget("ui.slider", $.ui.mouse, {
 		} else {
 			return this._values();
 		}
-
 	},
 
-	_setOption: function(key, value) {
-		
+	_setOption: function( key, value ) {
 		var i,
 			valsLength = 0;
-		if ( jQuery.isArray(this.options.values) ) {
+
+		if ( $.isArray( this.options.values ) ) {
 			valsLength = this.options.values.length;
-		};
+		}
 
-		$.Widget.prototype._setOption.apply(this, arguments);
+		$.Widget.prototype._setOption.apply( this, arguments );
 
-		switch (key) {
-			case 'disabled':
-				if (value) {
-					this.handles.filter(".ui-state-focus").blur();
-					this.handles.removeClass("ui-state-hover");
-					this.handles.attr("disabled", "disabled");
-					this.element.addClass("ui-disabled");
+		switch ( key ) {
+			case "disabled":
+				if ( value ) {
+					this.handles.filter( ".ui-state-focus" ).blur();
+					this.handles.removeClass( "ui-state-hover" );
+					this.handles.attr( "disabled", "disabled" );
+					this.element.addClass( "ui-disabled" );
 				} else {
-					this.handles.removeAttr("disabled");
-					this.element.removeClass("ui-disabled");
+					this.handles.removeAttr( "disabled" );
+					this.element.removeClass( "ui-disabled" );
 				}
-			case 'orientation':
-
+				break;
+			case "orientation":
 				this._detectOrientation();
-				
 				this.element
-					.removeClass("ui-slider-horizontal ui-slider-vertical")
-					.addClass("ui-slider-" + this.orientation);
+					.removeClass( "ui-slider-horizontal ui-slider-vertical" )
+					.addClass( "ui-slider-" + this.orientation );
 				this._refreshValue();
 				break;
-			case 'value':
+			case "value":
 				this._animateOff = true;
 				this._refreshValue();
-				this._change(null, 0);
+				this._change( null, 0 );
 				this._animateOff = false;
 				break;
-			case 'values':
+			case "values":
 				this._animateOff = true;
 				this._refreshValue();
-				for (i = 0; i < valsLength; i++) {
-					this._change(null, i);
+				for ( i = 0; i < valsLength; i += 1 ) {
+					this._change( null, i );
 				}
 				this._animateOff = false;
 				break;
 		}
-
 	},
 
-	_step: function() {
-		var step = this.options.step;
-		return step;
-	},
-
+	//internal value getter
+	// _value() returns value trimmed by min and max, aligned by step
 	_value: function() {
-		//internal value getter
-		// _value() returns value trimmed by min and max
 		var val = this.options.value;
-		val = this._trimValue(val);
+		val = this._trimAlignValue( val );
 
 		return val;
 	},
 
-	_values: function(index) {
-		//internal values getter
-		// _values() returns array of values trimmed by min and max
-		// _values(index) returns single value trimmed by min and max
+	//internal values getter
+	// _values() returns array of values trimmed by min and max, aligned by step
+	// _values( index ) returns single value trimmed by min and max, aligned by step
+	_values: function( index ) {
+		var val,
+			vals,
+			i;
 
-		if (arguments.length) {
-			var val = this.options.values[index];
-			val = this._trimValue(val);
+		if ( arguments.length ) {
+			val = this.options.values[ index ];
+			val = this._trimAlignValue( val );
 
 			return val;
 		} else {
 			// .slice() creates a copy of the array
 			// this copy gets trimmed by min and max and then returned
-			var vals = this.options.values.slice();
-			for (var i = 0, l = vals.length; i < l; i++) {
-				vals[i] = this._trimValue(vals[i]);
+			vals = this.options.values.slice();
+			for ( i = 0; i < vals.length; i+= 1) {
+				vals[ i ] = this._trimAlignValue( vals[ i ] );
 			}
 
 			return vals;
 		}
-
 	},
 	
-	_trimValue: function(val) {
-		if (val < this._valueMin()) val = this._valueMin();
-		if (val > this._valueMax()) val = this._valueMax();
+	// returns the step-aligned value that val is closest to, between (inclusive) min and max
+	_trimAlignValue: function( val ) {
+		if ( val < this._valueMin() ) {
+			return this._valueMin();
+		}
+		if ( val > this._valueMax() ) {
+			return this._valueMax();
+		}
+		var step = this.options.step,
+			valModStep = val % step,
+			alignValue = val - valModStep;
 
-		return val;
+		if ( valModStep >= ( step / 2 ) ) {
+			alignValue += step;
+		}
+
+		// Since JavaScript has problems with large floats, round
+		// the final value to 5 digits after the decimal point (see #4124)
+		return parseFloat( alignValue.toFixed(5) );
 	},
 
 	_valueMin: function() {
-		var valueMin = this.options.min;
-		return valueMin;
+		return this.options.min;
 	},
 
 	_valueMax: function() {
-		var valueMax = this.options.max;
-		return valueMax;
+		return this.options.max;
 	},
 	
 	_refreshValue: function() {
+		var oRange = this.options.range,
+			o = this.options,
+			self = this,
+			animate = ( !this._animateOff ) ? o.animate : false,
+			valPercent,
+			_set = {},
+			lastValPercent,
+			value,
+			valueMin,
+			valueMax;
 
-		var oRange = this.options.range, o = this.options, self = this;
-		var animate = (!this._animateOff) ? o.animate : false;
-
-		if (this.options.values && this.options.values.length) {
-			var vp0, vp1;
-			this.handles.each(function(i, j) {
-				var valPercent = (self.values(i) - self._valueMin()) / (self._valueMax() - self._valueMin()) * 100;
-				var _set = {}; _set[self.orientation == 'horizontal' ? 'left' : 'bottom'] = valPercent + '%';
-				$(this).stop(1,1)[animate ? 'animate' : 'css'](_set, o.animate);
-				if (self.options.range === true) {
-					if (self.orientation == 'horizontal') {
-						(i == 0) && self.range.stop(1,1)[animate ? 'animate' : 'css']({ left: valPercent + '%' }, o.animate);
-						(i == 1) && self.range[animate ? 'animate' : 'css']({ width: (valPercent - lastValPercent) + '%' }, { queue: false, duration: o.animate });
+		if ( this.options.values && this.options.values.length ) {
+			this.handles.each(function( i, j ) {
+				valPercent = ( self.values(i) - self._valueMin() ) / ( self._valueMax() - self._valueMin() ) * 100;
+				_set[ self.orientation === "horizontal" ? "left" : "bottom" ] = valPercent + "%";
+				$( this ).stop( 1, 1 )[ animate ? "animate" : "css" ]( _set, o.animate );
+				if ( self.options.range === true ) {
+					if ( self.orientation === "horizontal" ) {
+						if ( i === 0 ) {
+							self.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { left: valPercent + "%" }, o.animate );
+						}
+						if ( i === 1 ) {
+							self.range[ animate ? "animate" : "css" ]( { width: ( valPercent - lastValPercent ) + "%" }, { queue: false, duration: o.animate } );
+						}
 					} else {
-						(i == 0) && self.range.stop(1,1)[animate ? 'animate' : 'css']({ bottom: (valPercent) + '%' }, o.animate);
-						(i == 1) && self.range[animate ? 'animate' : 'css']({ height: (valPercent - lastValPercent) + '%' }, { queue: false, duration: o.animate });
+						if ( i === 0 ) {
+							self.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { bottom: ( valPercent ) + "%" }, o.animate );
+						}
+						if ( i === 1 ) {
+							self.range[ animate ? "animate" : "css" ]( { height: ( valPercent - lastValPercent ) + "%" }, { queue: false, duration: o.animate } );
+						}
 					}
 				}
 				lastValPercent = valPercent;
 			});
 		} else {
-			var value = this.value(),
-				valueMin = this._valueMin(),
-				valueMax = this._valueMax(),
-				valPercent = valueMax != valueMin
-					? (value - valueMin) / (valueMax - valueMin) * 100
-					: 0;
-			var _set = {}; _set[self.orientation == 'horizontal' ? 'left' : 'bottom'] = valPercent + '%';
-			this.handle.stop(1,1)[animate ? 'animate' : 'css'](_set, o.animate);
+			value = this.value();
+			valueMin = this._valueMin();
+			valueMax = this._valueMax();
+			valPercent = ( valueMax !== valueMin ) ?
+					( value - valueMin ) / ( valueMax - valueMin ) * 100 :
+					0;
+			_set[ self.orientation === "horizontal" ? "left" : "bottom" ] = valPercent + "%";
+			this.handle.stop( 1, 1 )[ animate ? "animate" : "css" ]( _set, o.animate );
 
-			(oRange == "min") && (this.orientation == "horizontal") && this.range.stop(1,1)[animate ? 'animate' : 'css']({ width: valPercent + '%' }, o.animate);
-			(oRange == "max") && (this.orientation == "horizontal") && this.range[animate ? 'animate' : 'css']({ width: (100 - valPercent) + '%' }, { queue: false, duration: o.animate });
-			(oRange == "min") && (this.orientation == "vertical") && this.range.stop(1,1)[animate ? 'animate' : 'css']({ height: valPercent + '%' }, o.animate);
-			(oRange == "max") && (this.orientation == "vertical") && this.range[animate ? 'animate' : 'css']({ height: (100 - valPercent) + '%' }, { queue: false, duration: o.animate });
+			if ( oRange === "min" && this.orientation === "horizontal" ) {
+				this.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { width: valPercent + "%" }, o.animate );
+			}
+			if ( oRange === "max" && this.orientation === "horizontal" ) {
+				this.range[ animate ? "animate" : "css" ]( { width: ( 100 - valPercent ) + "%" }, { queue: false, duration: o.animate } );
+			}
+			if ( oRange === "min" && this.orientation === "vertical" ) {
+				this.range.stop( 1, 1 )[ animate ? "animate" : "css" ]( { height: valPercent + "%" }, o.animate );
+			}
+			if ( oRange === "max" && this.orientation === "vertical" ) {
+				this.range[ animate ? "animate" : "css" ]( { height: ( 100 - valPercent ) + "%" }, { queue: false, duration: o.animate } );
+			}
 		}
-
 	}
-	
+
 });
 
-$.extend($.ui.slider, {
-	version: "1.8"
+$.extend( $.ui.slider, {
+	version: "1.8.1"
 });
 
-})(jQuery);
+}(jQuery));
 /*
- * jQuery UI Tabs 1.8
+ * jQuery UI Tabs 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -7483,7 +7565,7 @@ $.widget("ui.tabs", {
 });
 
 $.extend($.ui.tabs, {
-	version: '1.8'
+	version: '1.8.1'
 });
 
 /*
@@ -7543,7 +7625,7 @@ $.extend($.ui.tabs.prototype, {
 
 })(jQuery);
 /*
- * jQuery UI Datepicker 1.8
+ * jQuery UI Datepicker 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -7557,7 +7639,7 @@ $.extend($.ui.tabs.prototype, {
 
 (function($) { // hide the namespace
 
-$.extend($.ui, { datepicker: { version: "1.8" } });
+$.extend($.ui, { datepicker: { version: "1.8.1" } });
 
 var PROP_NAME = 'datepicker';
 var dpuuid = new Date().getTime();
@@ -9262,7 +9344,7 @@ $.fn.datepicker = function(options){
 $.datepicker = new Datepicker(); // singleton instance
 $.datepicker.initialized = false;
 $.datepicker.uuid = new Date().getTime();
-$.datepicker.version = "1.8";
+$.datepicker.version = "1.8.1";
 
 // Workaround for #4055
 // Add another global to avoid noConflict issues with inline event handlers
@@ -9270,7 +9352,7 @@ window['DP_jQuery_' + dpuuid] = $;
 
 })(jQuery);
 /*
- * jQuery UI Progressbar 1.8
+ * jQuery UI Progressbar 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -9372,12 +9454,12 @@ $.widget( "ui.progressbar", {
 });
 
 $.extend( $.ui.progressbar, {
-	version: "1.8"
+	version: "1.8.1"
 });
 
 })( jQuery );
 /*
- * jQuery UI Effects 1.8
+ * jQuery UI Effects 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -9679,7 +9761,7 @@ $.fn.extend({
 /******************************************************************************/
 
 $.extend($.effects, {
-	version: "1.8",
+	version: "1.8.1",
 
 	// Saves a set of properties in a data storage
 	save: function(element, set) {
@@ -10091,7 +10173,7 @@ $.extend($.easing,
 
 })(jQuery);
 /*
- * jQuery UI Effects Blind 1.8
+ * jQuery UI Effects Blind 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10140,7 +10222,7 @@ $.effects.blind = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Bounce 1.8
+ * jQuery UI Effects Bounce 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10218,7 +10300,7 @@ $.effects.bounce = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Clip 1.8
+ * jQuery UI Effects Clip 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10272,7 +10354,7 @@ $.effects.clip = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Drop 1.8
+ * jQuery UI Effects Drop 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10322,7 +10404,7 @@ $.effects.drop = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Explode 1.8
+ * jQuery UI Effects Explode 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10401,7 +10483,7 @@ $.effects.explode = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Fold 1.8
+ * jQuery UI Effects Fold 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10457,7 +10539,7 @@ $.effects.fold = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Highlight 1.8
+ * jQuery UI Effects Highlight 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10507,7 +10589,7 @@ $.effects.highlight = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Pulsate 1.8
+ * jQuery UI Effects Pulsate 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10558,7 +10640,7 @@ $.effects.pulsate = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Scale 1.8
+ * jQuery UI Effects Scale 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10736,7 +10818,7 @@ $.effects.size = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Shake 1.8
+ * jQuery UI Effects Shake 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10793,7 +10875,7 @@ $.effects.shake = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Slide 1.8
+ * jQuery UI Effects Slide 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -10843,7 +10925,7 @@ $.effects.slide = function(o) {
 
 })(jQuery);
 /*
- * jQuery UI Effects Transfer 1.8
+ * jQuery UI Effects Transfer 1.8.1
  *
  * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
