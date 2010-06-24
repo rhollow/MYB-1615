@@ -275,7 +275,7 @@ sakai.sitemembers = function(tuid, showSettings){
 
     var getTotalAmountOfMembers = function(){
         $.ajax({
-            url: "/var/search/sites.json?q=" + siteid,
+            url: sakai.config.URL.SEARCH_SITES + "?q=" + siteid,
             success: function(data){
                 var json = data;
                 if (json.results.length === 1) {
@@ -460,7 +460,7 @@ sakai.sitemembers = function(tuid, showSettings){
         $.ajax({
             url: url,
             success: function(data){
-                var json = $.parseJSON(data).results;
+                var json = data.results;
 
                 // If we get an emty list, then we assume we have received all the members.
                 if (json.length === 0) {
@@ -613,7 +613,7 @@ sakai.sitemembers = function(tuid, showSettings){
             init();
         }
         else {
-            sdata.container.informFinish(tuid);
+            sakai.api.Widgets.Container.informFinish(tuid);
         }
     };
 
@@ -761,7 +761,7 @@ sakai.sitemembers = function(tuid, showSettings){
         }
         else {
             // Inserts the sendmessage-widget
-            sdata.widgets.WidgetLoader.insertWidgets(tuid);
+            sakai.api.Widgets.widgetLoader.insertWidgets(tuid);
         }
         // Get the settings, when the settings are received we either fill in the settings view or get all the members for the normal view.
         getSiteMembersSettingsFromJCR();
@@ -771,4 +771,4 @@ sakai.sitemembers = function(tuid, showSettings){
 
 };
 
-sdata.widgets.WidgetLoader.informOnLoad("sitemembers");
+sakai.api.Widgets.widgetLoader.informOnLoad("sitemembers");

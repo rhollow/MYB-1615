@@ -43,6 +43,28 @@ var Widgets = {
         }
     },
     "widgets": {
+        "addcontent": {
+            "ca":true,
+            "description":"Add Resource to a Site",
+            "name":"Add Resource",
+            "id":"addcontent",
+            "img":"/devwidgets/addcontent/images/addcontent.png",
+            "showinsakaigoodies":true,
+            "url":"/devwidgets/addcontent/addcontent.html"
+        },
+        "activitystream": {
+            "description":"Activity Stream Widget",
+            "hasSettings":true,
+            "img": "/devwidgets/activitystream/images/activitystream_icon.png",
+            "id":"activitystream",
+            "i18n": {
+                "default": "/devwidgets/activitystream/bundles/default.json",
+                "en_US": "/devwidgets/activitystream/bundles/en_US.json"
+            },
+            "name":"Activity Stream",
+            "personalportal":true,
+            "url":"/devwidgets/activitystream/activitystream.html"
+        },
         "addtocontacts": {
             "description":"Add a contact",
             "name":"Add a contact",
@@ -122,6 +144,15 @@ var Widgets = {
             "personalportal":true,
             "url":"/devwidgets/delicious/delicious.html"
         },
+        "deletecontent": {
+            "description":"Delete content widget",
+            "id":"deletecontent",
+            "i18n": {
+                "default": "/devwidgets/deletecontent/bundles/default.json"
+            },
+            "name":"Delete Content",
+            "url":"/devwidgets/deletecontent/deletecontent.html"
+        },
         "discussion": {
             "ca":true,
             "description":"Discussion widget",
@@ -182,6 +213,15 @@ var Widgets = {
             "name":"Folder",
             "showinsakaigoodies":true,
             "url":"/devwidgets/pickers/folderpicker.html"
+        },
+        "ggadget": {
+            "ca":true,
+            "description":"Embed Google Gadgets in your page or dashboard",
+            "id":"ggadget",
+            "img":"/devwidgets/ggadget/images/ggadget.png",
+            "name":"Google Gadget",
+            "showinsakaigoodies":true,
+            "url":"/devwidgets/ggadget/ggadget.html"
         },
         "googledocs": {
             "description": "Google docs - Show your recent google documents",
@@ -287,6 +327,16 @@ var Widgets = {
             "id":"navigationchat",
             "name":"navigationchat",
             "url":"/devwidgets/navigationchat/navigationchat.html"
+        },
+        "pickeruser": {
+            "description":"General people picker widget",
+            "hasSettings": false,
+            "id": "pickeruser",
+            "i18n": {
+                "default": "/devwidgets/pickeruser/bundles/default.json"
+            },
+            "name": "People Picker",
+            "url": "/devwidgets/pickeruser/pickeruser.html"
         },
         "poll": {
             "ca":true,
@@ -408,6 +458,15 @@ var Widgets = {
             "name":"Twitter",
             "personalportal":true,
             "url":"/devwidgets/twitter/twitter.html"
+        },
+        "uploadcontent": {
+            "description": "Upload content to Sakai3",
+            "i18n": {
+                "default": "/devwidgets/uploadcontent/bundles/default.json"
+            },
+            "id": "uploadcontent",
+            "name": "Upload Content",
+            "url": "/devwidgets/uploadcontent/uploadcontent.html"
         },
         "video": {
             "ca":true,

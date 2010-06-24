@@ -113,6 +113,7 @@ sakai.site = function(){
     var $sidebar_content_pages = $("#sidebar-content-pages");
     var $main_content_div = $("#main-content-div");
     var $dashboard_options = $(".dashboard_options");
+    var $more_link = $("#more_link");
 
 
     /////////////////////////////
@@ -244,6 +245,7 @@ sakai.site = function(){
                     $site_management_appearance_link.attr("href", $site_management_appearance_link.attr("href") + sitepath);
                     $site_settings_link.attr("href", $site_settings_link.attr("href") + "?site=" + sitepath);
                     $site_management_files_link.attr("href", $site_management_files_link.attr("href") + sitepath);
+                    $more_link.attr("href", $more_link.attr("href") + "?url=" +location.pathname);
                 }
 
                 // Determine whether the user is maintainer, if yes show and load admin elements
@@ -257,7 +259,7 @@ sakai.site = function(){
                     $site_management.show();
 
                     // Load admin part from a separate file
-                    $.Load.requireJS(sakai.site.siteAdminJS);
+                    $.getScript(sakai.site.siteAdminJS);
                 }
 
                 // Check user's login status
@@ -450,9 +452,9 @@ sakai.site = function(){
               cache: false,
               async: false,
               success: function(response){
-                sakai.site.pagecontents._navigation = response;
-                $page_nav_content.html(response);
-                sdata.widgets.WidgetLoader.insertWidgets("page_nav_content",null,sakai.site.currentsite.id + "/_widgets/");
+                sakai.site.pagecontents._navigation = response["sakai:pagenavigationcontent"];
+                $page_nav_content.html(sakai.site.pagecontents._navigation);
+                sakai.api.Widgets.widgetLoader.insertWidgets("page_nav_content",null,sakai.site.currentsite.id + "/_widgets/");
                 $(window).trigger('hashchange');
             },
             error: function(xhr, textStatus, thrownError) {
@@ -539,7 +541,7 @@ sakai.site = function(){
             $("#revision_history_container").hide();
             $("#content_page_options").show();
             $("#" + sakai.site.selectedpage).html(sakai.site.pagecontents[sakai.site.selectedpage]["sakai:pagecontent"]);
-            sdata.widgets.WidgetLoader.insertWidgets(sakai.site.selectedpage, null, sakai.site.currentsite.id + "/_widgets/");
+            sakai.api.Widgets.widgetLoader.insertWidgets(sakai.site.selectedpage, null, sakai.site.currentsite.id + "/_widgets/");
         }
 
     };
@@ -1093,8 +1095,8 @@ sakai.site = function(){
 
                         var x = $(this).position().left;
                         var y = $(this).position().top;
-                        $("#widget_settings_menu").css("left", x - $(dashPageID + " #widget_settings_menu").width() + 23 + "px");
-                        $("#widget_settings_menu").css("top", y + 18 + "px");
+                        $("#widget_settings_menu").css("left", x - $(dashPageID + " #widget_settings_menu").width() + 25 + "px");
+                        $("#widget_settings_menu").css("top", y + 20 + "px");
                         $("#widget_settings_menu").show();
                     });
 
@@ -1143,7 +1145,7 @@ sakai.site = function(){
                         old.parentNode.replaceChild(newel, old);
                         $("#widget_settings_menu").hide();
                         currentSettingsOpen = false;
-                        sdata.widgets.WidgetLoader.insertWidgets(newel.parentNode.id, true);
+                        sakai.api.Widgets.widgetLoader.insertWidgets(newel.parentNode.id, true);
                         return false;
                     });
 
@@ -1180,7 +1182,7 @@ sakai.site = function(){
                 }
 
 
-                sdata.widgets.WidgetLoader.insertWidgets(el.id);
+                sakai.api.Widgets.widgetLoader.insertWidgets(el.id);
 
             }
             else {
@@ -1311,7 +1313,7 @@ sakai.site = function(){
                 }
 
             // Insert widgets
-            sdata.widgets.WidgetLoader.insertWidgets(sakai.site.selectedpage,null,sakai.site.currentsite.id + "/_widgets/");
+            sakai.api.Widgets.widgetLoader.insertWidgets(sakai.site.selectedpage,null,sakai.site.currentsite.id + "/_widgets/");
 
             // (Re)-Render Navigation widget
             if (sakai.site.navigation) {
@@ -1400,4 +1402,4 @@ sakai.site = function(){
 
 };
 
-sdata.container.registerForLoad("sakai.site");
+sakai.api.Widgets.Container.registerForLoad("sakai.site");
