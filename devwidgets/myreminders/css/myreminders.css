@@ -1,0 +1,114 @@
+/*
+ * Licensed to the Sakai Foundation (SF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The SF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
+/* Main */
+.myreminders_widget .fl-widget-content {padding: 0px 0px; }
+.myreminders_widget .reminders_header {
+    background-color: #D4DADE; 
+    padding: 5px 10px 0px 40px;
+    height: 20px;
+}
+.myreminders_widget .reminders_header .left_header {float: left; width: 140px;}
+.myreminders_widget .reminders_header .right_header {float: left;}
+
+
+/* List of reminders */
+.myreminders_widget .reminders_list {overflow: auto; max-height: 200px;}
+.myreminders_widget .reminders_list li {list-style: none;}
+.myreminders_widget .reminders_list .reminder {
+    display: block;
+    height: 27px;
+    padding: 0px 10px 0px 15px;
+    border-bottom: 1px solid #E8E8E8;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    outline: none;
+}
+.myreminders_widget .reminders_list .reminder:hover {
+    background-color: #C6DEFF;
+    text-overflow: ellipsis;
+    text-decoration: none;
+}
+
+
+/* Individual reminder */
+.myreminders_widget .reminders_list .left_column {
+    float: left;
+    width: 25px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-top: 6px;
+}
+.myreminders_widget .reminders_list .middle_column {
+    float: left;
+    width: 140px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-top: 6px;
+}
+.myreminders_widget .reminders_list .right_column {
+    float: left;
+    width: 230px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-top: 6px;
+}
+.myreminders_widget .reminders_list .balloon_tooltip {float: left; padding: 2px; }
+
+/***** Reminder tooltips *****/
+
+/* "fallback" links for non-CSS supporting browsers. */
+.fallback {display: none;}
+
+/* Here's our default note styles. */
+.notedefault {
+    position: absolute;
+    visibility: hidden;
+    top: 1.5em;
+    left: 2em;
+    width: 220px;
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    color: black;
+}
+.notedefault .tooltip_content {padding: 5px; overflow: auto;  max-height: 200px;}
+.notedefault .tooltip_content a {color: blue; text-decoration: underline;}
+.notedefault .tooltip_text {text-align: justify;}
+
+/* Some position-type-specific offset information. Tweak as needed! */
+.snp-mouseoffset, .snp-triggeroffset, .snp-mousetrack {margin-left: 5px; margin-top: 15px;}
+
+/* Headings within notes */
+.notedefault .tooltip_header {
+    margin: 0 0 5px 0;
+    padding: 5px;
+    background-color: #D4DADE;
+    color: black;
+}
+
+/* Note close marker is only shown within pinned notes. */
+.note-close {
+    float: right;
+    width: 10px;
+    height: 14px;
+    color: black;
+    text-decoration: none;
+    visibility: hidden;
+}
+.snb-pinned .note-close {visibility: inherit;}
