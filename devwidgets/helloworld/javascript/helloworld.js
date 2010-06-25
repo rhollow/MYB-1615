@@ -25,6 +25,7 @@ var sakai = sakai || {};
  * @param {String} tuid Unique id of the widget
  * @param {Boolean} showSettings Show the settings of the widget or not
  */
+
 sakai.helloworld = function(tuid,showSettings){
 
 

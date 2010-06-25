@@ -1,9 +1,11 @@
 var myLinks = {
+    "featured" : ["bear_facts","bspace","calmail"],
     "links" : [
         {
             "id" : "bear_facts",
             "name" : "Bear Facts",
-            "url": "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome"
+            "url": "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome",
+            "description" : ""
         },
         {
             "id" : "bspace",
