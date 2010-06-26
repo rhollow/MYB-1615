@@ -29,10 +29,14 @@ sakai.mylinks = function (tuid, showSettings) {
     var $draggableList = $(".movable_list", $elm_container);
 
     // selectors
-    var draggableElmSelector = "li"
+    var draggableElmSelector = "li";
 
     // Templates
     var mylinksListTemplate = "mylinks_list_template";
+
+    var saveLinkList = function (updatedList) {
+        sakai.api.Widgets.saveWidgetData(tuid, updatedList);
+    };
 
 
     /**
@@ -41,41 +45,53 @@ sakai.mylinks = function (tuid, showSettings) {
      * @param {String} an index of the new position
      * @param {String} a jQuery object containing the current list in the new order
     */
-    var saveNewOrder = function (item, requestedPosition, $movables) {
+    var saveNewOrder = function (item, requestedPosition, movables) {
 
         // retreave objects
-        var updatedList = currentListObj($movables);
+        var updatedList = currentListObj(movables);
 
         // push data to server
+        saveLinkList(updatedList);
     };
 
     /**
      * return the proper js Obj to store on the server
      * @param {String} a jQuery object containing the current list
     */
-    var currentListObj = function ($movables) {
+    var currentListObj = function (movables) {
         var listObj = {};
         var list = [];
 
-        console.log($movables); // debug
         // loop through movables, retrieve data and return it as an array
-        $movables.each(function(idx, movable){
-            var $movable = $(movable);
+        movables.each(function(idx, movable){
+            var $link = $("a", movable);
             var record = {
-                "id" : $movable.attr("id"),
-                "name" : $movable.text(),
-                "url" : $("a",$movable).attr("href")
+                id :   $link.attr("id"),
+                name : $link.text(),
+                url :  $link.attr("href")
             }
             list.push(record);
         });
-        listObj.items = list;
-        console.log(listObj); // debug
+        listObj.links = list;
 
         return listObj;
     };
 
+
+    var initDraggables = function () {
+        fluid.reorderList($draggableList, {
+            selectors: {
+                movables: draggableElmSelector
+            },
+            listeners: {
+                afterMove: saveNewOrder
+            }
+        });
+    };
+
     var createLinkList = function (data, isUserList) {
         $draggableList.html($.TemplateRenderer(mylinksListTemplate, data));
+        initDraggables();
     };
 
     var defaultLinks = {
@@ -147,32 +163,22 @@ sakai.mylinks = function (tuid, showSettings) {
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data) {
             var json;
             if (success) {
-                // Show posts
+                // load the users link list
                 json = data;
                 createLinkList(json, true);
              } else {
-                // Show empty page.
+                // load the default link list and use that
                 //json = fetchDefaultList();
                 createLinkList(defaultLinks, false);
+                // save the default link list back to the server
+                saveLinkList(defaultLinks);
             }
         });
 
-    };
-
-    var initDraggables = function () {
-        fluid.reorderList($draggableList, {
-            selectors: {
-                movables: draggableElmSelector
-            },
-            listeners: {
-                afterMove: saveNewOrder
-            }
-        });
     };
 
     var doInit = function() {
         loadLinkList();
-        initDraggables();
     };
 
     doInit();
