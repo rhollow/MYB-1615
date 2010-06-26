@@ -1,5 +1,4 @@
-var myLinks = {
-    "featured" : ["bear_facts","bspace","calmail"],
+var defaultLinks = {
     "links" : [
         {
             "id" : "bear_facts",

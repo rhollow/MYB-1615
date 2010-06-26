@@ -17,7 +17,7 @@
  */
 
 /* Main */
-.mylinks_widget .fl-widget-content {padding: 10px 0px;}
+.mylinks_widget .fl-widget-content {padding: 0;}
 
 /* List of links */
 .mylinks_widget .link_list {overflow: auto; max-height: 200px;}
@@ -40,20 +40,20 @@
 }
 
 /* Movable links */
-li.fl-reorderer-movable-hover {cursor: move;}
-li.fl-reorderer-movable-dragging {background-color: #C6DEFF;}
-li.fl-reorderer-movable-avatar {
+.mylinks_widget .fl-reorderer-movable-hover {cursor: move;}
+
+.mylinks_widget .fl-reorderer-movable-dragging {background-color: #C6DEFF;}
+
+.mylinks_widget .fl-reorderer-movable-avatar {
     opacity: 0.55;
     filter: alpha(opacity=55);
     width: 300px;
     border: 0;
 }
-li.fl-reorderer-dropMarker {
-    background-color: #C6DEFF;
+
+.mylinks_widget .fl-reorderer-dropMarker {
+    background-color: #469AC8;
     height: 2px;
     margin: 0px;
     padding: 0px;
 }
-
-
-
