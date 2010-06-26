@@ -113,7 +113,7 @@ sakai.search = function() {
 
         currentpage = page;
         // This will invoke the sakai._search.doSearch function and change the url.
-        History.addBEvent("" + page + "|" + encodeURIComponent(searchquery) + "|" + searchwhere);
+        History.addBEvent(page, encodeURIComponent(searchquery), searchwhere);
     };
 
     /**
@@ -160,8 +160,8 @@ sakai.search = function() {
 
                 // If result is page content set up page path
                 for (var i=0, j=finaljson.items.length; i<j; i++ ) {
-                    var full_path = finaljson.items[i]["path"];
-                    var site_path = finaljson.items[i]["site"]["path"];
+                    var full_path = finaljson.items[i]["data"]["jcr:path"];
+                    var site_path = finaljson.items[i]["site"]["jcr:path"];
                     var page_path = site_path;
                     if (finaljson.items[i]["excerpt"]) {
                         var stripped_excerpt = $(""+finaljson.items[i]["excerpt"] + "").text().replace(/<[^>]*>/g, "");
@@ -251,8 +251,7 @@ sakai.search = function() {
                 url: sakai.config.URL.SEARCH_CONTENT_COMPREHENSIVE_SERVICE + "?page=" + (currentpage - 1) + "&items=" + resultsToDisplay + "&q=" + urlsearchterm + "&sites=" + searchWhere,
                 cache: false,
                 success: function(data) {
-                    var json = $.evalJSON(data);
-                    renderResults(json, true);
+                    renderResults(data, true);
                 },
                 onFail: function(status) {
                     var json = {};
