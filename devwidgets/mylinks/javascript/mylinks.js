@@ -192,4 +192,4 @@ sakai.mylinks = function (tuid, showSettings) {
 
 };
 
-sdata.widgets.WidgetLoader.informOnLoad("mylinks");
+sakai.api.Widgets.widgetLoader.informOnLoad("mylinks");
