@@ -22,6 +22,13 @@
 
 var sakai = sakai || {};
 
+
+/**
+ * Initialize the My Links widget
+ * @param {String} tuid unique id of the widget
+ * @param {Boolean} showSettings show the settings of the widget or not
+ */
+
 sakai.mylinks = function (tuid, showSettings) {
 
     // page elements
@@ -149,7 +156,7 @@ sakai.mylinks = function (tuid, showSettings) {
         ]
     };
 
-    var fetchDefaultList = function () {
+    var getDefaultList = function () {
          return defaultLinks;
     };
 
@@ -158,7 +165,7 @@ sakai.mylinks = function (tuid, showSettings) {
      * if the user does have any links, returns the default list
      */
 
-    var loadLinkList = function () {
+    var getLinkList = function () {
 
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data) {
             var json;
@@ -168,8 +175,8 @@ sakai.mylinks = function (tuid, showSettings) {
                 createLinkList(json, true);
              } else {
                 // load the default link list and use that
-                //json = fetchDefaultList();
-                createLinkList(defaultLinks, false);
+                var defaultLinksList = getDefaultList();
+                createLinkList(defaultLinksList, false);
                 // save the default link list back to the server
                 saveLinkList(defaultLinks);
             }
@@ -178,7 +185,7 @@ sakai.mylinks = function (tuid, showSettings) {
     };
 
     var doInit = function() {
-        loadLinkList();
+        getLinkList();
     };
 
     doInit();
