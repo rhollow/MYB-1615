@@ -294,6 +294,13 @@ var Widgets = {
             "personalportal":true,
             "url":"/devwidgets/myfriends/myfriends.html"
         },
+        "mylinks": {
+            "description":"My Links: favorite Berkeley sites from the campus directory",
+            "id":"mylinks",
+            "name":"My Links",
+            "personalportal":true,
+            "url":"/devwidgets/myLinks/myLinks.html"
+        },
         "myprofile": {
             "description":"My Personal Profile",
             "name":"My Profile",
