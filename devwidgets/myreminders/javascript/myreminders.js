@@ -19,7 +19,7 @@
 
 var sakai = sakai || {};
 
-sakai.myreminders = function(tuid,showSettings){
+sakai.myreminders = function(tuid, showSettings){
 
     /////////////////////////////
     // Configuration variables //
@@ -58,8 +58,8 @@ sakai.myreminders = function(tuid,showSettings){
         //    }
         //});
     };
+
     doInit();
 };
 
 sakai.api.Widgets.widgetLoader.informOnLoad("myreminders");
-

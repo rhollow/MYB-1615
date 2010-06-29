@@ -281,7 +281,7 @@ var Widgets = {
             "id":"mylinks",
             "name":"My Links",
             "personalportal":true,
-            "url":"/devwidgets/myLinks/myLinks.html"
+            "url":"/devwidgets/mylinks/mylinks.html"
         },
         "myprofile": {
             "description":"My Personal Profile",
