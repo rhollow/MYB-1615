@@ -196,24 +196,6 @@ var Widgets = {
             "showinsakaigoodies": true,
             "url":"/devwidgets/flickr/flickr.html"
         },
-        "filepicker": {
-            "description":"Pick a file.",
-            "name":"File",
-            "id":"filepicker",
-            "img":"/devwidgets/discussion/images/discussion.png",
-            "hasSettings": true,
-            "showinsakaigoodies":true,
-            "url":"/devwidgets/pickers/filepicker.html"
-        },
-        "folderpicker": {
-            "description":"Pick a folder.",
-            "hasSettings":false,
-            "id":"folderpicker",
-            "img":"/devwidgets/discussion/images/discussion.png",
-            "name":"Folder",
-            "showinsakaigoodies":true,
-            "url":"/devwidgets/pickers/folderpicker.html"
-        },
         "ggadget": {
             "ca":true,
             "description":"Embed Google Gadgets in your page or dashboard",
@@ -293,6 +275,13 @@ var Widgets = {
             "name":"My Contacts",
             "personalportal":true,
             "url":"/devwidgets/myfriends/myfriends.html"
+        },
+        "mylinks": {
+            "description":"My Links: favorite Berkeley sites from the campus directory",
+            "id":"mylinks",
+            "name":"My Links",
+            "personalportal":true,
+            "url":"/devwidgets/myLinks/myLinks.html"
         },
         "myprofile": {
             "description":"My Personal Profile",
