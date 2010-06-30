@@ -45,7 +45,7 @@
 
     </head>
 
-    <body class="fl-centered links i18nable" onload="setTitles()">
+    <body class="fl-centered links i18nable" onload="doInit()">
 
         <!-- EXPLORE BAR -->
         <div id="widget_navigationchat" class="widget_inline"></div>
@@ -81,12 +81,12 @@
 
                             <h4 class="links_section_header">Suggested Sites</h4>
 
-                            <div class="links_section_body">
+                            <div class="links_section_body" onclick="doInit()">
                                 
                                 <div class="suggested_link_col">
                                     <div class="suggested_link_header">
-                                        <input id="CheckBox1" type="checkbox" onclick="doInit()" class="CheckBoxClass"/>
-                                    	<label id="Label1" for="CheckBox1" class="CheckBoxLabelClass"><a href="link" target="_blank">BearFacts</a></label>
+                                        <input id="CheckBox1" type="checkbox" class="CheckBoxClass"/>
+                                    	<label id="Label1" for="CheckBox1" class="CheckBoxLabelClass"><a href="link" target="_blank" title="BearFacts">BearFacts</a></label>
                                     </div>
                                 <br>
                                 <p>
@@ -99,8 +99,8 @@
                                                                   
                                 <div class="suggested_link_col">
                                     <div class="suggested_link_header">
-                                        <input id="CheckBox2" type="checkbox" onclick="doInit()" class="CheckBoxClass"/>
-                                	    <label id="Label2" for="CheckBox2" class="CheckBoxLabelClass"><a href="link" target="_blank">CalMail</a></label></li>
+                                        <input id="CheckBox2" type="checkbox" class="CheckBoxClass"/>
+                                	    <label id="Label2" for="CheckBox2" class="CheckBoxLabelClass"><a href="link" target="_blank" title="CalMail">CalMail</a></label></li>
                                     </div>
                                 <br>
                                 <p>
@@ -113,8 +113,8 @@
                                  
                                 <div class="suggested_link_col"  id="right_col">
                                     <div class="suggested_link_header">
-                                        <input id="CheckBox3" type="checkbox" onclick="doInit()" class="CheckBoxClass"/>
-                                	    <label id="Label3" for="CheckBox3" class="CheckBoxLabelClass"><a href="link" target="_blank">Tele-Bears</a></label>
+                                        <input id="CheckBox3" type="checkbox" class="CheckBoxClass"/>
+                                	    <label id="Label3" for="CheckBox3" class="CheckBoxLabelClass"><a href="link" target="_blank" title="Tele-Bears">Tele-Bears</a></label>
                                     </div>
                                 <br>
                                 <p>
@@ -134,7 +134,7 @@
 
                             <div class="links_section_body">     
                               
-                         <form name="linkset" onclick="doInit()" method="post" action="post.php">                                                   
+                         <form name="linkset" onclick="doInit()">                                                   
                              
                                <div class="all_links_col">
                                    
@@ -145,19 +145,19 @@
                                        <fieldset id="set1">  
                                                 <ul>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox1_1" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox1_1" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label1" for="CheckBox1_1" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox1_2" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox1_2" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label2" for="CheckBox1_2" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox1_3" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox1_3" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label3" for="CheckBox1_3" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox1_4" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox1_4" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label4" for="CheckBox1_4" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>    
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox1_5" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox1_5" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label5" for="CheckBox1_5" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li> 
                                                 </ul>                          
                                         </fieldset>                                            
@@ -170,19 +170,19 @@
                                          <fieldset id="set2">                                                                                                         
                                                 <ul>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox2_1" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox2_1" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label1" for="CheckBox2_1" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox2_2" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox2_2" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label2" for="CheckBox2_2" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox2_3" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox2_3" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label3" for="CheckBox2_3" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox2_4" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox2_4" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label4" for="CheckBox2_4" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>    
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox2_5" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox2_5" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label5" for="CheckBox2_5" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li> 
                                                 </ul>         
                                         </fieldset>                                                                   
@@ -195,19 +195,19 @@
                                          <fieldset id="set3">                                                                                                         
                                                 <ul>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox3_1" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox3_1" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label1" for="CheckBox3_1" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox3_2" onclick="doInit()" type="checkbox"  class="CheckBoxClass"/>
+                                                        <input id="CheckBox3_2" type="checkbox"  class="CheckBoxClass"/>
                                 	                    <label id="Label2" for="CheckBox3_2" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox3_3" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox3_3" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label3" for="CheckBox3_3" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox3_4" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox3_4" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label4" for="CheckBox3_4" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>    
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox3_5" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox3_5" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label5" for="CheckBox3_5" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li> 
                                                 </ul>         
                                         </fieldset>                                                                   
@@ -220,36 +220,25 @@
                                          <fieldset id="set4">                                                                                                         
                                                 <ul>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox4_1" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox4_1" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label1" for="CheckBox4_1" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox4_2" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox4_2" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label2" for="CheckBox4_2" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox4_3" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox4_3" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label3" for="CheckBox4_3" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox4_4" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox4_4" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label4" for="CheckBox4_4" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li>    
                                                     <li class="NoBulletNoIndent">
-                                                        <input id="CheckBox4_5" onclick="doInit()" type="checkbox" class="CheckBoxClass"/>
+                                                        <input id="CheckBox4_5" type="checkbox" class="CheckBoxClass"/>
                                 	                    <label id="Label5" for="CheckBox4_5" class="CheckBoxLabelClass"><a title="A short description of the site." href="link" target="_blank">Link</a></label></li> 
                                                 </ul>         
                                         </fieldset>                                                                   
                                 </div>
                                 
-                              <script type="text/javascript">  
-                                  function setTitles(){                                  
-                                      var all_labels = document.getElementsByTagName("label");
-                                          for(k=0; k<all_labels.length; k++){
-                                              all_labels[k].setAttribute("title", "Add to myLinks.");
-                                      }
-                                      var selected_labels = document.getElementsByClassName("LabelSelected");
-                                          for(i=0; i<selected_labels.length; i++){
-                                              selected_labels[i].setAttribute("title", "Remove from myLinks.");
-                                      }
-                                  }
-                                </script> 
+
                                     
                             </form>                           
                                      
