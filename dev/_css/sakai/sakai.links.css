@@ -24,26 +24,34 @@
 
 
 /** SUGGESTED LINKS SECTION **/
-.suggested_link_header
-{ font-size: 14px; font-weight: bold;}
-
 .suggested_link_col
-{ float: left; width: 31%; margin: 5px; padding: 5px; border-right: 1px solid #cdcdcd }
+{ float: left; width: 31%; margin: 5px; padding: 5px; border-right: 1px solid #cdcdcd; }
+
+.suggested_link_col .suggested_link_header
+{ font-size: 14px; font-weight: bold; }
+
+.suggested_link_col .suggested_link_header a
+{ position: relative; top: 3px; }
 
 
 /** ALL LINKS SECTION **/
 .all_links_col
-{ float: left; height: 150px; width: 22%; margin: 5px; padding: 5px; line-height: 30px;}
+{ float: left; height: 150px; width: 23%; margin: 5px; padding: 0px; line-height: 30px;}
 
 .all_links_col li.NoBulletNoIndent {
   list-style-type: none;
   margin-left: 0px;
-  padding: 0px;
+  padding-top: 5px;
   width: 200px;
+  height: 22px;
 }
 
 .all_links_col li:hover
 { background-color: #c6deff }
+
+.all_links_col a
+{ position: relative; top: -5px; left: 5px; }
+
 
 
 /** TAB VARIANT **/
@@ -76,8 +84,7 @@
 { padding: 0 0 0 20px; }
 
 .links .links_section .multi_entry table div
-{ padding: 5px;    }
-
+{ padding: 5px; }
 
 
 /** BUTTONS **/
@@ -94,33 +101,33 @@
 
 .CheckBoxLabelClass
 {
-	background: url("../../_images/icon_star_off.png") no-repeat;
+	background: url("../../_images/starsprites.png") no-repeat;
 	padding-left: 25px;
 	padding-top: 0px;
 	margin: 0px;
-	height: 28px;	
+	height: 20px;	
 	width: 150px;
 	display: block;
 }
 
 .LabelSelected
 { 
-    background: url("../../_images/icon_star_on.png") no-repeat; 
+    background-position: 0px -22px; 
     padding-left: 25px;
 	padding-top: 0px;
 	margin: 0px;
-	height: 28px;	
+	height: 20px;	
 	width: 150px;
 	display: block;
 }
 
 .LabelRequired
 { 
-    background: url("../../_images/icon_star_no_change.png") no-repeat; 
+    background-position: 0px -44px; 
     padding-left: 25px;
 	padding-top: 0px;
 	margin: 0px;
-	height: 28px;	
+	height: 20px;	
 	width: 150px;
 	display: block;
  }
