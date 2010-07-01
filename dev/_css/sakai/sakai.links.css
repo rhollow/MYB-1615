@@ -39,7 +39,7 @@
   list-style-type: none;
   margin-left: 0px;
   padding: 0px;
-  width: 190px;
+  width: 200px;
 }
 
 .all_links_col li:hover
@@ -104,7 +104,26 @@
 }
 
 .LabelSelected
-{ background: url("../../_images/icon_star_on.png") no-repeat; }
+{ 
+    background: url("../../_images/icon_star_on.png") no-repeat; 
+    padding-left: 25px;
+	padding-top: 0px;
+	margin: 0px;
+	height: 28px;	
+	width: 150px;
+	display: block;
+}
+
+.LabelRequired
+{ 
+    background: url("../../_images/icon_star_no_change.png") no-repeat; 
+    padding-left: 25px;
+	padding-top: 0px;
+	margin: 0px;
+	height: 28px;	
+	width: 150px;
+	display: block;
+ }
 
 
 /** IDS **/
