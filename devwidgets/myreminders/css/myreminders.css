@@ -28,9 +28,9 @@
 
 
 /* List of reminders */
-.myreminders_widget .reminders_list {overflow: auto; max-height: 200px;}
-.myreminders_widget .reminders_list li {list-style: none;}
-.myreminders_widget .reminders_list .reminder {
+.myreminders_widget .reminders_div {overflow: auto; max-height: 200px;}
+.myreminders_widget .reminders_div li {list-style: none;}
+.myreminders_widget .reminders_div .reminder {
     display: block;
     height: 27px;
     padding: 0px 10px 0px 15px;
@@ -40,7 +40,7 @@
     white-space: nowrap;
     outline: none;
 }
-.myreminders_widget .reminders_list .reminder:hover {
+.myreminders_widget .reminders_div .reminder:hover {
     background-color: #C6DEFF;
     text-overflow: ellipsis;
     text-decoration: none;
@@ -48,28 +48,28 @@
 
 
 /* Individual reminder */
-.myreminders_widget .reminders_list .left_column {
+.myreminders_widget .reminders_div .left_column {
     float: left;
     width: 25px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
-.myreminders_widget .reminders_list .middle_column {
+.myreminders_widget .reminders_div .middle_column {
     float: left;
     width: 140px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
-.myreminders_widget .reminders_list .right_column {
+.myreminders_widget .reminders_div .right_column {
     float: left;
     width: 230px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
-.myreminders_widget .reminders_list .balloon_tooltip {float: left; padding: 2px; }
+.myreminders_widget .reminders_div .balloon_tooltip {float: left; padding: 2px; }
 
 /***** Reminder tooltips *****/
 
