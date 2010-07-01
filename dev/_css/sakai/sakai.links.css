@@ -94,7 +94,7 @@
 
 .CheckBoxLabelClass
 {
-	background: url("../../_images/greystar.png") no-repeat;
+	background: url("../../_images/icon_star_off.png") no-repeat;
 	padding-left: 25px;
 	padding-top: 0px;
 	margin: 0px;
@@ -104,7 +104,7 @@
 }
 
 .LabelSelected
-{ background: url("../../_images/yellowstar.png") no-repeat; }
+{ background: url("../../_images/icon_star_on.png") no-repeat; }
 
 
 /** IDS **/
