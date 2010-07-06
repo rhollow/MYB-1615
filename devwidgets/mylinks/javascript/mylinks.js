@@ -41,16 +41,24 @@ sakai.mylinks = function (tuid, showSettings) {
     // Templates
     var mylinksListTemplate = "mylinks_list_template";
 
-    var saveLinkList = function (updatedList) {
-        sakai.api.Widgets.saveWidgetData(tuid, updatedList);
-    };
+    // Data files and paths
+    var userLinks = "my_links"
+    var linksDataNode = "/_user" + sakai.data.me.profile.path + "/private/" + userLinks;
 
+    /**
+     * write the users links to JCR
+     * @param {object} the current state of the users list
+    */
+    var saveLinkList = function (updatedList) {
+        sakai.api.Server.saveJSON(linksDataNode, updatedList);
+        //sakai.api.Widgets.saveWidgetData(tuid, updatedList);
+    };
 
     /**
      * saves the new list (or list order) to the server
-     * @param {String} a jQuery object containing the moved item
-     * @param {String} an index of the new position
-     * @param {String} a jQuery object containing the current list in the new order
+     * @param {Object} a jQuery object containing the moved item
+     * @param {Number} an index of the new position
+     * @param {Object} a jQuery object containing the current list in the new order
     */
     var saveNewOrder = function (item, requestedPosition, movables) {
 
@@ -63,7 +71,7 @@ sakai.mylinks = function (tuid, showSettings) {
 
     /**
      * return the proper js Obj to store on the server
-     * @param {String} a jQuery object containing the current list
+     * @param {Object} a jQuery object containing the current list
     */
     var currentListObj = function (movables) {
         var listObj = {};
@@ -163,29 +171,25 @@ sakai.mylinks = function (tuid, showSettings) {
     /**
      * Retreives the current list of links for the current user
      * if the user does have any links, returns the default list
+     * @param {Boolean} whether the loadJSON got it's data
+     * @param {Object} contains the users links record
      */
 
-    var getLinkList = function () {
-
-        sakai.api.Widgets.loadWidgetData(tuid, function(success, data) {
-            var json;
-            if (success) {
-                // load the users link list
-                json = data;
-                createLinkList(json, true);
-             } else {
-                // load the default link list and use that
-                var defaultLinksList = getDefaultList();
-                createLinkList(defaultLinksList, false);
-                // save the default link list back to the server
-                saveLinkList(defaultLinks);
-            }
-        });
-
+    var loadLinksList = function (success, data) {
+        if (success) {
+            // load the users link list from data
+            createLinkList(data, true);
+         } else {
+            // load the default link list and use that
+            var defaultLinksList = getDefaultList();
+            createLinkList(defaultLinksList, false);
+            // save the default link list back to the server
+            saveLinkList(defaultLinks);
+        }
     };
 
     var doInit = function() {
-        getLinkList();
+        sakai.api.Server.loadJSON(linksDataNode, loadLinksList);
     };
 
     doInit();
