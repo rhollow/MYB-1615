@@ -1,9 +1,23 @@
-/*global $, setTitles, window */
-
 var sakai = sakai || {};
 
+// page elements
+var $suggestedSites = $(".suggested_sites");
+
+// templates
+var suggested_sites_template = "links_suggestedlist_template";
+
+// data files and paths
+var userLinks = "my_links"
+//var linksDataNode = "/_user" + sakai.data.me.profile.path + "/private/" + userLinks;
+var linksDataNode = getDirectory();
+
+function createLinkList(data, isUserList){
+    //alert("Calling createLinkList...");
+    $suggestedSites.html($.TemplateRenderer(suggested_sites_template, data));
+}
+
 var directory = {
-    featured : ["bear_facts", "bspace", "calmail"],
+    featured : ["calmail", "bspace", "asuc"],
     links : [
         {
             id : "bear_facts",
@@ -27,7 +41,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -40,7 +54,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -53,7 +67,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -79,7 +93,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -92,7 +106,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -105,7 +119,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -118,7 +132,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -131,7 +145,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -144,7 +158,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -157,7 +171,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -170,7 +184,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -183,7 +197,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -196,7 +210,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -209,7 +223,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -222,7 +236,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -235,7 +249,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -248,7 +262,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -261,7 +275,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -274,7 +288,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -287,7 +301,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -300,7 +314,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -313,7 +327,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -326,7 +340,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -365,7 +379,7 @@ var directory = {
             audience : [
                 {
                     name : "student",
-                    required : "true"
+                    required : "false"
                 }
             ]
         },
@@ -385,12 +399,30 @@ var directory = {
     ]
 }
 
+function getDirectory(){
+    //alert("Calling getDirectory...");
+    return directory;
+}
+
+function loadLinksList(success, data){
+    //alert("Calling loadLinksList...");
+    if (success) {
+        // load the users link list from data
+        createLinkList(data, true);
+    }
+    else {
+        // NOTE-- NO DEFAULT LIST FOR SUGGESTED SITES
+        // load the default link list and use that
+        var defaultLinksList = getDirectory();
+        createLinkList(defaultLinksList, false);      
+    }
+}
+
 /*
  * Sets the titles for the checkboxes' tooltips, based on
  * whether its label's class specifies that it is checked
  * or unchecked.
  */
-
 function setTitles(){
     var all_labels = document.getElementsByTagName("label");
     for (k = 0; k < all_labels.length; k++) {
@@ -403,10 +435,10 @@ function setTitles(){
 }
 
 /*
- * Looks at all checkboxes and whether they are checked or not, 
- * then adds or removes the label class for the custom star.
+ * As checkboxes are checked or unchecked, toggles the state
+ * of the custom star sprite as appropriate by changing its class.
+ * then also resets the titles for the tooltips.
  */
-
 function setStars(){
     $(".CheckBoxClass").change(function(){
         if ($(this).is(":checked")) {
@@ -415,12 +447,13 @@ function setStars(){
         else {
             $(this).next("label").removeClass("LabelSelected");
         }
-        setTitles();
+       setTitles();
     })
 }
 
 function doInit(){
     setStars();
-    setTitles();   
+    setTitles();
+    sakai.api.Server.loadJSON(linksDataNode, loadLinksList); 
 }
 

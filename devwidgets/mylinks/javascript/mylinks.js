@@ -61,8 +61,7 @@ sakai.mylinks = function (tuid, showSettings) {
      * @param {Object} a jQuery object containing the current list in the new order
     */
     var saveNewOrder = function (item, requestedPosition, movables) {
-
-        // retreave objects
+        // retrieve objects
         var updatedList = currentListObj(movables);
 
         // push data to server
@@ -91,7 +90,6 @@ sakai.mylinks = function (tuid, showSettings) {
 
         return listObj;
     };
-
 
     var initDraggables = function () {
         fluid.reorderList($draggableList, {
