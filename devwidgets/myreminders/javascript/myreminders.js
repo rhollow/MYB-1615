@@ -27,245 +27,258 @@ var sakai = sakai || {};
 sakai.myreminders = function(tuid, showSettings){
 
     // Page Elements
-    var rootel = $("#" + tuid);
-    var $remindersList = $(".reminders_list", rootel);
+    var $rootel = $("#" + tuid);
+    var $remindersList = $(".reminders_list", $rootel);
     
     // Template
     var myremindersTemplate = "myreminders_template";
     
-    var fetchData = function(){
-        var reminders = {
-            "items": 25,
-            "total": 5,
-            "results": [{
-                "jcr:path": "",
-                "jcr:name": "",
-                "sakai:created": "2010-06-28T01:10:49-07:00",
-                "sling:resourceType": "sakai/message",
-                "sakai:type": "internal",
-                "sakai:messagebox": "inbox",
-                "sakai:category": "reminder",
-                "sakai:id": "70896405574174eb091b85ee6be93d4f70558454",
-                "jcr:primaryType": "",
-                "sakai:from": "Susan Hagstrom",
-                "sakai:subject": "IMPORTANT: CED Commencement tickets",
-                "sakai:body": "Dear CED seniors, \n\n <b>Beginning Monday, April 26th,</b> students who have RSVPed for CED's commencement may pick up four complimentary tickets and purchase unlimited additional tickets for $5 each (you can use check or money order payable to UC Regents or your CalOne ID card). \n\n Tickets will be distributed in the Card Key Office (477 Wurster) to those who are on the RSVP list. You must show ID. \n\n <b>The RSVP deadline is today.</b> To RSVP, complete the senior survey. \n\n Graduation: <a href='http://www.ced.berkeley.edu/advising/continuingstudents/graduation'>http://www.ced.berkeley.edu/advising/continuingstudents/graduation</a> \n\n Commencement ceremony: <a href='http://www.ced.berkeley.edu/events/calendar/commencement'>http://www.ced.berkeley.edu/events/calendar/commencement</a> \n\n <b>IMPORTANT: HAVE YOU ADDED YOURSELF TO THE DEGREE LIST?</b> THIS IS DIFFERENT FROM RSVP-ING FOR THE CEREMONY! See <a href='http://www.ced.berkeley.edu/advising/continuingstudents/graduation'>http://www.ced.berkeley.edu/advising/continuingstudents/graduation</a> for more information. \n\n Congratulations graduates! \n\n Susan \n\n -- \n\n <h1>Susan Hagstrom</h1> \n\n Undergraduate Services Manager \n\n College of Environmental Design \n\n 232 Wurster \n\n UC Berkeley \n\n Berkeley, CA 94720-1800 \n\n 510-642-0408 \n\n <a href='http://www.ced.berkeley.edu/advising/'>http://www.ced.berkeley.edu/advising/</a>",
-                "sakai:read": true,
-                "sakai:sendstate": "notified",
-                "sakai:to": "internal:eli",
-                "sakai:dueDate": "2010-06-28T01:10:49-07:00",
-                "sakai:completeDate": "2010-06-28T01:10:49-07:00",
-                "sakai:to": "internal:eli",
-                "_charset_": "utf-8",
-                "id": "70896405574174eb091b85ee6be93d4f70558454",
-                "userTo": [{
-                    "userid": "eli",
-                    "hash": "/e/el/eli/eli",
-                    "jcr:path": "",
-                    "jcr:name": "",
-                    "firstName": "Eli",
-                    "lastName": "Cochran",
-                    "picture": false,
-                    "user": "eli",
-                    "sakai:status": "online",
-                    "sakai:location": "none"
-                }],
-                "userFrom": [{
-                    "userid": "wombat",
-                    "hash": "/w/wo/wombat",
-                    "jcr:path": "",
-                    "jcr:name": "",
-                    "firstName": "wombat t.",
-                    "lastName": "firefly",
-                    "picture": false,
-                    "user": "wombat",
-                    "sakai:status": "offline",
-                    "sakai:location": "none"
-                }]
-            }, {
-                "jcr:path": "",
-                "jcr:name": "",
-                "sakai:created": "2010-06-30T06:39:51-07:00",
-                "sling:resourceType": "sakai/message",
-                "sakai:previousmessage": "5e49022e929f5cdcf1531867fb2e84ee18d6ced9",
-                "sakai:messagebox": "inbox",
-                "sakai:type": "internal",
-                "sakai:category": "reminder",
-                "sakai:id": "c250e0204224c7ff234579f2282128359ddb89c8",
-                "jcr:primaryType": "",
-                "sakai:from": "wombat",
-                "sakai:subject": "Re: Re: wombat t. firefly has invited you to become a connection",
-                "sakai:body": "This is another reply",
-                "sakai:read": true,
-                "sakai:sendstate": "notified",
-                "sakai:to": "internal:eli",
-                "sakai:dueDate": "2010-06-28T01:10:49-07:00",
-                "sakai:completeDate": "2010-06-28T01:10:49-07:00",
-                "_charset_": "utf-8",
-                "id": "c250e0204224c7ff234579f2282128359ddb89c8",
-                "userTo": [{
-                    "userid": "eli",
-                    "hash": "/e/el/eli/eli",
-                    "jcr:path": "",
-                    "jcr:name": "",
-                    "firstName": "Eli",
-                    "lastName": "Cochran",
-                    "picture": false,
-                    "user": "eli",
-                    "sakai:status": "online",
-                    "sakai:location": "none"
-                }],
-                "userFrom": [{
-                    "userid": "wombat",
-                    "hash": "/w/wo/wombat",
-                    "jcr:path": "",
-                    "jcr:name": "",
-                    "firstName": "wombat t.",
-                    "lastName": "firefly",
-                    "picture": false,
-                    "user": "wombat",
-                    "sakai:status": "offline",
-                    "sakai:location": "none"
-                }],
-                "previousMessage": {
-                    "jcr:path": "",
-                    "jcr:name": "",
-                    "sakai:created": "2010-06-30T06:33:47-07:00",
-                    "sling:resourceType": "sakai/message",
-                    "sakai:previousmessage": "70896405574174eb091b85ee6be93d4f70558454",
-                    "sakai:messagebox": "outbox",
-                    "sakai:type": "internal",
-                    "sakai:category": "reminder",
-                    "sakai:id": "5e49022e929f5cdcf1531867fb2e84ee18d6ced9",
-                    "jcr:primaryType": "",
-                    "sakai:from": "eli",
-                    "sakai:subject": "Re: wombat t. firefly has invited you to become a connection",
-                    "sakai:body": "thanks buddy",
-                    "sakai:read": "true",
-                    "sakai:sendstate": "notified",
-                    "sakai:to": "internal:wombat",
-                    "sakai:dueDate": "2010-06-28T01:10:49-07:00",
-                    "sakai:completeDate": "2010-06-28T01:10:49-07:00",
-                    "_charset_": "utf-8",
-                    "id": "5e49022e929f5cdcf1531867fb2e84ee18d6ced9",
-                    "userTo": [{
-                        "userid": "wombat",
-                        "hash": "/w/wo/wombat",
-                        "jcr:path": "",
-                        "jcr:name": "",
-                        "firstName": "wombat t.",
-                        "lastName": "firefly",
-                        "picture": false,
-                        "user": "wombat",
-                        "sakai:status": "offline",
-                        "sakai:location": "none"
-                    }],
-                    "userFrom": [{
-                        "userid": "eli",
-                        "hash": "/e/el/eli/eli",
-                        "jcr:path": "",
-                        "jcr:name": "",
-                        "firstName": "Eli",
-                        "lastName": "Cochran",
-                        "picture": false,
-                        "user": "eli",
-                        "sakai:status": "online",
-                        "sakai:location": "none"
-                    }],
-                    "previousMessage": {
-                        "jcr:path": "",
-                        "jcr:name": "",
-                        "sakai:created": "2010-06-30T06:22:46-07:00",
-                        "sling:resourceType": "sakai/message",
-                        "sakai:type": "internal",
-                        "sakai:messagebox": "inbox",
-                        "sakai:category": "reminder",
-                        "sakai:id": "70896405574174eb091b85ee6be93d4f70558454",
-                        "jcr:primaryType": "",
-                        "sakai:from": "wombat",
-                        "sakai:subject": "wombat t. firefly has invited you to become a connection",
-                        "sakai:body": "Hi, \n\n wombat t. firefly has invited you to become a connection. \nHe/She has also left the following message: \n\n I would like to invite you to become a member of my network on Sakai.\n\n- wombat t. \n\nTo accept this invitation, please click on the accept button. \n\nKind regards,\n\nThe Sakai Team",
-                        "sakai:read": true,
-                        "sakai:sendstate": "notified",
-                        "sakai:to": "internal:eli",
-                        "sakai:dueDate": "2010-06-28T01:10:49-07:00",
-                        "sakai:completeDate": "2010-06-28T01:10:49-07:00",
-                        "_charset_": "utf-8",
-                        "id": "70896405574174eb091b85ee6be93d4f70558454",
-                        "userTo": [{
-                            "userid": "eli",
-                            "hash": "/e/el/eli/eli",
-                            "jcr:path": "",
-                            "jcr:name": "",
-                            "firstName": "Eli",
-                            "lastName": "Cochran",
-                            "picture": false,
-                            "user": "eli",
-                            "sakai:status": "online",
-                            "sakai:location": "none"
-                        }],
-                        "userFrom": [{
-                            "userid": "wombat",
-                            "hash": "/w/wo/wombat",
-                            "jcr:path": "",
-                            "jcr:name": "",
-                            "firstName": "wombat t.",
-                            "lastName": "firefly",
-                            "picture": false,
-                            "user": "wombat",
-                            "sakai:status": "offline",
-                            "sakai:location": "none"
-                        }]
-                    }
-                }
-            }, {
-                "jcr:path": "",
-                "jcr:name": "",
-                "sakai:created": "2010-06-30T06:39:23-07:00",
-                "sling:resourceType": "sakai/message",
-                "sakai:type": "internal",
-                "sakai:messagebox": "inbox",
-                "sakai:category": "reminder",
-                "sakai:id": "963b9e35158e98a289a5ddf646f892033bd8aae5",
-                "jcr:primaryType": "",
-                "sakai:from": "wombat",
-                "sakai:subject": "This is a message",
-                "sakai:body": "A message",
-                "sakai:read": true,
-                "sakai:sendstate": "notified",
-                "sakai:to": "internal:eli",
-                "sakai:dueDate": "2010-06-28T01:10:49-07:00",
-                "sakai:completeDate": "2010-06-28T01:10:49-07:00",
-                "_charset_": "utf-8",
-                "id": "963b9e35158e98a289a5ddf646f892033bd8aae5",
-                "userTo": [{
-                    "userid": "eli",
-                    "hash": "/e/el/eli/eli",
-                    "jcr:path": "",
-                    "jcr:name": "",
-                    "firstName": "Eli",
-                    "lastName": "Cochran",
-                    "picture": false,
-                    "user": "eli",
-                    "sakai:status": "online",
-                    "sakai:location": "none"
-                }],
-                "userFrom": [{
-                    "userid": "wombat",
-                    "hash": "/w/wo/wombat",
-                    "jcr:path": "",
-                    "jcr:name": "",
-                    "firstName": "wombat t.",
-                    "lastName": "firefly",
-                    "picture": false,
-                    "user": "wombat",
-                    "sakai:status": "offline",
-                    "sakai:location": "none"
-                }]
+var reminders = {
+        items: 25,
+        total: 3,
+        results: [{
+            jcr__path: "",
+            jcr__name: "",
+            sakai__created: "2010-06-30T06:22:46-07:00",
+            sling__resourceType: "sakai/message",
+            sakai__type: "internal",
+            sakai__messagebox: "inbox",
+            sakai__category: "reminder",
+            sakai__id: "70896405574174eb091b85ee6be93d4f70558454",
+            jcr__primaryType: "",
+            sakai__from: "Susan Hagstrom",
+            sakai__subject: "5th week deadline is approaching",
+            sakai__body: "Dear CED Undergraduate Student,",
+            sakai__read: true,
+            sakai__sendstate: "notified",
+            sakai__to: "internal:eli",
+            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            _charset_: "utf-8",
+            id: "70896405574174eb091b85ee6be93d4f70558454",
+            userTo: [{
+                userid: "eli",
+                hash: "/e/el/eli/eli",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "Eli",
+                lastName: "Cochran",
+                picture: false,
+                user: "eli",
+                sakai__status: "online",
+                sakai__location: "none"
+            }],
+            userFrom: [{
+                userid: "wombat",
+                hash: "/w/wo/wombat",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "wombat t.",
+                lastName: "firefly",
+                picture: false,
+                user: "wombat",
+                sakai__status: "offline",
+                sakai__location: "none"
             }]
-        };
+        }, {
+            jcr__path: "",
+            jcr__name: "",
+            sakai__created: "2010-06-30T06:39:51-07:00",
+            sling__resourceType: "sakai/message",
+            sakai__previousmessage: "5e49022e929f5cdcf1531867fb2e84ee18d6ced9",
+            sakai__messagebox: "inbox",
+            sakai__type: "internal",
+            sakai__category: "reminder",
+            sakai__id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            jcr__primaryType: "",
+            sakai__from: "Susan Hagstrom",
+            sakai__subject: "CED Commencement tickets",
+            sakai__body: "Dear CED seniors, \n\n <b>Beginning Monday, April</b>",
+            sakai__read: true,
+            sakai__sendstate: "notified",
+            sakai__to: "internal:eli",
+            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            _charset_: "utf-8",
+            id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            userTo: [{
+                userid: "eli",
+                hash: "/e/el/eli/eli",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "Eli",
+                lastName: "Cochran",
+                picture: false,
+                user: "eli",
+                sakai__status: "online",
+                sakai__location: "none"
+            }],
+            userFrom: [{
+                userid: "wombat",
+                hash: "/w/wo/wombat",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "wombat t.",
+                lastName: "firefly",
+                picture: false,
+                user: "wombat",
+                sakai__status: "offline",
+                sakai__location: "none"
+            }]
+        }, {
+            jcr__path: "",
+            jcr__name: "",
+            sakai__created: "2010-06-30T06:39:51-07:00",
+            sling__resourceType: "sakai/message",
+            sakai__previousmessage: "5e49022e929f5cdcf1531867fb2e84ee18d6ced9",
+            sakai__messagebox: "inbox",
+            sakai__type: "internal",
+            sakai__category: "reminder",
+            sakai__id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            jcr__primaryType: "",
+            sakai__from: "Susan Hagstrom",
+            sakai__subject: "Peer Adviser Workshop: Experience at Cal",
+            sakai__body: "Wondering why our curriculum is the way it is?",
+            sakai__read: true,
+            sakai__sendstate: "notified",
+            sakai__to: "internal:eli",
+            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            _charset_: "utf-8",
+            id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            userTo: [{
+                userid: "eli",
+                hash: "/e/el/eli/eli",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "Eli",
+                lastName: "Cochran",
+                picture: false,
+                user: "eli",
+                sakai__status: "online",
+                sakai__location: "none"
+            }],
+            userFrom: [{
+                userid: "wombat",
+                hash: "/w/wo/wombat",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "wombat t.",
+                lastName: "firefly",
+                picture: false,
+                user: "wombat",
+                sakai__status: "offline",
+                sakai__location: "none"
+            }]
+        } , {
+            jcr__path: "",
+            jcr__name: "",
+            sakai__created: "2010-06-30T06:39:51-07:00",
+            sling__resourceType: "sakai/message",
+            sakai__previousmessage: "5e49022e929f5cdcf1531867fb2e84ee18d6ced9",
+            sakai__messagebox: "inbox",
+            sakai__type: "internal",
+            sakai__category: "reminder",
+            sakai__id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            jcr__primaryType: "",
+            sakai__from: "Susan Hagstrom",
+            sakai__subject: "Getting too many emails?",
+            sakai__body: "Dear ARCH undergraduates, \n\n Following are some helpful",
+            sakai__read: true,
+            sakai__sendstate: "notified",
+            sakai__to: "internal:eli",
+            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            _charset_: "utf-8",
+            id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            userTo: [{
+                userid: "eli",
+                hash: "/e/el/eli/eli",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "Eli",
+                lastName: "Cochran",
+                picture: false,
+                user: "eli",
+                sakai__status: "online",
+                sakai__location: "none"
+            }],
+            userFrom: [{
+                userid: "wombat",
+                hash: "/w/wo/wombat",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "wombat t.",
+                lastName: "firefly",
+                picture: false,
+                user: "wombat",
+                sakai__status: "offline",
+                sakai__location: "none"
+            }]
+        } , {
+            jcr__path: "",
+            jcr__name: "",
+            sakai__created: "2010-06-30T06:39:23-07:00",
+            sling__resourceType: "sakai/message",
+            sakai__type: "internal",
+            sakai__messagebox: "inbox",
+            sakai__category: "reminder",
+            sakai__id: "963b9e35158e98a289a5ddf646f892033bd8aae5",
+            jcr__primaryType: "",
+            sakai__from: "Susan Hagstrom",
+            sakai__subject: "April 23 deadline for CED commencement",
+            sakai__body: "Dear CED seniors, \n\n If you would like to participate",
+            sakai__read: true,
+            sakai__sendstate: "notified",
+            sakai__to: "internal:eli",
+            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            _charset_: "utf-8",
+            id: "963b9e35158e98a289a5ddf646f892033bd8aae5",
+            userTo: [{
+                userid: "eli",
+                hash: "/e/el/eli/eli",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "Eli",
+                lastName: "Cochran",
+                picture: false,
+                user: "eli",
+                sakai__status: "online",
+                sakai__location: "none"
+            }],
+            userFrom: [{
+                userid: "wombat",
+                hash: "/w/wo/wombat",
+                jcr__path: "",
+                jcr__name: "",
+                firstName: "wombat t.",
+                lastName: "firefly",
+                picture: false,
+                user: "wombat",
+                sakai__status: "offline",
+                sakai__location: "none"
+            }]
+        }]
+    };
+    
+        var selectMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        //var datetime = ${i.sakai__dueDate};
+        var datetime = "2010-06-30T06:22:46-07:00"; 
+        var year = datetime.substring(0,3);
+        var month = datetime.substring(5,6);
+        var day = datetime.substring(8,9);
         
-        return reminders;
+        alert(year + " " + month + " " + day);
+        //alert(selectMonth(1));
+        //var date_string = selectMonth(month-1)+" "+day+","+year;
+        
+        // need to figure out how to get the day of the week
+    
+    
+    var fetchData = function(){
+        return reminders;  
     };
     
     var createRemindersList = function(data){
@@ -277,10 +290,12 @@ sakai.myreminders = function(tuid, showSettings){
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
             if (success) {
                 // load the user's reminders
-                createRemindersList(json);
+                createRemindersList(data);
             }
             else {
-                alert("error");
+                //alert("Error: Couldn't load reminders list from json [getRemindersList]");
+                var mockdata = fetchData();
+                createRemindersList(mockdata);
             }
         });
     };

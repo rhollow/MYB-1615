@@ -3,51 +3,47 @@
 
 <div class="myreminders_widget">
     <div class="fl-widget-content">
-
+        
         <div class="reminders_header">
             <span class="left_header">Due</span>
             <span class="right_header">Title</span>
         </div>
-
+        
         <div class="reminders_div">
             <ul class="reminders_list">
                 <li class="reminder">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="transcripts" /></span>
-                    <span class="middle_column">Friday, 8/22/10</span>
+                    <span class="left_column"><input type="checkbox" name="reminder" value="transcripts" /></span><span class="middle_column">Fri Aug 22 2010</span>
                     <span class="right_column">Transcripts Due</span>
                 </li>
                 <li class="reminder">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="lab_fees" /></span>
-                    <span class="middle_column">Wednesday, 8/27/10</span>
+                    <span class="left_column"><input type="checkbox" name="reminder" value="lab_fees" /></span><span class="middle_column">Wed Aug 27 2010</span>
                     <span class="right_column">Lab Fees</span>
                 </li>
                 <li class="reminder">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="submit_food" /></span>
-                    <span class="middle_column">Friday, 8/29/10</span>
+                    <span class="left_column"><input type="checkbox" name="reminder" value="submit_food" /></span><span class="middle_column">Fri Aug 29 2010</span>
                     <span class="right_column">Submit Food</span>
                 </li>
                 <li class="reminder">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="drop_classes" /></span>
-                    <span class="middle_column">Sunday, 9/12/10</span>
+                    <span class="left_column"><input type="checkbox" name="reminder" value="drop_classes" /></span><span class="middle_column">Sun Sep 12 2010</span>
                     <span class="right_column">Drop Classes</span>
                 </li>
             </ul>
         </div>
-        
-        <ul id="myreminders_template" style="display:none"><!--
-        {for i in reminders}
+    </div>
+    
+    <ul id="myreminders_template" style="display:none"><!--
+        {for i in results}
             <li class="reminder">
-                <span class="left_column"><input type="checkbox" name="reminder" value="${i.id}" /></span>
-                <span class="middle_column">$(i.sakai:dueDate)</span>
-                <span class="right_column">$(i.sakai:subject)</span>
+                <span class="left_column"><input type="checkbox" name="reminder" value="${i.id}" /></span>            
+                <span class="middle_column">${i.sakai__dueDate}</span>
+                <span class="right_column">${i.sakai__subject}</span>
             </li>
         {forelse}
             <span>There was a failure loading your list of reminders</span>
         {/for}
-    --></ul>
-
-    </div>
-
+        -->
+    </ul>
+    
     <div class="fl-widget-options fl-fix">
         <div class="widget-options-inner">
             <ul>
@@ -57,10 +53,7 @@
             </ul>
         </div>
     </div>
-
 </div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/myreminders/javascript/myreminders.js"></script>
-
-
