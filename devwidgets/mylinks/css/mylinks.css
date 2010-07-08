@@ -22,6 +22,7 @@
 /* List of links */
 .mylinks_widget .link_list {overflow: auto; max-height: 200px;}
 .mylinks_widget .link_list li {list-style: none;}
+
 .mylinks_widget .link_list a {
     display: block;
     padding: 6px 10px 5px 40px;
@@ -31,7 +32,8 @@
     white-space: nowrap;
     outline: none;
 }
-.mylinks_widget .link_list a:hover {
+.mylinks_widget .link_list a:hover 
+{
     background-image: url("/devwidgets/mylinks/images/grab_handle.png");
     background-repeat: no-repeat;
     background-position: 10px 3px;
