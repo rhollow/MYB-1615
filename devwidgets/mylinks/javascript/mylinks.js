@@ -110,9 +110,24 @@ sakai.mylinks = function (tuid, showSettings) {
     var defaultLinks = {
         links : [
             {
+                id :   "asuc",
+                name : "ASUC (Student Government)",
+                url :  "http://www.asuc.org"
+            },
+            {
                 id :   "bear_facts",
                 name : "Bear Facts",
                 url :  "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome"
+            },
+            {
+                id : "atoz_sites",
+                name : "Berkeley Sites (A-Z)",
+                url : "http://www.berkeley.edu/a-z/a.shtml"
+            },
+            {
+                id : "student_services",
+                name : "Berkeley Student Services",
+                url : "http://www.berkeley.edu/students"
             },
             {
                 id :   "bspace",
@@ -125,24 +140,19 @@ sakai.mylinks = function (tuid, showSettings) {
                 url :  "http://calmail.berkeley.edu"
             },
             {
-                id :   "schedule_of_classes",
-                name : "Schedule of Classes",
-                url :  "http://schedule.berkeley.edu"
-            },
-            {
-                id :   "tele-bears",
-                name : "Tele-BEARS",
-                url :  "http://telebears.berkeley.edu"
-            },
-            {
                 id :   "campus_textbook_store",
                 name : "Campus Textbook Store",
                 url :  "http://www.bkstr.com/CategoryDisplay/10001-9604-10433-1"
             },
             {
-                id :   "how_to_pick_classes",
-                name : "How to pick classes / plan your schedule",
-                url :  "http://asuc.org/newsite/scheduleplanning"
+                id: "dars",
+                name: "DARS",
+                url: "https://marin.berkeley.edu/darsweb/servlet/ListAuditsServlet"
+            },
+            {
+                id :   "decal",
+                name : "DeCal courses",
+                url :  "http://www.decal.org/"
             },
             {
                 id :   "public_service",
@@ -150,15 +160,25 @@ sakai.mylinks = function (tuid, showSettings) {
                 url :  "http://calcorps.berkeley.edu/"
             },
             {
-                id :   "asuc",
-                name : "ASUC (Student Government)",
-                url :  "http://www.asuc.org"
+                id :   "schedule_of_classes",
+                name : "Schedule of Classes",
+                url :  "http://schedule.berkeley.edu"
             },
             {
-                id :   "decal",
-                name : "DeCal courses",
-                url :  "http://www.decal.org/"
-            }
+                id :   "how_to_pick_classes",
+                name : "How to pick classes / plan your schedule",
+                url :  "http://asuc.org/newsite/scheduleplanning"
+            },
+            {
+                id :   "tele-bears",
+                name : "Tele-BEARS",
+                url :  "http://telebears.berkeley.edu"
+            },
+            {
+                id : "resource_guide",
+                name : "Resource Guide for Students",
+                url : "http://resource.berkeley.edu"
+            }                        
         ]
     };
 
