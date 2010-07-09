@@ -207,7 +207,7 @@ sakai.links = function(){
             },
             {
                 id : "campus_bookstore",
-                name : "Campus Book Store",
+                name : "Campus Bookstore",
                 url : "http://www.bkstr.com/CategoryDisplay/10001-9604-10433-1",
                 popup_description : "Find and purchase textbooks by course.",
                 featured_description : "Needs featured_description.",
@@ -220,7 +220,7 @@ sakai.links = function(){
             },       
             {
                 id : "course_catalog",
-                name : "Course Catalog / Descriptions",
+                name : "Course Catalog",
                 url : "http://sis.berkeley.edu/catalog/gcc_search_menu",
                 popup_description : "Detailed course descriptions.",
                 featured_description : "Needs featured_description.",
@@ -258,8 +258,8 @@ sakai.links = function(){
                 ]
             },
             {
-                id : "finaid_scholarships",
-                name : "Financial Aid and Scholarships",
+                id : "finaid",
+                name : "Financial Aid",
                 url : "http://students.berkeley.edu/finaid",
                 popup_description : "Learn about financial aid and scholarships.",
                 featured_description : "Needs featured_description.",
@@ -285,7 +285,7 @@ sakai.links = function(){
             },
             {
                 id : "uhs",
-                name : "University Health Services (UHS)",
+                name : "University Health Services",
                 url : "http://uhs.berkeley.edu",
                 popup_description : "Health and medical services for students.",
                 featured_description : "Needs featured_description.",
@@ -350,7 +350,7 @@ sakai.links = function(){
             },
             {
                 id : "rsf",
-                name : "Recreational Sports Facility (RSF)",
+                name : "Recreational Sports Facility",
                 url : "http://www.recsports.berkeley.edu",
                 popup_description : "Explore RSF programs and intramural sports.",
                 featured_description : "Needs featured_description.",
@@ -363,7 +363,7 @@ sakai.links = function(){
             },        
             {
                 id : "rescomp",
-                name : "Residential Computing (ResComp)",
+                name : "Residential Computing",
                 url : "http://rescomp.berkeley.edu",
                 popup_description : "Computing help for the residence halls.",
                 featured_description : "Needs featured_description.",
