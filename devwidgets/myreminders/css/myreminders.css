@@ -26,8 +26,8 @@
 .myreminders_widget .reminders_header .left_header {float: left; width: 110px;}
 .myreminders_widget .reminders_header .right_header {float: left;}
 
-
 /* List of reminders */
+.myreminders_widget .reminders_list {min-height: 40px;}
 .myreminders_widget .reminders_div {overflow: auto; max-height: 200px;}
 .myreminders_widget .reminders_div li {list-style: none;}
 .myreminders_widget .reminders_div .reminder {
@@ -39,6 +39,7 @@
     overflow: hidden;
     white-space: nowrap;
     outline: none;
+    
 }
 
 .myreminders_widget .reminders_div .reminder:hover {

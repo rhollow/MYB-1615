@@ -13,12 +13,12 @@
         
         var date = months[(parseInt(month, 10)) - 1] + " " + day + ", " + year + " " + time;
         var d = new Date(date);
-        var dstring = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear();
+        var dstring = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + datetime.substring(2,4);
         return dstring;
     }
     
-    function taskDone() {
-        $(this).parentNode.remove();
+    function taskDone(id) {
+        $("#"+id).fadeOut(1000, function() {$("#"+id).remove();});
     }
 </script>
 
@@ -55,14 +55,14 @@
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
             <li class="reminder" id="${i.id}">
-                <span class="left_column"><input type="checkbox" onClick="taskDone()" name="reminder" value="${i.id}" /></span>            
+                <span class="left_column"><input type="checkbox" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></span>            
                 <a href="" target="_blank">    
                     <span class="middle_column">${formatDate(i.sakai__dueDate)}</span>
                     <span class="right_column">${i.sakai__subject}</span>
                 </a>
             </li>
         {forelse}
-            <span>There was a failure loading your list of reminders</span>
+            <span>No reminders</span>
         {/for}
         -->
     </ul>

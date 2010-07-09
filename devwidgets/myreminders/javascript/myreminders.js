@@ -134,7 +134,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__messagebox: "inbox",
             sakai__type: "internal",
             sakai__category: "reminder",
-            sakai__id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            sakai__id: "c250e0204224c7ff234579f2282128359ddb89c9",
             jcr__primaryType: "",
             sakai__from: "Susan Hagstrom",
             sakai__subject: "Peer Adviser Workshop: Experience at Cal",
@@ -145,7 +145,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__dueDate: "2010-08-10T06:22:46-07:00",
             sakai__completeDate: "2010-06-30T06:22:46-07:00",
             _charset_: "utf-8",
-            id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            id: "c250e0204224c7ff234579f2282128359ddb89c9",
             userTo: [{
                 userid: "eli",
                 hash: "/e/el/eli/eli",
@@ -175,11 +175,11 @@ sakai.myreminders = function(tuid, showSettings){
             jcr__name: "",
             sakai__created: "2010-06-30T06:39:51-07:00",
             sling__resourceType: "sakai/message",
-            sakai__previousmessage: "5e49022e929f5cdcf1531867fb2e84ee18d6ced9",
+            sakai__previousmessage: "5e49022e929f5cdcf1531867fb2e84ee18d6ce9",
             sakai__messagebox: "inbox",
             sakai__type: "internal",
             sakai__category: "reminder",
-            sakai__id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            sakai__id: "c250e0204224c7ff234579f2282128359ddb88c8",
             jcr__primaryType: "",
             sakai__from: "Susan Hagstrom",
             sakai__subject: "Getting too many emails?",
@@ -190,7 +190,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__dueDate: "2010-11-30T06:22:46-07:00",
             sakai__completeDate: "2010-06-30T06:22:46-07:00",
             _charset_: "utf-8",
-            id: "c250e0204224c7ff234579f2282128359ddb89c8",
+            id: "c250e0204224c7ff234579f2282128359ddb88c8",
             userTo: [{
                 userid: "eli",
                 hash: "/e/el/eli/eli",
@@ -267,6 +267,7 @@ sakai.myreminders = function(tuid, showSettings){
     };
     
     var createRemindersList = function(data){
+        $("#myreminders_template").innerHTML = "";
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
     };
     
@@ -283,7 +284,7 @@ sakai.myreminders = function(tuid, showSettings){
             }
         });
     };
-
+    
     var doInit = function(){
         getRemindersList();
     };
