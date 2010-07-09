@@ -68,11 +68,8 @@
 
 .myreminders_widget .reminders_div .right_column {
     float: left;
-    width: 280px;
+    width: 260px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
-
-
-

@@ -66,13 +66,15 @@ sakai.inbox = function() {
     var inboxFilter = inboxID + "_filter";
     var inboxFilterClass = inboxClass + "_filter";
     var inboxFilterInbox = inboxFilter + "_inbox";
-    var inboxFilterMessages = inboxFilter + "_messages";
+    var inboxFilterMessages = inboxFilter + "_messages"
+    var inboxFilterReminders = inboxFilter + "_reminders";
     var inboxFilterAnnouncements = inboxFilter + "_announcements";
     var inboxFilterChats = inboxFilter + "_chats";
     var inboxFilterInvitations = inboxFilter + "_invitations";
     var inboxFilterSent = inboxFilter + "_sent";
     var inboxFilterTrash = inboxFilter + "_trash";
-    var inboxFilterNrMessages = inboxFilterClass + "_nrMessages";
+    var inboxFilterNrMessages = inboxFilterClass + "nrMessages";
+    var inboxFilterNrReminders = inboxFilterClass + "_nrReminders";
     var inboxBold = inbox + "_bold";
 
     // Different panes (inbox, send message, view message, ..)
@@ -622,8 +624,10 @@ sakai.inbox = function() {
 
         cats = selectedCategory;
         if (selectedCategory){
-            if (selectedCategory === "Message"){
+            if (selectedCategory === "Message") {
                 cats = "message";
+            } else if (selectedCategory === "Reminder") {
+                cats = "reminder";
             } else if (selectedCategory === "Announcement"){
                 cats = "announcement";
             } else if (selectedCategory === "Invitation"){
@@ -671,6 +675,8 @@ sakai.inbox = function() {
                 for (var i = 0, j = data.count.length; i < j; i++){
                     if (data.count[i].group === "message"){
                         unreadMessages = data.count[i].count;
+                    } else if (data.count[i].group === "reminder") {
+                        unreadReminders = data.count[i].count;
                     } else if (data.count[i].group === "announcement"){
                         unreadAnnouncements = data.count[i].count;
                     } else if (data.count[i].group === "invitation"){
@@ -1098,6 +1104,9 @@ sakai.inbox = function() {
 
     $(inboxFilterMessages).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
+    });
+    $(inboxFilterReminders).click(function() {
+        filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
     });
     $(inboxFilterAnnouncements).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
