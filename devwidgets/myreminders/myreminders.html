@@ -1,6 +1,27 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/myreminders/css/myreminders.css" />
 
+<script type="text/javascript">
+    function formatDate(datetime){
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        var year = datetime.substring(0, 4);
+        var month = datetime.substring(5, 7);
+        var day = datetime.substring(8, 10);
+        var time = datetime.substring(11, 19);
+        
+        var date = months[(parseInt(month, 10)) - 1] + " " + day + ", " + year + " " + time;
+        var d = new Date(date);
+        var dstring = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear();
+        return dstring;
+    }
+    
+    function taskDone() {
+        $(this).parentNode.remove();
+    }
+</script>
+
 <div class="myreminders_widget">
     <div class="fl-widget-content">
         
@@ -33,10 +54,12 @@
     
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
-            <li class="reminder">
-                <span class="left_column"><input type="checkbox" name="reminder" value="${i.id}" /></span>            
-                <span class="middle_column">${i.sakai__dueDate}</span>
-                <span class="right_column">${i.sakai__subject}</span>
+            <li class="reminder" id="${i.id}">
+                <span class="left_column"><input type="checkbox" onClick="taskDone()" name="reminder" value="${i.id}" /></span>            
+                <a href="" target="_blank">    
+                    <span class="middle_column">${formatDate(i.sakai__dueDate)}</span>
+                    <span class="right_column">${i.sakai__subject}</span>
+                </a>
             </li>
         {forelse}
             <span>There was a failure loading your list of reminders</span>
@@ -57,3 +80,4 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/myreminders/javascript/myreminders.js"></script>
+

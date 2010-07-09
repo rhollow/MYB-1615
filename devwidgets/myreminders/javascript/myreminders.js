@@ -33,13 +33,13 @@ sakai.myreminders = function(tuid, showSettings){
     // Template
     var myremindersTemplate = "myreminders_template";
     
-var reminders = {
+    var reminders = {
         items: 25,
         total: 3,
         results: [{
             jcr__path: "",
             jcr__name: "",
-            sakai__created: "2010-06-30T06:22:46-07:00",
+            sakai__created: "2010-08-30T06:22:46-07:00",
             sling__resourceType: "sakai/message",
             sakai__type: "internal",
             sakai__messagebox: "inbox",
@@ -52,7 +52,7 @@ var reminders = {
             sakai__read: true,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
-            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__dueDate: "2010-09-12T06:22:46-07:00",
             sakai__completeDate: "2010-06-30T06:22:46-07:00",
             _charset_: "utf-8",
             id: "70896405574174eb091b85ee6be93d4f70558454",
@@ -97,7 +97,7 @@ var reminders = {
             sakai__read: true,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
-            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__dueDate: "2010-02-10T06:22:46-07:00",
             sakai__completeDate: "2010-06-30T06:22:46-07:00",
             _charset_: "utf-8",
             id: "c250e0204224c7ff234579f2282128359ddb89c8",
@@ -142,7 +142,7 @@ var reminders = {
             sakai__read: true,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
-            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__dueDate: "2010-08-10T06:22:46-07:00",
             sakai__completeDate: "2010-06-30T06:22:46-07:00",
             _charset_: "utf-8",
             id: "c250e0204224c7ff234579f2282128359ddb89c8",
@@ -170,7 +170,7 @@ var reminders = {
                 sakai__status: "offline",
                 sakai__location: "none"
             }]
-        } , {
+        }, {
             jcr__path: "",
             jcr__name: "",
             sakai__created: "2010-06-30T06:39:51-07:00",
@@ -187,7 +187,7 @@ var reminders = {
             sakai__read: true,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
-            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__dueDate: "2010-11-30T06:22:46-07:00",
             sakai__completeDate: "2010-06-30T06:22:46-07:00",
             _charset_: "utf-8",
             id: "c250e0204224c7ff234579f2282128359ddb89c8",
@@ -215,7 +215,7 @@ var reminders = {
                 sakai__status: "offline",
                 sakai__location: "none"
             }]
-        } , {
+        }, {
             jcr__path: "",
             jcr__name: "",
             sakai__created: "2010-06-30T06:39:23-07:00",
@@ -231,7 +231,7 @@ var reminders = {
             sakai__read: true,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
-            sakai__dueDate: "2010-06-30T06:22:46-07:00",
+            sakai__dueDate: "2010-04-23T06:22:46-07:00",
             sakai__completeDate: "2010-06-30T06:22:46-07:00",
             _charset_: "utf-8",
             id: "963b9e35158e98a289a5ddf646f892033bd8aae5",
@@ -262,29 +262,13 @@ var reminders = {
         }]
     };
     
-        var selectMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-        //var datetime = ${i.sakai__dueDate};
-        var datetime = "2010-06-30T06:22:46-07:00"; 
-        var year = datetime.substring(0,3);
-        var month = datetime.substring(5,6);
-        var day = datetime.substring(8,9);
-        
-        alert(year + " " + month + " " + day);
-        //alert(selectMonth(1));
-        //var date_string = selectMonth(month-1)+" "+day+","+year;
-        
-        // need to figure out how to get the day of the week
-    
-    
     var fetchData = function(){
-        return reminders;  
+        return reminders;
     };
     
     var createRemindersList = function(data){
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
     };
-    
     
     var getRemindersList = function(){
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
@@ -299,8 +283,7 @@ var reminders = {
             }
         });
     };
-    
-    
+
     var doInit = function(){
         getRemindersList();
     };

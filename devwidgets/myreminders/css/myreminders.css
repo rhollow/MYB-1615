@@ -17,13 +17,13 @@
  */
 
 /* Main */
-.myreminders_widget .fl-widget-content {padding: 0px 0px; }
+.myreminders_widget .fl-widget-content {padding: 0px 0px;}
 .myreminders_widget .reminders_header {
     background-color: #D4DADE; 
     padding: 5px 10px 0px 40px;
     height: 20px;
 }
-.myreminders_widget .reminders_header .left_header {float: left; width: 140px;}
+.myreminders_widget .reminders_header .left_header {float: left; width: 110px;}
 .myreminders_widget .reminders_header .right_header {float: left;}
 
 
@@ -40,6 +40,7 @@
     white-space: nowrap;
     outline: none;
 }
+
 .myreminders_widget .reminders_div .reminder:hover {
     background-color: #C6DEFF;
     text-overflow: ellipsis;
@@ -58,14 +59,15 @@
 
 .myreminders_widget .reminders_div .middle_column {
     float: left;
-    width: 140px;
+    width: 110px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
+
 .myreminders_widget .reminders_div .right_column {
     float: left;
-    width: 255px;
+    width: 280px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
