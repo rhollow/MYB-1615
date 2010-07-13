@@ -142,14 +142,14 @@
                                     {for i in featured}
                                         {if counter==featured.length}
                                             <div class="suggested_link_col" id="right_col">
-                                        {else}
-                                            <div class="suggested_link_col">                                                
+                                            {else}
+                                                <div class="suggested_link_col">                                                
                                         {/if}
                                                 <div class="suggested_link_header">
                                         {for j in links}
                                             {if i==j.id}                                                
                                                     <input id="${j.id}_checkbox" type="checkbox" class="CheckBoxClass"/>
-                                                    <label id="${j.id}" for="${j.id}_checkbox" class="CheckBoxLabelClass">
+                                                    <label id="${j.id}" for="${j.id}_checkbox" class="LabelUnselected">
                                                         <a href="${j.url}" target="_blank" title="${j.name}">${j.name|default:"No Available Name"}</a>
                                                     </label>
                                                 </div>
@@ -348,8 +348,20 @@
                                                  ${counter=counter+1|eat}
                                                  {if counter>=lowerbound && counter<=upperbound}                                          
                                                      <li class="NoBulletNoIndent">
-                                                         <input id="${j.id}_box" type="checkbox" class="CheckBoxClass"/>
-                                	                     <label id="${j.id}_label" for="${j.id}_box" class="CheckBoxLabelClass">
+                                                         {if j.selected!=null && j.selected}
+                                                             <input id="${j.id}_box" type="checkbox" class="CheckBoxClass" checked/>
+                                                             <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected">
+                                                             {else}                                                              
+                                                                 {for k in j.audience}
+                                                                     {if k.required}
+                                                                         <input id="${j.id}_box" type="checkbox" class="CheckBoxClass" checked disabled="true"/>
+                                                                         <label id="${j.id}_label" for="${j.id}_box" class="LabelRequired">                                                                                                                     
+                                                                         {else}
+                                                                             <input id="${j.id}_box" type="checkbox" class="CheckBoxClass"/>
+                                            	                             <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected">
+                                                                     {/if}
+                                                                 {/for}
+                                                         {/if}
                                 	                         <a href="${j.url}" target="_blank" title="${j.popup_description}">${j.name|default:"No Available Name"}</a>
                                                          </label>
                                                      </li>                                                                                                    

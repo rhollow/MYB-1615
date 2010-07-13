@@ -14,11 +14,13 @@
 
         <ul id="mylinks_list_template" style="display:none"><!--
             {for i in links}
-                <li class="link">
-                    <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
-                </li>
+                {if i.selected==null || i.selected}
+                    <li class="link">                    
+                        <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
+                    </li>
+                {/if}
             {forelse}
-                <span>there was a failure loading your list of links</span>
+                <span>Sorry, there was a failure loading your list of links.</span>
             {/for}
         --></ul>
 

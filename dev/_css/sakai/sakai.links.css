@@ -58,7 +58,6 @@
 { width: 210px; }
 
 
-
 /** TAB VARIANT **/
 .links .s3d-primary-tabs{
     background: #fff url('../../_images/profile_tab_bg.png') top right no-repeat;
@@ -104,7 +103,7 @@
 .CheckBoxClass 
 { display: none; }
 
-.CheckBoxLabelClass
+.LabelUnselected
 {
 	background: url("../../_images/starsprites.png") no-repeat;
 	padding-left: 25px;
@@ -128,6 +127,7 @@
 
 .LabelRequired
 { 
+    background: url("../../_images/starsprites.png") no-repeat;
     background-position: 0px -44px; 
     padding-left: 25px;
 	padding-top: 0px;
