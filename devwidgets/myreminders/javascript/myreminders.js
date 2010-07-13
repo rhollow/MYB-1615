@@ -267,7 +267,6 @@ sakai.myreminders = function(tuid, showSettings){
     };
     
     var createRemindersList = function(data){
-        $("#myreminders_template").innerHTML = "";
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
     };
     
