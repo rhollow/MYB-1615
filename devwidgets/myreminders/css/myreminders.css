@@ -17,20 +17,20 @@
  */
 
 /* Main */
-.myreminders_widget .fl-widget-content {padding: 0px 0px; }
+.myreminders_widget .fl-widget-content {padding: 0px 0px;}
 .myreminders_widget .reminders_header {
     background-color: #D4DADE; 
     padding: 5px 10px 0px 40px;
     height: 20px;
 }
-.myreminders_widget .reminders_header .left_header {float: left; width: 140px;}
+.myreminders_widget .reminders_header .left_header {float: left; width: 110px;}
 .myreminders_widget .reminders_header .right_header {float: left;}
 
-
 /* List of reminders */
-.myreminders_widget .reminders_list {overflow: auto; max-height: 200px;}
-.myreminders_widget .reminders_list li {list-style: none;}
-.myreminders_widget .reminders_list .reminder {
+.myreminders_widget .reminders_list {min-height: 40px;}
+.myreminders_widget .reminders_div {overflow: auto; max-height: 200px;}
+.myreminders_widget .reminders_div li {list-style: none;}
+.myreminders_widget .reminders_div .reminder {
     display: block;
     height: 27px;
     padding: 0px 10px 0px 15px;
@@ -39,8 +39,10 @@
     overflow: hidden;
     white-space: nowrap;
     outline: none;
+    
 }
-.myreminders_widget .reminders_list .reminder:hover {
+
+.myreminders_widget .reminders_div .reminder:hover {
     background-color: #C6DEFF;
     text-overflow: ellipsis;
     text-decoration: none;
@@ -48,67 +50,26 @@
 
 
 /* Individual reminder */
-.myreminders_widget .reminders_list .left_column {
+.myreminders_widget .reminders_div .left_column {
     float: left;
     width: 25px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
-.myreminders_widget .reminders_list .middle_column {
+
+.myreminders_widget .reminders_div .middle_column {
     float: left;
-    width: 140px;
+    width: 110px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
-.myreminders_widget .reminders_list .right_column {
+
+.myreminders_widget .reminders_div .right_column {
     float: left;
-    width: 230px;
+    width: 260px;
     text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 6px;
 }
-.myreminders_widget .reminders_list .balloon_tooltip {float: left; padding: 2px; }
-
-/***** Reminder tooltips *****/
-
-/* "fallback" links for non-CSS supporting browsers. */
-.fallback {display: none;}
-
-/* Here's our default note styles. */
-.notedefault {
-    position: absolute;
-    visibility: hidden;
-    top: 1.5em;
-    left: 2em;
-    width: 220px;
-    border: 1px solid #000000;
-    background-color: #FFFFFF;
-    color: black;
-}
-.notedefault .tooltip_content {padding: 5px; overflow: auto;  max-height: 200px;}
-.notedefault .tooltip_content a {color: blue; text-decoration: underline;}
-.notedefault .tooltip_text {text-align: justify;}
-
-/* Some position-type-specific offset information. Tweak as needed! */
-.snp-mouseoffset, .snp-triggeroffset, .snp-mousetrack {margin-left: 5px; margin-top: 15px;}
-
-/* Headings within notes */
-.notedefault .tooltip_header {
-    margin: 0 0 5px 0;
-    padding: 5px;
-    background-color: #D4DADE;
-    color: black;
-}
-
-/* Note close marker is only shown within pinned notes. */
-.note-close {
-    float: right;
-    width: 10px;
-    height: 14px;
-    color: black;
-    text-decoration: none;
-    visibility: hidden;
-}
-.snb-pinned .note-close {visibility: inherit;}

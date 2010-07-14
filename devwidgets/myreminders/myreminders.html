@@ -1,108 +1,79 @@
+
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/myreminders/css/myreminders.css" />
 
+<script type="text/javascript">
+    function formatDate(datetime){
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        var date = months[(parseInt(datetime.substring(5,7),10))-1]+" "+datetime.substring(8,10)+", "+datetime.substring(0,4)+" "+datetime.substring(11,19);
+        var d = new Date(date);
+        var dstring = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + datetime.substring(2,4);
+        return dstring;
+    }
+    
+    function taskDone(id) {
+        $("#"+id).slideUp("normal", function(){$(this).remove;});
+    }
+</script>
+
 <div class="myreminders_widget">
     <div class="fl-widget-content">
-
+        
         <div class="reminders_header">
             <span class="left_header">Due</span>
-            <span class="right_header">Title</span>
+            <span class="right_header">Subject</span>
         </div>
-
-        <div class="reminders_list">
-            <ul>
-                <li class="reminder" id="reminder1">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="transcripts" /></span><span class="middle_column">Friday, 8/22/10</span>
+        
+        <div class="reminders_div">
+            <ul class="reminders_list">
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="transcripts" /></span><span class="middle_column">Fri Aug 22 2010</span>
                     <span class="right_column">Transcripts Due</span>
-                    <span class="balloon_tooltip">
-                        <a href="#note1" class="supernote-click-note1"><img src="/devwidgets/myreminders/images/link_bg.jpg" alt="More Info"/></a>
-                    </span>
                 </li>
-                <li class="reminder" id="reminder2">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="lab_fees" /></span><span class="middle_column">Wednesday, 8/27/10</span>
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="lab_fees" /></span><span class="middle_column">Wed Aug 27 2010</span>
                     <span class="right_column">Lab Fees</span>
-                    <span class="balloon_tooltip">
-                        <a href="#note2" class="supernote-click-note2"><img src="/devwidgets/myreminders/images/link_bg.jpg" alt="More Info"/></a>
-                    </span>
                 </li>
-                <li class="reminder" id="reminder3">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="submit_food" /></span><span class="middle_column">Friday, 8/29/10</span>
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="submit_food" /></span><span class="middle_column">Fri Aug 29 2010</span>
                     <span class="right_column">Submit Food</span>
-                    <span class="balloon_tooltip">
-                        <a href="#note3" class="supernote-click-note3"><img src="/devwidgets/myreminders/images/link_bg.jpg" alt="More Info"/></a>
-                    </span>
                 </li>
-                <li class="reminder" id="reminder4">
-                    <span class="left_column"><input type="checkbox" name="reminder" value="drop_classes" /></span><span class="middle_column">Sunday, 9/12/10</span>
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="drop_classes" /></span><span class="middle_column">Sun Sep 12 2010</span>
                     <span class="right_column">Drop Classes</span>
-                    <span class="balloon_tooltip">
-                        <a href="#note4" class="supernote-click-note4"><img src="/devwidgets/myreminders/images/link_bg.jpg" alt="More Info"/></a>
-                    </span>
                 </li>
             </ul>
         </div>
-
     </div>
-
+    
+    <ul id="myreminders_template" style="display:none"><!--
+        {for i in results}
+            <li class="reminder" id="${i.id}">
+                <span class="left_column"><input type="checkbox" title="completed" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></span>            
+                <a href="inbox.html" target="_blank">    
+                    <span class="middle_column" title="${formatDate(i.sakai__dueDate)}">${formatDate(i.sakai__dueDate)}</span>
+                    <span class="right_column" title="${i.sakai__subject}">${i.sakai__subject}</span>
+                </a>
+            </li>
+        {forelse}
+            <span>You have no reminders</span>
+        {/for}
+        -->
+    </ul>
+    
     <div class="fl-widget-options fl-fix">
         <div class="widget-options-inner">
             <ul>
                 <li>
-                    <a href="reminders.html">Manage Reminders</a>
+                    <a href="inbox.html">Manage Reminders</a>
                 </li>
             </ul>
         </div>
-    </div>
-
-</div>
-
-<!-- Balloon tooltips -->
-
-<div id="supernote-note-note1" class="snp-triggeroffset snb-pinned notedefault">
-    <a name="note1"></a>
-    <div class="tooltip_header"><a href="#" class="note-close">X</a>Reminder Details</div>
-    <div class="tooltip_content">
-        <h3>Transcripts Due</h3>
-        <p>Due Date: Friday, Aug. 22, 2010</p>
-        <p>Contact: <a href="">Someone important</a></p>
-        <p class="tooltip_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum placerat, magna nec laoreet ultricies, nulla mi gravida tortor, at varius tellus elit et orci. Sed dapibus venenatis quam, sit amet facilisis risus iaculis in. Integer lacinia commodo enim a eleifend. Vestibulum lacus lectus, feugiat sit amet feugiat non, eleifend non sapien. Sed vitae arcu ac dui tincidunt viverra. Sed ultrices pellentesque lorem, sed dapibus arcu aliquam vitae.</p>
-    </div>
-</div>
-
-<div id="supernote-note-note2" class="snp-triggeroffset snb-pinned notedefault">
-    <a name="note2"></a>
-    <div class="tooltip_header"><a href="#" class="note-close">X</a>Reminder Details</div>
-    <div class="tooltip_content">
-        <h3>Lab Fees</h3>
-        <p>Due Date: Wednesday, Aug. 27, 2010</p>
-        <p>Contact: <a href="">Prof. Hastings</a></p>
-        <p class="tooltip_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum placerat, magna nec laoreet ultricies, nulla mi gravida tortor, at varius tellus elit et orci. Sed dapibus venenatis quam, sit amet facilisis risus iaculis in. Integer lacinia commodo enim a eleifend. Vestibulum lacus lectus, feugiat sit amet feugiat non, eleifend non sapien. Sed vitae arcu ac dui tincidunt viverra. Sed ultrices pellentesque lorem, sed dapibus arcu aliquam vitae.</p>
-        <p><a href="">Lab Website</a></p>
-    </div>
-</div>
-
-<div id="supernote-note-note3" class="snp-triggeroffset snb-pinned notedefault">
-    <a name="note3"></a>
-    <div class="tooltip_header"><a href="#" class="note-close">X</a>Reminder Details</div>
-    <div class="tooltip_content">
-        <h3>Submit Food</h3>
-        <p>Due Date: Friday, Aug. 29, 2010</p>
-        <p>Contact: <a href="">Someone hungry </a></p>
-        <p class="tooltip_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum placerat, magna nec laoreet ultricies, nulla mi gravida tortor, at varius tellus elit et orci. Sed dapibus venenatis quam, sit amet facilisis risus iaculis in. Integer lacinia commodo enim a eleifend. Vestibulum lacus lectus, feugiat sit amet feugiat non, eleifend non sapien. Sed vitae arcu ac dui tincidunt viverra. Sed ultrices pellentesque lorem, sed dapibus arcu aliquam vitae.</p>
-    </div>
-</div>
-
-<div id="supernote-note-note4" class="snp-triggeroffset snb-pinned notedefault">
-    <a name="note4"></a>
-    <div class="tooltip_header"><a href="#" class="note-close">X</a>Reminder Details</div>
-    <div class="tooltip_content">
-        <h3>Drop Classes</h3>
-        <p>Due Date: Sunday, Sept. 12, 2010</p>
-        <p>Contact: <a href="">Counselor</a></p>
-        <p class="tooltip_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum placerat, magna nec laoreet ultricies, nulla mi gravida tortor, at varius tellus elit et orci. Sed dapibus venenatis quam, sit amet facilisis risus iaculis in. Integer lacinia commodo enim a eleifend. Vestibulum lacus lectus, feugiat sit amet feugiat non, eleifend non sapien. Sed vitae arcu ac dui tincidunt viverra. Sed ultrices pellentesque lorem, sed dapibus arcu aliquam vitae.</p>
     </div>
 </div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/myreminders/javascript/myreminders.js"></script>
-<!--<script type="text/javascript" src="/devwidgets/myreminders/javascript/supernote.js"></script>-->
+
