@@ -14,7 +14,7 @@
     }
     
     function taskDone(id) {
-        $("#"+id).fadeOut(1000, function() {$("#"+id).remove();});
+        $("#"+id).slideUp("normal", function(){$(this).remove;});
     }
 </script>
 
@@ -51,10 +51,10 @@
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
             <li class="reminder" id="${i.id}">
-                <span class="left_column"><input type="checkbox" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></span>            
-                <a href="" target="_blank">    
-                    <span class="middle_column">${formatDate(i.sakai__dueDate)}</span>
-                    <span class="right_column">${i.sakai__subject}</span>
+                <span class="left_column"><input type="checkbox" title="completed" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></span>            
+                <a href="inbox.html" target="_blank">    
+                    <span class="middle_column" title="${formatDate(i.sakai__dueDate)}">${formatDate(i.sakai__dueDate)}</span>
+                    <span class="right_column" title="${i.sakai__subject}">${i.sakai__subject}</span>
                 </a>
             </li>
         {forelse}
@@ -67,7 +67,7 @@
         <div class="widget-options-inner">
             <ul>
                 <li>
-                    <a href="reminders.html">Manage Reminders</a>
+                    <a href="inbox.html">Manage Reminders</a>
                 </li>
             </ul>
         </div>

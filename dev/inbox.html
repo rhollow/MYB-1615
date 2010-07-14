@@ -75,7 +75,6 @@
                 <div class="fl-col fl-fix side_panel">
 
                     <!-- DROP DOWN -->
-                    <!--
                     <div class="drop-menu" id="inbox_compose_new">
                         <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__ ...</a>
                         <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
@@ -84,7 +83,7 @@
                                 <li id="inbox_compose_announcement"><a href="javascript:;">__MSG__ANNOUNCEMENT__</a></li>
                             </ul>
                         </div>
-                    </div> -->
+                    </div>
 
                     <!-- FOLDERS -->
 
@@ -98,10 +97,16 @@
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__INBOX__</a></div></div>
 
                             <ul>
-                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_reminders">Reminders</a> <span id="inbox_unread_nr_reminders"></span></li>
+                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGE__</a> <span id="inbox_unread_nr_messages"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_announcements">__MSG__ANNOUNCEMENTS__</a> <span id="inbox_unread_nr_announcements"></span></li>
+                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_chats">__MSG__CHATS__</a> <span id="inbox_unread_nr_chats"></span></li>
+                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_invitations">__MSG__INVITATIONS__</a> <span id="inbox_unread_nr_invitations"></span></li>
                             </ul>
-                            
+
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__SENT__</a></div></div>
+
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
+
                         </div>
                         <div class="if_bottom">
                             <div class="if_bottom_inner"></div>
@@ -128,27 +133,26 @@
                                 </span>
 
                                 <!-- Delete-->
-                                <!--
-                                <a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a> -->
+                                <a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a>
                             </div>
 
                             <div class="top_decor">
 
                                 <!-- Header -->
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__INBOX__</div>
-                                <!--
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_sent" style="display:none;">__MSG__SENT_MESSAGES__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div> -->
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                             </div>
 
                             <!-- Inbox -->
                             <div class="main_content_container">
                                 <table class="inbox-table" id="inbox_table" summary="All your messages.">
                                     <tr class="different">
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_type"><span>__MSG__TYPE__</span></th>
+                                        <th class="inbox-checkbox" id="inbox_tableHeader_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__" /></th>
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_from"><span>__MSG__FROM__</span></th>
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_subject"><span>__MSG__SUBJECT__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>Received</span></th>
+                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_type"><span>__MSG__TYPE__</span></th>
+                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__DATE_ARRIVED__</span></th>
                                     </tr>
                                 </table>
                             </div>
@@ -317,7 +321,6 @@
                             --></div>
 
                             <!-- Compose Message -->
-                            <!--
                             <div class="compose-message" id="inbox_message_compose" style="display:none;">
                                 <form class="compose-form" method="post" action="">
                                     <div>
@@ -332,7 +335,7 @@
                                     <button type="submit" class="s3d-button s3d-button-primary" id="inbox_message_compose_send"><span class="s3d-button-inner">__MSG__SEND_MESSAGE__</span></button>
                                     <button type="button" class="s3d-button" id="inbox_message_compose_cancel"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
                                 </form>
-                            </div> -->
+                            </div>
                         </div>
 
                         <div class="bottom_decor"></div>
@@ -340,18 +343,15 @@
                     </div>
 
                     <!-- NEW MESSAGE -->
-                    <!--
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
-                    -->
+
                             <!-- Header -->
-                            <!--
                             <div class="inbox-heading">__MSG__COMPOSE_A_NEW_MESSAGE__</div>
-                        </div> -->
+                        </div>
 
                         <!-- Compose message -->
-                        <!--
                         <div class="main_content_container">
 
                             <div class="compose-message">
@@ -366,7 +366,7 @@
 
                         <div class="bottom_decor"></div>
 
-                    </div> -->
+                    </div>
 
                 </div>
             </div>

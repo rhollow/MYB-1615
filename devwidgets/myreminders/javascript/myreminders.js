@@ -53,7 +53,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-09-12T06:22:46-07:00",
-            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "",
             _charset_: "utf-8",
             id: "70896405574174eb091b85ee6be93d4f70558454",
             userTo: [{
@@ -98,7 +98,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-02-10T06:22:46-07:00",
-            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "",
             _charset_: "utf-8",
             id: "c250e0204224c7ff234579f2282128359ddb89c8",
             userTo: [{
@@ -143,7 +143,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-08-10T06:22:46-07:00",
-            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "",
             _charset_: "utf-8",
             id: "c250e0204224c7ff234579f2282128359ddb89c9",
             userTo: [{
@@ -188,7 +188,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-11-30T06:22:46-07:00",
-            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "",
             _charset_: "utf-8",
             id: "c250e0204224c7ff234579f2282128359ddb88c8",
             userTo: [{
@@ -232,7 +232,7 @@ sakai.myreminders = function(tuid, showSettings){
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-04-23T06:22:46-07:00",
-            sakai__completeDate: "2010-06-30T06:22:46-07:00",
+            sakai__completeDate: "",
             _charset_: "utf-8",
             id: "963b9e35158e98a289a5ddf646f892033bd8aae5",
             userTo: [{
@@ -262,6 +262,9 @@ sakai.myreminders = function(tuid, showSettings){
         }]
     };
     
+    function test() {
+        alert("test");
+    }    
     var fetchData = function(){
         return reminders;
     };
