@@ -48,7 +48,7 @@ sakai.myreminders = function(tuid, showSettings){
             jcr__primaryType: "",
             sakai__from: "Susan Hagstrom",
             sakai__subject: "5th week deadline is approaching",
-            sakai__body: "Dear CED Undergraduate Student,",
+            sakai__body: "Dear CED Undergraduate Student, \n\n This message is to remind you that FRIDAY, FEBRUARY 20th blah blah blah blah blah",
             sakai__read: true,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
@@ -93,8 +93,8 @@ sakai.myreminders = function(tuid, showSettings){
             jcr__primaryType: "",
             sakai__from: "Susan Hagstrom",
             sakai__subject: "CED Commencement tickets",
-            sakai__body: "Dear CED seniors, \n\n <b>Beginning Monday, April</b>",
-            sakai__read: true,
+            sakai__body: "Dear CED seniors, \n\n <b>Beginning Monday, April</b> students who have RSVPed for CED's commencement blah blah blah blah",
+            sakai__read: false,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-02-10T06:22:46-07:00",
@@ -138,7 +138,7 @@ sakai.myreminders = function(tuid, showSettings){
             jcr__primaryType: "",
             sakai__from: "Susan Hagstrom",
             sakai__subject: "Peer Adviser Workshop: Experience at Cal",
-            sakai__body: "Wondering why our curriculum is the way it is?",
+            sakai__body: "Wondering why our curriculum is the way it is? \n How your studio projects relate to professional work? blah blah blah blah",
             sakai__read: true,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
@@ -183,8 +183,8 @@ sakai.myreminders = function(tuid, showSettings){
             jcr__primaryType: "",
             sakai__from: "Susan Hagstrom",
             sakai__subject: "Getting too many emails?",
-            sakai__body: "Dear ARCH undergraduates, \n\n Following are some helpful",
-            sakai__read: true,
+            sakai__body: "Dear ARCH undergraduates, \n\n Following are some helpful hints on managing the emails you receive blah blah blah blah",
+            sakai__read: false,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-11-30T06:22:46-07:00",
@@ -227,8 +227,8 @@ sakai.myreminders = function(tuid, showSettings){
             jcr__primaryType: "",
             sakai__from: "Susan Hagstrom",
             sakai__subject: "April 23 deadline for CED commencement",
-            sakai__body: "Dear CED seniors, \n\n If you would like to participate",
-            sakai__read: true,
+            sakai__body: "Dear CED seniors, \n\n If you would like to participate in CED's commencement ceremony this spring, YOU MUST RSVP by Friday, APRIL 23rd",
+            sakai__read: false,
             sakai__sendstate: "notified",
             sakai__to: "internal:eli",
             sakai__dueDate: "2010-04-23T06:22:46-07:00",
@@ -262,9 +262,6 @@ sakai.myreminders = function(tuid, showSettings){
         }]
     };
     
-    function test() {
-        alert("test");
-    }    
     var fetchData = function(){
         return reminders;
     };

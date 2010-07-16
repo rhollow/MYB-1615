@@ -32,23 +32,34 @@
 .myreminders_widget .reminders_div li {list-style: none;}
 .myreminders_widget .reminders_div .reminder {
     display: block;
-    min-height: 27px;
-    max-height: 40px;
+    height: 27px;
     padding: 0px 10px 0px 15px;
-    border-bottom: 1px solid #E8E8E8;
+    border-top: 1px solid #E8E8E8;
     text-overflow: ellipsis;
-    overflow: visible;
     white-space: nowrap;
+    overflow: hidden;
     outline: none;
 }
 
 .myreminders_widget .reminders_div .reminder:hover {
-    background-color: #C6DEFF;
+    /*background-color: #C6DEFF;*/
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     text-decoration: none;
     background-image: url("/devwidgets/myreminders/images/link_bg.jpg");
     background-repeat: no-repeat;
-    background-position: 10px 5px;
+    background-position: 415px 4px;
+}
+
+.myreminders_widget .reminders_div .read_true {font-weight: normal; background-color: #E6E6E6;}
+.myreminders_widget .reminders_div .pastDue {font-weight: bold; color: red;}
+.myreminders_widget .reminders_div .read_false {font-weight: bold; background-color: white;}
+
+.myreminders_widget .reminders_div .slideUpButton {
+    background-image: url("/devwidgets/myreminders/images/link_bg.jpg");
+    background-repeat: no-repeat;
+    background-position: 415px 4px;
 }
 
 /* Individual reminder */
@@ -56,6 +67,7 @@
     float: left;
     width: 25px;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
 }
@@ -64,34 +76,36 @@
     float: left;
     width: 110px;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
-    height: 27px;
 }
 
 .myreminders_widget .reminders_div .subjectLine {
     float: left;
     width: 260px;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
-    height: 27px;
 }
 
-.myreminders_widget .reminders_div .dropDownButton {
+.myreminders_widget .reminders_div .slideDownButton {
     display: block;
     float: left;
-    width: 15px;
+    width: 20px;
+    height: 20px;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
-    padding-top: 6px;
-    height: 27px;
+    padding: 6px 0px 0px 5px;
 }
 
 .myreminders_widget .reminders_div .messageSnippet {
     display: none;
-    max-height: 40px;
-    text-overflow: ellipsis;
+    max-height: 29px;
+    /*text-overflow: ellipsis;
+    white-space: nowrap;*/
     overflow: hidden;
-    padding-top: 6px;
+    padding: 0px 33px 5px 15px;
 }
