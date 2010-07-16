@@ -98,7 +98,6 @@
 .links .grey_button .button
 { background:transparent url(../../_images/gray_button_right.png) no-repeat scroll right top; border:medium none; color:#FFFFFF; cursor:pointer; font-weight:bold; height:23px; margin:0 -10px 0 0; }
 
-
 /** CHECKBOXES **/
 .CheckBoxClass 
 { display: none; }
@@ -150,3 +149,6 @@
 
 #all_sites 
 { }
+
+#save_button 
+{ float: right; }
