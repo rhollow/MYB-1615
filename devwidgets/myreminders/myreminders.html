@@ -2,19 +2,56 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/myreminders/css/myreminders.css" />
 
-<script type="text/javascript">
-    function formatDate(datetime){
+<script type="text/javascript"> 
+   function formatDate(datetime) {
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         
         var date = months[(parseInt(datetime.substring(5,7),10))-1]+" "+datetime.substring(8,10)+", "+datetime.substring(0,4)+" "+datetime.substring(11,19);
         var d = new Date(date);
+        return d;
+    }
+
+    function getDateString(datetime){
+        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        var d = formatDate(datetime);
         var dstring = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + datetime.substring(2,4);
         return dstring;
     }
     
+    function compareDates(dueDate) {
+        var dueDate = formatDate(dueDate);  
+        var today = new Date();
+        
+        if(today > dueDate) {         // due date has passed
+            return "pastDue";
+        } else {                      // due date hasn't passed yet
+            return;
+        }
+    }
+    
     function taskDone(id) {
-        $("#"+id).slideUp("normal", function(){$(this).remove;});
+        $("#li_"+id).slideUp("normal", function(){$(this).remove;});
+    }
+    
+    var lastShown;
+    function showSnippet(id){
+        if ($("#snippetDiv_" + id).is(":visible")) {
+            $("#li_" + id).removeClass("slideUpButton");
+            $("#showSnippetDiv_" + id).attr("title", "Show snippet");
+            $("#snippetDiv_" + id).slideUp("normal");
+            lastShown = null;
+        } else {
+            if(lastShown) {
+                $("#li_" + lastShown).removeClass("slideUpButton");
+                $("#showSnippetDiv_" + id).attr("title", "Show snippet");
+                $("#snippetDiv_" + lastShown).slideUp("normal");
+            }
+            lastShown = id;
+            $("#li_" + id).addClass("slideUpButton");
+            $("#showSnippetDiv_" + id).attr("title", "Hide snippet");
+            $("#snippetDiv_" + id).slideDown("normal");
+        }
     }
 </script>
 
@@ -50,13 +87,23 @@
     
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
-            <li class="reminder" id="${i.id}">
-                <span class="left_column"><input type="checkbox" title="completed" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></span>            
-                <a href="inbox.html" target="_blank">    
-                    <span class="middle_column" title="${formatDate(i.sakai__dueDate)}">${formatDate(i.sakai__dueDate)}</span>
-                    <span class="right_column" title="${i.sakai__subject}">${i.sakai__subject}</span>
+            <li class="reminder read_${i['sakai:read']}" id="li_${i.id}">
+                <div class="checkboxes"><input type="checkbox" title="Completed" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></div>            
+                <a href="inbox.html" target="_blank" title="See full reminder">   
+                    <div class="dueDate ${compareDates(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
+                    <div class="subjectLine ${compareDates(i['sakai:dueDate'])}">${i['sakai:subject']}</div>
+                </a> 
+                <a href="javascript:showSnippet('${i.id}')">   
+                    <div class="slideDownButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
                 </a>
-            </li>
+                </div>
+                    <a href="inbox.html" target="_blank">    
+                        <div class="messageSnippet read_${i['sakai:read']}" id="snippetDiv_${i.id}" title="See full reminder">
+                            ${i['sakai:body']}
+                        </div>
+                    </a>
+                </div>
+             </li>
         {forelse}
             <span>You have no reminders</span>
         {/for}
