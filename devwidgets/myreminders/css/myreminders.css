@@ -23,7 +23,7 @@
     padding: 5px 10px 0px 40px;
     height: 20px;
 }
-.myreminders_widget .reminders_header .left_header {float: left; width: 110px;}
+.myreminders_widget .reminders_header .left_header {float: left; width: 100px;}
 .myreminders_widget .reminders_header .right_header {float: left;}
 
 /* List of reminders */
@@ -34,42 +34,78 @@
     display: block;
     height: 27px;
     padding: 0px 10px 0px 15px;
-    border-bottom: 1px solid #E8E8E8;
+    border-top: 1px solid #D4DADE;
     text-overflow: ellipsis;
-    overflow: hidden;
     white-space: nowrap;
+    overflow: hidden;
     outline: none;
-    
 }
 
 .myreminders_widget .reminders_div .reminder:hover {
-    background-color: #C6DEFF;
+    /*background-color: #C6DEFF;*/
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     text-decoration: none;
+    background-image: url("/devwidgets/myreminders/images/link_bg.jpg");
+    background-repeat: no-repeat;
+    background-position: 405px 4px;
 }
 
+.myreminders_widget .reminders_div .read_true {font-weight: normal; background-color: #E6E6E6;}
+.myreminders_widget .reminders_div .pastDue {font-weight: bold; color: red;}
+.myreminders_widget .reminders_div .read_false {font-weight: bold; background-color: white;}
+
+.myreminders_widget .reminders_div .slideUpButton {
+    background-image: url("/devwidgets/myreminders/images/link_bg.jpg");
+    background-repeat: no-repeat;
+    background-position: 405px 4px;
+}
 
 /* Individual reminder */
-.myreminders_widget .reminders_div .left_column {
+.myreminders_widget .reminders_div .checkboxes {
     float: left;
     width: 25px;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
 }
 
-.myreminders_widget .reminders_div .middle_column {
+.myreminders_widget .reminders_div .dueDate {
     float: left;
-    width: 110px;
+    width: 100px;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
 }
 
-.myreminders_widget .reminders_div .right_column {
+.myreminders_widget .reminders_div .subjectLine {
     float: left;
-    width: 260px;
-    text-overflow: ellipsis;
+    width: 255px;
+    /*text-overflow: ellipsis;
+    white-space: nowrap;*/
     overflow: hidden;
     padding-top: 6px;
+}
+
+.myreminders_widget .reminders_div .slideDownButton {
+    display: block;
+    float: left;
+    width: 20px;
+    height: 25px;
+    /*text-overflow: ellipsis;
+    white-space: nowrap;*/
+    overflow: hidden;
+    padding: 6px 0px 0px 0px;
+}
+
+.myreminders_widget .reminders_div .messageSnippet {
+    display: none;
+    max-height: 29px;
+    /*text-overflow: ellipsis-word;
+    white-space: nowrap;*/
+    overflow: hidden;
+    padding: 0px 33px 5px 15px;
 }
