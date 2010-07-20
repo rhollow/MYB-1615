@@ -32,6 +32,11 @@
     
     function taskDone(id) {
         $("#li_"+id).slideUp("normal", function(){$(this).remove;});
+        if ($("#snippetDiv_" + id).is(":visible")) {
+            $("#snippetDiv_" + id).slideUp("normal", function(){
+                $(this).remove;
+            });
+        }
     }
     
     var lastShown;
@@ -89,21 +94,21 @@
         {for i in results}
             <li class="reminder read_${i['sakai:read']}" id="li_${i.id}">
                 <div class="checkboxes"><input type="checkbox" title="Completed" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></div>            
-                <a href="inbox.html" target="_blank" title="See full reminder">   
+                <a href="inbox.html" target="_blank" title="${i['sakai:subject']}">   
                     <div class="dueDate ${compareDates(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
                     <div class="subjectLine ${compareDates(i['sakai:dueDate'])}">${i['sakai:subject']}</div>
                 </a> 
                 <a href="javascript:showSnippet('${i.id}')">   
                     <div class="slideDownButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
                 </a>
-                </div>
-                    <a href="inbox.html" target="_blank">    
-                        <div class="messageSnippet read_${i['sakai:read']}" id="snippetDiv_${i.id}" title="See full reminder">
-                            ${i['sakai:body']}
-                        </div>
-                    </a>
-                </div>
-             </li>
+            </li>
+            <div>
+	            <a href="inbox.html" target="_blank">    
+	                <div class="messageSnippet read_${i['sakai:read']}" id="snippetDiv_${i.id}" title="See full reminder">
+	                    ${i['sakai:body']}
+	                </div>
+	            </a>
+            </div>
         {forelse}
             <span>You have no reminders</span>
         {/for}

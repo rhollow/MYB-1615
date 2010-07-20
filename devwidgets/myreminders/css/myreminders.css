@@ -83,7 +83,7 @@
 
 .myreminders_widget .reminders_div .subjectLine {
     float: left;
-    width: 255px;
+    width: 265px;
     /*text-overflow: ellipsis;
     white-space: nowrap;*/
     overflow: hidden;
@@ -99,6 +99,7 @@
     white-space: nowrap;*/
     overflow: hidden;
     padding: 6px 0px 0px 0px;
+    margin-left: 10px;
 }
 
 .myreminders_widget .reminders_div .messageSnippet {
@@ -107,5 +108,5 @@
     /*text-overflow: ellipsis-word;
     white-space: nowrap;*/
     overflow: hidden;
-    padding: 0px 33px 5px 15px;
+    padding: 0px 25px 5px 15px;
 }
