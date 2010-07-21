@@ -42,7 +42,7 @@ sakai.mylinks = function (tuid, showSettings) {
     var mylinksListTemplate = "mylinks_list_template";
 
     // Data files and paths
-    var userLinks = "my_links"
+    var userLinks = "my_links";
     var linksDataNode = "/_user" + sakai.data.me.profile.path + "/private/" + userLinks;
 
     /**
@@ -82,7 +82,7 @@ sakai.mylinks = function (tuid, showSettings) {
                 id :   $link.attr("id"),
                 name : $link.text(),
                 url :  $link.attr("href")
-            }
+            };
             list.push(record);
         });
         listObj.links = list;
