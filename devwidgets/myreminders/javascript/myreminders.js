@@ -33,7 +33,7 @@ sakai.myreminders = function(tuid, showSettings){
     // Template
     var myremindersTemplate = "myreminders_template";
     
-var reminders = {
+    var reminders = {
         "items": 25,
         "total": 3,
         "results": [{
@@ -271,12 +271,12 @@ var reminders = {
             "sakai:id": "ss3b9e35158e98a289a5ddf646f892033bd8aae5",
             "jcr:primaryType": "",
             "sakai:from": "Susan Hagstrom",
-            "sakai:subject": "Extra Reminder",
+            "sakai:subject": "REMINDER",
             "sakai:body": "Dear CED seniors, \n\n If you would like to participate in CED's commencement ceremony this spring, YOU MUST RSVP by Friday, APRIL 23rd \n\n To RSVP",
             "sakai:read": false,
             "sakai:sendstate": "notified",
             "sakai:to": "internal:eli",
-            "sakai:dueDate": "2010-04-23T06:22:46-07:00",
+            "sakai:dueDate": "2010-05-23T06:22:46-07:00",
             "sakai:completeDate": "",
             "_charset_": "utf-8",
             "id": "ss3b9e35158e98a289a5ddf646f892033bd8aae5",
@@ -304,15 +304,109 @@ var reminders = {
                 "sakai:status": "offline",
                 "sakai:location": "none"
             }]
+        }, {
+            "jcr:path": "",
+            "jcr:name": "",
+            "sakai:created": "2010-06-30T06:39:23-07:00",
+            "sling:resourceType": "sakai/message",
+            "sakai:previousmessage": "s49022e929f5cdcf1531867fb2e84ee18d6ced9",
+            "sakai:messagebox": "inbox",
+            "sakai:type": "internal",
+            "sakai:category": "reminder",
+            "sakai:id": "ss3b9e35158e98a289a5ddf646f892033bd8cae5",
+            "jcr:primaryType": "",
+            "sakai:from": "Susan Hagstrom",
+            "sakai:subject": "CED information",
+            "sakai:body": "Dear CED seniors, \n\n If you would like to participate in CED's commencement ceremony this spring, YOU MUST RSVP by Friday, APRIL 23rd \n\n To RSVP",
+            "sakai:read": false,
+            "sakai:sendstate": "notified",
+            "sakai:to": "internal:eli",
+            "sakai:dueDate": "2010-01-02T06:22:46-07:00",
+            "sakai:completeDate": "",
+            "_charset_": "utf-8",
+            "id": "ss3b9e35158e98a289a5ddf646f892033bd8cae5",
+            "userTo": [{
+                "userid": "eli",
+                "hash": "/e/el/eli/eli",
+                "jcr:path": "",
+                "jcr:name": "",
+                "firstName": "Eli",
+                "lastName": "Cochran",
+                "picture": false,
+                "user": "eli",
+                "sakai:status": "online",
+                "sakai:location": "none"
+            }],
+            "userFrom": [{
+                "userid": "wombat",
+                "hash": "/w/wo/wombat",
+                "jcr:path": "",
+                "jcr:name": "",
+                "firstName": "wombat t.",
+                "lastName": "firefly",
+                "picture": false,
+                "user": "wombat",
+                "sakai:status": "offline",
+                "sakai:location": "none"
+            }]
         }]
+    };
+    
+    var taskDone = function(id){
+        $("#li_" + id).slideUp("normal", function(){
+            $(this).remove;
+        });
+        if ($("#snippetDiv_" + id).is(":visible")) {
+            $("#snippetDiv_" + id).slideUp("normal", function(){
+                $(this).remove;
+            });
+        }
+    }
+    
+    var lastShown = null;
+    function showSnippet(id){
+        if ($("#snippetDiv_" + id).is(":visible")) {
+            $("#li_" + id).removeClass("slideUpButton");
+            $("#showSnippetDiv_" + id).attr("title", "Show snippet");
+            $("#snippetDiv_" + id).slideUp("normal");
+            lastShown = null;
+        }
+        else {
+            if (lastShown) {
+                $("#li_" + lastShown).removeClass("slideUpButton");
+                $("#showSnippetDiv_" + lastShown).attr("title", "Show snippet");
+                $("#snippetDiv_" + lastShown).slideUp("normal");
+            }
+            lastShown = id;
+            $("#li_" + id).addClass("slideUpButton");
+            $("#showSnippetDiv_" + id).attr("title", "Hide snippet");
+            $("#snippetDiv_" + id).slideDown("normal");
+        }
+    }
+    
+    var createRemindersList = function(data){
+        $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
+        
+        // not tested yet
+        for (i in data.results) {
+            $("#div_"+i.id).data(i);
+        }
+        
+        for (i in data.results) {
+            $("#checkbox_" + i.id).bind('click', function(){
+                i['sakai:completeDate'] = new Date();
+                taskDone(i.id);
+            });
+        }
+        
+        for (i in data.results) {
+            $("#showSnippetLink_" + i.id).bind('click', showSnippet(i.id))
+        }
+        
     };
     
     var fetchData = function(){
         return reminders;
-    };
-    
-    var createRemindersList = function(data){
-        $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
     };
     
     var getRemindersList = function(){
