@@ -396,12 +396,6 @@ sakai.myreminders = function(tuid, showSettings){
     	  });
       });
     };
-    
-//    var taskDone = function(id){
-//        $("#div_" + id).slideUp("normal", function(){
-//             $(this).remove;
-//         });
-//     }
      
     
     var updateReminder = function (url, propname, propvalue, callback) {
@@ -412,7 +406,6 @@ sakai.myreminders = function(tuid, showSettings){
     		  url: url,
     		  data: data,
     		  success: function(data, textStatus, xhr){
-    			  alert("updated " + propname + " to " + propvalue + "\n" + xhr.responseText);
                   if (typeof callback !== "undefined") {
                       callback();
                   }
