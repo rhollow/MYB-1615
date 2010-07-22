@@ -277,7 +277,7 @@ var Widgets = {
             "url":"/devwidgets/myfriends/myfriends.html"
         },
         "mylinks": {
-            "description":"My Links: favorite Berkeley sites from the campus directory",
+            "description":"My Links",
             "id":"mylinks",
             "name":"My Links",
             "personalportal":true,
@@ -300,11 +300,6 @@ var Widgets = {
             "name":"My Reminders",
             "id":"myreminders",
             "personalportal":true,
-            "i18n": {
-                "default": "/devwidgets/myprofile/bundles/default.json",
-                "en_US": "/devwidgets/myprofile/bundles/en_US.json",
-                "zh_CN": "/devwidgets/myprofile/bundles/zh_CN.json"
-            },
             "url":"/devwidgets/myreminders/myreminders.html"
         },
         "navigation": {
