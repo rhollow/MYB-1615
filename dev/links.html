@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <!-- PROFILE -->
+        <!-- LINKS -->
         <div class="fl-container-flex links">
             
             <div class="fl-fix fl-centered fixed-container">
@@ -72,7 +72,7 @@
                     <!-- TOP BORDER -->
                     <div class="content_top"><div class="content_top_inner"></div></div>
 
-                    <!-- PROFILE CONTENTS -->
+                    <!-- LINKS CONTENTS -->
                     <div class="links_contents_main">
 
                         <!-- Suggested Sites  -->
@@ -147,10 +147,17 @@
                                         {/if}
                                                 <div class="suggested_link_header">
                                         {for j in links}
-                                            {if i==j.id}                                                
-                                                    <input id="${j.id}_checkbox" type="checkbox" class="CheckBoxClass"/>
-                                                    <label id="${j.id}" for="${j.id}_checkbox" class="LabelUnselected">
-                                                        <a href="${j.url}" target="_blank" title="${j.name}">${j.name|default:"No Available Name"}</a>
+                                            {if i==j.id}
+                                                {for k in j.audience}
+                                                    {if k.required}
+                                                        <input id="${j.id}_checkbox" type="checkbox" class="FeaturedCheckBoxClass" checked disabled="true"/>
+                                                        <label id="${j.id}" for="${j.id}_checkbox" class="LabelRequired">
+                                                        {else}                                            
+                                                        <input id="${j.id}_checkbox" type="checkbox" class="FeaturedCheckBoxClass"/>
+                                                        <label id="${j.id}" for="${j.id}_checkbox" class="LabelUnselected">
+                                                    {/if}
+                                                {/for}
+                                                        <a href="${j.url}" target="_blank">${j.name|default:"No Available Name"}</a>
                                                     </label>
                                                 </div>
                                                 <br>
@@ -340,28 +347,23 @@
                                     {var offby=total%col}
                                     {var counter=0}
                                     {var lowerbound=counter}
-                                    {var upperbound=percol+offby}                                                
+                                    {var upperbound=percol+offby}                                                                                           
                                     {for i in colset}
                                         <div class="all_links_col">                                                                                                                                                                                             
                                              <ul>
                                              {for j in links}
                                                  ${counter=counter+1|eat}
                                                  {if counter>=lowerbound && counter<=upperbound}                                          
-                                                     <li class="NoBulletNoIndent">
-                                                         {if j.selected!=null && j.selected}
-                                                             <input id="${j.id}_box" type="checkbox" class="CheckBoxClass" checked/>
-                                                             <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected">
-                                                             {else}                                                              
+                                                     <li class="NoBulletNoIndent">                                                                                                                                             
                                                                  {for k in j.audience}
                                                                      {if k.required}
-                                                                         <input id="${j.id}_box" type="checkbox" class="CheckBoxClass" checked disabled="true"/>
-                                                                         <label id="${j.id}_label" for="${j.id}_box" class="LabelRequired">                                                                                                                     
-                                                                         {else}
-                                                                             <input id="${j.id}_box" type="checkbox" class="CheckBoxClass"/>
-                                            	                             <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected">
+                                                                         <input id="${j.id}_box" type="checkbox" class="CheckBoxClass" checked="checked" disabled="disabled"/>
+                                                                         <label id="${j.id}_label" for="${j.id}_box" class="LabelRequired">                                                                                                                                                                                         
+                                                                     {else}
+                                                                         <input id="${j.id}_box" type="checkbox" class="CheckBoxClass"/>
+                                        	                             <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected">
                                                                      {/if}
-                                                                 {/for}
-                                                         {/if}
+                                                                 {/for}                                                           
                                 	                         <a href="${j.url}" target="_blank" title="${j.popup_description}">${j.name|default:"No Available Name"}</a>
                                                          </label>
                                                      </li>                                                                                                    
@@ -382,15 +384,11 @@
                             
                             </div>                           
                                      
-                        </div>                   
-                        
-                        <!-- Done button -->
-                        <!--<div class="links_section_body" style="float: right; padding-right: 10px; padding-bottom: 5px;">
-                            <input type="button" value="Done">
-                        </div>-->
+                        </div>                                           
                                                                       
-                    </div>                  
-                </div>
+                    </div>
+                                    
+                </div>                
 
                     <div class="content_bottom"><div class="content_bottom_inner"></div></div>
 

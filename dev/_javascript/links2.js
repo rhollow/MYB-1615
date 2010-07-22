@@ -318,53 +318,7 @@ sakai.links = function(){
     */
     var saveLinkList = function (updatedList) {
         sakai.api.Server.saveJSON(linksDataNode, updatedList);
-    };
-    
-    /**
-     * Update the list according to whether a link was added or
-     * removed by either adding or removing from the user's link list
-     * array (based on the operation it is passed).
-     * @param {Object} what operation to perform; either "add" or "remove"
-     * @param {Object} the id of the link to perform the operation on
-     * @param {Object} users data and widget link list
-     */
-    var updateLinkList = function(operation, id, data){
-        var listObj = data;
-        var allLinks = getDirectory();
-        if (operation == "add") {
-            for (var i = 0; i < allLinks.links.length; i++) {
-                if (id === allLinks.links[i].id || id === allLinks.links[i].id + "_label") {
-                    var toAdd = {
-                        id: allLinks.links[i].id,
-                        name: allLinks.links[i].name,
-                        url: allLinks.links[i].url
-                    };
-                    listObj.links.push(toAdd);
-                }
-            }
-        }
-        if (operation == "remove") {
-            var newList = [];
-            for (var i = 0; i < listObj.links.length; i++) {
-                if (id === listObj.links[i].id || id === listObj.links[i].id + "_label") {
-                    // do nothing...
-                }
-                else {
-                    var toAdd = {
-                        id: listObj.links[i].id,
-                        name: listObj.links[i].name,
-                        url: listObj.links[i].url
-                    };
-                    newList.push(toAdd);
-                }
-            }
-            listObj.links = newList;
-        }
-        else{
-            // throw an error...
-        }
-        saveLinkList(listObj);
-    }     
+    };      
     
     /**
      * Sets the titles for the checkboxes' tooltips, based on
@@ -385,76 +339,66 @@ sakai.links = function(){
     };
     
     /** 
-     * As user checks or unchecks stars, will toggle the label class as needed. 
-     * Calls setTitles() after every change to ensure tooltips are always correct. 
-     * Also makes a call to update the user's data for the widget link list.
-     * Keeps featured and all link stars in sync.
+     * Pre-sets appropriate label class, then as user checks or unchecks
+     * boxes, will toggle the label class as needed. Calls setTitles() after
+     * every change to ensure tooltips are always correct. Also updates 
+     * the user's data for the widget link list.
      * @param {Object} the current state of the users list
      */
-    var setStars = function(data){               
-        var allLinks = getDirectory();
-        var listObj = data; 
-        // For links in the featured section (id)...
-        // Note that a link here will definitely also be in the all section.       
-        $(".FeaturedCheckBoxClass").change(function(data){
-            var id = $(this).next("label").attr("id");                   
-            if ($(this).is(":checked")) {             
-                $(this).next("label").addClass("LabelSelected");
-                $('#'+id+'_box').attr("checked", true);
-                $('#'+id+'_label').addClass("LabelSelected");
-                updateLinkList("add", id, listObj);                       
-            }
-            else {
-                $(this).next("label").removeClass("LabelSelected");
-                $('#'+id+'_box').attr("checked", false);
-                $('#'+id+'_label').removeClass("LabelSelected");
-                updateLinkList("remove", id, listObj);                                      
-            }                              
-        setTitles();
-        });
-        // For links in the all section (id_label)...
-        // Note that a link here MAY OR MAY NOT be in the featured section.
+    var setStars = function(data){
+        var listObj = data;        
+        var allLinks = getDirectory();         
         $(".CheckBoxClass").change(function(data){
-            var id = $(this).next("label").attr("id");
-            var pos = id.indexOf("_label");
-            var newID = id.slice(0,pos);
-            var isFeatured = false;
-            for(var k=0;k<allLinks.featured.length;k++){
-                if(allLinks.featured[k]==newID){
-                    isFeatured = true;
-                }                
-            }                               
+            var id = $(this).next("label").attr("id");                   
             if ($(this).is(":checked")) {              
-                $(this).next("label").addClass("LabelSelected");
-                if(isFeatured){
-                    $('#'+newID+'_checkbox').attr("checked", true);
-                    $('#'+newID).addClass("LabelSelected");                    
-                }                             
-                updateLinkList("add", newID, listObj);  
+                $(this).next("label").addClass("LabelSelected");                
+                for(var i=0;i<allLinks.links.length;i++){
+                    if(id===allLinks.links[i].id || id===allLinks.links[i].id+"_label"){
+                        var toAdd = {
+                            id :   allLinks.links[i].id,
+                            name : allLinks.links[i].name,
+                            url :  allLinks.links[i].url
+                        };
+                        listObj.links.push(toAdd);
+                    }
+                }
             }
             else {
-                $(this).next("label").removeClass("LabelSelected");
-                if(isFeatured){
-                    $('#'+newID+'_checkbox').attr("checked", false);
-                    $('#'+newID).removeClass("LabelSelected");                    
-                }                                     
-                updateLinkList("remove", newID, listObj);
-            }                        
-        setTitles();
-        });        
-    };    
-    
+                $(this).next("label").removeClass("LabelSelected");               
+                var newList = [];       
+                for(var i=0;i<listObj.links.length;i++){
+                    if(id===listObj.links[i].id || id===listObj.links[i].id+"_label"){
+                        // do nothing...
+                    }                                      
+                    else{
+                        var toAdd = {
+                            id :   listObj.links[i].id,
+                            name : listObj.links[i].name,
+                            url :  listObj.links[i].url
+                        };                        
+                        newList.push(toAdd);
+                    }
+                }
+                listObj.links = newList;         
+                setUnchecked(listObj);       
+            }          
+            setTitles();                          
+            saveLinkList(listObj); 
+            setChecked(listObj);           
+        });
+    };   
+
     /**
      * Goes through the user's widget list and checks the appropriate stars
-     * on the page.
+     * on the page. Calls setTitles at the end to ensure updated tooltips.
+     * Also used to help keep featured links and all links section in sync.
      * @param {Object} the current state of the users list
      */
     var setChecked = function(data){
-        var listObj = data;
         $("input[type=checkbox]").each(function(){
             var id = $(this).next("label").attr("id");
-            for (var i = 0; i < listObj.links.length; i++) {
-                if (id === listObj.links[i].id || id === listObj.links[i].id + "_label") {
+            for (var i = 0; i < data.links.length; i++) {
+                if (id === data.links[i].id || id === data.links[i].id + "_label") {
                     $(this).attr("checked", true);
                     if ($(this).next("label").attr("class") !== "LabelRequired") {
                         $(this).next("label").addClass("LabelSelected");
@@ -462,7 +406,23 @@ sakai.links = function(){
                 }
             }
         });
-    };    
+        setTitles();
+    };
+    
+    /**
+     * Is only called when a star is unchecked to ensure the featured links 
+     * and all links sections are constantly synced.
+     * @param {Object} data
+     */
+    var setUnchecked = function(data){
+        $("input[type=checkbox]").each(function(){
+            var id = $(this).next("label").attr("id");
+            if ($(this).next("label").attr("class") !== "LabelRequired") {
+                $(this).next("label").removeClass("LabelSelected");
+                $(this).attr("checked", false);
+            }
+        });
+    };
     
     var getDirectory = function () {
          return directory;
@@ -478,8 +438,8 @@ sakai.links = function(){
         $suggestedSites.html($.TemplateRenderer(suggested_sites_template, directory));
         $allSites.html($.TemplateRenderer(all_sites_template, directory));
         setChecked(data);
-        setStars(data);
         setTitles();
+        setStars(data);
     };    
     
     /**
