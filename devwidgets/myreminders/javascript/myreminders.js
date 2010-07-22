@@ -304,67 +304,11 @@ sakai.myreminders = function(tuid, showSettings){
                 "sakai:status": "offline",
                 "sakai:location": "none"
             }]
-        }, {
-            "jcr:path": "",
-            "jcr:name": "",
-            "sakai:created": "2010-06-30T06:39:23-07:00",
-            "sling:resourceType": "sakai/message",
-            "sakai:previousmessage": "s49022e929f5cdcf1531867fb2e84ee18d6ced9",
-            "sakai:messagebox": "inbox",
-            "sakai:type": "internal",
-            "sakai:category": "reminder",
-            "sakai:id": "ss3b9e35158e98a289a5ddf646f892033bd8cae5",
-            "jcr:primaryType": "",
-            "sakai:from": "Susan Hagstrom",
-            "sakai:subject": "CED information",
-            "sakai:body": "Dear CED seniors, \n\n If you would like to participate in CED's commencement ceremony this spring, YOU MUST RSVP by Friday, APRIL 23rd \n\n To RSVP",
-            "sakai:read": false,
-            "sakai:sendstate": "notified",
-            "sakai:to": "internal:eli",
-            "sakai:dueDate": "2010-01-02T06:22:46-07:00",
-            "sakai:completeDate": "",
-            "_charset_": "utf-8",
-            "id": "ss3b9e35158e98a289a5ddf646f892033bd8cae5",
-            "userTo": [{
-                "userid": "eli",
-                "hash": "/e/el/eli/eli",
-                "jcr:path": "",
-                "jcr:name": "",
-                "firstName": "Eli",
-                "lastName": "Cochran",
-                "picture": false,
-                "user": "eli",
-                "sakai:status": "online",
-                "sakai:location": "none"
-            }],
-            "userFrom": [{
-                "userid": "wombat",
-                "hash": "/w/wo/wombat",
-                "jcr:path": "",
-                "jcr:name": "",
-                "firstName": "wombat t.",
-                "lastName": "firefly",
-                "picture": false,
-                "user": "wombat",
-                "sakai:status": "offline",
-                "sakai:location": "none"
-            }]
         }]
     };
     
-    var taskDone = function(id){
-        $("#li_" + id).slideUp("normal", function(){
-            $(this).remove;
-        });
-        if ($("#snippetDiv_" + id).is(":visible")) {
-            $("#snippetDiv_" + id).slideUp("normal", function(){
-                $(this).remove;
-            });
-        }
-    }
-    
     var lastShown = null;
-    function showSnippet(id){
+    var showSnippet = function(id){
         if ($("#snippetDiv_" + id).is(":visible")) {
             $("#li_" + id).removeClass("slideUpButton");
             $("#showSnippetDiv_" + id).attr("title", "Show snippet");
@@ -387,22 +331,20 @@ sakai.myreminders = function(tuid, showSettings){
     var createRemindersList = function(data){
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
         
-        // not tested yet
+        // NOT WORKING
         for (i in data.results) {
-            $("#div_"+i.id).data(i);
+            $("#div_" + i.id).data(i);
         }
         
-        for (i in data.results) {
-            $("#checkbox_" + i.id).bind('click', function(){
-                i['sakai:completeDate'] = new Date();
-                taskDone(i.id);
-            });
-        }
+        $(".checkbox").check(function() {
+            var today = new Date();
+            $(this).parent().parent().parent().data('sakai:completeDate', today);
+            $(this).parent().parent().parent().slideUp("normal", function(){
+                $(this).remove;
+            } );
+        })
         
-        for (i in data.results) {
-            $("#showSnippetLink_" + i.id).bind('click', showSnippet(i.id))
-        }
-        
+        $(".slideDownButton").click(showShippet($(this).parent().parent().data('sakai:id')));
     };
     
     var fetchData = function(){

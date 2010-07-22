@@ -63,7 +63,7 @@
 }
 
 /* Individual reminder */
-.myreminders_widget .reminders_div .checkboxes {
+.myreminders_widget .reminders_div .checkDone {
     float: left;
     width: 25px;
     text-overflow: ellipsis;
@@ -107,7 +107,7 @@
 .myreminders_widget .reminders_div .messageSnippet {
     display: none;
     max-height: 29px;
-    text-overflow: ellipsis-word;
+    text-overflow: ellipsis;
     overflow: hidden;
     padding: 0px 25px 5px 15px;
     cursor: pointer;

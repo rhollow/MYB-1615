@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="/devwidgets/myreminders/css/myreminders.css" />
 
 <script type="text/javascript"> 
-   var formatDate = function(datetime) {
+    var formatDate = function(datetime) {
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         
         var date = months[(parseInt(datetime.substring(5,7),10))-1]+" "+datetime.substring(8,10)+", "+datetime.substring(0,4)+" "+datetime.substring(11,19);
@@ -30,15 +30,6 @@
     }
     
     var taskDone = function(id){
-        /*
-        $("#li_" + id).slideUp("normal", function(){
-            $(this).remove;
-        });
-        if ($("#snippetDiv_" + id).is(":visible")) {
-            $("#snippetDiv_" + id).slideUp("normal", function(){
-                $(this).remove;
-            });
-        }*/
        $("#div_" + id).slideUp("normal", function(){
             $(this).remove;
         });
@@ -62,6 +53,17 @@
             $("#showSnippetDiv_" + id).attr("title", "Hide snippet");
             $("#snippetDiv_" + id).slideDown("normal");
         }
+    }
+    
+    var ellipsis = function(text, limit) {
+        var counter = 0, i = 0, code = false, temp;
+        if (text.length > limit) {
+            while (counter < limit) {
+                    
+            }
+            text = temp + "...";
+        }
+        return text;
     }
 </script>
 
@@ -99,13 +101,13 @@
         {for i in results}
         <div id="div_${i.id}">
             <li class="reminder read_${i['sakai:read']}" id="li_${i.id}">
-                <div class="checkboxes"><input type="checkbox" title="Completed" onClick="taskDone('${i.id}')" id="checkbox_${i.id}" /></div>  
-                <div class="dueDate ${compareDates(i['sakai:dueDate'])}" title="Due ${getDateString(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
-                <div class="subjectLine ${compareDates(i['sakai:dueDate'])}" title="${i['sakai:subject']}">${i['sakai:subject']}</div>
-                <div class="slideDownButton" id="showSnippetDiv_${i.id}" onClick="showSnippet('${i.id}')" title="Show snippet"></div>
+                <div class="checkDone"><input type="checkbox" class="checkbox" title="Completed" onClick="taskDone('${i.id}')" /></div>  
+                <div class="dueDate ${compareDates(i['sakai:dueDate'])}" onClick="window.open('inbox.html','_blank')" title="Due ${getDateString(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
+                <div class="subjectLine ${compareDates(i['sakai:dueDate'])}" onClick="window.open('inbox.html','_blank')" title="${i['sakai:subject']}">${ellipsis(i['sakai:subject'], 34)}</div>
+                <div class="slideDownButton" onClick="showSnippet('${i.id}')" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
             </li>    
-	        <div class="messageSnippet read_${i['sakai:read']}" id="snippetDiv_${i.id}" title="See full reminder">
-	            ${i['sakai:body']}
+	        <div class="messageSnippet read_${i['sakai:read']}" onClick="window.open('inbox.html','_blank')" id="snippetDiv_${i.id}" title="See full reminder">
+	            ${ellipsis(i['sakai:body'], 120)}
 	        </div>
         </div>
         {forelse}
