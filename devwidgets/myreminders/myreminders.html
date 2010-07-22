@@ -1,9 +1,8 @@
-
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/myreminders/css/myreminders.css" />
 
 <script type="text/javascript"> 
-   function formatDate(datetime) {
+    var formatDate = function(datetime) {
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         
         var date = months[(parseInt(datetime.substring(5,7),10))-1]+" "+datetime.substring(8,10)+", "+datetime.substring(0,4)+" "+datetime.substring(11,19);
@@ -11,7 +10,7 @@
         return d;
     }
 
-    function getDateString(datetime){
+    var getDateString = function(datetime){
         var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         
         var d = formatDate(datetime);
@@ -19,7 +18,7 @@
         return dstring;
     }
     
-    function compareDates(dueDate) {
+    var compareDates = function(dueDate) {
         var dueDate = formatDate(dueDate);  
         var today = new Date();
         
@@ -30,12 +29,14 @@
         }
     }
     
-    function taskDone(id) {
-        $("#li_"+id).slideUp("normal", function(){$(this).remove;});
+    var taskDone = function(id){
+       $("#div_" + id).slideUp("normal", function(){
+            $(this).remove;
+        });
     }
     
-    var lastShown;
-    function showSnippet(id){
+    var lastShown = null;
+    var showSnippet = function(id){
         if ($("#snippetDiv_" + id).is(":visible")) {
             $("#li_" + id).removeClass("slideUpButton");
             $("#showSnippetDiv_" + id).attr("title", "Show snippet");
@@ -44,7 +45,7 @@
         } else {
             if(lastShown) {
                 $("#li_" + lastShown).removeClass("slideUpButton");
-                $("#showSnippetDiv_" + id).attr("title", "Show snippet");
+                $("#showSnippetDiv_" + lastShown).attr("title", "Show snippet");
                 $("#snippetDiv_" + lastShown).slideUp("normal");
             }
             lastShown = id;
@@ -52,6 +53,17 @@
             $("#showSnippetDiv_" + id).attr("title", "Hide snippet");
             $("#snippetDiv_" + id).slideDown("normal");
         }
+    }
+    
+    var ellipsis = function(text, limit) {
+        var counter = 0, i = 0, code = false, temp;
+        if (text.length > limit) {
+            while (counter < limit) {
+                    
+            }
+            text = temp + "...";
+        }
+        return text;
     }
 </script>
 
@@ -87,23 +99,17 @@
     
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
+        <div id="div_${i.id}">
             <li class="reminder read_${i['sakai:read']}" id="li_${i.id}">
-                <div class="checkboxes"><input type="checkbox" title="Completed" onClick="taskDone('${i.id}')" name="reminder" value="${i.id}" /></div>            
-                <a href="inbox.html" target="_blank" title="See full reminder">   
-                    <div class="dueDate ${compareDates(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
-                    <div class="subjectLine ${compareDates(i['sakai:dueDate'])}">${i['sakai:subject']}</div>
-                </a> 
-                <a href="javascript:showSnippet('${i.id}')">   
-                    <div class="slideDownButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
-                </a>
-                </div>
-                    <a href="inbox.html" target="_blank">    
-                        <div class="messageSnippet read_${i['sakai:read']}" id="snippetDiv_${i.id}" title="See full reminder">
-                            ${i['sakai:body']}
-                        </div>
-                    </a>
-                </div>
-             </li>
+                <div class="checkDone"><input type="checkbox" class="checkbox" title="Completed" onClick="taskDone('${i.id}')" /></div>  
+                <div class="dueDate ${compareDates(i['sakai:dueDate'])}" onClick="window.open('inbox.html','_blank')" title="Due ${getDateString(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
+                <div class="subjectLine ${compareDates(i['sakai:dueDate'])}" onClick="window.open('inbox.html','_blank')" title="${i['sakai:subject']}">${ellipsis(i['sakai:subject'], 34)}</div>
+                <div class="slideDownButton" onClick="showSnippet('${i.id}')" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
+            </li>    
+	        <div class="messageSnippet read_${i['sakai:read']}" onClick="window.open('inbox.html','_blank')" id="snippetDiv_${i.id}" title="See full reminder">
+	            ${ellipsis(i['sakai:body'], 120)}
+	        </div>
+        </div>
         {forelse}
             <span>You have no reminders</span>
         {/for}
