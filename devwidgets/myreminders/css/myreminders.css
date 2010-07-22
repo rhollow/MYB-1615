@@ -35,7 +35,6 @@
     height: 27px;
     padding: 0px 10px 0px 15px;
     border-top: 1px solid #D4DADE;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     outline: none;
@@ -43,7 +42,6 @@
 
 .myreminders_widget .reminders_div .reminder:hover {
     /*background-color: #C6DEFF;*/
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     text-decoration: none;
@@ -66,7 +64,6 @@
 .myreminders_widget .reminders_div .checkDone {
     float: left;
     width: 25px;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
@@ -75,7 +72,6 @@
 .myreminders_widget .reminders_div .dueDate {
     float: left;
     width: 100px;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
@@ -85,7 +81,6 @@
 .myreminders_widget .reminders_div .subjectLine {
     float: left;
     width: 245px;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
@@ -97,7 +92,6 @@
     float: left;
     width: 20px;
     height: 25px;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     margin-left: 10px;
@@ -107,7 +101,6 @@
 .myreminders_widget .reminders_div .messageSnippet {
     display: none;
     max-height: 29px;
-    text-overflow: ellipsis;
     overflow: hidden;
     padding: 0px 25px 5px 15px;
     cursor: pointer;

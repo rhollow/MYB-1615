@@ -54,17 +54,6 @@
             $("#snippetDiv_" + id).slideDown("normal");
         }
     }
-    
-    var ellipsis = function(text, limit) {
-        var counter = 0, i = 0, code = false, temp;
-        if (text.length > limit) {
-            while (counter < limit) {
-                    
-            }
-            text = temp + "...";
-        }
-        return text;
-    }
 </script>
 
 <div class="myreminders_widget">
@@ -103,11 +92,11 @@
             <li class="reminder read_${i['sakai:read']}" id="li_${i.id}">
                 <div class="checkDone"><input type="checkbox" class="checkbox" title="Completed" onClick="taskDone('${i.id}')" /></div>  
                 <div class="dueDate ${compareDates(i['sakai:dueDate'])}" onClick="window.open('inbox.html','_blank')" title="Due ${getDateString(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
-                <div class="subjectLine ${compareDates(i['sakai:dueDate'])}" onClick="window.open('inbox.html','_blank')" title="${i['sakai:subject']}">${ellipsis(i['sakai:subject'], 34)}</div>
+                <div class="subjectLine ${compareDates(i['sakai:dueDate'])}" onClick="window.open('inbox.html','_blank')" title="${i['sakai:subject']}">${i['sakai:subject']}</div>
                 <div class="slideDownButton" onClick="showSnippet('${i.id}')" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
             </li>    
 	        <div class="messageSnippet read_${i['sakai:read']}" onClick="window.open('inbox.html','_blank')" id="snippetDiv_${i.id}" title="See full reminder">
-	            ${ellipsis(i['sakai:body'], 120)}
+	            ${i['sakai:body']}
 	        </div>
         </div>
         {forelse}
