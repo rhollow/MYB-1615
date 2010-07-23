@@ -311,8 +311,8 @@ sakai.myreminders = function(tuid, showSettings){
         var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         
         var d = new Date(date);
-        // something wrong with grabbing substring of year
-        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear();
+        var year = "" + d.getFullYear();
+        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + year.substring(2,4);
         return dateString;
     }
     
@@ -371,6 +371,11 @@ sakai.myreminders = function(tuid, showSettings){
         var results_length = data.results.length;
         for (var i = 0; i < results_length; i++) {
             $("#div_" + data.results[i].id).data("data", data.results[i]);
+            $("#li_" + data.results[i].id).addClass("read_" + data.results[i]["sakai:read"]);
+            $("#snippetDiv_" + data.results[i].id).addClass("read_" + data.results[i]["sakai:read"]);
+            
+            var pastDue = "" + sakai.myreminders.compareDates(data.results[i]["sakai:dueDate"]);
+            $("#date_pastDue_" + data.results[i].id + ", " + "#subject_pastDue_" + data.results[i].id).addClass(pastDue);
         }
     };
     

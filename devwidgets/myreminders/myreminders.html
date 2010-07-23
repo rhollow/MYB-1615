@@ -34,15 +34,14 @@
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
         <div id="div_${i.id}">
-            <li class="reminder read_${i['sakai:read']}" id="li_${i.id}">
+            <li class="reminder" id="li_${i.id}">
                 <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>  
                 {var dateString = sakai.myreminders.getDateString(i['sakai:dueDate'])}
-                {var pastDue = sakai.myreminders.compareDates(i['sakai:dueDate'])}
-                <div class="dueDate" title="Due ${dateString}"><a class="${pastDue}" href="/dev/inbox.html?message=${i.id}">${dateString}</a></div>
-                <div class="subjectLine" title="${i['sakai:subject']}"><a class="${pastDue}" href="/dev/inbox.html?message=${i.id}">${i['sakai:subject']}</a></div>
+                <div class="dueDate" title="Due ${dateString}"><a id="date_pastDue_${i.id}" href="/dev/inbox.html?message=${i.id}">${dateString}</a></div>
+                <div class="subjectLine" title="${i['sakai:subject']}"><a id="subject_pastDue_${i.id}" href="/dev/inbox.html?message=${i.id}">${i['sakai:subject']}</a></div>
                 <div class="slideDownButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
             </li>    
-	        <div class="messageSnippet read_${i['sakai:read']}" id="snippetDiv_${i.id}" title="See full reminder">
+	        <div class="messageSnippet" id="snippetDiv_${i.id}" title="See full reminder">
 	            <a href="/dev/inbox.html?message=${i.id}">${i['sakai:body']}</a>
 	        </div>
         </div>
