@@ -312,7 +312,7 @@ sakai.myreminders = function(tuid, showSettings){
         
         var d = new Date(date);
         // something wrong with grabbing substring of year
-        //var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear().substring(2, 4);
+        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear();
         return dateString;
     }
     
