@@ -10,7 +10,7 @@
         </div>
         
         <div class="reminders_div">
-            <ul class="reminders_list">
+            <ul class="reminders_list"><!--
                 <li class="reminder">
                     <span class="left_column"><input type="checkbox" name="reminder" value="transcripts" /></span><span class="middle_column">Fri Aug 22 2010</span>
                     <span class="right_column">Transcripts Due</span>
@@ -27,12 +27,13 @@
                     <span class="left_column"><input type="checkbox" name="reminder" value="drop_classes" /></span><span class="middle_column">Sun Sep 12 2010</span>
                     <span class="right_column">Drop Classes</span>
                 </li>
-            </ul>
+            --></ul>
         </div>
     </div>
     
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
+
         <div id="div_${i.id}">
             <li class="reminder" id="li_${i.id}">
                 <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>  
@@ -45,6 +46,7 @@
 	            <a href="/dev/inbox.html?message=${i.id}">${i['sakai:body']}</a>
 	        </div>
         </div>
+
         {forelse}
             <span>You have no reminders</span>
         {/for}

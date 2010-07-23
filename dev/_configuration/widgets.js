@@ -277,7 +277,7 @@ var Widgets = {
             "url":"/devwidgets/myfriends/myfriends.html"
         },
         "mylinks": {
-            "description":"My Links: favorite Berkeley sites from the campus directory",
+            "description":"My Links",
             "id":"mylinks",
             "name":"My Links",
             "personalportal":true,

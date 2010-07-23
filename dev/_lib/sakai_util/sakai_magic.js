@@ -1550,67 +1550,23 @@ sakai.api.User.login = function(credentials, callback) {
  * @param {Function} [callback] Callback function that is called after sending the log-in request to the server.
  */
 sakai.api.User.logout = function(callback) {
-
-    /*
-     * Array to store the data for the batch Ajax POST.
-     * Each object in this array consists out of
-     *     - the config service URL
-     *     - the used Ajax method
-     *     - the parameters for the service
-     */
-    var data = [];
-
     /*
      * POST request to the presence service,
      * which will change the user status to offline.
      */
-    data.push({
-        "url": sakai.config.URL.PRESENCE_SERVICE,
-        "method": "POST",
-        "parameters": {
-            "sakai:status": "offline",
-            "_charset_": "utf-8"
-        }
-    });
-
-    /*
-     * POST request to the logout service,
-     * which will destroy the session.
-     */
-    data.push({
-        "url": sakai.config.URL.LOGOUT_SERVICE,
-        "method": "POST",
-        "parameters": {
-            "sakaiauth:logout": "1",
-            "_charset_": "utf-8"
-        }
-    });
-
-    /*
-     * The batch Ajax post.
-     * If the request fails, it is probably because there is no current session.
-     */
     $.ajax({
-        url: sakai.config.URL.BATCH,
+        url: sakai.config.URL.PRESENCE_SERVICE,
         type: "POST",
         data: {
-            requests: $.toJSON(data)
+            "sakai:status": "offline",
+            "_charset_": "utf-8"
         },
-        success: function(data){
-
-            // Call callback function if set
-            if (typeof callback === "function") {
-                callback(true, data);
-            }
-
-        },
-        error: function(xhr, textStatus, thrownError){
-
-            // Call callback function if set
-            if (typeof callback === "function") {
-                callback(false, xhr);
-            }
-
+        complete: function(xhr, textStatus) {
+            /*
+             * Redirect to the standard logout servlet, which
+             * will destroy the session.
+             */
+            window.location = sakai.config.URL.LOGOUT_SERVICE;
         }
     });
 
@@ -2140,7 +2096,7 @@ sakai.api.Widgets.loadWidgetData = function(id, callback) {
 
 
 
-/*
+/**
  * Will be used for detecting widget declerations inside the page and load those
  * widgets into the page
  */
@@ -2163,6 +2119,14 @@ sakai.api.Widgets.widgetLoader = {
         sakai.api.Widgets.widgetLoader.loaded.push(obj);
     },
 
+    /**
+     * Load the actual widgets
+     * @param {String} id The id of the widget
+     * @param {Boolean} showSettings
+     *  true  : render the settings mode of the widget
+     *  false : render the view mode of the widget
+     * @param {String} context The context of the widget (e.g. siteid)
+     */
     loadWidgets : function(id, showSettings, context){
 
         // Configuration variables
@@ -2768,6 +2732,9 @@ sakai.api.Widgets.removeWidgetData = function(id, callback) {
  */
 (function($){
 
+    /**
+     * Load JavaScript and CSS dynamically
+     */
     $.Load = {};
 
     /**

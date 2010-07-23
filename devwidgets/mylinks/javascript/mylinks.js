@@ -41,49 +41,52 @@ sakai.mylinks = function (tuid, showSettings) {
     // Templates
     var mylinksListTemplate = "mylinks_list_template";
 
-    var saveLinkList = function (updatedList) {
-        sakai.api.Widgets.saveWidgetData(tuid, updatedList);
-    };
+    // Data files and paths
+    var userLinks = "my_links";
+    var linksDataNode = "/_user" + sakai.data.me.profile.path + "/private/" + userLinks;
 
+    /**
+     * write the users links to JCR
+     * @param {object} the current state of the users links list
+    */
+    var saveLinkList = function (updatedList) {
+        sakai.api.Server.saveJSON(linksDataNode, updatedList);
+    };
 
     /**
      * saves the new list (or list order) to the server
-     * @param {String} a jQuery object containing the moved item
-     * @param {String} an index of the new position
-     * @param {String} a jQuery object containing the current list in the new order
+     * @param {Object} a jQuery object containing the moved item
+     * @param {Number} an index of the new position
+     * @param {Object} a jQuery object containing the current list in the new order
     */
     var saveNewOrder = function (item, requestedPosition, movables) {
-
-        // retreave objects
+        // retrieve objects
         var updatedList = currentListObj(movables);
-
         // push data to server
         saveLinkList(updatedList);
     };
 
     /**
      * return the proper js Obj to store on the server
-     * @param {String} a jQuery object containing the current list
+     * @param {Object} a jQuery object containing the current list
     */
     var currentListObj = function (movables) {
         var listObj = {};
         var list = [];
 
         // loop through movables, retrieve data and return it as an array
-        movables.each(function(idx, movable){
+        movables.each(function(idx, movable){                         
             var $link = $("a", movable);
             var record = {
                 id :   $link.attr("id"),
                 name : $link.text(),
                 url :  $link.attr("href")
-            }
+            };
             list.push(record);
         });
         listObj.links = list;
-
         return listObj;
     };
-
 
     var initDraggables = function () {
         fluid.reorderList($draggableList, {
@@ -103,89 +106,113 @@ sakai.mylinks = function (tuid, showSettings) {
 
     var defaultLinks = {
         links : [
+            {   id : "asuc",
+                name : "ASUC",
+                url : "http://www.asuc.org"
+            },
             {
-                id :   "bear_facts",
+                id : "atoz_sites",
+                name : "Berkeley Sites (A-Z)",
+                url : "http://www.berkeley.edu/a-z/a.shtml"
+            },
+            {
+                id : "bear_facts",
                 name : "Bear Facts",
-                url :  "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome"
+                url : "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome"
             },
             {
-                id :   "bspace",
+                id : "student_services",
+                name : "Student Services",
+                url : "http://www.berkeley.edu/students"
+            },
+            {
+                id : "bspace",
                 name : "bSpace",
-                url :  "http://bspace.berkeley.edu"
+                url : "http://bspace.berkeley.edu",
+                popup_description : "Homework assignments, lecture slides, syllabi, and class resources."
             },
             {
-                id :   "calmail",
+                id : "calmail",
                 name : "CalMail",
-                url :  "http://calmail.berkeley.edu"
+                url : "http://calmail.berkeley.edu",
+                popup_description : "Read and manage your university email."
             },
             {
-                id :   "schedule_of_classes",
-                name : "Schedule of Classes",
-                url :  "http://schedule.berkeley.edu"
+                id : "campus_bookstore",
+                name : "Campus Bookstore",
+                url : "http://www.bkstr.com/CategoryDisplay/10001-9604-10433-1"
             },
             {
-                id :   "tele-bears",
-                name : "Tele-BEARS",
-                url :  "http://telebears.berkeley.edu"
+                id : "dars",
+                name : "DARS",
+                url : "https://marin.berkeley.edu/darsweb/servlet/ListAuditsServlet"
             },
             {
-                id :   "campus_textbook_store",
-                name : "Campus Textbook Store",
-                url :  "http://www.bkstr.com/CategoryDisplay/10001-9604-10433-1"
+                id : "decal",
+                name : "DeCal Courses",
+                url : "http://www.decal.org"
             },
             {
-                id :   "how_to_pick_classes",
-                name : "How to pick classes / plan your schedule",
-                url :  "http://asuc.org/newsite/scheduleplanning"
-            },
-            {
-                id :   "public_service",
+                id : "public_service",
                 name : "Public Service",
-                url :  "http://calcorps.berkeley.edu/"
+                url : "http://calcorps.berkeley.edu"
             },
             {
-                id :   "asuc",
-                name : "ASUC (Student Government)",
-                url :  "http://www.asuc.org"
+                id : "class_schedule",
+                name : "Schedule of Classes",
+                url : "http://schedule.berkeley.edu"
             },
             {
-                id :   "decal",
-                name : "DeCal courses",
-                url :  "http://www.decal.org/"
-            }
+                id : "schedule_planning",
+                name : "Schedule Planning Tools",
+                url : "http://asuc.org/newsite/scheduleplanning"
+            },
+            {
+                id : "resource_guide",
+                name : "Resource Guide for Students",
+                url : "http://resource.berkeley.edu"
+            },
+            {
+                id: "tele-bears",
+                "name": "Tele-BEARS",
+                url: "http://telebears.berkeley.edu"
+            }  
         ]
-    };
+};
 
     var getDefaultList = function () {
          return defaultLinks;
     };
 
     /**
-     * Retreives the current list of links for the current user
-     * if the user does have any links, returns the default list
+     * initializes a list of links for the user
+     * if the user does have any links, uses the default list and saves it back to the users data
+     * @param {Boolean} whether the loadJSON got it's data
+     * @param {Object} contains the users links record
      */
 
-    var getLinkList = function () {
-
-        sakai.api.Widgets.loadWidgetData(tuid, function(success, data) {
-            var json;
-            if (success) {
-                // load the users link list
-                json = data;
-                createLinkList(json, true);
-             } else {
-                // load the default link list and use that
-                var defaultLinksList = getDefaultList();
-                createLinkList(defaultLinksList, false);
-                // save the default link list back to the server
-                saveLinkList(defaultLinks);
-            }
-        });
-
+    var loadLinksList = function (success, data) {
+        if (success) {
+            // load the users link list from data
+            createLinkList(data, true);
+         } else {
+            // load the default link list and use that
+            var defaultLinksList = getDefaultList();
+            createLinkList(defaultLinksList, false);
+            // save the default link list back to the server
+            saveLinkList(defaultLinks);
+        }
     };
 
+    /**
+     * Set up the widget
+     * grab the users link data, then fire callback loadLinksList
+     * @param {Boolean} whether the loadJSON got it's data
+     * @param {Object} contains the users links record
+     */
+
     var doInit = function() {
-        getLinkList();
+        sakai.api.Server.loadJSON(linksDataNode, loadLinksList);
     };
 
     doInit();

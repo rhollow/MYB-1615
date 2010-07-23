@@ -22,7 +22,8 @@
 /* List of links */
 .mylinks_widget .link_list {overflow: auto; max-height: 200px;}
 .mylinks_widget .link_list li {list-style: none;}
-.mylinks_widget .link_list .link {
+
+.mylinks_widget .link_list a {
     display: block;
     padding: 6px 10px 5px 40px;
     border-bottom: 1px solid #E8E8E8;
@@ -31,8 +32,9 @@
     white-space: nowrap;
     outline: none;
 }
-.mylinks_widget .link_list .link:hover {
-    background-image: url("/devwidgets/mylinks/images/link_bg.jpg");
+.mylinks_widget .link_list a:hover 
+{
+    background-image: url("/devwidgets/mylinks/images/grab_handle.png");
     background-repeat: no-repeat;
     background-position: 10px 3px;
     background-color: #C6DEFF;
