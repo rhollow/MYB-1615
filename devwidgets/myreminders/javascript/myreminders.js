@@ -452,7 +452,7 @@ sakai.myreminders = function(tuid, showSettings){
     };
 
     var doInit = function(){
-        getRemindersList();
+        getRemindersList("created");
     };
 
     doInit();
