@@ -19,6 +19,10 @@
 
 var sakai = sakai || {};
 
+// move this to the global config.js ??
+// the query at this URL will get sakai:type='notice' of sakai:category='reminder' with taskState as a request parameter
+sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE = "/var/message/notice/reminder_taskstate.json";
+
 /**
  * Initialize the My Reminders widget
  * @param {String} tuid unique id of the widget
@@ -29,11 +33,35 @@ sakai.myreminders = function(tuid, showSettings){
     // Page Elements
     var $rootel = $("#" + tuid);
     var $remindersList = $(".reminders_list", $rootel);
-    
+
     // Template
     var myremindersTemplate = "myreminders_template";
-    
-    var reminders = {
+
+    /**
+     * Formats a date to something like Mon 1/1/10
+     * @param {Object} date UTF string
+     */
+    sakai.myreminders.getDateString = function(date){
+        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        var d = new Date(date);
+        var year = "" + d.getFullYear();
+        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + year.substring(2, 4);
+        return dateString;
+    }
+
+    /**
+     * Checks whether a date has passed, and returns a class name
+     * @param {Object} date UTF string
+     */
+    sakai.myreminders.compareDates = function(date){
+        var dueDate = new Date(date);
+        var today = new Date();
+
+        return (today > dueDate) ? "pastDue" : "";
+    }
+
+    var mockreminders = {
         "items": 25,
         "total": 3,
         "results": [{
@@ -306,32 +334,9 @@ sakai.myreminders = function(tuid, showSettings){
             }]
         }]
     };
-    
-    /**
-     * Formats a date to something like Mon 1/1/10
-     * @param {Object} date UTF string
-     */
-    sakai.myreminders.getDateString = function(date){
-        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        
-        var d = new Date(date);
-        var year = "" + d.getFullYear();
-        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + year.substring(2,4);
-        return dateString;
-    }
-    
-    /**
-     * Checks whether a date has passed, and returns a class name
-     * @param {Object} date UTF string
-     */
-    sakai.myreminders.compareDates = function(date){
-        var dueDate = new Date(date);
-        var today = new Date();
-        
-        return (today > dueDate) ? "pastDue" : "";
-    }
-    
+
     var lastShown = null;
+
     /**
      * Toggles the showing of a reminder's snippet
      * @param {Object} id the id of the reminder whose snippet is being toggled
@@ -355,7 +360,38 @@ sakai.myreminders = function(tuid, showSettings){
             $("#snippetDiv_" + id).slideDown("normal");
         }
     }
-    
+
+    /**
+     * Updates specified property of a reminder with the specified value
+     * @param {Object} url jcr:path of the reminder being updated
+     * @param {Object} propname Data property that you are providing a value for
+     * @param {Object} propvalue Value for the data property
+     * @param {Object} callback Function to be called on completion
+     */
+    var updateReminder = function(url, propname, propvalue, callback){
+        var data = {};
+        data[propname] = propvalue;
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            success: function(data, textStatus, xhr){
+                alert("updated " + propname + " to " + propvalue + "n" + xhr.responseText);
+                if (typeof callback !== "undefined") {
+                    callback();
+                }
+            },
+            error: function(xhr, textStatus, thrownError){
+                alert("Updating " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
+                " and thrownError = " +
+                thrownError +
+                "n" +
+                xhr.responseText);
+            },
+            dataType: 'json'
+        });
+    };
+
     /**
      * Listens for a checkbox being marked to indicate that the reminder has been completed
      * @param {Object} evt click
@@ -363,16 +399,17 @@ sakai.myreminders = function(tuid, showSettings){
     $(".s3s-reminder-checkbox").live("click", function(evt){
         var id = evt.target.id;
         id = id.split("_");
-        
+
         var reminderDiv = $("#div_" + id[id.length - 1]);
         var reminderData = reminderDiv.data("data");
         var jcr_path = reminderData["jcr:path"];
-        
-        reminderDiv.slideUp("normal", function(){
-            reminderDiv.remove;
+        updateReminder(jcr_path, "taskState", "completed", function(){
+            reminderDiv.slideUp("normal", function(){
+                reminderDiv.remove;
+            });
         });
     })
-    
+
     /**
      * Listens for a click to show/hide a reminder's snippet
      * @param {Object} evt click
@@ -380,23 +417,24 @@ sakai.myreminders = function(tuid, showSettings){
     $(".slideButton").live("click", function(evt){
         var id = evt.target.id;
         id = id.split("_");
-        
+
         showSnippet(id[id.length - 1]);
-    })
-    
+    });
+
     /**
      * Calls trimpath to populate the widget, attaches data to each reminder node, styles according to read/unread/past due status
      * @param {Object} data JSON containing an array called "results" which contains the reminders
      */
     var createRemindersList = function(data){
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
-        
+
+        // TODO: BREAK OUT TO ANOTHER FUNCTION FOR READABILITY
         var results_length = data.results.length;
         for (var i = 0; i < results_length; i++) {
             $("#div_" + data.results[i].id).data("data", data.results[i]);
             $("#li_" + data.results[i].id).addClass("read_" + data.results[i]["sakai:read"]);
             $("#snippetDiv_" + data.results[i].id).addClass("read_" + data.results[i]["sakai:read"]);
-            
+
             var pastDue = "" + sakai.myreminders.compareDates(data.results[i]["sakai:dueDate"]);
             $("#date_pastDue_" + data.results[i].id + ", " + "#subject_pastDue_" + data.results[i].id).addClass(pastDue);
         }
@@ -405,38 +443,66 @@ sakai.myreminders = function(tuid, showSettings){
         var subjectWidth = totalWidth - 25 - 100 - 20 - 30; // 25 for checkbox, 100 for due date, 20 for slide button, 30 for misc.
         $(".subjectLine").css("width", subjectWidth);
     };
-    
+
     /**
-     * returns the mock data
+     * Merges two JSON arrays, appending the second array's results to the first
+     * @param {Object} reminders1 First JSON array with three properties: items (int), total (int), results (array of reminders)
+     * @param {Object} reminders2 Second JSON array with three properties: items (int), total (int), results (array of reminders)
      */
-    var fetchData = function(){
-        return reminders;
+    var merge = function(reminders1, reminders2){
+        if (typeof reminders1 !== "undefined") {
+            if (typeof reminders2 !== "undefined") {
+                reminders1.items = reminders1.items + reminders2.items;
+                reminders1.total = reminders1.total + reminders2.total;
+                reminders1.results.concat(reminders2.results);
+                return reminders1;
+            }
+        }
+        else {
+            alert("Got no reminders to merge");
+        }
     };
-    
+
     /**
      * Fetches the data used to populate the widget
+     * @param {Object} taskState Query value for a reminder's taskState property
+     * @param {Object} callback Function to be called on completion
      */
-    var getRemindersList = function(){
-        sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
-            if (success) {
-                // load the user's reminders
-                createRemindersList(data);
+    var getRemindersList = function(taskState, callback){
+        var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=" + taskState;
+        createRemindersList(mockreminders);
+
+        $.ajax({
+            url: dataURL,
+            cache: false,
+            success: function(data){
+                if (data.results) {
+                    createRemindersList(data);
+                }
+                else {
+                    createRemindersList(mockreminders);
+                }
+                if (typeof callback !== "undefined") {
+                    callback();
+                }
+            },
+            error: function(xhr, textStatus, thrownError){
+                alert("Getting Reminders failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
+                " and thrownError=" +
+                thrownError +
+                "\n" +
+                xhr.responseText);
             }
-            else {
-                //alert("Error: Couldn't load reminders list from json [getRemindersList]");
-                var mockreminders = fetchData();
-                createRemindersList(mockreminders);
-            }
-        });
+        })
     };
-    
+
     /**
      * Initial function
      */
     var doInit = function(){
         getRemindersList();
     };
-    
+
     doInit();
 };
 
