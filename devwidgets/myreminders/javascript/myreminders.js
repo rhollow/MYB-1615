@@ -451,6 +451,51 @@ sakai.myreminders = function(tuid, showSettings){
         })
     };
 
+    var merge = function(reminders1, reminders2) {
+    	if (typeof reminders1 !== "undefined") {
+    		if (typeof reminders2 !== "undefined") {
+    			reminders1.items = reminders1.items + reminders2.items;
+    			reminders1.total = reminders1.total + reminders2.total;
+    			reminders1.results.concat(reminders2.results);
+    			return reminders1;
+    		}
+    	}
+    	else {
+    		alert("Got no reminders to merge");
+    	}
+    };
+    
+    sakai.myreminders.taskDone = function(id, url) {
+		var propertyToUpdate = {"taskState":"completed"};
+	      updateReminder(url, propertyToUpdate, function(){
+	    	  $("#div_"+ id).slideUp("normal", function(){
+	    		  $(this).remove;
+	    	  });
+	      });
+    };
+     
+    /*
+     * updates the JCR not at the URL with property name, property value pairs
+     * the dataObj is a json  like {"taskState":"completed"}
+     */
+    var updateReminder = function (url, props, callback) {
+    	$.ajax({
+    		  type: 'POST',
+    		  url: url,
+    		  data: props,
+    		  success: function(data, textStatus, xhr){
+                  if (typeof callback !== "undefined") {
+                      callback();
+                  }
+    		  },
+              error: function(xhr, textStatus, thrownError) {
+              	alert("Updating " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus + 
+              			" and thrownError = " + thrownError + "\n" + xhr.responseText);
+              },
+    		  dataType: 'json'
+    		});
+    };
+    
     var doInit = function(){
         getRemindersList("created");
     };
