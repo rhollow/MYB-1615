@@ -44,7 +44,7 @@ sakai.myreminders = function(tuid, showSettings){
             "sakai:type": "internal",
             "sakai:messagebox": "inbox",
             "sakai:category": "reminder",
-            "sakai:id": "70896405574174eb091b85ee6be93d4f70558454",
+            "sakai:id": "37683cf926ee703a2a7a2a19bf298845c24a7712",
             "jcr:primaryType": "",
             "sakai:from": "Susan Hagstrom",
             "sakai:subject": "5th week deadline is approaching",
@@ -55,7 +55,7 @@ sakai.myreminders = function(tuid, showSettings){
             "sakai:dueDate": "2010-09-12T06:22:46-07:00",
             "sakai:completeDate": "",
             "_charset_": "utf-8",
-            "id": "70896405574174eb091b85ee6be93d4f70558454",
+            "id": "37683cf926ee703a2a7a2a19bf298845c24a7712",
             "userTo": [{
                 "userid": "eli",
                 "hash": "/e/el/eli/eli",
@@ -307,6 +307,23 @@ sakai.myreminders = function(tuid, showSettings){
         }]
     };
     
+    sakai.myreminders.getDateString = function(date){
+        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        var d = new Date(date);
+        // something wrong with grabbing substring of year
+        //var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear().substring(2, 4);
+        return dateString;
+    }
+    
+    sakai.myreminders.compareDates = function(date){
+        var dueDate = new Date(date);
+        var today = new Date();
+        
+        return (today > dueDate) ? "pastDue" : "";
+    }
+    
+    
     var lastShown = null;
     var showSnippet = function(id){
         if ($("#snippetDiv_" + id).is(":visible")) {
@@ -328,23 +345,33 @@ sakai.myreminders = function(tuid, showSettings){
         }
     }
     
+    $(".s3s-reminder-checkbox").live("click", function(evt){
+        var id = evt.target.id;
+        id = id.split("_");
+        
+        var reminderDiv = $("#div_" + id[id.length - 1]);
+        var reminderData = reminderDiv.data("data");
+        var jcr_path = reminderData["jcr:path"];
+        
+        reminderDiv.slideUp("normal", function(){
+            reminderDiv.remove;
+        });
+    })
+    
+    $(".slideDownButton").live("click", function(evt){
+        var id = evt.target.id;
+        id = id.split("_");
+        
+        showSnippet(id[id.length - 1]);
+    })
+    
     var createRemindersList = function(data){
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
         
-        // NOT WORKING
-        for (i in data.results) {
-            $("#div_" + i.id).data(i);
+        var results_length = data.results.length;
+        for (var i = 0; i < results_length; i++) {
+            $("#div_" + data.results[i].id).data("data", data.results[i]);
         }
-        
-        $(".checkbox").check(function() {
-            var today = new Date();
-            $(this).parent().parent().parent().data('sakai:completeDate', today);
-            $(this).parent().parent().parent().slideUp("normal", function(){
-                $(this).remove;
-            } );
-        })
-        
-        $(".slideDownButton").click(showShippet($(this).parent().parent().data('sakai:id')));
     };
     
     var fetchData = function(){

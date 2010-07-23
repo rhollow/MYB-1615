@@ -51,8 +51,8 @@
 }
 
 .myreminders_widget .reminders_div .read_true {font-weight: normal; background-color: #E6E6E6;}
-.myreminders_widget .reminders_div .pastDue {font-weight: bold; color: red;}
 .myreminders_widget .reminders_div .read_false {font-weight: bold; background-color: white;}
+.myreminders_widget .reminders_div .pastDue {font-weight: bold; color: red;}
 
 .myreminders_widget .reminders_div .slideUpButton {
     background-image: url("/devwidgets/myreminders/images/link_bg.jpg");
@@ -61,6 +61,8 @@
 }
 
 /* Individual reminder */
+.reminders_div a {text-decoration: none;}
+
 .myreminders_widget .reminders_div .checkDone {
     float: left;
     width: 25px;
