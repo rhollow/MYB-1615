@@ -331,11 +331,12 @@ sakai.links = function(){
     var updateLinkList = function(operation, id, data){
         var listObj = data;
         var allLinks = getDirectory();
+        var toAdd;
         // User added a link to their data list.
-        if (operation == "add") {
+        if (operation === "add") {
             for (var i = 0; i < allLinks.links.length; i++) {
                 if (id === allLinks.links[i].id || id === allLinks.links[i].id + "_label") {
-                    var toAdd = {
+                    toAdd = {
                         id: allLinks.links[i].id,
                         name: allLinks.links[i].name,
                         url: allLinks.links[i].url
@@ -345,17 +346,17 @@ sakai.links = function(){
             }
         }
         // User removed a link from their data list.
-        if (operation == "remove") {
+        if (operation === "remove") {
             var newList = [];
-            for (var i = 0; i < listObj.links.length; i++) {
-                if (id === listObj.links[i].id || id === listObj.links[i].id + "_label") {
+            for (var j = 0; j < listObj.links.length; j++) {
+                if (id === listObj.links[j].id || id === listObj.links[j].id + "_label") {
                     // do nothing...
                 }
                 else {
-                    var toAdd = {
-                        id: listObj.links[i].id,
-                        name: listObj.links[i].name,
-                        url: listObj.links[i].url
+                    toAdd = {
+                        id: listObj.links[j].id,
+                        name: listObj.links[j].name,
+                        url: listObj.links[j].url
                     };
                     newList.push(toAdd);
                 }
@@ -366,7 +367,7 @@ sakai.links = function(){
             // throw an error...
         }
         saveLinkList(listObj);
-    }
+    };
     
     /**
      * Sets the titles for the checkboxes' tooltips, based on
@@ -432,7 +433,7 @@ sakai.links = function(){
             var newID = id.slice(0, pos);
             var isFeatured = false;
             for (var k = 0; k < allLinks.featured.length; k++) {
-                if (allLinks.featured[k] == newID) {
+                if (allLinks.featured[k] === newID) {
                     isFeatured = true;
                 }
             }
@@ -454,8 +455,11 @@ sakai.links = function(){
             }
             setTitles();
         });
-    };    
+    };
     
+    /**
+     * A getter function that simply returns the directory of links.
+     */
     var getDirectory = function(){
         return directory;
     };
