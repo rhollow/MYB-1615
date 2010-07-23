@@ -400,6 +400,10 @@ sakai.myreminders = function(tuid, showSettings){
             var pastDue = "" + sakai.myreminders.compareDates(data.results[i]["sakai:dueDate"]);
             $("#date_pastDue_" + data.results[i].id + ", " + "#subject_pastDue_" + data.results[i].id).addClass(pastDue);
         }
+
+        var totalWidth = $("#li_" + data.results[0].id).width();
+        var subjectWidth = totalWidth - 25 - 100 - 20 - 30; // 25 for checkbox, 100 for due date, 20 for slide button, 30 for misc.
+        $(".subjectLine").css("width", subjectWidth);
     };
     
     /**

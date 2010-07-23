@@ -80,7 +80,6 @@
 
 .myreminders_widget .reminders_div .subjectLine {
     float: left;
-    width: 245px;
     white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
