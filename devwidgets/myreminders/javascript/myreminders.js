@@ -19,12 +19,18 @@
 
 var sakai = sakai || {};
 
+// move this to the global config.js ??
+// the query at this URL will get sakai:type='notice' of sakai:category='reminder' with taskState as a request parameter
+sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE = "/var/message/notice/reminder_taskstate.json";
+
 /**
  * Initialize the My Reminders widget
  * @param {String} tuid unique id of the widget
  * @param {Boolean} showSettings show the settings of the widget or not
  */
 sakai.myreminders = function(tuid, showSettings){
+
+    // TODO: ADD JDOC COMMENTS FOR DOCUMENTATION
 
     // Page Elements
     var $rootel = $("#" + tuid);
@@ -49,7 +55,7 @@ sakai.myreminders = function(tuid, showSettings){
         return (today > dueDate) ? "pastDue" : "";
     }
 
-    var reminders = {
+    var mockreminders = {
         "items": 25,
         "total": 3,
         "results": [{
@@ -345,18 +351,43 @@ sakai.myreminders = function(tuid, showSettings){
         }
     }
 
-    $(".s3s-reminder-checkbox").live("click", function(evt){
+    var updateReminder = function(url, propname, propvalue, callback) {
+        var data = {};
+        data[propname] = propvalue;
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            success: function(data, textStatus, xhr) {
+                alert("updated " + propname + " to " + propvalue + "n" + xhr.responseText);
+                if (typeof callback !== "undefined") {
+                    callback();
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+                alert("Updating " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
+                " and thrownError = " + thrownError + "n" + xhr.responseText);
+            },
+            dataType: 'json'
+        });
+    };
+
+    $(".s3s-reminder-checkbox").live("click",
+    function(evt) {
         var id = evt.target.id;
         id = id.split("_");
 
         var reminderDiv = $("#div_" + id[id.length - 1]);
         var reminderData = reminderDiv.data("data");
         var jcr_path = reminderData["jcr:path"];
-
-        reminderDiv.slideUp("normal", function(){
-            reminderDiv.remove;
+        updateReminder(jcr_path, "taskState", "completed",
+        function() {
+            reminderDiv.slideUp("normal",
+            function() {
+                reminderDiv.remove;
+            });
         });
-    })
+    });
 
     $(".slideDownButton").live("click", function(evt){
         var id = evt.target.id;
@@ -368,6 +399,7 @@ sakai.myreminders = function(tuid, showSettings){
     var createRemindersList = function(data){
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
 
+        // TODO: BREAK OUT TO ANOTHER FUNCTION FOR READABILITY
         var results_length = data.results.length;
         for (var i = 0; i < results_length; i++) {
             $("#div_" + data.results[i].id).data("data", data.results[i]);
@@ -379,22 +411,44 @@ sakai.myreminders = function(tuid, showSettings){
         }
     };
 
-    var fetchData = function(){
-        return reminders;
+    var merge = function(reminders1, reminders2) {
+        if (typeof reminders1 !== "undefined") {
+            if (typeof reminders2 !== "undefined") {
+                reminders1.items = reminders1.items + reminders2.items;
+                reminders1.total = reminders1.total + reminders2.total;
+                reminders1.results.concat(reminders2.results);
+                return reminders1;
+            }
+        }
+        else {
+            alert("Got no reminders to merge");
+        }
     };
 
-    var getRemindersList = function(){
-        sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
-            if (success) {
-                // load the user's reminders
-                createRemindersList(data);
+    var getRemindersList = function(taskState, callback){
+        var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=" + taskState;
+        //createRemindersList(mockreminders);
+
+        $.ajax({
+            url: dataURL,
+            cache: false,
+            success: function(data) {
+                if (data.results) {
+                    createRemindersList(data);
+                }
+                else {
+                    createRemindersList(mockreminders);
+                }
+                if (typeof callback !== "undefined") {
+                    callback();
+                }
+
+            },
+            error: function(xhr, textStatus, thrownError) {
+                alert("Getting Reminders failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
+                        " and thrownError=" + thrownError + "\n" + xhr.responseText);
             }
-            else {
-                //alert("Error: Couldn't load reminders list from json [getRemindersList]");
-                var mockreminders = fetchData();
-                createRemindersList(mockreminders);
-            }
-        });
+        })
     };
 
     var doInit = function(){
