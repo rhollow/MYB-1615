@@ -1,45 +1,14 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/myreminders/css/myreminders.css" />
 
-<script type="text/javascript">
-
-    var taskDone = function(id){
-       $("#div_" + id).slideUp("normal", function(){
-            $(this).remove;
-        });
-    }
-
-    var lastShown = null;
-
-    var showSnippet = function(id){
-        if ($("#snippetDiv_" + id).is(":visible")) {
-            $("#li_" + id).removeClass("slideUpButton");
-            $("#showSnippetDiv_" + id).attr("title", "Show snippet");
-            $("#snippetDiv_" + id).slideUp("normal");
-            lastShown = null;
-        } else {
-            if(lastShown) {
-                $("#li_" + lastShown).removeClass("slideUpButton");
-                $("#showSnippetDiv_" + lastShown).attr("title", "Show snippet");
-                $("#snippetDiv_" + lastShown).slideUp("normal");
-            }
-            lastShown = id;
-            $("#li_" + id).addClass("slideUpButton");
-            $("#showSnippetDiv_" + id).attr("title", "Hide snippet");
-            $("#snippetDiv_" + id).slideDown("normal");
-        }
-    }
-
-</script>
-
 <div class="myreminders_widget">
     <div class="fl-widget-content">
-
+        
         <div class="reminders_header">
             <span class="left_header">Due</span>
             <span class="right_header">Subject</span>
         </div>
-
+        
         <div class="reminders_div">
             <ul class="reminders_list">
                 <li class="reminder">
@@ -61,30 +30,30 @@
             </ul>
         </div>
     </div>
-
+    
     <ul id="myreminders_template" style="display:none"><!--
         {for i in results}
 
-           <div id="div_${i.id}">
+        <div id="div_${i.id}">
             <li class="reminder read_${i['sakai:read']}" id="li_${i.id}">
-                <div class="checkDone"><input type="checkbox" class="checkbox" title="Completed" onClick="taskDone('${i.id}')" /></div>
-                <div class="dueDate ${compareDates(i['sakai:dueDate'])}" title="Due ${getDateString(i['sakai:dueDate'])}">${getDateString(i['sakai:dueDate'])}</div>
-                <div class="subjectLine ${compareDates(i['sakai:dueDate'])}" title="${i['sakai:subject']}">${i['sakai:subject'], 34}</div>
-                <div class="slideDownButton" onClick="showSnippet('${i.id}')" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
-            </li>
+                <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>  
+                {var dateString = sakai.myreminders.getDateString(i['sakai:dueDate'])}
+                {var pastDue = sakai.myreminders.compareDates(i['sakai:dueDate'])}
+                <div class="dueDate" title="Due ${dateString}"><a class="${pastDue}" href="/dev/inbox.html?message=${i.id}">${dateString}</a></div>
+                <div class="subjectLine" title="${i['sakai:subject']}"><a class="${pastDue}" href="/dev/inbox.html?message=${i.id}">${i['sakai:subject']}</a></div>
+                <div class="slideDownButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
+            </li>    
 	        <div class="messageSnippet read_${i['sakai:read']}" id="snippetDiv_${i.id}" title="See full reminder">
-	            ${i['sakai:body'], 120}
+	            <a href="/dev/inbox.html?message=${i.id}">${i['sakai:body']}</a>
 	        </div>
         </div>
 
         {forelse}
-
             <span>You have no reminders</span>
-
         {/for}
         -->
     </ul>
-
+    
     <div class="fl-widget-options fl-fix">
         <div class="widget-options-inner">
             <ul>
@@ -98,3 +67,4 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/myreminders/javascript/myreminders.js"></script>
+

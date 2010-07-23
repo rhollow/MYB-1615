@@ -29,10 +29,10 @@ sakai.myreminders = function(tuid, showSettings){
     // Page Elements
     var $rootel = $("#" + tuid);
     var $remindersList = $(".reminders_list", $rootel);
-
+    
     // Template
     var myremindersTemplate = "myreminders_template";
-
+    
     var formatDate = function(datetime) {
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         var date = months[(parseInt(datetime.substring(5,7),10))-1]+" "+datetime.substring(8,10)+", "+datetime.substring(0,4)+" "+datetime.substring(11,19);
@@ -67,7 +67,7 @@ sakai.myreminders = function(tuid, showSettings){
             "sakai:type": "internal",
             "sakai:messagebox": "inbox",
             "sakai:category": "reminder",
-            "sakai:id": "70896405574174eb091b85ee6be93d4f70558454",
+            "sakai:id": "37683cf926ee703a2a7a2a19bf298845c24a7712",
             "jcr:primaryType": "",
             "sakai:from": "Susan Hagstrom",
             "sakai:subject": "5th week deadline is approaching",
@@ -78,7 +78,7 @@ sakai.myreminders = function(tuid, showSettings){
             "sakai:dueDate": "2010-09-12T06:22:46-07:00",
             "sakai:completeDate": "",
             "_charset_": "utf-8",
-            "id": "70896405574174eb091b85ee6be93d4f70558454",
+            "id": "37683cf926ee703a2a7a2a19bf298845c24a7712",
             "userTo": [{
                 "userid": "eli",
                 "hash": "/e/el/eli/eli",
@@ -329,9 +329,25 @@ sakai.myreminders = function(tuid, showSettings){
             }]
         }]
     };
-
+    
+    sakai.myreminders.getDateString = function(date){
+        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        var d = new Date(date);
+        // something wrong with grabbing substring of year
+        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear();
+        return dateString;
+    }
+    
+    sakai.myreminders.compareDates = function(date){
+        var dueDate = new Date(date);
+        var today = new Date();
+        
+        return (today > dueDate) ? "pastDue" : "";
+    }
+    
+    
     var lastShown = null;
-
     var showSnippet = function(id){
         if ($("#snippetDiv_" + id).is(":visible")) {
             $("#li_" + id).removeClass("slideUpButton");
@@ -351,30 +367,40 @@ sakai.myreminders = function(tuid, showSettings){
             $("#snippetDiv_" + id).slideDown("normal");
         }
     }
-
+    
+    $(".s3s-reminder-checkbox").live("click", function(evt){
+        var id = evt.target.id;
+        id = id.split("_");
+        
+        var reminderDiv = $("#div_" + id[id.length - 1]);
+        var reminderData = reminderDiv.data("data");
+        var jcr_path = reminderData["jcr:path"];
+        
+        reminderDiv.slideUp("normal", function(){
+            reminderDiv.remove;
+        });
+    })
+    
+    $(".slideDownButton").live("click", function(evt){
+        var id = evt.target.id;
+        id = id.split("_");
+        
+        showSnippet(id[id.length - 1]);
+    })
+    
     var createRemindersList = function(data){
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
-
-        // NOT WORKING
-        //for (i in data.results) {
-        //    $("#div_" + i.id).data(i);
-        //}
-
-        $(".checkbox").check(function() {
-            var today = new Date();
-            $(this).parent().parent().parent().data('sakai:completeDate', today);
-            $(this).parent().parent().parent().slideUp("normal", function(){
-                $(this).remove;
-            } );
-        })
-
-        $(".slideDownButton").click(showShippet($(this).parent().parent().data('sakai:id')));
+        
+        var results_length = data.results.length;
+        for (var i = 0; i < results_length; i++) {
+            $("#div_" + data.results[i].id).data("data", data.results[i]);
+        }
     };
-
+    
     var fetchData = function(){
         return reminders;
     };
-
+    
     var getRemindersList = function(){
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
             if (success) {
@@ -388,11 +414,11 @@ sakai.myreminders = function(tuid, showSettings){
             }
         });
     };
-
+    
     var doInit = function(){
         getRemindersList();
     };
-
+    
     doInit();
 };
 
