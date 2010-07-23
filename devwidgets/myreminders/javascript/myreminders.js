@@ -390,21 +390,23 @@ sakai.myreminders = function(tuid, showSettings){
     };
     
     sakai.myreminders.taskDone = function(id, url) {
-      updateReminder(url, "taskState", "completed", function(){
-    	  $("#div_"+ id).slideUp("normal", function(){
-    		  $(this).remove;
-    	  });
-      });
+		var propertyToUpdate = {"taskState":"completed"};
+	      updateReminder(url, propertyToUpdate, function(){
+	    	  $("#div_"+ id).slideUp("normal", function(){
+	    		  $(this).remove;
+	    	  });
+	      });
     };
      
-    
-    var updateReminder = function (url, propname, propvalue, callback) {
-    	var data = {};
-    	data[propname] = propvalue;
+    /*
+     * updates the JCR not at the URL with property name, property value pairs
+     * the dataObj is a json  like {"taskState":"completed"}
+     */
+    var updateReminder = function (url, props, callback) {
     	$.ajax({
     		  type: 'POST',
     		  url: url,
-    		  data: data,
+    		  data: props,
     		  success: function(data, textStatus, xhr){
                   if (typeof callback !== "undefined") {
                       callback();
