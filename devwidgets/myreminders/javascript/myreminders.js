@@ -307,6 +307,10 @@ sakai.myreminders = function(tuid, showSettings){
         }]
     };
     
+    /**
+     * Formats a date to something like Mon 1/1/10
+     * @param {Object} date UTF string
+     */
     sakai.myreminders.getDateString = function(date){
         var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         
@@ -316,6 +320,10 @@ sakai.myreminders = function(tuid, showSettings){
         return dateString;
     }
     
+    /**
+     * Checks whether a date has passed, and returns a class name
+     * @param {Object} date UTF string
+     */
     sakai.myreminders.compareDates = function(date){
         var dueDate = new Date(date);
         var today = new Date();
@@ -323,28 +331,35 @@ sakai.myreminders = function(tuid, showSettings){
         return (today > dueDate) ? "pastDue" : "";
     }
     
-    
     var lastShown = null;
+    /**
+     * Toggles the showing of a reminder's snippet
+     * @param {Object} id the id of the reminder whose snippet is being toggled
+     */
     var showSnippet = function(id){
         if ($("#snippetDiv_" + id).is(":visible")) {
-            $("#li_" + id).removeClass("slideUpButton");
+            $("#li_" + id).removeClass("reminder_expanded");
             $("#showSnippetDiv_" + id).attr("title", "Show snippet");
             $("#snippetDiv_" + id).slideUp("normal");
             lastShown = null;
         }
         else {
             if (lastShown) {
-                $("#li_" + lastShown).removeClass("slideUpButton");
+                $("#li_" + lastShown).removeClass("reminder_expanded");
                 $("#showSnippetDiv_" + lastShown).attr("title", "Show snippet");
                 $("#snippetDiv_" + lastShown).slideUp("normal");
             }
             lastShown = id;
-            $("#li_" + id).addClass("slideUpButton");
+            $("#li_" + id).addClass("reminder_expanded");
             $("#showSnippetDiv_" + id).attr("title", "Hide snippet");
             $("#snippetDiv_" + id).slideDown("normal");
         }
     }
     
+    /**
+     * Listens for a checkbox being marked to indicate that the reminder has been completed
+     * @param {Object} evt click
+     */
     $(".s3s-reminder-checkbox").live("click", function(evt){
         var id = evt.target.id;
         id = id.split("_");
@@ -358,13 +373,21 @@ sakai.myreminders = function(tuid, showSettings){
         });
     })
     
-    $(".slideDownButton").live("click", function(evt){
+    /**
+     * Listens for a click to show/hide a reminder's snippet
+     * @param {Object} evt click
+     */
+    $(".slideButton").live("click", function(evt){
         var id = evt.target.id;
         id = id.split("_");
         
         showSnippet(id[id.length - 1]);
     })
     
+    /**
+     * Calls trimpath to populate the widget, attaches data to each reminder node, styles according to read/unread/past due status
+     * @param {Object} data JSON containing an array called "results" which contains the reminders
+     */
     var createRemindersList = function(data){
         $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
         
@@ -379,10 +402,16 @@ sakai.myreminders = function(tuid, showSettings){
         }
     };
     
+    /**
+     * returns the mock data
+     */
     var fetchData = function(){
         return reminders;
     };
     
+    /**
+     * Fetches the data used to populate the widget
+     */
     var getRemindersList = function(){
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
             if (success) {
@@ -397,6 +426,9 @@ sakai.myreminders = function(tuid, showSettings){
         });
     };
     
+    /**
+     * Initial function
+     */
     var doInit = function(){
         getRemindersList();
     };
