@@ -47,11 +47,10 @@ sakai.mylinks = function (tuid, showSettings) {
 
     /**
      * write the users links to JCR
-     * @param {object} the current state of the users list
+     * @param {object} the current state of the users links list
     */
     var saveLinkList = function (updatedList) {
         sakai.api.Server.saveJSON(linksDataNode, updatedList);
-        //sakai.api.Widgets.saveWidgetData(tuid, updatedList);
     };
 
     /**
@@ -186,8 +185,8 @@ sakai.mylinks = function (tuid, showSettings) {
     };
 
     /**
-     * Retreives the current list of links for the current user
-     * if the user does have any links, returns the default list
+     * initializes a list of links for the user
+     * if the user does have any links, uses the default list and saves it back to the users data
      * @param {Boolean} whether the loadJSON got it's data
      * @param {Object} contains the users links record
      */
@@ -204,6 +203,13 @@ sakai.mylinks = function (tuid, showSettings) {
             saveLinkList(defaultLinks);
         }
     };
+
+    /**
+     * Set up the widget
+     * grab the users link data, then fire callback loadLinksList
+     * @param {Boolean} whether the loadJSON got it's data
+     * @param {Object} contains the users links record
+     */
 
     var doInit = function() {
         sakai.api.Server.loadJSON(linksDataNode, loadLinksList);

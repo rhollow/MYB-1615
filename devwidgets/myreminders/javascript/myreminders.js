@@ -19,6 +19,10 @@
 
 var sakai = sakai || {};
 
+// move this to the global config.js ??
+// the query at this URL will get sakai:type='notice' of sakai:category='reminder' with taskState as a request parameter
+sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE = "/var/message/notice/reminder_taskstate.json";
+
 /**
  * Initialize the My Reminders widget
  * @param {String} tuid unique id of the widget
@@ -26,14 +30,32 @@ var sakai = sakai || {};
  */
 sakai.myreminders = function(tuid, showSettings){
 
+    // TODO: ADD JDOC COMMENTS FOR DOCUMENTATION
+
     // Page Elements
     var $rootel = $("#" + tuid);
     var $remindersList = $(".reminders_list", $rootel);
-    
+
     // Template
     var myremindersTemplate = "myreminders_template";
-    
-    var reminders = {
+
+    sakai.myreminders.getDateString = function(date){
+        var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        var d = new Date(date);
+        var year = "" + d.getFullYear();
+        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + year.substring(2,4);
+        return dateString;
+    }
+
+    sakai.myreminders.compareDates = function(date){
+        var dueDate = new Date(date);
+        var today = new Date();
+
+        return (today > dueDate) ? "pastDue" : "";
+    }
+
+    var mockreminders = {
         "items": 25,
         "total": 3,
         "results": [{
@@ -44,7 +66,7 @@ sakai.myreminders = function(tuid, showSettings){
             "sakai:type": "internal",
             "sakai:messagebox": "inbox",
             "sakai:category": "reminder",
-            "sakai:id": "70896405574174eb091b85ee6be93d4f70558454",
+            "sakai:id": "37683cf926ee703a2a7a2a19bf298845c24a7712",
             "jcr:primaryType": "",
             "sakai:from": "Susan Hagstrom",
             "sakai:subject": "5th week deadline is approaching",
@@ -55,7 +77,7 @@ sakai.myreminders = function(tuid, showSettings){
             "sakai:dueDate": "2010-09-12T06:22:46-07:00",
             "sakai:completeDate": "",
             "_charset_": "utf-8",
-            "id": "70896405574174eb091b85ee6be93d4f70558454",
+            "id": "37683cf926ee703a2a7a2a19bf298845c24a7712",
             "userTo": [{
                 "userid": "eli",
                 "hash": "/e/el/eli/eli",
@@ -306,8 +328,9 @@ sakai.myreminders = function(tuid, showSettings){
             }]
         }]
     };
-    
+
     var lastShown = null;
+
     var showSnippet = function(id){
         if ($("#snippetDiv_" + id).is(":visible")) {
             $("#li_" + id).removeClass("slideUpButton");
@@ -327,48 +350,111 @@ sakai.myreminders = function(tuid, showSettings){
             $("#snippetDiv_" + id).slideDown("normal");
         }
     }
-    
-    var createRemindersList = function(data){
-        $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
-        
-        // NOT WORKING
-        for (i in data.results) {
-            $("#div_" + i.id).data(i);
-        }
-        
-        $(".checkbox").check(function() {
-            var today = new Date();
-            $(this).parent().parent().parent().data('sakai:completeDate', today);
-            $(this).parent().parent().parent().slideUp("normal", function(){
-                $(this).remove;
-            } );
-        })
-        
-        $(".slideDownButton").click(showShippet($(this).parent().parent().data('sakai:id')));
-    };
-    
-    var fetchData = function(){
-        return reminders;
-    };
-    
-    var getRemindersList = function(){
-        sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
-            if (success) {
-                // load the user's reminders
-                createRemindersList(data);
-            }
-            else {
-                //alert("Error: Couldn't load reminders list from json [getRemindersList]");
-                var mockreminders = fetchData();
-                createRemindersList(mockreminders);
-            }
+
+    var updateReminder = function(url, propname, propvalue, callback) {
+        var data = {};
+        data[propname] = propvalue;
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            success: function(data, textStatus, xhr) {
+                alert("updated " + propname + " to " + propvalue + "n" + xhr.responseText);
+                if (typeof callback !== "undefined") {
+                    callback();
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+                alert("Updating " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
+                " and thrownError = " + thrownError + "n" + xhr.responseText);
+            },
+            dataType: 'json'
         });
     };
-    
-    var doInit = function(){
-        getRemindersList();
+
+    $(".s3s-reminder-checkbox").live("click",
+    function(evt) {
+        var id = evt.target.id;
+        id = id.split("_");
+
+        var reminderDiv = $("#div_" + id[id.length - 1]);
+        var reminderData = reminderDiv.data("data");
+        var jcr_path = reminderData["jcr:path"];
+        updateReminder(jcr_path, "taskState", "completed",
+        function() {
+            reminderDiv.slideUp("normal",
+            function() {
+                reminderDiv.remove;
+            });
+        });
+    });
+
+    $(".slideDownButton").live("click", function(evt){
+        var id = evt.target.id;
+        id = id.split("_");
+
+        showSnippet(id[id.length - 1]);
+    })
+
+    var createRemindersList = function(data){
+        $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
+
+        // TODO: BREAK OUT TO ANOTHER FUNCTION FOR READABILITY
+        var results_length = data.results.length;
+        for (var i = 0; i < results_length; i++) {
+            $("#div_" + data.results[i].id).data("data", data.results[i]);
+            $("#li_" + data.results[i].id).addClass("read_" + data.results[i]["sakai:read"]);
+            $("#snippetDiv_" + data.results[i].id).addClass("read_" + data.results[i]["sakai:read"]);
+
+            var pastDue = "" + sakai.myreminders.compareDates(data.results[i]["sakai:dueDate"]);
+            $("#date_pastDue_" + data.results[i].id + ", " + "#subject_pastDue_" + data.results[i].id).addClass(pastDue);
+        }
     };
-    
+
+    var merge = function(reminders1, reminders2) {
+        if (typeof reminders1 !== "undefined") {
+            if (typeof reminders2 !== "undefined") {
+                reminders1.items = reminders1.items + reminders2.items;
+                reminders1.total = reminders1.total + reminders2.total;
+                reminders1.results.concat(reminders2.results);
+                return reminders1;
+            }
+        }
+        else {
+            alert("Got no reminders to merge");
+        }
+    };
+
+    var getRemindersList = function(taskState, callback){
+        var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=" + taskState;
+        //createRemindersList(mockreminders);
+
+        $.ajax({
+            url: dataURL,
+            cache: false,
+            success: function(data) {
+                if (data.results) {
+                    createRemindersList(data);
+                }
+                else {
+                    createRemindersList(mockreminders);
+                }
+                if (typeof callback !== "undefined") {
+                    callback();
+                }
+
+            },
+            error: function(xhr, textStatus, thrownError) {
+                alert("Getting Reminders failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
+                        " and thrownError=" + thrownError + "\n" + xhr.responseText);
+            }
+        })
+    };
+
+    var doInit = function(){
+        getRemindersList("created");
+    };
+
     doInit();
 };
 
