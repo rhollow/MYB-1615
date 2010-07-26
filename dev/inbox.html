@@ -76,17 +76,17 @@
 
                     <!-- DROP DOWN -->
                     <div class="drop-menu" id="inbox_compose_new">
-                        <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__ ...</a>
+                        <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__... </a>
                         <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
                             <ul>
                                 <li id="inbox_compose_message"><a href="javascript:;">__MSG__MESSAGE__</a></li>
                                 <li id="inbox_compose_announcement"><a href="javascript:;">__MSG__ANNOUNCEMENT__</a></li>
+                                <li id="inbox_compose_notification"><a href="javascript:;">Notification</a></li>
                             </ul>
                         </div>
                     </div>
 
                     <!-- FOLDERS -->
-
                     <div class="inbox-folders" id="inbox_folders">
 
                         <div class="if_titlebar">
@@ -354,6 +354,32 @@
                         <!-- Compose message -->
                         <div class="main_content_container">
 
+                            <div class="compose-message">
+                                <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
+                                    <div id="sendmessagecontainer">
+                                        <div id="widget_sendmessage" class="widget_inline"></div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <div class="bottom_decor"></div>
+
+                    </div>
+                    
+                    <!-- CREATE/EDIT NOTIFICATION (ADMIN VIEW) -->
+                    <div id="inbox_pane_createNotification" class="inbox_pane" style="display:none;">
+
+                        <div class="top_decor">
+
+                            <!-- Header -->
+                            <div class="inbox-heading">Create or Edit a Notification</div>
+                        </div>
+
+                        <!-- STILL NEEDS WORK Compose message -->
+                        <div class="main_content_container">
+                            TESTING, TESTING, TESTING...
                             <div class="compose-message">
                                 <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
                                     <div id="sendmessagecontainer">

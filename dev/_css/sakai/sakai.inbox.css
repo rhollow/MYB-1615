@@ -18,7 +18,6 @@
 /** SIDE NAV **/
 
 /** Compose a new ... **/
-
 .inbox_main .side_panel
 { width: 230px; margin:0; padding: 0; }
 
@@ -26,7 +25,7 @@
 { padding: 0 0 5px 15px; position: relative; z-index: 20000; width: 210px;}
 
 .inbox_main .drop-menu .compose_new_link
-{ background: transparent url(../../_images/create_dropdown_bg.png) no-repeat scroll left 0; color:#FFFFFF; display:block; font-weight:bold; height:20px; padding:3px 0 0 19px; }
+{ background: transparent url(../../_images/create_dropdown_bg.png) no-repeat scroll left 0; color:#FFFFFF; display:block; font-weight:bold; height:20px; padding:3px 0 0 13px; }
 
 .inbox_main .drop-box
 { background-color:#FFFFFF; border:1px solid #454A4F; margin: 0; padding:0; position: absolute; left: 22px; top: 22px; width: 128px; }
@@ -39,7 +38,6 @@
 
 
 /** Folders **/
-
 .inbox_main .inbox-folders
 { width: 230px; margin:0; padding-top: 2px; overflow: hidden; }
 
@@ -50,11 +48,11 @@
 { background:transparent url(/dev/_images/block_tl.png) no-repeat scroll left top; padding: 18px 0 0 17px; height:50px; }
 
 .inbox_main .inbox-folders .if_title
-{ background:transparent url(/dev/_images/recent_activity_icon.png) no-repeat scroll left top; color:#878A8C; font-size:1em; padding-left: 25px; }
+{ background:transparent url(/dev/_images/recent_activity_icon.png) no-repeat scroll left top; color:#878A8C; font-size:1em; padding-left: 25px; position: relative; top:-15px; }
 
 
 .inbox_main .inbox-folders .if_content
-{ border-left: 4px solid #D4DADE; border-right: 4px solid #D4DADE; padding: 1px 5px 1px 12px; margin: 0; }
+{ border-left: 3px solid #D4DADE; border-right: 3px solid #D4DADE; padding: 1px 5px 1px 12px; margin: 0; }
 
 .inbox_main .inbox-folders .if_content ul
 { padding-left: 20px; margin: 0; }
@@ -111,9 +109,8 @@
 { font-weight: bold; color: #333; font-size: 17px; padding: 4px 0 0 5px; }
 
 /** Table **/
-
 .inbox_main .main_content_container
-{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; }
+{ width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 400px; }
 
 .inbox_main .inbox-table
 { width: 670px; margin: 0; }
@@ -187,7 +184,7 @@
 { padding: 19px 0 0 0; }
 
 .inbox_main .compose-message
-{ background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; border-top: 3px solid #D5DBDF; }
+{ background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; }
 
 .inbox_main .compose-reply
 { background: #fff; width: 500px; height: auto; position: relative; top:-15px;}
@@ -215,6 +212,11 @@
 
 #sendmessage_dialog_footer
 { display: none; }
+
+
+/** INBOX CREATE & EDIT NOTIFICATIONS PANE **/
+.inbox_main #inbox_pane_createNotification
+{ padding: 19px 0 0 0; }
 
 
 /** INBOX MESSAGE VIEW PANE **/
