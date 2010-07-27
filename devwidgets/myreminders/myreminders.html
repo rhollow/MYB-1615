@@ -40,7 +40,7 @@
                 {var dateString = sakai.myreminders.getDateString(i['sakai:dueDate'])}
                 <div class="dueDate" title="Due ${dateString}"><a id="date_pastDue_${i.id}" href="/dev/inbox.html?message=${i.id}">${dateString}</a></div>
                 <div class="subjectLine" title="${i['sakai:subject']}"><a id="subject_pastDue_${i.id}" href="/dev/inbox.html?message=${i.id}">${i['sakai:subject']}</a></div>
-                <div class="slideDownButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
+                <div class="slideButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
             </li>    
 	        <div class="messageSnippet" id="snippetDiv_${i.id}" title="See full reminder">
 	            <a href="/dev/inbox.html?message=${i.id}">${i['sakai:body']}</a>

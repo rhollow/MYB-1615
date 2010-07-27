@@ -29,8 +29,8 @@
 /* List of reminders */
 .myreminders_widget .reminders_list {min-height: 40px;}
 .myreminders_widget .reminders_div {overflow: auto; max-height: 200px;}
-.myreminders_widget .reminders_div li {list-style: none;}
 .myreminders_widget .reminders_div .reminder {
+    list-style: none;
     display: block;
     height: 27px;
     padding: 0px 10px 0px 15px;
@@ -40,29 +40,27 @@
     outline: none;
 }
 
-.myreminders_widget .reminders_div .reminder:hover {
-    /*background-color: #C6DEFF;*/
-    white-space: nowrap;
-    overflow: hidden;
-    text-decoration: none;
-    background-image: url("/devwidgets/myreminders/images/link_bg.jpg");
+.myreminders_widget .reminders_div .reminder .slideButton {
+    background-image: url("/devwidgets/myreminders/images/link_bg.png");
+    background-position: 15px 0px;
     background-repeat: no-repeat;
-    background-position: 395px 4px;
+    display: block;
+}
+
+.myreminders_widget .reminders_div .reminder:hover .slideButton {
+    background-position: 0px 8px;
+}
+
+.myreminders_widget .reminders_div .reminder_expanded .slideButton, .myreminders_widget .reminders_div .reminder_expanded:hover .slideButton {
+    background-position: 0px -12px;
 }
 
 .myreminders_widget .reminders_div .read_true {font-weight: normal; background-color: #E6E6E6;}
 .myreminders_widget .reminders_div .read_false {font-weight: bold; background-color: white;}
 .myreminders_widget .reminders_div .pastDue {font-weight: bold; color: red;}
-
-.myreminders_widget .reminders_div .slideUpButton {
-    background-image: url("/devwidgets/myreminders/images/link_bg.jpg");
-    background-repeat: no-repeat;
-    background-position: 395px 4px;
-}
-
-/* Individual reminder */
 .reminders_div a {text-decoration: none;}
 
+/* Individual reminder */
 .myreminders_widget .reminders_div .checkDone {
     float: left;
     width: 25px;
@@ -82,14 +80,13 @@
 
 .myreminders_widget .reminders_div .subjectLine {
     float: left;
-    width: 245px;
     white-space: nowrap;
     overflow: hidden;
     padding-top: 6px;
     cursor: pointer;
 }
 
-.myreminders_widget .reminders_div .slideDownButton {
+.myreminders_widget .reminders_div .slideButton {
     display: block;
     float: left;
     width: 20px;
