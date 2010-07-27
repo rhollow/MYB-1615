@@ -364,33 +364,27 @@ sakai.myreminders = function(tuid, showSettings){
     /**
      * Updates specified property of a reminder with the specified value
      * @param {Object} url jcr:path of the reminder being updated
-     * @param {Object} propname Data property that you are providing a value for
-     * @param {Object} propvalue Value for the data property
+     * @param {Object} JSON obj containing name/value pairs to be updated, ex. {"taskState":"completed"}
      * @param {Object} callback Function to be called on completion
      */
-    var updateReminder = function(url, propname, propvalue, callback){
-        var data = {};
-        data[propname] = propvalue;
+    var updateReminder = function (url, props, callback) {
         $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            success: function(data, textStatus, xhr){
-                alert("updated " + propname + " to " + propvalue + "n" + xhr.responseText);
-                if (typeof callback !== "undefined") {
-                    callback();
-                }
-            },
-            error: function(xhr, textStatus, thrownError){
+              type: 'POST',
+              url: url,
+              data: props,
+              success: function(data, textStatus, xhr){
+                  if (typeof callback !== "undefined") {
+                      callback();
+                  }
+              },
+              error: function(xhr, textStatus, thrownError) {
                 alert("Updating " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
-                " and thrownError = " +
-                thrownError +
-                "n" +
-                xhr.responseText);
-            },
-            dataType: 'json'
+                    " and thrownError = " + thrownError + "\n" + xhr.responseText);
+              },
+              dataType: 'json'
         });
     };
+
 
     /**
      * Listens for a checkbox being marked to indicate that the reminder has been completed
@@ -403,12 +397,13 @@ sakai.myreminders = function(tuid, showSettings){
         var reminderDiv = $("#div_" + id[id.length - 1]);
         var reminderData = reminderDiv.data("data");
         var jcr_path = reminderData["jcr:path"];
-        updateReminder(jcr_path, "taskState", "completed", function(){
+        var propertyToUpdate = {"taskState":"completed"};
+        updateReminder(jcr_path, propertyToUpdate, function(){
             reminderDiv.slideUp("normal", function(){
                 reminderDiv.remove;
             });
         });
-    })
+    });
 
     /**
      * Listens for a click to show/hide a reminder's snippet
@@ -470,12 +465,12 @@ sakai.myreminders = function(tuid, showSettings){
      */
     var getRemindersList = function(taskState, callback){
         var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=" + taskState;
-        createRemindersList(mockreminders);
+        //createRemindersList(mockreminders);
 
         $.ajax({
             url: dataURL,
             cache: false,
-            success: function(data){
+            success: function(data) {
                 if (data.results) {
                     createRemindersList(data);
                 }
@@ -486,12 +481,9 @@ sakai.myreminders = function(tuid, showSettings){
                     callback();
                 }
             },
-            error: function(xhr, textStatus, thrownError){
+            error: function(xhr, textStatus, thrownError) {
                 alert("Getting Reminders failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
-                " and thrownError=" +
-                thrownError +
-                "\n" +
-                xhr.responseText);
+                    " and thrownError=" + thrownError + "\n" + xhr.responseText);
             }
         })
     };
@@ -500,7 +492,7 @@ sakai.myreminders = function(tuid, showSettings){
      * Initial function
      */
     var doInit = function(){
-        getRemindersList();
+        getRemindersList("created");
     };
 
     doInit();
