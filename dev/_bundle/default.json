@@ -34,7 +34,6 @@
 "ADDRESS": "Address",
 "ALL_FILES": "All Files",
 "ALL_MY_SITES": "All my sites",
-"ALL_SITES": "All Sites",
 "ALL": "All",
 "ALLFILES": "allfiles",
 "AN_ERROR_HAS_OCCURRED": "An error has occurred",
@@ -490,5 +489,14 @@
 "YOU_HAVE_ACCEPTED_THIS_PERSON_AS_A_CONTACT": "You have accepted this person as a contact",
 "YOULL_FIND_PAGES_AND_SITES_OF_YOUR_INTEREST_AND_PEOPLE_WITH_WHO_YOU_CAN_CONNECT": "You'll find pages and sites of your interest, and people with who you can connect",
 "YOUR_MESSAGE_HAS_BEEN_SENT": "Your message has been sent",
-"YOUR_PASSWORD_SHOULD_BE_FOUR_CHARACTERS_LONG": "Your password should be 4 characters long"
+"YOUR_PASSWORD_SHOULD_BE_FOUR_CHARACTERS_LONG": "Your password should be 4 characters long",
+
+"LINKS": "Links",
+"MY_LINKS": "My Links",
+"SUGGESTED_SITES": "Suggested Sites",
+"ALL_SITES": "All Sites",
+"MODIFY_LINKS": "Modify Links",
+
+"MANAGE_REMINDERS": "Manage Reminders",
+"DUE": "Due"
 }
