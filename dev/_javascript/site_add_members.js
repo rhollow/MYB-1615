@@ -66,7 +66,7 @@ sakai.site_add_members = function() {
             success: function(response) {
                 siteJson = response;
                 roleToGroup = sakai.lib.site.authz.getRoleToPrincipalMap(siteJson);
-                $("#sitetitle").text(siteJson.name);
+                $("#sitetitle").text(sakai.api.Security.saneHTML(siteJson.name));
                 $("#manage_members_role_rbts").html($.TemplateRenderer("manage_members_role_rbts_template", {"roles" : siteJson["sakai:roles"]}));
             },
             error: function(xhr, textStatus, thrownError) {
@@ -177,7 +177,7 @@ sakai.site_add_members = function() {
         for (var i = 0; i < people.results.length; i++) {
             if (people.results[i].picture && typeof people.results[i].picture === "string") {
                 people.results[i].picture = $.parseJSON(people.results[i].picture);
-                people.results[i].picture.picPath = "/_user" + people.results[i].path + "/public/profile/" + people.results[i].picture.name;
+                people.results[i].picture.picPath = "/~" + people.results[i]["rep:userId"] + "/public/profile/" + people.results[i].picture.name;
             }
             else {
                 people.results[i].picture = {};
@@ -238,7 +238,7 @@ sakai.site_add_members = function() {
                     arrSearchTerms.push(" " + $.trim(splitted[i]) + "*") ;
                 }
         }
-        //escape the special chars (Ž, Œ,...) and replace hyphens by spaces
+        //escape the special chars (ï¿½, ï¿½,...) and replace hyphens by spaces
         var peoplesearchterm = escape(arrSearchTerms.join(" OR ")).replace(/-/g,"%20");
         $.ajax({
             cache: false,
@@ -338,7 +338,7 @@ sakai.site_add_members = function() {
                 json.members = {
                     "results": []
                 };
-                $("#manage_members_count").html(getNumMembers(json.members.results));
+                $("#manage_members_count").html(sakai.api.Security.saneHTML(getNumMembers(json.members.results)));
             }
         });
     };
@@ -371,6 +371,7 @@ sakai.site_add_members = function() {
                     traditional: true,
                     success: function(data){
                             updateSiteMembers(dataTemp);
+                            addMembersToXythos(dataTemp);
                             selectNone();
 
                             // Create an activity item for adding new members to the site
@@ -389,7 +390,7 @@ sakai.site_add_members = function() {
                             }
                             sakai.api.Activity.createActivity(nodeUrl, "site", "default", activityData);
 
-                            sakai.lib.notifications.showNotification("Site management", "New member(s) were succesfully added", "normal", false, "/dev/_images/inbox_folders_messages.gif");
+                            sakai.api.Util.notification.show("Site management", "New member(s) were succesfully added");
                     },
                     error: function(xhr, textStatus, thrownError) {
                         alert("Failed to add these members.");
@@ -400,6 +401,27 @@ sakai.site_add_members = function() {
 
     };
 
+    var addMembersToXythos = function(addedMembers) {
+        if (addedMembers.uuserid.length > 0) {
+            var newMembers = [];
+            for (var i = 0; i < addedMembers.uuserid.length; i++) {
+                newMembers.push(addedMembers.uuserid[i]);
+            }
+            $.ajax({
+                url: "/addmembers",
+                type: "POST",
+                success: function(data){
+                    },
+                    error: function(xhr, textStatus, thrownError) {
+                    },
+                    data: {
+                        ":member": newMembers,
+                        "siteid": "/sites/" + siteJson.id
+                    }
+                });
+        }
+    }
+    
     $("#txt_member_search").bind("focus",
     function(e, ui) {
         if ($("#txt_member_search").css("color") !== "rgb(0, 0, 0)") {

@@ -78,7 +78,7 @@ sakai.wookiechat = function(tuid, showSettings) {
      * @param {Number} timeout The amount of milliseconds you want the message to be displayed, 0 = always (till the next message)
      */
     var showGeneralMessage = function(idToAppend, msg, isError, timeout) {
-        $(idToAppend).html(msg);
+        $(idToAppend).html(sakai.api.Security.saneHTML(msg));
         if (isError) {
             $(idToAppend).addClass(CSSerrorMessage);
             $(idToAppend).removeClass(CSSnormalMessage);
@@ -273,7 +273,7 @@ sakai.wookiechat = function(tuid, showSettings) {
                     // avatar
                     if (me.profile.picture) {
                         var oPicture = me.profile.picture;
-                        var sAvatar = "/_user" + me.profile.path + "/public/profile/" + oPicture.name;
+                        var sAvatar = "/~" + me.user.userid + "/public/profile/" + oPicture.name;
                         sFrame += "&avatar=" + sAvatar;
                     }
                 }

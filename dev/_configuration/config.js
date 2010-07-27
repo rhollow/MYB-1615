@@ -49,6 +49,7 @@ sakai.config = {
         ACTIVITY_PERSONAL: "/var/search/activity/myfeed.json",
         ACTIVITY_SITE: "/var/search/activity/sitefeed.json",
         BATCH: "/system/batch",
+        CAPTCHA_SERVICE: "/system/captcha",
         CHAT_GET_SERVICE: "/var/message/chat/__KIND__.json",
         CHAT_UPDATE_SERVICE: "/var/message.chatupdate.json",
         CONTACTS_ACCEPTED: "/var/contacts/accepted.json",
@@ -58,9 +59,10 @@ sakai.config = {
         DISCUSSION_INITIALPOSTS_SERVICE: "/var/search/discussions/initialdiscussionposts.json?path=__PATH__&items=__ITEMS__&page=__PAGE__",
         FRIEND_ACCEPTED_SERVICE: "/var/contacts/accepted.json",
         GOOGLE_CHARTS_API: "http://chart.apis.google.com/chart",
+        HEADER_SERVICE: "/var/proxy/header.json",
         IMAGE_SERVICE: "/var/image/cropit",
         LOGIN_SERVICE: "/system/sling/formlogin",
-        LOGOUT_SERVICE: "/system/sling/logout",
+        LOGOUT_SERVICE: "/system/sling/logout?resource=/dev/index.html",
         ME_SERVICE: "/system/me",
         MESSAGE_BOX_SERVICE: "/var/message/internal/box.json",
         MESSAGE_BOXCATEGORY_SERVICE: "/var/message/boxcategory.json",
@@ -211,6 +213,19 @@ sakai.config = {
         other: {
             URL: "/dev/_images/mimetypes/unknown.png",
             description: "Other document"
+        }
+    },
+
+    notification: {
+        type :{
+            ERROR : {
+                image: "/dev/_images/notifications_exclamation_icon.png",
+                time: 10000
+            },
+            INFORMATION: {
+                image: "/dev/_images/notifications_info_icon.png",
+                time: 5000
+            }
         }
     },
 
