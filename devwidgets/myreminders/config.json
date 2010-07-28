@@ -1,0 +1,7 @@
+{
+    "description":"My Reminders",
+    "name":"My Reminders",
+    "id":"myreminders",
+    "personalportal":true,
+    "url":"/devwidgets/myreminders/myreminders.html"
+}
