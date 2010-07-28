@@ -93,11 +93,11 @@ sakai.addtocontacts = function(tuid, showSettings) {
      */
     var fillInUserInfo = function(user) {
         if (user) {
-            $(addToContactsInfoDisplayName).text(user.firstName);
+            $(addToContactsInfoDisplayName).text(sakai.api.Security.saneHTML(user.firstName));
 
             // Check for picture
             if (user.picture && $.parseJSON(user.picture).name) {
-                $(addToContactsInfoProfilePicture).attr("src", "/_user" + sakai.data.me.profile.path + "/public/profile/" + $.parseJSON(user.picture).name);
+                $(addToContactsInfoProfilePicture).attr("src", "/~" + sakai.data.me.user.userid + "/public/profile/" + $.parseJSON(user.picture).name);
             }
             else {
                 $(addToContactsInfoProfilePicture).attr("src", sakai.config.URL.USER_DEFAULT_ICON_URL);
@@ -169,7 +169,7 @@ sakai.addtocontacts = function(tuid, showSettings) {
 
             // Do the invite and send a message
             $.ajax({
-                url: "/_user" + sakai.data.me.profile.path + "/contacts.invite.html",
+                url: "/~" + sakai.data.me.user.userid + "/contacts.invite.html",
                 type: "POST",
                 traditional: true,
                 data: {
@@ -181,13 +181,13 @@ sakai.addtocontacts = function(tuid, showSettings) {
                     sakai.api.Communication.sendMessage(userid, title, message, "invitation", null, contactAdded);
                 },
                 error: function(xhr, textStatus, thrownError) {
-                    $(addToContactsResponse).text($(addToContactsErrorRequest).text());
+                    $(addToContactsResponse).text(sakai.api.Security.saneHTML($(addToContactsErrorRequest).text()));
                 }
             });
 
         }
         else {
-            $(addToContactsResponse).text($(addToContactsErrorNoTypeSelected).text());
+            $(addToContactsResponse).text(sakai.api.Security.saneHTML($(addToContactsErrorNoTypeSelected).text()));
         }
     };
 

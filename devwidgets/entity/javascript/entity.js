@@ -168,8 +168,8 @@ sakai.entity = function(tuid, showSettings){
      */
     var constructProfilePicture = function(profile){
 
-        if (profile.picture && profile.path) {
-            return "/_user" + profile.path + "/public/profile/" + $.parseJSON(profile.picture).name;
+        if (profile.picture && profile["rep:userId"]) {
+            return "/~" + profile["rep:userId"] + "/public/profile/" + $.parseJSON(profile.picture).name;
         }
         else {
             return "";
@@ -297,7 +297,7 @@ sakai.entity = function(tuid, showSettings){
         $entity_profile_status.bind("submit", function(){
 
             var originalText = $("button span", $entity_profile_status).text();
-            $("button span", $entity_profile_status).text($entity_profile_status_input_saving.text());
+            $("button span", $entity_profile_status).text(sakai.api.Security.saneHTML($entity_profile_status_input_saving.text()));
 
             // Get the correct input value from the user
             var inputValue = $entity_profile_status_input.hasClass(entity_profile_status_input_dummy) ? "" : $.trim($entity_profile_status_input.val());
@@ -319,7 +319,7 @@ sakai.entity = function(tuid, showSettings){
                 success: function(){
 
                     // Set the button back to it's original text
-                    $("button span", $entity_profile_status).text(originalText);
+                    $("button span", $entity_profile_status).text(sakai.api.Security.saneHTML(originalText));
 
                     // Create an activity item for the status update
                     var nodeUrl = sakai.data.me.profile["jcr:path"];
@@ -337,11 +337,11 @@ sakai.entity = function(tuid, showSettings){
                     fluid.log("Entity widget - the saving of the profile status failed");
 
                     // Show the message about a saving that failed to the user
-                    $("button span", $entity_profile_status).text($entity_profile_status_input_saving_failed.text());
+                    $("button span", $entity_profile_status).text(sakai.api.Security.saneHTML($entity_profile_status_input_saving_failed.text()));
 
                     // Show the origin text after 5 min
                     window.setTimeout(function(){
-                        $("button span", $entity_profile_status).text(originalText);
+                        $("button span", $entity_profile_status).text(sakai.api.Security.saneHTML(originalText));
                     }, 5000);
 
                 }
@@ -445,7 +445,7 @@ sakai.entity = function(tuid, showSettings){
     var setProfileData = function(){
 
         // Set the profile picture for the user you are looking at
-        // /_user/a/ad/admin/public/profile/256x256_profilepicture
+        // /~admin/public/profile/256x256_profilepicture
         entityconfig.data.profile.picture = constructProfilePicture(entityconfig.data.profile);
 
         // Set the status for the user you want the information from
@@ -509,7 +509,7 @@ sakai.entity = function(tuid, showSettings){
         if(filedata["sakai:name"]){
             entityconfig.data.profile.name = filedata["sakai:name"];
         }
-        // e.g. http://localhost:8080/_user/a/ad/admin/private/3739036439_2418af9b4d_o.jpg
+        // e.g. http://localhost:8080/~admin/private/3739036439_2418af9b4d_o.jpg
         // to 3739036439_2418af9b4d_o.jpg
         else if(data.url){
             var splitslash = data.url.split("/");

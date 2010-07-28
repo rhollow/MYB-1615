@@ -292,7 +292,7 @@ sakai.sitemembers = function(tuid, showSettings){
                 var json = data;
                 if (json.results.length === 1) {
                     totalMembers = json.results[0]["member-count"];
-                    $(sitemembers_normal_count, rootel).text(totalMembers);
+                    $(sitemembers_normal_count, rootel).text(sakai.api.Security.saneHTML(totalMembers));
                 }
             }
         });
@@ -371,7 +371,7 @@ sakai.sitemembers = function(tuid, showSettings){
             if (typeof user.picture === "object") {
                 user.picture = user.picture[0];
             } else if (user.picture && $.parseJSON(user.picture).name) {
-                user.picture = "/_user" + user.path + "/public/profile/" + $.parseJSON(user.picture).name;
+                user.picture = "/~" + user["rep:userId"] + "/public/profile/" + $.parseJSON(user.picture).name;
             }
             if (typeof user["rep:userId"] === "object") {
                 user.userid = user["rep:userId"][0];
