@@ -43,7 +43,9 @@ sakai.mylinks = function (tuid, showSettings) {
 
     // Data files and paths
     var userLinks = "my_links";
-    var linksDataNode = "/_user" + sakai.data.me.profile.path + "/private/" + userLinks;
+    var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
+
+    var defaultLinksPath = "/var/myberkeley/mylinks-defaults.json";
 
     /**
      * write the users links to JCR
@@ -75,7 +77,7 @@ sakai.mylinks = function (tuid, showSettings) {
         var list = [];
 
         // loop through movables, retrieve data and return it as an array
-        movables.each(function(idx, movable){                         
+        movables.each(function(idx, movable){
             var $link = $("a", movable);
             var record = {
                 id :   $link.attr("id"),
@@ -104,84 +106,21 @@ sakai.mylinks = function (tuid, showSettings) {
         initDraggables();
     };
 
-    var defaultLinks = {
-        links : [
-            {   id : "asuc",
-                name : "ASUC",
-                url : "http://www.asuc.org"
+    var loadDefaultList = function () {
+        $.ajax({
+            url: defaultLinksPath,
+            cache: false,
+            success: function(data){
+                var parsedData = data;
+                // create the link list from the default list and then save it back
+                createLinkList(data, false);
+                // save the default link list back to the server
+                saveLinkList(data);
             },
-            {
-                id : "atoz_sites",
-                name : "Berkeley Sites (A-Z)",
-                url : "http://www.berkeley.edu/a-z/a.shtml"
-            },
-            {
-                id : "bear_facts",
-                name : "Bear Facts",
-                url : "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome"
-            },
-            {
-                id : "student_services",
-                name : "Student Services",
-                url : "http://www.berkeley.edu/students"
-            },
-            {
-                id : "bspace",
-                name : "bSpace",
-                url : "http://bspace.berkeley.edu",
-                popup_description : "Homework assignments, lecture slides, syllabi, and class resources."
-            },
-            {
-                id : "calmail",
-                name : "CalMail",
-                url : "http://calmail.berkeley.edu",
-                popup_description : "Read and manage your university email."
-            },
-            {
-                id : "campus_bookstore",
-                name : "Campus Bookstore",
-                url : "http://www.bkstr.com/CategoryDisplay/10001-9604-10433-1"
-            },
-            {
-                id : "dars",
-                name : "DARS",
-                url : "https://marin.berkeley.edu/darsweb/servlet/ListAuditsServlet"
-            },
-            {
-                id : "decal",
-                name : "DeCal Courses",
-                url : "http://www.decal.org"
-            },
-            {
-                id : "public_service",
-                name : "Public Service",
-                url : "http://calcorps.berkeley.edu"
-            },
-            {
-                id : "class_schedule",
-                name : "Schedule of Classes",
-                url : "http://schedule.berkeley.edu"
-            },
-            {
-                id : "schedule_planning",
-                name : "Schedule Planning Tools",
-                url : "http://asuc.org/newsite/scheduleplanning"
-            },
-            {
-                id : "resource_guide",
-                name : "Resource Guide for Students",
-                url : "http://resource.berkeley.edu"
-            },
-            {
-                id: "tele-bears",
-                "name": "Tele-BEARS",
-                url: "http://telebears.berkeley.edu"
-            }  
-        ]
-};
-
-    var getDefaultList = function () {
-         return defaultLinks;
+            error: function(xhr, textStatus, thrownError) {
+                    //alert("An error has occured");
+            }
+        });
     };
 
     /**
@@ -191,16 +130,13 @@ sakai.mylinks = function (tuid, showSettings) {
      * @param {Object} contains the users links record
      */
 
-    var loadLinksList = function (success, data) {
+    var loadUsersLinksList = function (success, data) {
         if (success) {
+            console.log(data);
             // load the users link list from data
             createLinkList(data, true);
          } else {
-            // load the default link list and use that
-            var defaultLinksList = getDefaultList();
-            createLinkList(defaultLinksList, false);
-            // save the default link list back to the server
-            saveLinkList(defaultLinks);
+            loadDefaultList();
         }
     };
 
@@ -212,7 +148,15 @@ sakai.mylinks = function (tuid, showSettings) {
      */
 
     var doInit = function() {
-        sakai.api.Server.loadJSON(linksDataNode, loadLinksList);
+        sakai.api.Server.loadJSON(linksDataNode, function (success, data) {
+            if (success && data._MODIFIERS === undefined) {
+                // load the users link list from data
+                createLinkList(data, true);
+            } else {
+                loadDefaultList();
+            }
+
+        });
     };
 
     doInit();
