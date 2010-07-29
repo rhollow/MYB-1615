@@ -112,9 +112,8 @@ sakai.mylinks = function (tuid, showSettings) {
             cache: false,
             success: function(data){
                 var parsedData = data;
-                console.log(parsedData); //DEZBUGZ
                 // create the link list from the default list and then save it back
-                createLinkList(parsedData, false);
+                createLinkList(data, false);
                 // save the default link list back to the server
                 saveLinkList(data);
             },
