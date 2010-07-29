@@ -5,15 +5,15 @@ sakai.links = function(){
     // page elements
     var $suggestedSites = $(".suggested_sites");
     var $allSites = $(".all_sites");
-    
+
     // templates
     var suggested_sites_template = "suggestedsites_links_template";
     var all_sites_template = "allsites_links_template";
-    
+
     // data files and paths
     var userLinks = "my_links";
-    var linksDataNode = "/_user" + sakai.data.me.profile.path + "/private/" + userLinks;
-    
+    var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
+
     var directory = {
         colset: 4, // use single integer
         featured: ["calmail", "dars", "tele_bears"],
@@ -310,8 +310,8 @@ sakai.links = function(){
             }]
         }]
     };
-    
-    
+
+
     /**
      * Write the users links to JCR.
      * @param {object} the current state of the users list
@@ -319,7 +319,7 @@ sakai.links = function(){
     var saveLinkList = function(updatedList){
         sakai.api.Server.saveJSON(linksDataNode, updatedList);
     };
-    
+
     /**
      * Update the list according to whether a link was added or
      * removed by either adding or removing from the user's link list
@@ -368,7 +368,7 @@ sakai.links = function(){
         }
         saveLinkList(listObj);
     };
-    
+
     /**
      * Sets the titles for the checkboxes' tooltips, based on
      * whether its label's class specifies that it is checked
@@ -386,8 +386,8 @@ sakai.links = function(){
             selected_labels[i].setAttribute("title", "Remove from myLinks.");
         }
     };
-    
-    /** 
+
+    /**
      * As user checks or unchecks stars, will toggle the label class as needed.
      * Calls setTitles() after every change to ensure tooltips are always correct.
      * Also makes a call to update the user's data for the widget link list.
@@ -409,7 +409,7 @@ sakai.links = function(){
                 }
             }
         });
-        // For links in the featured section (id)...     
+        // For links in the featured section (id)...
         $(".FeaturedCheckBoxClass").change(function(data){
             var id = $(this).next("label").attr("id");
             if ($(this).is(":checked")) {
@@ -456,14 +456,14 @@ sakai.links = function(){
             setTitles();
         });
     };
-    
+
     /**
      * A getter function that simply returns the directory of links.
      */
     var getDirectory = function(){
         return directory;
     };
-    
+
     /**
      * Runs through the trimpath functions to populate the page with
      * the proper data.
@@ -476,7 +476,7 @@ sakai.links = function(){
         checkStars(data);
         setTitles();
     };
-    
+
     /**
      * Retreives the current list of links for the current user
      * if the user does have any links, returns the default list
@@ -488,15 +488,14 @@ sakai.links = function(){
         var allLinks = getDirectory();
         createDirectory(allLinks, data);
     };
-    
+
     // First get user's link list, then populate directory with static directory data.
     var doInit = function(){
         sakai.api.Server.loadJSON(linksDataNode, loadLinksList);
     };
-    
+
     doInit();
-    
+
 };
 
 sakai.api.Widgets.Container.registerForLoad("sakai.links");
-
