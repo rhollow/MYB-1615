@@ -61,14 +61,6 @@ sakai.myreminders = function(tuid, showSettings){
         var sameDay = (today.getYear()==dueDate.getYear()) && (today.getMonth()==dueDate.getMonth()) && (today.getDate()==dueDate.getDate());
         return ((today > dueDate) && !sameDay) ? "pastDue" : "";
     }
-    
-    var del = function(){
-        alert("Here");
-        /*$.ajax({
-            type: 'DELETE',
-            url: "4c90af8ef4db674f72030871f70b2f6c8b62e7b5"
-        })*/
-    }
 
     var mockreminders = {
         "items": 25,
@@ -356,8 +348,7 @@ sakai.myreminders = function(tuid, showSettings){
             $("#showSnippetDiv_" + id).attr("title", "Show snippet");
             $("#snippetDiv_" + id).slideUp("normal");
             lastShown = null;
-        }
-        else {
+        } else {
             if (lastShown) {
                 $("#li_" + lastShown).removeClass("reminder_expanded");
                 $("#showSnippetDiv_" + lastShown).attr("title", "Show snippet");
@@ -367,6 +358,19 @@ sakai.myreminders = function(tuid, showSettings){
             $("#li_" + id).addClass("reminder_expanded");
             $("#showSnippetDiv_" + id).attr("title", "Hide snippet");
             $("#snippetDiv_" + id).slideDown("normal");
+        }
+    }
+    
+    var visibleReminders; // initialized in CreateRemindersList
+    
+    /**
+     * Checks if all reminders have been completed, and displays a message if that's the case
+     */
+    var checkIfAllDone = function() {
+        visibleReminders--;
+        if(visibleReminders < 1) {
+            $(".reminders_list").css("display","none");
+            $(".reminders_div").append("<div class='noReminders'>You have no reminders</div>");
         }
     }
 
@@ -393,19 +397,6 @@ sakai.myreminders = function(tuid, showSettings){
               dataType: 'json'
         });
     };
-
-    var visibleReminders; // initialized in CreateRemindersList
-    
-    /**
-     * Checks if all reminders have been completed, and displays a message if that's the case
-     */
-    var checkIfAllDone = function() {
-        visibleReminders--;
-        if(visibleReminders < 1) {
-            $(".reminders_list").css("display","none");
-            $(".reminders_div").append("<div class='noReminders'>You have no reminders</div>");
-        }
-    }
     
     /**
      * Listens for a checkbox being marked to indicate that the reminder has been completed
