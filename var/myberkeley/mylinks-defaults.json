@@ -1,7 +1,8 @@
 {
+    "jcr:primaryType" : "nt:unstructured",
     "links" : [
         {    "id"   : "asuc",
-             "name" : "ASUC",
+             "name" : "ASUCC",
              "url"  : "http://www.asuc.org"
         },
         {
