@@ -209,7 +209,7 @@ sakai.flickr = function(tuid, showSettings){
       * Closes the settings container.
       */
      var finishSettingsContainer = function() {
-        sakai.api.Widgets.Container.informCancel(tuid);
+        sakai.api.Widgets.Container.informCancel(tuid, "flickr");
      };
 
     /**
@@ -1047,6 +1047,7 @@ sakai.flickr = function(tuid, showSettings){
 
         $.ajax({
             url: sakai.config.URL.flickrGetPhotosBySearchTerm,
+            dataType: "json",
             success: function(data){
                 newPageKey = newPageKey + 1;
                 appendNextImagesKey(data);
@@ -1323,7 +1324,8 @@ sakai.flickr = function(tuid, showSettings){
 
         // Ajax call to get the user details
         $.ajax({
-            url: sakai.config.URL.flickrGetPicturesByUserId ,
+            url: sakai.config.URL.flickrGetPicturesByUserId,
+            dataType: "json",
             success: function(data){
 
                 // Get the pictures based on the userid
@@ -1397,6 +1399,7 @@ sakai.flickr = function(tuid, showSettings){
         // Ajax call to get the user details
         $.ajax({
             url: sakai.config.URL.flickrGetUserDetailsByName,
+            dataType: "json",
             success: function(data){
                 data = $.parseJSON(data);
                 // Get the pictures based on the userid
@@ -1433,6 +1436,7 @@ sakai.flickr = function(tuid, showSettings){
         // Ajax call to get the user details
         $.ajax({
             url: sakai.config.URL.flickrGetUserDetailsByEMail,
+            dataType: "json",
             success: function(data){
 
                 //Get the pictures based on the userid
@@ -1504,6 +1508,7 @@ sakai.flickr = function(tuid, showSettings){
         //Get the value from the inputbox
         $.ajax({
             url: sakai.config.URL.flickrGetPhotosBySearchTerm,
+            dataType: "json",
             success: function(data){
             
                 //If the token is received change the ui
@@ -1608,7 +1613,7 @@ sakai.flickr = function(tuid, showSettings){
      * This function will be executed after the data is saved
      */
     var closeContainer = function(){
-         sakai.api.Widgets.Container.informFinish(tuid);
+         sakai.api.Widgets.Container.informFinish(tuid, "flickr");
     };
 
     /**

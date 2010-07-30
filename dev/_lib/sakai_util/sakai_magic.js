@@ -811,6 +811,17 @@ sakai.api.l10n.getSiteLocale = function() {
  */
 sakai.api.Security = sakai.api.Security || {};
 
+/**
+ * Encodes the HTML characters inside a string so that the HTML characters (e.g. <, >, ...)
+ * are treated as text and not as HTML entities
+ * 
+ * @param {String} inputString  String of which the HTML characters have to be encoded
+ * 
+ * @returns {String} HTML Encoded string
+ */
+sakai.api.Security.escapeHTML = function(inputString){
+    return $("<div/>").text(inputString).html();
+}
 
 /**
  * Sanitizes HTML content. All untrusted (user) content should be run through
@@ -969,7 +980,9 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
     }
 
     /**
-     * <p>Convert all the arrays in an object to an object with a unique key</p>
+     * <p>Convert all the arrays in an object to an object with a unique key.<br />
+     * Mixed arrays (arrays with multiple types) are not supported.
+     * </p>
      * <code>
      * {
      *     "boolean": true,
@@ -994,7 +1007,6 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
         // Since the native createTree method doesn't support an array of objects natively,
         // we need to write extra functionality for this.
         for(var i in obj){
-
 
             // Check if the element is an array, whether it is empty and if it contains any elements
             if (obj.hasOwnProperty(i) && $.isArray(obj[i]) && obj[i].length > 0 && $.isPlainObject(obj[i][0])) {
@@ -1035,9 +1047,10 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
         url: i_url,
         type: "POST",
         data: {
-            ":operation": "createTree",
-            "tree": $.toJSON(i_data),
-            "delete": 1
+            ":operation": "import",
+            ":contentType": "json",
+            ":content": $.toJSON(i_data),
+            ":replace": true
         },
         dataType: "json",
 
@@ -1856,6 +1869,18 @@ sakai.api.Util.notification.show = function(title, text, type){
     $.gritter.add(notification);
 
 };
+
+
+/**
+ * Remove all the notification messages that are currently visible to the user
+ */
+sakai.api.Util.notification.removeAll = function(){
+
+    // Remove gritter notification messages
+    // We don't use the $.gritter.removeAll method since that causes pop-ups to flicker
+    $('#gritter-notice-wrapper').remove();
+
+}
 
 
 /**
