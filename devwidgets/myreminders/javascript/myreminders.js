@@ -58,12 +58,21 @@ sakai.myreminders = function(tuid, showSettings){
         var dueDate = new Date(date);
         var today = new Date();
 
-        return (today > dueDate) ? "pastDue" : "";
+        var sameDay = (today.getYear()==dueDate.getYear()) && (today.getMonth()==dueDate.getMonth()) && (today.getDate()==dueDate.getDate());
+        return ((today > dueDate) && !sameDay) ? "pastDue" : "";
+    }
+    
+    var del = function(){
+        alert("Here");
+        /*$.ajax({
+            type: 'DELETE',
+            url: "4c90af8ef4db674f72030871f70b2f6c8b62e7b5"
+        })*/
     }
 
     var mockreminders = {
         "items": 25,
-        "total": 3,
+        "total": 5,
         "results": [{
             "jcr:path": "",
             "jcr:name": "",
@@ -385,7 +394,19 @@ sakai.myreminders = function(tuid, showSettings){
         });
     };
 
-
+    var visibleReminders; // initialized in CreateRemindersList
+    
+    /**
+     * Checks if all reminders have been completed, and displays a message if that's the case
+     */
+    var checkIfAllDone = function() {
+        visibleReminders--;
+        if(visibleReminders < 1) {
+            $(".reminders_list").css("display","none");
+            $(".reminders_div").append("<div class='noReminders'>You have no reminders</div>");
+        }
+    }
+    
     /**
      * Listens for a checkbox being marked to indicate that the reminder has been completed
      * @param {Object} evt click
@@ -403,6 +424,8 @@ sakai.myreminders = function(tuid, showSettings){
                 reminderDiv.remove;
             });
         });
+                
+        checkIfAllDone();
     });
 
     /**
@@ -416,15 +439,15 @@ sakai.myreminders = function(tuid, showSettings){
         showSnippet(id[id.length - 1]);
     });
 
+    var results_length;
+    
     /**
-     * Calls trimpath to populate the widget, attaches data to each reminder node, styles according to read/unread/past due status
+     * Attaches data to each reminder node, styles according to read/unread/past due status, sets column widths
      * @param {Object} data JSON containing an array called "results" which contains the reminders
      */
-    var createRemindersList = function(data){
-        $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
-
-        // TODO: BREAK OUT TO ANOTHER FUNCTION FOR READABILITY
-        var results_length = data.results.length;
+    var formatReminders = function(data) {
+        results_length = data.results.length;
+        visibleReminders = data.results.length;
         for (var i = 0; i < results_length; i++) {
             $("#div_" + data.results[i].id).data("data", data.results[i]);
             $("#li_" + data.results[i].id).addClass("read_" + data.results[i]["sakai:read"]);
@@ -433,10 +456,22 @@ sakai.myreminders = function(tuid, showSettings){
             var pastDue = "" + sakai.myreminders.compareDates(data.results[i]["sakai:dueDate"]);
             $("#date_pastDue_" + data.results[i].id + ", " + "#subject_pastDue_" + data.results[i].id).addClass(pastDue);
         }
+        
+        if (results_length > 0) {
+            var totalWidth = $("#li_" + data.results[0].id).width();
+            var subjectWidth = totalWidth - 25 - 100 - 20 - 30; // 25 for checkbox, 100 for due date, 20 for slide button, 30 for misc.
+            $(".subjectLine").css("width", subjectWidth);
+        }
+    }
+    
+    /**
+     * Calls trimpath to populate the widget
+     * @param {Object} data JSON containing an array called "results" which contains the reminders
+     */
+    var createRemindersList = function(data){
+        $remindersList.html($.TemplateRenderer(myremindersTemplate, data));
 
-        var totalWidth = $("#li_" + data.results[0].id).width();
-        var subjectWidth = totalWidth - 25 - 100 - 20 - 30; // 25 for checkbox, 100 for due date, 20 for slide button, 30 for misc.
-        $(".subjectLine").css("width", subjectWidth);
+        formatReminders(data);
     };
 
     /**
@@ -465,7 +500,6 @@ sakai.myreminders = function(tuid, showSettings){
      */
     var getRemindersList = function(taskState, callback){
         var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=" + taskState;
-        //createRemindersList(mockreminders);
 
         $.ajax({
             url: dataURL,

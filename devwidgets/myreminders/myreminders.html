@@ -8,7 +8,6 @@
             <span class="left_header">__MSG__DUE__</span>
             <span class="right_header">__MSG__SUBJECT__</span>
         </div>
-        
         <div class="reminders_div">
             <ul class="reminders_list"><!--
                 <li class="reminder">
@@ -48,11 +47,11 @@
         </div>
 
         {forelse}
-            <span>You have no reminders</span>
+            <div class="noReminders">You have no reminders</div>
         {/for}
         -->
     </ul>
-    
+    <input type="button" onclick="del()" />
     <div class="fl-widget-options fl-fix">
         <div class="widget-options-inner">
             <ul>
@@ -66,4 +65,3 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/myreminders/javascript/myreminders.js"></script>
-
