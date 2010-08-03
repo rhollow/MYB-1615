@@ -48,9 +48,6 @@
   height: 22px;
 }
 
-/*.all_links_col li:hover
-{ background-color: #c6deff }*/
-
 .all_links_col a
 { position: relative; top: -24px; left: 30px; }
 
