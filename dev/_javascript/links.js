@@ -23,7 +23,7 @@ sakai.links = function(){
 
     /**
      * Write the users links to JCR.
-     * @param {object} the current state of the users list
+     * @param {object} updatedList The current state of the user's list.
      */
     var saveLinkList = function(updatedList){
         sakai.api.Server.saveJSON(linksDataNode, updatedList);
@@ -31,33 +31,26 @@ sakai.links = function(){
 
     /**
      * Update the list according to whether a link was added or
-     * removed by either adding or removing from the user's link list
+     * removed by either adding or removing from the user's link list.
      * array (based on the operation it is passed).
-     * @param {Object} what operation to perform; either "add" or "remove"
-     * @param {Object} the id of the link to perform the operation on
-     * @param {Object} users data and widget link list
+     * @param {Object} operation What operation to perform; either "add" or "remove".
+     * @param {Object} id The id of the link to perform the operation on.
+     * @param {Object} data User's current data.
      */
-    var updateLinkList = function(operation, id, data){
+    var updateLinkList = function(operation, toOperateOn, data){		
         var listObj = data;
         var toAdd;
         // User added a link to their data list.
         if (operation === "add") {
-            for (var i = 0; i < directory.links.length; i++) {
-                if (id === directory.links[i].id || id === directory.links[i].id + "_label") {
-                    toAdd = {
-                        id: directory.links[i].id,
-                        name: directory.links[i].name,
-                        url: directory.links[i].url
-                    };
-                    listObj.links.push(toAdd);
-                }
-            }
+			toAdd = toOperateOn;
+            listObj.links.push(toAdd);               
         }
         // User removed a link from their data list.
         if (operation === "remove") {
+			var id = toOperateOn.id;
             var newList = [];
             for (var j = 0; j < listObj.links.length; j++) {
-                if (id === listObj.links[j].id || id === listObj.links[j].id + "_label") {
+                if (id === listObj.links[j].id) {
                     // do nothing...
                 }
                 else {
@@ -93,18 +86,118 @@ sakai.links = function(){
         for (var i = 0; i < selected_labels.length; i++) {
             selected_labels[i].setAttribute("title", "Remove from myLinks.");
         }
-    };
+    };	
 
     /**
-     * As user checks or unchecks stars, will toggle the label class as needed.
-     * Calls setTitles() after every change to ensure tooltips are always correct.
-     * Also makes a call to update the user's data for the widget link list.
-     * Keeps featured and all link stars in sync.
-     * @param {Object} the current state of the users list
+     * Function for when user checks a link in the featured section.
+     * @param {Object} toCheck Checkbox element that was checked.
+     * @param {Object} data User's current data.
      */
-    var checkStars = function(data){
-        var listObj = data;
-        // Prechecking the stars which the user has saved to their data.
+    var checkFeatured = function(toCheck, data){
+		var listObj = data;
+		var toOperateOn;
+        var id = toCheck.next("label").attr("id");
+        if (toCheck.is(":checked")) {
+            toCheck.next("label").addClass("LabelSelected");
+			toCheck.next("label").attr("title", "Remove from myLinks.");
+            $('#' + id + '_box').attr("checked", true);
+            $('#' + id + '_label').addClass("LabelSelected");
+			$('#' + id + '_label').attr("title", "Remove from myLinks.");
+			toOperateOn = {
+				id: id,
+				name: $("#urlfor_"+id).attr("innerHTML"),
+				url: $("#urlfor_"+id).attr("href")
+			}
+            updateLinkList("add", toOperateOn, listObj);
+        }
+        else {
+            toCheck.next("label").removeClass("LabelSelected");
+			toCheck.next("label").attr("title", "Add to myLinks.");
+            $('#' + id + '_box').attr("checked", false);
+            $('#' + id + '_label').removeClass("LabelSelected");
+			$('#' + id + '_label').attr("title", "Add to myLinks.");
+			toOperateOn = {
+                id: id,
+                name: $("#urlfor_"+id).attr("innerHTML"),
+                url: $("#urlfor_"+id).attr("href")
+            }
+            updateLinkList("remove", toOperateOn, listObj);
+        }
+    };
+	
+	/**
+	 * Function for when user checks a link in the general (all) section.
+	 * @param {Object} toCheck Checkbox element that was checked.
+	 * @param {Object} data User's current data.
+	 */
+    var checkGeneral = function(toCheck, data){
+		var listObj = data;
+        var id = toCheck.next("label").attr("id");
+        var pos = id.indexOf("_label");
+        var newID = id.slice(0, pos);
+        var isFeatured = false;
+		var toOperateOn;
+        for (var k = 0; k < directory.featured.length; k++) {
+            if (directory.featured[k] === newID) {
+                isFeatured = true;
+            }
+        }
+        if (toCheck.is(":checked")) {
+            toCheck.next("label").addClass("LabelSelected");
+			toCheck.next("label").attr("title", "Remove from myLinks.");
+            if (isFeatured) {
+                $('#' + newID + '_checkbox').attr("checked", true);
+                $('#' + newID).addClass("LabelSelected");
+				$('#' + newID).attr("title", "Remove from myLinks.");
+            }
+			toOperateOn = {
+                id: id,
+                name: $("#urlfor_"+newID).attr("innerHTML"),
+                url: $("#urlfor_"+newID).attr("href")
+            }
+            updateLinkList("add", toOperateOn, listObj);
+        }
+        else {
+            toCheck.next("label").removeClass("LabelSelected");
+			toCheck.next("label").attr("title", "Add to myLinks.");
+            if (isFeatured) {
+                $('#' + newID + '_checkbox').attr("checked", false);
+                $('#' + newID).removeClass("LabelSelected");
+				$('#' + newID).attr("title", "Remove from myLinks.");
+            }
+			toOperateOn = {
+                id: id,
+                name: $("#urlfor_"+newID).attr("innerHTML"),
+                url: $("#urlfor_"+newID).attr("href")
+            }
+            updateLinkList("remove", toOperateOn, listObj);
+        }
+    };
+	
+	/**
+	 * Will react when the user causes a change to any of the checkboxes
+	 * on the page. It then determines if that checkbox is featured or
+	 * one of the general (all) links, and calls the appropriate function.
+	 * @param {Object} data User's current data.
+	 */
+	var checkStars = function(data){
+		var listObj = data;
+		$(":checkbox").change(function(data){
+		  if($(this).attr("class")=="FeaturedCheckBoxClass"){
+		      checkFeatured($(this), listObj);
+		  }
+		  if($(this).attr("class")=="CheckBoxClass"){
+		      checkGeneral($(this), listObj);
+		  }	
+		});		        
+    };
+	
+	/**
+	 * Pre-checking the stars of the links the user has saved in their data.
+	 * @param {Object} data User's data and list of links.
+	 */
+	var preCheckStars = function(data){
+		var listObj = data;
         $("input[type=checkbox]").each(function(){
             var id = $(this).next("label").attr("id");
             for (var i = 0; i < listObj.links.length; i++) {
@@ -116,65 +209,20 @@ sakai.links = function(){
                 }
             }
         });
-        // For links in the featured section (id)...
-        $(".FeaturedCheckBoxClass").change(function(data){
-            var id = $(this).next("label").attr("id");
-            if ($(this).is(":checked")) {
-                $(this).next("label").addClass("LabelSelected");
-                $('#' + id + '_box').attr("checked", true);
-                $('#' + id + '_label').addClass("LabelSelected");
-                updateLinkList("add", id, listObj);
-            }
-            else {
-                $(this).next("label").removeClass("LabelSelected");
-                $('#' + id + '_box').attr("checked", false);
-                $('#' + id + '_label').removeClass("LabelSelected");
-                updateLinkList("remove", id, listObj);
-            }
-            setTitles();
-        });
-        // For links in the all section (id_label)...
-        $(".CheckBoxClass").change(function(data){
-            var id = $(this).next("label").attr("id");
-            var pos = id.indexOf("_label");
-            var newID = id.slice(0, pos);
-            var isFeatured = false;
-            for (var k = 0; k < directory.featured.length; k++) {
-                if (directory.featured[k] === newID) {
-                    isFeatured = true;
-                }
-            }
-            if ($(this).is(":checked")) {
-                $(this).next("label").addClass("LabelSelected");
-                if (isFeatured) {
-                    $('#' + newID + '_checkbox').attr("checked", true);
-                    $('#' + newID).addClass("LabelSelected");
-                }
-                updateLinkList("add", newID, listObj);
-            }
-            else {
-                $(this).next("label").removeClass("LabelSelected");
-                if (isFeatured) {
-                    $('#' + newID + '_checkbox').attr("checked", false);
-                    $('#' + newID).removeClass("LabelSelected");
-                }
-                updateLinkList("remove", newID, listObj);
-            }
-            setTitles();
-        });
-    };
+	}
 
     /**
      * Runs through the trimpath functions to populate the page with
      * the proper data.
-     * @param {Object} all links
-     * @param {Object} users data for the widget
+     * @param {Object} directory All links.
+     * @param {Object} userLinks User's current data.
      */
     var createDirectory = function(directory, userLinks){
         $suggestedSites.html($.TemplateRenderer(suggested_sites_template, directory));
         $allSites.html($.TemplateRenderer(all_sites_template, directory));
-        checkStars(userLinks, directory);
-        setTitles();
+		preCheckStars(userLinks);
+		setTitles();
+        checkStars(userLinks);
     };
 
     /**
@@ -197,10 +245,10 @@ sakai.links = function(){
     };
 
     /**
-     * Retreives the current list of links for the current user
+     * Retrieves the current list of links for the current user
      * if the user does have any links, returns the default list
-     * @param {Boolean} whether the loadJSON got it's data
-     * @param {Object} contains the users links record
+     * @param {Boolean} success Whether the loadJSON got its data.
+     * @param {Object} data Contains the user's links record.
      */
     // If data is empty, then throw an error.
     var loadLinksList = function(success, data){
