@@ -14,7 +14,10 @@ sakai.links = function(){
     var userLinks = "my_links";
     var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
 
-    var directoryLinksLocation = "/var/myberkeley/links-directory.json";
+
+    // Still working out some problems with the loading of default data from /var
+    //var directoryLinksLocation = "/var/myberkeley/links-directory.json";
+    var directoryLinksLocation = "/devwidgets/mylinks/default/links-directory.json";
 
     var directory = {};
 
