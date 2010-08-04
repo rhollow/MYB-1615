@@ -510,5 +510,12 @@
 "MODIFY_LINKS": "Modify Links",
 
 "MANAGE_REMINDERS": "Manage Reminders",
-"DUE": "Due"
+"DUE": "Due",
+
+"MESSAGES_PAGE": "Messages Page",
+"DRAFTS": "Drafts",
+"NOTIFICATIONS": "Notifications",
+"QUEUE": "Queue",
+"NOTIFICATIONS_ARCHIVE": "Notifications Archive",
+"START_DISPLAY_DATE": "Start Display Date"
 }
