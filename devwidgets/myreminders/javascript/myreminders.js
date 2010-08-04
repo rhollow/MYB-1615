@@ -339,7 +339,7 @@ sakai.myreminders = function(tuid, showSettings){
     var lastShown = null;
 
     /**
-     * Toggles the showing of a reminder's snippet
+     * Toggles the showing of a reminder's snippet (only allows one snippet to be shown at a time)
      * @param {Object} id the id of the reminder whose snippet is being toggled
      */
     var showSnippet = function(id){
