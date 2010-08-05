@@ -397,7 +397,7 @@ sakai.myreminders = function(tuid, showSettings){
         var reminderDiv = $("#div_" + id[id.length - 1]);
         var reminderData = reminderDiv.data("data");
         var jcr_path = reminderData["jcr:path"];
-        var propertyToUpdate = {"taskState":"completed"};
+        var propertyToUpdate = {"sakai:taskState":"completed"};
         updateReminder(jcr_path, propertyToUpdate, function(){
             reminderDiv.slideUp("normal", function(){
                 reminderDiv.remove;
