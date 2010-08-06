@@ -18,10 +18,10 @@
 
 /* General */
 .footer_main {
-    background: url('../images/footer.png') center bottom no-repeat;
+    background: url('../images/new_footer.png') center bottom no-repeat;
     color: #fff;
     margin: 0 auto 45px auto;
-    padding: 10px 0;
+    padding: 0px 10px 10px;
     width: 960px;
 }
 
@@ -33,11 +33,39 @@
     cursor: pointer;
 }
 
+/* Feedback box */
+.footer_main .feedback {
+    width: 200px;
+    text-align: center;
+    padding: 5px 0px 5px 5px;
+    float: left;
+}
+
+.footer_main .feedback p {
+    font-size: 9pt;
+    font-family: Comic Sans MS;    
+}
+
+.footer_main .feedback a {
+    color: white;
+    font-size: 11pt;
+    text-decoration: none;
+}
+
+.footer_main #mail_icon {
+    float: left;
+    padding-left: 5px;
+}
+
+.footer_main #mail_link {
+    padding-top: 10px;
+}
+
 /* Fixed Container */
 .footer_main .fixed-container {
     background: #454A4F;
-    padding: 0 25px 10px;
-    width: 910px;
+    width: 700px;
+    padding: 10px 0px 0px;
 }
 
 .footer_main .fixed-container img {
@@ -45,7 +73,7 @@
     margin-right: 15px;
 }
 
-.footer_main .fixed-container p {
+.footer_main .fixed-container, .feedback p {
     font-size: 11px;
     margin-bottom: 0;
     padding-bottom: 0;
