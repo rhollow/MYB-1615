@@ -153,7 +153,7 @@
                                                         <label id="${j.id}" for="${j.id}_checkbox" class="LabelUnselected"></label>
                                                     {/if}
                                                 {/for}
-                                                        <a href="${j.url}" target="_blank">${j.name|default:"No Available Name"}</a>
+                                                        <a href="${j.url}" id="$urlfor_{j.id}" target="_blank">${j.name|default:"No Available Name"}</a>
                                                 </div>
                                                 <br>
                                                 <p>${j.featured_description}</p>
@@ -354,7 +354,7 @@
                 	                                <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected"></label>
                                                 {/if}
                                             {/for}
-        	                                <a href="${j.url}" target="_blank" title="${j.popup_description}">${j.name|default:"No Available Name"}</a>
+        	                                <a href="${j.url}" target="_blank" id="urlfor_${j.id}" title="${j.popup_description}">${j.name|default:"No Available Name"}</a>
                                         </li>
                                         {if counter<percol}
                                             ${counter=counter+1|eat}
