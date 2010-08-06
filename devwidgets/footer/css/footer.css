@@ -54,11 +54,12 @@
 
 .footer_main #mail_icon {
     float: left;
-    padding-left: 5px;
+    padding: 0px 5px 0px 5px;
 }
 
 .footer_main #mail_link {
-    padding-top: 10px;
+    padding: 10px 0px 0px 14px;
+    float: left;
 }
 
 /* Fixed Container */
