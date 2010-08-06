@@ -515,7 +515,10 @@
 "MESSAGES_PAGE": "Messages Page",
 "DRAFTS": "Drafts",
 "NOTIFICATIONS": "Notifications",
-"QUEUE": "Queue",
 "NOTIFICATIONS_ARCHIVE": "Notifications Archive",
-"START_DISPLAY_DATE": "Start Display Date"
+"START_DISPLAY_DATE": "Start Display Date",
+"QUEUE": "Queue",
+"COPY": "Copy",
+"NOTIFICATION": "Notification",
+"CREATE_OR_EDIT_A_NOTIFICATION": "Create or Edit a Notification"
 }

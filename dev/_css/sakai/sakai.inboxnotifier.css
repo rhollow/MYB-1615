@@ -13,7 +13,7 @@
 { margin-top: 8px; margin-left: 240px; padding: 0; overflow: hidden; width: 676px; }
 
 .inbox_pane
-{ margin-top: 20px; }
+{ }
 
 
 /** SIDE NAV **/
@@ -276,6 +276,7 @@
 
 .inbox_detail #inbox_compose_replies_template_chats
 { margin: 0 0 0 38px; background: #f4f4f4; }
+
 
 /** NOTIFICATIONS, ERROR MESSAGES **/
 .inbox_error_message

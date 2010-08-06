@@ -156,7 +156,7 @@
                                                         <a href="${j.url}" target="_blank">${j.name|default:"No Available Name"}</a>
                                                 </div>
                                                 <br>
-                                                <p>${j.featured_description}</p>
+                                                <p>${j.description}</p>
                                             {/if}
                                         {/for}
                                         ${counter=counter+1|eat}
@@ -354,7 +354,7 @@
                 	                                <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected" title="Add to myLinks."></label>
                                                 {/if}
                                             {/for}
-        	                                <a href="${j.url}" target="_blank" id="urlfor_${j.id}" title="${j.popup_description}">${j.name|default:"No Available Name"}</a>
+        	                                <a href="${j.url}" target="_blank" id="urlfor_${j.id}" title="${j.description}">${j.name|default:"No Available Name"}</a>
                                         </li>
                                         {if counter<percol}
                                             ${counter=counter+1|eat}

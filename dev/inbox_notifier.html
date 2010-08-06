@@ -75,14 +75,12 @@
                 <!-- Nav -->
                 <div class="fl-col fl-fix side_panel">
 
-                    <!-- DROP DOWN -->
+                    <!-- DROP DOWN MENU -->
                     <div class="drop-menu" id="inbox_compose_new">
                         <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__... </a>
                         <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
                             <ul>
-                                <li id="inbox_compose_message"><a href="javascript:;">__MSG__MESSAGE__</a></li>
-                                <li id="inbox_compose_announcement"><a href="javascript:;">__MSG__ANNOUNCEMENT__</a></li>
-                                <li id="inbox_compose_notification"><a href="javascript:;">Notification</a></li>
+                                <li id="inbox_compose_message"><a href="javascript:;">__MSG__NOTIFICATION__</a></li>
                             </ul>
                         </div>
                     </div>
@@ -93,21 +91,17 @@
                         <div class="if_titlebar">
                             <div class="if_titlebar_inner"><h2 class="if_title">__MSG__INBOX__</h2></div>
                         </div>
+                        
                         <div class="if_content">
-
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>
-
-                            <ul>
-                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__NOTIFICATIONS__</a> <span id="inbox_unread_nr_messages"></span></li>                                
-                            </ul>
-
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__QUEUE__</a></div></div>
-							
+                                <ul>
+                                    <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__NOTIFICATIONS__</a> <span id="inbox_unread_nr_messages"></span></li>                                
+                                </ul>
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__QUEUE__</a></div></div>							
 							<div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__NOTIFICATIONS_ARCHIVE__</a></div></div>
-
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
-
                         </div>
+                        
                         <div class="if_bottom">
                             <div class="if_bottom_inner"></div>
                         </div>
@@ -119,16 +113,16 @@
                 <!-- Main -->
                 <div class="col-main">
 
-                    <!-- MAIN INBOX -->
+                    <!-- NOTIFIER VIEW, PANE 1 || MAIN INBOX (includes default inbox, queue, notifications archive, and trash) -->
                     <div id="inbox_pane_inbox" class="inbox_pane">
-
+                        
                         <form name="my-inbox" action="" method="post">                            
 
-                            <div class="top_decor">
-
+                            <div class="top_decor">                                
                                 <!-- Header -->
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__INBOX__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_sent" style="display:none;">__MSG__SENT_MESSAGES__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_queue" style="display:none;">__MSG__QUEUE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__NOTIFICATIONS_ARCHIVE__</div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                             </div>
 
@@ -200,153 +194,21 @@
                         </form>
 						
 						<!-- Button List-->
-						<div class="button-list">							
-							<input type="button" id="delete-button" value="Delete" />
-							<input type="button" id="copy-button" value="Copy" />
-							<input type="button" id="queue-button" value="Queue" />
-							<input type="button" id="edit-button" value="Edit" />
+						<div class="button-list">
+						    <button id="delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                            <button id="delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
+                            <button id="delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+                            <button id="delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>							
 					   </div>
+                       
                     </div>
 
-                    <!-- VIEW A SPECIFIC MESSAGE -->
-                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
-
-                        <!-- Header -->
-                        <div class="top_toolbar fl-fix">
-                            <div class="fl-force-left sender-options">
-                                <a href="javascript:;" id="inbox_message_back_to_inbox"><span>&laquo;</span> __MSG__BACK_TO_INBOX__</a>
-                            </div>
-
-                            <div class="fl-force-right sender-options">
-                                <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
-                            </div>
-                        </div>
-
-                        <div class="top_decor">
-                            <div class="inbox-heading">__MSG__MESSAGE__</div>
-                        </div>
-
-                        <div class="main_content_container">
-                            <!-- Sender details -->
-                            <div class="sender_details">
-                                <div class="sender_picture_container">
-                                    <a href="javascript:;" title="__MSG__TO_SEE_THE_SENDERS_PROFILE__"><img src="/dev/_images/profile_picture.gif" class="sender-picture" id="inbox_message_picture" alt="__MSG__SENDERS_PROFILE_PIC__" /></a>
-                                </div>
-                                <div class="inbox_message_user">
-                                    <a href="javascript:;" class="sender-name" id="inbox_message_from" title="__MSG__FROM__"></a>
-                                    <br />
-                                    <div class="sender-timestamp">__MSG__SENT_THIS_ON__ <span id="inbox_message_date"></span></div>
-                                </div>
-                            </div>
-
-                            <!-- Message -->
-                            <div class="sender-body">
-                                <div class="message-arrow"></div>
-
-                                <div class="sender-message">
-                                    <div class="message-body">
-
-                                        <div class="message-header" id="inbox_message_subject"></div>
-
-                                        <div id="inbox_message_body"></div>
-
-                                        <div class="message-options">
-                                            <span id="inbox-sitejoin-accept" style="display:none"><a href="javascript:;" id="inbox_message_accept_sitejoin">__MSG__ACCEPT_SITEJOIN__</a> |</span>
-                                            <span id="inbox-sitejoin-deny" style="display:none"><a href="javascript:;" id="inbox_message_deny_sitejoin">__MSG__DENY_SITEJOIN__</a> |</span>
-                                            <span id="inbox-sitejoin-already" style="display:none; color: #666">__MSG__YOU_HAVE_REPLIED_TO_THIS_REQUEST_TO_JOIN_THIS_SITE__ |</span>
-                                            <span id="inbox-invitation-accept" style="display:none"><a href="javascript:;" id="inbox_message_accept_invitation">__MSG__ACCEPT_INVITATION__</a> |</span>
-                                            <span id="inbox-invitation-already" style="display:none; color: #666">__MSG__YOU_HAVE_ACCEPTED_THIS_PERSON_AS_A_CONTACT__ |</span>
-                                            <a href="javascript:;" id="inbox_message_option_reply">__MSG__REPLY__</a>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h4 id="inbox_message_previous_messages">__MSG__PREVIOUS_MESSAGES__</h4>
-
-                            <div id="inbox_message_replies"></div>
-                            <div id="inbox_message_replies_template"><!--
-                            {macro showReply(r)}
-                            <div style="padding: 10px 0px;">
-                                <span style="float:left;">
-                                    <a href="javascript:;" title="__MSG__TO_SEE_THE_PERSON_PROFILE__">
-                                    {if r.userFrom[0].picture}
-                                        <img src="/~${r.userFrom[0]["rep:userId"]}/public/profile/${r.userFrom[0].photo}" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" class="sender-picture" id="inbox_message_picture" />
-                                    {else}
-                                        <img src="/dev/_images/person_icon.jpg" class="sender-picture" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" id="inbox_message_picture" />
-                                    {/if}
-                                </span>
-                                <div class="inbox_message_user">
-                                    {for fromUser in r.userFrom}
-                                        <a href="/dev/profile.html?user=${r["sakai:from"]}" class="sender-name" id="inbox_message_from">${fromUser.firstName} ${fromUser.lastName}</a><br />
-                                    {/for}
-                                    <div class="sender-timestamp">Sent this on <span id="inbox_message_date">${r.date}</span></div>
-                                </div>
-                            </div>
-
-                            <div class="sender-body">
-                                <div class="message-arrow">
-                                </div>
-                                <div class="sender-message">
-                                    <div class="message-body" style="padding-top:0px">
-                                        <div class="message-header" id="inbox_message_subject">${r["sakai:subject"]}</div>
-                                        <div id="inbox_message_body">${r["sakai:body"]}</div>
-                                        <div class="message-options" style="display:none">
-                                            <a href="javascript:;" id="inbox_message_option_reply_${r["sakai:id"]}">__MSG__REPLY__</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {if r["sakai:previousmessage"]}
-                                ${showReply(r.previousMessage)}
-                            {/if}
-
-                            {/macro}
-
-                            ${showReply(message.previousMessage)}
-                            --></div>
-
-                            <div id="inbox_compose_replies_template_chats"><!--
-                                {for r in replies}
-                                    ${r.date} -
-                                    {for fromUser in r.userFrom}
-                                        ${fromUser.profile.firstName} ${fromUser.profile.lastName}
-                                    {/for}
-                                    : ${r.bodyText}<br />
-                                {/for}
-                            --></div>
-
-                            <!-- Compose Message -->
-                            <div class="compose-message" id="inbox_message_compose" style="display:none;">
-                                <form class="compose-form" method="post" action="">
-                                    <div>
-                                        <label for="inbox_message_compose_subject">__MSG__SUBJECT__</label><br />
-                                        <input type="text" maxlength="255" class="compose-subject" id="inbox_message_compose_subject" />
-                                    </div>
-                                    <div>
-                                        <label for="inbox_message_compose_body">__MSG__BODY__</label><br />
-                                        <textarea class="compose-body" id="inbox_message_compose_body" rows="0" cols="0"></textarea>
-                                    </div>
-
-                                    <button type="submit" class="s3d-button s3d-button-primary" id="inbox_message_compose_send"><span class="s3d-button-inner">__MSG__SEND_MESSAGE__</span></button>
-                                    <button type="button" class="s3d-button" id="inbox_message_compose_cancel"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="bottom_decor"></div>
-
-                    </div>
-
-                    <!-- NEW MESSAGE -->
+                    <!-- NOTIFIER VIEW, PANE 2 || CREATE OR EDIT A NOTIFICATION -->
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
-
                             <!-- Header -->
-                            <div class="inbox-heading">__MSG__COMPOSE_A_NEW_MESSAGE__</div>
+                            <div class="inbox-heading">__MSG__CREATE_OR_EDIT_A_NOTIFICATION__</div>
                         </div>
 
                         <!-- Compose message -->
@@ -354,8 +216,8 @@
 
                             <div class="compose-message">
                                 <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
-                                    <div id="sendmessagecontainer">
-                                        <div id="widget_sendmessage" class="widget_inline"></div>
+                                    <div id="createnotificationcontainer">
+                                        <div id="widget_notificationdetail" class="widget_inline"></div>
                                     </div>
                                 </form>
                             </div>
@@ -366,30 +228,6 @@
 
                     </div>
                     
-                    <!-- CREATE/EDIT NOTIFICATION (ADMIN VIEW) -->
-                    <div id="inbox_pane_createNotification" class="inbox_pane" style="display:none;">
-
-                        <div class="top_decor">
-
-                            <!-- Header -->
-                            <div class="inbox-heading">Create or Edit a Notification</div>
-                        </div>
-
-                        <!-- STILL NEEDS WORK Compose message -->
-                        <div class="main_content_container">
-                            TESTING, TESTING, TESTING...
-                            <div class="compose-message">
-                                <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
-                                    <div id="sendmessagecontainer">
-                                        <div id="widget_sendmessage" class="widget_inline"></div>
-                                    </div>
-                                </form>
-                            </div>
-
-                        </div>
-
-                        <div class="bottom_decor"></div>
-
                     </div>
 
                 </div>
@@ -409,7 +247,7 @@
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
         <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>
 
-        <script type="text/javascript" src="_javascript/inbox.js"></script>
+        <script type="text/javascript" src="_javascript/inboxnotifier.js"></script>
 
     </body>
 
