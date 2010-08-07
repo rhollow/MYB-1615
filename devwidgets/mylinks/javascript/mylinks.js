@@ -115,9 +115,9 @@ sakai.mylinks = function (tuid, showSettings) {
             success: function(data){
                 var parsedData = data;
                 // create the link list from the default list and then save it back
-                createLinkList(data, false);
+                createLinkList(parsedData, false);
                 // save the default link list back to the server
-                saveLinkList(data);
+                saveLinkList(parsedData);
             },
             error: function(xhr, textStatus, thrownError) {
                     //alert("An error has occured");
