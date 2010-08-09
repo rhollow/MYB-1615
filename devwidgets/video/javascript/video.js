@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata, Querystring, SWFID, swfobject */
+/*global $, Config, Querystring, SWFID, swfobject */
 
 
 var sakai = sakai || {};
@@ -265,7 +265,7 @@ sakai.video = function(tuid, showSettings) {
      * @param {Object} video
      */
     var addVideo = function(video) {
-        sakai.api.Widgets.saveWidgetData(tuid, video, sakai.api.Widgets.Container.informFinish(tuid));
+        sakai.api.Widgets.saveWidgetData(tuid, video, sakai.api.Widgets.Container.informFinish(tuid, "video"));
     };
 
 

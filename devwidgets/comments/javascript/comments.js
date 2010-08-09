@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global Config, $, sdata, pagerClickHandler */
+/*global Config, $, pagerClickHandler */
 
 var sakai = sakai || {};
 
@@ -267,7 +267,7 @@ sakai.comments = function(tuid, showSettings){
             // Puts the userinformation in a better structure for trimpath
             // if (comment.profile["sling:resourceType"] === "sakai/user-profile") { // no longer in use, it seems
             if (comment.profile) {
-             	  var profile = comment.profile[0];
+                   var profile = comment.profile[0];
                 var fullName = "";
                 if (profile.firstName) {
                     fullName = profile.firstName;
@@ -279,7 +279,7 @@ sakai.comments = function(tuid, showSettings){
                 user.picture = sakai.config.URL.USER_DEFAULT_ICON_URL;
                 // Check if the user has a picture
                 if (profile.picture && $.parseJSON(profile.picture).name) {
-                    user.picture = "/_user" + profile.hash + "/public/profile/" + $.parseJSON(profile.picture).name;
+                    user.picture = "/~" + profile["rep:userId"] + "/public/profile/" + $.parseJSON(profile.picture).name;
                 }
                 user.uid = profile["userid"][0];
                 user.profile = sakai.config.URL.PROFILE_URL + "?user=" + user.uid;
@@ -431,7 +431,7 @@ sakai.comments = function(tuid, showSettings){
             };
 
 
-            var url = "/_user" + sakai.data.me.profile.path + "/message.create.html";
+            var url = "/~" + sakai.data.me.user.userid + "/message.create.html";
             $.ajax({
                 url: url,
                 type: "POST",
@@ -502,7 +502,7 @@ sakai.comments = function(tuid, showSettings){
      * It will notify the container that it can be closed.
      */
     var finishNewSettings = function(){
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "comments");
     };
 
     /**
@@ -683,7 +683,7 @@ sakai.comments = function(tuid, showSettings){
 
     /** Bind the settings cancel button */
     $(commentsCancel, rootel).bind("click", function(e, ui){
-        sakai.api.Widgets.Container.informCancel(tuid);
+        sakai.api.Widgets.Container.informCancel(tuid, "comments");
     });
 
 
@@ -759,7 +759,7 @@ sakai.comments = function(tuid, showSettings){
                 type: 'POST',
                 success: function(data){
                     // Set the new message
-                    $(commentsMessage + id, rootel).html(tidyInput(message));
+                    $(commentsMessage + id, rootel).html(sakai.api.Security.saneHTML(tidyInput(message)));
                     // Hide the form
                     $(commentsMessageEditContainer + id, rootel).hide();
                     $(commentsMessage + id, rootel).show();

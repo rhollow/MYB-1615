@@ -49,6 +49,7 @@ sakai.config = {
         ACTIVITY_PERSONAL: "/var/search/activity/myfeed.json",
         ACTIVITY_SITE: "/var/search/activity/sitefeed.json",
         BATCH: "/system/batch",
+        CAPTCHA_SERVICE: "/system/captcha",
         CHAT_GET_SERVICE: "/var/message/chat/__KIND__.json",
         CHAT_UPDATE_SERVICE: "/var/message.chatupdate.json",
         CONTACTS_ACCEPTED: "/var/contacts/accepted.json",
@@ -58,9 +59,11 @@ sakai.config = {
         DISCUSSION_INITIALPOSTS_SERVICE: "/var/search/discussions/initialdiscussionposts.json?path=__PATH__&items=__ITEMS__&page=__PAGE__",
         FRIEND_ACCEPTED_SERVICE: "/var/contacts/accepted.json",
         GOOGLE_CHARTS_API: "http://chart.apis.google.com/chart",
+        GROUP_CREATE_SERVICE: "/system/userManager/group.create.json",
+        HEADER_SERVICE: "/var/proxy/header.json",
         IMAGE_SERVICE: "/var/image/cropit",
         LOGIN_SERVICE: "/system/sling/formlogin",
-        LOGOUT_SERVICE: "/system/sling/logout",
+        LOGOUT_SERVICE: "/system/sling/logout?resource=/dev/index.html",
         ME_SERVICE: "/system/me",
         MESSAGE_BOX_SERVICE: "/var/message/internal/box.json",
         MESSAGE_BOXCATEGORY_SERVICE: "/var/message/boxcategory.json",
@@ -91,6 +94,7 @@ sakai.config = {
         SITE_FILES_URL: "/sites/__SITEID__/_files",
         SITE_GET_MEMBERS_SERVICE: "/sites/__SITE__.members.json",
         SITE_GROUPDEF_URL: "/sites/__SITEID__/groupdef.json",
+        SITE_JOIN_REQUESTS: "/var/sites/joinrequests/pending.json",
         SITE_NAVIGATION_CONTENT: "/sites/__SITEID__/_navigation/content.json",
         SITE_NAVIGATION: "/sites/__SITEID__/_navigation",
         SITE_PAGECONFIGURATION: "/sites/__SITEID__/pageconfiguration",
@@ -213,6 +217,58 @@ sakai.config = {
             description: "Other document"
         }
     },
+
+    Authentication: {
+        "internal": true,
+        "external": [
+            {
+              label: "External Login System 1",
+              url: "http://external.login1.com/",
+              description: "This is the description displayed underneath ..."
+            },
+            {
+              label: "External Login System 2",
+              url: "http://external.login2.com/",
+              description: "This is the description displayed underneath ..."
+            }
+        ]
+    },
+
+    notification: {
+        type :{
+            ERROR : {
+                image: "/dev/_images/notifications_exclamation_icon.png",
+                time: 10000
+            },
+            INFORMATION: {
+                image: "/dev/_images/notifications_info_icon.png",
+                time: 5000
+            }
+        }
+    },
+
+    Navigation: [
+        {
+            "url" : "/dev/my_sakai.html",
+            "label" : "MY_SAKAI"
+        },
+        {
+            "url" : "javascript:;",
+            "label" : "CONTENT_AND_MEDIA"
+        },
+        {
+            "url" : "/dev/people.html",
+            "label" : "PEOPLE"
+        },
+        {
+            "url" : "javascript:;",
+            "label" : "COURSES_AND_SITES"
+        },
+        {
+            "url" : "javascript:;",
+            "label" : "CALENDAR"
+        }
+    ],
 
     displayDebugInfo: true,
 

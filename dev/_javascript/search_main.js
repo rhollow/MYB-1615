@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata, History, opensocial */
+/*global $, Config, History, opensocial */
 
 /*
  * This file will contain all the functionality that the 4 search files have in common.
@@ -112,6 +112,7 @@ sakai._search = function(config, callback) {
         $.ajax({
             url: "/var/contacts/all.json?page=0&n=100",
             cache: false,
+            async: false,
             success: function(data) {
                 myfriends = $.extend(data, {}, true);
                 // Change the history
@@ -245,12 +246,12 @@ sakai._search = function(config, callback) {
                 var user = {};
                 user.userid = item["rep:userId"];
                 // Parse the user his info.
-                user.path = "/_user/public/" + user.userid + "/";
+                user.path = "/~" + user.userid + "/public/";
                 var person = item;
                 if (person.picture) {
                     var picture = $.parseJSON(person.picture);
                     if (picture.name) {
-                        user.picture = "/_user" + person.path + "/public/profile/" + picture.name;
+                        user.picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     } else {
                         user.picture = sakai.config.URL.USER_DEFAULT_ICON_URL;
                     }

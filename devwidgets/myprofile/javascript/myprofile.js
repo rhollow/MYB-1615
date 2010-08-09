@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global $, Config, jQuery, sakai, sdata */
+/*global $, Config, jQuery, sakai */
 
 var sakai = sakai || {};
 
@@ -66,6 +66,8 @@ sakai.myprofile = function (tuid, showSettings) {
 
     var headerChatUserId = "#user_link"; // The username in the chat bar.
 
+    var chatStatus = "online";
+
 
     /////////////////
     // Chat status //
@@ -93,10 +95,8 @@ sakai.myprofile = function (tuid, showSettings) {
         $(profileChatStatusClass).hide();
         $(profileChatStatusID + status).show();
 
-        // Update the userid in the chat
-        updateChatStatusElement($(headerChatUserId), status);
-        updateChatStatusElement($(profileNameID), status);
-        updateChatStatusElement($(".chat_available_name"), status);
+        // Trigger the chat_status_change event to update other widgets
+        $(window).trigger("chat_status_change", chatStatus);
     };
 
     /**
@@ -132,17 +132,17 @@ sakai.myprofile = function (tuid, showSettings) {
 
         // Check if we have a first and last name
         if (json.firstName && json.lastName) {
-            $(profileNameID, rootel).text(json.firstName + " " + json.lastName);
+            $(profileNameID, rootel).text(sakai.api.Security.saneHTML(json.firstName + " " + json.lastName));
         }
         else {
-            $(profileNameID, rootel).text(me.user.userid);
+            $(profileNameID, rootel).text(sakai.api.Security.saneHTML(me.user.userid));
         }
 
         // Do we have a picture
         if (json.picture) {
             var pict = $.parseJSON(json.picture);
             if (pict.name) {
-                $(profilePictureID, rootel).attr('src', "/_user" + sakai.data.me.profile.path + "/public/profile/" + pict.name );
+                $(profilePictureID, rootel).attr('src', "/~" + sakai.data.me.user.userid + "/public/profile/" + pict.name );
             }
         }
 
@@ -159,11 +159,11 @@ sakai.myprofile = function (tuid, showSettings) {
             else if (json.unidepartment) {
                 extra = json.unidepartment;
             }
-            $(profileDepartementID, rootel).html(extra);
+            $(profileDepartementID, rootel).html(sakai.api.Security.saneHTML(extra));
         }
 
-        // Get the user his chatstatus
         var chatstatus = "online";
+        // Get the user his chatstatus
         if (me.profile.chatstatus) {
             chatstatus = me.profile.chatstatus;
         }
@@ -239,7 +239,15 @@ sakai.myprofile = function (tuid, showSettings) {
     // A user selects his status
     $(profileChatStatusPicker).live("click", function (ev) {
         var statusChosen = this.id.split("_")[this.id.split("_").length - 1];
+        chatStatus = statusChosen;
         changeStatus(statusChosen);
+    });
+
+    // Add binding to set the status
+    $(window).bind("chat_status_change", function(event, currentChatStatus){
+        updateChatStatusElement($(profileNameID), currentChatStatus);
+        $(profileChatStatusClass).hide();
+        $(profileChatStatusID + currentChatStatus).show();
     });
 
     doInit();

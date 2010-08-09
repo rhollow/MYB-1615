@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata */
+/*global $, Config */
 
 var sakai = sakai || {};
 
@@ -88,7 +88,7 @@ sakai.myfriends = function(tuid,showSettings){
         // The picture will be undefined if the other user is in process of
         // changing his/her picture
         if (profile && profile.picture && $.parseJSON(profile.picture).name) {
-            return "/_user" + profile.path + "/public/profile/" + $.parseJSON(profile.picture).name;
+            return "/~" + profile["rep:userId"] + "/public/profile/" + $.parseJSON(profile.picture).name;
         }
         return sakai.config.URL.USER_DEFAULT_ICON_URL;
     };
@@ -165,24 +165,7 @@ sakai.myfriends = function(tuid,showSettings){
      * them on the page.
      */
     var getContactRequests = function(){
-        $.ajax({
-            url: sakai.config.URL.CONTACTS_INVITED,
-            cache: false,
-            success: function(data){
-                var jsonTotal = {};
-                jsonTotal.total = 0;
-
-                // Check if the array contains any friends
-                if (data.total){
-
-                    // Only count the contacts which status is Invited
-                    jsonTotal.total += data.total;
-                }
-
-                // Render the requests on the page
-                $(myfriendsRequests).html($.TemplateRenderer(myfriendsRequestsTemplate, jsonTotal));
-            }
-        });
+        $(myfriendsRequests).html($.TemplateRenderer(myfriendsRequestsTemplate, sakai.data.me.contacts));
     };
 
 

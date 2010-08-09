@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, sdata, Config, addBinding */
+/*global $, Config, addBinding */
 
 var sakai = sakai || {};
 
@@ -47,7 +47,7 @@ sakai.googlemaps = function(tuid, showSettings){
      * To finish the widget
      */
     var finish = function() {
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "googlemaps");
     };
 
     /**
@@ -111,7 +111,7 @@ sakai.googlemaps = function(tuid, showSettings){
 
             // Add listerner to cancel button
             $("#googlemaps_cancel", rootel).bind("click", function(e, ui) {
-                sakai.api.Widgets.Container.informCancel(tuid);
+                sakai.api.Widgets.Container.informCancel(tuid, "googlemaps");
             });
 
             if (json) {
@@ -188,7 +188,7 @@ sakai.googlemaps = function(tuid, showSettings){
 
                 // Add listerner to cancel button
                 $("#googlemaps_cancel", rootel).bind("click", function(e, ui) {
-                    sakai.api.Widgets.Container.informCancel(tuid);
+                    sakai.api.Widgets.Container.informCancel(tuid, "googlemaps");
                 });
             }
 

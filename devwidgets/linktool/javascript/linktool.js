@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global $, sdata, get_cookie, Querystring, Config */
+/*global $, get_cookie, Querystring, Config */
 
 var sakai = sakai || {};
 
@@ -144,7 +144,7 @@ sakai.linktool = function(tuid, showSettings){
      * Called when the data has been saved to the JCR.
      */
     var savedDataToJCR = function(success, data){
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "linktool");
     };
 
 
@@ -358,7 +358,7 @@ sakai.linktool = function(tuid, showSettings){
 
         // Cancel it
         $(linktoolSettingsCancel).click(function(){
-            sakai.api.Widgets.Container.informCancel(tuid);
+            sakai.api.Widgets.Container.informCancel(tuid, "linktool");
         });
 
         addColorBinding();

@@ -87,7 +87,7 @@ sakai.search = function(){
                     finaljson.items[index].userid = item.target;
                     if (person.picture && $.parseJSON(person.picture).name) {
                         var picture = $.parseJSON(person.picture);
-                        finaljson.items[index].picture = "/_user" + person.path + "/public/profile/" + picture.name;
+                        finaljson.items[index].picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     }
                     if (person.firstName || person.lastName) {
                         var str = person.firstName;
@@ -133,9 +133,10 @@ sakai.search = function(){
             var user = this.id.split("_")[this.id.split("_").length - 1];
 
             $.ajax({
-                url: "/_user" + sakai.data.me.profile.path + "." + user + ".remove.html",
+                url: "/~" + sakai.data.me.user.userid + "/contacts.remove.html",
                 type: "POST",
-                data : {"_charset_":"utf-8"},
+                data : {"_charset_":"utf-8",
+                    "targetUserId": user},
                 success: function(data){
                     setTimeout(loadContacts,500,[1]);
 
@@ -199,7 +200,7 @@ sakai.search = function(){
                     finaljson.items[index].userid = item.target;
                     if (person.picture && $.parseJSON(person.picture).name) {
                         var picture = $.parseJSON(person.picture);
-                        finaljson.items[index].picture = "/_user" + person.path + "/public/profile/" + picture.name;
+                        finaljson.items[index].picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     }
                     if (person.firstName || person.lastName) {
                         var str = person.firstName;
@@ -234,7 +235,7 @@ sakai.search = function(){
             var user = this.id.split("_")[this.id.split("_").length - 1];
 
             $.ajax({
-                url: "/_user" + sakai.data.me.profile.path + "/contacts.accept.html",
+                url: "/~" + sakai.data.me.user.userid + "/contacts.accept.html",
                 type: "POST",
                 data : {"targetUserId": user},
                 success: function(data){
@@ -306,7 +307,7 @@ sakai.search = function(){
                     finaljson.items[index].userid = item.target;
                     if (person.picture && $.parseJSON(person.picture).name) {
                         var picture = $.parseJSON(person.picture);
-                        finaljson.items[index].picture = "/_user" + person.path + "/public/profile/" + picture.name;
+                        finaljson.items[index].picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     }
                     if (person.firstName || person.lastName) {
                         var str = person.firstName;

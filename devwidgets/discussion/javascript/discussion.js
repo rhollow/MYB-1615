@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global Config, $, sdata */
+/*global Config, $ */
 
 var sakai = sakai || {};
 
@@ -80,6 +80,15 @@ sakai.discussion = function(tuid, showSettings) {
     // Container
     var discussionContainer = discussion + "_container";
     var discussionMainContainer = discussion + "_main_container";
+
+    // Add new topic
+    var discussionAdd = discussion + "_add";
+    var discussionAddContainer = discussionAdd + "_container";
+    var discussionAddNewTopic = discussionAdd + "_newtopic";
+    var discussionAddTopicSubject = discussionAdd + "_subject";
+    var discussionAddTopicBody = discussionAdd + "_body";
+    var discussionAddTopicSubmit = discussionAdd + "_submit";
+    var discussionAddTopicCancel = discussionAdd + "_cancel";
 
     // Content
     var discussionContent = discussion + "_content";
@@ -223,14 +232,16 @@ sakai.discussion = function(tuid, showSettings) {
      * @param {String} picture The picture path for a user
      * @param {String} userStoragePrefix The user's storage prefix
      */
-    var parsePicture = function(uuid, picture){
+    var parsePicture = function(uuid, profile){
         // Check if the picture is undefined or not
         // The picture name will be undefined if the other user is in process of
         // changing his/her picture
-        if (picture && $.parseJSON(picture).name) {
-            return "/_user/public/" + uuid + "/" + $.parseJSON(picture).name;
+        if (profile.picture && $.parseJSON(profile.picture).name){
+            var picture = $.parseJSON(profile.picture);
+            return "/~" + uuid + "/public/profile/" + picture.name;
+        } else {
+          return sakai.config.URL.USER_DEFAULT_ICON_URL;
         }
-        return sakai.config.URL.USER_DEFAULT_ICON_URL;
     };
 
 
@@ -261,8 +272,8 @@ sakai.discussion = function(tuid, showSettings) {
         // Show new values
         stopEditing(id);
 
-        $(discussionContentSubject + "_" + id, rootel).html(subject);
-        $(discussionContentMessage + "_" + id, rootel).html(body.replace(/\n/g, "<br />"));
+        $(discussionContentSubject + "_" + id, rootel).html(sakai.api.Security.saneHTML(subject));
+        $(discussionContentMessage + "_" + id, rootel).html(sakai.api.Security.saneHTML(body.replace(/\n/g, "<br />")));
 
     };
 
@@ -281,11 +292,11 @@ sakai.discussion = function(tuid, showSettings) {
         };
 
         $.ajax({
-            url: store + id,
+            url: store + shardedId(id),
             cache: false,
             success: function(data){
                 if (showSettings) {
-                    sakai.api.Widgets.Container.informFinish(tuid);
+                    sakai.api.Widgets.Container.informFinish(tuid, "discussion");
                 }
                 else {
                     editComplete(id, subject, body);
@@ -297,6 +308,10 @@ sakai.discussion = function(tuid, showSettings) {
             data: post,
             type: 'POST'
         });
+    };
+
+    var shardedId = function(id) {
+        return id.substring(0,2) + '/' + id.substring(2,4) + '/' + id.substring(4,6) + '/' + id.substring(6,8) + '/' + id;
     };
 
     /**
@@ -439,20 +454,20 @@ sakai.discussion = function(tuid, showSettings) {
         }
 
         // Get the user's firstName, lastName and picture if it's in the database
-        var profile = post.profile;
+        var profile = post.profile[0];
         post.profile.fullName = parseName(uid, profile.firstName, profile.lastName);
-        post.profile.picture = parsePicture(uid, profile.picture);
+        post.profile.picture = parsePicture(uid, profile);
 
         // Check if someone edited the post
         // post.sakai:editedbyprofiles is an array of objects that contain all the editers for this post.
         // TODO: Fix this weird assignment bug.
         var editedByProfiles = post['sakai:editedbyprofiles'];
         if (editedByProfiles) {
-            var lastEditter = editedByProfiles[editedByProfiles.length - 1].editter;
+            var lastEditter = editedByProfiles[editedByProfiles.length - 1];
 
             // Get the profile info from the user that edited the post
-            post.editedByUserid = lastEditter["rep:userId"][0];
-            post.editedByName = parseName(lastEditter["rep:userId"][0], lastEditter.firstName, lastEditter.lastName);
+            post.editedByUserid = lastEditter.userid;
+            post.editedByName = parseName(lastEditter.userid, lastEditter.firstName, lastEditter.lastName);
             //post.editedByDate = formatDate(parseDate(lastEditter.date));
         }
         o.post = post;
@@ -485,6 +500,9 @@ sakai.discussion = function(tuid, showSettings) {
         // Hide the reply form
         $(discussionReplyContainer, rootel).hide();
 
+        // Hide the add new topic form
+        $(discussionAddContainer, rootel).hide();
+
         for (var i = 0, j = arrPosts.length; i<j; i++) {
             arrPosts[i] = doMarkUpOnPost(arrPosts[i]);
         }
@@ -500,7 +518,7 @@ sakai.discussion = function(tuid, showSettings) {
         }
 
         var firstPostSubject = jsonPosts.posts[0].post['sakai:subject'];
-        $('#discussion_widget_title',rootel).html(firstPostSubject);
+        $('#discussion_widget_title',rootel).html(sakai.api.Security.saneHTML(firstPostSubject));
 
         $('#discussion_compact_link',rootel).bind('click', jsonPosts, renderCompactPostsView);
 
@@ -620,12 +638,12 @@ sakai.discussion = function(tuid, showSettings) {
     var createInitialPost = function(post) {
         // Use the local store for creating the initial posts.
         $.ajax({
-            url: "/_user" + sakai.data.me.profile.path + "/message.create.html",
+            url: "/~" + sakai.data.me.user.userid + "/message.create.html",
             cache: false,
             type: 'POST',
             success: function(data) {
                 saveWidgetSettings();
-                sakai.api.Widgets.Container.informFinish(tuid);
+                sakai.api.Widgets.Container.informFinish(tuid, "discussion");
             },
             error: function(xhr, textStatus, thrownError) {
                 alert("Unable to save your post.");
@@ -645,6 +663,14 @@ sakai.discussion = function(tuid, showSettings) {
     var clearReplyFields = function() {
         $(discussionReplySubject, rootel).val('');
         $(discussionReplyBody, rootel).val('');
+    };
+
+    /**
+     * Clear the input fields for the add topic form
+     */
+    var clearAddTopicFields = function() {
+        $(discussionAddTopicSubject, rootel).val('');
+        $(discussionAddTopicBody, rootel).val('');
     };
 
 
@@ -712,6 +738,16 @@ sakai.discussion = function(tuid, showSettings) {
         $(discussionReplySubject, rootel).val("Re: " + $(discussionContentSubject + "_" + id, rootel).text());
     };
 
+    var showAddTopic = function(id) {
+        $(discussionAddContainer, rootel).show();
+
+        // Jump to reply form
+        scrollTo($(discussionAddContainer, rootel));
+
+        // Focus on the subject field
+        $(discussionAddTopicSubject, rootel).focus();
+    };
+
 
     ////////////
     // DELETE //
@@ -723,7 +759,7 @@ sakai.discussion = function(tuid, showSettings) {
      * @param {boolean} deleteValue true = delete, false = undelete
      */
     var deletePost = function(id, deleteValue) {
-        var url = store + id;
+        var url = store + shardedId(id);
         var data = {
             "sakai:deleted": deleteValue
         };
@@ -740,6 +776,57 @@ sakai.discussion = function(tuid, showSettings) {
         });
     };
 
+    ///////////////////
+    // ADD NEW TOPIC //
+    ///////////////////
+
+    /**
+     * Add a new topic.
+     * @param {String} id
+     */
+    var addNewTopic = function(id) {
+        var subject = $(discussionAddTopicSubject, rootel).val();
+        var body = $(discussionAddTopicBody, rootel).val();
+        if (subject.replace(/ /g, "") !== "" && body.replace(/ /g, "") !== "") {
+
+            var data = {
+                'sakai:subject': subject,
+                'sakai:body': body,
+                'sakai:marker': marker,
+                'sakai:type': 'discussion',
+                'sakai:writeto': store,
+                'sakai:marker': tuid,
+                'sakai:initialpost': true,
+                'sakai:messagebox': 'outbox',
+                'sakai:sendstate': 'pending',
+                'sakai:to': "discussion:s-" + currentSite
+            };
+            var url = sakai.site.currentsite["jcr:path"] + "/store.create.html";
+            $.ajax({
+                url: url,
+                type: 'POST',
+                success: function(data) {
+                    // Get all the other posts
+                    clearAddTopicFields();
+                    getPostsFromJCR();
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    if (xhr.status === 401) {
+                        clearReplyFields();
+                        alert("You are not allowed to add a reply.");
+                    }
+                    else {
+                        alert("Failed to add a reply.");
+                    }
+                },
+                data: data
+            });
+        }
+        else {
+            alert("Please enter all the fields.");
+        }
+    };
+
 
     //////////////
     // SETTINGS //
@@ -749,7 +836,7 @@ sakai.discussion = function(tuid, showSettings) {
      * Closes the settings container.
      */
     var finishSettingsContainer = function() {
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "discussion");
     };
 
     /**
@@ -843,8 +930,8 @@ sakai.discussion = function(tuid, showSettings) {
                 widgetSettings.displayMode = 'inline';
             }
 
-            var callback = finishSettingsContainer;
-            saveWidgetSettings(callback);
+            var callback1 = finishSettingsContainer;
+            saveWidgetSettings(callback1);
         }
     };
 
@@ -1038,6 +1125,26 @@ sakai.discussion = function(tuid, showSettings) {
         replyPost(currentReplyId);
     });
 
+    // Bind the add topic button
+    $(discussionAddNewTopic, rootel).bind("click", function(e, ui) {
+        showAddTopic();
+    });
+
+    // Bind the add topic submit
+    $(discussionAddTopicSubmit, rootel).bind("click", function(e, ui) {
+        addNewTopic($(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1]);
+    });
+
+    // Bind the add topic cancel
+    $(discussionAddTopicCancel, rootel).bind("click", function(e, ui){
+
+        // Clear everything in the add topic fields
+        clearReplyFields();
+
+        // Hide the input form
+        $(discussionReplyContainer, rootel).hide();
+    });
+
     /*
      * Bind the cancel button
      */
@@ -1059,7 +1166,7 @@ sakai.discussion = function(tuid, showSettings) {
      * Bind the settings cancel button
      */
     $("#discussion_settings_cancel", rootel).bind("click", function(e, ui) {
-        sakai.api.Widgets.Container.informCancel(tuid);
+        sakai.api.Widgets.Container.informCancel(tuid, "discussion");
     });
 
     /*

@@ -62,7 +62,7 @@ sakai.siterecentactivity = function(tuid, showSettings){
      */
     sakai.siterecentactivity.getRecentActivity = function(callback){
 
-        sakai.api.Server.loadJSON("/_user" + sakai.data.me.profile.path + "/private/recentactivity", function(success, data) {
+        sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/recentactivity", function(success, data) {
             if (success) {
                 sakai.siterecentactivity.recentactivity = data;
             }
@@ -82,7 +82,7 @@ sakai.siterecentactivity = function(tuid, showSettings){
     var saveRecentActivity = function(){
 
         // Save the recentactivity json file
-        sakai.api.Server.saveJSON("/_user" + sakai.data.me.profile.path + "/private/recentactivity", sakai.siterecentactivity.recentactivity, sakai.siterecentactivity.render());
+        sakai.api.Server.saveJSON("/~" + sakai.data.me.user.userid + "/private/recentactivity", sakai.siterecentactivity.recentactivity, sakai.siterecentactivity.render());
     };
 
 
@@ -133,10 +133,10 @@ sakai.siterecentactivity = function(tuid, showSettings){
     ///////////////////////
 
     $("#siterecentactivity_settings_submit",rootel).click(function(){
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "siterecentactivity");
     });
     $("#siterecentactivity_settings_cancel",rootel).click(function(){
-        sakai.api.Widgets.Container.informCancel(tuid);
+        sakai.api.Widgets.Container.informCancel(tuid, "siterecentactivity");
     });
 
     // Hide or show the settings
@@ -217,7 +217,7 @@ sakai.siterecentactivity = function(tuid, showSettings){
             return this.each(function(){
                 var date = humane_date(this.title);
                 if(date && jQuery(this).text() != date) // don't modify the dom if we don't have to
-                    jQuery(this).text(date);
+                    jQuery(this).text(sakai.api.Security.saneHTML(date));
             });
         };
     }

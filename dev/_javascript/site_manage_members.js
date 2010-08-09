@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, sdata, Querystring */
+/*global $, Querystring */
 
 var sakai = sakai || {};
 sakai.site_manage_members = function() {
@@ -53,7 +53,7 @@ sakai.site_manage_members = function() {
             success: function(response) {
                 siteJson = response;
                 roleToGroup = sakai.lib.site.authz.getRoleToPrincipalMap(siteJson);
-                $("#sitetitle").text(siteJson.name);
+                $("#sitetitle").text(sakai.api.Security.saneHTML(siteJson.name));
             },
             error: function(xhr, textStatus, thrownError) {
                 alert("Failed to get the site info.");
@@ -180,7 +180,7 @@ sakai.site_manage_members = function() {
         for (var i = 0; i < results.length; i++) {
             if (results[i].picture && typeof results[i].picture !== "object") {
                 results[i].picture = $.parseJSON(results[i].picture);
-                results[i].picture.picPath = "/_user" + results[i].path + "/public/profile/" + results[i].picture.name;
+                results[i].picture.picPath = "/~" + results[i]["rep:userId"] + "/public/profile/" + results[i].picture.name;
             }
             else {
                 results[i].picture = undefined;
@@ -263,11 +263,8 @@ sakai.site_manage_members = function() {
         $.ajax({
             cache: false,
             url: "/sites/" + selectedSite + ".members.json?sort=firstName,asc&start=" + start + "&items=" + pageSize,
+            dataType: "json",
             success: function(data) {
-
-                if (typeof data === "string") {
-                    data = $.parseJSON(data);
-                }
 
                 json = $.extend(data, {}, true);
 
@@ -283,6 +280,42 @@ sakai.site_manage_members = function() {
         });
     };
     getSiteMembers(null, 1,",");
+    var getPendingJoinRequests = function() {
+        $.getJSON(sakai.config.URL.SITE_JOIN_REQUESTS, {"site": selectedSite}, function(data) {
+            var toRender = {};
+            toRender.requesters = data.results;
+            if(data.results.length > 0) {
+                $("#siteManage_pending-requests-title").show();
+                $("#siteManage_requests").html($.TemplateRenderer("siteManage_requests_template", toRender));
+                $(".accept-sitejoin").bind("click",function(ev){
+                    var from = this.id.replace("accept_link_", "")
+                    var sitePath = '/sites/' + selectedSite;
+                    $.ajax({
+                        url: sitePath + ".approve.html",
+                        type: "POST",
+                        data : {"user":from},
+                        success: function(data){
+                            $("#siteManage_requester_" + from).fadeOut().remove();
+                            getSiteMembers(null, 1, ",");
+                        }
+                    });
+                });
+                $(".deny-sitejoin").bind("click",function(ev){
+                    var from = this.id.replace("deny_link_", "")
+                    var sitePath = '/sites/' + selectedSite;
+                    $.ajax({
+                        url: sitePath + ".deny.html",
+                        type: "POST",
+                        data : {"user":from},
+                        success: function(data){
+                            $("#siteManage_requester_" + from).fadeOut().remove();
+                        }
+                    });
+                });
+            }
+        });
+    }
+    getPendingJoinRequests();
 
 
     var filterMembers = function(search){

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata, opensocial */
+/*global $, Config, opensocial */
 
 var sakai = sakai || {};
 sakai.inbox = function() {
@@ -66,15 +66,13 @@ sakai.inbox = function() {
     var inboxFilter = inboxID + "_filter";
     var inboxFilterClass = inboxClass + "_filter";
     var inboxFilterInbox = inboxFilter + "_inbox";
-    var inboxFilterMessages = inboxFilter + "_messages"
-    var inboxFilterReminders = inboxFilter + "_reminders";
+    var inboxFilterMessages = inboxFilter + "_messages";
     var inboxFilterAnnouncements = inboxFilter + "_announcements";
     var inboxFilterChats = inboxFilter + "_chats";
     var inboxFilterInvitations = inboxFilter + "_invitations";
     var inboxFilterSent = inboxFilter + "_sent";
     var inboxFilterTrash = inboxFilter + "_trash";
-    var inboxFilterNrMessages = inboxFilterClass + "nrMessages";
-    var inboxFilterNrReminders = inboxFilterClass + "_nrReminders";
+    var inboxFilterNrMessages = inboxFilterClass + "_nrMessages";
     var inboxBold = inbox + "_bold";
 
     // Different panes (inbox, send message, view message, ..)
@@ -83,6 +81,7 @@ sakai.inbox = function() {
     var inboxPaneInbox = inboxPane + "_inbox";
     var inboxPaneCompose = inboxPane + "_compose";
     var inboxPaneMessage = inboxPane + "_message";
+    var inboxPaneCreateNotification = inboxPane + "_createNotification";
 
     // Main inbox
     var inboxTable = inboxID + "_table";
@@ -208,16 +207,15 @@ sakai.inbox = function() {
      * Shows a general message on the top screen
      * @param {String} msg    the message you want to display
      * @param {Boolean} isError    true for error (red block)/false for normal message(green block)
-     * @param {Number} timeoutthe amout of milliseconds you want the message to be displayed, 0 = always (till the next message)
      */
-    var showGeneralMessage = function(msg, isError, timeout) {
-        var type = "normal";
-        var stay = false;
-        if (isError) {
-            type = "error";
-            stay = true;
-        }
-        sakai.lib.notifications.showNotification("My Messages", msg, type, stay, "/dev/_images/inbox_folders_messages.gif");
+    var showGeneralMessage = function(msg, isError) {
+
+        // Check whether to show an error type message or an information one
+        var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
+
+        // Show the message to the user
+        sakai.api.Util.notification.show("", msg, type);
+
     };
 
     /**
@@ -624,10 +622,8 @@ sakai.inbox = function() {
 
         cats = selectedCategory;
         if (selectedCategory){
-            if (selectedCategory === "Message") {
+            if (selectedCategory === "Message"){
                 cats = "message";
-            } else if (selectedCategory === "Reminder") {
-                cats = "reminder";
             } else if (selectedCategory === "Announcement"){
                 cats = "announcement";
             } else if (selectedCategory === "Invitation"){
@@ -653,8 +649,8 @@ sakai.inbox = function() {
 
             },
             error: function(xhr, textStatus, thrownError) {
-                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text(), true);
-                $(inboxResults).html($(inboxGeneralMessagesErrorGeneral).text());
+                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
             }
         });
     };
@@ -666,7 +662,7 @@ sakai.inbox = function() {
     var showUnreadMessages = function() {
 
         $.ajax({
-            url: "/_user" + sakai.data.me.profile.path + "/message.count.json?filters=sakai:messagebox,sakai:read&values=inbox,false&groupedby=sakai:category",
+            url: "/~" + sakai.data.me.user.userid + "/message.count.json?filters=sakai:messagebox,sakai:read&values=inbox,false&groupedby=sakai:category",
             cache: false,
             success: function(data) {
 
@@ -675,14 +671,12 @@ sakai.inbox = function() {
                 for (var i = 0, j = data.count.length; i < j; i++){
                     if (data.count[i].group === "message"){
                         unreadMessages = data.count[i].count;
-                    } else if (data.count[i].group === "reminder") {
-                        unreadReminders = data.count[i].count;
                     } else if (data.count[i].group === "announcement"){
                         unreadAnnouncements = data.count[i].count;
                     } else if (data.count[i].group === "invitation"){
                         unreadInvitations = data.count[i].count;
                     } else if (data.count[i].group === "chat"){
-                        $(inboxFilterChats).append(tpl.replace(/__NR__/gi, data.count[i].count));
+                        $(inboxFilterChats).append(sakai.api.Security.saneHTML(tpl.replace(/__NR__/gi, data.count[i].count)));
                     }
                     totalcount += data.count[i].count;
                 }
@@ -691,7 +685,7 @@ sakai.inbox = function() {
 
             },
             error: function(xhr, textStatus, thrownError) {
-                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text(), true);
+                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
             }
         });
     };
@@ -699,19 +693,19 @@ sakai.inbox = function() {
     var updateUnreadNumbers = function(){
 
         if (unreadMessages > 0){
-            $("#inbox_unread_nr_messages").text("(" + unreadMessages + ")");
+            $("#inbox_unread_nr_messages").text(sakai.api.Security.saneHTML("(" + unreadMessages + ")"));
         } else {
             $("#inbox_unread_nr_messages").text("");
         }
 
         if (unreadAnnouncements > 0){
-            $("#inbox_unread_nr_announcements").text("(" + unreadAnnouncements + ")");
+            $("#inbox_unread_nr_announcements").text(sakai.api.Security.saneHTML("(" + unreadAnnouncements + ")"));
         } else {
             $("#inbox_unread_nr_announcements").text("");
         }
 
         if (unreadInvitations > 0){
-            $("#inbox_unread_nr_invitations").text("(" + unreadInvitations + ")");
+            $("#inbox_unread_nr_invitations").text(sakai.api.Security.saneHTML("(" + unreadInvitations + ")"));
         } else {
             $("#inbox_unread_nr_invitations").text("");
         }
@@ -729,8 +723,8 @@ sakai.inbox = function() {
      * @param {String} id    The id of a message
      */
     var getMessageWithId = function(id) {
-
-        for (var i = 0, j=allMessages.length; i<j; i++) {
+    
+        for (var i = 0, j = allMessages.length; i < j; i++) {
             if (allMessages[i]["jcr:name"] === id) {
                 return allMessages[i];
             }
@@ -775,11 +769,11 @@ sakai.inbox = function() {
                 updateUnreadNumbers();
 
                 // Mark message in navigationchat as read
-                $(chatUnreadMessages).html((parseInt($(chatUnreadMessages).text(),10) - 1));
+                $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(),10) - 1)));
 
             },
             error: function(xhr, textStatus, thrownError) {
-                showGeneralMessage($(inboxGeneralMessagesErrorReadFail).text(), true);
+                showGeneralMessage($(inboxGeneralMessagesErrorReadFail).text());
             }
         });
     };
@@ -797,6 +791,9 @@ sakai.inbox = function() {
         // Hide invitation links
         $("#inbox-invitation-accept").hide();
         $("#inbox-invitation-already").hide();
+        $("#inbox-sitejoin-accept").hide();
+        $("#inbox-sitejoin-deny").hide();
+        $("#inbox-sitejoin-already").hide();
 
         showPane(inboxPaneMessage);
         var message = getMessageWithId(id);
@@ -805,22 +802,22 @@ sakai.inbox = function() {
         if (typeof message !== "undefined") {
 
             // Fill in this message values.
-            $(inboxSpecificMessageSubject).text(message["sakai:subject"]);
-            $(inboxSpecificMessageBody).html(message["sakai:body"].replace(/\n/gi, "<br />"));
-            $(inboxSpecificMessageDate).text(message.date);
+            $(inboxSpecificMessageSubject).text(sakai.api.Security.saneHTML(message["sakai:subject"]));
+            $(inboxSpecificMessageBody).html(sakai.api.Security.saneHTML(message["sakai:body"].replace(/\n/gi, "<br />")));
+            $(inboxSpecificMessageDate).text(sakai.api.Security.saneHTML(message.date));
 
             if (message.userFrom) {
                 for (var i = 0, j = message.userFrom.length; i < j; i++) {
-                    $(inboxSpecificMessageFrom).text(message.userFrom[i]["firstName"] + " " + message.userFrom[i]["lastName"]);
+                    $(inboxSpecificMessageFrom).text(sakai.api.Security.saneHTML(message.userFrom[i]["firstName"] + " " + message.userFrom[i]["lastName"]));
                     if (message.userFrom[i].photo) {
-                        $(inboxSpecificMessagePicture).attr("src", "/_user" + message.userFrom[i].hash + "/public/profile/" + message.userFrom[i].photo);
+                        $(inboxSpecificMessagePicture).attr("src", "/~" + message.userFrom[i]["rep:userId"] + "/public/profile/" + message.userFrom[i].photo);
                     }
                     else {
                         $(inboxSpecificMessagePicture).attr("src", sakai.config.URL.USER_DEFAULT_ICON_URL);
                     }
                 }
             } else {
-                $(inboxSpecificMessageFrom).text(message["sakai:from"]);
+                $(inboxSpecificMessageFrom).text(sakai.api.Security.saneHTML(message["sakai:from"]));
                 $(inboxSpecificMessagePicture).attr("src", sakai.config.URL.USER_DEFAULT_ICON_URL);
             }
 
@@ -828,24 +825,36 @@ sakai.inbox = function() {
             $(inboxSpecificMessageComposeSubject).val("Re: " + message.subject);
 
             if (message["sakai:category"] === "invitation"){
-                // Check whether this request is still pending
-                $.ajax({
-                    url: "/var/contacts/invited?page=0&items=100",
-                    success: function(data) {
-                        var pending = false;
-                        for (var i = 0; i < data.results.length; i++){
-                            if (data.results[i].target === message["sakai:from"]){
-                                // Still a pending invitation
-                                pending = true;
+                if (message["sakai:subcategory"] === "joinrequest") {
+                    $.getJSON(message["sakai:sitepath"] + '/joinrequests/' + message.userFrom[0].hash + '.json', function(data) {
+                        var siteJoinRequestIsPending = (data["sakai:requestState"] && data["sakai:requestState"] === "pending");
+                        if (siteJoinRequestIsPending) {
+                            $("#inbox-sitejoin-accept").show();
+                            $("#inbox-sitejoin-deny").show();
+                        } else {
+                            $("#inbox-sitejoin-already").show();
+                        }
+                    });
+                } else {
+                    // Check whether this request is still pending
+                    $.ajax({
+                        url: "/var/contacts/invited?page=0&items=100",
+                        success: function(data) {
+                            var pending = false;
+                            for (var i = 0; i < data.results.length; i++){
+                                if (data.results[i].target === message["sakai:from"]){
+                                    // Still a pending invitation
+                                    pending = true;
+                                }
+                            }
+                            if (pending){
+                                $("#inbox-invitation-accept").show();
+                            } else {
+                                $("#inbox-invitation-already").show();
                             }
                         }
-                        if (pending){
-                            $("#inbox-invitation-accept").show();
-                        } else {
-                            $("#inbox-invitation-already").show();
-                        }
-                    }
-                });
+                    });
+                }
             }
 
             // This message has some replies attached to it.
@@ -887,12 +896,54 @@ sakai.inbox = function() {
     $("#inbox_message_accept_invitation").live("click", function(ev){
         var accepting = selectedMessage["sakai:from"];
         $.ajax({
-            url: "/_user" + sakai.data.me.profile.path + "/contacts.accept.html",
+            url: "/~" + sakai.data.me.user.userid + "/contacts.accept.html",
             type: "POST",
             data : {"targetUserId":accepting},
             success: function(data){
                 $("#inbox-invitation-accept").hide();
                 $("#inbox-invitation-already").show();
+            }
+        });
+    });
+    
+    /**
+     *
+     * ACCEPT SITE JOIN REQUEST
+     *
+     */
+
+    $("#inbox_message_accept_sitejoin").live("click", function(ev){
+        var from = selectedMessage["sakai:from"];
+        var sitePath = selectedMessage["sakai:sitepath"];
+        $.ajax({
+            url: sitePath + ".approve.html",
+            type: "POST",
+            data : {"user":from},
+            success: function(data){
+                $("#inbox-sitejoin-accept").hide();
+                $("#inbox-sitejoin-deny").hide();
+                $("#inbox-sitejoin-already").show();
+            }
+        });
+    });
+    
+    /**
+     *
+     * DENY SITE JOIN REQUEST
+     *
+     */
+
+    $("#inbox_message_deny_sitejoin").live("click", function(ev){
+        var from = selectedMessage["sakai:from"];
+        var sitePath = selectedMessage["sakai:sitepath"];
+        $.ajax({
+            url: sitePath + ".deny.html",
+            type: "POST",
+            data : {"user":from},
+            success: function(data){
+                $("#inbox-sitejoin-accept").hide();
+                $("#inbox-sitejoin-deny").hide();
+                $("#inbox-sitejoin-already").show();
             }
         });
     });
@@ -910,7 +961,7 @@ sakai.inbox = function() {
      */
     var sendMessageFinished = function(success, data) {
 
-        showGeneralMessage($(inboxGeneralMessagesSent).text(), false, 5000);
+        showGeneralMessage($(inboxGeneralMessagesSent).text(), false);
         clearInputFields();
 
         // Show the sent inbox pane.
@@ -948,10 +999,10 @@ sakai.inbox = function() {
                 txt = pathToMessages.length + $(inboxGeneralMessagesDeleted_x).text();
             }
 
-            showGeneralMessage(txt, false, 5000);
+            showGeneralMessage(txt, false);
         }
         else {
-            showGeneralMessage($(inboxGeneralMessagesDeletedFailed).text(), true);
+            showGeneralMessage($(inboxGeneralMessagesDeletedFailed).text());
         }
     };
 
@@ -964,13 +1015,13 @@ sakai.inbox = function() {
         $.ajax({
             url: "/system/batch/delete",
             type: "POST",
-            success: function(data) {
-            deleteMessagesFinished(pathToMessages, true);
+            success: function(data){
+                deleteMessagesFinished(pathToMessages, true);
             },
-            error: function(xhr, textStatus, thrownError) {
-               deleteMessagesFinished(pathToMessages, false);
+            error: function(xhr, textStatus, thrownError){
+                deleteMessagesFinished(pathToMessages, false);
             },
-            data : {
+            data: {
                 "resources": pathToMessages,
                 "_charset_": "utf-8"
             }
@@ -1036,7 +1087,7 @@ sakai.inbox = function() {
                         }
                     },
                     data: {
-                        "sakai:messagebox":"trash",
+                        "sakai:messagebox": "trash",
                         "_charset_": "utf-8"
                     }
                 });
@@ -1057,7 +1108,7 @@ sakai.inbox = function() {
         //    show the selector
         $(inboxComposeNewPanel).toggle();
         // set variable which tells us if the menu is open or closed
-        if(inboxComposeNewPanelOpen){
+        if (inboxComposeNewPanelOpen) {
             inboxComposeNewPanelOpen = false;
         } else {
             inboxComposeNewPanelOpen = true;
@@ -1081,11 +1132,12 @@ sakai.inbox = function() {
     $(document).bind("click", function(e){
         var $clicked = $(e.target);
         // Check if one of the parents is the element container AND check if menu is open
-        if(!$clicked.parents().is(inboxComposeNew) && inboxComposeNewPanelOpen){
+        if (!$clicked.parents().is(inboxComposeNew) && inboxComposeNewPanelOpen) {
             $(inboxComposeNewPanel).toggle();
             inboxComposeNewPanelOpen = false;
         }
     });
+    
 
     /**
      *
@@ -1104,9 +1156,6 @@ sakai.inbox = function() {
 
     $(inboxFilterMessages).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
-    });
-    $(inboxFilterReminders).click(function() {
-        filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
     });
     $(inboxFilterAnnouncements).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
@@ -1157,10 +1206,10 @@ sakai.inbox = function() {
     // Sorters for the inbox.
     $(inboxTableHeaderSort).bind("mouseenter", function() {
         if (sortOrder === 'descending') {
-            $(this).append($(inboxInboxSortUp).html());
+            $(this).append(sakai.api.Security.saneHTML($(inboxInboxSortUp).html()));
         }
         else {
-            $(this).append($(inboxInboxSortDown).html());
+            $(this).append(sakai.api.Security.saneHTML($(inboxInboxSortDown).html()));
         }
     });
     $(inboxTableHeaderSort).bind("mouseout", function() {
@@ -1172,10 +1221,6 @@ sakai.inbox = function() {
 
         getAllMessages();
     });
-
-
-
-
 
 
     /**
@@ -1245,9 +1290,9 @@ sakai.inbox = function() {
             redirectToLoginPage();
         }
         else {
-            // We are logged in. Do all the nescecary stuff.
-            // load the list of messages.
-            //getCount("all");
+            // We are logged in. Do all the necessary stuff.
+            // Load the list of messages.
+            // getCount("all");
             getAllMessages();
             showUnreadMessages();
 
@@ -1272,4 +1317,5 @@ sakai.inbox = function() {
 
     doInit();
 };
+
 sakai.api.Widgets.Container.registerForLoad("sakai.inbox");

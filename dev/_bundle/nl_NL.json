@@ -24,6 +24,7 @@
 "MAY": "mei",
 "MONDAY": "maandag",
 "MY_SAKAI": "Mijn Sakai",
+"CALENDAR": "Kalender",
 "NO_ONE": "Niemand",
 "NO_STATUS": "Geen status",
 "NOVEMBER": "november",
@@ -59,5 +60,5 @@
 "VIEW_PROFILE": "Bekijk Profiel",
 "WEDNESDAY": "woensdag",
 "WHAT_ARE_YOU_DOING_NOW": "Wat ben je aan het doen?",
-"WHO_CAN_SEE_SEARCH_ON_THIS": "Wie kan dit zien?"
+"WHO_CAN_VIEW_OR_SEARCH_THIS": "Wie kan dit zien?"
 }

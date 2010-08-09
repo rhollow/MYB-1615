@@ -28,10 +28,13 @@
 { float: left; width: 31%; margin: 5px; padding: 5px; border-right: 1px solid #cdcdcd; }
 
 .suggested_link_col .suggested_link_header
-{ font-size: 14px; font-weight: bold; }
+{ font-size: 14px; font-weight: bold; height: 20px; }
 
 .suggested_link_col .suggested_link_header a
-{ position: relative; top: 3px; }
+{ position: relative; top: -17px; left: 30px; }
+
+.suggested_link_col label
+{ width: 0px; }
 
 
 /** ALL LINKS SECTION **/
@@ -41,27 +44,23 @@
 .all_links_col li.NoBulletNoIndent {
   list-style-type: none;
   padding-top: 5px;
-  width: 215px;
+  width: 210px;
   height: 22px;
 }
 
-.all_links_col li:hover
-{ background-color: #c6deff }
-
 .all_links_col a
-{ position: relative; top: -5px; left: 5px; }
+{ position: relative; top: -24px; left: 30px; }
 
 .all_links_col ul 
 { margin: 5px; }
 
 .all_links_col label
-{ width: 210px; }
+{ width: 0px; }
 
 
 /** TAB VARIANT **/
-.links .s3d-primary-tabs{
-    background: #fff url('../../_images/profile_tab_bg.png') top right no-repeat;
-}
+.links .s3d-primary-tabs
+{ background: #fff url('../../_images/profile_tab_bg.png') top right no-repeat; }
 
 
 /** GENERAL LINKS SECTION RULES **/
@@ -98,6 +97,7 @@
 .links .grey_button .button
 { background:transparent url(../../_images/gray_button_right.png) no-repeat scroll right top; border:medium none; color:#FFFFFF; cursor:pointer; font-weight:bold; height:23px; margin:0 -10px 0 0; }
 
+
 /** CHECKBOXES **/
 .CheckBoxClass
 {
@@ -120,6 +120,7 @@
 	height: 20px;	
 	width: 150px;
 	display: block;
+    cursor: pointer;
 }
 
 .LabelSelected
@@ -131,6 +132,7 @@
 	height: 20px;	
 	width: 150px;
 	display: block;
+    cursor: pointer;
 }
 
 .LabelRequired
@@ -151,7 +153,7 @@
 { border-right: 0px; }
 
 #suggested_sites
-{ border-bottom: 1px solid #cdcdcd; margin-bottom: 10px; }
+{ border-bottom: 1px solid #cdcdcd; margin-bottom: 20px; }
 
 #allsite_form
 { padding: -10px; }

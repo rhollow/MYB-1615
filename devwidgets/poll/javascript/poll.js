@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata */
+/*global $, Config */
 
 var sakai = sakai || {};
 
@@ -700,7 +700,7 @@ sakai.poll = function(tuid, showSettings){
             a.appendChild(text);
 
             // Add the a tag to the div
-            $("#"+input+"_div").append(a);
+            $("#"+input+"_div").append(sakai.api.Security.saneHTML(a));
         }
 
         // If you click on a field, insert the value into the input box and change class
@@ -741,16 +741,16 @@ sakai.poll = function(tuid, showSettings){
      * Function that will be executed after the save to the database
      */
     var finishSettingsAfterSave = function(){
-        // Informes the sdata container that you are finished editing the widget.
+        // Informs the container that you are finished editing the widget.
         // This will close the lightbox
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "poll");
     };
 
     /**
      * Executed after clicking on the save button
      */
     var finishNewSettings = function(){
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "poll");
     };
 
     /**
@@ -1057,9 +1057,9 @@ sakai.poll = function(tuid, showSettings){
 
         // Bind the settings cancel button
         $(pollCancel, rootel).bind("click",function(e,ui){
-            // Informs the sdata container that you pressed cancel and
+            // Informs the container that you pressed cancel and
             // this will close the pop up
-            sakai.api.Widgets.Container.informCancel(tuid);
+            sakai.api.Widgets.Container.informCancel(tuid, "poll");
         });
 
         // Bind the preview button

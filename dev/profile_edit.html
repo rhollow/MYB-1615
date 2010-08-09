@@ -22,6 +22,7 @@
 
         <!-- Sakai Config JS -->
         <script type="text/javascript" src="_configuration/widgets.js"></script>
+        <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
         <script type="text/javascript" src="_configuration/config.js"></script>
 
         <!-- Core 3rd-party JS -->
@@ -29,6 +30,7 @@
         <script type="text/javascript" src="_lib/jquery/jquery-ui.full.js"></script>
         <script type="text/javascript" src="_lib/Fluid/3akai_Infusion.js"></script>
         <script type="text/javascript" src="_lib/jquery/plugins/jquery.json.js"></script>
+        <script type="text/javascript" src="/dev/_lib/google/html-sanitizer-minified.js"></script>
 
         <!-- Sakai Core JS -->
         <script type="text/javascript" src="_lib/sakai_util/sakai_magic.js"></script>
@@ -46,8 +48,8 @@
 
     <body class="fl-centered profile_preview i18nable">
 
-        <!-- EXPLORE BAR -->
-        <div id="widget_navigationchat" class="widget_inline"></div>
+        <!-- NAVIGATION -->
+        <div id="widget_topnavigation" class="widget_inline"></div>
 
         <div class="fl-container-flex header">
             <div class="fl-fix fl-centered fixed-container">
@@ -587,6 +589,10 @@
 
             <!-- FOOTER WIDGET -->
             <div id="widget_footer" class="widget_inline footercontainer"></div>
+
+            <!-- CHAT -->
+            <div id="widget_chat" class="widget_inline"></div>
+
         </div>
 
         <!-- DIALOGS -->

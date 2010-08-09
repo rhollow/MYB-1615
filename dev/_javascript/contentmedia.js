@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, sdata, Config, fluid, AIM, window, doPaging, get_cookie, Querystring */
+/*global $, Config, fluid, AIM, window, doPaging, get_cookie, Querystring */
 
 var sakai = sakai || {};
 
@@ -154,7 +154,7 @@ sakai.contentmedia = function(){
         var sortedVals = $.makeArray($(element + ' option')).sort(function(a,b){
             return $(a).text() > $(b).text() ? 1: -1;
         });
-        $(element).empty().html(sortedVals);
+        $(element).empty().html(sakai.api.Security.saneHTML(sortedVals));
     };
 
     /**
@@ -247,7 +247,7 @@ sakai.contentmedia = function(){
         // Render the message and add animation to show the message
         $(contentmediaDropMessage).hide();
         $.TemplateRenderer(contentmediaDropMessageTemplate, movedFiles, $(contentmediaDropMessage));
-        $(showDroppedMessageIn).append($(contentmediaDropMessage));
+        $(showDroppedMessageIn).append(sakai.api.Security.saneHTML($(contentmediaDropMessage)));
         $(contentmediaDropMessage).show();
         $(contentmediaDropMessage).fadeOut(2000);
     };
@@ -432,8 +432,17 @@ sakai.contentmedia = function(){
     var doFileRender = function(data){
 
         // Set the globaldata variable
-        globaldata = data;
-
+        
+        if (!data.results) {
+          resultwrapper = {};
+          resultwrapper.results = data;
+          resultwrapper.total = data.length;
+          globaldata = resultwrapper;
+        } else {
+          globaldata = data;
+        }
+        
+        
         // Set the formatted file size and format the date
         for(var i = 0; i < globaldata.results.length; i++){
             if(globaldata.results[i].filesize){
@@ -443,12 +452,12 @@ sakai.contentmedia = function(){
         }
 
         // Render files
-        $(contentmediaFilesContainer).html($.TemplateRenderer(contentmediaFilesContainerTemplate, data));
+        $.TemplateRenderer(contentmediaFilesContainerTemplate, globaldata, $(contentmediaFilesContainer));
 
         // Render paging
         $(jqPagerClass).pager({
             pagenumber: pageCurrent + 1,
-            pagecount: Math.ceil(data.total / pageSize),
+            pagecount: Math.ceil(globaldata.total / pageSize),
             buttonClickCallback: doPaging
         });
 
@@ -509,6 +518,8 @@ sakai.contentmedia = function(){
         $.ajax({
             url: url,
             data: {
+                "context" : options.context,
+                "search" : options.search,
                 "q" : options.search,
                 //"type" : type,
                 "page" : pageCurrent,
@@ -876,15 +887,6 @@ sakai.contentmedia = function(){
     });
 
     /**
-     * Bind actions to the uploader button
-     */
-    $(contentmediaUploaderTrigger).live("click", function(){
-
-        // Show the uploader dialog
-        $(contentmediaDialogUploader).jqmShow();
-    });
-
-    /**
      * Remove the search filter and fetch the files
      */
     $("#contentmedia_remove_filter_search").live("click", function(){
@@ -972,6 +974,8 @@ sakai.contentmedia = function(){
     /**
      * Show the pop up when the user goes over a file
      */
+     /* none of the info is relevant right now, lets not show it
+     *
     $("." + contentmediaViewThumbnailClass + " ." + contentmediaFileClass).live("mouseover", function(){
 
         // Get the id of the pop up that you want to see
@@ -988,10 +992,12 @@ sakai.contentmedia = function(){
         // Show the pop up
         $("#" + popupId).css("display","block");
     });
+    */
 
     /**
      * Hide the pop up when the user goes out of a file
      */
+     /*
     $("." + contentmediaViewThumbnailClass + " ." + contentmediaFileClass).live("mouseout", function(){
 
         // Get the id of the pop up that you want to hide
@@ -1004,7 +1010,7 @@ sakai.contentmedia = function(){
         // Hide the pop up
         $("#" + popupId).css("display","none");
     });
-
+    */
     /**
      * When the search input gets focus from the cursor, add the
      * selected class and empty the input box
@@ -1057,7 +1063,7 @@ sakai.contentmedia = function(){
         var sitesArray = [];
 
         $(contentmediaDialogAssociationsSelectAll + " :selected").each(function(i, selected){
-            $(contentmediaDialogAssociationsSelectSelected).append(selected);
+            $(contentmediaDialogAssociationsSelectSelected).append(sakai.api.Security.saneHTML(selected));
             sitesArray.push(selected.value);
         });
 
@@ -1079,7 +1085,7 @@ sakai.contentmedia = function(){
      */
     $(contentmediaDialogAssociationsMoveAll).live("click", function(){
         $(contentmediaDialogAssociationsSelectSelected + " :selected").each(function(i, selected){
-            $(contentmediaDialogAssociationsSelectAll).append(selected);
+            $(contentmediaDialogAssociationsSelectAll).append(sakai.api.Security.saneHTML(selected));
         });
         enableDisableMoveButtons();
 
@@ -1179,57 +1185,27 @@ sakai.contentmedia = function(){
     /**
      * Set the various settings for the fluid uploader component
      */
-    var initialiseUploader = function(){
-
-        // Show the Uploader's markup immediately, since we're not using progressive enhancement.
-        $(".fl-progEnhance-basic").hide();
-        $(".fl-progEnhance-enhanced").show();
-
-        var myUpload = fluid.progressiveEnhanceableUploader(".flc-uploader", ".fl-progEnhance-basic", {
-            uploadManager: {
-                type: "fluid.swfUploadManager",
-
-                options: {
-                    // Set the uploadURL to the URL for posting files to your server.
-                    uploadURL: getServerUrl("/_user" + sakai.data.me.profile.path + sakai.config.URL.USER_DEFAULT_UPLOAD_FOLDER),
-
-                    // This option points to the location of the SWFUpload Flash object that ships with Fluid Infusion.
-                    flashURL: "/dev/_lib/Fluid/fluid-components/swfupload/swfupload.swf"
-
-                    // Hide the postparams because we do not need to create a link (for now) -- if we upload files into sites, we do
-                    /*var linkUrl = "/sites/test/_files";
-                    var siteUrl = "/sites/test";
-                    postParams: {
-                        "link" : linkUrl,
-                        "site" : siteUrl
-                    }*/
-                }
-            },
-            decorators: [{
-                type: "fluid.swfUploadSetupDecorator",
-                options: {
-                     // This option points to the location of the Browse Files button used with Flash 10 clients.
-                    flashButtonImageURL: "/dev/_images/uploader/browse.png"
-                }
-            }],
-            listeners: {
-                //afterFileQueued: myQueueListenerFunc
-                afterUploadComplete : uploadCompleteListener
-            }
-
-        });
-
-        // Set the settings for when the users uses the single file uploader (without flash)
-        /*$(".fl-progEnhance-basic").submit(function() {
-            if($(contentmediaUploaderBasicName).val().length > 3){
-                basicUploadFilename = $(contentmediaUploaderBasicName).val();
-                $(contentmediaUploaderBasicName).attr("name", basicUploadFilename);
-            }
-
-            return AIM.submit(this, {'onStart' : startUpload, 'onComplete' : completeUpload});
-        });*/
-    };
-
+     
+     var initialiseUploader = function() {
+         $(function() {
+             $("#multifile_upload").MultiFile({
+               list: '#upload_file_list'
+             });  
+             if (sakai.config.URL.UPLOAD_URL) {
+               $("#new_uploader form").attr("action", sakai.config.URL.UPLOAD_URL);
+             } else {
+               $("#new_uploader form").attr("action", getServerUrl("/~" + sakai.data.me.user.userid + sakai.config.URL.USER_DEFAULT_UPLOAD_FOLDER));
+             }
+             $("#multifile_form").ajaxForm({
+                 success: function() {
+                     $("#multifile_upload").MultiFile('reset');
+                     $("#multifile_upload").val('');
+                     uploadCompleteListener();
+                 }
+             });
+         });
+     };
+    
     /**
      * Initialise the modal dialogs
      */
@@ -1484,10 +1460,10 @@ sakai.contentmedia = function(){
         initialiseUploader();
 
         // Accordion functionality
-        $(contentmediaAccordion).accordion({
+      // $(contentmediaAccordion).accordion({
             //fillSpace: true
-            autoHeight: false
-        });
+       //     autoHeight: false
+       // });
 
         // Initialise search
         initialiseSearch();

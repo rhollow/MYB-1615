@@ -17,7 +17,7 @@
  */
 
 /* Main */
-.mylinks_widget .fl-widget-content {padding: 0;}
+.mylinks_widget .fl-widget-content {padding: 0px;}
 
 /* List of links */
 .mylinks_widget .link_list {overflow: auto; max-height: 200px;}

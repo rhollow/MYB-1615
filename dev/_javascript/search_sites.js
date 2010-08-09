@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata, History, mainSearch, sakai */
+/*global $, Config, History, mainSearch, sakai */
 
 
 sakai.search = function() {
@@ -83,7 +83,7 @@ sakai.search = function() {
      * This method will show all the appropriate elements for when a search is executed.
      */
     var showSearchContent = function() {
-        $(searchConfig.global.searchTerm).text(searchterm);
+        $(searchConfig.global.searchTerm).text(sakai.api.Security.saneHTML(searchterm));
         $(searchConfig.global.numberFound).text("0");
         $(searchConfig.results.header).show();
         $(searchConfig.results.container).html($(searchConfig.global.resultTemp).html());
@@ -159,6 +159,12 @@ sakai.search = function() {
             // If we have results we add them to the object.
             if (results && results.results) {
                 finaljson.items = results.results;
+                
+                for (var site in finaljson.items){
+                    if (finaljson.items.hasOwnProperty(site)) {
+                        finaljson.items[site].site.name = sakai.api.Security.escapeHTML(finaljson.items[site].site.name);
+                    }
+                }
 
                 // If result is page content set up page path
                 for (var i=0, j=finaljson.items.length; i<j; i++ ) {

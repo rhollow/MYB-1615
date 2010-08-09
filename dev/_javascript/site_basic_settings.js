@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global $, Config, sdata, Querystring */
+/*global $, Config, Querystring */
 
 var sakai = sakai || {};
 sakai.site_basic_settings = function(){
@@ -65,6 +65,10 @@ sakai.site_basic_settings = function(){
     var siteSettingsAccessPublic = siteSettingsAccess + "_public";
     var siteSettingsAccessSakaiUsers = siteSettingsAccess + "_sakaiUsers";
     var siteSettingsAccessInvite = siteSettingsAccess + "_invite";
+    var siteSettingsJoinable = siteSettings + "_joinable";
+    var siteSettingsJoinableNo = siteSettingsJoinable + "_no";
+    var siteSettingsJoinableWithAuth = siteSettingsJoinable + "_withauth";
+    var siteSettingsJoinableYes = siteSettingsJoinable + "_yes";
     //    Delete
     var siteSettingsDelete = siteSettings + "_delete";
     var siteSettingsDeleteButton = siteSettingsDelete + "_button";
@@ -141,13 +145,14 @@ sakai.site_basic_settings = function(){
                 // Check if we are an owner for this site.
                 // Otherwise we will redirect to the site page.
                 if (sakai.lib.site.authz.isUserMaintainer(siteinfo)) {
+                    var nameSaneHTML = sakai.api.Security.saneHTML(response.name)
                     // Fill in the info.
-                    $("#sitetitle").text(response.name);
-                    $(siteSettingsInfoSakaiDomain).text(document.location.protocol + "//" + document.location.host + sakai.config.URL.SITE_ROOT);
+                    $("#sitetitle").text(nameSaneHTML);
+                    $(siteSettingsInfoSakaiDomain).text(sakai.api.Security.saneHTML(document.location.protocol + "//" + document.location.host + sakai.config.URL.SITE_ROOT));
                     $(siteSettingsInfoDescription).val(response.description);
                     $(siteSettingsInfoTitle).val(response.name);
-                    $(siteSettingsTitleClass).text(response.name);
-                    $(siteSettingsInfoSitePartTextLocation).text(response.id);
+                    $(siteSettingsTitleClass).text(nameSaneHTML);
+                    $(siteSettingsInfoSitePartTextLocation).text(sakai.api.Security.saneHTML(response.id));
                     getLanguages(response);
 
                     // Status
@@ -155,6 +160,7 @@ sakai.site_basic_settings = function(){
                         $(siteSettingsStatusOff).attr("checked", "checked");
                         //  Hide the other part.
                         $(siteSettingsAccess).hide();
+                        $(siteSettingsJoinable).hide();
                     }
                     else {
                         $(siteSettingsStatusOn).attr("checked", "checked");
@@ -163,14 +169,20 @@ sakai.site_basic_settings = function(){
                     // Access
                     if (response.access && response.access.toLowerCase() === "sakaiusers") {
                         $(siteSettingsAccessSakaiUsers).attr("checked", "checked");
+                    } else if (response.access && response.access.toLowerCase() === "invite") {
+                        $(siteSettingsAccessInvite).attr("checked", "checked");
+                    } else {
+                        $(siteSettingsAccessPublic).attr("checked", "checked");
                     }
-                    else
-                        if (response.access && response.access.toLowerCase() === "invite") {
-                            $(siteSettingsAccessInvite).attr("checked", "checked");
-                        }
-                        else {
-                            $(siteSettingsAccessPublic).attr("checked", "checked");
-                        }
+                        
+                    // Joinability
+                    if (response["sakai:joinable"] && response["sakai:joinable"].toLowerCase() === "yes") {
+                        $(siteSettingsJoinableYes).attr("checked", "checked");
+                    } else if (response["sakai:joinable"] && response["sakai:joinable"].toLowerCase() === "withauth") {
+                        $(siteSettingsJoinableWithAuth).attr("checked", "checked");
+                    } else {
+                        $(siteSettingsJoinableNo).attr("checked", "checked");
+                    }
                 }
                 else {
                     // The user is not an owner for this site. we redirect him/her to the site page.
@@ -206,7 +218,7 @@ sakai.site_basic_settings = function(){
 
     var saveSettingsDone = function(success, data, redirect_url){
         if (success) {
-            $(siteSettingsResponse).text($(siteSettingsErrorSaveSuccess).text());
+            $(siteSettingsResponse).text(sakai.api.Security.saneHTML($(siteSettingsErrorSaveSuccess).text()));
 
             // Go back to site
             document.location = sakai.config.URL.SITE_ROOT + redirect_url;
@@ -215,11 +227,11 @@ sakai.site_basic_settings = function(){
         else {
             // The user has no sufficient rights.
             if (data === 401) {
-                $(siteSettingsResponse).text($(siteSettingsErrorUnauthorized).text());
+                $(siteSettingsResponse).text(sakai.api.Security.saneHTML($(siteSettingsErrorUnauthorized).text()));
             }
             // Show a general error message.
             else {
-                $(siteSettingsResponse).text($(siteSettingsErrorSaveFail).text());
+                $(siteSettingsResponse).text(sakai.api.Security.saneHTML($(siteSettingsErrorSaveFail).text()));
             }
         }
 
@@ -287,6 +299,12 @@ sakai.site_basic_settings = function(){
                 if ($(siteSettingsAccessInvite + "[type=radio]").is(":checked")) {
                     access = "invite";
                 }
+            var joinable = "no";
+            if ($(siteSettingsJoinableWithAuth + "[type=radio]").is(":checked")) {
+                joinable = "withauth";
+            } else if ($(siteSettingsJoinableYes + "[type=radio]").is(":checked")) {
+                joinable = "yes";
+            }
 
             var language = $(siteSettingLanguageCmb + " option:selected").val();
             var tosend = {
@@ -294,6 +312,7 @@ sakai.site_basic_settings = function(){
                 "description": descEL.val(),
                 "status": status,
                 "access": access,
+                "sakai:joinable": joinable,
                 "language": language,
                 "_charset_":"utf-8"
             };
@@ -416,9 +435,11 @@ sakai.site_basic_settings = function(){
      */
     $(siteSettingsStatusOff).bind("click", function(){
         $(siteSettingsAccess).hide();
+        $(siteSettingsJoinable).hide();
     });
     $(siteSettingsStatusOn).bind("click", function(){
         $(siteSettingsAccess).show();
+        $(siteSettingsJoinable).show();
     });
 
     /*

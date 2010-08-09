@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata */
+/*global $, Config */
 
 var sakai = sakai || {};
 
@@ -91,7 +91,7 @@ sakai.footer = function(tuid,showSettings){
         debug_text += " | PLACE: " + doc_name;
 
         // Put text into holding tag
-        container.html(debug_text);
+        container.html(sakai.api.Security.saneHTML(debug_text));
 
     };
 

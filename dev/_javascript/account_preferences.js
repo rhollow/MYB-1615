@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata */
+/*global $, Config */
 
 sakai.account_preferences = function(){
 
@@ -86,7 +86,7 @@ sakai.account_preferences = function(){
      * @param {Number} timeoutthe amout of milliseconds you want the message to be displayed, 0 = always (till the next message)
      */
     var showGeneralMessage = function(msg, isError, hidebutton, generalMessage) {
-        $(generalMessage).html(msg);
+        $(generalMessage).html(sakai.api.Security.saneHTML(msg));
         if (isError) {
             $(generalMessage).addClass(errorMessage);
             $(generalMessage).removeClass(normalMessage);

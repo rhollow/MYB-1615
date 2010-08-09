@@ -2,3 +2,5 @@
 .project
 /target
 *.kpf
+nginx.*
+/dev-i

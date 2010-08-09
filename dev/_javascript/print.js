@@ -23,10 +23,10 @@ var sakai = sakai || {};
 sakai.print = function(){
 
     $.ajax({
-        url: "/_user/private/print.json",
+        url: "/~" + sakai.data.me.user.userid + "/private/print.json",
         cache: false,
         success: function(data){
-            $(".content_container").html(data.content);
+            $(".content_container").html(sakai.api.Security.saneHTML(data.content));
             /* for (var i = 0; i < data.css.length; i++){
                 $.Load.requireCSS(data.css[i]);
             } */

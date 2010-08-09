@@ -128,7 +128,7 @@ sakai.api.Communication.sendMessage = function(to, subject, body, category, repl
 
     // Send message
     $.ajax({
-        url: "/_user" + sakai.data.me.profile.path + "/message.create.html",
+        url: "/~" + sakai.data.me.user.userid + "/message.create.html",
         type: "POST",
         data: toSend,
         success: function(data) {
@@ -811,6 +811,107 @@ sakai.api.l10n.getSiteLocale = function() {
  */
 sakai.api.Security = sakai.api.Security || {};
 
+/**
+ * Encodes the HTML characters inside a string so that the HTML characters (e.g. <, >, ...)
+ * are treated as text and not as HTML entities
+ * 
+ * @param {String} inputString  String of which the HTML characters have to be encoded
+ * 
+ * @returns {String} HTML Encoded string
+ */
+sakai.api.Security.escapeHTML = function(inputString){
+    return $("<div/>").text(inputString).html();
+}
+
+/**
+ * Sanitizes HTML content. All untrusted (user) content should be run through
+ * this function before putting it into the DOM
+ *
+ * @param inputHTML {String} The content string we would like to sanitize
+ *
+ * @returns {String} Escaped and sanitized string
+ */
+sakai.api.Security.saneHTML = function(inputHTML) {
+
+    if (inputHTML === "") {
+        return "";
+    }
+
+
+    // Filter which runs through every url in inputHTML
+    var filterUrl = function(url) {
+
+        return url;
+
+    };
+
+    // Filter which runs through every name id and class
+    var filterNameIdClass = function(nameIdClass) {
+
+        return nameIdClass;
+
+    };
+
+
+    // A slightly modified version of Caja's sanitize_html function to allow style="display:none;"
+    var sakaiHtmlSanitize = function(htmlText, opt_urlPolicy, opt_nmTokenPolicy) {
+        var out = [];
+        html.makeHtmlSanitizer(
+            function sanitizeAttribs(tagName, attribs) {
+                for (var i = 0; i < attribs.length; i += 2) {
+                    var attribName = attribs[i];
+                    var value = attribs[i + 1];
+                    var atype = null, attribKey;
+                    if ((attribKey = tagName + '::' + attribName, html4.ATTRIBS.hasOwnProperty(attribKey)) || (attribKey = '*::' + attribName, html4.ATTRIBS.hasOwnProperty(attribKey))) {
+                        atype = html4.ATTRIBS[attribKey];
+                    }
+                    if (atype !== null) {
+                        switch (atype) {
+                            case html4.atype.SCRIPT:
+                            case html4.atype.STYLE:
+                                if ((value === "display: none;") || (value === "display:none;") || (value === "display: none") || (value === "display:none")) {
+                                    value = value;
+                                } else {
+                                    value = null;
+                                }
+                                break;
+                            case html4.atype.IDREF:
+                            case html4.atype.IDREFS:
+                            case html4.atype.GLOBAL_NAME:
+                            case html4.atype.LOCAL_NAME:
+                            case html4.atype.CLASSES:
+                                value = opt_nmTokenPolicy ? opt_nmTokenPolicy(value) : value;
+                                break;
+                            case html4.atype.URI:
+                                value = opt_urlPolicy && opt_urlPolicy(value);
+                                break;
+                            case html4.atype.URI_FRAGMENT:
+                                if (value && '#' === value.charAt(0)) {
+                                    value = opt_nmTokenPolicy ? opt_nmTokenPolicy(value) : value;
+                                    if (value) {
+                                        value = '#' + value;
+                                    }
+                                } else {
+                                    value = null;
+                                }
+                                break;
+                        }
+                    } else {
+                        value = null;
+                    }
+                    attribs[i + 1] = value;
+                }
+                return attribs;
+            })(htmlText, out);
+        return out.join('');
+    }
+
+    // Call a slightly modified version of Caja's sanitizer
+    return sakaiHtmlSanitize(inputHTML, filterUrl, filterNameIdClass);
+
+};
+
+
 /** Description - TO DO */
 sakai.api.Security.setPermissions = function(target, type, permissions_object) {
 
@@ -879,7 +980,9 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
     }
 
     /**
-     * <p>Convert all the arrays in an object to an object with a unique key</p>
+     * <p>Convert all the arrays in an object to an object with a unique key.<br />
+     * Mixed arrays (arrays with multiple types) are not supported.
+     * </p>
      * <code>
      * {
      *     "boolean": true,
@@ -904,7 +1007,6 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
         // Since the native createTree method doesn't support an array of objects natively,
         // we need to write extra functionality for this.
         for(var i in obj){
-
 
             // Check if the element is an array, whether it is empty and if it contains any elements
             if (obj.hasOwnProperty(i) && $.isArray(obj[i]) && obj[i].length > 0 && $.isPlainObject(obj[i][0])) {
@@ -945,9 +1047,10 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
         url: i_url,
         type: "POST",
         data: {
-            ":operation": "createTree",
-            "tree": $.toJSON(i_data),
-            "delete": 1
+            ":operation": "import",
+            ":contentType": "json",
+            ":content": $.toJSON(i_data),
+            ":replace": true
         },
         dataType: "json",
 
@@ -1502,6 +1605,7 @@ sakai.api.User.login = function(credentials, callback) {
     // Argument check
     if (!credentials || !credentials.username || !credentials.password) {
         fluid.log("sakai.api.user.login: Not enough or invalid arguments!");
+        callback(false, null);
         return;
     }
 
@@ -1550,24 +1654,38 @@ sakai.api.User.login = function(credentials, callback) {
  * @param {Function} [callback] Callback function that is called after sending the log-in request to the server.
  */
 sakai.api.User.logout = function(callback) {
+
     /*
-     * POST request to the presence service,
-     * which will change the user status to offline.
+     * POST request to the logout service,
+     * which will destroy the session.
      */
     $.ajax({
         url: sakai.config.URL.PRESENCE_SERVICE,
         type: "POST",
         data: {
-            "sakai:status": "offline",
+        	"sakai:status": "offline",
             "_charset_": "utf-8"
         },
-        complete: function(xhr, textStatus) {
+        success: function(data) {
+            if (typeof callback === "function"){
+                callback(true, data);
+            }
             /*
              * Redirect to the standard logout servlet, which
              * will destroy the session.
              */
-            window.location = sakai.config.URL.LOGOUT_SERVICE;
-        }
+             window.location = sakai.config.URL.LOGOUT_SERVICE;
+         },
+         error: function(xhr, textStatus, thrownError){
+            if (typeof callback === "function"){
+                callback(false, xhr);
+            }
+            /*
+             * Redirect to the standard logout servlet, which
+             * will destroy the session.
+             */
+             window.location = sakai.config.URL.LOGOUT_SERVICE;
+         }
     });
 
 };
@@ -1695,6 +1813,98 @@ sakai.api.Util.createSakaiDate = function(date, format, offset) {
     }
     return str;
 };
+
+
+/**
+ * @class notification
+ *
+ * @description
+ * Utility functions related to notifications messages in Sakai3
+ *
+ * @namespace
+ * Notifications messages
+ */
+sakai.api.Util.notification = sakai.api.Util.notification || {};
+
+
+/**
+ * Show notification messages
+ * @example sakai.api.Util.notification.show("Title Message", "z2", "z01");
+ * @param {String} title The notification title (if it is an empty string, the title isn't shown)
+ * @param {String} text The text you want to see appear in the body of the notification
+ * @param {Constant} [type] The type of the notification. If this is not supplied, we use the type "information"
+ */
+sakai.api.Util.notification.show = function(title, text, type){
+
+    // Check whether the text parameter is supplied.
+    if(!text){
+
+        // Log an error message
+        fluid.log("sakai.api.Util.notification.show: You need to fill out the 'text' parameter");
+
+        // Make sure the execution in this function stops
+        return;
+
+    }
+
+    // Check whether the type is an actual object if it is supplied
+    if (type && !$.isPlainObject(type)) {
+
+        // Log an error message
+        fluid.log("sakai.api.Util.notification.show: Make sure you supplied a correct type parameter");
+
+        // Stop the function execution
+        return;
+
+    }
+
+    // Set the notification type
+    var notification = type || sakai.api.Util.notification.type.INFORMATION;
+
+    // Set the title and text
+    notification.title = title;
+    notification.text = text;
+
+    // Show a the actual notification to the user
+    $.gritter.add(notification);
+
+};
+
+
+/**
+ * Remove all the notification messages that are currently visible to the user
+ */
+sakai.api.Util.notification.removeAll = function(){
+
+    // Remove gritter notification messages
+    // We don't use the $.gritter.removeAll method since that causes pop-ups to flicker
+    $('#gritter-notice-wrapper').remove();
+
+}
+
+
+/**
+ * @class type
+ *
+ * @description
+ * Namespace that contains all the different notification types
+ *
+ * @namespace
+ * Notifications types
+ */
+sakai.api.Util.notification.type = sakai.api.Util.notification.type || {};
+
+
+/**
+ * Object containing settings for the information notification type
+ */
+sakai.api.Util.notification.type.INFORMATION = $.extend(true, {}, sakai.config.notification.type.INFORMATION);
+
+
+/**
+ * Object containing settings for the error notification type
+ */
+sakai.api.Util.notification.type.ERROR = $.extend(true, {}, sakai.config.notification.type.ERROR);
 
 
 /**
@@ -2247,6 +2457,7 @@ sakai.api.Widgets.widgetLoader = {
                 $.ajax({
                     url: sakai.config.URL.BATCH,
                     traditional: true,
+                    cache: false,
                     data: {
                         requests: $.toJSON(urls)
                     },
@@ -2299,10 +2510,8 @@ sakai.api.Widgets.widgetLoader = {
                     widgetid = widgetname + "container";
                 }
 
-                // Check if the widget is an iframe or a gwt widget
-                if (Widgets.widgets[widgetname] && (Widgets.widgets[widgetname].gwt || Widgets.widgets[widgetname].iframe)){
-
-                    var gwt = Widgets.widgets[widgetname].gwt ? true : false;
+                // Check if the widget is an iframe widget
+                if (Widgets.widgets[widgetname] && Widgets.widgets[widgetname].iframe){
 
                     // Get the information about the widget in the widgets.js file
                     var portlet = Widgets.widgets[widgetname];
@@ -2310,12 +2519,7 @@ sakai.api.Widgets.widgetLoader = {
                     // Check if the scrolling property has been set to true
                     var scrolling = portlet.scrolling ? "auto" : "no";
 
-                    var src;
-                    if(gwt){
-                        src = portlet.url + "?placement=" + portlet.placement + "&tuid=" + portlet.uid + "&showSettings=" + settings + "&sid=" + Math.random();
-                    }else {
-                        src = portlet.url;
-                    }
+                    var src = portlet.url;
 
                     // Construct the HTML for the iframe
                     var html = '<div id="widget_content_'+ widgetname + '">' +
@@ -2326,15 +2530,12 @@ sakai.api.Widgets.widgetLoader = {
                                    'scrolling="' + scrolling + '"' +
                                    '></iframe></div>';
 
-                    if(gwt){
-                        $("#" + portlet.uid).append(html);
-                    }else{
-                        // Add the HTML for to the iframe widget container
-                        $("#" + widgetid + "_container").html(html).addClass("fl-widget-content").parent().append('<div class="fl-widget-no-options fl-fix"><div class="widget-no-options-inner"><!-- --></div></div>');
-                    }
+                    // Add the HTML for to the iframe widget container
+                    $("#" + widgetid + "_container").html(html).addClass("fl-widget-content").parent().append('<div class="fl-widget-no-options fl-fix"><div class="widget-no-options-inner"><!-- --></div></div>');
+                    
                 }
 
-                // The widget isn't a gwt or iframe widget
+                // The widget isn't an iframe widget
                 else if (Widgets.widgets[widgetname]){
 
                     // Set the placement for the widget
@@ -2553,6 +2754,9 @@ sakai.api.Widgets.removeWidgetData = function(id, callback) {
         // Run the template and feed it the given JSON object
         var render = templateCache[templateName].process(templateData);
 
+        // Run the rendered html through the sanitizer
+        render = sakai.api.Security.saneHTML(render);
+
         // Check it there was an output element defined
         // If so, put the rendered template in there
         if (outputElement) {
@@ -2634,10 +2838,10 @@ sakai.api.Widgets.removeWidgetData = function(id, callback) {
         // WARNING: This does not solve the locking/overwriting problem entirely, it merely takes care of high volume request related issues. Users
         // should be notified in advance by the UI when somebody else is editing a piece of content, and should actively try reduce the possibility of
         // overwriting.
-        if (requestStatus === 409) {
+/*        if (requestStatus === 409) {
             // Retry initial post
             $.ajax(s);
-        }
+        }*/
 
         // Call original error handler, but not in the case of 409 as we want that to be transparent for users
         if ((s.error) && (requestStatus !== 409)) {

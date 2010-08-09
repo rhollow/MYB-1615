@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, sdata, Config */
+/*global $, Config */
 
 var sakai = sakai || {};
 
@@ -129,7 +129,7 @@ sakai.createsite = function(tuid, showSettings){
             item.userid = sakai.data.me.user.userid;
             item.picture = sakai.config.URL.USER_DEFAULT_ICON_URL;
             if (sakai.data.me.profile.picture && $.parseJSON(sakai.data.me.profile.picture).name){
-                item.picture = "/_user/public/" + sakai.data.me.user.userid + "/" + $.parseJSON(sakai.data.me.profile.picture).name;
+                item.picture = "/~" + sakai.data.me.user.userid + "/public/" + $.parseJSON(sakai.data.me.profile.picture).name;
             }
             members.items.unshift(item);
 
@@ -406,6 +406,7 @@ sakai.createsite = function(tuid, showSettings){
         if (sitedescription.length > 80)
         {
             $(createSiteNoncourseDescriptionLongCount).html(sitedescription.length);
+            
             setError(createSiteNoncourseDescription,createSiteNoncourseDescriptionLong,true);
             inputError = true;
         }
@@ -508,7 +509,7 @@ sakai.createsite = function(tuid, showSettings){
 
         // Set the text of the span containing the url of the current site
         // e.g. http://celestine.caret.local:8080/site/
-        $(createSiteNoncourseUrl).text(document.location.protocol + "//" + document.location.host + "/sites/");
+        $(createSiteNoncourseUrl).text(sakai.api.Security.saneHTML(document.location.protocol + "//" + document.location.host + "/sites/"));
     };
 
     doInit();

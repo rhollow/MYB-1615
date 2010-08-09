@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata, Querystring, DOMParser */
+/*global $, Config, Querystring, DOMParser */
 
 var sakai = sakai || {};
 
@@ -457,7 +457,7 @@ sakai.rss = function(tuid, showSettings){
                     showHideSettings(showSettings);
                 }
                 else {
-                    sakai.api.Widgets.Container.informFinish(tuid);
+                    sakai.api.Widgets.Container.informFinish(tuid, "rss");
                 }
             });
         }

@@ -20,6 +20,7 @@
 
         <!-- Sakai Config JS -->
         <script type="text/javascript" src="_configuration/widgets.js"></script>
+        <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
         <script type="text/javascript" src="_configuration/config.js"></script>
 
         <!-- Core 3rd-party JS -->
@@ -27,6 +28,7 @@
         <script type="text/javascript" src="_lib/jquery/jquery-ui.full.js"></script>
         <script type="text/javascript" src="_lib/Fluid/3akai_Infusion.js"></script>
         <script type="text/javascript" src="_lib/jquery/plugins/jquery.json.js"></script>
+        <script type="text/javascript" src="/dev/_lib/google/html-sanitizer-minified.js"></script>
 
         <!-- Sakai Core JS -->
         <script type="text/javascript" src="_lib/sakai_util/sakai_magic.js"></script>
@@ -47,8 +49,8 @@
         <!-- MESSAGES -->
         <span id="siteSettings_error_unauthorized" style="display:none;">__MSG__YOU_ARE_NOT_ALLOWED_TO_CHANGE_THIS_SITE_ARE_YOU_STILL_LOGGED_IN__</span> <span id="siteSettings_error_saveFail" style="display:none;">__MSG__FAILED_TO_SAVE_THE_SITE_SETTINGS__.</span> <span id="siteSettings_error_saveSuccess" style="display:none;">__MSG__UPDATED_THE_SITE_SETTINGS__.</span>
 
-        <!-- EXPLORE BAR -->
-        <div id="widget_navigationchat" class="widget_inline"></div>
+        <!-- NAVIGATION -->
+        <div id="widget_topnavigation" class="widget_inline"></div>
         <div class="fl-container-flex content content-management">
             <div class="fl-fix fl-centered fixed-container">
                 <div class="decor"></div>
@@ -135,6 +137,17 @@
                                     <input type="radio" id="siteSettings_access_invite" class="siteSetting_access site_private" name="privacy" />
                                     <label for="siteSettings_access_invite"> __MSG__ONLY_PEOPLE_I_INVITE__</label>
                                 </div>
+                                <div class="access-form-item" id="siteSettings_joinable">
+                                    <div class="site_access_label">__MSG__SITE_JOINABILITY__:</div>
+                                    <input type="radio" id="siteSettings_joinable_no" class="siteSetting_access joinable_no" checked="checked" name="joinable" />
+                                    <label for="siteSettings_joinable_no"> __MSG__NO_ONE_MAY_JOIN__</label>
+                                    <br />
+                                    <input type="radio" id="siteSettings_joinable_withauth" class="siteSetting_access joinable_withauth" name="joinable" />
+                                    <label for="siteSettings_joinable_withauth"> __MSG__USERS_MAY_REQUEST_TO_JOIN__</label>
+                                    <br />
+                                    <input type="radio" id="siteSettings_joinable_yes" class="siteSetting_access joinable_yes" name="joinable" />
+                                    <label for="siteSettings_joinable_yes"> __MSG__ANY_USER_MAY_JOIN_THE_SITE__</label>
+                                </div>
                                 <div id="siteSettings_confirm" class="settings_confirm_container">
                                     <button id="siteSettings_save" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
                                     <button id="siteSettings_cancel" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
@@ -179,6 +192,9 @@
 
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
+
+        <!-- CHAT -->
+        <div id="widget_chat" class="widget_inline"></div>
 
         <!-- Sakai page JS -->
         <script type="text/javascript" src="_javascript/site_basic_settings.js"></script>

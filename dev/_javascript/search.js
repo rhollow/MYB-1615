@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata, History, Widgets */
+/*global $, Config, History, Widgets */
 
 var sakai = sakai || {};
 sakai.search = function() {
@@ -129,7 +129,7 @@ sakai.search = function() {
 
     var showSearchContent = function() {
         // Set searching messages
-        $(searchConfig.global.searchTerm).text(searchterm);
+        $(searchConfig.global.searchTerm).text(sakai.api.Security.saneHTML(searchterm));
         $(searchConfig.global.numberFound).text("0");
 
         $(searchConfig.cm.displayMoreNumber).text("0");
@@ -195,6 +195,11 @@ sakai.search = function() {
         var finaljson = {};
         finaljson.items = [];
 
+        // set required fields to default values in case foundCM is empty
+        // this can be the case when a search fails
+        foundCM.results = foundCM.results || [];
+        foundCM.total = foundCM.total || 0;
+
         // Adjust total search result count
         updateTotalHitCount(foundCM.results.length);
 
@@ -222,6 +227,11 @@ sakai.search = function() {
         var finaljson = {};
         finaljson.items = [];
 
+        // set required fields to default values in case foundCM is empty
+           // this can be the case when a search fails
+        foundSites.results = foundSites.results || [];
+        foundSites.total = foundSites.total || 0;
+
         // Adjust total search result count
         if (foundSites.results) {
           updateTotalHitCount(foundSites.results.length);
@@ -234,6 +244,12 @@ sakai.search = function() {
         if (foundSites && foundSites.results) {
 
             finaljson.items = foundSites.results;
+            
+            for (var site in finaljson.items){
+                if (finaljson.items.hasOwnProperty(site)) {
+                    finaljson.items[site].site.name = sakai.api.Security.escapeHTML(finaljson.items[site].site.name);
+                }
+            }
 
             // If result is page content set up page path
             for (var i=0, j=finaljson.items.length; i<j; i++ ) {
@@ -273,6 +289,11 @@ sakai.search = function() {
 
         var finaljson = {};
         finaljson.items = [];
+
+        // set required fields to default values in case foundCM is empty
+        // this can be the case when a search fails
+        results.results = results.results || [];
+        results.total = results.total || 0;
 
         // Adjust total search result count
         updateTotalHitCount(results.results.length);

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global sdata, fluid, window, $ */
+/*global, fluid, window, $ */
 
 var sakai = sakai || {};
 
@@ -43,7 +43,7 @@ sakai.uploadcontent = function(tuid, showSettings){
 
     // default POST URL
     var now = new Date();
-    var defaultposturl = "/_user" + sakai.data.me.profile.path + "/public/" + now.getFullYear() + "/" + (now.getMonth() + 1) + "/";
+    var defaultposturl = "/~" + sakai.data.me.user.userid + "/public/" + now.getFullYear() + "/" + (now.getMonth() + 1) + "/";
 
 
     ///////////////////
@@ -121,13 +121,13 @@ sakai.uploadcontent = function(tuid, showSettings){
         }
 
         if(error === "badurlformat"){
-            $uploadcontent_error_container.html($uploadcontent_error_badurlformat.html());
+            $uploadcontent_error_container.html(sakai.api.Security.saneHTML($uploadcontent_error_badurlformat.html()));
         }
         else if(error === "linkcouldnotbesaved"){
-            $uploadcontent_error_container.html($uploadcontent_error_linkcouldnotbesaved.html());
+            $uploadcontent_error_container.html(sakai.api.Security.saneHTML($uploadcontent_error_linkcouldnotbesaved.html()));
         }
         else if(error === "filenotuploaded"){
-            $uploadcontent_error_container.html($uploadcontent_error_filenotuploaded.html());
+            $uploadcontent_error_container.html(sakai.api.Security.saneHTML($uploadcontent_error_filenotuploaded.html()));
         }
 
         // Show the container to the user

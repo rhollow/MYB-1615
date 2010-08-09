@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, sdata */
+/*global $ */
 
 var sakai = sakai || {};
 
@@ -189,7 +189,7 @@ sakai.navigation = function(tuid, showSettings){
         var p_id = "";
         var p_pagePosition;
         if (page_info["pageTitle"]) {
-            p_title = page_info["pageTitle"];
+            p_title = sakai.api.Security.saneHTML(page_info["pageTitle"]);
             p_id = "nav_" + page_info["pageURLName"];
             p_pagePosition = page_info.pagePosition;
         }
@@ -453,10 +453,10 @@ sakai.navigation = function(tuid, showSettings){
     ///////////////////////
 
     $("#navigation_settings_submit",rootel).click(function(){
-        sakai.api.Widgets.Container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "navigation");
     });
     $("#navigation_settings_cancel",rootel).click(function(){
-        sakai.api.Widgets.Container.informCancel(tuid);
+        sakai.api.Widgets.Container.informCancel(tuid, "navigation");
     });
 
     // Hide or show the settings

@@ -17,9 +17,11 @@
 
         <!-- 3rd party CSS -->
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.components.jq_pager.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/_lib/jquery/plugins/gritter/css/jquery.gritter.css" />
 
         <!-- Sakai Config JS -->
         <script type="text/javascript" src="_configuration/widgets.js"></script>
+        <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
         <script type="text/javascript" src="_configuration/config.js"></script>
 
         <!-- Core 3rd-party JS -->
@@ -27,11 +29,11 @@
         <script type="text/javascript" src="_lib/jquery/jquery-ui.full.js"></script>
         <script type="text/javascript" src="_lib/Fluid/3akai_Infusion.js"></script>
         <script type="text/javascript" src="_lib/jquery/plugins/jquery.json.js"></script>
+        <script type="text/javascript" src="/dev/_lib/google/html-sanitizer-minified.js"></script>
 
         <!-- Sakai Core JS -->
         <script type="text/javascript" src="_lib/sakai_util/sakai_magic.js"></script>
         <script type="text/javascript" src="_lib/sakai_util/i18n.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/notifications.js"></script>
 
         <!-- 3rd party JS -->
         <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
@@ -39,19 +41,18 @@
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/gritter/jquery.gritter.js"></script>
         <script type="text/javascript" src="_lib/AutoComplete/jquery.bgiframe.min.js"></script>
         <script type="text/javascript" src="_lib/AutoComplete/jquery.ajaxQueue.js"></script>
         <script type="text/javascript" src="_lib/AutoComplete/thickbox-compressed.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.autocomplete.min.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/BrowserDetect.js"></script>
         <script type="text/javascript" src="_lib/AutoComplete/jquery.autocomplete.min.js"></script>
 
     </head>
 
     <body class="fl-centered inbox_main inbox_detail i18nable">
 
-        <!-- EXPLORE BAR -->
-        <div id="widget_navigationchat" class="widget_inline"></div>
+        <!-- NAVIGATION -->
+        <div id="widget_topnavigation" class="widget_inline"></div>
 
         <!-- HEADER -->
         <div class="fl-container-flex header">
@@ -76,17 +77,17 @@
 
                     <!-- DROP DOWN -->
                     <div class="drop-menu" id="inbox_compose_new">
-                        <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__ ...</a>
+                        <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__... </a>
                         <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
                             <ul>
                                 <li id="inbox_compose_message"><a href="javascript:;">__MSG__MESSAGE__</a></li>
                                 <li id="inbox_compose_announcement"><a href="javascript:;">__MSG__ANNOUNCEMENT__</a></li>
+                                <li id="inbox_compose_notification"><a href="javascript:;">Notification</a></li>
                             </ul>
                         </div>
                     </div>
 
                     <!-- FOLDERS -->
-
                     <div class="inbox-folders" id="inbox_folders">
 
                         <div class="if_titlebar">
@@ -256,6 +257,9 @@
                                         <div id="inbox_message_body"></div>
 
                                         <div class="message-options">
+                                            <span id="inbox-sitejoin-accept" style="display:none"><a href="javascript:;" id="inbox_message_accept_sitejoin">__MSG__ACCEPT_SITEJOIN__</a> |</span>
+                                            <span id="inbox-sitejoin-deny" style="display:none"><a href="javascript:;" id="inbox_message_deny_sitejoin">__MSG__DENY_SITEJOIN__</a> |</span>
+                                            <span id="inbox-sitejoin-already" style="display:none; color: #666">__MSG__YOU_HAVE_REPLIED_TO_THIS_REQUEST_TO_JOIN_THIS_SITE__ |</span>
                                             <span id="inbox-invitation-accept" style="display:none"><a href="javascript:;" id="inbox_message_accept_invitation">__MSG__ACCEPT_INVITATION__</a> |</span>
                                             <span id="inbox-invitation-already" style="display:none; color: #666">__MSG__YOU_HAVE_ACCEPTED_THIS_PERSON_AS_A_CONTACT__ |</span>
                                             <a href="javascript:;" id="inbox_message_option_reply">__MSG__REPLY__</a>
@@ -274,7 +278,7 @@
                                 <span style="float:left;">
                                     <a href="javascript:;" title="__MSG__TO_SEE_THE_PERSON_PROFILE__">
                                     {if r.userFrom[0].picture}
-                                        <img src="/_user${r.userFrom[0].hash}/public/profile/${r.userFrom[0].photo}" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" class="sender-picture" id="inbox_message_picture" />
+                                        <img src="/~${r.userFrom[0]["rep:userId"]}/public/profile/${r.userFrom[0].photo}" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" class="sender-picture" id="inbox_message_picture" />
                                     {else}
                                         <img src="/dev/_images/person_icon.jpg" class="sender-picture" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" id="inbox_message_picture" />
                                     {/if}
@@ -367,6 +371,32 @@
                         <div class="bottom_decor"></div>
 
                     </div>
+                    
+                    <!-- CREATE/EDIT NOTIFICATION (ADMIN VIEW) -->
+                    <div id="inbox_pane_createNotification" class="inbox_pane" style="display:none;">
+
+                        <div class="top_decor">
+
+                            <!-- Header -->
+                            <div class="inbox-heading">Create or Edit a Notification</div>
+                        </div>
+
+                        <!-- STILL NEEDS WORK Compose message -->
+                        <div class="main_content_container">
+                            TESTING, TESTING, TESTING...
+                            <div class="compose-message">
+                                <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
+                                    <div id="sendmessagecontainer">
+                                        <div id="widget_sendmessage" class="widget_inline"></div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <div class="bottom_decor"></div>
+
+                    </div>
 
                 </div>
             </div>
@@ -374,6 +404,9 @@
 
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
+
+        <!-- CHAT -->
+        <div id="widget_chat" class="widget_inline"></div>
 
         <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
