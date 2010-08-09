@@ -112,6 +112,7 @@ sakai.mylinks = function (tuid, showSettings) {
         $.ajax({
             url: defaultLinksPath,
             cache: false,
+            dataType: "json",
             success: function(data){
                 var parsedData = data;
                 // create the link list from the default list and then save it back
