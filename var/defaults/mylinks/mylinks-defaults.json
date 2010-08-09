@@ -1,9 +1,5 @@
 {
     "links" : [
-        {    "id"   : "test",
-             "name" : "TEST",
-             "url"  : "http://www.asuc.org"
-        },
         {    "id"   : "asuc",
              "name" : "ASUC",
              "url"  : "http://www.asuc.org"

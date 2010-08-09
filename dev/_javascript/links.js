@@ -16,9 +16,8 @@ sakai.links = function(){
 
 
     // Still working out some problems with the loading of default data from /var
-    var directoryLinksLocation = "/var/myberkeley/links-directory.json";
-    //var directoryLinksLocation = "/devwidgets/mylinks/default/links-directory.json";
-
+    var directoryLinksLocation = "/var/defaults/mylinks/links-directory.json";
+ 
     var directory = {};
 
     /**

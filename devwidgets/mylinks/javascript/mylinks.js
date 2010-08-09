@@ -46,8 +46,7 @@ sakai.mylinks = function (tuid, showSettings) {
     var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
 
     // Still working out some problems with the loading of default data from /var
-    var defaultLinksPath = "/var/myberkeley/mylinks-defaults.json";
-    //var defaultLinksPath = "/devwidgets/mylinks/default/mylinks-defaults.json";
+    var defaultLinksPath = "/var/defaults/mylinks/mylinks-defaults.json";
 
     /**
      * write the users links to JCR
