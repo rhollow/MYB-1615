@@ -1,6 +1,4 @@
 {
-    "jcr:contentType" : "json",
-    "jcr:primaryType" : "nt:unstructured",
     "links" : [
         {    "id"   : "test",
              "name" : "TEST",

@@ -1,6 +1,4 @@
 {
-    "jcr:contentType" : "json",
-    "jcr:primaryType" : "nt:unstructured",
     "colset": 4,
     "featured": ["calmail", "dars", "tele_bears"],
     "links": [
