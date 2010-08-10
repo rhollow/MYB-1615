@@ -42,31 +42,30 @@
 }
 
 .footer_main .feedback p {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.footer_main .feedback {
     font-size: 9pt;
+    color: #FFFFFF;
     font-family: Comic Sans MS;    
 }
 
 .footer_main .feedback a {
+    background: url("/devwidgets/footer/images/mail.jpg") no-repeat 0 5px;
+    padding: 2px 0 0 25px;
     color: white;
     font-size: 11pt;
     text-decoration: none;
 }
 
-.footer_main #mail_icon {
-    float: left;
-    padding: 0px 5px 0px 5px;
-}
-
-.footer_main #mail_link {
-    padding: 10px 0px 0px 14px;
-    float: left;
-}
 
 /* Fixed Container */
 .footer_main .fixed-container {
     background: #454A4F;
     width: 700px;
-    padding: 10px 0px 0px;
+    padding: 10px 0 5px;
 }
 
 .footer_main .fixed-container img {
@@ -74,7 +73,7 @@
     margin-right: 15px;
 }
 
-.footer_main .fixed-container, .feedback p {
+.footer_main .fixed-container p {
     font-size: 11px;
     margin-bottom: 0;
     padding-bottom: 0;
