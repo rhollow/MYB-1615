@@ -1,8 +1,6 @@
-/** inbox_main.html **/
-
 /** CONTAINER **/
 .fixed-container
-{ background: #fff;}
+{ background: #fff; }
 
 /** LAYOUT **/
 .inbox_main .main_container
@@ -13,6 +11,9 @@
 
 .inbox_main .col-main
 { margin-top: 8px; margin-left: 240px; padding: 0; overflow: hidden; width: 676px; }
+
+.inbox_pane
+{ }
 
 
 /** SIDE NAV **/
@@ -100,10 +101,7 @@
 { background:transparent url(/dev/_images/content_br.png) no-repeat scroll right bottom; height: 5px; }
 
 
-
-
-
-/** INBOX MAIN PANE **/
+/** NOTIFICATIONS MAIN PANE **/
 
 .inbox_main .inbox-heading
 { font-weight: bold; color: #333; font-size: 17px; padding: 4px 0 0 5px; }
@@ -119,11 +117,8 @@
 { background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px; }
 
 /** Buttons **/
-.inbox_main .top_button_bar
-{ padding: 0 12px 5px 0; text-align: right; }
-
-.inbox_main .inbox_inbox_delete
-{ color: #058EC4; }
+.button-list
+{ padding:5px; float:right; }
 
 /** Header **/
 .inbox_main .inbox-table .different
@@ -133,19 +128,16 @@
 { border-bottom: 3px solid #d5dbdf; }
 
 .inbox_main .inbox-table #inbox_table_header_chk
-{ width: 3%; }
+{ width: 5%; }
 
 .inbox_main .inbox-table #inbox_table_header_from
-{ width:20%; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_subject
-{ width:37%; border-left: 1px solid #D4DADE; color: #666666; }
-
-.inbox_main .inbox-table #inbox_table_header_type
-{ width:15%; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:40%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_date
-{ width:25%; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:30%; border-left: 1px solid #D4DADE; color: #666666; }
 
 /** List **/
 .inbox_main .inbox-table th
@@ -174,9 +166,6 @@
 
 .inbox_main .bottom_decor
 { background: transparent url(/dev/_images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
-
-
-
 
 
 /** INBOX COMPOSE PANE **/
@@ -288,6 +277,7 @@
 .inbox_detail #inbox_compose_replies_template_chats
 { margin: 0 0 0 38px; background: #f4f4f4; }
 
+
 /** NOTIFICATIONS, ERROR MESSAGES **/
 .inbox_error_message
 { font-weight:bold; padding:10px; border:3px solid #ff0000; background-color:#f7d8d8; width:80%;float:left; }
@@ -321,11 +311,6 @@
 
 
 .inbox_main .user-mail a{color: #666; padding-left: 16px;}
-
-
-
-.inbox_main .inbox-checkbox{width: 16px;}
-
 
 .inbox_main .inbox-delete{padding: 10px 0 12px 0;}
 

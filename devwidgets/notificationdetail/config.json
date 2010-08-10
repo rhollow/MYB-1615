@@ -1,0 +1,6 @@
+{
+    "description":"Create or edit a notification.",
+    "id":"notificationdetail",
+    "name":"Send a message",
+    "url":"/devwidgets/notificationdetail/notificationdetail.html"
+}
