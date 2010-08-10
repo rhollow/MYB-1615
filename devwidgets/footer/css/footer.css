@@ -18,7 +18,7 @@
 
 /* General */
 .footer_main {
-    background: url('../images/new_footer.png') center bottom no-repeat;
+    background: url('../images/footer.png') center bottom no-repeat;
     color: #fff;
     margin: 0 auto 45px auto;
     padding: 0px 10px 10px;
@@ -35,6 +35,7 @@
 
 /* Feedback box */
 .footer_main .feedback {
+    background: url('../images/blue_rectangle.png') no-repeat;
     width: 200px;
     text-align: center;
     padding: 5px 0px 5px 5px;
