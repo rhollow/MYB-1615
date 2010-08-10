@@ -47,7 +47,7 @@ var Widgets = {
     "defaults": {
         "personalportal":{
             "layout": "dev",
-            "columns": [["sites", "myfriends"], ["myprofile"]]
+            "columns": [["mylinks"], ["myreminders"]]
         },
         "siteportal":{
             "layout": "dev",

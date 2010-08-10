@@ -5,21 +5,19 @@ sakai.links = function(){
     // page elements
     var $suggestedSites = $(".suggested_sites");
     var $allSites = $(".all_sites");
-    
+
     // templates
     var suggested_sites_template = "suggestedsites_links_template";
     var all_sites_template = "allsites_links_template";
-    
+
     // data files and paths
     var userLinksObj = {};
     var userLinks = "my_links";
     var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
-    
-    
+
     // Still working out some problems with the loading of default data from /var
-    //var directoryLinksLocation = "/var/myberkeley/links-directory.json";
-    var directoryLinksLocation = "/devwidgets/mylinks/default/links-directory.json";
-    
+    var directoryLinksLocation = "/var/defaults/mylinks/links-directory.json";
+ 
     var directory = {};
     
     /**

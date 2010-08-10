@@ -25,6 +25,7 @@
 }
 .myreminders_widget .reminders_header .left_header {float: left; width: 100px;}
 .myreminders_widget .reminders_header .right_header {float: left;}
+.myreminders_widget .noReminders {font-size:9pt; padding: 10px 20px;}
 
 /* List of reminders */
 .myreminders_widget .reminders_list {min-height: 40px;}

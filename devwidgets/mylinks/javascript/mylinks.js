@@ -46,8 +46,7 @@ sakai.mylinks = function (tuid, showSettings) {
     var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
 
     // Still working out some problems with the loading of default data from /var
-    //var directoryLinksLocation = "/var/myberkeley/mylinks-defaults.json";
-    var defaultLinksPath = "/devwidgets/mylinks/default/mylinks-defaults.json";
+    var defaultLinksPath = "/var/defaults/mylinks/mylinks-defaults.json";
 
     /**
      * write the users links to JCR
@@ -112,12 +111,13 @@ sakai.mylinks = function (tuid, showSettings) {
         $.ajax({
             url: defaultLinksPath,
             cache: false,
+            dataType: "json",
             success: function(data){
                 var parsedData = data;
                 // create the link list from the default list and then save it back
-                createLinkList(data, false);
+                createLinkList(parsedData, false);
                 // save the default link list back to the server
-                saveLinkList(data);
+                saveLinkList(parsedData);
             },
             error: function(xhr, textStatus, thrownError) {
                     //alert("An error has occured");
