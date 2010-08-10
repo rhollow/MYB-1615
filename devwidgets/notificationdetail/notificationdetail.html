@@ -26,11 +26,10 @@
         <div id="notificationdetail_dialog_box" class="send_message dialogue_box fl-centered">
             <form class="compose-form" action="" method="post">
 
-                <!-- FROM -->
-                <div id="notificationdetail_from_user">From: <span class="right-col" id="message_from"></span></div>
-
                 <!-- ASSIGNEE (TO) -->
-                <div id="notificationdetail_fixed_to_user">Assignee: <span id="message_to"></span></div>
+                    <div class="left-col" id="notificationdetail_fixed_to_user">
+                       Assignee:
+                    </div>                    
 
                 <!-- MULTIPLE RECIPIENTS -->
                 <div id="notificationdetail_multiple_to_container" style="display:none;">
@@ -43,29 +42,12 @@
                 </div>
                 
                 <!-- REQUIRED -->
-                <div id="notificationdetail_required">Required?
+                <div class="left-col" id="notificationdetail_required">
+                    <p>Required?</p>
                     <span class="required" id="required_radio_buttons">
                         <input type="radio" name="required" id="yes" checked /><label for="yes">Yes</label>
                         <input type="radio" name="required" id="no" /><label for="no">No</label>                        
-                    </span>
-                </div>
-
-                <!-- EDIT EDIT EDIT --- SUBJECT -->
-                <div>
-                    <label for="comp-subject">Subject</label><br> 
-                    <input type="text" id="subject" class="compose-form" />
-                </div>
-
-                <!-- BODY -->
-                <div>
-                    <label for="comp-body">Body</label><br />
-                    <textarea class="text-field compose-body" id="comp-body" cols="90" rows="10"></textarea>
-                </div>
-
-                <!-- BUTTONS -->
-                <div class="dialog_buttons">
-                    <button type="button" class="s3d-button s3d-button-primary" id="send_message"><span class="s3d-button-inner">Send Message</span></button>
-                    <button type="button" class="s3d-button jqmClose" id="send_message_cancel"><span class="s3d-button-inner">Cancel</span></button>
+                    </span>                    
                 </div>
 
             </form>
@@ -73,10 +55,6 @@
 
     </div>
 
-    <!-- FOOTER -->
-    <div id="notificationdetail_dialog_footer" class="dialog_footer">
-        <div class="dialog_footer_inner"></div>
-    </div>
 </div>
 
 <!-- TEMPLATE FOR THE MULTPLE TO LIST -->

@@ -16,6 +16,10 @@
  * specific language governing permissions and limitations under the License.
  */
 
+.left-col {width: 125px; text-align: right;}
+
+.right-col {}
+
 .required {margin-left: 5px;}
 .required input {position: relative; margin-right: 5px; top: 2px;}
 .required label {position: relative; margin-right: 5px;}
