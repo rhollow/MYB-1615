@@ -118,7 +118,7 @@
 
 /** Buttons **/
 .button-list
-{ padding:5px; float:right; }
+{ margin-top: 10px; float: right; }
 
 /** Header **/
 .inbox_main .inbox-table .different
