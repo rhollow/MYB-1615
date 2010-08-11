@@ -27,33 +27,96 @@
             <form class="compose-form" action="" method="post">
 
                 <!-- ASSIGNEE (TO) -->
-                    <div class="left-col" id="notificationdetail_fixed_to_user">
-                       Assignee:
-                    </div>                    
-
-                <!-- MULTIPLE RECIPIENTS -->
-                <div id="notificationdetail_multiple_to_container" style="display:none;">
-                    <label for="notificationdetail_multiple_to">To</label>
-                    <br />
-                    <div id="notificationdetail_multiple_to_input_container">
-                        <input type="text" id="notificationdetail_multiple_to" />
-                    </div>
-                    <div id="notificationdetail_multiple_to_what" style="display:none;">Type the name of a friend PREASE.</div>
-                </div>
+                <div id="notificationdetail_to_user">
+                    Assignee
+                    <select>
+                      <option>Peter Parker</option>                      
+                    </select>                                                   
+                </div>          
                 
                 <!-- REQUIRED -->
-                <div class="left-col" id="notificationdetail_required">
-                    <p>Required?</p>
-                    <span class="required" id="required_radio_buttons">
-                        <input type="radio" name="required" id="yes" checked /><label for="yes">Yes</label>
-                        <input type="radio" name="required" id="no" /><label for="no">No</label>                        
-                    </span>                    
+                <div id="notificationdetail_required">
+                    Required?
+                    <input class="radioboxes" type="radio" name="required-check" id="yes" /><label for="yes">Yes</label>
+                    <input class="radioboxes" type="radio" name="required-check" id="no" /><label for="no">No</label>                                            
+                </div>
+                
+                <!-- START DISPLAY DATE -->
+                <div  id="notificationdetail_start_display_date">
+                Start Display Date
+                <span>
+                    <span id="datepicker-input">
+                        <input style="width:100px;" class="text-field" type="text" id="datepicker-text" />                        
+                    </span>
+                    <span id="datepicker"></span>               
+                </span>                                                                           
+                </div>
+                
+                <!-- CONTACT -->
+                <div id="notificationdetail_contact">
+                    Contact                    
+                    <input style="width:250px;" type="text" value="Type a name..."/>                                      
+                </div>
+                
+                <!-- DYNAMIC LIST -->
+                <div id="notificationdetail_dynamiclist">
+                    Dynamic List                    
+                    <select>
+                      <option>Transfer Students</option>                      
+                    </select>
+                    <button id="create-new-dynamic-list-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CREATE_NEW_DYNAMIC_LIST__</span></button>                 
+                </div>
+                
+                <!-- SUBJECT-->
+                <div id="notificationdetail_subject">
+                    <label for="nd-subject">Subject</label><br />
+                    <input type="text" style="width:513px;" class="text-field" id="nd-subject" />
+                </div>
+                
+                <!-- BODY-->
+                <div id="notificationdetail_body">
+                    <label for="nd-body">Body</label><br />
+                    <textarea class="text-field" id="nd-body" cols="95" rows="25"></textarea>
+                </div>
+                
+                <!-- REMINDER CHECK: HAS A DATE?-->
+                <div id="notificationdetail_reminder_check">                    
+                    <input class="checkboxes" type="checkbox" id="nd-remindercheck" />
+                    <label for="nd-remindercheck">This message has a date.</label>
+                </div>
+                
+                <!-- IF YES, REMINDER: Task or Event? -->
+                <div class="notificationdetail_taskorevent">
+                    <p class="header">Task or Event?</p>
+                    <div class="nd-task" style="margin-top:-13px;">
+                        <input type="radio" class="radioboxes" name="task-or-event" id="task"/>
+                        <label for="task-or-event">Task with due date</label>        
+                        <div class="nd-task task-details">
+                            Due Date PLACEHOLDER                            
+                        </div>            
+                    </div>
+                    <div class="nd-event">
+                        <input type="radio" class="radioboxes" name="task-or-event" id="event"/>
+                        <label for="task-or-event">Event</label><br>
+                        <div class="nd-event event-details">                            
+                            Event Date PLACEHOLDER                            
+                        </div>
+                        <div class="nd-event event-details">
+                            Time PLACEHOLDER
+                        </div>    
+                        <div class="nd-event event-details">
+                            Place PLACEHOLDER
+                        </div>
+                        <div class="nd-event event-details">
+                            Stop Display Date PLACEHOLDER
+                        </div>                                            
+                    </div>
                 </div>
 
-            </form>
-        </div>
-
-    </div>
+            </form>                                           
+        </div>                
+    
+    </div>            
 
 </div>
 
