@@ -514,7 +514,6 @@
 "MANAGE_REMINDERS": "Manage Reminders",
 "DUE": "Due",
 
-"MESSAGES_PAGE": "Messages Page",
 "DRAFTS": "Drafts",
 "NOTIFICATIONS": "Notifications",
 "NOTIFICATIONS_ARCHIVE": "Notifications Archive",
@@ -522,5 +521,7 @@
 "QUEUE": "Queue",
 "COPY": "Copy",
 "NOTIFICATION": "Notification",
-"CREATE_OR_EDIT_A_NOTIFICATION": "Create or Edit a Notification"
+"CREATE_OR_EDIT_A_NOTIFICATION": "Create or Edit a Notification",
+"SAVE_AS_DRAFT": "Save as Draft",
+"CREATE_NEW_DYNAMIC_LIST": "Create new dynamic list.."
 }

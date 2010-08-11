@@ -16,9 +16,14 @@
  * specific language governing permissions and limitations under the License.
  */
 
-.required {margin-left: 5px;}
-.required input {position: relative; margin-right: 5px; top: 2px;}
-.required label {position: relative; margin-right: 5px;}
+.radioboxes {margin-right: 5px; position: relative; top: 2px;}
+.checkboxes {margin-right: 5px; position: relative; top: 2px;}
+
+.notificationdetail_taskorevent .header {position: relative; left: 23px; font-size: 16px; top: -5px;}
+.nd-task {position: relative; left: 23px;}
+.nd-task .task-details {top: 5px;}
+.nd-event {position: relative; left: 23px;}
+.nd-event .event-details {top: 5px;}
 
  #message_dialog {width: 566px;}
 .dialogue_box {background:#FFFFFF none repeat scroll 0 0;border:none;height:auto;left:auto;margin-left:0px;margin-top:0px;position:relative;top:0%;width:100%;z-index:101;}

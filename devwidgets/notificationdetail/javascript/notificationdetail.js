@@ -565,6 +565,20 @@ if (!sakai.notificationdetail){
             onShow: loadMessageDialog
         });
     };
+    
+    $("#datepicker").datepicker();
+    $("#datepicker").hide();
+    
+    $("#datepicker-input").click(function(){              
+        if($("#datepicker").is(":visible")){
+            alert("Currently visible, now hiding...");
+            $("#datepicker").hide();    
+        }
+        else{
+            alert("Currently hidden, now showing...");
+            $("#datepicker").show();
+        }        
+    });
 }
 
 sakai.api.Widgets.widgetLoader.informOnLoad("notificationdetail");
