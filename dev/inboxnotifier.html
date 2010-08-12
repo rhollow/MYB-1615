@@ -51,8 +51,8 @@
 
     <body class="fl-centered inbox_main inbox_detail i18nable">
 
-        <!-- EXPLORE BAR -->
-        <div id="widget_navigationchat" class="widget_inline"></div>
+        <!-- NAVIGATION -->
+        <div id="widget_topnavigation" class="widget_inline"></div>
 
         <!-- HEADER -->
         <div class="fl-container-flex header">
@@ -75,7 +75,7 @@
                 <!-- Nav -->
                 <div class="fl-col fl-fix side_panel">
 
-                    <!-- DROP DOWN MENU -->
+                     <!-- DROP DOWN MENU -->
                     <div class="drop-menu" id="inbox_compose_new">
                         <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__... </a>
                         <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
@@ -85,7 +85,7 @@
                         </div>
                     </div>
 
-                    <!-- FOLDERS -->
+                    <!-- SIDE FOLDERS -->
                     <div class="inbox-folders" id="inbox_folders">
 
                         <div class="if_titlebar">
@@ -95,10 +95,10 @@
                         <div class="if_content">
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>
                                 <ul>
-                                    <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__NOTIFICATIONS__</a> <span id="inbox_unread_nr_messages"></span></li>                                
+                                    <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_notifications">__MSG__NOTIFICATIONS__</a> <span id="inbox_unread_nr_messages"></span></li>                                
                                 </ul>
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__QUEUE__</a></div></div>							
-							<div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__NOTIFICATIONS_ARCHIVE__</a></div></div>
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_queue">__MSG__QUEUE__</a></div></div>							
+							<div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__NOTIFICATIONS_ARCHIVE__</a></div></div>
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
                         </div>
                         
@@ -113,9 +113,9 @@
                 <!-- Main -->
                 <div class="col-main">
 
-                    <!-- NOTIFIER VIEW, PANE 1 || MAIN INBOX (includes default inbox, queue, notifications archive, and trash) -->
-                    <div id="inbox_pane_inbox" class="inbox_pane">
-                        
+                    <!-- PANE 1 || MAIN INBOX OF NOTIFICATION DRAFTS (DEFAULT VIEW) -->
+                    <div id="inbox_pane_inbox" class="inbox_pane" style="margin-top:20px;">                        
+
                         <form name="my-inbox" action="" method="post">                            
 
                             <div class="top_decor">                                
@@ -192,18 +192,18 @@
                             <div id="inbox_pager" class="jq_pager"></div>
                             <div id="inbox_results"></div>
                         </form>
-						
-						<!-- Button List-->
+                        
+                        <!-- Button List-->
 						<div class="button-list">
 						    <button id="delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                             <button id="copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
                             <button id="queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>							
 					   </div>
-                       
-                    </div>
-
-                    <!-- NOTIFIER VIEW, PANE 2 || CREATE OR EDIT A NOTIFICATION -->
+                        
+                    </div>                   
+                    
+                    <!-- PANE 2 || CREATE OR EDIT A NOTIFICATION -->
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
@@ -234,8 +234,6 @@
                         </div>  
 
                     </div>
-                    
-                    </div>
 
                 </div>
             </div>
@@ -243,6 +241,9 @@
 
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
+
+        <!-- CHAT -->
+        <div id="widget_chat" class="widget_inline"></div>
 
         <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>

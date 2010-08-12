@@ -564,21 +564,21 @@ if (!sakai.notificationdetail){
             toTop: true,
             onShow: loadMessageDialog
         });
-    };
+    };   
+    $("#datepicker-text").datepicker();
+    //$("#datepicker").datepicker();
+    //$("#datepicker").hide();
     
-    $("#datepicker").datepicker();
-    $("#datepicker").hide();
-    
-    $("#datepicker-input").click(function(){              
-        if($("#datepicker").is(":visible")){
-            alert("Currently visible, now hiding...");
-            $("#datepicker").hide();    
-        }
-        else{
-            alert("Currently hidden, now showing...");
-            $("#datepicker").show();
-        }        
-    });
+//    $("#datepicker-input").click(function(){              
+//        if($("#datepicker").is(":visible")){
+//            alert("Currently visible, now hiding...");
+//            $("#datepicker").hide();    
+//        }
+//        else{
+//            alert("Currently hidden, now showing...");
+//            $("#datepicker").show();
+//        }        
+//    });
 }
 
 sakai.api.Widgets.widgetLoader.informOnLoad("notificationdetail");
