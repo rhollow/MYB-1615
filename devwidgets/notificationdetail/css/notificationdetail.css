@@ -25,7 +25,7 @@
 .nd-event {position: relative; left: 23px;}
 .nd-event .event-details {top: 5px;}
 
- #message_dialog {width: 566px;}
+#message_dialog {width: 566px;}
 .dialogue_box {background:#FFFFFF none repeat scroll 0 0;border:none;height:auto;left:auto;margin-left:0px;margin-top:0px;position:relative;top:0%;width:100%;z-index:101;}
 .notificationdetail_error_message {font-weight:bold;margin:10px;padding:10px;border:1px solid #ff0000;background-color:#f7d8d8;}
 .notificationdetail_normal_message {margin:10px;padding:10px;border:1px solid #00ff00;background-color:#d9f7d8;}

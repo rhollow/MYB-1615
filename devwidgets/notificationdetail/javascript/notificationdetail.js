@@ -565,20 +565,55 @@ if (!sakai.notificationdetail){
             onShow: loadMessageDialog
         });
     };   
-    $("#datepicker-text").datepicker();
-    //$("#datepicker").datepicker();
-    //$("#datepicker").hide();
     
-//    $("#datepicker-input").click(function(){              
-//        if($("#datepicker").is(":visible")){
-//            alert("Currently visible, now hiding...");
-//            $("#datepicker").hide();    
-//        }
-//        else{
-//            alert("Currently hidden, now showing...");
-//            $("#datepicker").show();
-//        }        
-//    });
+    // ALL DATEPICKER FUNCTIONS
+    $("#datepicker-startdate-text").datepicker({
+        showOn: 'button',
+        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+		buttonImageOnly: true,        
+        buttonText: 'Click to pick a date.',        
+    });     
+    $("#datepicker-taskduedate-text").datepicker({
+        showOn: 'button',
+        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+		buttonImageOnly: true,        
+        buttonText: 'Click to pick a date.',        
+    });     
+    $("#datepicker-eventdate-text").datepicker({
+        showOn: 'button',
+        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+		buttonImageOnly: true,        
+        buttonText: 'Click to pick a date.',        
+    });     
+    $("#datepicker-eventstopdate-text").datepicker({
+        showOn: 'button',
+        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+		buttonImageOnly: true,        
+        buttonText: 'Click to pick a date.',        
+    }); 
+    
+    // REMINDER CRITERION FUNCTIONS
+    $("#nd-remindercheck").click(function() {
+        if($("#nd-remindercheck").is(":checked")){
+            $(".notificationdetail_taskorevent").show();    
+        }
+        else{
+            $(".notificationdetail_taskorevent").hide();
+        }
+    });
+        
+    // TASK AND EVENT DETAIL FUNCTIONS
+    $(".nd-task").hide();
+    $(".nd-event").hide();  
+    
+    $('#event-radio').click(function() {
+        $(".nd-task").hide();
+        $(".nd-event").show();
+    });
+    $('#task-radio').click(function() {
+        $(".nd-task").show();
+        $(".nd-event").hide();
+    });     
 }
 
 sakai.api.Widgets.widgetLoader.informOnLoad("notificationdetail");

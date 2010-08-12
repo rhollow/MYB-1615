@@ -14,6 +14,9 @@
 .inbox_main .col-main
 { margin-top: 8px; margin-left: 240px; padding: 0; overflow: hidden; width: 676px; }
 
+.button-list
+{ margin-top: 10px; float: right; }
+
 
 /** SIDE NAV **/
 
@@ -99,9 +102,6 @@
 .inbox_main .inbox_inbox_delete
 { color: #058EC4; }
 
-.button-list
-{ margin-top: 10px; float: right; }
-
 /** Header **/
 .inbox_main .inbox-table .different
 { background: #eaedef; }
@@ -171,8 +171,10 @@
 #sendmessage_dialog_footer
 { display: none; }
 
-#calendar-icon
-{ position: relative; top: 5px; cursor: pointer; }
+.datepicker img
+{ position: relative; top: 6px; left: 5px; cursor: pointer; }
+.datepicker input
+{ width: 70px; }
 
 
 /** INBOX MESSAGE VIEW PANE **/

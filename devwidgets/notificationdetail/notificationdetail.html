@@ -1,5 +1,6 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/notificationdetail/css/notificationdetail.css"></link>
+<link rel="stylesheet" type="text/css" href="/devwidgets/notificationdetail/lib/custom_datepicker.css"></link>
 
 <!-- ERROR MESSAGES -->
 <span id="notificationdetail_message_ok" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_SENT__.</span>
@@ -43,20 +44,16 @@
                 
                 <!-- START DISPLAY DATE -->
                 <div  id="notificationdetail_start_display_date">
-                Start Display Date
-                <span>
-                    <span id="datepicker-input">
-                        <input style="width:100px;" class="text-field" type="text" id="datepicker-text" />
-                        <img id="calendar-icon" src="/dev/_images/calendar_icon.gif">                        
-                    </span>
-                    <span id="datepicker"></span>               
-                </span>                                                                           
+                Start Display Date                
+                <span class="datepicker">
+                    <input class="text-field" type="text" id="datepicker-startdate-text" />                                        
+                </span>                                                                                                                    
                 </div>
                 
                 <!-- CONTACT -->
                 <div id="notificationdetail_contact">
-                    Contact                    
-                    <input style="width:250px;" type="text" value="Type a name..."/>                                      
+                    <label for="nd-contact">Contact</label>                    
+                    <input id="nd-contact" style="width:250px;" type="text" value="Type a name..."/>                                      
                 </div>
                 
                 <!-- DYNAMIC LIST -->
@@ -87,31 +84,57 @@
                 </div>
                 
                 <!-- IF YES, REMINDER: Task or Event? -->
-                <div class="notificationdetail_taskorevent">
+                <div class="notificationdetail_taskorevent" style="display: none;">
                     <p class="header">Task or Event?</p>
-                    <div class="nd-task" style="margin-top:-13px;">
-                        <input type="radio" class="radioboxes" name="task-or-event" id="task"/>
-                        <label for="task-or-event">Task with due date</label>        
-                        <div class="nd-task task-details">
-                            Due Date PLACEHOLDER                            
-                        </div>            
-                    </div>
-                    <div class="nd-event">
-                        <input type="radio" class="radioboxes" name="task-or-event" id="event"/>
+                    
+                    <div>
+                        <input type="radio" class="radioboxes" name="task-or-event" id="task-radio"/>
+                        <label for="task-or-event">Task with due date</label>                                            
+                    </div>                                        
+                    
+                        <!-- TASK DETAILS -->
+                        <div class="nd-task">                                
+                            <div class="nd-task task-details">
+                                Due Date
+                                <span class="datepicker">
+                                    <input class="text-field" type="text" id="datepicker-taskduedate-text" />                                        
+                                </span>                             
+                            </div>            
+                        </div>
+                    
+                    <div>
+                        <input type="radio" class="radioboxes" name="task-or-event" id="event-radio"/>
                         <label for="task-or-event">Event</label><br>
-                        <div class="nd-event event-details">                            
-                            Event Date PLACEHOLDER                            
-                        </div>
-                        <div class="nd-event event-details">
-                            Time PLACEHOLDER
-                        </div>    
-                        <div class="nd-event event-details">
-                            Place PLACEHOLDER
-                        </div>
-                        <div class="nd-event event-details">
-                            Stop Display Date PLACEHOLDER
-                        </div>                                            
                     </div>
+                    
+                        <!-- EVENT DETAILS -->
+                        <div class="nd-event">                        
+                            <div class="nd-event event-details">                            
+                                Event Date
+                                <span class="datepicker">
+                                    <input class="text-field" type="text" id="datepicker-eventdate-text" />                                        
+                                </span>                             
+                            </div>
+                            <div class="nd-event event-details">
+                                <label for="nd-event-time">Time</label>
+                                <input class="text-field" type="text" id="nd-event-time" style="width:40px;" />
+                                <select>
+                                    <option>AM</option>
+                                    <option>PM</option>
+                                </select>
+                            </div>    
+                            <div class="nd-event event-details">
+                                <label for="nd-event-place">Place</label>
+                                <input class="text-field" type="text" id="nd-event-place" style="width:150px;" />
+                            </div>
+                            <div class="nd-event event-details">
+                                Stop Display Date
+                                <span class="datepicker">
+                                    <input class="text-field" type="text" id="datepicker-eventstopdate-text" />                                        
+                                </span> 
+                            </div>                                            
+                        </div>
+                    
                 </div>
 
             </form>                                           
