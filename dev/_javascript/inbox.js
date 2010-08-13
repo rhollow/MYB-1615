@@ -1114,7 +1114,7 @@ sakai.inbox = function() {
             inboxComposeNewPanelOpen = true;
         }
     });
-    $(inboxComposeMessage).click(function() {
+    $(inboxComposeMessage).click(function() { // COPY THIS FUNCTION TO INITIALIZE A WIDGET
         showPane(inboxPaneCompose);
 
         // initialise the sendmessage widget

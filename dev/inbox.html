@@ -76,6 +76,7 @@
                 <div class="fl-col fl-fix side_panel">
 
                     <!-- DROP DOWN -->
+                    <!--
                     <div class="drop-menu" id="inbox_compose_new">
                         <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__... </a>
                         <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
@@ -86,6 +87,7 @@
                             </ul>
                         </div>
                     </div>
+                    -->
 
                     <!-- FOLDERS -->
                     <div class="inbox-folders" id="inbox_folders">
@@ -98,14 +100,21 @@
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__INBOX__</a></div></div>
 
                             <ul>
-                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGE__</a> <span id="inbox_unread_nr_messages"></span></li>
+                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGES__</a> <span id="inbox_unread_nr_messages"></span></li>
+                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_reminders">__MSG__REMINDERS__</a> <span id="inbox_unread_nr_reminders"></span></li>
+                                <!--
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_announcements">__MSG__ANNOUNCEMENTS__</a> <span id="inbox_unread_nr_announcements"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_chats">__MSG__CHATS__</a> <span id="inbox_unread_nr_chats"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_invitations">__MSG__INVITATIONS__</a> <span id="inbox_unread_nr_invitations"></span></li>
+                                -->
                             </ul>
 
+                            <!--
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__SENT__</a></div></div>
-
+                            -->
+                            
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__REMINDERS_ARCHIVE__</a></div></div>
+                            
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
 
                         </div>
@@ -133,8 +142,6 @@
                                     <a href="javascript:;" id="inbox_general_message" style="display:none;">__MSG__THE_CONVERSATION_HAS_BEEN_MARKED_AS_READ__.</a>
                                 </span>
 
-                                <!-- Delete-->
-                                <a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a>
                             </div>
 
                             <div class="top_decor">
@@ -212,7 +219,9 @@
                             <div id="inbox_pager" class="jq_pager"></div>
                             <div id="inbox_results"></div>
                         </form>
+
                     </div>
+           
 
                     <!-- VIEW A SPECIFIC MESSAGE -->
                     <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
@@ -325,6 +334,7 @@
                             --></div>
 
                             <!-- Compose Message -->
+                            <!--
                             <div class="compose-message" id="inbox_message_compose" style="display:none;">
                                 <form class="compose-form" method="post" action="">
                                     <div>
@@ -340,22 +350,32 @@
                                     <button type="button" class="s3d-button" id="inbox_message_compose_cancel"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
                                 </form>
                             </div>
+                            -->
                         </div>
 
                         <div class="bottom_decor"></div>
 
                     </div>
+                    
+                    <!-- Button List -->
+                    <div class="button-list">
+                        <button id="inbox_inbox_delete" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                    </div>
 
                     <!-- NEW MESSAGE -->
+                    <!--
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
-
+                        -->
                             <!-- Header -->
+                            <!--
                             <div class="inbox-heading">__MSG__COMPOSE_A_NEW_MESSAGE__</div>
                         </div>
+                        -->
 
                         <!-- Compose message -->
+                        <!--
                         <div class="main_content_container">
 
                             <div class="compose-message">
@@ -371,17 +391,23 @@
                         <div class="bottom_decor"></div>
 
                     </div>
+                    -->
                     
                     <!-- CREATE/EDIT NOTIFICATION (ADMIN VIEW) -->
+                    <!--
                     <div id="inbox_pane_createNotification" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
-
+                        -->
+                        
                             <!-- Header -->
+                            <!--
                             <div class="inbox-heading">Create or Edit a Notification</div>
                         </div>
+                        -->
 
                         <!-- STILL NEEDS WORK Compose message -->
+                        <!--
                         <div class="main_content_container">
                             TESTING, TESTING, TESTING...
                             <div class="compose-message">
@@ -397,6 +423,7 @@
                         <div class="bottom_decor"></div>
 
                     </div>
+                    -->
 
                 </div>
             </div>
@@ -406,7 +433,7 @@
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
         <!-- CHAT -->
-        <div id="widget_chat" class="widget_inline"></div>
+        <!--<div id="widget_chat" class="widget_inline"></div>-->
 
         <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>

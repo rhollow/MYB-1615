@@ -12,7 +12,7 @@
 { padding: 0; }
 
 .inbox_main .col-main
-{ margin-top: 8px; margin-left: 240px; padding: 0; overflow: hidden; width: 676px; }
+{ margin-top: -18px; margin-left: 240px; padding: 0; overflow: hidden; width: 676px; }
 
 
 /** SIDE NAV **/
@@ -52,7 +52,7 @@
 
 
 .inbox_main .inbox-folders .if_content
-{ border-left: 3px solid #D4DADE; border-right: 3px solid #D4DADE; padding: 1px 5px 1px 12px; margin: 0; }
+{ border-left: 4px solid #D4DADE; border-right: 4px solid #D4DADE; padding: 1px 5px 1px 12px; margin: 0; }
 
 .inbox_main .inbox-folders .if_content ul
 { padding-left: 20px; margin: 0; }
@@ -78,6 +78,13 @@
 .inbox_main .inbox-folders #inbox_filter_messages
 { background: transparent url(/dev/_images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
 
+.inbox_main .inbox-folders #inbox_filter_reminders
+{ background: transparent url(/dev/_images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
+
+.inbox_main .inbox-folders #inbox_filter_archive
+{ background: transparent url(/dev/_images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
+
+/*
 .inbox_main .inbox-folders #inbox_filter_announcements
 { background: transparent url(/dev/_images/inbox_folders_announcements.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
 
@@ -89,6 +96,7 @@
 
 .inbox_main .inbox-folders #inbox_filter_sent
 { background: transparent url(/dev/_images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
+*/
 
 .inbox_main .inbox-folders #inbox_filter_trash
 { background: transparent url(/dev/_images/inbox_folders_trash.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
@@ -110,7 +118,7 @@
 
 /** Table **/
 .inbox_main .main_content_container
-{ width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 400px; }
+{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; }
 
 .inbox_main .inbox-table
 { width: 670px; margin: 0; }
@@ -122,8 +130,13 @@
 .inbox_main .top_button_bar
 { padding: 0 12px 5px 0; text-align: right; }
 
+/*
 .inbox_main .inbox_inbox_delete
 { color: #058EC4; }
+*/
+
+.inbox_main .button-list
+{position: relative; top: 10px; float: right;}
 
 /** Header **/
 .inbox_main .inbox-table .different
