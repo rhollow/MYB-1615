@@ -1146,10 +1146,10 @@ sakai.inbox = function() {
         sakai.sendmessage.initialise(null, true, inboxComposeNewContainer, sendMessageFinished);
     });
     
-    $(inboxFilterReminders).click(function() {  // TRYING TO INITIALIZE A NEW WIDGET; NOT SURE HOW
+    /*$(inboxFilterReminders).click(function() {  // TRYING TO INITIALIZE A NEW WIDGET; NOT SURE HOW
         showPane(inboxPaneReminders);
         sakai.sendmessage.initialise(null, true, inboxComposeNewContainer, sendMessageFinished);
-    });
+    });*/
 
     //    This is the widget id!
     $(inboxComposeCancel).live("click", function() {
@@ -1186,6 +1186,9 @@ sakai.inbox = function() {
     $(inboxFilterMessages).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
     });
+    $(inboxFilterReminders).click(function() {
+        filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
+    });
     $(inboxFilterAnnouncements).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
     });
@@ -1198,18 +1201,15 @@ sakai.inbox = function() {
     $(inboxFilterInbox).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
     });
-
     $(inboxFilterSent).click(function() {
         filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
 
         //    Change header to 'to' instead of 'from'
         $(inboxTableHeaderFromContent).text("To");
     });
-
     $(inboxFilterArchive).click(function() {
         filterMessages(sakai.config.Messages.Types.archive, "", "all", inboxFilterArchive);
     });
-
     $(inboxFilterTrash).click(function() {
         filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
         $(inboxTableHeaderFromContent).text("From/To");
