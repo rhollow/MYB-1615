@@ -19,10 +19,10 @@
 /*global $, sdata, opensocial, Config */
 
 var sakai = sakai || {};
-if (!sakai.notificationdetail){
+if (!sakai.notificationqueue){
 
     /**
-     * @name sakai.notificationdetail
+     * @name sakai.notificationqueue
      *
      * @class sendmessage
      *
@@ -33,7 +33,7 @@ if (!sakai.notificationdetail){
      * @param {String} tuid Unique id of the widget
      * @param {Boolean} showSettings Show the settings of the widget or not
      */
-    sakai.notificationdetail = function(tuid, showSettings) {
+    sakai.notificationqueue = function(tuid, showSettings) {
 
 
         /////////////////////////////
@@ -397,7 +397,7 @@ if (!sakai.notificationdetail){
          * @param {String} insertInId Insert the HTML into another element instead of showing it as a popup
          * @param {Object} callback When the message is sent this function will be called. If no callback is provided a standard message will be shown that fades out.
          */
-        sakai.notificationdetail.initialise = function(userObj, allowOtherReceivers, insertInId, callback, subject, body) {
+        sakai.notificationqueue.initialise = function(userObj, allowOtherReceivers, insertInId, callback, subject, body) {
 
             // Make sure that everything is standard.
             resetView();
@@ -569,25 +569,25 @@ if (!sakai.notificationdetail){
     // ALL DATEPICKER FUNCTIONS
     $("#datepicker-senddate-text").datepicker({
         showOn: 'button',
-        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+        buttonImage: '/devwidgets/notificationqueue/images/calendar_icon.gif',
 		buttonImageOnly: true,        
         buttonText: 'Click to pick a date.',        
     });     
     $("#datepicker-taskduedate-text").datepicker({
         showOn: 'button',
-        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+        buttonImage: '/devwidgets/notificationqueue/images/calendar_icon.gif',
 		buttonImageOnly: true,        
         buttonText: 'Click to pick a date.',        
     });     
     $("#datepicker-eventdate-text").datepicker({
         showOn: 'button',
-        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+        buttonImage: '/devwidgets/notificationqueue/images/calendar_icon.gif',
 		buttonImageOnly: true,        
         buttonText: 'Click to pick a date.',        
     });     
     $("#datepicker-eventstopdate-text").datepicker({
         showOn: 'button',
-        buttonImage: '/devwidgets/notificationdetail/images/calendar_icon.gif',
+        buttonImage: '/devwidgets/notificationqueue/images/calendar_icon.gif',
 		buttonImageOnly: true,        
         buttonText: 'Click to pick a date.',        
     }); 
@@ -595,10 +595,10 @@ if (!sakai.notificationdetail){
     // REMINDER CRITERION FUNCTIONS
     $("#nd-remindercheck").click(function() {
         if($("#nd-remindercheck").is(":checked")){
-            $(".notificationdetail_taskorevent").show();    
+            $(".notificationqueue_taskorevent").show();    
         }
         else{
-            $(".notificationdetail_taskorevent").hide();
+            $(".notificationqueue_taskorevent").hide();
         }
     });
         
@@ -616,4 +616,4 @@ if (!sakai.notificationdetail){
     });     
 }
 
-sakai.api.Widgets.widgetLoader.informOnLoad("notificationdetail");
+sakai.api.Widgets.widgetLoader.informOnLoad("notificationqueue");

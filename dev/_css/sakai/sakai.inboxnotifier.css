@@ -20,25 +20,9 @@
 
 /** SIDE NAV **/
 
-/** Drop Down Menu (Compose a new...) **/
-.inbox_main .side_panel
-{ width: 230px; margin:0; padding: 0; }
-
-.inbox_main .drop-menu
-{ padding: 0 0 5px 15px; position: relative; z-index: 20000; width: 210px; }
-.inbox_main .drop-menu .compose_new_link
-{ background: transparent url(../../_images/create_dropdown_bg.png) no-repeat scroll left 0; color:#FFFFFF; display:block; font-weight:bold; height:20px; padding:3px 0 0 13px; }
-
-.inbox_main .drop-box
-{ background-color:#FFFFFF; border:1px solid #454A4F; margin: 0; padding:0; position: absolute; left: 22px; top: 22px; width: 128px; }
-.inbox_main .drop-box ul
-{ padding: 5px 0; margin:0; width: 128px; }
-.inbox_main .drop-box ul li
-{ list-style-type: none; padding: 5px 5px 5px 12px; }
-
 /** Side Folders **/
 .inbox_main .inbox-folders
-{ width: 230px; margin:0; padding-top: 2px; overflow: hidden; }
+{ width: 230px; margin:0; padding-top: 2px; overflow: hidden; margin-top: 6px; }
 .inbox_main .inbox-folders .if_titlebar
 { background:transparent url(/dev/_images/block_tr.png) no-repeat scroll right top; padding: 0 10px 0 0; height:50px; }
 .inbox_main .inbox-folders .if_titlebar_inner
@@ -80,7 +64,7 @@
 { background:transparent url(/dev/_images/content_br.png) no-repeat scroll right bottom; height: 5px; }
 
 
-/** PANE 1 || NOTIFICATION DRAFTS (DEFAULT) **/
+/** INBOX PANE & DEFAULT SETUP **/
 
 .inbox_main .inbox-heading
 { font-weight: bold; color: #333; font-size: 17px; padding: 4px 0 0 5px; }
@@ -96,11 +80,10 @@
 { background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px;}
 
 /** Buttons **/
-.inbox_main .top_button_bar
-{ padding: 0 12px 5px 0; text-align: right; }
-
-.inbox_main .inbox_inbox_delete
-{ color: #058EC4; }
+#inbox-new-button
+{ position: relative; top: 10px; margin-bottom: 15px; width: 230px; }
+#inbox-new-button-inner
+{font-size: 14px;}
 
 /** Header **/
 .inbox_main .inbox-table .different
@@ -142,10 +125,7 @@
 
 /** PANE 2 || NOTIFICATION DETAIL **/
 
-.inbox_main #inbox_pane_compose
-{ padding: 19px 0 0 0; }
-
-.inbox_main .compose-message
+.inbox_main .compose-notification
 { background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; }
 
 .inbox_main .compose-reply

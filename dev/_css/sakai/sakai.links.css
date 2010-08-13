@@ -146,6 +146,12 @@
 	width: 150px;
 	display: block;
  }
+ 
+ /** RETURN TO HOME LINK **/
+.return_home_footer
+{    
+    text-align: right;       
+}
 
 
 /** IDS **/

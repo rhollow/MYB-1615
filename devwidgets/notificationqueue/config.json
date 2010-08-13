@@ -1,0 +1,6 @@
+{
+    "description":"Manage your notification queue.",
+    "id":"notificationqueue",
+    "name":"Notifications Queue",
+    "url":"/devwidgets/notificationqueue/notificationqueue.html"
+}

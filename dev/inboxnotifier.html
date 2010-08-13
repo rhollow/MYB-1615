@@ -75,30 +75,19 @@
                 <!-- Nav -->
                 <div class="fl-col fl-fix side_panel">
 
-                     <!-- DROP DOWN MENU -->
-                    <div class="drop-menu" id="inbox_compose_new">
-                        <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__... </a>
-                        <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
-                            <ul>
-                                <li id="inbox_compose_message"><a href="javascript:;">__MSG__NOTIFICATION__</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
+                    <button id="inbox-new-button" class="s3d-button"><span id="inbox-new-button-inner" class="s3d-button-inner">__MSG__CREATE_NEW__</span></button>
+                    
                     <!-- SIDE FOLDERS -->
                     <div class="inbox-folders" id="inbox_folders">
 
                         <div class="if_titlebar">
-                            <div class="if_titlebar_inner"><h2 class="if_title">__MSG__INBOX__</h2></div>
-                        </div>
+                            <div class="if_titlebar_inner"><h2 class="if_title">__MSG__NOTIFICATIONS__</h2></div>
+                        </div>                                                
                         
-                        <div class="if_content">
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>
-                                <ul>
-                                    <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_notifications">__MSG__NOTIFICATIONS__</a> <span id="inbox_unread_nr_messages"></span></li>                                
-                                </ul>
+                        <div class="if_content">                                                       
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>                              
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_queue">__MSG__QUEUE__</a></div></div>							
-							<div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__NOTIFICATIONS_ARCHIVE__</a></div></div>
+							<div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__ARCHIVE__</a></div></div>
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
                         </div>
                         
@@ -113,27 +102,24 @@
                 <!-- Main -->
                 <div class="col-main">
 
-                    <!-- PANE 1 || MAIN INBOX OF NOTIFICATION DRAFTS (DEFAULT VIEW) -->
-                    <div id="inbox_pane_inbox" class="inbox_pane" style="margin-top:20px;">                        
+                    <!-- PANE 1 || INBOX OF NOTIFICATION DRAFTS (DEFAULT VIEW) -->
+                    <div id="inbox_pane_inbox" class="inbox_pane">                        
 
                         <form name="my-inbox" action="" method="post">                            
-
-                            <div class="top_decor">                                
-                                <!-- Header -->
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__INBOX__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_queue" style="display:none;">__MSG__QUEUE__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__NOTIFICATIONS_ARCHIVE__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
+                            
+                            <!-- Header -->
+                            <div class="top_decor">                                                               
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__NOTIFICATION_DRAFTS__</div>                                
                             </div>
 
                             <!-- Inbox -->
                             <div class="main_content_container">
-                                <table class="inbox-table" id="inbox_table" summary="All your notification drafts.">
+                                <table class="inbox-table" id="inbox_table" summary="All of your notification drafts.">
                                     <tr class="different">
                                         <th id="inbox_table_header_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__" /></th>
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_from"><span>__MSG__FROM__</span></th>
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_subject"><span>__MSG__SUBJECT__</span></th>                                      
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__START_DISPLAY_DATE__</span></th>
+                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__SEND_DATE__</span></th>
                                     </tr>
                                 </table>
                             </div>
@@ -195,10 +181,10 @@
                         
                         <!-- Button List-->
 						<div class="button-list">
-						    <button id="delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                            <button id="copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
-                            <button id="queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-                            <button id="edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>							
+						    <button id="inbox-delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                            <button id="inbox-copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
+                            <button id="inbox-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+                            <button id="inbox-edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>						
 					   </div>
                         
                     </div>                   
@@ -214,10 +200,42 @@
                         <!-- Compose message -->
                         <div class="main_content_container">
 
-                            <div class="compose-message">
+                            <div class="compose-notification">
                                 <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
                                     <div id="createnotificationcontainer">
                                         <div id="widget_notificationdetail" class="widget_inline"></div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <div class="bottom_decor"></div>
+                        
+                        <!-- Button List-->
+                    	<div class="button-list">
+                    	    <button id="nd-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
+                            <button id="nd-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+                            <button id="nd-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
+                        </div>  
+
+                    </div>
+                    
+                    <!-- PANE 3 || NOTIFICATION QUEUE -->
+                    <div id="inbox_pane_queue" class="inbox_pane" style="display:none;">
+
+                        <div class="top_decor">
+                            <!-- Header -->
+                            <div class="inbox-heading">__MSG__NOTIFICATION_QUEUE__</div>
+                        </div>
+
+                        <!-- Compose message -->
+                        <div class="main_content_container">
+
+                            <div class="queue">
+                                <form class="queue-form" method="post" action="" id="inbox_queue_new_container">
+                                    <div id="notificationqueuecontainer">
+                                        <div id="widget_notificationqueue" class="widget_inline"></div>
                                     </div>
                                 </form>
                             </div>

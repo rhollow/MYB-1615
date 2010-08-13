@@ -1,12 +1,11 @@
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="/devwidgets/notificationdetail/css/notificationdetail.css"></link>
-<link rel="stylesheet" type="text/css" href="/devwidgets/notificationdetail/lib/custom_datepicker.css"></link>
+<link rel="stylesheet" type="text/css" href="/devwidgets/notificationqueue/css/notificationqueue.css"></link>
 
 <!-- ERROR MESSAGES -->
-<span id="notificationdetail_message_ok" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_SENT__.</span>
-<span id="notificationdetail_message_error" style="display:none;">The message could not be sent.</span>
-<span id="notificationdetail_friends_error" style="display:none;">Failed to retrieve your friends.</span>
-<span id="notificationdetail_fields_error" style="display:none;">Please fill in all the fields.</span>
+<span id="notificationqueue_message_ok" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_SENT__.</span>
+<span id="notificationqueue_message_error" style="display:none;">The message could not be sent.</span>
+<span id="notificationqueue_friends_error" style="display:none;">Failed to retrieve your friends.</span>
+<span id="notificationqueue_fields_error" style="display:none;">Please fill in all the fields.</span>
 
 <div class="dialog" id="message_dialog">
 
@@ -24,18 +23,18 @@
         <!-- CONTAINER FOR MESSAGES -->
         <div id="message_done"></div>
 
-        <div id="notificationdetail_dialog_box" class="send_message dialogue_box fl-centered">
+        <div id="notificationqueue_dialog_box" class="send_message dialogue_box fl-centered">
             <form class="compose-form" action="" method="post">      
                 
                 <!-- REQUIRED -->
-                <div id="notificationdetail_required">
+                <div id="notificationqueue_required">
                     Required?
                     <input class="radioboxes" type="radio" name="required-check" id="yes" /><label for="yes">Yes</label>
                     <input class="radioboxes" type="radio" name="required-check" id="no" /><label for="no">No</label>                                            
                 </div>
                 
                 <!-- SEND DATE -->
-                <div  id="notificationdetail_send_date">
+                <div  id="notificationqueue_send_date">
                 Send Date                
                 <span class="datepicker">
                     <input class="text-field" type="text" id="datepicker-senddate-text" />                                        
@@ -43,7 +42,7 @@
                 </div>
                 
                 <!-- DYNAMIC LIST -->
-                <div id="notificationdetail_dynamiclist">
+                <div id="notificationqueue_dynamiclist">
                     Dynamic List                                     
                     <select>
                       <option>Transfer Students</option>                      
@@ -52,25 +51,25 @@
                 </div>
                 
                 <!-- SUBJECT-->
-                <div id="notificationdetail_subject">
+                <div id="notificationqueue_subject">
                     <label for="nd-subject">Subject</label><br />
                     <input type="text" style="width:513px;" class="text-field" id="nd-subject" />
                 </div>
                 
                 <!-- BODY-->
-                <div id="notificationdetail_body">
+                <div id="notificationqueue_body">
                     <label for="nd-body">Body</label><br />
                     <textarea class="text-field" id="nd-body" cols="95" rows="25"></textarea>
                 </div>
                 
                 <!-- REMINDER CHECK: HAS A DATE?-->
-                <div id="notificationdetail_reminder_check">                    
+                <div id="notificationqueue_reminder_check">                    
                     <input class="checkboxes" type="checkbox" id="nd-remindercheck" />
                     <label for="nd-remindercheck">This message has a due date or event date.</label>
                 </div>
                 
                 <!-- IF YES, REMINDER: Task or Event? -->
-                <div class="notificationdetail_taskorevent" style="display: none;">
+                <div class="notificationqueue_taskorevent" style="display: none;">
                     <p class="header">Task or Event?</p>
                     
                     <div class="task_or_event">
@@ -130,5 +129,12 @@
 
 </div>
 
+<!-- TEMPLATE FOR THE MULTPLE TO LIST -->
+<div id="notificationqueue_box_template"><!--
+    <span class="notificationqueue_multipleBox_result" id="notificationqueue_to_result_${uid}"> ${name}
+        <img src="/dev/_images/close_icon.png" alt="X" width="15" height="15" class="notificationqueue_multipleBox_delete" id="notificationqueue_to_result_img_${uid}" />
+    </span>
+--></div>
+
 <!-- JAVASCRIPT -->
-<script type="text/javascript" src="/devwidgets/notificationdetail/javascript/notificationdetail.js"></script>
+<script type="text/javascript" src="/devwidgets/notificationqueue/javascript/notificationqueue.js"></script>
