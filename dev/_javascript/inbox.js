@@ -71,6 +71,8 @@ sakai.inbox = function() {
     var inboxFilterChats = inboxFilter + "_chats";
     var inboxFilterInvitations = inboxFilter + "_invitations";
     var inboxFilterSent = inboxFilter + "_sent";
+    var inboxFilterReminders = inboxFilter + "_reminders";
+    var inboxFilterArchive = inboxFilter + "_archive";
     var inboxFilterTrash = inboxFilter + "_trash";
     var inboxFilterNrMessages = inboxFilterClass + "_nrMessages";
     var inboxBold = inbox + "_bold";
@@ -145,6 +147,9 @@ sakai.inbox = function() {
     var inboxComposeNewContainer = inboxComposeNew + "_container";
 
     var inboxComposeNewPanel = inboxComposeNew + "_panel";
+    
+    // Viewing reminders
+    var inboxReminder = inboxID + "_reminder";
 
     // Errors and messages
     var inboxGeneralMessages = inboxID + "_generalmessages";
@@ -177,6 +182,7 @@ sakai.inbox = function() {
     var unreadMessages = 0;
     var unreadInvitations = 0;
     var unreadAnnouncements = 0;
+    var unreadReminders = 0;
     var unreadChats = 0;
 
     /**
@@ -483,6 +489,8 @@ sakai.inbox = function() {
             message.category = "Invitation";
         } else if (message["sakai:category"] === "chat"){
             message.category = "Chat";
+        } else if (message["sakai:category"] === "reminder") {
+            message.category = "Reminder";
         }
 
         if (message.previousMessage) {
@@ -630,6 +638,8 @@ sakai.inbox = function() {
                 cats = "invitation";
             } else if (selectedCategory === "Chat"){
                 cats = "chat";
+            } else if (selectedCategory === "Reminder") {
+                cats = "reminder";
             }
             url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
         }
@@ -677,6 +687,8 @@ sakai.inbox = function() {
                         unreadInvitations = data.count[i].count;
                     } else if (data.count[i].group === "chat"){
                         $(inboxFilterChats).append(sakai.api.Security.saneHTML(tpl.replace(/__NR__/gi, data.count[i].count)));
+                    } else if (data.count[i].group === "reminder"){
+                        unreadReminders = data.count[i].count;
                     }
                     totalcount += data.count[i].count;
                 }
@@ -708,6 +720,12 @@ sakai.inbox = function() {
             $("#inbox_unread_nr_invitations").text(sakai.api.Security.saneHTML("(" + unreadInvitations + ")"));
         } else {
             $("#inbox_unread_nr_invitations").text("");
+        }
+        
+        if (unreadReminders > 0){
+            $("#inbox_unread_nr_reminders").text(sakai.api.Security.saneHTML("(" + unreadReminders + ")"));
+        } else {
+            $("#inbox_unread_nr_reminders").text("");
         }
 
     };
@@ -764,6 +782,8 @@ sakai.inbox = function() {
                     unreadInvitations -= 1;
                 } else if (message["sakai:category"] === "announcement"){
                     unreadAnnouncements -= 1;
+                } else if (message["sakai:category"] === "reminder"){
+                    unreadReminders -= 1;
                 }
 
                 updateUnreadNumbers();
@@ -1049,6 +1069,7 @@ sakai.inbox = function() {
             var deletedUnreadMessages = 0;
             var deletedUnreadAnnouncements = 0;
             var deletedUnreadInvitations = 0;
+            var deletedUnreadReminders = 0;
 
             for (var i = 0, j = allMessages.length; i < j; i++){
                 for (var m = 0, n = pathToMessages.length; m < n; m++){
@@ -1060,6 +1081,8 @@ sakai.inbox = function() {
                                 deletedUnreadInvitations++;
                             } else if (allMessages[i]["sakai:category"] === "announcement"){
                                 deletedUnreadAnnouncements++;
+                            } else if (allMessages[i]["sakai:category"] === "reminder"){
+                                deletedUnreadReminders++;
                             }
                         }
                     }
@@ -1068,6 +1091,7 @@ sakai.inbox = function() {
             unreadMessages -= deletedUnreadMessages;
             unreadAnnouncements -= deletedUnreadAnnouncements;
             unreadInvitations -= deletedUnreadInvitations;
+            unreadReminders -= deletedUnreadReminders;
             updateUnreadNumbers();
 
             for (var d = 0, e = pathToMessages.length; d < e; d++) {
@@ -1114,11 +1138,16 @@ sakai.inbox = function() {
             inboxComposeNewPanelOpen = true;
         }
     });
-    $(inboxComposeMessage).click(function() { // COPY THIS FUNCTION TO INITIALIZE A WIDGET
+    $(inboxComposeMessage).click(function() {
         showPane(inboxPaneCompose);
 
         // initialise the sendmessage widget
         // we tell it to show it in our id and NOT as a layover.
+        sakai.sendmessage.initialise(null, true, inboxComposeNewContainer, sendMessageFinished);
+    });
+    
+    $(inboxFilterReminders).click(function() {  // TRYING TO INITIALIZE A NEW WIDGET; NOT SURE HOW
+        showPane(inboxPaneReminders);
         sakai.sendmessage.initialise(null, true, inboxComposeNewContainer, sendMessageFinished);
     });
 
@@ -1175,6 +1204,10 @@ sakai.inbox = function() {
 
         //    Change header to 'to' instead of 'from'
         $(inboxTableHeaderFromContent).text("To");
+    });
+
+    $(inboxFilterArchive).click(function() {
+        filterMessages(sakai.config.Messages.Types.archive, "", "all", inboxFilterArchive);
     });
 
     $(inboxFilterTrash).click(function() {
