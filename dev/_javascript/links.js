@@ -50,7 +50,7 @@ sakai.links = function(){
      */
     var addLink = function(toAdd){
         userLinksObj.links.push(toAdd);
-        return userLinksObj;
+        saveLinkList(userLinksObj);
     };
     
     /**
@@ -62,31 +62,9 @@ sakai.links = function(){
         var lookingFor = toRemove.id;
         var index = searchIndex(lookingFor, userLinksObj.links);
         userLinksObj.links.splice(index, 1);
-        return userLinksObj;
+        saveLinkList(userLinksObj);
     };
-    
-    /**
-     * Update the list according to whether a link was added or
-     * removed by either adding or removing from the user's link list.
-     * array (based on the operation it is passed).
-     * @param {Object} operation What operation to perform; either "add" or "remove".
-     * @param {Object} id The id of the link to perform the operation on.
-     * @param {Object} data User's current data.
-     */
-    var updateLinkList = function(operation, toOperateOn, data){
-        // User added a link to their data list.
-        if (operation === "add") {
-            updateduserLinksObj = addLink(toOperateOn, data);
-        }
-        // User removed a link from their data list.
-        if (operation === "remove") {
-            updateduserLinksObj = removeLink(toOperateOn, data);
-        }
-        else {
-            // throw an error...
-        }
-        saveLinkList(updateduserLinksObj);
-    };
+
     /**
      * Function for when user checks a link in the featured section.
      * Will have id format of id.
@@ -106,14 +84,16 @@ sakai.links = function(){
             toCheck.next("label").addClass("LabelSelected").attr("title", "Remove from myLinks.");
             $('#' + id + '_box').attr("checked", true);
             $('#' + id + '_label').addClass("LabelSelected").attr("title", "Remove from myLinks.");
-            updateLinkList("add", toOperateOn, userLinksObj);
+            addLink(toOperateOn);
+            //updateLinkList("add", toOperateOn, userLinksObj);
         }
         // The link was previously unchecked, so now we check it and set its attributes accordingly.
         else {
             toCheck.next("label").removeClass("LabelSelected").attr("title", "Add to myLinks.");
             $('#' + id + '_box').attr("checked", false);
             $('#' + id + '_label').removeClass("LabelSelected").attr("title", "Add to myLinks.");
-            updateLinkList("remove", toOperateOn, userLinksObj);
+            removeLink(toOperateOn);
+            //updateLinkList("remove", toOperateOn, userLinksObj);
         }
     };
     
@@ -150,7 +130,8 @@ sakai.links = function(){
                 $('#' + newID + '_checkbox').attr("checked", true);
                 $('#' + newID).addClass("LabelSelected").attr("title", "Remove from myLinks.");
             }
-            updateLinkList("add", toOperateOn, userLinksObj);
+            addLink(toOperateOn);
+           //updateLinkList("add", toOperateOn, userLinksObj);
         }
         // The link was previously unchecked, so now we check it and set its attributes accordingly.
         // If it is featured, we also deal with that. 
@@ -160,7 +141,8 @@ sakai.links = function(){
                 $('#' + newID + '_checkbox').attr("checked", false);
                 $('#' + newID).removeClass("LabelSelected").attr("title", "Add to myLinks.");
             }
-            updateLinkList("remove", toOperateOn, userLinksObj);
+            removeLink(toOperateOn);
+            //updateLinkList("remove", toOperateOn, userLinksObj);
         }
     };
     
@@ -172,10 +154,10 @@ sakai.links = function(){
     var checkStars = function(){
         $(":checkbox").change(function(data){
             if ($(this).attr("class") === "FeaturedCheckBoxClass") {
-                checkFeatured($(this), userLinksObj);
+                checkFeatured($(this));
             }
             if ($(this).attr("class") === "CheckBoxClass") {
-                checkGeneral($(this), userLinksObj);
+                checkGeneral($(this));
             }
         });
     };
@@ -207,8 +189,8 @@ sakai.links = function(){
     var createDirectory = function(directory, userLinks){
         $suggestedSites.html($.TemplateRenderer(suggested_sites_template, directory));
         $allSites.html($.TemplateRenderer(all_sites_template, directory));
-        preCheckStars(userLinks);
-        checkStars(userLinks);
+        preCheckStars();
+        checkStars();
     };
     
     /**

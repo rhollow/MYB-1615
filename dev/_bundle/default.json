@@ -508,7 +508,7 @@
 "YOUR_PASSWORD_SHOULD_BE_FOUR_CHARACTERS_LONG": "Your password should be 4 characters long",
 
 "LINKS": "Links",
-"MY_LINKS": "My Links",
+"LINKS_DIRECTORY": "Links Directory",
 "SUGGESTED_SITES": "Suggested Sites",
 "ALL_SITES": "All Sites",
 "MODIFY_LINKS": "Modify Links",
@@ -516,13 +516,16 @@
 "MANAGE_REMINDERS": "Manage Reminders",
 "DUE": "Due",
 
-"MESSAGES_PAGE": "Messages Page",
-"DRAFTS": "Drafts",
+"NOTIFICATION": "Notification",
 "NOTIFICATIONS": "Notifications",
-"NOTIFICATIONS_ARCHIVE": "Notifications Archive",
-"START_DISPLAY_DATE": "Start Display Date",
+"NOTIFICATION_DRAFTS": "Notification Drafts",
+"CREATE_NEW": "Create New",
+"DRAFTS": "Drafts",
+"ARCHIVE": "Archive",
 "QUEUE": "Queue",
 "COPY": "Copy",
-"NOTIFICATION": "Notification",
-"CREATE_OR_EDIT_A_NOTIFICATION": "Create or Edit a Notification"
+"SAVE_AS_DRAFT": "Save as Draft",
+"CREATE_OR_EDIT_A_NOTIFICATION": "Create or Edit a Notification",
+"SEND_DATE": "Send Date",
+"CREATE_NEW_DYNAMIC_LIST": "Create new dynamic list..."
 }
