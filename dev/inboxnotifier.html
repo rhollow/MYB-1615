@@ -18,6 +18,7 @@
         <!-- 3rd party CSS -->
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.components.jq_pager.css" />
         <link rel="stylesheet" type="text/css" href="/dev/_lib/jquery/plugins/gritter/css/jquery.gritter.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/_lib/jquery/notifpage.custom.css" />
 
         <!-- Sakai Config JS -->
         <script type="text/javascript" src="_configuration/widgets.js"></script>
@@ -49,7 +50,7 @@
 
     </head>
 
-    <body class="fl-centered inbox_main inbox_detail i18nable">
+    <body class="fl-centered inbox_main inbox_detail i18nable">               
 
         <!-- NAVIGATION -->
         <div id="widget_topnavigation" class="widget_inline"></div>
@@ -125,7 +126,7 @@
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__SEND_DATE__</span></th>
                                     </tr>
                                 </table>
-                            </div>
+                            </div>                                                                                                         
 
                             <div class="bottom_decor"></div>
 
@@ -203,11 +204,11 @@
 						    <button id="inbox-emptytrash-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>                            
                             <button id="inbox-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
                             <button id="inbox-viewdetail-button" class="s3d-button"><span class="s3d-button-inner">__MSG__VIEW_DETAIL__</span></button>						
-					   </div>
+					   </div>                                              
                         
                     </div>                   
                     
-                    <!-- PANE 2 || NOTIFICATION DETAIL -->
+                    <!-- PANE 2 || NOTIFICATION DETAIL (EDITABLE) -->
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
@@ -218,11 +219,41 @@
                         <!-- Create/Edit Notification -->
                         <div class="main_content_container">
                             <div class="compose-notification">
-                                <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
-                                    <div id="createnotificationcontainer">
+                               
+                                    <div id="inbox_compose_new_container">
+                                        <div id="widget_composenotification" class="widget_inline"></div>
+                                    </div>
+                                
+                            </div>
+                        </div>
+
+                        <div class="bottom_decor"></div>
+                        
+                        <!-- Button List-->
+                    	<div class="button-list">
+                    	    <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
+                            <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+                            <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
+                        </div>  
+
+                    </div> 
+                    
+                    <!-- PANE 6 || NOTIFICATION DETAIL (NONEDITABLE) -->
+                    <div id="inbox_pane_viewdetail" class="inbox_pane" style="display:none;">
+
+                        <div class="top_decor">
+                            <!-- Header -->
+                            <div class="inbox-heading">__MSG__NOTIFICATION_DETAILS__</div>
+                        </div>
+
+                        <!-- Create/Edit Notification -->
+                        <div class="main_content_container">
+                            <div class="compose-notification">
+                                
+                                    <div id="inbox_viewdetail_new_container">
                                         <div id="widget_notificationdetail" class="widget_inline"></div>
                                     </div>
-                                </form>
+                                
                             </div>
                         </div>
 
@@ -235,7 +266,7 @@
                             <button id="nd-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
                         </div>  
 
-                    </div>                                       
+                    </div>                                                                           
 
                 </div>
             </div>

@@ -1,6 +1,6 @@
 {
-    "description":"Create or edit a notification.",
+    "description":"View notification details.",
     "id":"notificationdetail",
-    "name":"Create/Edit Notifications",
+    "name":"Notification Details",
     "url":"/devwidgets/notificationdetail/notificationdetail.html"
 }

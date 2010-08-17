@@ -18,11 +18,11 @@
 /*global $, Config, opensocial */
 
 var sakai = sakai || {};
-sakai.inbox = function(){
+sakai.notificationsinbox = function(){
 
     /**
      *
-     * Configuration
+     * CONFIGURATION
      *
      */
     var messagesPerPage = 13; // The number of messages per page
@@ -36,14 +36,11 @@ sakai.inbox = function(){
     var currentPage = 0;
     var messagesForTypeCat; // The number of messages for this type/cat
     var box = "";
-    var cats = "";
-    var inboxComposeNewPanelOpen = false;
-    var inboxQueueNewPanelOpen = false;
-    
+    var cats = "";       
     
     /**
      *
-     * CSS IDs
+     * CSS IDS
      *
      */
     var inbox = "inbox";
@@ -73,9 +70,9 @@ sakai.inbox = function(){
     var inboxPaneClass = inboxClass + "_pane";
     var inboxPaneInbox = inboxPane + "_inbox";
     var inboxPaneCompose = inboxPane + "_compose";
-    var inboxPaneQueue = inboxPane + "_queue";
+    var inboxPaneViewDetail = inboxPane + "_viewdetail";
     
-    // Main inbox
+    // Main inbox view
     var inboxTable = inboxID + "_table";
     var inboxTablePreloader = inboxTable + "_preloader";
     var inboxTableHeader = inboxTable + "_header";
@@ -126,8 +123,10 @@ sakai.inbox = function(){
     // Pane 2: Notification Detail (create or edit notifications)
     var inboxCompose = inboxID + "_compose";
     var inboxComposeNew = inboxCompose + "_new";
-    var inboxComposeNewContainer = inboxComposeNew + "_container";    
-    var inboxComposeNewPanel = inboxComposeNew + "_panel";    
+    var inboxComposeNewContainer = inboxComposeNew + "_container";       
+    var inboxComposeNewPanel = inboxComposeNew + "_panel";  
+    
+    var inboxViewDetailNewContainer = "inbox_viewdetail_new_container";  
     
     // Errors and messages
     var inboxGeneralMessages = inboxID + "_generalmessages";
@@ -152,7 +151,7 @@ sakai.inbox = function(){
     
     /**
      *
-     * Aid Functions
+     * AID FUNCTIONS
      *
      */
     var unreadMessages = 0;
@@ -172,8 +171,8 @@ sakai.inbox = function(){
     };
     
     /**
-     * Scroll to a specific element in a page
-     * @param {Object} element The element you want to scroll to
+     * Scroll to a specific element in a page.
+     * @param {Object} element The element you want to scroll to.
      */
     var scrollTo = function(element){
         $("html, body").animate({
@@ -182,22 +181,20 @@ sakai.inbox = function(){
     };
     
     /**
-     * Shows a general message on the top screen
-     * @param {String} msg    the message you want to display
-     * @param {Boolean} isError    true for error (red block)/false for normal message(green block)
+     * Shows a general message on the top screen.
+     * @param {String} msg The message you want to display
+     * @param {Boolean} isError True for error (red block)/false for normal message(green block)
      */
-    var showGeneralMessage = function(msg, isError){
-    
+    var showGeneralMessage = function(msg, isError){    
         // Check whether to show an error type message or an information one
         var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
         
         // Show the message to the user
-        sakai.api.Util.notification.show("", msg, type);
-        
+        sakai.api.Util.notification.show("", msg, type);        
     };
     
     /**
-     * This will hide all the panes (the inbox, new reply, view message, etc..)
+     * This will hide all the panes.
      */
     var hideAllPanes = function(){
         $(inboxPaneClass).hide();
@@ -205,7 +202,7 @@ sakai.inbox = function(){
     
     /**
      * Will show the required pane and hide all the others.
-     * @param {String} the Id of the pane you want to show
+     * @param {String} pane The id of the pane you want to show.
      */
     var showPane = function(pane){
         //    We do a check to see if the pane isn't already visible
@@ -224,30 +221,26 @@ sakai.inbox = function(){
     };
     
     /**
-     * This will display the first page of the specified messages
-     * @param {String} type The type of the messages (inbox, sent or trash or * for all of them)
-     * @param {String} category The category of the messages (chat, invitation, ... or * for all of them)
-     * @param {String} read Wether we should fetch messages that are read, unread or all of them. Option: true, false, all
+     * This will display the first page of the specified messages.
+     * @param {String} type The type of the messages (inbox, queue, archive, trash or * for all of them). 
+     * @param {String} read Whether we should fetch messages that are read, unread or all of them. (options: true, false, all)
      * @param {String} id The id of the filter that got clicked in the side panel.
      */
-    var filterMessages = function(type, category, read, id){
-        $(inboxTableHeaderFromContent).text("From");
-        
-        // The small header above the webpage
+    var filterMessages = function(type, read, id){               
+        // The small header/titlebar above the current pane.
         $(inboxInboxHeader).hide();
         $(inboxID + "_" + type).show();
         
-        // Remember the type and category we want to see.
+        // Remember the type we want to see.
         selectedType = type;
         
-        // Display first page.
-        //getCount(read);
+        // Display first page.      
         getAllMessages();
         
-        // Show the inbox pane
+        // Show the inbox pane.
         showPane(inboxPaneInbox);
         
-        // Set the title bold
+        // Set the title bold.
         $(inboxFilterClass).removeClass(inboxBold);
         $(id).addClass(inboxBold);
     };
@@ -260,14 +253,13 @@ sakai.inbox = function(){
         $(inboxTableMessage).remove();
     };
     
-    
-    
+        
     /**
      *
-     * Render messages
+     * RENDER MESSAGES
      *
-     */
-    // TODO: Document properties.
+     */    
+ 
     /**
      * Used for the date formatter.
      */
@@ -396,7 +388,7 @@ sakai.inbox = function(){
     /**
      * Format a date to a string.
      * See replaceChars for the specific options.
-     * @param {Date} d
+     * @param {Date} d 
      * @param {String} format
      */
     var formatDate = function(d, format){
@@ -420,8 +412,7 @@ sakai.inbox = function(){
      * ex: parsing the date
      * @param {Object} message
      */
-    var formatMessage = function(message){
-    
+    var formatMessage = function(message){    
         var dateString = message["sakai:created"];
         var d = new Date();
         d.setFullYear(parseInt(dateString.substring(0, 4), 10));
@@ -469,8 +460,7 @@ sakai.inbox = function(){
      * @param {Object} The JSON response from the server. Make sure it has a .message array in it.
      */
     var renderMessages = function(response){    
-        for (var i = 0, k = response.results.length; i < k; i++) {
-        
+        for (var i = 0, k = response.results.length; i < k; i++) {        
             if (box === "inbox" && cats === "" && response.results[i]["sakai:category"] === "chat") {
                 response.results.splice(i, 1);
                 // We are modifying the array we are iterating. We need to adjust the length otherwise we end up with undefined array elements
@@ -490,7 +480,7 @@ sakai.inbox = function(){
         
         allMessages = response.results;
         
-        // Show messages
+        // show messages
         var tplData = {
             "messages": response.results
         };
@@ -498,7 +488,7 @@ sakai.inbox = function(){
         // remove previous messages
         removeAllMessagesOutDOM();
         
-        // Add them to the DOM
+        // add them to the DOM
         $(inboxTable).children("tbody").append($.TemplateRenderer(inboxTableMessagesTemplate, tplData));
         
         // do checkboxes
@@ -507,22 +497,23 @@ sakai.inbox = function(){
     
     /**
      *
-     * Pager
+     * PAGER
      *
-     */
+     **/
+    
     /**
      * Show a certain page of messages.
      * @param {int} pageNumber The page number you want to display.
      */
     var showPage = function(pageNumber){
-        // Remove all messages
-        // remove previous messages
+        // Remove all messages.
+        // remove previous messages.
         removeAllMessagesOutDOM();
-        // Set the pager
+        // Set the pager.
         pageMessages(pageNumber);
         // Remember which page were on.
         currentPage = pageNumber - 1;
-        // Show set of messages
+        // Show set of messages.
         getAllMessages();
     };
     
@@ -541,9 +532,10 @@ sakai.inbox = function(){
     
     /**
      *
-     * Server functions
+     * SERVER FUNCTIONS
      *
-     */
+     **/
+    
     /**
      * Gets all the messages from the JCR.
      */
@@ -551,6 +543,9 @@ sakai.inbox = function(){
         box = "inbox";
         if (selectedType === "queue") {
             box = "queue";
+        }
+        if (selectedType === "archive") {
+            box = "archive";
         }
         else 
             if (selectedType === "trash") {
@@ -590,12 +585,13 @@ sakai.inbox = function(){
     
     /**
      *
-     * Display specific message
+     * DISPLAY SPECIFIC MESSAGE
      *
      */
+    
     /**
      * Get the message out of the list with the specific id.
-     * @param {String} id    The id of a message
+     * @param {String} id The id of a message.
      */
     var getMessageWithId = function(id){
         for (var i = 0, j = allMessages.length; i < j; i++) {
@@ -609,7 +605,7 @@ sakai.inbox = function(){
     
     /**
      * Displays only the message with that id.
-     * @param {String} id    The id of a message
+     * @param {String} id The id of a message.
      */
     var displayMessage = function(id){
     
@@ -645,13 +641,13 @@ sakai.inbox = function(){
         }        
     };
     
-    
-    
+        
     /**
      *
      * SEND MESSAGE
      *
-     */
+     **/
+    
     /**
      * When a message has been sent this function gets called.
      * @param {Object} data A JSON object that contains the response from the server.
@@ -664,9 +660,10 @@ sakai.inbox = function(){
     
     /**
      *
-     * Delete a message
+     * DELETE A MESSAGE
      *
-     */
+     **/
+    
     /**
      * Removes all the messages from memory that are in pathToMessages if success = true
      * success = false will show an error.
@@ -718,10 +715,9 @@ sakai.inbox = function(){
     
     /**
      * Delete all the messages that are in ids
-     * @param {Array} ids    An array of ids that have to be deleted.
+     * @param {Array} ids An array of ids that have to be deleted.
      */
-    var deleteMessages = function(pathToMessages, hardDelete){
-    
+    var deleteMessages = function(pathToMessages, hardDelete){    
         if (typeof hardDelete === "undefined") {
             hardDelete = false;
         }
@@ -761,26 +757,32 @@ sakai.inbox = function(){
     
     /**
      *
-     * Event Handling
+     * EVENT HANDLING
      *
      */
     // Event handler for when user clicks on "Create New" button (on pane 1).
-    $("#inbox-new-button").click(function(){
+    $("#inbox-new-button").live("click", function(){
         showPane(inboxPaneCompose);
-        // initialise the notificationdetail widget   
-        sakai.notificationdetail.initialise(null, true, inboxComposeNewContainer, null);
+        // initialise the composenotification widget   
+        sakai.composenotification.initialise(null, true, inboxComposeNewContainer, null);
     });
     
     // Event handler for when user clicks on "Cancel" button (on pane 2).
-    $("#nd-cancel-button").live("click", function(){
+    $("#cn-cancel-button").live("click", function(){
         // jump back to inbox
         showPane(inboxPaneInbox);
     });
     
+    $("#inbox-viewdetail-button").live("click", function(){
+        alert("Testing");
+        showPane(inboxPaneViewDetail);
+        sakai.notificationdetail.initialise(null, true, inboxViewDetailNewContainer, null);
+    });
+
     
     /**
      *
-     * Show a specific message
+     * SHOW A SPECIFIC MESSAGE
      *
      */
     $(inboxInboxMessage).live("click", function(e, ui){
@@ -821,9 +823,7 @@ sakai.inbox = function(){
         correctButtonList("trash");
     });
     
-    
-    
-    
+           
     // Check all message
     $(inboxInboxCheckAll).change(function(){
         tickMessages();
@@ -929,27 +929,20 @@ sakai.inbox = function(){
             var qs = new Querystring();
             var qs_messageid = qs.get("message");
             
-            if (qs_messageid) {
-            
+            if (qs_messageid) {            
                 var callback = function(){
                     displayMessage(qs_messageid);
-                };
-                
-                getAllMessages(callback);
-                
+                };                
+                getAllMessages(callback);                
             }
-            else {
-            
+            else {            
                 // Show messages by default (as if click on "Inbox")
                 filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
-            }
-            
-        }
-        
-    };
-    
+            }            
+        }        
+    };    
     doInit();
 };
 
-sakai.api.Widgets.Container.registerForLoad("sakai.inbox");
+sakai.api.Widgets.Container.registerForLoad("sakai.notificationsinbox");
 

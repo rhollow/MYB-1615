@@ -123,7 +123,7 @@
 { background: transparent url(/dev/_images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
 
 
-/** PANE 2 || NOTIFICATION DETAIL **/
+/** PANE 2 || NOTIFICATION DETAIL (EDITABLE) **/
 
 .inbox_main .compose-notification
 { background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; }
@@ -156,6 +156,8 @@
 .datepicker input
 { width: 70px; }
 
+
+/** PANE 6 || NOTIFICATIN DETAIL (NONEDITABLE) **/
 
 /** INBOX MESSAGE VIEW PANE **/
 
