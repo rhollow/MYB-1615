@@ -107,12 +107,15 @@
 
                         <form name="my-inbox" action="" method="post">                            
                             
-                            <!-- Header -->
+                            <!-- HEADERS -->
                             <div class="top_decor">                                                               
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__NOTIFICATION_DRAFTS__</div>                                
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__DRAFTS__</div>                                
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_queue" style="display:none;">__MSG__QUEUE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__ARCHIVE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                             </div>
 
-                            <!-- Inbox -->
+                            <!-- INBOX -->
                             <div class="main_content_container">
                                 <table class="inbox-table" id="inbox_table" summary="All of your notification drafts.">
                                     <tr class="different">
@@ -179,17 +182,32 @@
                             <div id="inbox_results"></div>
                         </form>
                         
-                        <!-- Button List-->
-						<div class="button-list">
+                        <!-- BUTTON LISTS-->
+						<div class="button-list" id="buttons-drafts">
 						    <button id="inbox-delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                             <button id="inbox-copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
                             <button id="inbox-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="inbox-edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>						
+					   </div>                       
+					   <div class="button-list" id="buttons-queue" style="display:none;">
+						    <button id="inbox-delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                            <button id="inbox-copytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                            <button id="inbox-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
+                            <button id="inbox-edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>						
+					   </div>
+                       <div class="button-list" id="buttons-archive" style="display:none;">						    
+                            <button id="inbox-copytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                            <button id="inbox-viewdetail-button" class="s3d-button"><span class="s3d-button-inner">__MSG__VIEW_DETAIL__</span></button>					
+					   </div>
+                       <div class="button-list" id="buttons-trash" style="display:none;">
+						    <button id="inbox-emptytrash-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>                            
+                            <button id="inbox-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
+                            <button id="inbox-viewdetail-button" class="s3d-button"><span class="s3d-button-inner">__MSG__VIEW_DETAIL__</span></button>						
 					   </div>
                         
                     </div>                   
                     
-                    <!-- PANE 2 || CREATE OR EDIT A NOTIFICATION -->
+                    <!-- PANE 2 || NOTIFICATION DETAIL -->
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
@@ -197,9 +215,8 @@
                             <div class="inbox-heading">__MSG__CREATE_OR_EDIT_A_NOTIFICATION__</div>
                         </div>
 
-                        <!-- Compose message -->
+                        <!-- Create/Edit Notification -->
                         <div class="main_content_container">
-
                             <div class="compose-notification">
                                 <form class="compose-form" method="post" action="" id="inbox_compose_new_container">
                                     <div id="createnotificationcontainer">
@@ -207,7 +224,6 @@
                                     </div>
                                 </form>
                             </div>
-
                         </div>
 
                         <div class="bottom_decor"></div>
@@ -219,39 +235,7 @@
                             <button id="nd-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
                         </div>  
 
-                    </div>
-                    
-                    <!-- PANE 3 || NOTIFICATION QUEUE -->
-                    <div id="inbox_pane_queue" class="inbox_pane" style="display:none;">
-
-                        <div class="top_decor">
-                            <!-- Header -->
-                            <div class="inbox-heading">__MSG__NOTIFICATION_QUEUE__</div>
-                        </div>
-
-                        <!-- Compose message -->
-                        <div class="main_content_container">
-
-                            <div class="queue">
-                                <form class="queue-form" method="post" action="" id="inbox_queue_new_container">
-                                    <div id="notificationqueuecontainer">
-                                        <div id="widget_notificationqueue" class="widget_inline"></div>
-                                    </div>
-                                </form>
-                            </div>
-
-                        </div>
-
-                        <div class="bottom_decor"></div>
-                        
-                        <!-- Button List-->
-                    	<div class="button-list">
-                    	    <button id="cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
-                            <button id="queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-                            <button id="saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
-                        </div>  
-
-                    </div>
+                    </div>                                       
 
                 </div>
             </div>

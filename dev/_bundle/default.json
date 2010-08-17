@@ -518,9 +518,7 @@
 "MANAGE_REMINDERS": "Manage Reminders",
 "DUE": "Due",
 
-"NOTIFICATION": "Notification",
 "NOTIFICATIONS": "Notifications",
-"NOTIFICATION_DRAFTS": "Notification Drafts",
 "CREATE_NEW": "Create New",
 "DRAFTS": "Drafts",
 "ARCHIVE": "Archive",
@@ -529,5 +527,9 @@
 "SAVE_AS_DRAFT": "Save as Draft",
 "CREATE_OR_EDIT_A_NOTIFICATION": "Create or Edit a Notification",
 "SEND_DATE": "Send Date",
-"CREATE_NEW_DYNAMIC_LIST": "Create new dynamic list..."
+"CREATE_NEW_DYNAMIC_LIST": "Create new dynamic list...",
+"COPY_TO_DRAFTS": "Copy to Drafts",
+"MOVE_TO_DRAFTS": "Move to Drafts",
+"VIEW_DETAIL": "View Detail",
+"EMPTY_TRASH": "Empty Trash"
 }

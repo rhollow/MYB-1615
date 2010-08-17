@@ -59,14 +59,13 @@ sakai.inbox = function(){
     var inboxArrow = inboxClass + "_arrow";
     var inboxFolders = inboxID + "_folders";
     
-    // Filters on the left side
+    // Filters on the left side menu
     var inboxFilter = inboxID + "_filter";
     var inboxFilterClass = inboxClass + "_filter";
-    var inboxFilterInbox = inboxFilter + "_inbox";
-    var inboxFilterMessages = inboxFilter + "_messages";
-    var inboxFilterSent = inboxFilter + "_sent";
-    var inboxFilterTrash = inboxFilter + "_trash";
-    var inboxFilterNrMessages = inboxFilterClass + "_nrMessages";
+    var inboxFilterInbox = inboxFilter + "_inbox";   
+    var inboxFilterQueue = inboxFilter + "_queue";
+    var inboxFilterArchive = inboxFilter + "_archive";
+    var inboxFilterTrash = inboxFilter + "_trash";  
     var inboxBold = inbox + "_bold";
     
     // Different panes (inbox, send message, view message, ..)
@@ -82,7 +81,7 @@ sakai.inbox = function(){
     var inboxTableHeader = inboxTable + "_header";
     var inboxTableHeaderFrom = inboxTableHeader + "_from";
     var inboxTableHeaderFromContent = inboxTableHeaderFrom + " span";
-    var inboxTableMessage = inboxClass + "_message"; //    A row in the table
+    var inboxTableMessage = inboxClass + "_message"; // A row in the table
     var inboxTableMessageID = inboxTable + "_message_";
     var inboxTableMessagesTemplate = inbox + "_" + inbox + "_messages_template";
     var inboxTableSubject = inboxTable + "_subject_";
@@ -128,13 +127,7 @@ sakai.inbox = function(){
     var inboxCompose = inboxID + "_compose";
     var inboxComposeNew = inboxCompose + "_new";
     var inboxComposeNewContainer = inboxComposeNew + "_container";    
-    var inboxComposeNewPanel = inboxComposeNew + "_panel";
-    
-    // Pane 3: Notification Queue
-    var inboxQueue = inboxID + "_queue";
-    var inboxQueueNew = inboxQueue + "_new";
-    var inboxQueueNewContainer = inboxQueueNew + "_container";    
-    var inboxQueueNewPanel = inboxQueueNew + "_panel";
+    var inboxComposeNewPanel = inboxComposeNew + "_panel";    
     
     // Errors and messages
     var inboxGeneralMessages = inboxID + "_generalmessages";
@@ -147,12 +140,8 @@ sakai.inbox = function(){
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
-    var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
-    
-    // other IDs
-    var chatUnreadMessages = "#chat_unreadMessages";
-    
-    
+    var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";    
+        
     // Keep JSLint.com happy...
     var pageMessages = function(){
     };
@@ -167,9 +156,6 @@ sakai.inbox = function(){
      *
      */
     var unreadMessages = 0;
-    var unreadInvitations = 0;
-    var unreadAnnouncements = 0;
-    var unreadChats = 0;
     
     /**
      * This function will redirect the user to the login page.
@@ -563,8 +549,8 @@ sakai.inbox = function(){
      */
     getAllMessages = function(callback){    
         box = "inbox";
-        if (selectedType === "sent") {
-            box = "outbox";
+        if (selectedType === "queue") {
+            box = "queue";
         }
         else 
             if (selectedType === "trash") {
@@ -672,12 +658,7 @@ sakai.inbox = function(){
      */
     var sendMessageFinished = function(success, data){    
         showGeneralMessage($(inboxGeneralMessagesSent).text(), false);
-        clearInputFields();
-        
-        // Show the sent inbox pane.
-        filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
-        $(inboxTableHeaderFromContent).text("To");
-        
+        clearInputFields();                    
     };
     
     
@@ -783,7 +764,7 @@ sakai.inbox = function(){
      * Event Handling
      *
      */
-    // Event handler for when user clicks on "New" button (on pane 1).
+    // Event handler for when user clicks on "Create New" button (on pane 1).
     $("#inbox-new-button").click(function(){
         showPane(inboxPaneCompose);
         // initialise the notificationdetail widget   
@@ -794,13 +775,6 @@ sakai.inbox = function(){
     $("#nd-cancel-button").live("click", function(){
         // jump back to inbox
         showPane(inboxPaneInbox);
-    });
-    
-    $("#inbox_filter_queue").live("click", function(){
-        alert("TESTING...");
-        showPane(inboxPaneQueue);
-        // initialise the notificationdetail widget   
-        sakai.notificationqueue.initialise(null, true, inboxQueueNewContainer, null);
     });
     
     
@@ -816,26 +790,35 @@ sakai.inbox = function(){
         displayMessage(id[id.length - 1]);
     });
     
+    /**
+     * Toggles the bottom button list between filters. 
+     * First hides all visible button lists, then displays the correct one.     
+     * @param {Object} type The type of filter whose button list we want visible.
+     */
+    var correctButtonList = function(type) {     
+        $("[id|=buttons]").hide();
+        $("#buttons-"+type).show();
+    }
+    
     /* Filter the messages. */
-    
-    $(inboxFilterMessages).click(function(){
-        filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
-    });
-    
     $(inboxFilterInbox).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
+        correctButtonList("drafts");        
     });
     
-    $(inboxFilterSent).click(function(){
-        filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
-        
-        //    Change header to 'to' instead of 'from'
-        $(inboxTableHeaderFromContent).text("To");
+    $(inboxFilterQueue).click(function(){        
+        filterMessages("queue", "", "all", inboxFilterQueue);       
+        correctButtonList("queue");
+    });
+    
+    $(inboxFilterArchive).click(function(){       
+        filterMessages("archive", "", "all", inboxFilterArchive);         
+        correctButtonList("archive");
     });
     
     $(inboxFilterTrash).click(function(){
         filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
-        $(inboxTableHeaderFromContent).text("From/To");
+        correctButtonList("trash");
     });
     
     
