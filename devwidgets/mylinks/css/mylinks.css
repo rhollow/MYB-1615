@@ -42,20 +42,18 @@
 }
 
 /* Movable links */
-.mylinks_widget .fl-reorderer-movable-hover {cursor: move;}
+.mylinks_widget .fl-reorderer-movable-selected {outline: none;}
 
-.mylinks_widget .fl-reorderer-movable-dragging {background-color: #C6DEFF;}
+.mylinks_widget .fl-reorderer-movable-dragging {background-color: #C6DEFF; outline: none;}
 
-.mylinks_widget .fl-reorderer-movable-avatar {
+.mylinks_widget .fl-reorderer-dropMarker {background-color: #469AC8; height: 2px;}
+
+.fl-reorderer-movable-hover {cursor: -moz-grabbing; cursor: grabbing; background-color: #C6DEFF;}
+
+.fl-reorderer-avatar {
     opacity: 0.55;
     filter: alpha(opacity=55);
     width: 300px;
     border: 0;
 }
 
-.mylinks_widget .fl-reorderer-dropMarker {
-    background-color: #469AC8;
-    height: 2px;
-    margin: 0px;
-    padding: 0px;
-}
