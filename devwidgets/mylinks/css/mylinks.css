@@ -48,12 +48,18 @@
 
 .mylinks_widget .fl-reorderer-dropMarker {background-color: #469AC8; height: 2px;}
 
-.fl-reorderer-movable-hover {cursor: -moz-grabbing; cursor: grabbing; background-color: #C6DEFF;}
+.fl-reorderer-movable-hover {
+    cursor: -moz-grabbing; 
+    cursor: grabbing; 
+    background-color: #C6DEFF;
+}
 
 .fl-reorderer-avatar {
     opacity: 0.55;
     filter: alpha(opacity=55);
     width: 300px;
-    border: 0;
+    border: 1px solid gray;
+    line-height: 2em;
+    text-indent: 40px;
 }
 
