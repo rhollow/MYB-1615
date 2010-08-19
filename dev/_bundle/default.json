@@ -570,5 +570,22 @@
 "YOULL_FIND_PAGES_AND_SITES_OF_YOUR_INTEREST_AND_PEOPLE_WITH_WHO_YOU_CAN_CONNECT": "You'll find pages and sites of your interest, and people with who you can connect",
 "YOUR_MESSAGE_HAS_BEEN_SENT": "Your message has been sent",
 "YOUR_PASSWORD_SHOULD_BE_FOUR_CHARACTERS_LONG": "Your password should be 4 characters long",
-"YOUR_PROFILE_INFORMATION_HAS_BEEN_UPDATED": "Your profile information has been updated"
+"YOUR_PROFILE_INFORMATION_HAS_BEEN_UPDATED": "Your profile information has been updated",
+
+"LINKS": "Links",
+"LINKS_DIRECTORY": "Links Directory",
+"SUGGESTED_SITES": "Suggested Sites",
+
+"NOTIFICATIONS": "Notifications",
+"CREATE_NEW": "Create New",
+"SEND_DATE": "Send Date",
+"DRAFTS": "Drafts",
+"QUEUE": "Queue",
+"ARCHIVE": "Archive",
+"COPY": "Copy",
+"CREATE_OR_EDIT_A_NOTIFICATION": "Create or Edit a Notification",
+"SAVE_AS_DRAFT": "Save as Draft",
+"COPY_TO_DRAFTS": "Copy to Drafts",
+"MOVE_TO_DRAFTS": "Move to Drafts",
+"EMPTY_TRASH": "Empty Trash"
 }

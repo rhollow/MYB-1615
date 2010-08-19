@@ -70,7 +70,6 @@ sakai.notificationsinbox = function(){
     var inboxPaneClass = inboxClass + "_pane";
     var inboxPaneInbox = inboxPane + "_inbox";
     var inboxPaneCompose = inboxPane + "_compose";
-    var inboxPaneViewDetail = inboxPane + "_viewdetail";
     
     // Main inbox view
     var inboxTable = inboxID + "_table";
@@ -125,9 +124,7 @@ sakai.notificationsinbox = function(){
     var inboxComposeNew = inboxCompose + "_new";
     var inboxComposeNewContainer = inboxComposeNew + "_container";       
     var inboxComposeNewPanel = inboxComposeNew + "_panel";  
-    
-    var inboxViewDetailNewContainer = "inbox_viewdetail_new_container";  
-    
+       
     // Errors and messages
     var inboxGeneralMessages = inboxID + "_generalmessages";
     var inboxGeneralMessagesError = inboxGeneralMessages + "_error";
@@ -764,21 +761,14 @@ sakai.notificationsinbox = function(){
     $("#inbox-new-button").live("click", function(){
         showPane(inboxPaneCompose);
         // initialise the composenotification widget   
-        sakai.composenotification.initialise(null, true, inboxComposeNewContainer, null);
+        sakai.composenotification.initialise(null, true, inboxComposeNewContainer, null);        
     });
     
     // Event handler for when user clicks on "Cancel" button (on pane 2).
     $("#cn-cancel-button").live("click", function(){
         // jump back to inbox
         showPane(inboxPaneInbox);
-    });
-    
-    $("#inbox-viewdetail-button").live("click", function(){
-        alert("Testing");
-        showPane(inboxPaneViewDetail);
-        sakai.notificationdetail.initialise(null, true, inboxViewDetailNewContainer, null);
-    });
-
+    });       
     
     /**
      *
@@ -802,7 +792,7 @@ sakai.notificationsinbox = function(){
         $("#buttons-"+type).show();
     }
     
-    /* Filter the messages. */
+    /* EVENT HANDLERS FOR THE FILTERS ON LEFT HAND SIDE */
     $(inboxFilterInbox).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
         correctButtonList("drafts");        

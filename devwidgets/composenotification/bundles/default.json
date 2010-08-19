@@ -1,5 +1,6 @@
 {
 "name": "Notification Detail",
 "description": "Notification Detail Widget\r\n",
-"WIDGET_TITLE": "Notification Detail"
+"WIDGET_TITLE": "Notification Detail",
+"CREATE_NEW_DYNAMIC_LIST": "Create New Dyanimic List"
 }

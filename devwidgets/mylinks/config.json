@@ -1,7 +1,10 @@
 {
-    "description":"My Links",
+    "description":"A list of your favorite Berkeley websites",
     "id":"mylinks",
     "name":"My Links",
     "personalportal":true,
-    "url":"/devwidgets/mylinks/mylinks.html"
+    "url":"/devwidgets/mylinks/mylinks.html",
+    "i18n": {
+        "default": "/devwidgets/mylinks/bundles/default.json"     
+    },
 }

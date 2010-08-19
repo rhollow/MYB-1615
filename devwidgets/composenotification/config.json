@@ -2,5 +2,9 @@
     "description":"Create or edit a notification.",
     "id":"composenotification",
     "name":"Create/Edit Notifications",
-    "url":"/devwidgets/composenotification/composenotification.html"
+    "url":"/devwidgets/composenotification/composenotification.html",
+    "i18n": {
+        "default": "/devwidgets/composenotification/bundles/default.json",
+        "en_US": "/devwidgets/composenotification/bundles/en_US.json",        
+    },
 }
