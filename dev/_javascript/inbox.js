@@ -75,6 +75,7 @@ sakai.inbox = function() {
     var inboxFilterArchive = inboxFilter + "_archive";
     var inboxFilterTrash = inboxFilter + "_trash";
     var inboxFilterNrMessages = inboxFilterClass + "_nrMessages";
+    var inboxFilterNrReminders = inboxFilterClass + "_nrReminders";
     var inboxBold = inbox + "_bold";
 
     // Different panes (inbox, send message, view message, ..)
@@ -91,6 +92,8 @@ sakai.inbox = function() {
     var inboxTableHeader = inboxTable + "_header";
     var inboxTableHeaderFrom = inboxTableHeader + "_from";
     var inboxTableHeaderFromContent = inboxTableHeaderFrom + " span";
+    var inboxTableHeaderDate = inboxTableHeader + "_date";
+    var inboxTableHeaderDateContent = inboxTableHeaderDate + " span";
     var inboxTableMessage = inboxClass + "_message";    //    A row in the table
     var inboxTableMessageID = inboxTable + "_message_";
     var inboxTableMessagesTemplate = inbox + "_" + inbox + "_messages_template";
@@ -106,6 +109,7 @@ sakai.inbox = function() {
 
     var inboxInboxCheckAll = inboxInbox + "_checkAll";
     var inboxInboxDelete = inboxInbox + "_delete";
+    var inboxInboxEmptyTrash = inboxInbox + "_empty_trash";
 
     var inboxInboxMessage = inboxInboxClass + "_message";
     var inboxInboxHeader = inboxInboxClass + "_header";
@@ -260,10 +264,13 @@ sakai.inbox = function() {
      */
     var filterMessages = function(type, category, read, id) {
         $(inboxTableHeaderFromContent).text("From");
+        $(inboxTableHeaderDateContent).text("Date");
+        $(inboxInboxDelete).show();
+        $(inboxInboxEmptyTrash).hide();
 
         // The small header above the webpage
         $(inboxInboxHeader).hide();
-        $(inboxID + "_" + type).show();
+        $(inboxID + "_" + type + category).show();
 
         // Remember the type and category we want to see.
         selectedType = type;
@@ -1081,8 +1088,6 @@ sakai.inbox = function() {
                                 deletedUnreadInvitations++;
                             } else if (allMessages[i]["sakai:category"] === "announcement"){
                                 deletedUnreadAnnouncements++;
-                            } else if (allMessages[i]["sakai:category"] === "reminder"){
-                                deletedUnreadReminders++;
                             }
                         }
                     }
@@ -1091,7 +1096,6 @@ sakai.inbox = function() {
             unreadMessages -= deletedUnreadMessages;
             unreadAnnouncements -= deletedUnreadAnnouncements;
             unreadInvitations -= deletedUnreadInvitations;
-            unreadReminders -= deletedUnreadReminders;
             updateUnreadNumbers();
 
             for (var d = 0, e = pathToMessages.length; d < e; d++) {
@@ -1145,11 +1149,6 @@ sakai.inbox = function() {
         // we tell it to show it in our id and NOT as a layover.
         sakai.sendmessage.initialise(null, true, inboxComposeNewContainer, sendMessageFinished);
     });
-    
-    /*$(inboxFilterReminders).click(function() {  // TRYING TO INITIALIZE A NEW WIDGET; NOT SURE HOW
-        showPane(inboxPaneReminders);
-        sakai.sendmessage.initialise(null, true, inboxComposeNewContainer, sendMessageFinished);
-    });*/
 
     //    This is the widget id!
     $(inboxComposeCancel).live("click", function() {
@@ -1188,6 +1187,8 @@ sakai.inbox = function() {
     });
     $(inboxFilterReminders).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
+        $(inboxTableHeaderDateContent).text("Due Date");
+        $(inboxInboxDelete).hide();
     });
     $(inboxFilterAnnouncements).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
@@ -1209,10 +1210,14 @@ sakai.inbox = function() {
     });
     $(inboxFilterArchive).click(function() {
         filterMessages(sakai.config.Messages.Types.archive, "", "all", inboxFilterArchive);
+        $(inboxTableHeaderDateContent).text("Due Date");
+        $(inboxInboxDelete).hide();
     });
     $(inboxFilterTrash).click(function() {
         filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
         $(inboxTableHeaderFromContent).text("From/To");
+        $(inboxInboxDelete).hide();
+        $(inboxInboxEmptyTrash).show();
     });
 
 
@@ -1341,7 +1346,7 @@ sakai.inbox = function() {
             } else {
 
                 // Show messages by default (as if click on "Inbox")
-                filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
+                filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterInbox);
             }
 
         }

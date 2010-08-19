@@ -21,6 +21,7 @@ sakai.config = {
 
     URL: {
         // Static URLs
+        INBOX_MESSAGES: "inbox: messages",
         CONTENT_MEDIA_URL: "/dev/content_media.html",
         COURSES_SITES_URL: "/dev/courses_sites.html",
         GATEWAY_URL: "/dev/index.html",
@@ -348,10 +349,12 @@ sakai.config = {
         Types: {
             inbox: "inbox",
             sent: "sent",
+            archive: "archive",
             trash: "trash"
         },
         Categories: {
             message: "Message",
+            reminder: "Reminder",
             announcement: "Announcement",
             chat: "Chat",
             invitation: "Invitation"

@@ -147,11 +147,11 @@
                             <div class="top_decor">
 
                                 <!-- Header -->
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_messages">__MSG__INBOX_MESSAGES__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_reminders">__MSG__INBOX_REMINDERS__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxMessage">__MSG__INBOX_MESSAGES__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxReminder" style="display:none;">__MSG__INBOX_REMINDERS__</div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_sent" style="display:none;">__MSG__SENT_MESSAGES__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__REMINDERS_ARCHIVE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                             </div>
 
                             <!-- Inbox -->
@@ -161,8 +161,8 @@
                                         <th class="inbox-checkbox" id="inbox_tableHeader_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__" /></th>
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_from"><span>__MSG__FROM__</span></th>
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_subject"><span>__MSG__SUBJECT__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_type"><span>__MSG__TYPE__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__DATE_ARRIVED__</span></th>
+                                        <!--<th class="inbox_inbox_table_header_sort" id="inbox_table_header_type"><span>__MSG__TYPE__</span></th>-->
+                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__DATE__</span></th>
                                     </tr>
                                 </table>
                             </div>
@@ -362,6 +362,7 @@
                     <!-- Button List -->
                     <div class="button-list">
                         <button id="inbox_inbox_delete" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                        <button id="inbox_inbox_empty_trash" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>
                     </div>
 
                     <!-- NEW MESSAGE -->
@@ -435,7 +436,7 @@
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
         <!-- CHAT -->
-        <!--<div id="widget_chat" class="widget_inline"></div>-->
+        <div id="widget_chat" class="widget_inline"></div>
 
         <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
