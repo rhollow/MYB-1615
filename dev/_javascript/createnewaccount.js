@@ -220,8 +220,8 @@ sakai.newaccount = function(){
         profileData.basic.access = "everybody";
         var data = {
             ":create-auth": "reCAPTCHA.net",
-            "recaptcha-challenge": values["recaptcha-challenge"],
-            "recaptcha-response": values["recaptcha-response"],
+            ":recaptcha-challenge": values["recaptcha-challenge"],
+            ":recaptcha-response": values["recaptcha-response"],
             "email": values[email],
             "pwd": values[password],
             "pwdConfirm": values[password],
@@ -241,7 +241,7 @@ sakai.newaccount = function(){
                 // Destroy the captcha
                 sakai.captcha.destroy();
             },
-        error: function(xhr, textStatus, thrownError) {
+            error: function(xhr, textStatus, thrownError) {
                 if (xhr.status === 500) {
                     if (xhr.responseText.indexOf("Untrusted request") !== -1) {
                         setError(captchaField, captchaNoMatch, true);
