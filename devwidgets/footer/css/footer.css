@@ -54,8 +54,8 @@
 }
 
 .footer_main .feedback a {
-    background: url("/devwidgets/footer/images/mail.jpg") no-repeat 0 5px;
-    padding: 2px 0 0 25px;
+    background: url("/dev/_images/mail_icon.png") no-repeat 0 8px;
+    padding: 0 0 0 22px;
     color: white;
     font-size: 11pt;
     text-decoration: none;
@@ -65,13 +65,13 @@
 /* Fixed Container */
 .footer_main .fixed-container {
     background: #454A4F;
-    width: 718px;
+    width: 708px;
     padding: 10px 0 5px;
 }
 
 .footer_main .fixed-container img {
     float: left;
-    margin-right: 15px;
+    margin-right: 22px;
 }
 
 .footer_main .fixed-container p {
