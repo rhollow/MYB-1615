@@ -110,6 +110,7 @@ sakai.inbox = function() {
     var inboxInboxCheckAll = inboxInbox + "_checkAll";
     var inboxInboxDelete = inboxInbox + "_delete";
     var inboxInboxEmptyTrash = inboxInbox + "_empty_trash";
+    var inboxInboxBackToList = inboxInbox + "_back_to_list";
 
     var inboxInboxMessage = inboxInboxClass + "_message";
     var inboxInboxHeader = inboxInboxClass + "_header";
@@ -267,6 +268,7 @@ sakai.inbox = function() {
         $(inboxTableHeaderDateContent).text("Date");
         $(inboxInboxDelete).show();
         $(inboxInboxEmptyTrash).hide();
+        $(inboxInboxBackToList).hide();
 
         // The small header above the webpage
         $(inboxInboxHeader).hide();
@@ -1178,6 +1180,7 @@ sakai.inbox = function() {
         var id = e.target.id;
         id = id.split('_');
         displayMessage(id[id.length - 1]);
+        $(inboxInboxBackToList).show();
     });
 
     /* Filter the messages. */

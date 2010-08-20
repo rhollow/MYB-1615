@@ -122,7 +122,7 @@
 { width: 670px; margin: 0; }
 
 .inbox_main .top_decor
-{ background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px; }
+{ background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px; margin-top: 5px;}
 
 /** Buttons **/
 .inbox_main .top_button_bar
