@@ -18,10 +18,10 @@
 
 /* General */
 .footer_main {
-    background: url('../images/footer.png') center bottom no-repeat;
+    background: url('../images/myberkeley/full_footer.png') no-repeat bottom center;
     color: #fff;
-    margin: 0 auto 45px auto;
-    padding: 0px 10px 10px;
+    margin: 0 auto 45px;
+    padding: 0;
     width: 960px;
 }
 
@@ -35,10 +35,10 @@
 
 /* Feedback box */
 .footer_main .feedback {
-    background: url('../images/blue_rectangle.png') no-repeat;
-    width: 200px;
+    background-color: transparent;
+    width: 204px;
     text-align: center;
-    padding: 5px 0px 5px 5px;
+    padding: 5px 0px 18px 3px;
     float: left;
 }
 
@@ -64,9 +64,9 @@
 
 /* Fixed Container */
 .footer_main .fixed-container {
-    background: #454A4F;
-    width: 708px;
-    padding: 10px 0 5px;
+    background-color: transparent;
+    width: 709px;
+    padding: 10px 22px 16px;
 }
 
 .footer_main .fixed-container img {
@@ -99,7 +99,7 @@
 /* Footer on the login page */
 .footer_index {
     bottom: 0;
-    background: url('../images/footer_index.png') center top no-repeat;
+    background: url('../images/myberkeley/full_footer_index.png') center top no-repeat;
     clear: both;
     padding-bottom: 0;
     position: fixed;
