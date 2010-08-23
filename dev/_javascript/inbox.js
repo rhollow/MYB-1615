@@ -596,7 +596,12 @@ sakai.inbox = function(){
             // Use the name for the id.
             response.results[j].nr = j;
             response.results[j].subject = response.results[j]["sakai:subject"];
-            response.results[j].body = response.results[j]["sakai:body"];
+            // IN PROCESS - NOT WORKING YET
+            if (response.results[j]["sakai:category"] === "reminder") {
+                response.results[j].body = "Due date: " + response.results[j]["sakai:dueDate"] + "</ br><input type='checkbox' title='Completed' value='Completed' /></ br>Contact: " + response.results[j]["sakai:contact"] + "</ br></ br><hr></ br>" + response.results[j]["sakai:body"];
+            } else {
+                response.results[j].body = response.results[j]["sakai:body"];
+            }
             response.results[j].messagebox = response.results[j]["sakai:messagebox"];
             response.results[j] = formatMessage(response.results[j]);
         }
