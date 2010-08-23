@@ -98,7 +98,7 @@
                         <div class="if_content">
 
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__INBOX__</a></div></div>
-
+                            
                             <ul>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGES__</a> <span id="inbox_unread_nr_messages"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_reminders">__MSG__REMINDERS__</a> <span id="inbox_unread_nr_reminders"></span></li>
@@ -147,7 +147,8 @@
                             <div class="top_decor">
 
                                 <!-- Header -->
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxMessage" title="Inbox">__MSG__INBOX_MESSAGES__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox" title="Inbox">__MSG__INBOX__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxMessage" title="__MSG__INBOX_MESSAGES__" style="display:none;">__MSG__INBOX_MESSAGES__</div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_inboxReminder" title="__MSG__INBOX_REMINDERS__" style="display:none;">__MSG__INBOX_REMINDERS__</div>
                             <!--<div class="inbox-heading inbox_inbox_header" id="inbox_sent" title="__MSG__SENT_MESSAGES__" style="display:none;">__MSG__SENT_MESSAGES__</div>-->
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_archive" title="__MSG__REMINDERS_ARCHIVE__" style="display:none;">__MSG__REMINDERS_ARCHIVE__</div>
@@ -179,7 +180,7 @@
                                     {var readClass="inbox-subject-read"}
                                 {/if}
                                 <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
-                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
+                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
                                         {if m.messagebox === "outbox"}
                                             {if m.userTo}
                                                 <td>
@@ -337,7 +338,6 @@
                             --></div>
 
                             <!-- Compose Message -->
-                            <!--
                             <div class="compose-message" id="inbox_message_compose" style="display:none;">
                                 <form class="compose-form" method="post" action="">
                                     <div>
@@ -353,7 +353,7 @@
                                     <button type="button" class="s3d-button" id="inbox_message_compose_cancel"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
                                 </form>
                             </div>
-                            -->
+                            
                         </div>
 
                         <div class="bottom_decor"></div>
@@ -368,19 +368,14 @@
                     </div>
 
                     <!-- NEW MESSAGE -->
-                    <!--
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
-                        -->
                             <!-- Header -->
-                            <!--
                             <div class="inbox-heading">__MSG__COMPOSE_A_NEW_MESSAGE__</div>
                         </div>
-                        -->
 
                         <!-- Compose message -->
-                        <!--
                         <div class="main_content_container">
 
                             <div class="compose-message">
@@ -396,7 +391,6 @@
                         <div class="bottom_decor"></div>
 
                     </div>
-                    -->
                     
                     <!-- CREATE/EDIT NOTIFICATION (ADMIN VIEW) -->
                     <!--

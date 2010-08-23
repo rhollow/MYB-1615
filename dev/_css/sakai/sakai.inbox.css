@@ -72,6 +72,9 @@
 .inbox_main .inbox-folders .if_content .tab a
 { font-weight: bold; color: #058EC4; font-size: 1.2em; padding: 0 0 10px 0; }
 
+.inbox_main .inbox-folders .selected
+{ background-color: lightBlue; padding: 2px 2px 2px 0px}
+
 .inbox_main .inbox-folders #inbox_filter_inbox
 { background: transparent url(/dev/_images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
 
