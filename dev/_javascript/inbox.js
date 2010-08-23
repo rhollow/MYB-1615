@@ -77,6 +77,7 @@ sakai.inbox = function() {
     var inboxFilterNrMessages = inboxFilterClass + "_nrMessages";
     var inboxFilterNrReminders = inboxFilterClass + "_nrReminders";
     var inboxBold = inbox + "_bold";
+    var currentFilter = inboxFilterMessages;
 
     // Different panes (inbox, send message, view message, ..)
     var inboxPane = inboxID + "_pane";
@@ -500,6 +501,8 @@ sakai.inbox = function() {
             message.category = "Chat";
         } else if (message["sakai:category"] === "reminder") {
             message.category = "Reminder";
+            var critical = "" + compareDates(message["sakai:dueDate"]);
+            $("inbox_table_message_" + message["jcr:name"]).addClass(critical);
         }
 
         if (message.previousMessage) {
@@ -1187,40 +1190,47 @@ sakai.inbox = function() {
 
     $(inboxFilterMessages).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
+        currentFilter = inboxFilterMessages;
     });
     $(inboxFilterReminders).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
         $(inboxTableHeaderDateContent).text("Due Date");
         $(inboxInboxDelete).hide();
+        currentFilter = inboxFilterReminders;
     });
     $(inboxFilterAnnouncements).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
+        currentFilter = inboxFilterAnnouncements;
     });
     $(inboxFilterChats).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.chat, "all", inboxFilterChats);
+        currentFilter = inboxFilterChats;
     });
     $(inboxFilterInvitations).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.invitation, "all", inboxFilterInvitations);
+        currentFilter = inboxFilterInvitations;
     });
     $(inboxFilterInbox).click(function() {
         filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
+        currentFilter = inboxFilterInbox;
     });
     $(inboxFilterSent).click(function() {
         filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
-
-        //    Change header to 'to' instead of 'from'
         $(inboxTableHeaderFromContent).text("To");
+        currentFilter = inboxFilterSent;
     });
     $(inboxFilterArchive).click(function() {
         filterMessages(sakai.config.Messages.Types.archive, "", "all", inboxFilterArchive);
         $(inboxTableHeaderDateContent).text("Due Date");
         $(inboxInboxDelete).hide();
+        currentFilter = inboxFilterArchive;
     });
     $(inboxFilterTrash).click(function() {
         filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
         $(inboxTableHeaderFromContent).text("From/To");
         $(inboxInboxDelete).hide();
         $(inboxInboxEmptyTrash).show();
+        currentFilter = inboxFilterTrash;
     });
 
 
@@ -1243,6 +1253,9 @@ sakai.inbox = function() {
 
     });
 
+    $(inboxInboxBackToList).click(function() {
+        $(currentFilter).click();
+    });
 
     // Sorters for the inbox.
     $(inboxTableHeaderSort).bind("mouseenter", function() {
@@ -1349,7 +1362,7 @@ sakai.inbox = function() {
             } else {
 
                 // Show messages by default (as if click on "Inbox")
-                filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterInbox);
+                filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
             }
 
         }
