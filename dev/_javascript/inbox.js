@@ -572,7 +572,7 @@ sakai.inbox = function(){
                 }
             }
         }
-        
+
         return message;
     };
     
@@ -599,7 +599,6 @@ sakai.inbox = function(){
             response.results[j].body = response.results[j]["sakai:body"];
             response.results[j].messagebox = response.results[j]["sakai:messagebox"];
             response.results[j] = formatMessage(response.results[j]);
-            $("#inbox_checkbox_" + response.results[j]["jcr:name"]).attr("title", "Delete");
         }
         
         allMessages = response.results;
@@ -622,6 +621,8 @@ sakai.inbox = function(){
         for (var p = 0, q = response.results.length; p < q; p++) {
             if (response.results[p]["sakai:category"] === "reminder") {
                 formatReminder(response.results[p]);
+            } else {
+                $("#inbox_checkbox_" + response.results[p]["jcr:name"]).attr("title", "Delete");
             }
         }
     };
