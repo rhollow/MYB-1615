@@ -179,8 +179,8 @@ sakai.notificationsinbox = function(){
     
     /**
      * Shows a general message on the top screen.
-     * @param {String} msg The message you want to display
-     * @param {Boolean} isError True for error (red block)/false for normal message(green block)
+     * @param {String} msg The message you want to display.
+     * @param {Boolean} isError True for error (red block) or false for normal message(green block).
      */
     var showGeneralMessage = function(msg, isError){    
         // Check whether to show an error type message or an information one
@@ -202,8 +202,8 @@ sakai.notificationsinbox = function(){
      * @param {String} pane The id of the pane you want to show.
      */
     var showPane = function(pane){
-        //    We do a check to see if the pane isn't already visible
-        //    Otherwise we get an annoying flicker.
+        // We do a check to see if the pane isn't already visible
+        // Otherwise we get an annoying flicker.
         if (!$(pane).is(":visible")) {
             hideAllPanes();
             $(pane).show();
@@ -604,8 +604,7 @@ sakai.notificationsinbox = function(){
      * Displays only the message with that id.
      * @param {String} id The id of a message.
      */
-    var displayMessage = function(id){
-    
+    var displayMessage = function(id){    
         $(".message-options").show();
         $("#inbox_message_previous_messages").hide();
         
@@ -650,8 +649,7 @@ sakai.notificationsinbox = function(){
      * @param {Object} data A JSON object that contains the response from the server.
      */
     var sendMessageFinished = function(success, data){    
-        showGeneralMessage($(inboxGeneralMessagesSent).text(), false);
-        clearInputFields();                    
+        showGeneralMessage($(inboxGeneralMessagesSent).text(), false);                        
     };
     
     
@@ -669,7 +667,7 @@ sakai.notificationsinbox = function(){
      */
     var deleteMessagesFinished = function(pathToMessages, success){
         if (success) {
-            // Repage the inbox
+            // Repage the inbox.
             currentPage = currentPage + 1;
             showPage(currentPage);
             
@@ -711,7 +709,7 @@ sakai.notificationsinbox = function(){
     };
     
     /**
-     * Delete all the messages that are in ids
+     * Delete all the messages that are in ids.
      * @param {Array} ids An array of ids that have to be deleted.
      */
     var deleteMessages = function(pathToMessages, hardDelete){    
@@ -757,14 +755,14 @@ sakai.notificationsinbox = function(){
      * EVENT HANDLING
      *
      */
-    // Event handler for when user clicks on "Create New" button (on pane 1).
+    // Event handler for when user clicks on "Create New" button.
     $("#inbox-new-button").live("click", function(){
         showPane(inboxPaneCompose);
         // initialise the composenotification widget   
         sakai.composenotification.initialise(null, true, inboxComposeNewContainer, null);        
     });
     
-    // Event handler for when user clicks on "Cancel" button (on pane 2).
+    // Event handler for when user cancels notification authoring (cancel button on pane 2).
     $("#cn-cancel-button").live("click", function(){
         // jump back to inbox
         showPane(inboxPaneInbox);
@@ -860,9 +858,7 @@ sakai.notificationsinbox = function(){
     $(inboxSpecificMessageBackToInbox).click(function(){
         // Show the inbox.
         showPane(inboxPaneInbox);
-        
-        // Clear all the input fields
-        clearInputFields();
+    
     });
     
     $(inboxSpecificMessageOptionDelete).click(function(){
@@ -876,15 +872,10 @@ sakai.notificationsinbox = function(){
         
         // Show the inbox
         showPane(inboxPaneInbox);
-        
-        // Clear all the input fields
-        clearInputFields();
+   
     });
     
-    $(inboxSpecificMessageComposeCancel).click(function(){
-        // Clear all the input fields
-        clearInputFields();
-    });
+   
     
     $(inboxSpecificMessageComposeSend).click(function(){
         // We want to send a message.
@@ -893,8 +884,7 @@ sakai.notificationsinbox = function(){
         
         sakai.api.Communication.sendMessage(selectedMessage["sakai:from"], subject, body, "message", selectedMessage["sakai:id"], sendMessageFinished);
         
-        // Clear all the input fields
-        clearInputFields();
+        
     });
     
     
@@ -926,7 +916,7 @@ sakai.notificationsinbox = function(){
                 getAllMessages(callback);                
             }
             else {            
-                // Show messages by default (as if click on "Inbox")
+                // Show messages by default (as if click on "Inbox").
                 filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
             }            
         }        

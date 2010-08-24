@@ -13,17 +13,29 @@
     <div id="message_form" class="dialog_content">  
 
         <div id="composenotification_dialog_box" class="send_message dialogue_box fl-centered">
-            <form class="compose-form" action="" method="post">      
+            <form class="compose-form" action="" method="post">                      
+                
+                <!-- TEMPORARY: Validation Test -->
+                <div>
+                    <input type="radio" id="validation-test">
+                    <label for"validation-test">Run validation test?</label>
+                </div>
+                
+                <!-- TEMPORARY: Non-editable Mode Test -->
+                <div>
+                    <input type="radio" id="disabling-test">
+                    <label for "disabling-test">Run non-editable mode test?</label>
+                </div>
                 
                 <!-- REQUIRED -->
                 <div id="composenotification_required">
                     Required?
-                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="yes" /><label for="yes">Yes</label>
-                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="no" /><label for="no">No</label>                                            
+                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredyes" /><label for="cn-requiredyes">Yes</label>
+                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredno" /><label for="cn-requiredno">No</label>                                            
                 </div>
                 
                 <!-- SEND DATE -->
-                <div  id="composenotification_send_date">
+                <div  id="composenotification_senddate">
                 Send Date                
                 <span class="datepicker">
                     <input class="compose-form-elm text-field" type="text" id="datepicker-senddate-text" />                                        
@@ -33,7 +45,7 @@
                 <!-- DYNAMIC LIST -->
                 <div id="composenotification_dynamiclist">
                     Dynamic List                                     
-                    <select class="compose-form-elm">
+                    <select class="compose-form-elm" id="cn-dynamiclistselect">
                       <option>Transfer Students</option>                      
                     </select>
                     <button id="create-new-dynamic-list-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CREATE_NEW_DYNAMIC_LIST__</span></button>                 
@@ -58,15 +70,15 @@
                 </div>
                 
                 <!-- IF YES, REMINDER: Task or Event? -->
-                <div class="composenotification_taskorevent" style="display: none;">
+                <div class="composenotification_taskorevent" id="task-or-event-check" style="display: none;">
                     <p class="header">Task or Event?</p>
                     
+                    <!-- TASK DETAILS -->
                     <div class="task_or_event">
                         <input type="radio" class="compose-form-elm radioboxes" name="task-or-event" id="task-radio"/>
                         <label for="task-or-event">Task with due date</label>                                            
                     </div>                                        
-                    
-                        <!-- TASK DETAILS -->
+                                            
                         <div class="cn-task">                                
                             <div class="cn-task task-details">
                                 Due Date
@@ -76,12 +88,12 @@
                             </div>            
                         </div>
                     
+                    <!-- EVENT DETAILS -->
                     <div class="task_or_event">
                         <input type="radio" class="compose-form-elm radioboxes" name="task-or-event" id="event-radio"/>
                         <label for="task-or-event">Event</label><br>
                     </div>
-                    
-                        <!-- EVENT DETAILS -->
+                                            
                         <div class="cn-event">                        
                             <div class="cn-event event-details">                            
                                 Event Date
@@ -92,7 +104,7 @@
                             <div class="cn-event event-details">
                                 <label for="cn-event-time">Time</label>
                                 <input class="compose-form-elm text-field" type="text" id="cn-event-time" style="width:40px;" />
-                                <select class="compose-form-elm">
+                                <select class="compose-form-elm" id="cn-event-ampm">
                                     <option>AM</option>
                                     <option>PM</option>
                                 </select>
