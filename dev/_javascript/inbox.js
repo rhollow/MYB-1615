@@ -907,7 +907,7 @@ sakai.inbox = function(){
      * @param {String} id    The id of a message
      */
     var displayMessage = function(id){
-    
+        
         $(".message-options").show();
         $("#inbox_message_previous_messages").hide();
         $("#inbox_message_replies").html("");
@@ -1487,15 +1487,13 @@ sakai.inbox = function(){
             
             var qs = new Querystring();
             var qs_messageid = qs.get("message");
-            
             if (qs_messageid) {
-            
                 var callback = function(){
                     displayMessage(qs_messageid);
                 };
-                
+
+                selectedCategory = "reminder";
                 getAllMessages(callback);
-                
             }
             else {
             
