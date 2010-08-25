@@ -912,6 +912,15 @@ sakai.inbox = function(){
         $("#inbox_message_previous_messages").hide();
         $("#inbox_message_replies").html("");
         
+        // Hide/show relevant buttons
+        $(inboxInboxBackToList).show();
+        $(inboxInboxEmptyTrash).hide();
+        if (currentFilter === inboxFilterReminders || currentFilter === inboxFilterArchive) {
+            $(inboxInboxDelete).hide();
+        } else {
+            $(inboxInboxDelete).show();
+        }
+        
         // Hide invitation links
         $("#inbox-invitation-accept").hide();
         $("#inbox-invitation-already").hide();
@@ -948,7 +957,6 @@ sakai.inbox = function(){
             
             // Reply part.
             $(inboxSpecificMessageComposeSubject).val("Re: " + message.subject);
-            
             if (message["sakai:category"] === "invitation") {
                 if (message["sakai:subcategory"] === "joinrequest") {
                     $.getJSON(message["sakai:sitepath"] + '/joinrequests/' + message.userFrom[0].hash + '.json', function(data){
@@ -1183,7 +1191,7 @@ sakai.inbox = function(){
                 for (var i = 0, j = allMessages.length; i < j; i++) {
                     var toDeleteID = pathToMessages[m].split("/");
                     toDeleteID = toDeleteID[toDeleteID.length - 1];
-
+                    
                     if (allMessages[i].id === toDeleteID) {
                         if ((allMessages[i]["sakai:read"] === "false" || allMessages[i]["sakai:read"] === false) && allMessages[i]["sakai:category"]) {
                             if (allMessages[i]["sakai:category"] === "message") {
@@ -1287,9 +1295,6 @@ sakai.inbox = function(){
         var id = e.target.id;
         id = id.split('_');
         displayMessage(id[id.length - 1]);
-        $(inboxInboxBackToList).show();
-        $(inboxInboxEmptyTrash).hide();
-        $(inboxInboxDelete).show();
     });
     
     /* Filter the messages. */
@@ -1494,7 +1499,7 @@ sakai.inbox = function(){
             }
             else {
             
-                // Show messages by default (as if click on "Inbox")
+                // Show messages by default (as if click on "Inbox > Messages")
                 filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterMessages);
             }
             

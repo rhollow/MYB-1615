@@ -119,7 +119,7 @@
 
 /** Table **/
 .inbox_main .main_content_container
-{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; }
+{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; height: 400px; }
 
 .inbox_main .inbox-table
 { width: 670px; margin: 0; }
@@ -271,7 +271,7 @@
 { background: url(../../_images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
 
 .inbox_detail .message-body
-{ padding: 20px 37px 30px; color:#333; font-size: 13px; }
+{ padding: 20px 37px 30px; color:#333; font-size: 13px; max-height: 306px; overflow: auto;}
 
 .inbox_detail .message-header
 { font-weight: bold; font-size: 15px; padding: 5px 0px 5px 5px; }
