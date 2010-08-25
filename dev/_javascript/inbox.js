@@ -472,33 +472,41 @@ sakai.inbox = function(){
         return (tomorrow > dueDate) ? "inbox-subject-critical" : "";
     }
     
-    var updateReminder = function (url, props, callback) {
+    var updateReminder = function(url, props, callback){
         $.ajax({
-              type: 'POST',
-              url: url,
-              data: props,
-              success: function(data, textStatus, xhr){
-                  if (typeof callback !== "undefined") {
-                      callback();
-                  }
-              },
-              error: function(xhr, textStatus, thrownError) {
+            type: 'POST',
+            url: url,
+            data: props,
+            success: function(data, textStatus, xhr){
+                if (typeof callback !== "undefined") {
+                    callback();
+                }
+            },
+            error: function(xhr, textStatus, thrownError){
                 alert("Updating " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
-                    " and thrownError = " + thrownError + "\n" + xhr.responseText);
-              },
-              dataType: 'json'
+                " and thrownError = " +
+                thrownError +
+                "\n" +
+                xhr.responseText);
+            },
+            dataType: 'json'
         });
     };
     
     var formatReminder = function(rem){
         var critical = "" + compareDates(rem["sakai:dueDate"]);
-        $(inboxTableMessageID + rem["jcr:name"]).addClass(critical); /* class added correctly, but styling doesn't show up. Precedence issues? */
+        $(inboxTableMessageID + rem["jcr:name"]).addClass(critical); /* class added, but styling doesn't show up. Precedence issues? */
         $("#inbox_checkbox_" + rem["jcr:name"]).attr("title", "Completed");
         
         $("#inbox_checkbox_" + rem["jcr:name"]).live("click", function(evt){
             var jcr_path = rem["jcr:path"];
-            var propertyToUpdate = {"sakai:taskState":"completed"};
-            updateReminder(jcr_path, propertyToUpdate); 
+            var propertyToUpdate = {
+                "sakai:taskState": "completed",
+                "sakai:messagebox": "archive"
+            };
+            updateReminder(jcr_path, propertyToUpdate, function(){
+                $(inboxTableMessageID + rem["jcr:path"]).remove;
+            });
         });
     }
     
@@ -572,7 +580,7 @@ sakai.inbox = function(){
                 }
             }
         }
-
+        
         return message;
     };
     
@@ -599,7 +607,8 @@ sakai.inbox = function(){
             // IN PROCESS - NOT WORKING YET
             if (response.results[j]["sakai:category"] === "reminder") {
                 response.results[j].body = "Due date: " + response.results[j]["sakai:dueDate"] + "</ br><input type='checkbox' title='Completed' value='Completed' /></ br>Contact: " + response.results[j]["sakai:contact"] + "</ br></ br><hr></ br>" + response.results[j]["sakai:body"];
-            } else {
+            }
+            else {
                 response.results[j].body = response.results[j]["sakai:body"];
             }
             response.results[j].messagebox = response.results[j]["sakai:messagebox"];
@@ -626,7 +635,8 @@ sakai.inbox = function(){
         for (var p = 0, q = response.results.length; p < q; p++) {
             if (response.results[p]["sakai:category"] === "reminder") {
                 formatReminder(response.results[p]);
-            } else {
+            }
+            else {
                 $("#inbox_checkbox_" + response.results[p]["jcr:name"]).attr("title", "Delete");
             }
         }
@@ -679,11 +689,15 @@ sakai.inbox = function(){
         box = "inbox";
         if (selectedType === "sent") {
             box = "outbox";
-        } else if (selectedType === "trash") {
-            box = "trash";
-        } else if (selectedType === "archive") {
-            box = "archive";
         }
+        else 
+            if (selectedType === "trash") {
+                box = "trash";
+            }
+            else 
+                if (selectedType === "archive") {
+                    box = "archive";
+                }
         
         var url = sakai.config.URL.MESSAGE_BOX_SERVICE + "?box=" + box + "&items=" + messagesPerPage + "&page=" + currentPage;
         
@@ -700,15 +714,23 @@ sakai.inbox = function(){
         if (selectedCategory) {
             if (selectedCategory === "Message") {
                 cats = "message";
-            } else if (selectedCategory === "Announcement") {
-                cats = "announcement";
-            } else if (selectedCategory === "Invitation") {
-                cats = "invitation";
-            } else if (selectedCategory === "Chat") {
-                cats = "chat";
-            } else if (selectedCategory === "Reminder") {
-                cats = "reminder";
             }
+            else 
+                if (selectedCategory === "Announcement") {
+                    cats = "announcement";
+                }
+                else 
+                    if (selectedCategory === "Invitation") {
+                        cats = "invitation";
+                    }
+                    else 
+                        if (selectedCategory === "Chat") {
+                            cats = "chat";
+                        }
+                        else 
+                            if (selectedCategory === "Reminder") {
+                                cats = "reminder";
+                            }
             url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
         }
         
@@ -729,51 +751,6 @@ sakai.inbox = function(){
             error: function(xhr, textStatus, thrownError){
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
                 $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
-            }
-        });
-    };
-    
-    /**
-     * Will do a count of all the unread messages and change the values in the DOM.
-     * Note: This function will only check the nr of messages there are. It will not fetch them!
-     */
-    var showUnreadMessages = function(){
-    
-        $.ajax({
-            url: "/~" + sakai.data.me.user.userid + "/message.count.json?filters=sakai:messagebox,sakai:read&values=inbox,false&groupedby=sakai:category",
-            cache: false,
-            success: function(data){
-            
-                var totalcount = 0;
-                
-                for (var i = 0, j = data.count.length; i < j; i++) {
-                    if (data.count[i].group === "message") {
-                        unreadMessages = data.count[i].count;
-                    }
-                    else 
-                        if (data.count[i].group === "announcement") {
-                            unreadAnnouncements = data.count[i].count;
-                        }
-                        else 
-                            if (data.count[i].group === "invitation") {
-                                unreadInvitations = data.count[i].count;
-                            }
-                            else 
-                                if (data.count[i].group === "chat") {
-                                    $(inboxFilterChats).append(sakai.api.Security.saneHTML(tpl.replace(/__NR__/gi, data.count[i].count)));
-                                }
-                                else 
-                                    if (data.count[i].group === "reminder") {
-                                        unreadReminders = data.count[i].count;
-                                    }
-                    totalcount += data.count[i].count;
-                }
-                
-                updateUnreadNumbers();
-                
-            },
-            error: function(xhr, textStatus, thrownError){
-                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
             }
         });
     };
@@ -808,6 +785,48 @@ sakai.inbox = function(){
             $("#inbox_unread_nr_reminders").text("");
         }
         
+    };
+    
+    /**
+     * Will do a count of all the unread messages and change the values in the DOM.
+     * Note: This function will only check the nr of messages there are. It will not fetch them!
+     */
+    var showUnreadMessages = function(){
+        $.ajax({
+            url: "/~" + sakai.data.me.user.userid + "/message.count.json?filters=sakai:messagebox,sakai:read&values=inbox,false&groupedby=sakai:category",
+            cache: false,
+            success: function(data){
+                var totalcount = 0;
+                for (var i = 0, j = data.count.length; i < j; i++) {
+                    if (data.count[i].group === "message") {
+                        unreadMessages = data.count[i].count;
+                    }
+                    else 
+                        if (data.count[i].group === "announcement") {
+                            unreadAnnouncements = data.count[i].count;
+                        }
+                        else 
+                            if (data.count[i].group === "invitation") {
+                                unreadInvitations = data.count[i].count;
+                            }
+                            else 
+                                if (data.count[i].group === "chat") {
+                                    $(inboxFilterChats).append(sakai.api.Security.saneHTML(tpl.replace(/__NR__/gi, data.count[i].count)));
+                                }
+                                else 
+                                    if (data.count[i].group === "reminder") {
+                                        unreadReminders = data.count[i].count;
+                                        alert(unreadReminders);
+                                    }
+                    totalcount += data.count[i].count;
+                }
+                
+                updateUnreadNumbers();
+            },
+            error: function(xhr, textStatus, thrownError){
+                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+            }
+        });
     };
     
     /**
@@ -1143,7 +1162,6 @@ sakai.inbox = function(){
      * @param {Array} ids    An array of ids that have to be deleted.
      */
     var deleteMessages = function(pathToMessages, hardDelete){
-    
         if (typeof hardDelete === "undefined") {
             hardDelete = false;
         }
@@ -1159,12 +1177,15 @@ sakai.inbox = function(){
             var deletedUnreadMessages = 0;
             var deletedUnreadAnnouncements = 0;
             var deletedUnreadInvitations = 0;
-            var deletedUnreadReminders = 0;
+            var deletedUnreadTotal = 0;
             
-            for (var i = 0, j = allMessages.length; i < j; i++) {
-                for (var m = 0, n = pathToMessages.length; m < n; m++) {
-                    if (allMessages[i].id === pathToMessages[m]) {
-                        if (allMessages[i]["sakai:read"] === "false" && allMessages[i]["sakai:category"]) {
+            for (var m = 0, n = toDelete; m < n; m++) {
+                for (var i = 0, j = allMessages.length; i < j; i++) {
+                    var toDeleteID = pathToMessages[m].split("/");
+                    toDeleteID = toDeleteID[toDeleteID.length - 1];
+
+                    if (allMessages[i].id === toDeleteID) {
+                        if ((allMessages[i]["sakai:read"] === "false" || allMessages[i]["sakai:read"] === false) && allMessages[i]["sakai:category"]) {
                             if (allMessages[i]["sakai:category"] === "message") {
                                 deletedUnreadMessages++;
                             }
@@ -1177,12 +1198,15 @@ sakai.inbox = function(){
                                         deletedUnreadAnnouncements++;
                                     }
                         }
+                        break;
                     }
                 }
             }
             unreadMessages -= deletedUnreadMessages;
             unreadAnnouncements -= deletedUnreadAnnouncements;
             unreadInvitations -= deletedUnreadInvitations;
+            deletedUnreadTotal = deletedUnreadMessages + deletedUnreadAnnouncements + deletedUnreadInvitations;
+            $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(), 10) - deletedUnreadTotal)));
             updateUnreadNumbers();
             
             for (var d = 0, e = pathToMessages.length; d < e; d++) {
@@ -1264,6 +1288,8 @@ sakai.inbox = function(){
         id = id.split('_');
         displayMessage(id[id.length - 1]);
         $(inboxInboxBackToList).show();
+        $(inboxInboxEmptyTrash).hide();
+        $(inboxInboxDelete).show();
     });
     
     /* Filter the messages. */
@@ -1271,39 +1297,55 @@ sakai.inbox = function(){
     $(inboxFilterMessages).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
         currentFilter = inboxFilterMessages;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterReminders).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
         $(inboxTableHeaderDateContent).text("Due Date");
         $(inboxInboxDelete).hide();
         currentFilter = inboxFilterReminders;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterAnnouncements).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
         currentFilter = inboxFilterAnnouncements;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterChats).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.chat, "all", inboxFilterChats);
         currentFilter = inboxFilterChats;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterInvitations).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.invitation, "all", inboxFilterInvitations);
         currentFilter = inboxFilterInvitations;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterInbox).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
         currentFilter = inboxFilterInbox;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterSent).click(function(){
         filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
         $(inboxTableHeaderFromContent).text("To");
         currentFilter = inboxFilterSent;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterArchive).click(function(){
         filterMessages(sakai.config.Messages.Types.archive, "", "all", inboxFilterArchive);
         $(inboxTableHeaderDateContent).text("Due Date");
         $(inboxInboxDelete).hide();
         currentFilter = inboxFilterArchive;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     $(inboxFilterTrash).click(function(){
         filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
@@ -1311,9 +1353,9 @@ sakai.inbox = function(){
         $(inboxInboxDelete).hide();
         $(inboxInboxEmptyTrash).show();
         currentFilter = inboxFilterTrash;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
-    
-    
     
     
     // Check all message
@@ -1327,10 +1369,21 @@ sakai.inbox = function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
-        alert(pathToMessages);
         // If we are in trash we hard delete the messages
         deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
-        
+    });
+    
+    $(inboxInboxEmptyTrash).click(function(){
+        // Delete all checked messages
+        var pathToMessages = [];
+        $(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            pathToMessages.push(pathToMessage);
+        });
+        // If we are in trash we hard delete the messages
+        deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
     });
     
     $(inboxInboxBackToList).click(function(){
