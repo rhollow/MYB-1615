@@ -62,7 +62,12 @@ sakai.entity = function(tuid, showSettings){
         data: {
             profile: "",
             count: {
-                messages_unread: 0
+                messages_unread: 0,
+                contacts_accepted: 0,
+                contacts_invited: 0,
+                contacts_pending: 0,
+                groups: 0,
+                contents: 0
             }
         }
     };
@@ -79,7 +84,6 @@ sakai.entity = function(tuid, showSettings){
     var $entity_container = $("#entity_container", $rootel);
     var $entity_container_template = $("#entity_container_template", $rootel);
     var $entity_container_actions = $("#entity_container_actions", $rootel);
-    var $entity_container_actions_template = $("#entity_container_actions_template", $rootel);
 
     // Profile
     var $entity_profile_status;
@@ -93,11 +97,6 @@ sakai.entity = function(tuid, showSettings){
     var entityProfileChatstatus = "#entity_profile_chatstatus";
     var profileChatStatusClass = ".myprofile_chat_status";
     var profileChatStatusID = "#myprofile_chat_status_";
-
-    // Actions
-    var $entity_action_delete = $("#entity_action_delete", $rootel);
-    var $entity_action_download = $("#entity_action_download", $rootel);
-    var $entity_action_upload = $("#entity_action_upload", $rootel);
 
     var authprofileURL;
 
@@ -139,9 +138,7 @@ sakai.entity = function(tuid, showSettings){
      */
     var renderTemplate = function(){
         $.TemplateRenderer($entity_container_template, entityconfig, $entity_container);
-        $.TemplateRenderer($entity_container_actions_template, entityconfig, $entity_container_actions);
         $entity_container.show();
-        $entity_container_actions.show();
     };
 
     /**
@@ -153,8 +150,17 @@ sakai.entity = function(tuid, showSettings){
      */
     var constructProfilePicture = function(profile){
 
-        if (profile.basic.elements.picture && profile["rep:userId"]) {
-            return "/~" + profile["rep:userId"] + "/public/profile/" + profile.basic.elements.picture.value.name;
+        // if (profile.basic.elements.picture && profile["rep:userId"]) {
+        // profile.basic.elements object does not have picture information
+        // if there is profile picture and userId
+        // return the picture links
+        if(profile.picture && profile["rep:userId"]) {
+
+            //change string to json object and get name from picture object
+            var picture_name = $.parseJSON(profile.picture).name;
+
+            //return "/~" + profile["rep:userId"] + "/public/profile/" + profile.basic.elements.picture.value.name;
+            return "/~" + profile["rep:userId"] + "/public/profile/" + picture_name;
         }
         else {
             return "";
@@ -264,6 +270,9 @@ sakai.entity = function(tuid, showSettings){
             if (sakai.data.me.profile["rep:policy"])
                 delete sakai.data.me.profile["rep:policy"];
 
+            //trigger chat_status_message_change to update the status message on chat widget.
+            $(window).trigger("chat_status_message_change", inputValue);
+
             sakai.api.Server.saveJSON(authprofileURL, sakai.data.me.profile, function(success, data) {
                if (success) {
                    // Set the button back to it's original text
@@ -305,48 +314,6 @@ sakai.entity = function(tuid, showSettings){
     };
 
     /**
-     * Add binding to the downlaod button
-     */
-    var addBindingDownload = function(){
-
-        // Reinitialise the jQuery selector
-        $entity_action_download = $($entity_action_download.selector);
-
-        // Open the content in a new window
-        $entity_action_download.bind("click", function(){
-            window.open(entityconfig.data.profile.path);
-        });
-
-    };
-
-    /**
-     * Add binding to the delete button
-     */
-    var addBindingDelete = function(){
-
-        // Reinitialise the jQuery selector
-        $entity_action_delete = $($entity_action_delete.selector);
-
-        // Open the delete content pop-up
-        $entity_action_delete.bind("click", function(){
-            sakai.deletecontent.init(entityconfig.data.profile);
-        });
-    };
-
-    /**
-     * Add binding to the upload buttons
-     */
-    var addBindingUpload = function(){
-        // Reinitialise the jQuery selector
-        $entity_action_upload = $($entity_action_upload.selector);
-
-        // Initialise the uploadcontent widget
-        $entity_action_upload.bind("click", function(){
-            sakai.uploadcontent.init(entityconfig.data.profile);
-        });
-    };
-
-    /**
      * Add binding to various elements on the entity widget
      */
     var addBinding = function(){
@@ -357,17 +324,6 @@ sakai.entity = function(tuid, showSettings){
             // Add binding related to chat status
             addBindingChatStatus();
         }
-        else if(entityconfig.mode === "content"){
-            // Add binding to the download button
-            addBindingDownload();
-
-            // Add binding to the delete button
-            addBindingDelete();
-
-            // Add binding to the upload button
-            addBindingUpload();
-        }
-
     };
 
     /**
@@ -436,8 +392,8 @@ sakai.entity = function(tuid, showSettings){
         }
 
         // Set the filename of the file
-        if(filedata["sakai:name"]){
-            entityconfig.data.profile.name = filedata["sakai:name"];
+        if(filedata["sakai:pooled-content-file-name"]){
+            entityconfig.data.profile.name = filedata["sakai:pooled-content-file-name"];
         }
         // e.g. http://localhost:8080/~admin/private/3739036439_2418af9b4d_o.jpg
         // to 3739036439_2418af9b4d_o.jpg
@@ -450,6 +406,17 @@ sakai.entity = function(tuid, showSettings){
         if(data.url){
             entityconfig.data.profile.path = data.url;
         }
+
+        // Set the description of the resource
+        if (filedata["sakai:description"]) {
+            entityconfig.data.profile.description = filedata["sakai:description"];
+        }
+
+        
+        // Set the copyright of the file
+        if (filedata["jcr:copyright"]) {
+            entityconfig.data.profile.copyright = filedata["jcr:copyright"];
+        }
     };
 
     /**
@@ -459,43 +426,32 @@ sakai.entity = function(tuid, showSettings){
      * @param {Function} [callback] A callback function that will be fired it is supplied
      */
     var getData = function(mode, data){
+
         switch (mode) {
             case "profile":
                 entityconfig.data.profile = $.extend(true, {}, data);
-
                 // Set the correct profile data
                 setProfileData();
-
                 break;
-
             case "myprofile":
-               
                 // Set the profile for the entity widget to the personal profile information
                 // We need to clone the sakai.data.me.profile object so we don't interfere with it
                 entityconfig.data.profile = $.extend(true, {}, sakai.data.me.profile);
-                entityconfig.data.count.messages_unread = sakai.data.me.messages.unread;
-
+                //get data from sakai.data.me object and set in the entityconfig
+                setData();
                 // Set the correct profile data
                 setProfileData();
-                
                 break;
-                
             case "group":
-            
                 entityconfig.data.profile = data;
-                
                 break;
-
             case "content":
-            
                 setContentData(data);
-
                 break;
-                
         }
-        
+
         if(entityconfig.mode ==="content" && !data){
-        	return;
+            return;
         }
 
         // Render the main template
@@ -503,9 +459,62 @@ sakai.entity = function(tuid, showSettings){
 
         // Add binding
         addBinding();
-            
+
     };
 
+    /**
+     * Set data.
+     * For example:
+     * No. Unread messages
+     * No. of Contacts
+     * No. invited contacts
+     * No. of pending request
+     * No. of group
+     *
+     */
+    var setData = function(){
+        //no. of unread messages
+        entityconfig.data.count.messages_unread = sakai.data.me.messages.unread;
+
+        //no. of contacts
+        entityconfig.data.count.contacts_accepted = sakai.data.me.contacts.accepted;
+
+        //no. of contacts invited
+        entityconfig.data.count.contacts_invited = sakai.data.me.contacts.invited;
+
+        //no. of pending requests
+        entityconfig.data.count.contacts_pending = sakai.data.me.contacts.pending;
+
+        //no. of groups user is memeber of
+        entityconfig.data.count.groups = sakai.data.me.groups.length;
+    }
+
+    /**
+     * Get content data and then call method to get data for the appropriate mode
+     * @param {String} mode The mode in which you load the entity widget
+     * @param {Object} data A JSON object containing the necessary data - the structure depends on the mode
+     * to display Contents: no. Items
+     *
+     */
+    var getContentData = function(mode, data){
+        //make an ajax call to get content data
+        $.ajax({
+            url: "/var/search/pool/me/manager.json?q=*",
+            type: "GET",
+            success: function(d, textStatus){
+                entityconfig.data.count.contents = d.total;
+
+                // Change the mode for the entity widget
+                entityconfig.mode = mode;
+
+                // Get the data for the appropriate mode
+                getData(entityconfig.mode, data);
+            },
+            error: function(xhr, textStatus, thrownError){
+                alert("An error has occured");
+            }
+        });
+    };
 
     ////////////////////
     // INITIALISATION //
@@ -523,12 +532,8 @@ sakai.entity = function(tuid, showSettings){
         $entity_container.empty().hide();
         $entity_container_actions.empty();
 
-        // Change the mode for the entity widget
-        entityconfig.mode = mode;
-
-        // Get the data for the appropriate mode
-        getData(entityconfig.mode, data);
-
+        //Get the content data
+        getContentData(mode, data);
     };
 
     $(window).trigger("sakai.api.UI.entity.ready", {});

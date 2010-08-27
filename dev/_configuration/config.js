@@ -67,6 +67,7 @@ sakai.config = {
         ME_SERVICE: "/system/me",
         MESSAGE_BOX_SERVICE: "/var/message/internal/box.json",
         MESSAGE_BOXCATEGORY_SERVICE: "/var/message/boxcategory.json",
+        POOLED_CONTENT_MANAGER: "/var/search/pool/me/manager.json",
         PRESENCE_CONTACTS_SERVICE: "/var/presence.contacts.json",
         PRESENCE_SERVICE: "/var/presence.json",
         PROXY_RSS_SERVICE: "/var/proxy/rss.json?rss=",
@@ -118,6 +119,27 @@ sakai.config = {
     },
 
     SakaiDomain: window.location.protocol + "//" + window.location.host,
+
+    Permissions: {
+        /*
+         * A collection of permission keys and range of values to be referenced
+         * for making permissions decisions. The values of properties are only
+         * for reference, may not match designs and are not to be place in the
+         * UI (message bundles should be used to match up-to-date designs).
+         */
+        Groups: {
+            joinable: {
+                "manager_add": "Managers add people",
+                "user_direct": "People can automatically join",
+                "user_request": "People request to join"
+            },
+            visible: {
+                "members": "Group members only",
+                "allusers": "All logged in users",
+                "public": "Anyone on the Internet"
+            }
+        }
+    },
 
     Profile: {
         /*

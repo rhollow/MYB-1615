@@ -38,6 +38,8 @@ sakai.creategroup = function(tuid, showSettings){
     // Configuration variables //
     /////////////////////////////
 
+    var MAX_LENGTH = 30;
+
     // - ID
     var createGroup = "#creategroup";
 
@@ -56,6 +58,8 @@ sakai.creategroup = function(tuid, showSettings){
     var createGroupAddProcess = createGroupAdd + "_process";
     var createGroupAddSave = createGroupAdd + "_save";
     var createGroupAddUrl = createGroupAdd + "_url";
+    var createGroupAddUrlLength = createGroupAddUrl + "_length";
+    var createGroupAddUrlMaxLength = createGroupAddUrl + "_max_length";
 
     // Error fields
     var createGroupAddNameEmpty = createGroupAddName + "_empty";
@@ -69,7 +73,7 @@ sakai.creategroup = function(tuid, showSettings){
     var invalidFieldClass = "invalid";
 
     // Pages to be added to the group
-    var pagestemplate = "interdisciplinary";
+    var pagestemplate = "defaultgroup";
 
     ///////////////////////
     // Utility functions //
@@ -101,7 +105,7 @@ sakai.creategroup = function(tuid, showSettings){
             $(createGroupAddCancel).hide();
             $(createGroupAddSave).hide();
             $(createGroupAddProcess).show();
-        }else{
+        } else {
             $(createGroupAddProcess).hide();
             $(createGroupAddCancel).show();
             $(createGroupAddSave).show();
@@ -207,7 +211,9 @@ sakai.creategroup = function(tuid, showSettings){
                 ":member": groupidManagers,
                 "sakai:group-title" : grouptitle,
                 "sakai:group-description" : groupdescription,
-                "sakai:group-id": groupid
+                "sakai:group-id": groupid,
+                "sakai:group-joinable": sakai.config.Permissions.Groups.joinable.manager_add,
+                "sakai:group-visible": sakai.config.Permissions.Groups.visible.members
             },
             type: "POST",
             success: function(data, textStatus){
@@ -249,7 +255,9 @@ sakai.creategroup = function(tuid, showSettings){
                 ":member": sakai.data.me.user.userid,
                 "sakai:group-title" : grouptitleManagers,
                 "sakai:group-description" : groupdescription,
-                "sakai:group-id": groupidManagers
+                "sakai:group-id": groupidManagers,
+                "sakai:group-joinable": sakai.config.Permissions.Groups.joinable.manager_add,
+                "sakai:group-visible": sakai.config.Permissions.Groups.visible.members
             },
             type: "POST",
             success: function(data, textStatus){
@@ -457,7 +465,23 @@ sakai.creategroup = function(tuid, showSettings){
 
         // Set the text of the span containing the url of the current group
         // e.g. http://celestine.caret.local:8080/~g-
-        $(createGroupAddUrl).text(sakai.api.Security.saneHTML(document.location.protocol + "//" + document.location.host + "/~g-"));
+        var url = document.location.protocol + "//" + document.location.host;
+        url += "/~g-";
+        // get max length value
+        var maxLength = parseInt(MAX_LENGTH,10);
+
+        // get length
+
+        // if url is too long greater than 30 character
+        // show only first 15 characters +...+ last 15 characters
+        // e.g.http://sakai3-demo.uits.indiana.edu:8080/~g-
+        // it will change to shorter form:
+        // http://sakai3-...diana.edu:8080/~g-
+        if (url.length > maxLength) {
+            url = url.substr(0,15)+ "..."+ url.substr(url.length-15,url.length-1);
+        }
+
+        $(createGroupAddUrl).text(sakai.api.Security.saneHTML(url));
     };
 
     doInit();

@@ -69,11 +69,9 @@
                 {/if}
             </div>
             <div class="fl-force-left entity_content_information">
-                <p>${data.profile.name}</p>
-                <p>${data.profile.mimetype}</p>
-                <p>${data.profile.filesize}</p>
-                <p>__MSG__CREATED__ ${data.profile.created} __MSG__BY__ ${data.profile.createdby}</p>
-                <p>__MSG__LAST_MODIFIED__ ${data.profile.lastmodified} __MSG__BY__ ${data.profile.lastmodifiedby}</p>
+                <h1>${data.profile.name}</h1>
+                <p>${data.profile.mimetype} (${data.profile.filesize}), ${data.profile.copyright}</p>
+                <p>${data.profile.description}</p>
             </div>
         {/if}
         {if mode === "group"}
@@ -97,7 +95,15 @@
     <div class="fl-col entity_container_right s3d-actions">
         {if mode === "myprofile"}
             <strong>__MSG__MESSAGES__:</strong>
-            <a href="/dev/inbox.html">${data.count.messages_unread|default:0} __MSG__UNREAD__</a>
+            <a href="/dev/inbox.html">${data.count.messages_unread|default:0} __MSG__UNREAD__</a><br />
+			<strong>__MSG__CONTACTS__:</strong>
+			<a href="/dev/people.html">${data.count.contacts_accepted|default:0} __MSG__CONTACTS__;</a>
+			<a href="/dev/people.html">${data.count.contacts_invited|default:0} __MSG__INVITES__;</a>
+			<a href="/dev/people.html">${data.count.contacts_pending|default:0} __MSG__REQUESTS__</a><br />
+			<strong>__MSG__GROUPS__:</strong>
+			<a href="/dev/group.html">${data.count.groups|default:0} __MSG__GROUPS__</a><br />
+			<strong>__MSG__CONTENT__:</strong>
+			<a href="/dev/group.html">${data.count.contents|default:0} __MSG__ITEMS__</a>
         {/if}
         {if mode === "group"}
             <strong>__MSG__MANAGERS__:</strong><a href="#group_edit_managers">0 __MSG__MANAGER__</a><br/>
@@ -107,16 +113,6 @@
             <strong>&nbsp;</strong><a href="directory.html">Location A >> Loc B</a><br/>
         {/if}
     </div>
---></div>
-
-<div id="entity_container_actions_template"><!--
-    {if mode === "content"}
-        <div class="fl-push entity_actions">
-            <button type="button" class="s3d-button s3d-button-primary" id="entity_action_upload"><span class="s3d-button-inner">__MSG__ADD_RESOURCE__</span></button>
-            <button type="button" class="s3d-button s3d-button-primary" id="entity_action_download"><span class="s3d-button-inner">__MSG__DOWNLOAD_FILE__</span></button>
-            <button type="button" class="s3d-button s3d-button-primary" id="entity_action_delete"><span class="s3d-button-inner">__MSG__DELETE_FILE__</span></button>
-        </div>
-    {/if}
 --></div>
 
 <!-- JAVASCRIPT -->
