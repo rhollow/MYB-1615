@@ -89,6 +89,10 @@ if (!sakai.composenotification){
         var messageError = "#sendmessage_message_error";
         var messageErrorFriends = "#sendmessage_friends_error";        
         
+        var reenableView = function() {
+            $(".compose-form-elm").removeAttr("disabled");       
+        };
+        
         /**
          * Disables proper elements of the compose-form-elm class for the
          * notification authoring page. (Used in the non-editable notification
@@ -137,6 +141,7 @@ if (!sakai.composenotification){
             $(".compose-form-elm").each(function(){
                 clearElement(this);
             });            
+            reenableView();
             $(".cn-task").hide();
             $(".cn-event").hide();            
             $(".composenotification_taskorevent").hide();

@@ -74,7 +74,7 @@ sakai.api = {
  * @description
  * Communication related convenience functions. This should only hold
  * functions which are used across multiple pages, and does not constitute
- * functionality related to a single area/pag
+ * functionality related to a single area/page.
  *
  * @namespace
  * Communication related convenience functions
