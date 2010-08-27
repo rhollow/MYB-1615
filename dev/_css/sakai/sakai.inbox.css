@@ -41,6 +41,8 @@
 .inbox_main .inbox-folders
 { width: 230px; margin:0; padding-top: 2px; overflow: hidden; }
 
+.inbox_main .inbox-folders a:hover {text-decoration: none;}
+
 .inbox_main .inbox-folders .if_titlebar
 { background:transparent url(/dev/_images/block_tr.png) no-repeat scroll right top; padding: 0 10px 0 0; height:50px; }
 
@@ -119,10 +121,10 @@
 
 /** Table **/
 .inbox_main .main_content_container
-{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; height: 400px; overflow: auto; }
+{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; height: 400px; overflow:auto;}
 
 .inbox_main .inbox-table
-{ width: 652px; margin: 0; } /* width used to be 670 */
+{ width: 670px; margin: 0; }
 
 .inbox_main .top_decor
 { background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px; margin-top: 5px;}

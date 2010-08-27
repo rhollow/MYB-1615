@@ -25,7 +25,7 @@ sakai.inbox = function(){
      * Configuration
      *
      */
-    var messagesPerPage = 13; // The number of messages per page.
+    var messagesPerPage = 12; // The number of messages per page.
     var allMessages = []; // Array that will hold all the messages.
     var me = sakai.data.me;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
@@ -116,9 +116,9 @@ sakai.inbox = function(){
     
     var inboxTableHeaderSort = inboxInboxClass + "_table_header_sort";
     
-    
     // Specific message
     var inboxSpecificMessage = inboxID + "_message";
+    var inboxSpecificMessageDelete = inboxSpecificMessage + "_delete";
     var inboxSpecificMessageBackToInbox = inboxSpecificMessage + "_back_to_inbox";
     var inboxSpecificMessagePreviousMessages = inboxSpecificMessage + "_previous_messages";
     var inboxSpecificMessageOption = inboxSpecificMessage + "_option";
@@ -281,6 +281,7 @@ sakai.inbox = function(){
         // Display first page.
         //getCount(read);
         getAllMessages();
+        showPage(1);
         
         // Show the inbox pane
         showPane(inboxPaneInbox);
@@ -902,10 +903,9 @@ sakai.inbox = function(){
         // Hide/show relevant buttons
         $(inboxInboxBackToList).show();
         $(inboxInboxEmptyTrash).hide();
-        if (currentFilter === inboxFilterReminders || currentFilter === inboxFilterArchive) {
-            $(inboxInboxDelete).hide();
-        } else {
-            $(inboxInboxDelete).show();
+        $(inboxInboxDelete).hide();
+        if (!(currentFilter === inboxFilterReminders || currentFilter === inboxFilterArchive)) {
+            $(inboxSpecificMessageDelete).show();
         }
         
         // Hide invitation links
@@ -1342,7 +1342,6 @@ sakai.inbox = function(){
     });
     $(inboxFilterTrash).click(function(){
         filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
-        $(inboxTableHeaderFromContent).text("From/To");
         $(inboxInboxDelete).hide();
         $(inboxInboxEmptyTrash).show();
         currentFilter = inboxFilterTrash;
@@ -1422,6 +1421,22 @@ sakai.inbox = function(){
     });
     
     $(inboxSpecificMessageOptionDelete).click(function(){
+        var harddelete = false;
+        if ($.inArray(selectedMessage.types, "trash") > -1) {
+            // This is a trashed message, hard delete it.
+            harddelete = true;
+        }
+        // Delete the message
+        deleteMessages([selectedMessage.pathToMessage], harddelete);
+        
+        // Show the inbox
+        showPane(inboxPaneInbox);
+        
+        // Clear all the input fields
+        clearInputFields();
+    });
+    
+    $(inboxSpecificMessageDelete).click(function(){
         var harddelete = false;
         if ($.inArray(selectedMessage.types, "trash") > -1) {
             // This is a trashed message, hard delete it.
