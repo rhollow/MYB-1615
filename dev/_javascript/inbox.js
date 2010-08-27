@@ -74,7 +74,7 @@ sakai.inbox = function(){
     var inboxFilterNrMessages = inboxFilterClass + "_nrMessages";
     var inboxFilterNrReminders = inboxFilterClass + "_nrReminders";
     var inboxBold = inbox + "_bold";
-    var currentFilter = inboxFilterMessages;
+    var currentFilter;
     
     // Different panes (inbox, send message, view message, ..)
     var inboxPane = inboxID + "_pane";
@@ -685,7 +685,6 @@ sakai.inbox = function(){
      * Gets all the messages from the JCR.
      */
     getAllMessages = function(callback){
-    
         box = "inbox";
         if (selectedType === "sent") {
             box = "outbox";
@@ -698,7 +697,7 @@ sakai.inbox = function(){
                 if (selectedType === "archive") {
                     box = "archive";
                 }
-        
+
         var url = sakai.config.URL.MESSAGE_BOX_SERVICE + "?box=" + box + "&items=" + messagesPerPage + "&page=" + currentPage;
         
         var types = "&types=" + selectedType;
@@ -714,32 +713,23 @@ sakai.inbox = function(){
         if (selectedCategory) {
             if (selectedCategory === "Message") {
                 cats = "message";
-            }
-            else 
-                if (selectedCategory === "Announcement") {
+            } else if (selectedCategory === "Announcement") {
                     cats = "announcement";
-                }
-                else 
-                    if (selectedCategory === "Invitation") {
-                        cats = "invitation";
-                    }
-                    else 
-                        if (selectedCategory === "Chat") {
-                            cats = "chat";
-                        }
-                        else 
-                            if (selectedCategory === "Reminder") {
-                                cats = "reminder";
-                            }
+            } else if (selectedCategory === "Invitation") {
+                    cats = "invitation";
+            } else if (selectedCategory === "Chat") {
+                    cats = "chat";
+            } else if (selectedCategory === "Reminder") {
+                    cats = "reminder";
+            }
             url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
         }
-        
+
         $.ajax({
             url: url,
             cache: false,
             success: function(data){
                 if (data.results) {
-                
                     // Render the messages
                     renderMessages(data);
                 }
@@ -816,7 +806,6 @@ sakai.inbox = function(){
                                 else 
                                     if (data.count[i].group === "reminder") {
                                         unreadReminders = data.count[i].count;
-                                        alert(unreadReminders);
                                     }
                     totalcount += data.count[i].count;
                 }
@@ -839,7 +828,6 @@ sakai.inbox = function(){
      * @param {String} id    The id of a message
      */
     var getMessageWithId = function(id){
-    
         for (var i = 0, j = allMessages.length; i < j; i++) {
             if (allMessages[i]["jcr:name"] === id) {
                 return allMessages[i];
@@ -907,7 +895,6 @@ sakai.inbox = function(){
      * @param {String} id    The id of a message
      */
     var displayMessage = function(id){
-        
         $(".message-options").show();
         $("#inbox_message_previous_messages").hide();
         $("#inbox_message_replies").html("");
@@ -929,6 +916,7 @@ sakai.inbox = function(){
         $("#inbox-sitejoin-already").hide();
         
         showPane(inboxPaneMessage);
+        
         var message = getMessageWithId(id);
         
         selectedMessage = message;
@@ -1022,7 +1010,7 @@ sakai.inbox = function(){
                 markMessageRead(message, id);
             }
         }
-        
+
     };
     
     /**
@@ -1487,12 +1475,24 @@ sakai.inbox = function(){
             
             var qs = new Querystring();
             var qs_messageid = qs.get("message");
+            if(qs.get("category") === "reminder"){
+                selectedCategory = "reminder";
+            } else {
+                selectedCategory = "message";
+            }
+            
+            // Set currentFilter
+            if(selectedCategory === "reminder") {
+                currentFilter = inboxFilterReminders;
+            } else if (selectedCategory === "message") {
+                currentFilter = inboxFilterMessages;
+            }
+            
             if (qs_messageid) {
                 var callback = function(){
                     displayMessage(qs_messageid);
                 };
-
-                selectedCategory = "reminder";
+                
                 getAllMessages(callback);
             }
             else {
