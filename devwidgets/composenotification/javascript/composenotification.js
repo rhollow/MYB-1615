@@ -194,7 +194,7 @@ if (!sakai.composenotification){
             $(messageTaskDueDate).removeClass(invalidClass);                                                                                                         
         });     
         
-        // DATEPICKER FUNCTIONS
+        // Datepicker functions.
         $("#datepicker-senddate-text").datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
@@ -228,7 +228,14 @@ if (!sakai.composenotification){
         // Testing disabling. REMOVE LATER.
         $('#disabling-test').click(function(){
             disableView();    
-        })    
+        });
+        
+        // Create new dynamic list button (reminder to save).
+        $('#create-new-dynamic-list-button').click(function(){
+            //alert("Click successful.");
+            $('#reminder-to-save-dialog').dialog();       
+            // Maybe this should be a new widget to conform with other dialog boxes?     
+        });         
 
         /**         
          * This method will check if there are any required fields that are not filled in.
