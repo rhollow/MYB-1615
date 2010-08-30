@@ -160,6 +160,7 @@ sakai.inbox = function(){
     var inboxGeneralMessagesErrorGeneral = inboxGeneralMessagesError + "_general";
     var inboxGeneralMessagesErrorReadFail = inboxGeneralMessagesError + "_read_fail";
     var inboxGeneralMessagesNrNewMessages = inboxGeneralMessages + "_nr_new_messages";
+    var inboxGeneralMessagesNoneSelected = inboxGeneralMessages + "_none_selected";
     var inboxGeneralMessagesDeleted = inboxGeneralMessages + "_deleted";
     var inboxGeneralMessagesDeleted_1 = inboxGeneralMessagesDeleted + "_1";
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
@@ -1167,8 +1168,7 @@ sakai.inbox = function(){
         if (hardDelete) {
             // We will have to do a hard delete to all the JCR files.
             hardDeleteMessage(pathToMessages);
-        }
-        else {
+        } else {
             var toDelete = pathToMessages.length;
             var deleted = 0;
             
@@ -1179,10 +1179,9 @@ sakai.inbox = function(){
             var deletedUnreadTotal = 0;
             
             for (var m = 0, n = toDelete; m < n; m++) {
+                var toDeleteID = pathToMessages[m].split("/");
+                toDeleteID = toDeleteID[toDeleteID.length - 1];
                 for (var i = 0, j = allMessages.length; i < j; i++) {
-                    var toDeleteID = pathToMessages[m].split("/");
-                    toDeleteID = toDeleteID[toDeleteID.length - 1];
-                    
                     if (allMessages[i].id === toDeleteID) {
                         if ((allMessages[i]["sakai:read"] === "false" || allMessages[i]["sakai:read"] === false) && allMessages[i]["sakai:category"]) {
                             if (allMessages[i]["sakai:category"] === "message") {
@@ -1364,9 +1363,9 @@ sakai.inbox = function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
-        
-        if (!pathToMessages) {
-            alert("No messages were selected.");
+
+        if (pathToMessages.length === 0) {
+            showGeneralMessage($(inboxGeneralMessagesNoneSelected).text());
         }
         else {
             // If we are in trash we hard delete the messages
@@ -1375,7 +1374,7 @@ sakai.inbox = function(){
     });
     
     $(inboxInboxEmptyTrash).click(function(){
-        // Delete all checked messages
+        // Delete all checked messages 
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function(){
             var pathToMessage = $(this).val();
@@ -1383,6 +1382,7 @@ sakai.inbox = function(){
         });
         // If we are in trash we hard delete the messages
         deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+        
         $(inboxInboxCheckAll).attr("checked", '');
         tickMessages();
     });
@@ -1435,6 +1435,7 @@ sakai.inbox = function(){
             // This is a trashed message, hard delete it.
             harddelete = true;
         }
+
         // Delete the message
         deleteMessages([selectedMessage.pathToMessage], harddelete);
         
@@ -1447,12 +1448,14 @@ sakai.inbox = function(){
     
     $(inboxSpecificMessageDelete).click(function(){
         var harddelete = false;
-        if ($.inArray(selectedMessage.types, "trash") > -1) {
-            // This is a trashed message, hard delete it.
+        if(currentFilter === inboxFilterTrash){
             harddelete = true;
         }
+        
         // Delete the message
-        deleteMessages([selectedMessage.pathToMessage], harddelete);
+        var pathToMessages = [];
+        pathToMessages.push(selectedMessage["jcr:path"]);
+        deleteMessages(pathToMessages, harddelete);
         
         // Show the inbox
         showPane(inboxPaneInbox);
