@@ -260,13 +260,14 @@ sakai.inbox = function(){
      * This will display the first page of the specified messages
      * @param {String} type The type of the messages (inbox, sent or trash or * for all of them)
      * @param {String} category The category of the messages (chat, invitation, ... or * for all of them)
-     * @param {String} read Wether we should fetch messages that are read, unread or all of them. Option: true, false, all
+     * @param {String} read Whether we should fetch messages that are read, unread or all of them. Option: true, false, all
      * @param {String} id The id of the filter that got clicked in the side panel.
      */
     var filterMessages = function(type, category, read, id){
         $(inboxTableHeaderFromContent).text("From");
         $(inboxTableHeaderDateContent).text("Date");
         $(inboxInboxDelete).show();
+        $(inboxSpecificMessageDelete).hide();
         $(inboxInboxEmptyTrash).hide();
         $(inboxInboxBackToList).hide();
         
@@ -904,8 +905,10 @@ sakai.inbox = function(){
         $(inboxInboxBackToList).show();
         $(inboxInboxEmptyTrash).hide();
         $(inboxInboxDelete).hide();
-        if (!(currentFilter === inboxFilterReminders || currentFilter === inboxFilterArchive)) {
+        if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash) {
             $(inboxSpecificMessageDelete).show();
+        } else {
+            $(inboxSpecificMessageDelete).hide();
         }
         
         // Hide invitation links
@@ -1361,8 +1364,14 @@ sakai.inbox = function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
-        // If we are in trash we hard delete the messages
-        deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+        
+        if (!pathToMessages) {
+            alert("No messages were selected.");
+        }
+        else {
+            // If we are in trash we hard delete the messages
+            deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+        }
     });
     
     $(inboxInboxEmptyTrash).click(function(){
@@ -1492,14 +1501,9 @@ sakai.inbox = function(){
             var qs_messageid = qs.get("message");
             if(qs.get("category") === "reminder"){
                 selectedCategory = "reminder";
+                currentFilter = inboxFilterReminders;
             } else {
                 selectedCategory = "message";
-            }
-            
-            // Set currentFilter
-            if(selectedCategory === "reminder") {
-                currentFilter = inboxFilterReminders;
-            } else if (selectedCategory === "message") {
                 currentFilter = inboxFilterMessages;
             }
             
