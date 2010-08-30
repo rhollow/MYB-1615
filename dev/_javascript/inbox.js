@@ -265,8 +265,11 @@ sakai.inbox = function(){
      * @param {String} id The id of the filter that got clicked in the side panel.
      */
     var filterMessages = function(type, category, read, id){
+        // Reset headers
         $(inboxTableHeaderFromContent).text("From");
         $(inboxTableHeaderDateContent).text("Date");
+        
+        // Show/hide appropriate buttons
         $(inboxInboxDelete).show();
         $(inboxSpecificMessageDelete).hide();
         $(inboxInboxEmptyTrash).hide();
@@ -501,14 +504,15 @@ sakai.inbox = function(){
         $(inboxTableMessageID + rem["jcr:name"]).addClass(critical); /* class added, but styling doesn't show up. Precedence issues? */
         $("#inbox_checkbox_" + rem["jcr:name"]).attr("title", "Completed");
         
-        $("#inbox_checkbox_" + rem["jcr:name"]).live("click", function(evt){
+        $("#inbox_checkbox_" + rem["jcr:name"]).click(function(){
             var jcr_path = rem["jcr:path"];
             var propertyToUpdate = {
                 "sakai:taskState": "completed",
                 "sakai:messagebox": "archive"
             };
             updateReminder(jcr_path, propertyToUpdate, function(){
-                $(inboxTableMessageID + rem["jcr:path"]).remove;
+                $(inboxTableMessageID + rem["jcr:path"]).empty();           // NOT WORKING
+                $(inboxTableMessageID + rem["jcr:path"]).remove();          // NOT WORKING
             });
         });
     }
@@ -607,7 +611,7 @@ sakai.inbox = function(){
             // Use the name for the id.
             response.results[j].nr = j;
             response.results[j].subject = response.results[j]["sakai:subject"];
-            // IN PROCESS - NOT WORKING YET
+                                                                                     // IN PROCESS - NOT WORKING YET
             if (response.results[j]["sakai:category"] === "reminder") {
                 response.results[j].body = "Due date: " + response.results[j]["sakai:dueDate"] + "</ br><input type='checkbox' title='Completed' value='Completed' /></ br>Contact: " + response.results[j]["sakai:contact"] + "</ br></ br><hr></ br>" + response.results[j]["sakai:body"];
             }
@@ -660,7 +664,7 @@ sakai.inbox = function(){
         removeAllMessagesOutDOM();
         // Set the pager
         pageMessages(pageNumber);
-        // Remember which page were on.
+        // Remember which page we're on.
         currentPage = pageNumber - 1;
         // Show set of messages
         getAllMessages();
@@ -676,6 +680,8 @@ sakai.inbox = function(){
             pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
             buttonClickCallback: showPage
         });
+        alert(pageNumber);
+        curentPage = pageNumber;
     };
     
     
@@ -865,26 +871,30 @@ sakai.inbox = function(){
                 $(inboxTableMessageID + id).addClass(inboxTablesubjectReadClass);
                 $(inboxTableMessageID + id).removeClass(inboxTablesubjectUnreadClass);
                 
-                if (message["sakai:category"] === "message") {
-                    unreadMessages -= 1;
-                }
-                else 
-                    if (message["sakai:category"] === "invitation") {
-                        unreadInvitations -= 1;
+                if (currentFilter != inboxFilterTrash) {
+                    if (message["sakai:category"] === "message") {
+                        unreadMessages -= 1;
                     }
                     else 
-                        if (message["sakai:category"] === "announcement") {
-                            unreadAnnouncements -= 1;
+                        if (message["sakai:category"] === "invitation") {
+                            unreadInvitations -= 1;
                         }
                         else 
-                            if (message["sakai:category"] === "reminder") {
-                                unreadReminders -= 1;
+                            if (message["sakai:category"] === "announcement") {
+                                unreadAnnouncements -= 1;
                             }
-                
-                updateUnreadNumbers();
+                            else 
+                                if (message["sakai:category"] === "reminder") {
+                                    unreadReminders -= 1;
+                                }
+                    
+                    updateUnreadNumbers();
+                }
                 
                 // Mark message in navigationchat as read
-                $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(), 10) - 1)));
+                if (currentFilter != inboxFilterTrash) {
+                    $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(), 10) - 1)));
+                }
                 
             },
             error: function(xhr, textStatus, thrownError){
@@ -1366,8 +1376,7 @@ sakai.inbox = function(){
 
         if (pathToMessages.length === 0) {
             showGeneralMessage($(inboxGeneralMessagesNoneSelected).text());
-        }
-        else {
+        } else {
             // If we are in trash we hard delete the messages
             deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
         }
@@ -1380,15 +1389,21 @@ sakai.inbox = function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
-        // If we are in trash we hard delete the messages
-        deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
         
-        $(inboxInboxCheckAll).attr("checked", '');
-        tickMessages();
+        if (pathToMessages.length === 0) {
+            showGeneralMessage($(inboxGeneralMessagesNoneSelected).text());
+        }
+        else {
+            // If we are in trash we hard delete the messages
+            deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+            $(inboxInboxCheckAll).attr("checked", '');
+            tickMessages();
+        }
     });
     
     $(inboxInboxBackToList).click(function(){
         $(currentFilter).click();
+        showPage(currentPage);
     });
     
     // Sorters for the inbox.

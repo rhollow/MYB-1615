@@ -176,9 +176,11 @@
                             <div id="inbox_inbox_messages_template" title=""><!--
                             {for m in messages}
                                 {var readClass="inbox-subject-unread"}
+                                
                                 {if m.read}
                                     {var readClass="inbox-subject-read"}
                                 {/if}
+                                
                                 <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
                                     <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
                                         {if m.messagebox === "outbox"}
