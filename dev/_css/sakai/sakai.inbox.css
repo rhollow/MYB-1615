@@ -182,14 +182,17 @@
 .inbox_main .inbox-table tr.inbox-subject-unread *
 { font-weight: bold; background-color: white;}
 
-.inbox_main .inbox-table tr.inbox-subject-critical
+.inbox_main .inbox-table tr.inbox-subject-critical *
 { font-weight: bold; color: red;}
 
-.inbox_main .inbox-table td a.inbox_inbox_message {color:#058EC4;}
+.inbox_main .inbox-table tr.inbox-subject-critical a:link
+{ font-weight: bold; color: red;}
+
+.inbox_main .inbox-table td a.inbox_inbox_message 
+{color:#058EC4;}
 
 .inbox_main .inbox-table .inbox_message_none
 { text-align: center; border: none; height: 370px; }
-
 
 .inbox_main .bottom_decor
 { background: transparent url(/dev/_images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }

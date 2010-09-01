@@ -881,7 +881,6 @@ sakai.inbox = function(){
                 tableRow.addClass(inboxTablesubjectReadClass);
                 tableRow.removeClass(inboxTablesubjectUnreadClass);
                 
-                
                 if (currentFilter != inboxFilterTrash) {
                     if (message["sakai:category"] === "message") {
                         unreadMessages -= 1;
