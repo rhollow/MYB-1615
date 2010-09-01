@@ -499,20 +499,23 @@ sakai.inbox = function(){
         });
     };
     
-    var formatReminder = function(rem){
-        var critical = "" + compareDates(rem["sakai:dueDate"]);
-        $(inboxTableMessageID + rem["jcr:name"]).addClass(critical); /* class added, but styling doesn't show up. Precedence issues? */
-        $("#inbox_checkbox_" + rem["jcr:name"]).attr("title", "Completed");
+    var formatReminder = function(reminder){
+        var critical = "" + compareDates(reminder["sakai:dueDate"]);
+        var tableRow = $(inboxTableMessageID + reminder["jcr:name"]);
+        var rowCheckbox = $("#inbox_checkbox_" + reminder["jcr:name"], tableRow);
+        var jcr_path = reminder["jcr:path"];
         
-        $("#inbox_checkbox_" + rem["jcr:name"]).click(function(){
-            var jcr_path = rem["jcr:path"];
+        tableRow.addClass(critical); /* class added, but styling doesn't show up. Precedence issues? */
+        rowCheckbox.attr("title", "Completed");
+        
+        rowCheckbox.click(function(){
             var propertyToUpdate = {
                 "sakai:taskState": "completed",
                 "sakai:messagebox": "archive"
             };
             updateReminder(jcr_path, propertyToUpdate, function(){
-                $(inboxTableMessageID + rem["jcr:path"]).empty();           // NOT WORKING
-                $(inboxTableMessageID + rem["jcr:path"]).remove();          // NOT WORKING
+                tableRow.empty();
+                tableRow.remove();
             });
         });
     }
@@ -680,7 +683,6 @@ sakai.inbox = function(){
             pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
             buttonClickCallback: showPage
         });
-        alert(pageNumber);
         curentPage = pageNumber;
     };
     
