@@ -41,6 +41,8 @@
 .inbox_main .inbox-folders
 { width: 230px; margin:0; padding-top: 2px; overflow: hidden; }
 
+.inbox_main .inbox-folders a:hover {text-decoration: none;}
+
 .inbox_main .inbox-folders .if_titlebar
 { background:transparent url(/dev/_images/block_tr.png) no-repeat scroll right top; padding: 0 10px 0 0; height:50px; }
 
@@ -119,7 +121,7 @@
 
 /** Table **/
 .inbox_main .main_content_container
-{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; }
+{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; height: 400px;}
 
 .inbox_main .inbox-table
 { width: 670px; margin: 0; }
@@ -160,6 +162,8 @@
 { width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 
 /** List **/
+.inbox_main .inbox-table a:hover {text-decoration: none;}
+
 .inbox_main .inbox-table th
 { color: #333;  text-align: left; height: 26px; border: none; }
 
@@ -170,7 +174,7 @@
     background-color:#d9eaf5;cursor:pointer;
 }
 .inbox_main .inbox-table td
-{ border: none;  color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; }
+{ border: none; color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; white-space: nowrap; overflow: hidden;}
 
 .inbox_main .inbox-table tr.inbox-subject-read *
 { font-weight: normal; background-color: #E6E6E6;}
@@ -178,14 +182,17 @@
 .inbox_main .inbox-table tr.inbox-subject-unread *
 { font-weight: bold; background-color: white;}
 
-.inbox_main .inbox-table tr.inbox-subject-critical
+.inbox_main .inbox-table tr.inbox-subject-critical *
 { font-weight: bold; color: red;}
 
-.inbox_main .inbox-table td a.inbox_inbox_message {color:#058EC4}
+.inbox_main .inbox-table tr.inbox-subject-critical a:link
+{ font-weight: bold; color: red;}
+
+.inbox_main .inbox-table td a.inbox_inbox_message 
+{color:#058EC4;}
 
 .inbox_main .inbox-table .inbox_message_none
 { text-align: center; border: none; height: 370px; }
-
 
 .inbox_main .bottom_decor
 { background: transparent url(/dev/_images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
@@ -271,7 +278,7 @@
 { background: url(../../_images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
 
 .inbox_detail .message-body
-{ padding: 20px 37px 30px; color:#333; font-size: 13px; }
+{ padding: 20px 37px 30px; color:#333; font-size: 13px; max-height: 306px; overflow: auto;}
 
 .inbox_detail .message-header
 { font-weight: bold; font-size: 15px; padding: 5px 0px 5px 5px; }
