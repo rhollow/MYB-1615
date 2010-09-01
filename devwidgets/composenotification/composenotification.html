@@ -1,5 +1,6 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/composenotification/css/composenotification.css"></link>
+<link rel="stylesheet" type="text/css" href="/devwidgets/composenotification/lib/jquery-ui-1.8.4.custom.css"></link>
 
 <!-- ERROR MESSAGES -->
 <span id="composenotification_message_ok" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_SENT__.</span>
@@ -49,6 +50,9 @@
                       <option>Transfer Students</option>                      
                     </select>
                     <button id="create-new-dynamic-list-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CREATE_NEW_DYNAMIC_LIST__</span></button>                 
+                    <div id="reminder-to-save-dialog">
+                        <p>Remember to save your work!</p>
+                    </div>
                 </div>
                 
                 <!-- SUBJECT-->
@@ -70,7 +74,7 @@
                 </div>
                 
                 <!-- IF YES, REMINDER: Task or Event? -->
-                <div class="composenotification_taskorevent" id="task-or-event-check" style="display: none;">
+                <div class="composenotification_taskorevent" id="task-or-event-check" style="display: none;>
                     <p class="header">Task or Event?</p>
                     
                     <!-- TASK DETAILS -->
