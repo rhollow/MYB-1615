@@ -54,12 +54,24 @@ sakai.myreminders = function(tuid, showSettings){
      * Checks whether a date has passed, and returns a class name
      * @param {Object} date UTF string
      */
-    sakai.myreminders.compareDates = function(date){
+    /*sakai.myreminders.compareDates = function(date){
         var dueDate = new Date(date);
         var today = new Date();
 
         var sameDay = (today.getYear()==dueDate.getYear()) && (today.getMonth()==dueDate.getMonth()) && (today.getDate()==dueDate.getDate());
         return ((today > dueDate) && !sameDay) ? "pastDue" : "";
+    }*/
+   
+   /**
+     * Checks whether the due date is within 24 hours or if it has passed, and returns a class name
+     * @param {Object} date UTF string
+     */
+   sakai.myreminders.compareDates = function(date){
+        var dueDate = new Date(date);
+        var today = new Date();
+        var tomorrow = today.setDate(today.getDate() + 1);
+        tomorrow = new Date(tomorrow);
+        return (tomorrow > dueDate)? "pastDue" : "";
     }
 
     var lastShown = null;

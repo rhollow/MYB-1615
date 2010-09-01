@@ -514,7 +514,7 @@ sakai.inbox = function(){
         d.setMinutes(parseInt(dateString.substring(14, 16), 10));
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //Jan 22, 2009 10:25 PM
-        reminder["sakai:dueDate"] = sakai.inbox.formatDate(d, "M j, Y G:i A");
+        reminder["sakai:dueDate"] = sakai.inbox.formatDate(d, "M j, Y g:i A");
         
         rowCheckbox.click(function(){
             var propertyToUpdate = {
@@ -544,7 +544,7 @@ sakai.inbox = function(){
         d.setMinutes(parseInt(dateString.substring(14, 16), 10));
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //Jan 22, 2009 10:25 PM
-        message.date = sakai.inbox.formatDate(d, "M j, Y G:i A");
+        message.date = sakai.inbox.formatDate(d, "M j, Y g:i A");
         
         if (message["sakai:read"] === "true" || message["sakai:read"] === true) {
             message.read = true;
