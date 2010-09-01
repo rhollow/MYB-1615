@@ -85,10 +85,10 @@
                         </div>                                                
                         
                         <div class="if_content">                                                       
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>                              
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_queue">__MSG__QUEUE__</a></div></div>							
-							<div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__ARCHIVE__</a></div></div>
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
+                            <div id="tab-drafts" class="tab current_tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>                              
+                            <div id="tab-queue" class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_queue">__MSG__QUEUE__</a></div></div>							
+							<div id="tab-archive" class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__ARCHIVE__</a></div></div>
+                            <div id="tab-trash" class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
                         </div>
                         
                         <div class="if_bottom">
@@ -102,7 +102,7 @@
                 <!-- Main -->
                 <div class="col-main">
 
-                    <!-- PANE 1 || INBOX OF NOTIFICATION DRAFTS (DEFAULT VIEW) -->
+                    <!-- INBOXES OF NOTIFICATIONS (DEFAULT VIEW) -->
                     <div id="inbox_pane_inbox" class="inbox_pane">                        
 
                         <form name="my-inbox" action="" method="post">                            
@@ -205,7 +205,7 @@
                         
                     </div>                   
                     
-                    <!-- PANE 2 || NOTIFICATION DETAIL (EDITABLE) -->
+                    <!-- NOTIFICATION COMPOSING -->
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
@@ -215,12 +215,10 @@
 
                         <!-- Create/Edit Notification -->
                         <div class="main_content_container">
-                            <div class="compose-notification">
-                               
+                            <div class="compose-notification">                               
                                     <div id="inbox_compose_new_container">
                                         <div id="widget_composenotification" class="widget_inline"></div>
-                                    </div>
-                                
+                                    </div>                                
                             </div>
                         </div>
 

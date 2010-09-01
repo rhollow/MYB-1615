@@ -23,7 +23,7 @@ if (!sakai.composenotification){
 
     sakai.composenotification = function(tuid, showSettings) {
 
-        var rootel = $(tuid);
+        var rootel = $("#"+tuid);        
 
         var user = false; // user object that contains the information for the user that should be posted to.
         var me = sakai.data.me;        
@@ -33,11 +33,8 @@ if (!sakai.composenotification){
          * 
          * CSS IDS
          * 
-         */
-        var dialogBoxContainer = "#sendmessage_dialog_box";
-        var dialogFooterContainer = "#sendmessage_dialog_footer";
-
-        var messageDialogContainer = '#message_dialog';
+         */     
+        var notificationBox = '#composenotification_box';
         var messageDone = "#message_done";
         var messageForm = "#message_form";
 
@@ -79,11 +76,7 @@ if (!sakai.composenotification){
 
         var invalidClass = "composenotification_invalid";
         var errorClass = "composenotification_error_message";
-        var normalClass = "composenotification_normal_message";
-        var dialogBoxClass = "dialogue_box";
-        var dialogFooterClass = "dialog_footer";
-        var dialogHeaderClass = ".dialog_header";
-        var dialogClass = ".dialog";
+        var normalClass = "composenotification_normal_message";        
 
         var messageOK = "#sendmessage_message_ok";
         var messageError = "#sendmessage_message_error";
@@ -229,13 +222,16 @@ if (!sakai.composenotification){
         $('#disabling-test').click(function(){
             disableView();    
         });
-        
-        // Create new dynamic list button (reminder to save).
-        $('#create-new-dynamic-list-button').click(function(){
-            //alert("Click successful.");
-            $('#reminder-to-save-dialog').dialog();       
-            // Maybe this should be a new widget to conform with other dialog boxes?     
-        });         
+                    
+        // For dialog-overlay to remind user to save their draft.
+        // (When user clicks on 'Create New Dyanmic List' button.)
+        $("#save_reminder_dialog").jqm({
+             modal: true,
+             trigger: $("#create-new-dynamic-list-button"),
+             overlay: 20,
+             toTop: true,
+             onShow: null           
+         });             
 
         /**         
          * This method will check if there are any required fields that are not filled in.
@@ -350,13 +346,7 @@ if (!sakai.composenotification){
             resetView();
 
             // The user we are sending a message to.
-            user = userObj;        
-          
-            // Remove the dialog stuff.
-            $(dialogHeaderClass).remove();
-            $(messageDialogContainer).removeClass(dialogClass.replace(/\./, ''));
-            $(dialogBoxContainer).removeClass(dialogBoxClass);
-            $(dialogFooterContainer).removeClass(dialogFooterClass);            
+            user = userObj;                                       
         };
 
         // EDIT EDIT EDIT
