@@ -54,9 +54,16 @@
         <div class="fl-centered fixed-container" style="background: #fff; min-height: 400px;">
 
             <div id="widget_pickeruser" class="widget_inline"></div>
-            <br><br><div id="test_response">pickeruser response:</div><br><br>
+            <br><br>
+            <button id="listpeople_add_files" type="button" class="s3d-button">
+               <span class="s3d-button-inner">Add test file(s)</span>
+            </button>
+            <div id="test_response">pickeruser response:</div><br><br>
             <div id="widget_listpeople" class="widget_inline"></div>
 
+            <button id="listpeople_remove" type="button" class="s3d-button">
+               <span class="s3d-button-inner">Remove selected users</span>
+            </button>
         </div>
 
         <!-- FOOTER WIDGET -->
@@ -87,7 +94,9 @@
                             async: false,
                             success: function(data){
                                 sakai.data.pickeruser[tuid]["selected"][groupid] = data;
-                                sakai.data.pickeruser[tuid]["selected"][groupid].id = groupid;
+                                sakai.data.pickeruser[tuid]["selected"][groupid].groupid = groupid;
+                                sakai.data.pickeruser[tuid]["selected"][groupid]['sakai:group-description'] = data.authprofile['sakai:group-description'];
+                                sakai.data.pickeruser[tuid]["selected"][groupid]['sakai:group-title'] = data.authprofile['sakai:group-title'];
                                 sakai.data.pickeruser[tuid].selectCount += 1;
                             }
                         });
@@ -105,9 +114,39 @@
 
                     var pl_query = sakai.config.URL.SEARCH_USERS + "?q=*&page=0&items=12&_=" + (Math.random() * 100000000000000000);
                     //var pl_query = "/sites/test.members.json?sort=firstName,asc&start=0&items=10&_=" + (Math.random() * 100000000000000000);
-                    var pl_config = {"selectable":true, "subNameInfo": "email", "sortOn": "lastName", "sortOrder": "ascending", "items": 50, "function": "getSelection" };
-                    sakai.listPeople.render(ltuid, pl_query, pl_config, json_data);
+                    var pl_config = {"selectable":true, "subNameInfoUser": "email", "subNameInfoGroup": "sakai:group-description", "sortOn": "lastName", "sortOrder": "ascending", "items": 50, "function": "getSelection" };
+                    sakai.listPeople.render(ltuid, pl_config, json_data);
+
+                    // Bind the remove user button
+                    $("#listpeople_remove").bind("click", function(){
+                        sakai.listPeople.removeFromList('listpeoplecontainer');
+                    });
                 });
+
+                // Bind the add files button
+                $("#listpeople_add_files").bind("click", function(){
+                    var content_path = '/index.html';
+                    $.ajax({
+                        url: sakai.config.SakaiDomain + content_path + ".2.json",
+                        success: function(data){
+                            // Construct the JSON object
+                            var json = {};
+                            json[content_path] = {
+                                data: data,
+                                mode: "content",
+                                content_path: content_path,
+                                url: sakai.config.SakaiDomain + content_path
+                            };
+                            var json_data = {
+                                "results" : json,
+                                "total" : 1
+                            };
+                            var pl_config = {"selectable":true, "sortOrder": "ascending", "items": 50, "function": "getSelection" };
+                            sakai.listPeople.render(ltuid, pl_config, json_data);
+                        }
+                    });
+                });
+
             });
 
         </script>

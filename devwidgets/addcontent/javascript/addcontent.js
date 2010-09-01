@@ -125,7 +125,7 @@ sakai.addcontent = function(tuid, showSettings){
             $addcontent_container_content_box_selected = $($addcontent_container_content_box_selected.selector);
 
             var data ={
-                path: $addcontent_container_content_box_selected.attr("data-sakai_widget_addcontent")
+                path: $addcontent_container_content_box_selected.find("img").attr("src")
             };
 
             // Save the widget data
@@ -174,35 +174,29 @@ sakai.addcontent = function(tuid, showSettings){
 
     };
 
+    var filesLoaded = function(bool, data){
+        // Render the template for a file
+        renderTemplate(data);
+        
+        // Add binding
+        addBinding();
+        
+        // Show the container
+        $addcontent_container.show();
+    }
+
     /**
      * Load the files from a specific location
      * @param {String} location The location where you want to load the files from
      */
     var loadFiles = function(location){
-
         if(location === "myfiles"){
-
-            $.ajax({
-                url: "/var/search/files/myfiles.json",
-                data: {
-                    q:"*",
-                    sortOn:"jcr:created",
-                    sortOrder:"descending"
-                },
-                success: function(data){
-
-                    // Render the template for a file
-                    renderTemplate(data);
-
-                    // Add binding
-                    addBinding();
-
-                    // Show the container
-                    $addcontent_container.show();
-
-                }
-            });
-
+            var data = {
+                q: "*",
+                sortOn: "jcr:created",
+                sortOrder: "descending"
+            }
+            sakai.api.Server.loadJSON("/var/search/pool/me/manager.1", filesLoaded, data);
         }
 
     };

@@ -7,8 +7,11 @@
 }
 
 /** TOP RIGHT MENU **/
+.sakai_site #content_page_options_container 
+{ height:25px; display:block; margin: 20px 10px 0 0;  }
+
 .sakai_site .content_page_options
-{ background: #fff url('/dev/_images/tab_bg_right.png') top right no-repeat; height: 25px; border: none;  padding: 0 10px 0 0; display: block; margin: 20px 10px 0 0; }
+{ background: #fff url('/dev/_images/tab_bg_right.png') top right no-repeat; height: 25px; border: none;  padding: 0 10px 0 0; display: block; }
 
 .sakai_site .content_page_options ul
 { padding: 7px 0 0 20px; background: #fff url('/dev/_images/tab_bg_left.png') top left no-repeat; }
@@ -78,7 +81,7 @@
 /** ADD NEW MENU **/
 
 .sakai_site .add_a_new_container
-{ min-height: 25px; margin: 15px 0 5px 15px; position: relative; }
+{ min-height: 25px; margin: 15px 0 5px 15px; position: relative; width: 170px; }
 
 .sakai_site .add_a_new
 { background: transparent url(/dev/_images/create_dropdown_bg.png) no-repeat scroll left 0; color:#FFFFFF; display:block; font-weight:bold; height:22px; padding:3px 0 0 19px; }
@@ -270,3 +273,6 @@
 .layout_picker_item_column_unselected {border-right: 1px solid #dddfe1;}
 .layout_picker_item_radio_unselected {margin-left:50px; margin-top: 10px;}
 #layouts_list {display:block;}
+
+/* Full width pages */
+.sitepages_fullwidth { margin-left: 0px !important;}

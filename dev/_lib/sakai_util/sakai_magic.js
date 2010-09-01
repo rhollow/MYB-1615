@@ -82,9 +82,11 @@ sakai.api = {
 sakai.api.Communication = sakai.api.Communication || {};
 
 /**
- * Sends a Sakai message
+ * Sends a Sakai message to one or more users. If a group id is received, the
+ * message is sent to users that are members of that group.
  *
- * @param {Array|String} to Array with the uuids of the users to post a message to or a String with one user.
+ * @param {Array|String} to Array with the ids of the users or groups to post a
+ *   message to or a String with one user or group id.
  * @param {String} subject The subject for this message
  * @param {String} body The text that this message will contain
  * @param {String} [category="message"] The category for this message
@@ -94,59 +96,188 @@ sakai.api.Communication = sakai.api.Communication || {};
  */
 sakai.api.Communication.sendMessage = function(to, subject, body, category, reply, callback) {
 
-    var toUsers = "";
-    if (typeof(to) === "string") {
-        toUsers = "internal:" + to;
-    }
-    else {
-        toUsers += "internal:" + to.join(",internal:");
-    }
+    /////////////////////////////
+    // CONFIGURATION VARIABLES //
+    /////////////////////////////
 
-    // Basic message details
-    var toSend = {
-        "sakai:type": "internal",
-        "sakai:sendstate": "pending",
-        "sakai:messagebox": "outbox",
-        "sakai:to": toUsers,
-        "sakai:from": sakai.data.me.user.userid,
-        "sakai:subject": subject,
-        "sakai:body":body,
-        "_charset_":"utf-8"
+    var numGroupAJAXRequests = 0;  // tracks AJAX requests for group data
+    var toUsers = "";              // aggregates all message recipients
+    var sendDone = false;          // has the send been issued?
+
+
+    ///////////////////////
+    // UTILITY FUNCTIONS //
+    ///////////////////////
+
+    /**
+     * Initiates an AJAX call to fetch members of a given group.
+     * @param {String} groupid The group's id
+     * @return None
+     */
+    var fetchGroupMembers = function(groupid) {
+        // keep track of AJAX requests
+        numGroupAJAXRequests++;
+
+        // Fetch members
+        $.ajax({
+            url: "/system/userManager/group/" + groupid + ".members.json",
+            type: "GET",
+            success: handleAJAXGroupData,
+            error: function(xhr, textStatus, thrownError) {
+                fluid.log("sakai.api.Communication.sendMessage(): Could not fetch group data for groupid: " + groupid);
+            }
+        });
     };
 
-    // Message category
-    if (category) {
-        toSend["sakai:category"] = category;
-    } else {
-        toSend["sakai:category"] = "message";
-    }
-
-    // See if this is a reply or not
-    if (reply) {
-        toSend["sakai:previousmessage"] = reply;
-    }
-
-    // Send message
-    $.ajax({
-        url: "/~" + sakai.data.me.user.userid + "/message.create.html",
-        type: "POST",
-        data: toSend,
-        success: function(data) {
-
-            if (typeof callback === "function") {
-                callback(true, data);
+    /**
+     * Responds to the AJAX call to fetch members of a given group. Parses data
+     * returned and initiates aggregating list of recipients.
+     * @param {Object} data The data returned from the groupid.members.json AJAX call
+     * @return None
+     */
+    var handleAJAXGroupData = function(data) {
+        // currently, data is being returned as an array with no root object
+        // Not entirely sure, but this may be causing the data not to be read as
+        // JSON directly.
+        // This may be fixed in the future and the following code may break
+        // once JSON is being returned, simply delete the following line
+        data = JSON.parse(data);
+        if(data) {
+            // get user ids
+            var userids = [];
+            for(var i = 1; i < data.length; i++) {
+                if(data[i].userid) {
+                    userids.push(data[i].userid);
+                }
             }
-        },
-        error: function(xhr, textStatus, thrownError) {
+            if(userids.length) {
+                addToUsers(userids);
+            }
+        } else {
+            fluid.log("sakai.api.Communication.sendMessage(): group data is empty");
+        }
 
-            fluid.log("sakai.api.Communication.sendMessage(): Could not send message to " + to);
+        // keep track of AJAX callbacks ("thread" safe?)
+        numGroupAJAXRequests--;
+        if(numGroupAJAXRequests === 0) {
+            // once all AJAX requests have returned, commit the message
+            sendMessageToUsers();
+        }
+    };
 
-            if (typeof callback === "function") {
-                callback(false, xhr);
+    /**
+     * Adds the given userids (String or Array) to the current list of recipients
+     * @param {Array|String} userids Either a single userid (String) or a list
+     * of userids (Array) to be added to the current list of recipients
+     * @return None
+     */
+    var addToUsers = function(userids) {
+        // append comma if the list already exists
+        if(toUsers) {
+            toUsers += ",";
+        }
+        if(typeof(userids) === "string") {
+            toUsers += "internal:" + userids;
+        } else if(typeof(userids) === "object") {
+            toUsers += "internal:" + userids.join(",internal:");
+        }
+    };
+
+    /**
+     * Sets up and initiates an AJAX POST to send this message to its recipients
+     * @param None
+     * @return None
+     */
+    var sendMessageToUsers = function() {
+        // Basic message details
+        var toSend = {
+            "sakai:type": "internal",
+            "sakai:sendstate": "pending",
+            "sakai:messagebox": "outbox",
+            "sakai:to": toUsers,
+            "sakai:from": sakai.data.me.user.userid,
+            "sakai:subject": subject,
+            "sakai:body":body,
+            "_charset_":"utf-8"
+        };
+
+        // Message category
+        if (category) {
+            toSend["sakai:category"] = category;
+        } else {
+            toSend["sakai:category"] = "message";
+        }
+
+        // See if this is a reply or not
+        if (reply) {
+            toSend["sakai:previousmessage"] = reply;
+        }
+
+        // Send message
+        $.ajax({
+            url: "/~" + sakai.data.me.user.userid + "/message.create.html",
+            type: "POST",
+            data: toSend,
+            success: function(data) {
+
+                if (typeof callback === "function") {
+                    callback(true, data);
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+
+                fluid.log("sakai.api.Communication.sendMessage(): Could not send message to " + to);
+
+                if (typeof callback === "function") {
+                    callback(false, xhr);
+                }
+            }
+        });
+
+        // the send has been issued
+        sendDone = true;
+    };
+
+
+    //////////////////
+    // MAIN ROUTINE //
+    //////////////////
+
+    // check 'to' argument
+    if (typeof(to) === "string") {
+        // single recipient - is it a group?
+        if(to.indexOf("g-") != -1) {
+            // fetch the members and managers in this group
+            fetchGroupMembers(to);
+        } else {
+            // add single recipient & send
+            toUsers = "internal:" + to;
+            sendMessageToUsers();
+        }
+    } else if(typeof(to) === "object") {
+        // array of recipients
+        for(var i = 0; i < to.length; i++) {
+            // is it a group?
+            if(to[i].indexOf("g-") != -1) {
+                // fetch the members and managers in this group
+                fetchGroupMembers(to[i]);
+            } else {
+                addToUsers(to[i]);
             }
         }
-    });
+    } else {
+        // unrecognized type
+        fluid.log("sakai.api.Communication.sendMessage(): invalid argument ('to' not an Array or String).");
 
+        if (typeof callback === "function") {
+            callback(false, xhr);
+        }
+    }
+
+    // send now if we have only a list of users ("thread" safe?)
+    if(numGroupAJAXRequests === 0 && !sendDone) {
+        sendMessageToUsers();
+    }
 };
 
 /**
@@ -157,7 +288,21 @@ sakai.api.Communication.sendMessage = function(to, subject, body, category, repl
  * @return {Boolean} true or false depending on whether the sending was successful or not
  */
 sakai.api.Communication.sendMessageToGroup = function(groupID, message) {
-
+    /**
+     * SAKIII-599: Unable to currently send a message via:
+     *  - /~userid/message.create.html or
+     *  - /~groupid/message.create.html
+     *
+     * Until backend support is available, sakai.api.Communication.sendMessage
+     * has been modified to support groupids. Any groupids included in the 'to'
+     * list argument will be expanded and messages sent to those users.
+     *
+     * Once backend support to message a group directly is available, it will be
+     * important to complete this function to support posting messages to group
+     * pages directly and to track messages sent to groups as opposed to
+     * individual users (i.e. Message sent to: "user1, user2, group5" instead of
+     * Message sent to: "user1, user2, [list of users in group5]")
+     */
 };
 
 /**
@@ -636,90 +781,6 @@ sakai.api.i18n.General.getValueForKey = function(key) {
 sakai.api.i18n.Widgets = sakai.api.i18n.Widgets || {};
 
 /**
- * Loads up language bundle for the widget, and exchanges messages found in content.
- * If no language bundle found, it attempts to load the default language bundle for the widget, and use that for i18n
- * @example sakai.api.i18n.Widgets.process(
- *     "myfriends",
- *     "&lt;div&gt;__MSG__YOU_CURRENTLY_HAVE_NO_CONTACTS__&lt;/div&gt;"
- * );
- * @param widgetname {String} The name of the widget
- * @param widget_html_content {String} The content html of the widget which contains the messages
- * @returns {String} The translated content html
- */
-sakai.api.i18n.Widgets.process = function(widgetname, widget_html_content) {
-
-    var translated_content = "";
-    var current_locale_string = false;
-    if (typeof sakai.data.me.user.locale === "object") {
-        current_locale_string = sakai.data.me.user.locale.language + "_" + sakai.data.me.user.locale.country;
-    }
-
-    // If there is no i18n defined in Widgets, run standard i18n on content
-    if (typeof Widgets.widgets[widgetname].i18n !== "object") {
-        translated_content = sakai.api.i18n.General.process(widget_html_content, sakai.data.i18n.localBundle, sakai.data.i18n.defaultBundle);
-        return translated_content;
-    }
-
-    // Load default language bundle for the widget if exists
-    if (Widgets.widgets[widgetname].i18n["default"]) {
-
-        $.ajax({
-            url: Widgets.widgets[widgetname].i18n["default"],
-            async: false,
-            success: function(messages_raw){
-
-                sakai.data.i18n.widgets[widgetname] = sakai.data.i18n.widgets[widgetname] || {};
-                sakai.data.i18n.widgets[widgetname]["default"] = messages_raw;
-
-            },
-            error: function(xhr, textStatus, thrownError){
-                //alert("Could not load default language bundle for widget: " + widgetname);
-            }
-        });
-
-    }
-
-    // Load current language bundle for the widget if exists
-    if (Widgets.widgets[widgetname].i18n[current_locale_string]) {
-
-        $.ajax({
-            url: Widgets.widgets[widgetname].i18n[current_locale_string],
-            async: false,
-            success: function(messages_raw){
-
-                sakai.data.i18n.widgets[widgetname] = sakai.data.i18n.widgets[widgetname] || {};
-                sakai.data.i18n.widgets[widgetname][current_locale_string] = messages_raw;
-            },
-            error: function(xhr, textStatus, thrownError){
-                //alert("Could not load default language bundle " + current_locale_string + "for widget: " + widgetname);
-            }
-        });
-    }
-
-    // Translate widget name and description
-    if ((typeof sakai.data.i18n.widgets[widgetname][current_locale_string] === "object") && (typeof sakai.data.i18n.widgets[widgetname][current_locale_string].name === "string")) {
-        Widgets.widgets[widgetname].name = sakai.data.i18n.widgets[widgetname][current_locale_string].name;
-    }
-    if ((typeof sakai.data.i18n.widgets[widgetname][current_locale_string] === "String") && (typeof sakai.data.i18n.widgets[widgetname][current_locale_string].description === "string")) {
-        Widgets.widgets[widgetname].name = sakai.data.i18n.widgets[widgetname][current_locale_string].description;
-    }
-
-    // Change messages
-    var expression = new RegExp("__MSG__(.*?)__", "gm");
-    var lastend = 0;
-    while (expression.test(widget_html_content)) {
-        var replace = RegExp.lastMatch;
-        var lastParen = RegExp.lastParen;
-        var toreplace = sakai.api.i18n.Widgets.getValueForKey(widgetname, current_locale_string, lastParen);
-        translated_content += widget_html_content.substring(lastend, expression.lastIndex - replace.length) + toreplace;
-        lastend = expression.lastIndex;
-    }
-    translated_content += widget_html_content.substring(lastend);
-
-    return translated_content;
-};
-
-/**
  * Get the value for a specific key in a specific widget.
  * @example sakai.api.i18n.Widgets.getValueForKey("myprofile", "en_US", "PREVIEW_PROFILE");
  * @param {String} widgetname The name of the widget
@@ -814,9 +875,9 @@ sakai.api.Security = sakai.api.Security || {};
 /**
  * Encodes the HTML characters inside a string so that the HTML characters (e.g. <, >, ...)
  * are treated as text and not as HTML entities
- * 
+ *
  * @param {String} inputString  String of which the HTML characters have to be encoded
- * 
+ *
  * @returns {String} HTML Encoded string
  */
 sakai.api.Security.escapeHTML = function(inputString){
@@ -1083,10 +1144,11 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
  * @param {String} i_url The path to the preference which needs to be loaded
  * @param {Function} callback A callback function which is executed at the end
  * of the operation
+ * @param {Object} data The data to pass to the url
  *
  * @returns {Void}
  */
-sakai.api.Server.loadJSON = function(i_url, callback) {
+sakai.api.Server.loadJSON = function(i_url, callback, data) {
 
     // Argument check
     if (!i_url) {
@@ -1107,6 +1169,7 @@ sakai.api.Server.loadJSON = function(i_url, callback) {
         url: i_url + ".infinity.json",
         cache: false,
         dataType: "json",
+        data: data,
         success: function(data) {
 
             // Remove keys which are created by JCR or Sling
@@ -1773,7 +1836,7 @@ sakai.api.User.getDisplayName = function(profile) {
     return sakai.api.Security.saneHTML($.trim(nameToReturn));
 };
 
-/*
+/**
  * Safely retrieves an element value from the user's profile
  *
  * @param {Object} profile the user's profile (sakai.data.me.profile for the current user)
@@ -1792,7 +1855,7 @@ sakai.api.User.getProfileBasicElementValue = function(profile, eltName) {
     return sakai.api.Security.saneHTML($.trim(ret));
 };
 
-/*
+/**
  * Sets a value to the user's basic profile information
  *
  * @param {Object} profile the user's profile (sakai.data.me.profile for the current user)
@@ -1807,6 +1870,56 @@ sakai.api.User.setProfileBasicElementValue = function(profile, eltName, eltValue
 
         profile.basic.elements[eltName].value = eltValue;
     }
+};
+
+/**
+ * Get a user's short description from their profile
+ * This is based off of the configuration in config.js
+ * Example: "${role} in ${department}" could translate to "Undergraduate Student in Computer Science"
+ *           based on the configuration in config.js and the user's profile information
+ * If the user doesn't have the profile information requested by config.js, the function
+ * will remove the token from the string and any modifiers before the token after the previous token
+ * In the above example, if the user only had a department, the resulting string would be "Computer Science"
+ *
+ * @param {Object} profile The user's profile to get a description from
+ * @return {String} the user's short description
+ */
+sakai.api.User.getShortDescription = function(profile) {
+    var shortDesc = sakai.config.Profile.shortDescription || "";
+    var tokenRegex = /\$\{[A-Za-z]+\}/gi;
+    var tokens = shortDesc.match(tokenRegex);
+    var lastReplacementValue = "";
+    $(tokens).each(function(i, val) {
+        var profileNode = val.match(/[A-Za-z]+/gi)[0];
+        if (profile.basic.elements[profileNode] && $.trim(profile.basic.elements[profileNode].value) !== "") {
+            if (lastReplacementValue === "" && tokens[i-1]) {
+                // replace everything before this and after the last token
+            }
+            if (sakai.config.Profile.configuration.basic.elements[profileNode].type === "select") {
+                lastReplacementValue = profile.basic.elements[profileNode].value;
+                lastReplacementValue = sakai.config.Profile.configuration.basic.elements[profileNode].select_elements[lastReplacementValue];
+                lastReplacementValue = sakai.api.i18n.General.process(lastReplacementValue, sakai.data.i18n.localBundle, sakai.data.i18n.defaultBundle);
+            } else {
+                lastReplacementValue = profile.basic.elements[profileNode].value;
+            }
+
+            shortDesc = shortDesc.replace(val, lastReplacementValue);
+        } else {
+            if (tokens[i-1]) { // this is not the first time through
+                var indexToStart = 0;
+                // if the previous token's replaced value exists
+                if (lastReplacementValue !== "" && shortDesc.indexOf(shortDesc.indexOf(lastReplacementValue)) !== -1) {
+                    // the index to start replacing at is the end of the last replacement
+                    indexToStart = shortDesc.indexOf(shortDesc.indexOf(lastReplacementValue)) + lastReplacementValue.length;
+                }
+                var indexToEnd = shortDesc.indexOf(val) + val.length;
+                shortDesc = $.trim(shortDesc.replace(shortDesc.substring(indexToStart, indexToEnd), ""));
+            } else {
+                shortDesc = $.trim(shortDesc.replace(val, ""));
+            }
+        }
+    });
+    return $.trim(shortDesc);
 };
 
 /**
@@ -2512,6 +2625,7 @@ sakai.api.Widgets.widgetLoader = {
          */
         var loadWidgetFiles = function(widgets, batchWidgets){
             var urls = [];
+            var requestedURLsResults = [];
 
             for(var k in batchWidgets){
                 if(batchWidgets.hasOwnProperty(k)){
@@ -2532,16 +2646,82 @@ sakai.api.Widgets.widgetLoader = {
                         requests: $.toJSON(urls)
                     },
                     success: function(data){
-                        data = data.results;
-                        for (var i = 0, j = data.length; i<j; i++) {
-                            var jsonpath = data[i].url;
+                        requestedURLsResults = data.results;
+                        var current_locale_string = false;
+                        if (typeof sakai.data.me.user.locale === "object") {
+                            current_locale_string = sakai.data.me.user.locale.language + "_" + sakai.data.me.user.locale.country;
+                        }
+                        var bundles = [];
+                        for (var i = 0, j = requestedURLsResults.length; i<j; i++) {
+                            var jsonpath = requestedURLsResults[i].url;
                             var widgetname = batchWidgets[jsonpath];
 
-                            // Do i18n on widget content
-                            var translated_content = sakai.api.i18n.Widgets.process(widgetname, data[i].body);
-
-                            sethtmlover(translated_content, widgets, widgetname);
+                            if (typeof Widgets.widgets[widgetname].i18n === "object") {
+                                if (Widgets.widgets[widgetname].i18n["default"]){
+                                    var item = {
+                                        "url" : Widgets.widgets[widgetname].i18n["default"],
+                                        "method" : "GET"
+                                    }
+                                    bundles.push(item);
+                                }
+                                if (Widgets.widgets[widgetname].i18n[current_locale_string]) {
+                                    var item = {
+                                        "url" : Widgets.widgets[widgetname].i18n[current_locale_string],
+                                        "method" : "GET"
+                                    }
+                                    bundles.push(item);
+                                }
+                            }
                         }
+                        $.ajax({
+                            url: sakai.config.URL.BATCH,
+                            traditional: true,
+                            cache: false,
+                            data: {
+                                requests: $.toJSON(bundles)
+                            },
+                            success: function(data){
+                                for (var i = 0, j = requestedURLsResults.length; i < j; i++) {
+                                    // Current widget name
+                                    var widgetName = requestedURLsResults[i].url.split("/")[2];
+                                    // Check if widget has bundles
+                                    var hasBundles = false;
+                                    // Array containing language bundles
+                                    var bundleArr = [];
+                                    // Local and default bundle
+                                    for (var ii = 0, jj = data.results.length; ii < jj; ii++) {
+                                        if (widgetName === data.results[ii].url.split("/")[2]){
+                                            hasBundles = true;
+                                            if(data.results[ii].url.split("/")[4].split(".")[0] === "default"){
+                                                sakai.data.i18n.widgets[widgetName] = sakai.data.i18n.widgets[widgetName] || {};
+                                                sakai.data.i18n.widgets[widgetName]["default"] = $.parseJSON(data.results[ii].body);
+                                            } else {
+                                                sakai.data.i18n.widgets[widgetName] = sakai.data.i18n.widgets[widgetName] || {};
+                                                sakai.data.i18n.widgets[widgetName][current_locale_string] = $.parseJSON(data.results[ii].body);
+                                            }
+                                        }
+                                    }
+
+                                    // Change messages
+                                    if (hasBundles) {
+                                        var expression = new RegExp("__MSG__(.*?)__", "gm");
+                                        var lastend = 0;
+                                        var translated_content = "";
+                                        while (expression.test(requestedURLsResults[i].body)) {
+                                            var replace = RegExp.lastMatch;
+                                            var lastParen = RegExp.lastParen;
+                                            var toreplace = sakai.api.i18n.Widgets.getValueForKey(widgetName, current_locale_string, lastParen);
+                                            translated_content += requestedURLsResults[i].body.substring(lastend, expression.lastIndex - replace.length) + toreplace;
+                                            lastend = expression.lastIndex;
+                                        }
+                                        translated_content += requestedURLsResults[i].body.substring(lastend);
+                                    } else {
+                                        translated_content = sakai.api.i18n.General.process(requestedURLsResults[i].body, sakai.data.i18n.localBundle, sakai.data.i18n.defaultBundle);
+                                    }
+                                    sethtmlover(translated_content, widgets, widgetName);
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -2603,7 +2783,7 @@ sakai.api.Widgets.widgetLoader = {
 
                     // Add the HTML for to the iframe widget container
                     $("#" + widgetid + "_container").html(html).addClass("fl-widget-content").parent().append('<div class="fl-widget-no-options fl-fix"><div class="widget-no-options-inner"><!-- --></div></div>');
-                    
+
                 }
 
                 // The widget isn't an iframe widget

@@ -29,20 +29,15 @@ sakai.content_profile = function(){
     var content_path = ""; // The current path of the content
     var globalJSON;
     var ready_event_fired = 0;
+    var list_event_fired = false;
 
 
     ///////////////////
     // CSS Selectors //
     ///////////////////
 
-    var $content_profile_basic_info_container = $("#content_profile_basic_info_container");
-    var $content_profile_basic_info_container_template = $("#content_profile_basic_info_container_template");
     var $content_profile_error_container = $("#content_profile_error_container");
     var $content_profile_error_container_template = $("#content_profile_error_container_template");
-    var $content_profile_form = $("#content_profile_form");
-    var $content_profile_form_description = $("#content_profile_form_description");
-    var $content_profile_form_name = $("#content_profile_form_name");
-    var $content_profile_form_tags = $("#content_profile_form_tags");
 
 
     //////////////////////////
@@ -55,119 +50,13 @@ sakai.content_profile = function(){
      * A key for an error message - we use the key and not the text for i18n
      */
     var showError = function(error){
-
         $.TemplateRenderer($content_profile_error_container_template, {"error": error}, $content_profile_error_container);
-
-    };
-
-    /**
-     * Get the values for the main form
-     */
-    var getFormValues = function(){
-
-        // Create a data object
-        var data = {};
-
-        // Set all the different values of the current item
-        data["sakai:name"] = $.trim($content_profile_form_name.val());
-        data["sakai:description"] = $.trim($content_profile_form_description.val());
-
-        // For tags we need to do something special, since they are comma separated
-        data["sakai:tags"] = "";
-
-        // Get all the tags
-        var tagValues = $.trim($content_profile_form_tags.val());
-        if (tagValues) {
-            data["sakai:tags"] = tagValues.split(",");
-
-            // Set the correct typehint
-            data["sakai:tags@TypeHint"] = "String[]";
-
-            // Temporary array of tags
-            var tagArray = [];
-
-            // Remove all the begin and end spaces in the tags
-            // Also remove the empty tags
-            for (var i = 0, il = data["sakai:tags"].length; i < il; i++) {
-                var tagValue = $.trim(data["sakai:tags"][i]);
-                if (tagValue) {
-                    tagArray.push(tagValue);
-                }
-            }
-
-            // Set the tags property to the temporary tag array
-            data["sakai:tags"] = tagArray;
-
-        }
-        else {
-            data["sakai:tags"] = "";
-        }
-
-        // Set the correct mixintype
-        data["jcr:mixinTypes"] = "sakai:propertiesmix";
-
-        // Return the data object
-        return data;
-
-    };
-
-    /**
-     * Add binding to the basic info
-     */
-    var addBindingBasicinfo = function(){
-
-        // Reinitialise jQuery Selectors
-        $content_profile_form = $($content_profile_form.selector);
-        $content_profile_form_description = $($content_profile_form_description.selector);
-        $content_profile_form_name = $($content_profile_form_name.selector);
-        $content_profile_form_tags = $($content_profile_form_tags.selector);
-
-        // Submitting of the form
-        $content_profile_form.bind("submit", function(){
-
-            // Get all the value for the form
-            var data = getFormValues();
-
-            // Send the Ajax request
-            $.ajax({
-                url: globalJSON.url,
-                data: data,
-                traditional: true,
-                type:"post",
-                success: function(){
-                    // TODO show a valid message to the user instead of reloading the page
-                    $(window).trigger('hashchange');
-                },
-                error: function(){
-                    // TODO show a valid error message
-                }
-            });
-
-        });
-
-    };
-
-    /**
-     * General add binding function
-     */
-    var addBinding = function(){
-
-        // Add binding to the basic info
-        addBindingBasicinfo();
-
     };
 
     /**
      * Load the content profile for the current content path
      */
     var loadContentProfile = function(){
-
-        // Hide + clear the basic information
-        $content_profile_basic_info_container.hide();
-
-        // Clear the error container
-        $content_profile_error_container.empty();
-
         // Check whether there is actually a content path in the URL
         if (content_path) {
 
@@ -182,9 +71,6 @@ sakai.content_profile = function(){
                         url: sakai.config.SakaiDomain + content_path
                     };
 
-                    // Set the global JSON object (we also need this in other functions + don't want to modify this)
-                    globalJSON = $.extend(true, {}, json);
-
                     // The request was successful so initialise the entity widget
                     if (ready_event_fired > 0) {
                         sakai.api.UI.entity.render("content", json);
@@ -196,15 +82,11 @@ sakai.content_profile = function(){
                         });
                     }
 
-                    // And render the basic information
-                    $.TemplateRenderer($content_profile_basic_info_container_template, json, $content_profile_basic_info_container);
-
-                    // Add binding to various jQuery elements
-                    addBinding();
-
-                    // Show the basic info container
-                    $content_profile_basic_info_container.show();
-
+                    if (!list_event_fired) {
+                        // add binding to listpeople widget and buttons
+                        addListBinding();
+                        list_event_fired = true;
+                    }
                 },
                 error: function(xhr, textStatus, thrownError){
 
@@ -251,6 +133,138 @@ sakai.content_profile = function(){
 
     };
 
+    /**
+     * Load the content authorizables who have access to the content
+     */
+    var loadContentUsers = function(tuid){
+        // Check whether there is actually a content path in the URL
+        if (content_path) {
+            var pl_config = {"selectable":true, "subNameInfoUser": "email", "subNameInfoGroup": "sakai:group-description", "sortOn": "lastName", "sortOrder": "ascending", "items": 50 };
+            var url = sakai.config.SakaiDomain + content_path + ".members.json";
+            $("#content_profile_listpeople_container").show();
+            sakai.listPeople.render(tuid, pl_config, url, content_path);
+        }
+    };
+
+    /**
+     * addRemoveUsers users
+     * Function that adds or removes selected users to/from the content
+     * @param {String} tuid Identifier for the widget/type of user we're adding (viewer or manager)
+     * @param {Object} users List of users we're adding/removing
+     * @param {String} task Operation of either adding or removing
+     */
+    var addRemoveUsers = function(tuid, users, task) {
+        var updateSuccess = false;
+
+        $.each(users, function(index, user) {
+            var data = {
+                "_charset_":"utf-8",
+                ":viewer": user
+            };
+            if (tuid === 'managers' && task === 'add') {
+                data = {
+                    "_charset_":"utf-8",
+                    ":manager": user
+                };
+            } else if (task === 'remove') {
+                if (user['userid']) {
+                    user = user['userid'];
+                } else if (user['groupid']) {
+                    user = user['groupid'];
+                } else if (user['rep:userId']) {
+                    user = user['rep:userId'];
+                }
+                data = {
+                    "_charset_":"utf-8",
+                    ":viewer@Delete": user
+                };
+                if (tuid === 'managers') {
+                    data = {
+                        "_charset_":"utf-8",
+                        ":manager@Delete": user
+                    };
+                }
+            }
+            if (user) {
+                // update user access for the content
+                $.ajax({
+                    url: content_path + ".members.json",
+                    async: false,
+                    data: data,
+                    type: "POST",
+                    success: function(data){
+                        updateSuccess = true;
+                    }
+                });
+            }
+        });
+
+        if (updateSuccess) {
+            loadContentUsers(tuid);
+        }
+    };
+
+
+    ///////////////////////
+    // BINDING FUNCTIONS //
+    ///////////////////////
+
+    /**
+     * Add binding to list elements on the page
+     */
+    var addListBinding = function(){
+
+        $(window).bind("listpeople_ready", function(e, tuid){
+            loadContentUsers(tuid);
+        });
+
+        // Bind the remove viewers button
+        $("#content_profile_remove_viewers").bind("click", function(){
+            addRemoveUsers('viewers', sakai.data.listpeople["viewers"]["selected"], 'remove');
+        });
+
+        // Bind the remove managers button
+        $("#content_profile_remove_managers").bind("click", function(){
+            addRemoveUsers('managers', sakai.data.listpeople["managers"]["selected"], 'remove');
+        });
+
+        // Add binding to the pickeruser widget buttons for adding users
+        $(window).bind("sakai-pickeruser-ready", function(e){
+            var pl_config = {
+                "mode": "search",
+                "selectable":true,
+                "subNameInfo": "email",
+                "sortOn": "lastName",
+                "items": 50,
+                "type": "people",
+                "what": "Viewers",
+                "where": 'Content'
+            };
+
+            // Bind the add viewers button
+            $("#content_profile_add_viewers").bind("click", function(){
+                pl_config.what = "Viewers";
+                $(window).trigger("sakai-pickeruser-init", pl_config, function(people) {
+                });
+                $(window).unbind("sakai-pickeruser-finished");
+                $(window).bind("sakai-pickeruser-finished", function(e, peopleList) {
+                    addRemoveUsers('viewers', peopleList.toAdd, 'add');
+                });
+            });
+
+            // Bind the add managers button
+            $("#content_profile_add_managers").bind("click", function(){
+                pl_config.what = "Managers";
+                $(window).trigger("sakai-pickeruser-init", pl_config, function(people) {
+                });
+                $(window).unbind("sakai-pickeruser-finished");
+                $(window).bind("sakai-pickeruser-finished", function(e, peopleList) {
+                    addRemoveUsers('managers', peopleList.toAdd, 'add');
+                });
+            });
+        });
+    };
+
 
     ////////////////////
     // Initialisation //
@@ -264,11 +278,8 @@ sakai.content_profile = function(){
         // Bind an event to window.onhashchange that, when the history state changes,
         // loads all the information for the current resource
         $(window).bind('hashchange', function(e){
-
             content_path = e.getState("content_path") || "";
-
             loadContentProfile();
-
         });
 
         // Since the event is only triggered when the hash changes, we need to trigger
