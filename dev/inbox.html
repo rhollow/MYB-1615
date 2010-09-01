@@ -147,12 +147,12 @@
                             <div class="top_decor">
 
                                 <!-- Header -->
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox" title="Inbox">__MSG__INBOX__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxMessage" title="__MSG__INBOX_MESSAGES__" style="display:none;">__MSG__INBOX_MESSAGES__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxReminder" title="__MSG__INBOX_REMINDERS__" style="display:none;">__MSG__INBOX_REMINDERS__</div>
-                            <!--<div class="inbox-heading inbox_inbox_header" id="inbox_sent" title="__MSG__SENT_MESSAGES__" style="display:none;">__MSG__SENT_MESSAGES__</div>-->
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" title="__MSG__REMINDERS_ARCHIVE__" style="display:none;">__MSG__REMINDERS_ARCHIVE__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" title="__MSG__TRASH__" style="display:none;">__MSG__TRASH__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__INBOX__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxMessage" style="display:none;">__MSG__INBOX_MESSAGES__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_inboxReminder" style="display:none;">__MSG__INBOX_REMINDERS__</div>
+                            <!--<div class="inbox-heading inbox_inbox_header" id="inbox_sent" style="display:none;">__MSG__SENT_MESSAGES__</div>-->
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__REMINDERS_ARCHIVE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                             </div>
 
                             <!-- Inbox -->
@@ -177,8 +177,14 @@
                             {for m in messages}
                                 {var readClass="inbox-subject-unread"}
                                 
-                                {if m.read}
+                                {if m["sakai:read"]}
                                     {var readClass="inbox-subject-read"}
+                                {/if}
+                                
+                                {if m["sakai:category"] == "reminder"}
+                                    {var messageDate=m["sakai:dueDate"]}
+                                {elseif}
+                                    {var messageDate=m.date}
                                 {/if}
                                 
                                 <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
@@ -205,7 +211,7 @@
                                             {/if}
                                         {/if}
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
-                                        <td>${m.date}</td>
+                                        <td>${messageDate}</td>
                                 </tr>
                             {forelse}
                                 <tr class="inbox_message">

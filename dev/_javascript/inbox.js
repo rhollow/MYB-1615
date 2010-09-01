@@ -165,6 +165,7 @@ sakai.inbox = function(){
     var inboxGeneralMessagesDeleted_1 = inboxGeneralMessagesDeleted + "_1";
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
+    var inboxGeneralMessagesCompleted = inboxGeneralMessages + "_completed";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
     
@@ -454,7 +455,7 @@ sakai.inbox = function(){
      * @param {Date} d
      * @param {String} format
      */
-    var formatDate = function(d, format){
+    sakai.inbox.formatDate = function(d, format){
         var returnStr = '';
         replaceChars.date = d;
         var replace = replaceChars;
@@ -475,7 +476,7 @@ sakai.inbox = function(){
         var today = new Date();
         var tomorrow = today.setDate(today.getDate() + 1);
         tomorrow = new Date(tomorrow);
-        return (tomorrow > dueDate) ? "inbox-subject-critical" : "";
+        return (tomorrow > dueDate)? "inbox-subject-critical" : "";
     }
     
     var updateReminder = function(url, props, callback){
@@ -500,13 +501,20 @@ sakai.inbox = function(){
     };
     
     var formatReminder = function(reminder){
-        var critical = "" + compareDates(reminder["sakai:dueDate"]);
         var tableRow = $(inboxTableMessageID + reminder["jcr:name"]);
         var rowCheckbox = $("#inbox_checkbox_" + reminder["jcr:name"], tableRow);
         var jcr_path = reminder["jcr:path"];
         
-        tableRow.addClass(critical); /* class added, but styling doesn't show up. Precedence issues? */
-        rowCheckbox.attr("title", "Completed");
+        var dateString = reminder["sakai:dueDate"];
+        var d = new Date();
+        d.setFullYear(parseInt(dateString.substring(0, 4), 10));
+        d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
+        d.setDate(parseInt(dateString.substring(8, 10), 10));
+        d.setHours(parseInt(dateString.substring(11, 13), 10));
+        d.setMinutes(parseInt(dateString.substring(14, 16), 10));
+        d.setSeconds(parseInt(dateString.substring(17, 19), 10));
+        //Jan 22, 2009 10:25 PM
+        reminder["sakai:dueDate"] = sakai.inbox.formatDate(d, "M j, Y G:i A");
         
         rowCheckbox.click(function(){
             var propertyToUpdate = {
@@ -516,6 +524,7 @@ sakai.inbox = function(){
             updateReminder(jcr_path, propertyToUpdate, function(){
                 tableRow.empty();
                 tableRow.remove();
+                showGeneralMessage($(inboxGeneralMessagesCompleted).text());
             });
         });
     }
@@ -526,7 +535,6 @@ sakai.inbox = function(){
      * @param {Object} message
      */
     var formatMessage = function(message){
-    
         var dateString = message["sakai:created"];
         var d = new Date();
         d.setFullYear(parseInt(dateString.substring(0, 4), 10));
@@ -536,7 +544,7 @@ sakai.inbox = function(){
         d.setMinutes(parseInt(dateString.substring(14, 16), 10));
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //Jan 22, 2009 10:25 PM
-        message.date = formatDate(d, "M j, Y G:i A");
+        message.date = sakai.inbox.formatDate(d, "M j, Y G:i A");
         
         if (message["sakai:read"] === "true" || message["sakai:read"] === true) {
             message.read = true;
@@ -560,10 +568,6 @@ sakai.inbox = function(){
                     if (message["sakai:category"] === "chat") {
                         message.category = "Chat";
                     }
-                    else 
-                        if (message["sakai:category"] === "reminder") {
-                            message.category = "Reminder";
-                        }
         
         if (message.previousMessage) {
             message.previousMessage = formatMessage(message.previousMessage);
@@ -614,15 +618,15 @@ sakai.inbox = function(){
             // Use the name for the id.
             response.results[j].nr = j;
             response.results[j].subject = response.results[j]["sakai:subject"];
-                                                                                     // IN PROCESS - NOT WORKING YET
-            if (response.results[j]["sakai:category"] === "reminder") {
-                response.results[j].body = "Due date: " + response.results[j]["sakai:dueDate"] + "</ br><input type='checkbox' title='Completed' value='Completed' /></ br>Contact: " + response.results[j]["sakai:contact"] + "</ br></ br><hr></ br>" + response.results[j]["sakai:body"];
-            }
-            else {
-                response.results[j].body = response.results[j]["sakai:body"];
-            }
+            response.results[j].body = response.results[j]["sakai:body"];
             response.results[j].messagebox = response.results[j]["sakai:messagebox"];
-            response.results[j] = formatMessage(response.results[j]);
+            
+            // style notice according to whether it's a message or reminder
+            if (response.results[j]["sakai:category"] === "reminder") {
+                formatReminder(response.results[j])
+            } else {
+                response.results[j] = formatMessage(response.results[j]);
+            }
         }
         
         allMessages = response.results;
@@ -641,13 +645,16 @@ sakai.inbox = function(){
         // do checkboxes
         tickMessages();
         
-        // if the message is a reminder, check if the due date is less than 24 hours away and style accordingly
+        // if the notice is a reminder style accordingly
         for (var p = 0, q = response.results.length; p < q; p++) {
-            if (response.results[p]["sakai:category"] === "reminder") {
-                formatReminder(response.results[p]);
-            }
-            else {
-                $("#inbox_checkbox_" + response.results[p]["jcr:name"]).attr("title", "Delete");
+            var tableRow = $(inboxTableMessageID + response.results[p]["jcr:name"]);
+            var rowCheckbox = $("#inbox_checkbox_" + response.results[p]["jcr:name"], tableRow);
+            if (response.results[p]["sakai:category"] === "reminder") { 
+                var critical = compareDates(response.results[p]["sakai:dueDate"]);
+                tableRow.addClass(critical);
+       	        rowCheckbox.attr("title", "Completed");
+            } else {
+                rowCheckbox.attr("title", "Delete");
             }
         }
     };
@@ -869,9 +876,11 @@ sakai.inbox = function(){
                         break;
                     }
                 }
-                // Mark the message in the inbox table as read.
-                $(inboxTableMessageID + id).addClass(inboxTablesubjectReadClass);
-                $(inboxTableMessageID + id).removeClass(inboxTablesubjectUnreadClass);
+                // Mark the message in the inbox table as read.         
+                var tableRow = $(inboxTableMessageID + id);
+                tableRow.addClass(inboxTablesubjectReadClass);
+                tableRow.removeClass(inboxTablesubjectUnreadClass);
+                
                 
                 if (currentFilter != inboxFilterTrash) {
                     if (message["sakai:category"] === "message") {
@@ -1541,7 +1550,6 @@ sakai.inbox = function(){
             }
             
         }
-        
     };
     
     doInit();
