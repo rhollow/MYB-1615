@@ -155,7 +155,7 @@ sakai.profilesection = function(tuid, showSettings){
                     sakai.profile.main.data[currentsection] = {};
                 }
             }
-            if (sakai.profile.main.data[currentsection].elements === undefined || sakai.profile.main.data[currentsection].elements.length === 0) {
+            if (sakai.profile.main.data[currentsection] === undefined || sakai.profile.main.data[currentsection].elements === undefined || sakai.profile.main.data[currentsection].elements.length === 0) {
                if (sakai.profile.main.mode.value === "edit") {
                    sections = "<div class='profilesection_section' id='profilesection_section_0'>";
                    sakai.profile.main.data[currentsection].elements = [];
@@ -376,6 +376,10 @@ sakai.profilesection = function(tuid, showSettings){
                         }
                     } else {
                         sakai.profile.main.data[title.split(".")[0]].access = $selected_element.val();
+                    }
+                } else {
+                    if (prop && $.isPlainObject(prop) && parentProp) {
+                        delete parentProp[prop["jcr:name"]];
                     }
                 }
 

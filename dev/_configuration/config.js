@@ -30,6 +30,7 @@ sakai.config = {
         MY_DASHBOARD_URL: "/dev/my_sakai.html",
         PEOPLE_URL: "/dev/people.html",
         PROFILE_URL: "/dev/profile.html",
+        PROFILE_EDIT_URL: "/dev/profile_edit.html",
         PUBLIC_CONTENT_MEDIA_URL: "/dev/public_content_media.html",
         PUBLIC_COURSES_SITES_URL: "/dev/public_courses_sites.html",
         PUBLIC_INSTITUTIONAL_LOGIN_URL: "/dev/i_index.html",
@@ -85,10 +86,12 @@ sakai.config = {
         SEARCH_MY_CONTACTS: "/var/search/files/mycontacts.json",
         SEARCH_MY_FILES: "/var/search/files/myfiles.json",
         SEARCH_MY_SITES: "/var/search/files/mysites.json",
+        SEARCH_GROUPS: "/var/search/groups.json",
         SEARCH_PAGES: "/var/search/page.json",
         SEARCH_SITES: "/var/search/sites.json",
-        SEARCH_USERS_ACCEPTED: "/var/contacts/find.json?s=",
+        SEARCH_USERS_ACCEPTED: "/var/contacts/find.json",
         SEARCH_USERS: "/var/search/users.json",
+        SEARCH_USERS_GROUPS: "/var/search/usersgroups.json",
         SITE_ADD_MEMBERS_SERVICE: "/_rest/site/members/add/__SITE__",
         SITE_CONFIGFOLDER: "/sites/__SITEID__",
         SITE_CREATE_SERVICE: "/sites.createsite.json",
@@ -335,7 +338,13 @@ sakai.config = {
          * Note: the value for userNameDisplay and this value can be the same.
          *       If neither exists, nothing will show
          */
-        userNameDefaultDisplay: "firstName lastName"
+        userNameDefaultDisplay: "firstName lastName",
+
+        /*
+         * Set the user's short description to appear underneath their name
+         * in search results
+         */
+        shortDescription: "${role} in ${department} at ${college}"
 
     },
 
