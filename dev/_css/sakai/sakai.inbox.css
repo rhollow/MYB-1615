@@ -54,7 +54,7 @@
 
 
 .inbox_main .inbox-folders .if_content
-{ border-left: 4px solid #D4DADE; border-right: 4px solid #D4DADE; padding: 1px 5px 1px 12px; margin: 0; }
+{ border-left: 4px solid #D4DADE; border-right: 4px solid #D4DADE; padding: 1px 0px 1px 0px; margin: 0; } /* padding: 1px 5px 1px 12px */
 
 .inbox_main .inbox-folders .if_content ul
 { padding-left: 20px; margin: 0; }
@@ -69,7 +69,7 @@
 { font-weight: normal; color: #999999; }
 
 .inbox_main .inbox-folders .if_content .tab
-{ margin: 10px 0 10px 0; }
+{ padding: 5px 10px 5px 10px; } /* used to be margin: 10px 0 10px 0; */
 
 .inbox_main .inbox-folders .if_content .tab a
 { font-weight: bold; color: #058EC4; font-size: 1.2em; padding: 0 0 10px 0; }
@@ -189,6 +189,9 @@
 { font-weight: bold; color: red;}
 
 .inbox_main .inbox-table td a.inbox_inbox_message 
+{color:#058EC4;}
+
+.inbox_main .inbox-table td a.inbox_inbox_message_from 
 {color:#058EC4;}
 
 .inbox_main .inbox-table .inbox_message_none

@@ -179,12 +179,6 @@
                                     {var readClass="inbox-subject-read"}
                                 {/if}
                                 
-                                {if m["sakai:category"] == "reminder"}
-                                    {var messageDate=m["sakai:dueDate"]}
-                                {elseif}
-                                    {var messageDate=m.date}
-                                {/if}
-                                
                                 <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
                                     <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
                                         {if m.messagebox === "outbox"}
@@ -209,7 +203,7 @@
                                             {/if}
                                         {/if}
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
-                                        <td>${messageDate}</td>
+                                        <td>${m.date}</td>
                                 </tr>
                             {forelse}
                                 <tr class="inbox_message">
