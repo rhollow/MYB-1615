@@ -15,7 +15,7 @@ sakai.links = function(){
     var userLinks = "my_links";
     var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
 
-    // Still working out some problems with the loading of default data from /var
+    // path for links directory (includes number of columns, featured sites, and all sites)   
     var directoryLinksLocation = "/var/defaults/mylinks/links-directory.json";
  
     var directory = {};

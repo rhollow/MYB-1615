@@ -38,14 +38,14 @@ sakai.mylinks = function (tuid, showSettings) {
     // selectors
     var draggableElmSelector = "li";
 
-    // Templates
+    // templates
     var mylinksListTemplate = "mylinks_list_template";
 
-    // Data files and paths
+    // data files and paths
     var userLinks = "my_links";
     var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
 
-    // Still working out some problems with the loading of default data from /var
+    // path for the default list of links to display in the widget
     var defaultLinksPath = "/var/defaults/mylinks/mylinks-defaults.json";
 
     /**
