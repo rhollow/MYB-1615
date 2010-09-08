@@ -1619,7 +1619,7 @@ sakai.inbox = function(){
             else {
             
                 // Show messages by default (as if click on "Inbox > Messages")
-                filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterMessages);
+                filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
                 $(selectedFilterDiv).removeClass("selected");
                 selectedFilterDiv = $(inboxFilterMessages).parent();
                 $(selectedFilterDiv).addClass("selected");
