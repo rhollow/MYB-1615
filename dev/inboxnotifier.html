@@ -17,9 +17,8 @@
 
         <!-- 3rd party CSS -->
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.components.jq_pager.css" />
-        <link rel="stylesheet" type="text/css" href="/dev/_lib/jquery/plugins/gritter/css/jquery.gritter.css" />
-        <link rel="stylesheet" type="text/css" href="/dev/_lib/jquery/notifpage.custom.css" />
-
+        <link rel="stylesheet" type="text/css" href="_lib/jquery/plugins/gritter/css/jquery.gritter.css" />
+        
         <!-- Sakai Config JS -->
         <script type="text/javascript" src="_configuration/widgets.js"></script>
         <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
@@ -30,7 +29,7 @@
         <script type="text/javascript" src="_lib/jquery/jquery-ui.full.js"></script>
         <script type="text/javascript" src="_lib/Fluid/3akai_Infusion.js"></script>
         <script type="text/javascript" src="_lib/jquery/plugins/jquery.json.js"></script>
-        <script type="text/javascript" src="/dev/_lib/google/html-sanitizer-minified.js"></script>
+        <script type="text/javascript" src="_lib/google/html-sanitizer-minified.js"></script>
 
         <!-- Sakai Core JS -->
         <script type="text/javascript" src="_lib/sakai_util/sakai_magic.js"></script>
@@ -86,10 +85,10 @@
                         </div>                                                
                         
                         <div class="if_content">                                                       
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>                              
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_queue">__MSG__QUEUE__</a></div></div>							
-							<div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__ARCHIVE__</a></div></div>
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
+                            <div id="tab-drafts" class="tab current_tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__DRAFTS__</a></div></div>                              
+                            <div id="tab-queue" class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_queue">__MSG__QUEUE__</a></div></div>							
+							<div id="tab-archive" class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__ARCHIVE__</a></div></div>
+                            <div id="tab-trash" class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
                         </div>
                         
                         <div class="if_bottom">
@@ -103,7 +102,7 @@
                 <!-- Main -->
                 <div class="col-main">
 
-                    <!-- PANE 1 || INBOX OF NOTIFICATION DRAFTS (DEFAULT VIEW) -->
+                    <!-- INBOXES OF NOTIFICATIONS (DEFAULT VIEW) -->
                     <div id="inbox_pane_inbox" class="inbox_pane">                        
 
                         <form name="my-inbox" action="" method="post">                            
@@ -206,7 +205,7 @@
                         
                     </div>                   
                     
-                    <!-- PANE 2 || NOTIFICATION DETAIL (EDITABLE) -->
+                    <!-- NOTIFICATION COMPOSING -->
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
@@ -216,24 +215,22 @@
 
                         <!-- Create/Edit Notification -->
                         <div class="main_content_container">
-                            <div class="compose-notification">
-                               
+                            <div class="compose-notification">                               
                                     <div id="inbox_compose_new_container">
                                         <div id="widget_composenotification" class="widget_inline"></div>
-                                    </div>
-                                
+                                    </div>                                
                             </div>
                         </div>
 
                         <div class="bottom_decor"></div>
                         
                         <!-- Button List-->
-                    	<div class="button-list">
-                    	    <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
+                        <div class="button-list" id="editable">
+                            <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
                             <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
-                        </div>  
-
+                        </div>
+                                                                        
                     </div>                                                                                              
 
                 </div>

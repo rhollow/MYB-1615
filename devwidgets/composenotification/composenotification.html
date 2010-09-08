@@ -1,5 +1,6 @@
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="/devwidgets/composenotification/css/composenotification.css"></link>
+<link rel="stylesheet" type="text/css" href="/devwidgets/composenotification/css/composenotification.css" />
+<link rel="stylesheet" type="text/css" href="/devwidgets/composenotification/lib/jquery-ui-1.8.4.custom.css" />
 
 <!-- ERROR MESSAGES -->
 <span id="composenotification_message_ok" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_SENT__.</span>
@@ -7,23 +8,33 @@
 <span id="composenotification_friends_error" style="display:none;">Failed to retrieve your friends.</span>
 <span id="composenotification_fields_error" style="display:none;">Please fill in all the fields.</span>
 
-<div class="dialog" id="message_dialog">
-
     <!-- FORM -->
-    <div id="message_form" class="dialog_content">  
+    <div id="message_form">  
 
-        <div id="composenotification_dialog_box" class="send_message dialogue_box fl-centered">
-            <form class="compose-form" action="" method="post">      
+        <div id="composenotification_box" class="send_message fl-centered">
+            <form class="compose-form" action="" method="post">                      
+                
+                <!-- TEMPORARY: Validation Test -->
+                <div>
+                    <input type="radio" id="validation-test">
+                    <label for"validation-test">Run validation test?</label>
+                </div>
+                
+                <!-- TEMPORARY: Non-editable Mode Test -->
+                <div>
+                    <input type="radio" id="disabling-test">
+                    <label for "disabling-test">Run non-editable mode test?</label>
+                </div>                               
                 
                 <!-- REQUIRED -->
                 <div id="composenotification_required">
                     Required?
-                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="yes" /><label for="yes">Yes</label>
-                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="no" /><label for="no">No</label>                                            
+                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredyes" /><label for="cn-requiredyes">Yes</label>
+                    <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredno" /><label for="cn-requiredno">No</label>                                            
                 </div>
                 
                 <!-- SEND DATE -->
-                <div  id="composenotification_send_date">
+                <div  id="composenotification_senddate">
                 Send Date                
                 <span class="datepicker">
                     <input class="compose-form-elm text-field" type="text" id="datepicker-senddate-text" />                                        
@@ -33,22 +44,49 @@
                 <!-- DYNAMIC LIST -->
                 <div id="composenotification_dynamiclist">
                     Dynamic List                                     
-                    <select class="compose-form-elm">
+                    <select class="compose-form-elm" id="cn-dynamiclistselect">
                       <option>Transfer Students</option>                      
                     </select>
-                    <button id="create-new-dynamic-list-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CREATE_NEW_DYNAMIC_LIST__</span></button>                 
+                    <button id="create-new-dynamic-list-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CREATE_NEW_DYNAMIC_LIST__</span></button>                                                                                                                                  
+                </div>
+                
+                <!-- SAVE REMINDER DIALOG -->
+                <div id="save_reminder_dialog" class="dialog">
+                    <!-- Dialog Header -->
+                    <div class="dialog_header">
+                        <div class="dialog_header_inner">
+                            <h1>Warning</h1>
+                            <a href="javascript:;" class="jqmClose dialog_close_image" title="__MSG__CLOSE_DIALOG__">__MSG__CLOSE_DIALOG__</a>
+                        </div>
+                    </div>                        
+                    <!-- Dialog Content -->
+                    <div class="dialog_content">
+                        <p>You are about to leave the create/edit notification pane.<br>
+                           Do you want to save your notification before you create a new list?<br>
+                           If you don't, any changes you've made will be lost.</p>
+                        <div class="dialog_buttons">
+                            <button type="button" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
+                            <button type="button" class="s3d-button"><span class="s3d-button-inner">Don't Save</span></button>
+                            <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                        </div>
+                    </div>                        
+                    <!-- Dialog Footer -->
+                    <div class="dialog_footer">
+                        <div class="dialog_footer_inner"><!-- 
+                        --></div>
+                    </div>                        
                 </div>
                 
                 <!-- SUBJECT-->
                 <div id="composenotification_subject">
                     <label for="cn-subject">Subject</label><br />
-                    <input type="text" style="width:513px;" class="compose-form-elm text-field" id="cn-subject" />
+                    <input type="text" style="width:550px;" class="compose-form-elm text-field" id="cn-subject" />
                 </div>
                 
                 <!-- BODY-->
                 <div id="composenotification_body">
                     <label for="cn-body">Body</label><br />
-                    <textarea class="compose-form-elm text-field" id="cn-body" cols="95" rows="25"></textarea>
+                    <textarea class="compose-form-elm text-field" id="cn-body" style="width:550px; height:150px;"></textarea>
                 </div>
                 
                 <!-- REMINDER CHECK: HAS A DATE?-->
@@ -58,15 +96,15 @@
                 </div>
                 
                 <!-- IF YES, REMINDER: Task or Event? -->
-                <div class="composenotification_taskorevent" style="display: none;">
+                <div class="composenotification_taskorevent" id="task-or-event-check" style="display: none;">
                     <p class="header">Task or Event?</p>
                     
+                    <!-- TASK DETAILS -->
                     <div class="task_or_event">
                         <input type="radio" class="compose-form-elm radioboxes" name="task-or-event" id="task-radio"/>
                         <label for="task-or-event">Task with due date</label>                                            
                     </div>                                        
-                    
-                        <!-- TASK DETAILS -->
+                                            
                         <div class="cn-task">                                
                             <div class="cn-task task-details">
                                 Due Date
@@ -76,12 +114,12 @@
                             </div>            
                         </div>
                     
+                    <!-- EVENT DETAILS -->
                     <div class="task_or_event">
                         <input type="radio" class="compose-form-elm radioboxes" name="task-or-event" id="event-radio"/>
                         <label for="task-or-event">Event</label><br>
                     </div>
-                    
-                        <!-- EVENT DETAILS -->
+                                            
                         <div class="cn-event">                        
                             <div class="cn-event event-details">                            
                                 Event Date
@@ -92,7 +130,7 @@
                             <div class="cn-event event-details">
                                 <label for="cn-event-time">Time</label>
                                 <input class="compose-form-elm text-field" type="text" id="cn-event-time" style="width:40px;" />
-                                <select class="compose-form-elm">
+                                <select class="compose-form-elm" id="cn-event-ampm">
                                     <option>AM</option>
                                     <option>PM</option>
                                 </select>
@@ -106,11 +144,9 @@
                 </div>
 
             </form>                                           
-        </div>                
+        </div>                             
     
-    </div>            
-
-</div>
+    </div>                    
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/composenotification/javascript/composenotification.js"></script>

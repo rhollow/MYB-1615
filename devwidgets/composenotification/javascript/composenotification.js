@@ -23,17 +23,18 @@ if (!sakai.composenotification){
 
     sakai.composenotification = function(tuid, showSettings) {
 
-        var rootel = $(tuid);
+        var rootel = $("#"+tuid);        
 
         var user = false; // user object that contains the information for the user that should be posted to.
         var me = sakai.data.me;        
         var callbackWhenDone = null;    //    Callback function for when the message gets sent       
 
-        // CSS IDs EDIT EDIT EDIT
-        var dialogBoxContainer = "#sendmessage_dialog_box";
-        var dialogFooterContainer = "#sendmessage_dialog_footer";
-
-        var messageDialogContainer = '#message_dialog';
+        /**
+         * 
+         * CSS IDS
+         * 
+         */     
+        var notificationBox = '#composenotification_box';
         var messageDone = "#message_done";
         var messageForm = "#message_form";
 
@@ -45,27 +46,64 @@ if (!sakai.composenotification){
         var messageMultipleToBoxDelete = ".sendmessage_multipleBox_delete";
         var messageMultipleToWhat = "#sendmessage_multiple_to_what";
 
-        var messageFieldSubject = "#comp-subject";
-        var messageFieldBody = "#comp-body";
-        var messageFieldFrom = "#message_from";
-        var messageFieldToSingle = "#message_to";
-        var messageFieldMultipleTo = "#sendmessage_multiple_to";
-
-        var messageToResult = ".sendmessage_compose_to_result";
-
+        // NOTIFICATION AUTHORING FORM ELEMENT IDS. (All required unless otherwise stated.)
+        var messageFieldRequiredCheck = "#composenotification_required";
+        var messageRequiredYes = "#cn-requiredyes";
+        var messageRequiredNo = "#cn-requiredno";        
+        var messageFieldSendDate = "#datepicker-senddate-text";
+        var messageFieldTo = "#cn-dynamiclistselect";        
+        var messageFieldSubject = "#cn-subject";        
+        var messageFieldBody = "#cn-body";
+        
+        // Optional.
+        var messageReminderCheck = "#task-or-event-check";
+        var messageReminderCheckbox = "#cn-remindercheck";
+        
+        // Optional, unless messageReminderCheck is checked.
+        var messageTaskCheck = "#task-radio"; 
+        var messageEventCheck = "#event-radio";
+        
+        // Optional, unless messageTaskCheck is checked.
+        var messageTaskDueDate = "#datepicker-taskduedate-text"; 
+        
+        // Optional, unless messageEventCheck is checked.
+        var messageEventDate = "#datepicker-eventdate-text"; 
+        var messageEventTime = "#cn-event-time";
+        var messageEventAMPM = "#cn-event-ampm";
+        var messageEventPlace = "#cn-event-place";
+                
         var buttonSendMessage = "#send_message";
 
-        var invalidClass = "sendmessage_invalid";
-        var errorClass = 'sendmessage_error_message';
-        var normalClass = 'sendmessage_normal_message';
-        var dialogBoxClass = "dialogue_box";
-        var dialogFooterClass = "dialog_footer";
-        var dialogHeaderClass = ".dialog_header";
-        var dialogClass = ".dialog";
+        var invalidClass = "composenotification_invalid";
+        var errorClass = "composenotification_error_message";
+        var normalClass = "composenotification_normal_message";        
 
         var messageOK = "#sendmessage_message_ok";
         var messageError = "#sendmessage_message_error";
-        var messageErrorFriends = "#sendmessage_friends_error";
+        var messageErrorFriends = "#sendmessage_friends_error";        
+        
+        var reenableView = function() {
+            $(".compose-form-elm").removeAttr("disabled");       
+        };
+        
+        /**
+         * Disables proper elements of the compose-form-elm class for the
+         * notification authoring page. (Used in the non-editable notification
+         * detail views.)
+         */
+        var disableView = function() {            
+            $(".compose-form-elm").attr("disabled","disabled");       
+            $(".composenotification_taskorevent").show();
+            $(".cn-task").show();
+            $(".cn-event").show();                        
+        };
+        
+        /**
+         * Removes invalidClass from all elements that are currently within that class.
+         */
+        var clearInvalids = function(){            
+            $("."+invalidClass).removeClass(invalidClass);
+        };
         
         /**
          * Resets whatever element it is passed as a parameter, as long as it is of
@@ -85,106 +123,230 @@ if (!sakai.composenotification){
             else if(tag=="select"){              
                 toClear.selectedIndex=-1;
             }
-        }
+        };
 
         /**
          * This will reset the whole widget to its default state.
          * It will clear any values or texts that might have been entered.
          * Called every time the widget is initalised.
          */
-        var resetView = function() {            
+        var resetView = function() {                        
             $(".compose-form-elm").each(function(){
                 clearElement(this);
             });            
+            reenableView();
             $(".cn-task").hide();
             $(".cn-event").hide();            
             $(".composenotification_taskorevent").hide();
         };
         
-        // REMINDER CRITERION FUNCTIONS
+        /**
+         * 
+         * EVENT HANDLERS
+         * 
+         */
+        // Reminder criterion functions.
         $("#cn-remindercheck").click(function() {
+            $(messageTaskDueDate).removeClass(invalidClass); 
+            $(messageEventDate).removeClass(invalidClass);
+            $(messageEventTime).removeClass(invalidClass);
+            $(messageEventAMPM).removeClass(invalidClass);
+            $(messageEventPlace).removeClass(invalidClass);
+            
             if($("#cn-remindercheck").is(":checked")){
                 $(".composenotification_taskorevent").show();    
             }
             else{
+                $(".cn-task").hide();
+                $(".cn-event").hide();
                 $(".composenotification_taskorevent").hide();
                 $(".composenotification_taskorevent").find(".compose-form-elm").each(function() {
                     clearElement(this);    
-                });
+                });                
             };
         });
             
-        // TASK AND EVENT DETAIL FUNCTIONS 
-        $('#event-radio').click(function() {
-            $(".cn-task").hide();        
-            $(".cn-event").show();
-            $(".cn-task").find(".compose-form-elm").each(function(){             
-                clearElement(this);
-            })
-        });
+        // Task and event detail functions.
         $('#task-radio').click(function() {
             $(".cn-task").show();
             $(".cn-event").hide();
             $(".cn-event").find(".compose-form-elm").each(function(){                
                 clearElement(this);
-            })
-        });  
+            });                      
+            $(messageEventDate).removeClass(invalidClass);
+            $(messageEventTime).removeClass(invalidClass);
+            $(messageEventAMPM).removeClass(invalidClass);
+            $(messageEventPlace).removeClass(invalidClass);
+        });          
+        $('#event-radio').click(function() {
+            $(".cn-task").hide();        
+            $(".cn-event").show();
+            $(".cn-task").find(".compose-form-elm").each(function(){             
+                clearElement(this);
+            });            
+            $(messageTaskDueDate).removeClass(invalidClass);                                                                                                         
+        });     
+        
+        // Datepicker functions.
+        $("#datepicker-senddate-text").datepicker({
+            showOn: 'button',
+            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
+    		buttonImageOnly: true,        
+            buttonText: 'Click to pick a date.',        
+        });     
+        $("#datepicker-taskduedate-text").datepicker({
+            showOn: 'button',
+            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
+    		buttonImageOnly: true,        
+            buttonText: 'Click to pick a date.',        
+        });     
+        $("#datepicker-eventdate-text").datepicker({
+            showOn: 'button',
+            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
+    		buttonImageOnly: true,        
+            buttonText: 'Click to pick a date.',        
+        });     
+        $("#datepicker-eventstopdate-text").datepicker({
+            showOn: 'button',
+            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
+    		buttonImageOnly: true,        
+            buttonText: 'Click to pick a date.',        
+        });                
+        
+        // Testing validation. REMOVE LATER.
+        $('#validation-test').click(function(){            
+            checkFieldsForErrors();
+        });            
+        
+        // Testing disabling. REMOVE LATER.
+        $('#disabling-test').click(function(){
+            disableView();    
+        });
+                    
+        // For dialog-overlay to remind user to save their draft.
+        // (When user clicks on 'Create New Dyanmic List' button.)
+        $("#save_reminder_dialog").jqm({
+             modal: true,
+             trigger: $("#create-new-dynamic-list-button"),
+             overlay: 20,
+             toTop: true,
+             onShow: null           
+         });             
 
-        /**
-         * EDIT EDIT EDIT
+        /**         
          * This method will check if there are any required fields that are not filled in.
          * If a field is not filled in the invalidClass will be added to that field.
-         * @return true = no errors, false = error
+         * Returns a boolean that determines if the fields are valid or not.
+         * @return valid True = no errors, false = errors found.
          */
         var checkFieldsForErrors = function() {
-            var subjectEl = $(messageFieldSubject);
-            var bodyEl = $(messageFieldBody);
-
+            // By default, valid is true.             
             var valid = true;
+            
+            // Collect all elements that require validation on the page.         
+            var requiredEl = $(messageFieldRequiredCheck);            
+            var sendDateEl = $(messageFieldSendDate);
+            var sendToEl = $(messageFieldTo);           
+            var subjectEl = $(messageFieldSubject);
+            var bodyEl = $(messageFieldBody);                           
+            var reminderCheckEl = $(messageReminderCheck); 
+            var taskDueDateEl = $(messageTaskDueDate);                                                          
+            var eventDateEl = $(messageEventDate);
+            var eventTimeEl = $(messageEventTime);
+            var eventAMPMEl = $(messageEventAMPM);
+            var eventPlaceEl = $(messageEventPlace);                                      
+            
+            // Collect the values of each of the elements that require validation.
+            var requiredYes = $(messageRequiredYes).attr("checked");
+            var requiredNo = $(messageRequiredNo).attr("checked");
+            var sendDate = sendDateEl.val();
+            var sendTo = sendToEl.val();            
             var subject = subjectEl.val();
-            var body = bodyEl.val();
+            var body = bodyEl.val();            
+            var reminderCheck = $(messageReminderCheckbox).attr("checked");
+            var taskCheck = $(messageTaskCheck).attr("checked");
+            var eventCheck = $(messageEventCheck).attr("checked");
+            var taskDueDate = taskDueDateEl.val(); 
+            var eventDate = eventDateEl.val();
+            var eventTime = eventTimeEl.val();
+            var eventAMPM = eventAMPMEl.val();
+            var eventPlace = eventPlaceEl.val();               
+            
+            // Remove the invalidClass from each element first.
+            clearInvalids();
 
-            subjectEl.removeClass(invalidClass);
-            bodyEl.removeClass(invalidClass);
-
+            // Check each one and set the boolean valid as appropriate.
+            if(!requiredYes && !requiredNo){
+                valid = false;
+                $(requiredEl).addClass(invalidClass);                
+            }
+            if(!sendDate) {
+                valid = false;
+                sendDateEl.addClass(invalidClass);               
+            }
+            if(!sendTo){
+                valid = false;
+                sendToEl.addClass(invalidClass);                
+            }
+            
             if (!subject) {
                 valid = false;
-                subjectEl.addClass(invalidClass);
+                subjectEl.addClass(invalidClass);              
             }
             if (!body) {
                 valid = false;
-                bodyEl.addClass(invalidClass);
+                bodyEl.addClass(invalidClass);                
             }
-
-            if (selectedFriendsToPostTo.length === 0) {
-                //    No user selected.
-                valid = false;
-                //    This can only happen when a user wants to add multiple persons.
-                $(messageMultipleToInputContainer).addClass(invalidClass);
-                $(messageFieldMultipleTo).addClass(invalidClass);
+            if(reminderCheck){
+                // This notification is a REMINDER. Either task or event must be checked.                
+                if(!taskCheck && !eventCheck){
+                    valid = false;
+                    reminderCheckEl.addClass(invalidClass);                    
+                }
+                else if(taskCheck){
+                    // The reminder is a TASK.                    
+                    if(!taskDueDate){
+                        valid = false;
+                        taskDueDateEl.addClass(invalidClass);                       
+                    }
+                }
+                else if(eventCheck){   
+                    // The reminder is an EVENT.                                     
+                    if(!eventDate){
+                        valid = false;
+                        eventDateEl.addClass(invalidClass);                        
+                    }
+                    if(!eventTime){
+                        valid = false;
+                        eventTimeEl.addClass(invalidClass);                      
+                    }
+                    if(!eventAMPM){
+                        valid = false;
+                        eventAMPMEl.addClass(invalidClass);                        
+                    }
+                    if(!eventPlace){
+                        valid = false;
+                        eventPlaceEl.addClass(invalidClass);                       
+                    }
+                }
             }
+            // Return the status of the form.        
             return valid;
         };
 
         /**
-         * This is the method that can be called from other widgets or pages
-         * @param {Object} userObj The user object containing the nescecary information {uuid:  "user1", firstName: "foo", lastName: "bar"}
-         * @param {Boolean} allowOtherReceivers If the user can add other users, default = false    
+         * This is the method that can be called from other widgets or pages.
+         * @param {Object} userObj The user object containing the necessary information.
+         * @param {Boolean} allowOtherReceivers If the user can add other users, default = false.    
          * @param {Object} callback When the message is sent this function will be called. If no callback is provided a standard message will be shown that fades out.
          */
-        sakai.composenotification.initialise = function(userObj, allowOtherReceivers, callback, subject, body) {
-            
+        sakai.composenotification.initialise = function(userObj, allowOtherReceivers, callback, subject, body) {            
             // Make sure that everything is standard.
+            clearInvalids();
             resetView();
 
             // The user we are sending a message to.
-            user = userObj;        
-          
-            // Remove the dialog stuff.
-            $(dialogHeaderClass).remove();
-            $(messageDialogContainer).removeClass(dialogClass.replace(/\./, ''));
-            $(dialogBoxContainer).removeClass(dialogBoxClass);
-            $(dialogFooterContainer).removeClass(dialogFooterClass);            
+            user = userObj;                                       
         };
 
         // EDIT EDIT EDIT
@@ -211,33 +373,7 @@ if (!sakai.composenotification){
                 }
             }
         });
-    };   
-    
-    // DATEPICKER FUNCTIONS
-    $("#datepicker-senddate-text").datepicker({
-        showOn: 'button',
-        buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
-		buttonImageOnly: true,        
-        buttonText: 'Click to pick a date.',        
-    });     
-    $("#datepicker-taskduedate-text").datepicker({
-        showOn: 'button',
-        buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
-		buttonImageOnly: true,        
-        buttonText: 'Click to pick a date.',        
-    });     
-    $("#datepicker-eventdate-text").datepicker({
-        showOn: 'button',
-        buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
-		buttonImageOnly: true,        
-        buttonText: 'Click to pick a date.',        
-    });     
-    $("#datepicker-eventstopdate-text").datepicker({
-        showOn: 'button',
-        buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
-		buttonImageOnly: true,        
-        buttonText: 'Click to pick a date.',        
-    });           
+    };              
 }
 
 sakai.api.Widgets.widgetLoader.informOnLoad("composenotification");

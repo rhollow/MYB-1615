@@ -38,6 +38,8 @@ sakai.creategroup = function(tuid, showSettings){
     // Configuration variables //
     /////////////////////////////
 
+    var MAX_LENGTH = 30;
+
     // - ID
     var createGroup = "#creategroup";
 
@@ -56,6 +58,8 @@ sakai.creategroup = function(tuid, showSettings){
     var createGroupAddProcess = createGroupAdd + "_process";
     var createGroupAddSave = createGroupAdd + "_save";
     var createGroupAddUrl = createGroupAdd + "_url";
+    var createGroupAddUrlLength = createGroupAddUrl + "_length";
+    var createGroupAddUrlMaxLength = createGroupAddUrl + "_max_length";
 
     // Error fields
     var createGroupAddNameEmpty = createGroupAddName + "_empty";
@@ -69,7 +73,7 @@ sakai.creategroup = function(tuid, showSettings){
     var invalidFieldClass = "invalid";
 
     // Pages to be added to the group
-    var pagestemplate = "interdisciplinary";
+    var pagestemplate = "defaultgroup";
 
     ///////////////////////
     // Utility functions //
@@ -101,7 +105,7 @@ sakai.creategroup = function(tuid, showSettings){
             $(createGroupAddCancel).hide();
             $(createGroupAddSave).hide();
             $(createGroupAddProcess).show();
-        }else{
+        } else {
             $(createGroupAddProcess).hide();
             $(createGroupAddCancel).show();
             $(createGroupAddSave).show();
@@ -207,13 +211,16 @@ sakai.creategroup = function(tuid, showSettings){
                 ":member": groupidManagers,
                 "sakai:group-title" : grouptitle,
                 "sakai:group-description" : groupdescription,
-                "sakai:group-id": groupid
+                "sakai:group-id": groupid,
+                "sakai:group-joinable": sakai.config.Permissions.Groups.joinable.manager_add,
+                "sakai:group-visible": sakai.config.Permissions.Groups.visible.members,
+                ":sakai:pages-template": "/var/templates/site/" + pagestemplate
             },
             type: "POST",
             success: function(data, textStatus){
                 //check if the group exists
                 if (doCheckGroup(groupid)) {
-                    createPagesNode(groupid);
+                    document.location = "/dev/group_edit.html?id=" + groupid;
                 }
             },
             error: function(xhr, textStatus, thrownError){
@@ -249,7 +256,9 @@ sakai.creategroup = function(tuid, showSettings){
                 ":member": sakai.data.me.user.userid,
                 "sakai:group-title" : grouptitleManagers,
                 "sakai:group-description" : groupdescription,
-                "sakai:group-id": groupidManagers
+                "sakai:group-id": groupidManagers,
+                "sakai:group-joinable": sakai.config.Permissions.Groups.joinable.manager_add,
+                "sakai:group-visible": sakai.config.Permissions.Groups.visible.members
             },
             type: "POST",
             success: function(data, textStatus){
@@ -344,108 +353,6 @@ sakai.creategroup = function(tuid, showSettings){
     });
 
 
-    ///////////////////////////////
-    // Page templating functions //
-    ///////////////////////////////
-
-    //Step 1: Create the default node
-    //Step 2: Copy the _pages
-    //Step 3: Copy the _widgets folder
-    //Step 4: Copy the _navigation folder
-    //Step 5: Redirect to group.html page
-
-    /**
-     * Creates the default node underneath the sites node so that
-     * we can start copying pages from the chosen template
-     * @param {String} groupid   The groups group id
-     */
-    var createPagesNode = function(groupid){
-         $.ajax({
-            url: "/~" + groupid + "/sites/default" ,
-            data: {
-                "_charset_":"utf-8"
-            },
-            type: "POST",
-            success: function(data, textStatus){
-                copyPages(groupid);
-            },
-            error: function(xhr, textStatus, thrownError){
-                alert("An error has occured");
-            }
-        });
-    }
-
-    /**
-     * Copy the pages from the template into the group
-     * @param {String} groupid   The groups group id
-     */
-    var copyPages = function(groupid){
-        $.ajax({
-            url: "/var/templates/site/" + pagestemplate,
-            data: {
-                "_charset_":"utf-8",
-                ":operation":"copy",
-                ":applyTo":"_pages",
-                ":dest":"/_group/g/g-/" + groupid + "/sites/default/"
-            },
-            type: "POST",
-            success: function(data, textStatus){
-                copyNavigation(groupid);
-            },
-            error: function(xhr, textStatus, thrownError){
-                alert("An error has occured");
-            }
-        });
-    }
-
-    /**
-     * Copy the content of the sidebar from the template into the group
-     * @param {String} groupid   The groups group id
-     */
-    var copyNavigation = function(groupid){
-        $.ajax({
-            url: "/var/templates/site/" + pagestemplate,
-            data: {
-                "_charset_":"utf-8",
-                ":operation":"copy",
-                ":applyTo":"_navigation",
-                ":dest":"/_group/g/g-/" + groupid + "/sites/default/"
-            },
-            type: "POST",
-            success: function(data, textStatus){
-                copyWidgets(groupid);
-            },
-            error: function(xhr, textStatus, thrownError){
-                alert("An error has occured");
-            }
-        });
-    }
-
-    /**
-     * Copy the default widget settings from the template into the group
-     * @param {Object} groupid   The groups group id
-     */
-    var copyWidgets = function(groupid){
-        $.ajax({
-            url: "/var/templates/site/" + pagestemplate,
-            data: {
-                "_charset_":"utf-8",
-                ":operation":"copy",
-                ":applyTo":"_widgets",
-                ":dest":"/_group/g/g-/" + groupid + "/sites/default/"
-            },
-            type: "POST",
-            success: function(data, textStatus){
-                //redirect the user to the group
-                document.location = "/dev/group_edit.html?id=" + groupid;
-            },
-            error: function(xhr, textStatus, thrownError){
-                alert("An error has occured");
-            }
-        });
-    }
-
-
     /////////////////////////////
     // Initialisation function //
     /////////////////////////////
@@ -457,7 +364,23 @@ sakai.creategroup = function(tuid, showSettings){
 
         // Set the text of the span containing the url of the current group
         // e.g. http://celestine.caret.local:8080/~g-
-        $(createGroupAddUrl).text(sakai.api.Security.saneHTML(document.location.protocol + "//" + document.location.host + "/~g-"));
+        var url = document.location.protocol + "//" + document.location.host;
+        url += "/~g-";
+        // get max length value
+        var maxLength = parseInt(MAX_LENGTH,10);
+
+        // get length
+
+        // if url is too long greater than 30 character
+        // show only first 15 characters +...+ last 15 characters
+        // e.g.http://sakai3-demo.uits.indiana.edu:8080/~g-
+        // it will change to shorter form:
+        // http://sakai3-...diana.edu:8080/~g-
+        if (url.length > maxLength) {
+            url = url.substr(0,15)+ "..."+ url.substr(url.length-15,url.length-1);
+        }
+
+        $(createGroupAddUrl).text(sakai.api.Security.saneHTML(url));
     };
 
     doInit();
