@@ -472,6 +472,10 @@ sakai.inbox = function(){
         return returnStr;
     };
     
+    /**
+     * Detects whether a given date is within 24 of today, and returns the appropriate class name
+     * @param {Object} date The date being compared to today
+     */
     var compareDates = function(date){
         var dueDate = new Date(date);
         var today = new Date();
@@ -480,6 +484,12 @@ sakai.inbox = function(){
         return (tomorrow > dueDate) ? "inbox-subject-critical" : "";
     }
     
+    /**
+     * Updates specified property of a reminder with the specified value
+     * @param {Object} url jcr:path of the reminder being updated
+     * @param {Object} JSON obj containing name/value pairs to be updated, ex. {"taskState":"completed"}
+     * @param {Object} callback Function to be called on completion
+     */
     var updateReminder = function(url, props, callback){
         $.ajax({
             type: 'POST',
@@ -501,10 +511,11 @@ sakai.inbox = function(){
         });
     };
     
+    /**
+     * Formats the due date property for reminder
+     * @param {Object} reminder A reminder object
+     */
     var formatReminder = function(reminder){
-        var tableRow = $(inboxTableMessageID + reminder["jcr:name"]);
-        var rowCheckbox = $("#inbox_checkbox_" + reminder["jcr:name"], tableRow);
-        
         var dateString = reminder["sakai:dueDate"];
         var d = new Date();
         d.setFullYear(parseInt(dateString.substring(0, 4), 10));
@@ -589,7 +600,7 @@ sakai.inbox = function(){
     };
     
     /**
-     * Renders the messages.
+     * Renders the messages and reminders.
      * @param {Object} The JSON response from the server. Make sure it has a .message array in it.
      */
     var renderMessages = function(response){
@@ -783,6 +794,9 @@ sakai.inbox = function(){
         });
     };
     
+    /**
+     * Updates the number of unread messages/reminders/etc.; this number is displayed next to each filter
+     */
     var updateUnreadNumbers = function(){
     
         if (unreadMessages > 0) {
@@ -1421,10 +1435,12 @@ sakai.inbox = function(){
     });
     
     
-    // Check all message
+    // Check all messages
     $(inboxInboxCheckAll).change(function(){
         tickMessages();
     });
+    
+    // Deleting a message from the inbox display
     $(inboxInboxDelete).click(function(){
         // Delete all checked messages
         var pathToMessages = [];
@@ -1442,6 +1458,7 @@ sakai.inbox = function(){
         }
     });
     
+    // Emptying all the selected messages in Trash
     $(inboxInboxEmptyTrash).click(function(){
         // Delete all checked messages 
         var pathToMessages = [];
@@ -1461,6 +1478,7 @@ sakai.inbox = function(){
         }
     });
     
+    // Takes user back to the filter they were on before going into a specific message
     $(inboxInboxBackToList).click(function(){
         $(currentFilter).click();
         showPage(currentPage);
@@ -1520,6 +1538,7 @@ sakai.inbox = function(){
         clearInputFields();
     });
     
+    // Deletes a message from inside the message
     $(inboxSpecificMessageDelete).click(function(){
         var harddelete = false;
         if (currentFilter === inboxFilterTrash) {
