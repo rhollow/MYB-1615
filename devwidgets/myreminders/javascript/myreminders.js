@@ -208,6 +208,9 @@ sakai.myreminders = function(tuid, showSettings){
      */
     var getRemindersList = function(taskState, callback){
         var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=" + taskState;
+        
+        // replacing top line with bottom line possible solve the problem of having reminders show up in sender's widget
+        //var dataURL = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
 
         $.ajax({
             url: dataURL,
