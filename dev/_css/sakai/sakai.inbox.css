@@ -140,26 +140,41 @@
 {position: relative; top: 10px; float: right;}
 
 /** Header **/
-.inbox_main .inbox-table .different
+.inbox_main .inbox-table .different_messages, .different_reminders
 { background: #eaedef; }
 
-.inbox_main .inbox-table .different th
+.inbox_main .inbox-table .different_messages th
+{ border-bottom: 4px solid #d5dbdf; }
+
+.inbox_main .inbox-table .different_reminders th
 { border-bottom: 3px solid #d5dbdf; }
 
 .inbox_main .inbox-table #inbox_table_header_chk
 { width: 15px; }
 
-.inbox_main .inbox-table #inbox_table_header_from
+.inbox_main .inbox-table #inbox_table_header_from_message
 { width:150px; border-left: 1px solid #D4DADE; color: #666666; }
 
-.inbox_main .inbox-table #inbox_table_header_subject
+.inbox_main .inbox-table #inbox_table_header_subject_message
 { width:300px; border-left: 1px solid #D4DADE; color: #666666; }
 
-.inbox_main .inbox-table #inbox_table_header_type
+.inbox_main .inbox-table #inbox_table_header_type_message
 { width:15%; border-left: 1px solid #D4DADE; color: #666666; }
 
-.inbox_main .inbox-table #inbox_table_header_date
+.inbox_main .inbox-table #inbox_table_header_date_message
+{ width:148px; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_from_reminder
 { width:150px; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_subject_reminder
+{ width:245px; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_date_reminder
+{ width:144px; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_checkbox_reminder
+{ width:75px; border-left: 1px solid #D4DADE; color: #666666; }
 
 /** List **/
 .inbox_main .inbox-table a:hover {text-decoration: none;}
@@ -183,10 +198,10 @@
 { font-weight: bold; background-color: white;}
 
 .inbox_main .inbox-table tr.inbox-subject-critical *
-{ font-weight: bold; color: red;}
+{ font-weight: bold; color: #CC0000;}
 
 .inbox_main .inbox-table tr.inbox-subject-critical a:link
-{ font-weight: bold; color: red;}
+{ font-weight: bold; color: #CC0000;}
 
 .inbox_main .inbox-table td a.inbox_inbox_message 
 {color:#058EC4;}

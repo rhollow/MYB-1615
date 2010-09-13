@@ -58,7 +58,7 @@
 
 .myreminders_widget .reminders_div .read_true {font-weight: normal; background-color: #E6E6E6;}
 .myreminders_widget .reminders_div .read_false {font-weight: bold; background-color: white;}
-.myreminders_widget .reminders_div .pastDue {font-weight: bold; color: red;}
+.myreminders_widget .reminders_div .pastDue {font-weight: bold; color: #CC0000;}
 .reminders_div a {text-decoration: none;}
 
 /* Individual reminder */

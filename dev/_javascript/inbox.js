@@ -88,14 +88,13 @@ sakai.inbox = function(){
     var inboxTable = inboxID + "_table";
     var inboxTablePreloader = inboxTable + "_preloader";
     var inboxTableHeader = inboxTable + "_header";
-    var inboxTableHeaderFrom = inboxTableHeader + "_from";
-    var inboxTableHeaderFromContent = inboxTableHeaderFrom + " span";
-    var inboxTableHeaderDate = inboxTableHeader + "_date";
-    var inboxTableHeaderDateContent = inboxTableHeaderDate + " span";
+    var inboxTableHeaderFromMessages = inboxTableHeader + "_from_messages";
+    var inboxTableHeaderFromContent = inboxTableHeaderFromMessages + " span";
+    var inboxTableHeaderDate = inboxTableHeader + "_date_";
     var inboxTableMessage = inboxClass + "_message"; //    A row in the table
     var inboxTableMessageID = inboxTable + "_message_";
     var inboxTableMessagesTemplate = inbox + "_" + inbox + "_messages_template";
-    var inboxTableSubject = inboxTable + "_subject_";
+    var inboxTableSubjectMessages = inboxTable + "_subject_messages";
     var inboxTablesubjectReadClass = 'inbox-subject-read';
     var inboxTablesubjectUnreadClass = 'inbox-subject-unread';
     
@@ -272,10 +271,11 @@ sakai.inbox = function(){
     var filterMessages = function(type, category, read, id){
         // Reset headers
         $(inboxTableHeaderFromContent).text("From");
-        $(inboxTableHeaderDateContent).text("Date");
         
         // Show/hide appropriate buttons
         $(inboxInboxDelete).show();
+        $(".different_messages").show();
+        $(".different_reminders").hide();
         $(inboxInboxArchiveCompleted).hide();
         $(inboxSpecificMessageDelete).hide();
         $(inboxInboxEmptyTrash).hide();
@@ -1370,9 +1370,10 @@ sakai.inbox = function(){
     });
     $(inboxFilterReminders).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
-        $(inboxTableHeaderDateContent).text("Due Date");
         $(inboxInboxDelete).hide();
         $(inboxInboxArchiveCompleted).show();
+        $(".different_messages").hide();
+        $(".different_reminders").show();
         currentFilter = inboxFilterReminders;
         $(inboxInboxCheckAll).attr("checked", '');
         tickMessages();
@@ -1428,8 +1429,9 @@ sakai.inbox = function(){
     });
     $(inboxFilterArchive).click(function(){
         filterMessages(sakai.config.Messages.Types.archive, "", "all", inboxFilterArchive);
-        $(inboxTableHeaderDateContent).text("Due Date");
         $(inboxInboxDelete).hide();
+        $(".different_messages").hide();
+        $(".different_reminders").show();
         currentFilter = inboxFilterArchive;
         $(inboxInboxCheckAll).attr("checked", '');
         tickMessages();
