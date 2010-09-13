@@ -106,6 +106,7 @@ sakai.inbox = function(){
     var inboxInboxSortDown = inboxInbox + "_sort_down";
     
     var inboxInboxCheckAll = inboxInbox + "_checkAll";
+    var inboxInboxArchiveCompleted = inboxInbox + "_archive_completed";
     var inboxInboxDelete = inboxInbox + "_delete";
     var inboxInboxEmptyTrash = inboxInbox + "_empty_trash";
     var inboxInboxBackToList = inboxInbox + "_back_to_list";
@@ -160,12 +161,14 @@ sakai.inbox = function(){
     var inboxGeneralMessagesErrorGeneral = inboxGeneralMessagesError + "_general";
     var inboxGeneralMessagesErrorReadFail = inboxGeneralMessagesError + "_read_fail";
     var inboxGeneralMessagesNrNewMessages = inboxGeneralMessages + "_nr_new_messages";
-    var inboxGeneralMessagesNoneSelected = inboxGeneralMessages + "_none_selected";
+    var inboxGeneralMessagesNoneSelectedMessages = inboxGeneralMessages + "_none_selected_messages";
+    var inboxGeneralMessagesNoneSelectedReminders = inboxGeneralMessages + "_none_selected_reminders";
     var inboxGeneralMessagesDeleted = inboxGeneralMessages + "_deleted";
     var inboxGeneralMessagesDeleted_1 = inboxGeneralMessagesDeleted + "_1";
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesCompleted = inboxGeneralMessages + "_completed";
+    var inboxGeneralMessagesArchived = inboxGeneralMessages + "_archived";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
     
@@ -273,6 +276,7 @@ sakai.inbox = function(){
         
         // Show/hide appropriate buttons
         $(inboxInboxDelete).show();
+        $(inboxInboxArchiveCompleted).hide();
         $(inboxSpecificMessageDelete).hide();
         $(inboxInboxEmptyTrash).hide();
         $(inboxInboxBackToList).hide();
@@ -657,7 +661,11 @@ sakai.inbox = function(){
                 tableRow.data("data", response.results[p]);
                 $(".inbox_inbox_check_message").attr("title", "Completed");
                 
-                rowCheckbox.one("click", function(evt){
+                if(response.results[p]["sakai:taskState"] === "completed"){
+                    rowCheckbox.attr("checked", true);
+                }
+                
+                rowCheckbox.live("click", function(evt){
                     var id = evt.target.id;
                     id = id.split("_");
                     id = id[id.length - 1];
@@ -665,15 +673,21 @@ sakai.inbox = function(){
                     var reminderData = $(inboxTableMessageID + id).data("data");
                     var path = reminderData["jcr:path"];
                     
-                    var propertyToUpdate = {
-                        "sakai:taskState": "completed",
-                        "sakai:messagebox": "archive"
-                    };
+                    var propertyToUpdate;
+                    var message;
+                    if (reminderData["sakai:taskState"] === "completed") {
+                        propertyToUpdate = {
+                            "sakai:taskState": "created"
+                        };
+                    } else {
+                        propertyToUpdate = {
+                            "sakai:taskState": "completed"
+                        };
+                        message = $(inboxGeneralMessagesCompleted).text();
+                    }
                     
                     updateReminder(path, propertyToUpdate, function(){
-                        $(inboxTableMessageID + id).empty();
-                        $(inboxTableMessageID + id).remove();
-                        showGeneralMessage($(inboxGeneralMessagesCompleted).text());
+                        showGeneralMessage(message);
                     });
                 });
             }
@@ -959,6 +973,7 @@ sakai.inbox = function(){
         // Hide/show relevant buttons
         $(inboxInboxBackToList).show();
         $(inboxInboxEmptyTrash).hide();
+        $(inboxInboxArchiveCompleted).hide();
         $(inboxInboxDelete).hide();
         if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash) {
             $(inboxSpecificMessageDelete).show();
@@ -1337,7 +1352,6 @@ sakai.inbox = function(){
      *
      */
     $(inboxInboxMessage).live("click", function(e, ui){
-    
         var id = e.target.id;
         id = id.split('_');
         displayMessage(id[id.length - 1]);
@@ -1358,6 +1372,7 @@ sakai.inbox = function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
         $(inboxTableHeaderDateContent).text("Due Date");
         $(inboxInboxDelete).hide();
+        $(inboxInboxArchiveCompleted).show();
         currentFilter = inboxFilterReminders;
         $(inboxInboxCheckAll).attr("checked", '');
         tickMessages();
@@ -1450,11 +1465,44 @@ sakai.inbox = function(){
         });
         
         if (pathToMessages.length === 0) {
-            showGeneralMessage($(inboxGeneralMessagesNoneSelected).text());
+            showGeneralMessage($(inboxGeneralMessagesNoneSelectedMessages).text());
         }
         else {
             // If we are in trash we hard delete the messages
             deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+        }
+    });
+    
+    // Moving all reminders marked as complete to the archive
+    $(inboxInboxArchiveCompleted).click(function() {
+        var pathToMessages = [];
+        $(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            pathToMessages.push(pathToMessage);
+        });
+        
+        if (pathToMessages.length === 0) {
+            showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
+        }
+        else {
+            var propertyToUpdate = {
+                "sakai:messagebox": "archive"
+            };
+            
+            for (var i = 0, j = pathToMessages.length; i < j; i++) {
+                var id = pathToMessages[i].split("/");
+                id = id[id.length - 1];
+                
+                var reminderData = $(inboxTableMessageID + id).data("data");
+                var path = reminderData["jcr:path"];
+                
+                updateReminder(path, propertyToUpdate, function(){
+                    $(inboxTableMessageID + id).empty();
+                    $(inboxTableMessageID + id).remove();
+                });
+            }
+            
+            showGeneralMessage($(inboxGeneralMessagesArchived).text());
         }
     });
     
@@ -1468,7 +1516,7 @@ sakai.inbox = function(){
         });
         
         if (pathToMessages.length === 0) {
-            showGeneralMessage($(inboxGeneralMessagesNoneSelected).text());
+            showGeneralMessage($(inboxGeneralMessagesNoneSelectedMessages).text());
         }
         else {
             // If we are in trash we hard delete the messages
