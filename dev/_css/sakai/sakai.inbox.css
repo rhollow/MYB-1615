@@ -57,10 +57,10 @@
 { border-left: 4px solid #D4DADE; border-right: 4px solid #D4DADE; padding: 1px 0px 1px 0px; margin: 0; } /* padding: 1px 5px 1px 12px */
 
 .inbox_main .inbox-folders .if_content ul
-{ padding-left: 20px; margin: 0; }
+{margin: 0; }
 
 .inbox_main .inbox-folders .if_content ul li
-{ list-style-type: none; padding: 3px 0 3px 0; }
+{ list-style-type: none; padding: 3px 0px 3px 20px; }
 
 .inbox_main .inbox-folders .if_content ul li a
 { font-weight: normal; color: #058EC4; }
