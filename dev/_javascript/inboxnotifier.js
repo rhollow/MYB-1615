@@ -64,7 +64,7 @@ sakai.notificationsinbox = function(){
     var inboxFilterTrash = inboxFilter + "_trash";  
     var inboxBold = inbox + "_bold";
     
-    // Different panes (inbox, send message, view message, ..)
+    // Different panes (inbox, notification detail)
     var inboxPane = inboxID + "_pane";
     var inboxPaneClass = inboxClass + "_pane";
     var inboxPaneInbox = inboxPane + "_inbox";
@@ -135,9 +135,7 @@ sakai.notificationsinbox = function(){
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";    
         
-    // Keep JSLint.com happy...
-    var pageMessages = function(){
-    };
+    // Keep JSLint.com happy...    
     var getCount = function(){
     };
     var getAllMessages = function(){
@@ -199,8 +197,8 @@ sakai.notificationsinbox = function(){
      * @param {String} pane The id of the pane you want to show.
      */
     var showPane = function(pane){
-        // We do a check to see if the pane isn't already visible
-        // Otherwise we get an annoying flicker.
+        // We do a check to see if the pane isn't already visible.
+        // Otherwise, we get an annoying flicker.
         if (!$(pane).is(":visible")) {
             hideAllPanes();
             $(pane).show();
@@ -436,8 +434,7 @@ sakai.notificationsinbox = function(){
                     message.userFrom[i].photo = $.parseJSON(message.userFrom[i].picture).name;
                 }
             }
-        }
-        
+        }        
         if (message.userTo && $.isArray(message.To)) {
             for (var j = 0, jl = message.userTo.length; j < jl; j++) {
                 if (message.userTo[j].picture && $.parseJSON(message.userTo[j].picture).name) {
@@ -499,30 +496,40 @@ sakai.notificationsinbox = function(){
      * Show a certain page of messages.
      * @param {int} pageNumber The page number you want to display.
      */
-    var showPage = function(pageNumber){
-        // Remove all messages.
-        // remove previous messages.
-        removeAllMessagesOutDOM();
-        // Set the pager.
-        pageMessages(pageNumber);
-        // Remember which page were on.
-        currentPage = pageNumber - 1;
-        // Show set of messages.
-        getAllMessages();
+//    var showPage = function(pageNumber){
+//        alert("showPage() being called.");
+//        // Remove all messages.
+//        // remove previous messages.
+//        removeAllMessagesOutDOM();
+//        // Set the pager.
+//        pageMessages(pageNumber);
+//        // Remember which page were on.
+//        currentPage = pageNumber - 1;
+//        // Show set of messages.
+//        getAllMessages();
+//    };
+
+    var showPage = function(){
+        alert("showPage() is being called.");    
     };
     
     /**
      * Draw up the pager at the bottom of the page.
      * @param {int} pageNumber The number of the current page
      */
-    pageMessages = function(pageNumber){
-        $(inboxPager).pager({
-            pagenumber: pageNumber,
-            pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
-            buttonClickCallback: showPage
-        });
+//    pageMessages = function(pageNumber){
+//        $(inboxPager).pager({
+//            pagenumber: pageNumber,
+//            pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
+//            buttonClickCallback: showPage
+//        });
+//        currentPage = pageNumber;
+//    };
+
+    var pageMessages = function(){
+        alert("pageMessages() is being called!");
     };
-    
+        
     
     /**
      *
@@ -765,7 +772,37 @@ sakai.notificationsinbox = function(){
     $("#cn-cancel-button").live("click", function(){
         // jump back to inbox
         showPane(inboxPaneInbox);
-    });       
+    });  
+    
+    // Various filter functions (left-hand side menu).
+    $(inboxFilterInbox).click(function(){
+        filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
+        correctButtonList("drafts");   
+        correctHighlightedTab("drafts");     
+    });
+    
+    $(inboxFilterQueue).click(function(){        
+        filterMessages("queue", "", "all", inboxFilterQueue);       
+        correctButtonList("queue");
+        correctHighlightedTab("queue");
+    });
+    
+    $(inboxFilterArchive).click(function(){       
+        filterMessages("archive", "", "all", inboxFilterArchive);         
+        correctButtonList("archive");
+        correctHighlightedTab("archive");
+    });
+    
+    $(inboxFilterTrash).click(function(){
+        filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
+        correctButtonList("trash");
+        correctHighlightedTab("trash");
+    });        
+           
+    // Check all messages.
+    $(inboxInboxCheckAll).change(function(){
+        tickMessages();
+    });         
     
     /**
      *
@@ -796,37 +833,7 @@ sakai.notificationsinbox = function(){
     var correctButtonList = function(type) {     
         $("[id|=buttons]").hide();
         $("#buttons-"+type).show();
-    };
-    
-    /* EVENT HANDLERS FOR THE FILTERS ON LEFT HAND SIDE */
-    $(inboxFilterInbox).click(function(){
-        filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
-        correctButtonList("drafts");   
-        correctHighlightedTab("drafts");     
-    });
-    
-    $(inboxFilterQueue).click(function(){        
-        filterMessages("queue", "", "all", inboxFilterQueue);       
-        correctButtonList("queue");
-        correctHighlightedTab("queue");
-    });
-    
-    $(inboxFilterArchive).click(function(){       
-        filterMessages("archive", "", "all", inboxFilterArchive);         
-        correctButtonList("archive");
-        correctHighlightedTab("archive");
-    });
-    
-    $(inboxFilterTrash).click(function(){
-        filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
-        correctButtonList("trash");
-        correctHighlightedTab("trash");
-    });        
-           
-    // Check all messages.
-    $(inboxInboxCheckAll).change(function(){
-        tickMessages();
-    });
+    };     
     
     $(inboxInboxDelete).click(function(){
         // Delete all checked messages
@@ -858,8 +865,7 @@ sakai.notificationsinbox = function(){
         
         getAllMessages();
     });
-    
-    
+        
     /**
      *
      * Specific message
@@ -883,9 +889,7 @@ sakai.notificationsinbox = function(){
         // Show the inbox
         showPane(inboxPaneInbox);
    
-    });
-    
-   
+    });     
     
     $(inboxSpecificMessageComposeSend).click(function(){
         // We want to send a message.

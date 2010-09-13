@@ -25,9 +25,9 @@ if (!sakai.composenotification){
 
         var rootel = $("#"+tuid);        
 
-        var user = false; // user object that contains the information for the user that should be posted to.
+        var user = false; // user object that contains the information for the user that should be posted to
         var me = sakai.data.me;        
-        var callbackWhenDone = null;    //    Callback function for when the message gets sent       
+        var callbackWhenDone = null; // callback function for when the message gets sent       
 
         /**
          * 
@@ -46,7 +46,12 @@ if (!sakai.composenotification){
         var messageMultipleToBoxDelete = ".sendmessage_multipleBox_delete";
         var messageMultipleToWhat = "#sendmessage_multiple_to_what";
 
-        // NOTIFICATION AUTHORING FORM ELEMENT IDS. (All required unless otherwise stated.)
+        /**
+         * 
+         * NOTIFICATION AUTHORING FORM ELEMENT IDS.
+         * 
+         */          
+        //All required unless otherwise stated.)
         var messageFieldRequiredCheck = "#composenotification_required";
         var messageRequiredYes = "#cn-requiredyes";
         var messageRequiredNo = "#cn-requiredno";        
@@ -68,8 +73,9 @@ if (!sakai.composenotification){
         
         // Optional, unless messageEventCheck is checked.
         var messageEventDate = "#datepicker-eventdate-text"; 
-        var messageEventTime = "#cn-event-time";
-        var messageEventAMPM = "#cn-event-ampm";
+        var messageEventTimeHour = "#cn-event-timehour";
+        var messageEventTimeMinute = "#cn-event-timeminute";
+        var messageEventTimeAMPM = "#cn-event-timeampm";        
         var messageEventPlace = "#cn-event-place";
                 
         var buttonSendMessage = "#send_message";
@@ -80,10 +86,51 @@ if (!sakai.composenotification){
 
         var messageOK = "#sendmessage_message_ok";
         var messageError = "#sendmessage_message_error";
-        var messageErrorFriends = "#sendmessage_friends_error";        
+        var messageErrorFriends = "#sendmessage_friends_error"; 
         
+        // Various arrays for event time picking.
+        var allHourOptions = {                     
+          '01' : '01',
+          '02' : '02',
+          '03' : '03',
+          '04' : '04',
+          '05' : '05',
+          '06' : '06',
+          '07' : '07',
+          '08' : '08',
+          '09' : '09',
+          '10' : '10',
+          '11' : '11',
+          '12' : '12'  
+        };
+              
+        var allMinuteOptions = {        
+          '00' : '00',
+          '15' : '15',
+          '30' : '30',
+          '45' : '45'      
+        };
+        
+        var allAMPMOptions = {         
+          'AM' : 'AM',
+          'PM' : 'PM'  
+        };       
+        
+        // Dynamic list options (for send to).
+        var allDynamicListOptions = {
+          'group1id' : 'Group 1',
+          'group2id' : 'Group 2',
+          'group3id' : 'Group 3'  
+        };
+        
+        /**
+         * Re-enables previously disabled fields. 
+         */
         var reenableView = function() {
-            $(".compose-form-elm").removeAttr("disabled");       
+            $(".compose-form-elm").removeAttr("disabled"); 
+//            $('input[id|=datepicker]').each(function() {
+//                $(this).datepicker( "option", "disabled", false );
+//            });          
         };
         
         /**
@@ -95,7 +142,12 @@ if (!sakai.composenotification){
             $(".compose-form-elm").attr("disabled","disabled");       
             $(".composenotification_taskorevent").show();
             $(".cn-task").show();
-            $(".cn-event").show();                        
+            $(".cn-event").show();         
+            $('input[id|=datepicker]').each(function() {
+                var buttonImagePath = $(this).datepicker( "option", "buttonImage" );
+                var buttonImage = $("img[src$='"+buttonImagePath+"']");                
+                $(buttonImage).hide();
+            });                          
         };
         
         /**
@@ -120,8 +172,8 @@ if (!sakai.composenotification){
             else if(type=="checkbox" || type=="radio"){                
                 toClear.checked=false;
             }
-            else if(tag=="select"){              
-                toClear.selectedIndex=-1;
+            else if(tag=="select"){                           
+                toClear.selectedIndex=-1;                
             }
         };
 
@@ -149,8 +201,9 @@ if (!sakai.composenotification){
         $("#cn-remindercheck").click(function() {
             $(messageTaskDueDate).removeClass(invalidClass); 
             $(messageEventDate).removeClass(invalidClass);
-            $(messageEventTime).removeClass(invalidClass);
-            $(messageEventAMPM).removeClass(invalidClass);
+            $(messageEventTimeHour).removeClass(invalidClass);
+            $(messageEventTimeMinute).removeClass(invalidClass);
+            $(messageEventTimeAMPM).removeClass(invalidClass);
             $(messageEventPlace).removeClass(invalidClass);
             
             if($("#cn-remindercheck").is(":checked")){
@@ -174,8 +227,9 @@ if (!sakai.composenotification){
                 clearElement(this);
             });                      
             $(messageEventDate).removeClass(invalidClass);
-            $(messageEventTime).removeClass(invalidClass);
-            $(messageEventAMPM).removeClass(invalidClass);
+            $(messageEventTimeHour).removeClass(invalidClass);
+            $(messageEventTimeMinute).removeClass(invalidClass);
+            $(messageEventTimeAMPM).removeClass(invalidClass);
             $(messageEventPlace).removeClass(invalidClass);
         });          
         $('#event-radio').click(function() {
@@ -231,7 +285,14 @@ if (!sakai.composenotification){
              overlay: 20,
              toTop: true,
              onShow: null           
-         });             
+         }); 
+         $("#save_reminder_dialog").css("position","absolute");
+         $("#save_reminder_dialog").css("top", "200px");  
+         
+         /**
+          * More Date Testing...
+          */                        
+          alert($("#datepicker-eventstopdate-text").datepicker("getDate"));          
 
         /**         
          * This method will check if there are any required fields that are not filled in.
@@ -252,8 +313,9 @@ if (!sakai.composenotification){
             var reminderCheckEl = $(messageReminderCheck); 
             var taskDueDateEl = $(messageTaskDueDate);                                                          
             var eventDateEl = $(messageEventDate);
-            var eventTimeEl = $(messageEventTime);
-            var eventAMPMEl = $(messageEventAMPM);
+            var eventTimeHourEl = $(messageEventTimeHour);
+            var eventTimeMinuteEl = $(messageEventTimeMinute);
+            var eventTimeAMPMEl = $(messageEventTimeAMPM);
             var eventPlaceEl = $(messageEventPlace);                                      
             
             // Collect the values of each of the elements that require validation.
@@ -268,8 +330,9 @@ if (!sakai.composenotification){
             var eventCheck = $(messageEventCheck).attr("checked");
             var taskDueDate = taskDueDateEl.val(); 
             var eventDate = eventDateEl.val();
-            var eventTime = eventTimeEl.val();
-            var eventAMPM = eventAMPMEl.val();
+            var eventTimeHour = eventTimeHourEl.val();
+            var eventTimeMinute = eventTimeMinuteEl.val();            
+            var eventTimeAMPM = eventTimeAMPMEl.val();
             var eventPlace = eventPlaceEl.val();               
             
             // Remove the invalidClass from each element first.
@@ -308,7 +371,7 @@ if (!sakai.composenotification){
                     if(!taskDueDate){
                         valid = false;
                         taskDueDateEl.addClass(invalidClass);                       
-                    }
+                    }                    
                 }
                 else if(eventCheck){   
                     // The reminder is an EVENT.                                     
@@ -316,13 +379,17 @@ if (!sakai.composenotification){
                         valid = false;
                         eventDateEl.addClass(invalidClass);                        
                     }
-                    if(!eventTime){
+                    if(!eventTimeHour){
                         valid = false;
-                        eventTimeEl.addClass(invalidClass);                      
+                        eventTimeHourEl.addClass(invalidClass);                      
                     }
-                    if(!eventAMPM){
+                    if(!eventTimeMinute){
                         valid = false;
-                        eventAMPMEl.addClass(invalidClass);                        
+                        eventTimeMinuteEl.addClass(invalidClass);                      
+                    }
+                    if(!eventTimeAMPM){
+                        valid = false;
+                        eventTimeAMPMEl.addClass(invalidClass);                        
                     }
                     if(!eventPlace){
                         valid = false;
@@ -332,6 +399,53 @@ if (!sakai.composenotification){
             }
             // Return the status of the form.        
             return valid;
+        };             
+        
+        /**
+         * Sets up the timepicker drop down menus for the Event Time fields, 
+         * based on the arrays for hour, minutes, and AM/PM as pre-defined earlier in the JS.  
+         * Hours are 1-12, minutes are in 15 min intervals.       
+         */          
+        var eventTimeInit = function(){                        
+            // Selecting the 'options' attributes on the various drop down menus.
+            var eventTimeHoursOptions = $(messageEventTimeHour).attr('options');
+            var eventTimeMinutesOptions = $(messageEventTimeMinute).attr('options');
+            var eventTimeAMPMOptions = $(messageEventTimeAMPM).attr('options');
+            
+            // First, clear any pre-existing options that might be there already.
+            // (Helps prevent duplication when user hits the 'Cancel' button.)                        
+            $(messageEventTimeHour).html('');	     
+            $(messageEventTimeMinute).html('');	      
+            $(messageEventTimeAMPM).html(''); 
+                      
+            // Then, fill in all the options for each drop down menu based on the arrays.
+            $.each(allHourOptions, function(val, text) {
+                eventTimeHoursOptions[eventTimeHoursOptions.length] = new Option(text, val);
+	        });   
+            $.each(allMinuteOptions, function(val, text) {
+                eventTimeMinutesOptions[eventTimeMinutesOptions.length] = new Option(text, val);
+	        });          
+            $.each(allAMPMOptions, function(val, text) {
+               eventTimeAMPMOptions[eventTimeAMPMOptions.length] = new Option(text, val); 
+            });                                          
+        };
+        
+        /**
+         * Sets up drop down menu for Dynamic List field (or otherwise known as
+         * the 'Send To' field) based on the array pre-defined earlier in the JS.
+         */
+        var dynamicListInit = function(){
+          // Select the 'options' attribute of the dynamic list drop down menu.
+          var dynamicListOptions = $(messageFieldTo).attr('options');
+          
+          // Clear any pre-existing options that might be there already.
+          // (Helps prevent duplication when user hits the 'Cancel' button.)
+          $(messageFieldTo).html('');
+          
+          // Fill in options for menu based on array.
+          $.each(allDynamicListOptions, function(val, text) {
+              dynamicListOptions[dynamicListOptions.length] = new Option(text, val);
+          });          
         };
 
         /**
@@ -341,9 +455,11 @@ if (!sakai.composenotification){
          * @param {Object} callback When the message is sent this function will be called. If no callback is provided a standard message will be shown that fades out.
          */
         sakai.composenotification.initialise = function(userObj, allowOtherReceivers, callback, subject, body) {            
-            // Make sure that everything is standard.
+            // Reset page back to its original condition.
             clearInvalids();
-            resetView();
+            eventTimeInit();
+            dynamicListInit();
+            resetView();            
 
             // The user we are sending a message to.
             user = userObj;                                       
