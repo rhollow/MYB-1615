@@ -126,11 +126,13 @@ if (!sakai.composenotification){
         /**
          * Re-enables previously disabled fields. 
          */
-        var reenableView = function() {
+        var reenableView = function() {           
             $(".compose-form-elm").removeAttr("disabled"); 
-//            $('input[id|=datepicker]').each(function() {
-//                $(this).datepicker( "option", "disabled", false );
-//            });          
+            $('input[id|=datepicker]').each(function() {
+                var buttonImagePath = $(this).datepicker( "option", "buttonImage" );
+                var buttonImage = $("img[src$='"+buttonImagePath+"']");                
+                $(buttonImage).show();
+            });            
         };
         
         /**
@@ -198,7 +200,7 @@ if (!sakai.composenotification){
          * 
          */
         // Reminder criterion functions.
-        $("#cn-remindercheck").click(function() {
+        $(messageReminderCheckbox).change(function() {
             $(messageTaskDueDate).removeClass(invalidClass); 
             $(messageEventDate).removeClass(invalidClass);
             $(messageEventTimeHour).removeClass(invalidClass);
@@ -217,10 +219,10 @@ if (!sakai.composenotification){
                     clearElement(this);    
                 });                
             };
-        });
+        });                 
             
         // Task and event detail functions.
-        $('#task-radio').click(function() {
+        $('#task-radio').change(function() {
             $(".cn-task").show();
             $(".cn-event").hide();
             $(".cn-event").find(".compose-form-elm").each(function(){                
@@ -232,7 +234,7 @@ if (!sakai.composenotification){
             $(messageEventTimeAMPM).removeClass(invalidClass);
             $(messageEventPlace).removeClass(invalidClass);
         });          
-        $('#event-radio').click(function() {
+        $('#event-radio').change(function() {
             $(".cn-task").hide();        
             $(".cn-event").show();
             $(".cn-task").find(".compose-form-elm").each(function(){             
@@ -269,7 +271,7 @@ if (!sakai.composenotification){
         
         // Testing validation. REMOVE LATER.
         $('#validation-test').click(function(){            
-            checkFieldsForErrors();
+            checkFieldsForErrors();                    
         });            
         
         // Testing disabling. REMOVE LATER.
@@ -287,12 +289,31 @@ if (!sakai.composenotification){
              onShow: null           
          }); 
          $("#save_reminder_dialog").css("position","absolute");
-         $("#save_reminder_dialog").css("top", "200px");  
+         $("#save_reminder_dialog").css("top", "200px");    
          
-         /**
-          * More Date Testing...
-          */                        
-          alert($("#datepicker-eventstopdate-text").datepicker("getDate"));          
+         // If 'Yes' is checked for required, then automatically check that it has a date.
+         $(messageRequiredYes).change(function(){            
+            $(messageReminderCheckbox).attr("checked", true);
+            
+            $(messageTaskDueDate).removeClass(invalidClass); 
+            $(messageEventDate).removeClass(invalidClass);
+            $(messageEventTimeHour).removeClass(invalidClass);
+            $(messageEventTimeMinute).removeClass(invalidClass);
+            $(messageEventTimeAMPM).removeClass(invalidClass);
+            $(messageEventPlace).removeClass(invalidClass);
+            
+            if($(messageReminderCheckbox).is(":checked")){                
+                $(".composenotification_taskorevent").show();    
+            }
+            else{
+                $(".cn-task").hide();
+                $(".cn-event").hide();
+                $(".composenotification_taskorevent").hide();
+                $(".composenotification_taskorevent").find(".compose-form-elm").each(function() {
+                    clearElement(this);    
+                });                
+            };                        
+         });                                                     
 
         /**         
          * This method will check if there are any required fields that are not filled in.
@@ -300,9 +321,13 @@ if (!sakai.composenotification){
          * Returns a boolean that determines if the fields are valid or not.
          * @return valid True = no errors, false = errors found.
          */
-        var checkFieldsForErrors = function() {
-            // By default, valid is true.             
+        var checkFieldsForErrors = function() {                        
             var valid = true;
+            var today = new Date(); // full today's date
+            var month = today.getMonth();
+            var day = today.getDate();
+            var year = today.getFullYear();
+            var modtoday = new Date(year, month, day); // today's date with 00:00:00 time                                          
             
             // Collect all elements that require validation on the page.         
             var requiredEl = $(messageFieldRequiredCheck);            
@@ -316,8 +341,8 @@ if (!sakai.composenotification){
             var eventTimeHourEl = $(messageEventTimeHour);
             var eventTimeMinuteEl = $(messageEventTimeMinute);
             var eventTimeAMPMEl = $(messageEventTimeAMPM);
-            var eventPlaceEl = $(messageEventPlace);                                      
-            
+            var eventPlaceEl = $(messageEventPlace);  
+                       
             // Collect the values of each of the elements that require validation.
             var requiredYes = $(messageRequiredYes).attr("checked");
             var requiredNo = $(messageRequiredNo).attr("checked");
@@ -333,19 +358,29 @@ if (!sakai.composenotification){
             var eventTimeHour = eventTimeHourEl.val();
             var eventTimeMinute = eventTimeMinuteEl.val();            
             var eventTimeAMPM = eventTimeAMPMEl.val();
-            var eventPlace = eventPlaceEl.val();               
+            var eventPlace = eventPlaceEl.val();                                                                      
             
             // Remove the invalidClass from each element first.
             clearInvalids();
 
-            // Check each one and set the boolean valid as appropriate.
+            // Check for invalid values.            
             if(!requiredYes && !requiredNo){
                 valid = false;
-                $(requiredEl).addClass(invalidClass);                
+                requiredEl.addClass(invalidClass);                
+            }
+            if(requiredYes && !reminderCheck){
+                // WIP
+                alert("Uh oh spaghetti oh.");
+                valid = false;                
+                reminderCheckEl.addClass(invalidClass); 
             }
             if(!sendDate) {
                 valid = false;
                 sendDateEl.addClass(invalidClass);               
+            }                                    
+            else if(modtoday>$(sendDateEl).datepicker("getDate")){                                              
+                valid = false;
+                sendDateEl.addClass(invalidClass);                
             }
             if(!sendTo){
                 valid = false;
@@ -366,37 +401,75 @@ if (!sakai.composenotification){
                     valid = false;
                     reminderCheckEl.addClass(invalidClass);                    
                 }
-                else if(taskCheck){
+                else if (taskCheck) {
                     // The reminder is a TASK.                    
-                    if(!taskDueDate){
+                    if (!taskDueDate) {
                         valid = false;
-                        taskDueDateEl.addClass(invalidClass);                       
-                    }                    
+                        taskDueDateEl.addClass(invalidClass);
+                    }
+                    else if(modtoday>$(taskDueDateEl).datepicker("getDate")) {                                              
+                        valid = false;
+                        taskDueDateEl.addClass(invalidClass);
+                    }
                 }
-                else if(eventCheck){   
+                else if (eventCheck) {
                     // The reminder is an EVENT.                                     
-                    if(!eventDate){
+                    if (!eventDate) {
                         valid = false;
-                        eventDateEl.addClass(invalidClass);                        
+                        eventDateEl.addClass(invalidClass);
                     }
-                    if(!eventTimeHour){
+                    else if(modtoday>$(eventDateEl).datepicker("getDate")){                                                    
                         valid = false;
-                        eventTimeHourEl.addClass(invalidClass);                      
+                        eventDateEl.addClass(invalidClass);            
                     }
-                    if(!eventTimeMinute){
+                    if (!eventTimeHour) {
                         valid = false;
-                        eventTimeMinuteEl.addClass(invalidClass);                      
-                    }
-                    if(!eventTimeAMPM){
+                        eventTimeHourEl.addClass(invalidClass);
+                    }                    
+                    if (!eventTimeMinute) {
                         valid = false;
-                        eventTimeAMPMEl.addClass(invalidClass);                        
+                        eventTimeMinuteEl.addClass(invalidClass);
                     }
-                    if(!eventPlace){
+                    if (!eventTimeAMPM) {
                         valid = false;
-                        eventPlaceEl.addClass(invalidClass);                       
+                        eventTimeAMPMEl.addClass(invalidClass);
                     }
+                    if (!eventPlace) {
+                        valid = false;
+                        eventPlaceEl.addClass(invalidClass);
+                    } 
+                    
+                    // Checking event time for invalids.
+                    if(eventTimeHour && eventTimeMinute && eventTimeAMPM){
+                        alert("All filled in!");
+                        var currentHour = today.getHours();                                               
+                        var currentMin = today.getMinutes();
+                        var compareToHour = parseInt(eventTimeHour); 
+                        var compareToMin = parseInt(eventTimeMinute); 
+                        
+                        // Convert the user-picked hour to military time.                      
+                        if (eventTimeAMPM=="PM"){
+                            compareToHour = compareToHour+12;                                                       
+                        }
+                            
+                        // Compare the hours.
+                        // If they are equal, also compare the minutes.                    
+                        if (compareToHour<currentHour){                           
+                            valid = false;
+                            eventTimeHourEl.addClass(invalidClass);
+                            eventTimeMinuteEl.addClass(invalidClass);
+                            eventTimeAMPMEl.addClass(invalidClass);
+                        }       
+                        else if (compareToHour==currentHour && compareToMin<currentMin){                          
+                            valid = false;
+                            eventTimeHourEl.addClass(invalidClass);
+                            eventTimeMinuteEl.addClass(invalidClass);
+                            eventTimeAMPMEl.addClass(invalidClass);
+                        }               
+                    }                            
                 }
-            }
+            }                                            
+            
             // Return the status of the form.        
             return valid;
         };             
