@@ -147,7 +147,9 @@ sakai.myreminders = function(tuid, showSettings){
         var reminderDiv = $("#div_" + id[id.length - 1]);
         var reminderData = reminderDiv.data("data");
         var jcr_path = reminderData["jcr:path"];
-        var propertyToUpdate = {"sakai:taskState":"completed"};
+        var propertyToUpdate = {
+            "sakai:taskState": "completed"
+        };
         updateReminder(jcr_path, propertyToUpdate, function(){
             reminderDiv.slideUp("normal", function(){
                 reminderDiv.remove;
@@ -208,6 +210,9 @@ sakai.myreminders = function(tuid, showSettings){
      */
     var getRemindersList = function(taskState, callback){
         var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=" + taskState;
+        
+        // replacing top line with bottom line possible solve the problem of having reminders show up in sender's widget
+        //var dataURL = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
 
         $.ajax({
             url: dataURL,
