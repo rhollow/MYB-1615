@@ -152,6 +152,9 @@
 .inbox_main .inbox-table #inbox_table_header_chk
 { width: 15px; }
 
+.inbox_main .inbox-table .inbox_inbox_check_done
+{ position: relative; left: 20px; }
+
 .inbox_main .inbox-table #inbox_table_header_from_message
 { width:150px; border-left: 1px solid #D4DADE; color: #666666; }
 
@@ -299,7 +302,7 @@
 { padding: 20px 37px 30px; color:#333; font-size: 13px; max-height: 306px; overflow: auto;}
 
 .inbox_detail .message-header
-{ font-weight: bold; font-size: 15px; padding: 5px 0px 5px 5px; }
+{ font-weight: bold; font-size: 15px; padding: 5px 0px 5px 5px; white-space: nowrap; overflow: hidden;}
 
 .inbox_detail .message-options
 { padding: 15px 15px 0 0; }

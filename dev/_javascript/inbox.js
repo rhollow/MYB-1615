@@ -38,6 +38,7 @@ sakai.inbox = function(){
     var messagesForTypeCat; // The number of messages for this type/cat.
     var box = "";
     var cats = "";
+    var chooseCategory = {"Message": "message", "Reminder": "reminder", "Announcement": "announcement", "Chat": "chat"};
     var inboxComposeNewPanelOpen = false;
     
     
@@ -112,7 +113,8 @@ sakai.inbox = function(){
     
     var inboxInboxMessage = inboxInboxClass + "_message";
     var inboxInboxHeader = inboxInboxClass + "_header";
-    var inboxInboxCheckMessage = inboxInboxClass + '_check_message';
+    var inboxInboxCheckMessage = inboxInboxClass + "_check_message";
+    var inboxInboxCheckDone = inboxInboxClass + "_check_done";
     
     var inboxTableHeaderSort = inboxInboxClass + "_table_header_sort";
     
@@ -167,6 +169,7 @@ sakai.inbox = function(){
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesCompleted = inboxGeneralMessages + "_completed";
+    var inboxGeneralMessagesNotCompleted = inboxGeneralMessages + "_not_completed";
     var inboxGeneralMessagesArchived = inboxGeneralMessages + "_archived";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
@@ -290,8 +293,8 @@ sakai.inbox = function(){
         selectedCategory = category;
         
         // Display first page.
-        //getCount(read);
-        //getAllMessages();
+        // getCount(read);
+        // getAllMessages();
         showPage(1);
         
         // Show the inbox pane
@@ -650,18 +653,18 @@ sakai.inbox = function(){
         // do checkboxes
         tickMessages();
         
-        // if the notice is a reminder style accordingly
-        if (currentFilter == inboxFilterReminders) {
+        // if the notice is a reminder (either in the inbox or archive), style accordingly
+        if (selectedCategory === "Reminder") {
             for (var p = 0, q = response.results.length; p < q; p++) {
                 var tableRow = $(inboxTableMessageID + response.results[p]["jcr:name"]);
                 var rowCheckbox = $("#inbox_checkbox_" + response.results[p]["jcr:name"], tableRow);
-                
-                var critical = compareDates(response.results[p]["sakai:dueDate"]);
-                tableRow.addClass(critical);
+                $(inboxInboxCheckDone).attr("title", "Completed");
                 tableRow.data("data", response.results[p]);
-                $(".inbox_inbox_check_message").attr("title", "Completed");
                 
-                if(response.results[p]["sakai:taskState"] === "completed"){
+                if(response.results[p]["sakai:taskState"] != "completed") {
+                    var critical = compareDates(response.results[p]["sakai:dueDate"]);
+                    tableRow.addClass(critical);
+                } else {
                     rowCheckbox.attr("checked", true);
                 }
                 
@@ -675,25 +678,45 @@ sakai.inbox = function(){
                     
                     var propertyToUpdate;
                     var message;
+                    var funct;
+                    
                     if (reminderData["sakai:taskState"] === "completed") {
-                        propertyToUpdate = {
-                            "sakai:taskState": "created"
-                        };
+                        message = $(inboxGeneralMessagesNotCompleted).text();
+                        if (reminderData["sakai:messagebox"] === "archive") {
+                            propertyToUpdate = {
+                                "sakai:taskState": "created",
+                                "sakai:messagebox": "inbox"
+                            };
+                            funct = function(){
+                                showGeneralMessage(message);
+                                $(inboxTableMessageID + id).empty();
+                                $(inboxTableMessageID + id).remove();
+                            }
+                        }
+                        else {
+                            propertyToUpdate = {
+                                "sakai:taskState": "created"
+                            };
+                            funct = function(){
+                                showGeneralMessage(message);
+                            }
+                        }
                     } else {
                         propertyToUpdate = {
                             "sakai:taskState": "completed"
                         };
                         message = $(inboxGeneralMessagesCompleted).text();
+                        funct = function(){
+                            showGeneralMessage(message);
+                        }
                     }
                     
-                    updateReminder(path, propertyToUpdate, function(){
-                        showGeneralMessage(message);
-                    });
+                    updateReminder(path, propertyToUpdate, funct);
                 });
             }
         }
         else {
-            $(".inbox_inbox_check_message").attr("title", "Delete");
+            $(inboxInboxCheckMessage).attr("title", "Delete");
         }
     };
     
@@ -760,12 +783,11 @@ sakai.inbox = function(){
         if (typeof selectedType === "undefined" || selectedType === "") {
             types = "";
         }
-        else 
-            if (typeof selectedType === "Array") {
-                types = "&types=" + selectedType.join(",");
-            }
+        else if (typeof selectedType === "Array") {
+        	types = "&types=" + selectedType.join(",");
+        }
         
-        cats = selectedCategory;
+        /*
         if (selectedCategory) {
             if (selectedCategory === "Message") {
                 cats = "message";
@@ -787,7 +809,13 @@ sakai.inbox = function(){
                                 cats = "reminder";
                             }
             url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
+        }*/
+        
+        if (selectedCategory) {
+            cats = chooseCategory[selectedCategory];
+            url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
         }
+        
         $.ajax({
             url: url,
             cache: false,
@@ -1359,6 +1387,15 @@ sakai.inbox = function(){
     
     /* Filter the messages. */
     
+    $(inboxFilterInbox).click(function(){
+        filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
+        currentFilter = inboxFilterInbox;
+        $(inboxInboxCheckAll).attr("checked", '');
+        tickMessages();
+        $(selectedFilterDiv).removeClass("selected");
+        selectedFilterDiv = $(inboxFilterInbox).parent();
+        $(selectedFilterDiv).addClass("selected");
+    });
     $(inboxFilterMessages).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
         currentFilter = inboxFilterMessages;
@@ -1375,8 +1412,6 @@ sakai.inbox = function(){
         $(".different_messages").hide();
         $(".different_reminders").show();
         currentFilter = inboxFilterReminders;
-        $(inboxInboxCheckAll).attr("checked", '');
-        tickMessages();
         $(selectedFilterDiv).removeClass("selected");
         selectedFilterDiv = $(inboxFilterReminders).parent();
         $(selectedFilterDiv).addClass("selected");
@@ -1408,17 +1443,8 @@ sakai.inbox = function(){
         selectedFilterDiv = $(inboxFilterInvitations).parent();
         $(selectedFilterDiv).addClass("selected");
     });
-    $(inboxFilterInbox).click(function(){
-        filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
-        currentFilter = inboxFilterInbox;
-        $(inboxInboxCheckAll).attr("checked", '');
-        tickMessages();
-        $(selectedFilterDiv).removeClass("selected");
-        selectedFilterDiv = $(inboxFilterInbox).parent();
-        $(selectedFilterDiv).addClass("selected");
-    });
     $(inboxFilterSent).click(function(){
-        filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
+        filterMessages(sakai.config.Messages.Types.sent, sakai.config.Messages.Categories.message, "all", inboxFilterSent);
         $(inboxTableHeaderFromContent).text("To");
         currentFilter = inboxFilterSent;
         $(inboxInboxCheckAll).attr("checked", '');
@@ -1428,19 +1454,17 @@ sakai.inbox = function(){
         $(selectedFilterDiv).addClass("selected");
     });
     $(inboxFilterArchive).click(function(){
-        filterMessages(sakai.config.Messages.Types.archive, "", "all", inboxFilterArchive);
+        filterMessages(sakai.config.Messages.Types.archive, sakai.config.Messages.Categories.reminder, "all", inboxFilterArchive);
         $(inboxInboxDelete).hide();
         $(".different_messages").hide();
         $(".different_reminders").show();
         currentFilter = inboxFilterArchive;
-        $(inboxInboxCheckAll).attr("checked", '');
-        tickMessages();
         $(selectedFilterDiv).removeClass("selected");
         selectedFilterDiv = $(inboxFilterArchive).parent();
         $(selectedFilterDiv).addClass("selected");
     });
     $(inboxFilterTrash).click(function(){
-        filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
+        filterMessages(sakai.config.Messages.Types.trash, sakai.config.Messages.Categories.message, "all", inboxFilterTrash);
         $(inboxInboxDelete).hide();
         $(inboxInboxEmptyTrash).show();
         currentFilter = inboxFilterTrash;
@@ -1478,7 +1502,7 @@ sakai.inbox = function(){
     // Moving all reminders marked as complete to the archive
     $(inboxInboxArchiveCompleted).click(function() {
         var pathToMessages = [];
-        $(inboxInboxCheckMessage + ":checked").each(function(){
+        $(inboxInboxCheckDone + ":checked").each(function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
@@ -1638,8 +1662,8 @@ sakai.inbox = function(){
         else {
             // We are logged in. Do all the necessary stuff.
             // Load the list of messages.
-            // getCount("all");
-            // getAllMessages();
+            getCount("all");
+            getAllMessages();
             showUnreadMessages();
             
             var qs = new Querystring();

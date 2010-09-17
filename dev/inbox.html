@@ -152,8 +152,8 @@
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_inboxMessage" style="display:none;">__MSG__MESSAGES__</div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_inboxReminder" style="display:none;">__MSG__REMINDERS__</div>
                             <!--<div class="inbox-heading inbox_inbox_header" id="inbox_sent" style="display:none;">__MSG__SENT_MESSAGES__</div>-->
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__ARCHIVE__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_archiveReminder" style="display:none;">__MSG__ARCHIVE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_trashMessage" style="display:none;">__MSG__TRASH__</div>
                             </div>
 
                             <!-- Inbox -->
@@ -243,7 +243,7 @@
                                         {/if}
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
                                         <td>${m.date}</td>
-                                        <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
+                                        <td><input type="checkbox" class="inbox_inbox_check_done" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
                                 </tr>
                                 
                                 {/if}
@@ -492,6 +492,7 @@
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
         <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>
         <span id="inbox_generalmessages_completed" style="display:none;">__MSG__REMINDER_MARKED_AS_COMPLETE__.</span>
+        <span id="inbox_generalmessages_not_completed" style="display:none;">__MSG__REMINDER_UNMARKED_AS_COMPLETE__.</span>
         <span id="inbox_generalmessages_archived" style="display:none;">__MSG__ALL_COMPLETED_REMINDERS_WERE_MOVED_TO_THE_ARCHIVE__.</span>
 
         <script type="text/javascript" src="_javascript/inbox.js"></script>
