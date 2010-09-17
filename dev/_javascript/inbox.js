@@ -112,7 +112,8 @@ sakai.inbox = function(){
     
     var inboxInboxMessage = inboxInboxClass + "_message";
     var inboxInboxHeader = inboxInboxClass + "_header";
-    var inboxInboxCheckMessage = inboxInboxClass + '_check_message';
+    var inboxInboxCheckMessage = inboxInboxClass + "_check_message";
+    var inboxInboxCheckDone = inboxInboxClass + "_check_done";
     
     var inboxTableHeaderSort = inboxInboxClass + "_table_header_sort";
     
@@ -167,6 +168,7 @@ sakai.inbox = function(){
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesCompleted = inboxGeneralMessages + "_completed";
+    var inboxGeneralMessagesNotCompleted = inboxGeneralMessages + "_not_completed";
     var inboxGeneralMessagesArchived = inboxGeneralMessages + "_archived";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
@@ -290,8 +292,8 @@ sakai.inbox = function(){
         selectedCategory = category;
         
         // Display first page.
-        //getCount(read);
-        //getAllMessages();
+        // getCount(read);
+        // getAllMessages();
         showPage(1);
         
         // Show the inbox pane
@@ -659,7 +661,7 @@ sakai.inbox = function(){
                 var critical = compareDates(response.results[p]["sakai:dueDate"]);
                 tableRow.addClass(critical);
                 tableRow.data("data", response.results[p]);
-                $(".inbox_inbox_check_message").attr("title", "Completed");
+                $(inboxInboxCheckDone).attr("title", "Completed");
                 
                 if(response.results[p]["sakai:taskState"] === "completed"){
                     rowCheckbox.attr("checked", true);
@@ -679,6 +681,7 @@ sakai.inbox = function(){
                         propertyToUpdate = {
                             "sakai:taskState": "created"
                         };
+                        message = $(inboxGeneralMessagesNotCompleted).text();
                     } else {
                         propertyToUpdate = {
                             "sakai:taskState": "completed"
@@ -693,7 +696,7 @@ sakai.inbox = function(){
             }
         }
         else {
-            $(".inbox_inbox_check_message").attr("title", "Delete");
+            $(inboxInboxCheckMessage).attr("title", "Delete");
         }
     };
     
@@ -760,13 +763,13 @@ sakai.inbox = function(){
         if (typeof selectedType === "undefined" || selectedType === "") {
             types = "";
         }
-        else 
-            if (typeof selectedType === "Array") {
-                types = "&types=" + selectedType.join(",");
-            }
+        else if (typeof selectedType === "Array") {
+        	types = "&types=" + selectedType.join(",");
+        }
         
-        cats = selectedCategory;
-        if (selectedCategory) {
+        cats = selectedCategory;        // with this line, is the if/else stuff after this necessary?
+        cats = cats.toLowerCase();
+        /* if (selectedCategory) {
             if (selectedCategory === "Message") {
                 cats = "message";
             }
@@ -787,12 +790,15 @@ sakai.inbox = function(){
                                 cats = "reminder";
                             }
             url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
-        }
+        } */
+        url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
+        
         $.ajax({
             url: url,
             cache: false,
             success: function(data){
                 if (data.results) {
+                    console.log(data);  //    DEBUGGING
                     // Render the messages
                     renderMessages(data);
                 }
@@ -1478,7 +1484,7 @@ sakai.inbox = function(){
     // Moving all reminders marked as complete to the archive
     $(inboxInboxArchiveCompleted).click(function() {
         var pathToMessages = [];
-        $(inboxInboxCheckMessage + ":checked").each(function(){
+        $(inboxInboxCheckDone + ":checked").each(function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
@@ -1638,8 +1644,8 @@ sakai.inbox = function(){
         else {
             // We are logged in. Do all the necessary stuff.
             // Load the list of messages.
-            // getCount("all");
-            // getAllMessages();
+            getCount("all");
+            getAllMessages();
             showUnreadMessages();
             
             var qs = new Querystring();
