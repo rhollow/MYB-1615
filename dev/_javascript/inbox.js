@@ -787,30 +787,6 @@ sakai.inbox = function(){
         	types = "&types=" + selectedType.join(",");
         }
         
-        /*
-        if (selectedCategory) {
-            if (selectedCategory === "Message") {
-                cats = "message";
-            }
-            else 
-                if (selectedCategory === "Announcement") {
-                    cats = "announcement";
-                }
-                else 
-                    if (selectedCategory === "Invitation") {
-                        cats = "invitation";
-                    }
-                    else 
-                        if (selectedCategory === "Chat") {
-                            cats = "chat";
-                        }
-                        else 
-                            if (selectedCategory === "Reminder") {
-                                cats = "reminder";
-                            }
-            url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
-        }*/
-        
         if (selectedCategory) {
             cats = chooseCategory[selectedCategory];
             url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
