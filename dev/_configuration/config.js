@@ -473,7 +473,7 @@ sakai.config = {
         }
     },
 
-    Navigation: [
+    /*Navigation: [
         {
             "url" : "/dev/my_sakai.html",
             "label" : "MY_SAKAI"
@@ -494,7 +494,14 @@ sakai.config = {
             "url" : "javascript:;",
             "label" : "CALENDAR"
         }
-    ],
+    ],*/
+   
+   Navigation: [
+       {
+           "url" : "/dev/my_sakai.html",
+           "label" : "MY_SAKAI"
+       }
+   ],
 
     displayDebugInfo: true,
 

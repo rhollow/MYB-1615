@@ -34,7 +34,7 @@
         {var isEmpty = true}
         {for i in results}
             {if i["sakai:messagebox"] === "inbox"}
-                {isEmpty = false}
+                {var isEmpty = false}
                 <div id="div_${i.id}">
                     <li class="reminder" id="li_${i.id}">
                         <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>  
