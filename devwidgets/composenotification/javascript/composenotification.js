@@ -31,27 +31,19 @@ if (!sakai.composenotification){
 
         /**
          * 
-         * CSS IDS
+         * GENERAL CSS IDS
          * 
          */     
         var notificationBox = '#composenotification_box';
         var messageDone = "#message_done";
-        var messageForm = "#message_form";
-
-        var messageSingleToContainer = "#sendmessage_fixed_to_user";
-        var messageMultipleToContainer = "#sendmessage_multiple_to_container";
-        var messageMultipleToInputContainer = "#sendmessage_multiple_to_input_container";
-        var messageMultipleToBox = "#sendmessage_box_template";
-        var messageMultipleToBoxResult = ".sendmessage_multipleBox_result";
-        var messageMultipleToBoxDelete = ".sendmessage_multipleBox_delete";
-        var messageMultipleToWhat = "#sendmessage_multiple_to_what";
+        var messageForm = "#message_form";       
 
         /**
          * 
          * NOTIFICATION AUTHORING FORM ELEMENT IDS.
          * 
          */          
-        //All required unless otherwise stated.)
+        //All required unless otherwise stated.
         var messageFieldRequiredCheck = "#composenotification_required";
         var messageRequiredYes = "#cn-requiredyes";
         var messageRequiredNo = "#cn-requiredno";        
@@ -60,7 +52,7 @@ if (!sakai.composenotification){
         var messageFieldSubject = "#cn-subject";        
         var messageFieldBody = "#cn-body";
         
-        // Optional.
+        // Optional, unless required is checked.
         var messageReminderCheck = "#task-or-event-check";
         var messageReminderCheckbox = "#cn-remindercheck";
         
@@ -221,8 +213,8 @@ if (!sakai.composenotification){
             };
         });                 
             
-        // Task and event detail functions.
-        $('#task-radio').change(function() {
+        // Task and event detail functions.        
+        $(messageTaskCheck).change(function() {           
             $(".cn-task").show();
             $(".cn-event").hide();
             $(".cn-event").find(".compose-form-elm").each(function(){                
@@ -234,7 +226,7 @@ if (!sakai.composenotification){
             $(messageEventTimeAMPM).removeClass(invalidClass);
             $(messageEventPlace).removeClass(invalidClass);
         });          
-        $('#event-radio').change(function() {
+        $(messageEventCheck).change(function() {          
             $(".cn-task").hide();        
             $(".cn-event").show();
             $(".cn-task").find(".compose-form-elm").each(function(){             
@@ -277,7 +269,7 @@ if (!sakai.composenotification){
         // Testing disabling. REMOVE LATER.
         $('#disabling-test').click(function(){
             disableView();    
-        });
+        });              
                     
         // For dialog-overlay to remind user to save their draft.
         // (When user clicks on 'Create New Dyanmic List' button.)
@@ -289,31 +281,33 @@ if (!sakai.composenotification){
              onShow: null           
          }); 
          $("#save_reminder_dialog").css("position","absolute");
-         $("#save_reminder_dialog").css("top", "200px");    
+         $("#save_reminder_dialog").css("top", "250px");    
          
          // If 'Yes' is checked for required, then automatically check that it has a date.
          $(messageRequiredYes).change(function(){            
-            $(messageReminderCheckbox).attr("checked", true);
-            
-            $(messageTaskDueDate).removeClass(invalidClass); 
-            $(messageEventDate).removeClass(invalidClass);
-            $(messageEventTimeHour).removeClass(invalidClass);
-            $(messageEventTimeMinute).removeClass(invalidClass);
-            $(messageEventTimeAMPM).removeClass(invalidClass);
-            $(messageEventPlace).removeClass(invalidClass);
-            
-            if($(messageReminderCheckbox).is(":checked")){                
-                $(".composenotification_taskorevent").show();    
-            }
-            else{
-                $(".cn-task").hide();
-                $(".cn-event").hide();
-                $(".composenotification_taskorevent").hide();
-                $(".composenotification_taskorevent").find(".compose-form-elm").each(function() {
-                    clearElement(this);    
-                });                
-            };                        
+            $(messageReminderCheckbox).attr("checked", true);                                    
+            $(".composenotification_taskorevent").show();                                                   
          });                                                     
+         $(messageReminderCheckbox).change(function() {
+           if(!$(messageReminderCheckbox).attr("checked")){
+               if($(messageRequiredYes).attr("checked")){                   
+                   $(messageReminderCheckbox).attr("checked",true);
+                   $(".composenotification_taskorevent").show();   
+                   
+                   // Dialog overlay window to remind user that required notifications (reminders)
+                   // require a date and are either a task or event.
+                   $("#required_must_have_date_dialog").jqm({
+                     modal: true,                     
+                     overlay: 20,
+                     toTop: true,
+                     onShow: null           
+                 }); 
+                 $("#required_must_have_date_dialog").css("position","absolute");
+                 $("#required_must_have_date_dialog").css("top", "250px");
+                 $("#required_must_have_date_dialog").jqmShow();                                 
+               }
+           } 
+        });                        
 
         /**         
          * This method will check if there are any required fields that are not filled in.
@@ -367,13 +361,7 @@ if (!sakai.composenotification){
             if(!requiredYes && !requiredNo){
                 valid = false;
                 requiredEl.addClass(invalidClass);                
-            }
-            if(requiredYes && !reminderCheck){
-                // WIP
-                alert("Uh oh spaghetti oh.");
-                valid = false;                
-                reminderCheckEl.addClass(invalidClass); 
-            }
+            }           
             if(!sendDate) {
                 valid = false;
                 sendDateEl.addClass(invalidClass);               
@@ -440,8 +428,7 @@ if (!sakai.composenotification){
                     } 
                     
                     // Checking event time for invalids.
-                    if(eventTimeHour && eventTimeMinute && eventTimeAMPM){
-                        alert("All filled in!");
+                    if(eventTimeHour && eventTimeMinute && eventTimeAMPM){                        
                         var currentHour = today.getHours();                                               
                         var currentMin = today.getMinutes();
                         var compareToHour = parseInt(eventTimeHour); 
@@ -536,30 +523,59 @@ if (!sakai.composenotification){
 
             // The user we are sending a message to.
             user = userObj;                                       
-        };
-
-        // EDIT EDIT EDIT
+        };       
+        
         // When someone clicks the send button.
-        $(buttonSendMessage).bind("click", function(ev) {
-
+        $("#cn-queue-button").bind("click", function(ev) {                                              
             // Check the fields if there are any required fields that are not filled in.
             if (checkFieldsForErrors()) {
-
-                var body = $(messageFieldBody).val();
-                var subject = $(messageFieldSubject).val();
-
-                var tosend = selectedFriendsToPostTo.length;
-                var sent = 0;
-
-                for (var i = 0; i < selectedFriendsToPostTo.length; i++){
-
-                    sakai.api.Communication.sendMessage(selectedFriendsToPostTo[i], subject, body, "message", null, function(success, data){
-                        sent++;
-                        if (sent === tosend){
-                            showMessageSent(success);
-                        }
-                    });
+                // Common values.
+                var toSend = {
+                    "sakai:type": "notice",
+                    "sakai:to": $(messageFieldTo).val(), 
+                    "sakai:from": sakai.data.me.user.userid,
+                    "sakai:subject": $(messageFieldSubject).val(), 
+                    "sakai:body": $(messageFieldBody).val(),
+                    "sakai:sendstate": "pending",
+                    "sakai:read": false,
+                    "sakai:messagebox": "inbox"
+                }                                     
+                               
+                // Is this notification required or not?               
+                if($(messageRequiredYes).attr("checked")){                    
+                    // Reminders (could be task or event).
+                    toSend["sakai:category"] = "reminder";                   
                 }
+                else{                    
+                    // Notifications (treated same as a message).  
+                    toSend["sakai:category"] = "message";                                           
+                }                                  
+                
+                // See if it is a task or an event and get the appropriate info.
+                if($(messageTaskCheck).attr("checked", true)){
+                    toSend["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate");
+                    toSend["sakai:dueDate@TypeHint"] = "date";    
+                    toSend["sakai:taskState"] = "created";
+                }
+                else{
+                    toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
+                    toSend["sakai:eventDate@TypeHint"] = "date";
+                    toSend["sakai:eventPlace"] = $(messageEventPlace).val();
+                    toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();
+                }            
+                              
+                // Post all the data in an AJAX call.    
+                $.ajax({
+                    url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
+                    type: "POST",
+                    data: toSend,
+                    success: function(){
+                        alert("Success!");
+                    }, 
+                    error: function(){
+                        alert("Failure!");
+                    }
+                });            
             }
         });
     };              
