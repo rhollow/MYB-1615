@@ -168,13 +168,13 @@
 { width:148px; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_from_reminder
-{ width:150px; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:150px; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_subject_reminder
 { width:245px; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_date_reminder
-{ width:144px; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:145px; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_checkbox_reminder
 { width:75px; border-left: 1px solid #D4DADE; color: #666666; }

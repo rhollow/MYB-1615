@@ -523,7 +523,12 @@ sakai.inbox = function(){
      * @param {Object} reminder A reminder object
      */
     var formatReminder = function(reminder){
-        var dateString = reminder["sakai:dueDate"];
+        var dateString;
+        if (reminder["sakai:dueDate"] != null) {
+            dateString = reminder["sakai:dueDate"];
+        } else if(reminder["sakai:eventDate"] != null) {
+            dateString = reminder["sakai:eventDate"];
+        }
         var d = new Date();
         d.setFullYear(parseInt(dateString.substring(0, 4), 10));
         d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
@@ -531,7 +536,7 @@ sakai.inbox = function(){
         d.setHours(parseInt(dateString.substring(11, 13), 10));
         d.setMinutes(parseInt(dateString.substring(14, 16), 10));
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
-        //Jan 22, 2009 10:25 PM
+        //format Jan 22, 2009 10:25 PM
         reminder.date = sakai.inbox.formatDate(d, "M j, Y g:i A");
         
         return reminder;
@@ -631,8 +636,7 @@ sakai.inbox = function(){
             // style notice according to whether it's a message or reminder
             if (response.results[j]["sakai:category"] === "reminder") {
                 response.results[j] = formatReminder(response.results[j]);
-            }
-            else {
+            } else {
                 response.results[j] = formatMessage(response.results[j]);
             }
         }
@@ -662,7 +666,12 @@ sakai.inbox = function(){
                 tableRow.data("data", response.results[p]);
                 
                 if(response.results[p]["sakai:taskState"] != "completed") {
-                    var critical = compareDates(response.results[p]["sakai:dueDate"]);
+                    var critical;
+                    if (response.results[p]["sakai:dueDate"] != null) {
+                        critical = compareDates(response.results[p]["sakai:dueDate"]);
+                    } else if (response.results[p]["sakai:eventDate"]){
+                        critical = compareDates(response.results[p]["sakai:eventDate"]);
+                    }
                     tableRow.addClass(critical);
                 } else {
                     rowCheckbox.attr("checked", true);
@@ -683,6 +692,11 @@ sakai.inbox = function(){
                     if (reminderData["sakai:taskState"] === "completed") {
                         message = $(inboxGeneralMessagesNotCompleted).text();
                         if (reminderData["sakai:messagebox"] === "archive") {
+                            if(reminderData["sakai:read"] === false) {
+                                unreadReminders += 1;
+                                $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(), 10) + 1)));
+                                updateUnreadNumbers();
+                            }
                             propertyToUpdate = {
                                 "sakai:taskState": "created",
                                 "sakai:messagebox": "inbox"
@@ -692,8 +706,7 @@ sakai.inbox = function(){
                                 $(inboxTableMessageID + id).empty();
                                 $(inboxTableMessageID + id).remove();
                             }
-                        }
-                        else {
+                        } else {
                             propertyToUpdate = {
                                 "sakai:taskState": "created"
                             };
@@ -714,8 +727,7 @@ sakai.inbox = function(){
                     updateReminder(path, propertyToUpdate, funct);
                 });
             }
-        }
-        else {
+        } else {
             $(inboxInboxCheckMessage).attr("title", "Delete");
         }
     };
@@ -760,6 +772,7 @@ sakai.inbox = function(){
      * Server functions
      *
      */
+    
     /**
      * Gets all the messages from the JCR.
      */
@@ -893,6 +906,7 @@ sakai.inbox = function(){
      * Display specific message
      *
      */
+    
     /**
      * Get the message out of the list with the specific id.
      * @param {String} id    The id of a message
@@ -933,7 +947,7 @@ sakai.inbox = function(){
                 tableRow.addClass(inboxTablesubjectReadClass);
                 tableRow.removeClass(inboxTablesubjectUnreadClass);
                 
-                if (currentFilter != inboxFilterTrash) {
+                if (currentFilter != inboxFilterTrash && currentFilter != inboxFilterArchive) {
                     if (message["sakai:category"] === "message") {
                         unreadMessages -= 1;
                     }
@@ -954,7 +968,7 @@ sakai.inbox = function(){
                 }
                 
                 // Mark message in navigationchat as read
-                if (currentFilter != inboxFilterTrash) {
+                if (currentFilter != inboxFilterTrash && currentFilter != inboxFilterArchive) {
                     $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(), 10) - 1)));
                 }
                 
@@ -1491,6 +1505,7 @@ sakai.inbox = function(){
                 "sakai:messagebox": "archive"
             };
             
+            var unreadTotal = 0;
             for (var i = 0, j = pathToMessages.length; i < j; i++) {
                 var id = pathToMessages[i].split("/");
                 id = id[id.length - 1];
@@ -1498,12 +1513,19 @@ sakai.inbox = function(){
                 var reminderData = $(inboxTableMessageID + id).data("data");
                 var path = reminderData["jcr:path"];
                 
+                if(reminderData["sakai:read"] === false){
+                    unreadTotal++;
+                    unreadReminders -= 1;
+                }
+                
                 updateReminder(path, propertyToUpdate, function(){
                     $(inboxTableMessageID + id).empty();
                     $(inboxTableMessageID + id).remove();
                 });
             }
             
+            $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(), 10) - unreadTotal)));
+            updateUnreadNumbers();
             showGeneralMessage($(inboxGeneralMessagesArchived).text());
         }
     });
@@ -1665,9 +1687,7 @@ sakai.inbox = function(){
                 };
                 
                 getAllMessages(callback);
-            }
-            else {
-            
+            } else {
                 // Show messages by default (as if click on "Inbox > Messages")
                 filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
                 $(selectedFilterDiv).removeClass("selected");
