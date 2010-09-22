@@ -82,15 +82,15 @@ if (!sakai.composenotification){
         
         // Various arrays for event time picking.
         var allHourOptions = {                     
-          '01' : '01',
-          '02' : '02',
-          '03' : '03',
-          '04' : '04',
-          '05' : '05',
-          '06' : '06',
-          '07' : '07',
-          '08' : '08',
-          '09' : '09',
+          '1' : '1',
+          '2' : '2',
+          '3' : '3',
+          '4' : '4',
+          '5' : '5',
+          '6' : '6',
+          '7' : '7',
+          '8' : '8',
+          '9' : '9',
           '10' : '10',
           '11' : '11',
           '12' : '12'  
@@ -352,7 +352,11 @@ if (!sakai.composenotification){
             var eventTimeHour = eventTimeHourEl.val();
             var eventTimeMinute = eventTimeMinuteEl.val();            
             var eventTimeAMPM = eventTimeAMPMEl.val();
-            var eventPlace = eventPlaceEl.val();                                                                      
+            var eventPlace = eventPlaceEl.val();    
+            
+            var sendDateObj = $(sendDateEl).datepicker("getDate");
+            var taskDueDateObj = $(taskDueDateEl).datepicker("getDate");
+            var eventDateObj = $(eventDateEl).datepicker("getDate");                                                                  
             
             // Remove the invalidClass from each element first.
             clearInvalids();
@@ -366,7 +370,7 @@ if (!sakai.composenotification){
                 valid = false;
                 sendDateEl.addClass(invalidClass);               
             }                                    
-            else if(modtoday>$(sendDateEl).datepicker("getDate")){                                              
+            else if(modtoday>sendDateObj){                                              
                 valid = false;
                 sendDateEl.addClass(invalidClass);                
             }
@@ -395,10 +399,14 @@ if (!sakai.composenotification){
                         valid = false;
                         taskDueDateEl.addClass(invalidClass);
                     }
-                    else if(modtoday>$(taskDueDateEl).datepicker("getDate")) {                                              
+                    else if(modtoday>taskDueDateObj) {                                              
                         valid = false;
                         taskDueDateEl.addClass(invalidClass);
-                    }
+                    }             
+                    else if(sendDateObj>taskDueDateObj) {
+                        valid = false;
+                        taskDueDateEl.addClass(invalidClass);
+                    }      
                 }
                 else if (eventCheck) {
                     // The reminder is an EVENT.                                     
@@ -406,9 +414,40 @@ if (!sakai.composenotification){
                         valid = false;
                         eventDateEl.addClass(invalidClass);
                     }
-                    else if(modtoday>$(eventDateEl).datepicker("getDate")){                                                    
+                    else if(modtoday>eventDateObj){                                                    
                         valid = false;
                         eventDateEl.addClass(invalidClass);            
+                    }
+                    else if(sendDateObj>eventDateObj){
+                        valid = false;
+                        eventDateEl.addClass(invalidClass);
+                    }
+                    else{
+                        // If the event date is today, check that the time hasn't already passed.                                        
+                        if((eventDateObj.getTime()-modtoday.getTime())==0){                            
+                            if(eventTimeHour && eventTimeMinute && eventTimeAMPM){                                                    
+                                var compareToHour = parseInt(eventTimeHour);                             
+                                var compareToMin = parseInt(eventTimeMinute);                             
+                                
+                                // Convert to military time.
+                                if(eventTimeAMPM=="PM"){
+                                    if(compareToHour<12){
+                                        compareToHour = compareToHour+12;
+                                    }                                
+                                }                                                                                   
+                                                            
+                                eventDateObj.setHours(compareToHour);
+                                eventDateObj.setMinutes(compareToMin);                                                        
+                                
+                                // If the event is today and the time of the event has already passed...                  
+                                if(today.getTime()>eventDateObj.getTime()){
+                                    valid = false;                                
+                                    eventTimeHourEl.addClass(invalidClass);
+                                    eventTimeMinuteEl.addClass(invalidClass);
+                                    eventTimeAMPMEl.addClass(invalidClass);
+                                }              
+                            }    
+                        }
                     }
                     if (!eventTimeHour) {
                         valid = false;
@@ -425,35 +464,7 @@ if (!sakai.composenotification){
                     if (!eventPlace) {
                         valid = false;
                         eventPlaceEl.addClass(invalidClass);
-                    } 
-                    
-                    // Checking event time for invalids.
-                    if(eventTimeHour && eventTimeMinute && eventTimeAMPM){                        
-                        var currentHour = today.getHours();                                               
-                        var currentMin = today.getMinutes();
-                        var compareToHour = parseInt(eventTimeHour); 
-                        var compareToMin = parseInt(eventTimeMinute); 
-                        
-                        // Convert the user-picked hour to military time.                      
-                        if (eventTimeAMPM=="PM"){
-                            compareToHour = compareToHour+12;                                                       
-                        }
-                            
-                        // Compare the hours.
-                        // If they are equal, also compare the minutes.                    
-                        if (compareToHour<currentHour){                           
-                            valid = false;
-                            eventTimeHourEl.addClass(invalidClass);
-                            eventTimeMinuteEl.addClass(invalidClass);
-                            eventTimeAMPMEl.addClass(invalidClass);
-                        }       
-                        else if (compareToHour==currentHour && compareToMin<currentMin){                          
-                            valid = false;
-                            eventTimeHourEl.addClass(invalidClass);
-                            eventTimeMinuteEl.addClass(invalidClass);
-                            eventTimeAMPMEl.addClass(invalidClass);
-                        }               
-                    }                            
+                    }                                                                                                                                                                                          
                 }
             }                                            
             
@@ -506,7 +517,19 @@ if (!sakai.composenotification){
           $.each(allDynamicListOptions, function(val, text) {
               dynamicListOptions[dynamicListOptions.length] = new Option(text, val);
           });          
-        };
+        };                
+
+        var formatDate = function(dateStr){           
+            dateObj = new Date(dateStr);
+            var daysoftheweek = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+            var monthsoftheyear = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+            var month = dateObj.getMonth();
+            var day = dateObj.getDate();
+            var year = dateObj.getFullYear();
+            var dayofweek = dateObj.getDay()            
+            
+            return daysoftheweek[dayofweek]+" "+monthsoftheyear[month]+" "+day+", "+year;                      
+        }
 
         /**
          * This is the method that can be called from other widgets or pages.
@@ -552,28 +575,32 @@ if (!sakai.composenotification){
                 }                                  
                 
                 // See if it is a task or an event and get the appropriate info.
-                if($(messageTaskCheck).attr("checked", true)){
+                if($(messageTaskCheck).attr("checked")){                                       
                     toSend["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate");
-                    toSend["sakai:dueDate@TypeHint"] = "date";    
+                    toSend["sakai:dueDate@TypeHint"] = "date";   
                     toSend["sakai:taskState"] = "created";
                 }
-                else{
+                else{                    
                     toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
                     toSend["sakai:eventDate@TypeHint"] = "date";
                     toSend["sakai:eventPlace"] = $(messageEventPlace).val();
-                    toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();
+                    toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
+                        
+                    var eventDetails = "Date: "+formatDate(toSend["sakai:eventDate"])+"\nTime: "+toSend["sakai:eventTime"]+"\nPlace: "+toSend["sakai:eventPlace"]+"\n\n";
+                    toSend["sakai:body"] = eventDetails+toSend["sakai:body"];                                                                                                            
                 }            
                               
-                // Post all the data in an AJAX call.    
+                // Post all the data in an Ajax call.    
                 $.ajax({
                     url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                     type: "POST",
                     data: toSend,
                     success: function(){
                         alert("Success!");
+                        resetView();
                     }, 
                     error: function(){
-                        alert("Failure!");
+                        alert("Failure!");                        
                     }
                 });            
             }
