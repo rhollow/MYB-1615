@@ -93,6 +93,32 @@
                     <label for="cn-remindercheck">This message has a due date or event date.</label>
                 </div>
                 
+                <!-- REQUIRED MUST HAVE DATE DIALOG -->
+                <div id="required_must_have_date_dialog" class="dialog">
+                    <!-- Dialog Header -->
+                    <div class="dialog_header">
+                        <div class="dialog_header_inner">
+                            <h1>Warning</h1>
+                            <a href="javascript:;" class="jqmClose dialog_close_image" title="__MSG__CLOSE_DIALOG__">__MSG__CLOSE_DIALOG__</a>
+                        </div>
+                    </div>                        
+                    <!-- Dialog Content -->
+                    <div class="dialog_content">
+                        <p>This notification is flagged as required.<br>
+                           All required reminders must have a date, and be either a task or event.<br>
+                           Please properly fill out the task/event details, or uncheck this notification as
+                           required if it is not a reminder.</p>
+                        <div class="dialog_buttons">                            
+                            <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">Okay</span></button>
+                        </div>
+                    </div>                        
+                    <!-- Dialog Footer -->
+                    <div class="dialog_footer">
+                        <div class="dialog_footer_inner"><!-- 
+                        --></div>
+                    </div>                        
+                </div>
+                
                 <!-- IF YES, REMINDER: Task or Event? -->
                 <div class="composenotification_taskorevent" id="task-or-event-check" style="display: none;">
                     <p class="header">Task or Event?</p>

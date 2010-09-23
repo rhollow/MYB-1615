@@ -770,15 +770,20 @@ sakai.notificationsinbox = function(){
     
     // For when user cancels notification authoring (cancel button on pane 2).
     $("#cn-cancel-button").live("click", function(){
-        // jump back to inbox
+        // jump back to previous pane
         showPane(inboxPaneInbox);
-    });  
+        $(".inbox_inbox_header").each(function(){            
+            if ($(this).is(":visible")) {
+                correctHighlightedTab($(this).attr("id").substring(6, $(this).attr("id").length));
+            }
+        });
+    });
     
     // Various filter functions (left-hand side menu).
     $(inboxFilterInbox).click(function(){
         filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
-        correctButtonList("drafts");   
-        correctHighlightedTab("drafts");     
+        correctButtonList("inbox");   
+        correctHighlightedTab("inbox");     
     });
     
     $(inboxFilterQueue).click(function(){        
@@ -873,8 +878,7 @@ sakai.notificationsinbox = function(){
      */
     $(inboxSpecificMessageBackToInbox).click(function(){
         // Show the inbox.
-        showPane(inboxPaneInbox);
-    
+        showPane(inboxPaneInbox);    
     });
     
     $(inboxSpecificMessageOptionDelete).click(function(){
@@ -897,8 +901,6 @@ sakai.notificationsinbox = function(){
         var body = $(inboxSpecificMessageComposeBody).val();
         
         sakai.api.Communication.sendMessage(selectedMessage["sakai:from"], subject, body, "message", selectedMessage["sakai:id"], sendMessageFinished);
-        
-        
     });
     
     
