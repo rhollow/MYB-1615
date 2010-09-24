@@ -18,6 +18,7 @@
 
         <!-- 3rd party CSS -->
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.components.jq_pager.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/_css/lib/jquery.autoSuggest.css" />
 
 
         <!-- Sakai Config JS -->
@@ -40,11 +41,12 @@
         <!-- 3rd party JS -->
         <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
         <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.ba-bbq.js"></script>
         <script type="text/javascript" src="_javascript/_history/search_history.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js"></script>
 
     </head>
 
@@ -66,8 +68,8 @@
                     <ul class="fl-tabs fl-tabs-right">
                         <li><a id="tab_search_all" href="search.html#">__MSG__ALL__</a></li>
                         <li class="fl-tabs-active search_tab_selected"><a href="search_content.html#" id="tab_search_content">__MSG__CONTENT_AND_MEDIA__</a></li>
+                        <li><a href="search_groups.html#" id="tab_search_sites">__MSG__GROUPS__</a></li>
                         <li><a href="search_people.html#" id="tab_search_people">__MSG__PEOPLE__</a></li>
-                        <li><a href="search_sites.html#" id="tab_search_sites">__MSG__COURSES_AND_SITES__</a></li>
                     </ul>
                 </div>
 
@@ -81,20 +83,6 @@
                         <!-- SEARCH BAR -->
                         <div class="fl-left fl-container fl-fix search_bar">
                             <div id="search_form" >
-                                <div id="search_site_select"></div>
-                                <div id="search_site_select_template"><!--
-                                    <select class="skinned_select" id="search_filter" title="__MSG__SELECT_SITE_TO_SEARCH__">
-                                        <option value="entire_community" id="search_filter_community">__MSG__ENTIRE_COMMUNITY__</option>
-                                        <option value="all_my_sites" id="search_filter_all_my_sites">__MSG__ALL_MY_SITES__</option>
-                                        {if sites.length > 0}
-                                            <optgroup id="search_filter_my_sites" label="__MSG__CHOOSE_A_SPECIFIC_SITE_WHERE_YOU_WANT_TO_SEARCH_IN__.">
-                                                {for i in sites}
-                                                    <option value="${i.siteref}" id="search_filter_my_sites_${i.siteref}">${i.site.name}</option>
-                                                {/for}
-                                            </optgroup>
-                                        {/if}
-                                    </select>
-                                --></div>
                                 <input type="text" maxlength="255" id="search_text" class="input" value="__MSG__ENTER_A_SEARCHTERM__" title="__MSG__ENTER_A_SEARCHTERM__" />
                                 <button id="search_button" class="s3d-search-button s3d-button s3d-button-primary"><span class="s3d-button-inner"><span class="s3d-button-icon-right">__MSG__SEARCH__</span></span></button>
                                 <!-- SITEs TEMPLATE -->
@@ -105,20 +93,37 @@
                                 --></div>
                             </div>
                         </div>
-                        <div class="fl-left fl-container search_result_title" id="search_results_header">
-                            __MSG__FOUND__ <strong id="search_numberFound">0</strong>
-                            __MSG__RESULTS_MATCHING_YOUR_SEARCH_FOR__
-                            <span class="keyword" id="search_mysearchterm"></span> </div>
 
                         <!-- TEMPORARY SEARCH TEXT -->
-                        <span id="search_result_temp" style="display:none;"><b>__MSG__SEARCHING__ ...</b></span>
+                        <div id="search_result_temp" style="display:none;"><div class="search_padded_content"><b>__MSG__SEARCHING__ ...</b></div></div>
+
+                        <div class="fl-container fl-fix search_results">
+
+                        <div class="search_results_faceted">
+                            <!-- CONTAINER FOR FACETED -->
+                            <div id="faceted_container"></div>
+
+                            <!-- FACETED WIDGET -->
+                            <div id="widget_faceted" class="widget_inline"></div>
+                        </div>
 
                         <!-- SEARCH RESULTS -->
-                        <div id="search_results_page1" class="fl-container fl-fix search_results_container">
+                        <div id="search_results_page1" class="search_results_container search_results_container_sub">
+
                             <div class="search_top_rounded"><div class="search_top_rounded_inner"><!-- --></div></div>
 
                             <!-- CONTENT -->
                             <div class="fl-container fl-fix search_results_part">
+                                
+                                <div class="fl-left fl-container search_result_title" id="search_results_header">
+                                    __MSG__FOUND__ <strong id="search_numberFound">0</strong>
+                                    __MSG__RESULTS_MATCHING_YOUR_SEARCH_FOR__
+                                    <span class="keyword" id="search_mysearchterm"></span> 
+                                </div>
+                                <div class="fl-left fl-container search_result_title" id="search_results_tag_header">
+                                    __MSG__RESULTS_TAGGED_UNDER__
+                                    <span class="keyword" id="search_mytagterm"></span> 
+                                </div>
 
                                 <!-- CONTAINER FOR THE RESULTS -->
                                 <div id="search_results_container"></div>
@@ -127,17 +132,25 @@
                             <!-- TEMPLATE CONTAINING THE RESULTS -->
                             <div id="search_results_template"><!--
                                 {for i in items}
+                                    {if i['sakai:pooled-content-file-name']}
+                                    {var contentFound = true}
                                     <div class="fl-container fl-fix search_result">
-                                        {if i['sakai:mimeType']}
-                                            {var mimeType = i['sakai:mimeType']}
-                                        {elseif i.file && i.file['sakai:mimeType']}
-                                            {var mimeType = i.file['sakai:mimeType']}
+                                        {if i['jcr:mimeType']}
+                                            {var mimeType = i['jcr:mimeType']}
+                                        {elseif i.file && i.file['jcr:mimeType']}
+                                            {var mimeType = i.file['jcr:mimeType']}
+                                        {elseif i['jcr:content'] && i['jcr:content']['jcr:mimeType']}
+                                            {var mimeType = i['jcr:content']['jcr:mimeType']}
                                         {elseif i['jcr:primaryType'] === "sling:Folder"}
                                             {var mimeType = 'folder'}
                                         {/if}
                                         {if mimeType=="image/jpg" || mimeType=="image/png" || mimeType=="image/gif" || mimeType=="image/bmp"}
                                             {var mimeTypeDescription = sakai.config.MimeTypes[mimeType].description}
-                                            <img src="${i.path}" alt="${mimeTypeDescription}" />
+                                            {if i['jcr:primaryType'] && i['jcr:primaryType'] === "sakai:pooled-content"}
+                                                <img src="/p/${i['jcr:name']}" alt="${mimeTypeDescription}" />
+                                            {else}
+                                                <img src="${i['jcr:path']}" alt="${mimeTypeDescription}" />
+                                            {/if}
                                         {elseif sakai.config.MimeTypes[mimeType]}
                                             {var mimeTypeDescription = sakai.config.MimeTypes[mimeType].description}
                                             <img src="${sakai.config.MimeTypes[mimeType].URL}" alt="${mimeTypeDescription}" />
@@ -146,24 +159,28 @@
                                             <img src="${sakai.config.MimeTypes["other"].URL}" alt="${mimeTypeDescription}" />
                                         {/if}
                                         <div class="search_result_right">
-                                            <div class="search_result_header"><a href="${i.path}">{if i.name}${i.name}{else}${i["sakai:filename"]}{/if}</a></div>
+                                            <div class="search_result_header"><a href="/dev/content_profile.html#content_path={if i['sakai:pooled-content-file-name']}/p/${i['jcr:name']}{else}${i['jcr:path']}{/if}">{if i['sakai:pooled-content-file-name']}${i['sakai:pooled-content-file-name']}{elseif i['jcr:name']}${i['jcr:name']}{/if}</a></div>
                                             {if i["sakai:description"]}<div class="search_result_description">${i["sakai:description"]}</div>{/if}
                                             {if i["sakai:tags"] && i["sakai:tags"].length > 0}
                                                 <div class="search_result_tags">__MSG__TAGS__:
                                                     {for t in i["sakai:tags"]}{if t_index > 0},{/if} ${t}{/for}
                                                 </div>
                                             {/if}
-                                            {if mimeTypeDescription}<div class="search_result_type"><a href="${i.path}">${mimeTypeDescription}</a></div>{/if}
+                                            {if mimeTypeDescription}<div class="search_result_type"><a href="/dev/content_profile.html#content_path={if i['sakai:pooled-content-file-name']}/p/${i['jcr:name']}{else}${i['jcr:path']}{/if}">${mimeTypeDescription}</a></div>{/if}
                                         </div>
                                     </div>
-                                {forelse}
-                                    __MSG__NO_CONTENT_AND_MEDIA_FOUND__
+                                    {/if}
                                 {/for}
+                                {if !contentFound}
+                                    <div class="search_padded_content">__MSG__NO_CONTENT_AND_MEDIA_FOUND__</div>
+                                {/if}
                             --></div>
 
                             <div class="search_bottom_rounded"><div class="search_bottom_rounded_inner"><!-- --></div></div>
                         </div>
+                        </div>
                     </div>
+
                     <div class="search_tab_content_bottom">
                         <div class="search_tab_content_bottom_inner"><!-- --></div>
                     </div>

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global */
+/*global $ */
 
 var sakai = sakai || {};
 
@@ -29,7 +29,6 @@ sakai.filerevisions = function(tuid, showSettings){
 
     var $fileRevisionsDialog = $("#filerevisions_dialog");
     var baseFileData = {};
-    var revisions = [];
 
     // Templates
     var filerevisionsTemplate = "#filerevisions_template";
@@ -51,7 +50,7 @@ sakai.filerevisions = function(tuid, showSettings){
         var year = date.getFullYear();
         var formattedDate = day + " " + month + " " + year;
         return formattedDate;
-    }
+    };
 
     /**
      * Render the template that displays all revision information
@@ -59,9 +58,31 @@ sakai.filerevisions = function(tuid, showSettings){
     var renderRevisionData = function(){
         var data = [];
         baseFileData.created = getFormattedDate(new Date(baseFileData["jcr:created"]));
-        data.data = baseFileData
+        data.data = baseFileData;
+        data.linkrevision = $("#content_profile_details_view_revisions").hasClass("link_revision");
+
         var renderedTemplate = $.TemplateRenderer(filerevisionsTemplate, data);
         $(filerevisionsTemplateContainer).html(renderedTemplate);
+
+        var renderedTemplate = $.TemplateRenderer("#filerevision_header_text_template", data);
+        $("#filerevision_header_text").html(renderedTemplate);
+    };
+
+    /**
+     * Get userprofile with the userid provided
+     * @param {Object} userid
+     */
+    var getUserProfile = function(userid){
+        $.ajax({
+            url: "/~" + userid + "/public/authprofile.infinity.json",
+            success: function(profile){
+                baseFileData["sakai:savedByFull"] = sakai.api.User.getDisplayName(profile);
+                renderRevisionData();
+            },
+            error: function(xhr, textStatus, thrownError){
+                sakai.api.Util.notification.show("Failed loading profile", "Failed to load file profile information");
+            }
+        });
     };
 
     /**
@@ -71,11 +92,13 @@ sakai.filerevisions = function(tuid, showSettings){
     var getRevisionInformationDetails = function(){
         var revisionInformationDetails = [];
         for (var i in baseFileData.revisions) {
-            var item = {
-                "url": baseFileData.path + ".version.," + i + ",.json",
-                "method" : "GET"
-            };
-            revisionInformationDetails[revisionInformationDetails.length] = item;
+            if (baseFileData.revisions.hasOwnProperty(i)) {
+                var item = {
+                    "url": baseFileData.path + ".version.," + i + ",.json",
+                    "method": "GET"
+                };
+                revisionInformationDetails[revisionInformationDetails.length] = item;
+            }
         }
         // Do the Batch request
         $.ajax({
@@ -91,10 +114,12 @@ sakai.filerevisions = function(tuid, showSettings){
                 // Get file information out of results
                 var revisionFileDetails = [];
                 for (var i in data.results){
-                    revisionFileDetails[revisionFileDetails.length] = $.parseJSON(data.results[i].body);
+                    if (data.results.hasOwnProperty(i)) {
+                        revisionFileDetails[revisionFileDetails.length] = $.parseJSON(data.results[i].body);
+                    }
                 }
                 baseFileData.revisionFileDetails = revisionFileDetails;
-                renderRevisionData();
+                getUserProfile(baseFileData.data["sakai:savedBy"]);
             },
             error: function(xhr, textStatus, thrownError){
 
@@ -111,14 +136,20 @@ sakai.filerevisions = function(tuid, showSettings){
             type : "GET",
             success: function(data){
                 for (var i in data.versions){
-                    data.versions[i]["jcr:created"] = getFormattedDate(new Date(data.versions[i]["jcr:created"]));
+                    if (data.versions.hasOwnProperty(i)) {
+                        if (!$.browser.webkit) {
+                            data.versions[i]["jcr:created"] = getFormattedDate(new Date(data.versions[i]["jcr:created"]));
+                        }else{
+                            data.versions[i]["jcr:created"] = getFormattedDate(new Date(data.versions[i]["jcr:created"].split("T")[0]));
+                        }
+                    }
                 }
                 baseFileData.revisions = data.versions;
                 getRevisionInformationDetails();
             },
             error: function(){
                 sakai.api.Util.notification.show("Revision information not retrieved", "The revision information for the file could not be retrieved");
-            },
+            }
         });
     };
 

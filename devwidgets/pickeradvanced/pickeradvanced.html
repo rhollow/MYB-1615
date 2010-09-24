@@ -2,10 +2,11 @@
 <link rel="stylesheet" type="text/css" href="/devwidgets/pickeradvanced/css/pickeradvanced.css" />
 
 <!-- MAIN VIEW -->
-<div id="pickeradvanced_container" style="display:none" class="dialog">
+<div id="pickeradvanced_container" class="dialog">
     <div id="pickeradvanced_container_header" class="dialog_header">
         <div class="dialog_header_inner">
-            <h1>Search for People to add</h1>
+            <h1 id="pickeradvanced_search_people" class="pickeradvanced_search_titles" style="display:none">__MSG__SEARCH_FOR_PEOPLE_TO_ADD__</h1>
+            <h1 id="pickeradvanced_search_files"  class="pickeradvanced_search_titles" style="display:none">__MSG__SEARCH_FOR_CONTENT_TO_ADD__</h1>
             <a href="javascript:;" class="dialog_close_image pickeradvanced_close_dialog" title="Close Dialog"></a>
         </div>
     </div>
@@ -13,35 +14,40 @@
         <div id="pickeradvanced_header">
             <span class="fl-force-left">
                 <form id="pickeradvanced_content_search_form" method="post" action="javascript:;">
-                    Search For <input name="pickeradvanced_search_query" id="pickeradvanced_search_query" />
+                    __MSG__SEARCH_FOR__ <input name="pickeradvanced_search_query" id="pickeradvanced_search_query" />
                     <button type="button" class="s3d-button" id="pickeradvanced_search_button">
-                        <span class="s3d-button-inner">search</span>
+                        <span class="s3d-button-inner">__MSG__SEARCH__</span>
                     </button>
                 </form>
             </span>
 
             <span class="fl-force-right">
-                <select class="pickeradvanced_sort_on">
-                    <option default="true" value="lastNameAsc">Last name A-Z</option>
-                    <option value="lastNameDesc">Last name Z-A</option>
-                    <option value="firstNameAsc">First name A-Z</option>
-                    <option value="firstNameDesc">First name Z-A</option>
+                <select id="pickeradvanced_sort_on">
+                    <option default="true" value="basic/elements/lastName/@value_ascending">__MSG__LAST_NAME__ __MSG__A_Z__</option>
+                    <option value="basic/elements/lastName/@value_descending">__MSG__LAST_NAME__ __MSG__Z_A__</option>
+                    <option value="basic/elements/firstName/@value_ascending">__MSG__FIRST_NAME__ __MSG__A_Z__</option>
+                    <option value="basic/elements/firstName/@value_descending">__MSG__FIRST_NAME__ __MSG__Z_A__</option>
                 </select>
             </span>
         </div>
 
         <div id="pickeradvanced_content">
+            <div id="pickeradvanced_results_header" class="fl-force-left"><span><a href="javascript:;" id="pickeradvanced_select_all_button" class="s3d-action">__MSG__SELECT_ALL__</a></span></div>
             <div id="pickeradvanced_content_list" class="fl-force-left">
-                <ul id="pickeradvanced_people_filters">
-                    <li><a href="javascript:;" id="pickeradvanced_search_contacts" class="pickeradvanced_search_filter">All Contacts</li>
-                    <li><a href="javascript:;" id="pickeradvanced_search_users" class="pickeradvanced_search_filter">All Users</li>
-                    <li><a href="javascript:;" id="pickeradvanced_search_groups" class="pickeradvanced_search_filter">All Groups</li>
+                <ul id="pickeradvanced_file_filters" style="display:none" class="pickeradvanced_search_content">
+                    <li><a href="javascript:;" id="pickeradvanced_search_files_mine" class="pickeradvanced_search_filter s3d-action">__MSG__MY_CONTENT__</a></li>
+                    <li><a href="javascript:;" id="pickeradvanced_search_files_view" class="pickeradvanced_search_filter s3d-action">__MSG__CONTENT_I_CAN_SEE__</a></li>
                 </ul>
-                <ul id="pickeradvanced_group_filters">
-                    <li><a href="javascript:;" id="pickeradvanced_search_groups_member" class="pickeradvanced_search_filter">Groups I can see</li>
-                    <li><a href="javascript:;" id="pickeradvanced_search_groups_manager" class="pickeradvanced_search_filter">Groups I manage</li>
+                <ul id="pickeradvanced_people_filters" style="display:none" class="pickeradvanced_search_people">
+                    <li><a href="javascript:;" id="pickeradvanced_search_contacts" class="pickeradvanced_search_filter s3d-action">__MSG__ALL_CONTACTS__</a></li>
+                    <li><a href="javascript:;" id="pickeradvanced_search_users" class="pickeradvanced_search_filter s3d-action">__MSG__ALL_USERS__</a></li>
+                    <li><a href="javascript:;" id="pickeradvanced_search_groups" class="pickeradvanced_search_filter s3d-action">__MSG__ALL_GROUPS__</a></li>
                 </ul>
-                <ul id="pickeradvanced_group_specific_filters">
+                <ul id="pickeradvanced_group_filters" style="display:none" class="pickeradvanced_search_people">
+                    <li><a href="javascript:;" id="pickeradvanced_search_groups_member" class="pickeradvanced_search_filter s3d-action">__MSG__GROUPS_I_CAN_SEE__</a></li>
+                    <li><a href="javascript:;" id="pickeradvanced_search_groups_manager" class="pickeradvanced_search_filter s3d-action">__MSG__GROUPS_I_MANAGE__</a></li>
+                </ul>
+                <ul id="pickeradvanced_group_specific_filters" class="last pickeradvanced_search_people" style="display:none">
                 </ul>
             </div>
             <div id="pickeradvanced_content_search" class="fl-force-left"></div>
@@ -50,8 +56,8 @@
                     <button type="button" class="s3d-button s3d-button-primary fl-force-right" disabled="disabled" id="pickeradvanced_add_button">
                         <span class="s3d-button-inner">__MSG__ADD_SELECTED__</span></span>
                     </button>
-                    <button type="button" class="s3d-button fl-force-right" id="pickeradvanced_close">
-                        <span class="s3d-button-inner">Cancel</span>
+                    <button type="button" class="s3d-button fl-force-right" id="pickeradvanced_close_button">
+                        <span class="s3d-button-inner">__MSG__CANCEL__</span>
                     </button>
                 </div>
             </div>
@@ -73,23 +79,76 @@
 
             <div id="pickeradvanced_content_search_pagetemplate" style="display:none;"><!--
                 {for i in results}
-                <li id="${i['rep:userId']}">
-                    {if i.picture}
-                        <img src="/~${i["rep:userId"]}/public/profile/${i.picture.name}" alt="Profile picture for ${i.firstName} ${i.lastName}" class="pickeradvanced_ppicture"/>
-                    {else}
-                        <img src="/dev/_images/person_icon.jpg" alt="Default profile picture" class="pickeradvanced_ppicture"/>
+                    {if i['rep:userId']}
+                    <li id="${i['rep:userId']}">
+                        {if i.picture}
+                            <img src="/~${i["rep:userId"]}/public/profile/${$.parseJSON(i.picture).name}" alt="Profile picture for ${i.firstName} ${i.lastName}" class="pickeradvanced_ppicture"/>
+                        {else}
+                            <img src="/dev/_images/person_icon.jpg" alt="Default profile picture" class="pickeradvanced_ppicture"/>
+                        {/if}
+                        <a class="pickeradvanced_name" href="/dev/show.html?type=user&amp;id=${i['rep:userId']}" target="_blank">${sakai.api.User.getDisplayName(i)}</a>
+                        <br />
+                        {if sakai.api.User.getShortDescription(i).length > 125}
+                            <span class="pickeradvanced_subnameinfo">${sakai.api.User.getShortDescription(i).substring(0, 125)}...</span>
+                        {else}
+                            <span class="pickeradvanced_subnameinfo">${sakai.api.User.getShortDescription(i)}</span>
+                        {/if}
+                    </li>
+                    {elseif i['sakai:group-id']}
+                    <li id="${i['sakai:group-id']}">
+                        {if i.picture}
+                            <img src="/~${i["sakai:group-id"]}/public/profile/${$.parseJSON(i.picture).name}" alt="Profile picture for ${i["sakai:group-title"]}" class="pickeradvanced_ppicture"/>
+                        {else}
+                            <img src="/dev/_images/group_avatar_icon_64x64.png" alt="Default group picture" class="pickeradvanced_ppicture"/>
+                        {/if}
+                        <a class="pickeradvanced_name" href="/dev/show.html?type=group&amp;id=${i["sakai:group-id"]}" target="_blank">${i["sakai:group-title"]}</a>
+                        <br />
+                        {if i["sakai:group-description"]}
+                            {if i["sakai:group-description"].length > 125}
+                                <span class="pickeradvanced_subnameinfo">${i["sakai:group-description"].substring(0, 125)}...</span>
+                            {else}
+                                <span class="pickeradvanced_subnameinfo">${i["sakai:group-description"]}</span>
+                            {/if}
+                        {/if}
+                    </li>
+                    {elseif i["sakai:pooled-content-file-name"]}
+                    <li id="${i["jcr:name"]}">
+                        {var mimetype = i["jcr:content"]["jcr:mimeType"]}
+                        {if mimetype == "image/jpg" || mimetype == "image/jpeg" || mimetype == "image/png" || mimetype == "image/gif" || mimetype == "image/bmp" }
+                            <img src="/p/${i["jcr:name"]}/${i["sakai:pooled-content-file-name"]}" alt="${sakai.config.MimeTypes[mimetype].description}" class="pickeradvanced_ppicture"/>
+                        {elseif sakai.config.MimeTypes[mimetype]}
+                            <img src="${sakai.config.MimeTypes[mimetype].URL}" alt="${sakai.config.MimeTypes[mimetype].description}" class="pickeradvanced_ppicture"/>
+                        {else}
+                            <img src="${sakai.config.MimeTypes["other"].URL}" alt="${sakai.config.MimeTypes["other"].description}" class="pickeradvanced_ppicture"/>
+                        {/if}
+                        <a class="pickeradvanced_name" href="/dev/content_profile.html#content_path=/p/${i["jcr:name"]}" target="_blank">${i["sakai:pooled-content-file-name"]}</a>
+                        <br />
+                        {if i["sakai:description"]}
+                            {if i["sakai:description"].length > 125}
+                                <span class="pickeradvanced_subnameinfo">${i["sakai:description"].substring(0, 125)}...</span>
+                            {else}
+                                <span class="pickeradvanced_subnameinfo">${i["sakai:description"]}</span>
+                            {/if}
+                        {/if}
+                    </li>
                     {/if}
-                    <a class="pickeradvanced_name" href="/dev/profile.html?user=${i['rep:userId']}" target="_blank">${sakai.api.User.getDisplayName(i)}</a>
-                    <br />
-                    <span class="pickeradvanced_subnameinfo">${sakai.api.User.getShortDescription(i)}</span>
-                </li>
+                {forelse}
+                    <span id="pickeradvanced_no_results">__MSG__NO_RESULTS__</span>
                 {/for}
             --></div>
         </div>
 
+        <div id="pickeradvanced_group_search_template" style="display:none"><!--
+            <li><a href="javascript:;" id="pickeradvanced_search_groups_${data.groupid}" class="pickeradvanced_search_filter s3d-action">${data["sakai:group-title"]}</a></li>
+        --></div>
+
         <div id="pickeradvanced_error_template" style="display:none;">
-            <span>Sorry, could not retrieve the list of users form the server!</span>
+            <span>__MSG__ERROR_MSG__</span>
         </div>
+    </div>
+    <!-- DIALOG FOOTER -->
+    <div class="dialog_footer">
+        <div class="dialog_footer_inner"><!-- --></div>
     </div>
 </div>
 

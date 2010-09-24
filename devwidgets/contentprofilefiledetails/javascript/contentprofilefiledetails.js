@@ -44,27 +44,6 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
     var fileRevisions = [];
     var profileData = [];
 
-    var convertToHumanReadableFileSize = function(filesize){
-        // Divide the length into its largest unit
-        var units = [[1024 * 1024 * 1024, 'GB'], [1024 * 1024, 'MB'], [1024, 'KB'], [1, 'bytes']];
-        var lengthunits;
-        for (var i = 0, j=units.length; i < j; i++) {
-
-            var unitsize = units[i][0];
-            var unittext = units[i][1];
-
-            if (filesize >= unitsize) {
-                filesize = filesize / unitsize;
-                // 1 decimal place
-                filesize = Math.ceil(filesize * 10) / 10;
-                lengthunits = unittext;
-                break;
-            }
-        }
-        // Return the human readable filesize
-        return filesize + " " + lengthunits;
-    };
-
     var addBinding = function(){
         // Bind the download button
         $(contentProfileFileDetailsActionDownload).bind("click", function(){
@@ -73,7 +52,7 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
 
         // Open the delete content pop-up
         $(contentProfileFileDetailsActionDelete).bind("click", function(){
-            sakai.deletecontent.init(profileData);
+            sakai.deletecontent.init(sakai.content_profile.content_data);
         });
     };
 
@@ -90,6 +69,23 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
         return formattedDate;
     }
 
+    /**
+     * Get userprofile with the userid provided
+     * @param {Object} userid
+     */
+    var getUserProfile = function(userid){
+        $.ajax({
+            url: "/~" + userid + "/public/authprofile.infinity.json",
+            success: function(profile){
+                profileData["sakai:pool-content-created-for-full"] = sakai.api.User.getDisplayName(profile);
+                renderDetails();
+            },
+            error: function(xhr, textStatus, thrownError){
+                sakai.api.Util.notification.show("Failed loading profile", "Failed to load file profile information");
+            }
+        });
+    }
+
     var renderDetails = function(){
         // Construct the JSON object
         // Create a readable data to display
@@ -102,7 +98,7 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
             revisions: fileRevisions,
             mode: "content",
             url: contentPath,
-            filesize: convertToHumanReadableFileSize(profileData["jcr:content"][":jcr:data"]),
+            filesize: sakai.api.Util.convertToHumanReadableFileSize(profileData["jcr:content"][":jcr:data"]),
             anon : anon
         };
 
@@ -135,7 +131,7 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
                     }
                     fileRevisions[fileRevisions.length] = item;
                 }
-                renderDetails();
+                getUserProfile(profileData["sakai:pool-content-created-for"]);
             },
             error: function(xhr, textStatus, thrownError){
                 sakai.api.Util.notification.show("Failed loading revisions", "Failed to load file revision information");
@@ -144,17 +140,15 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
     }
 
     var loadContentProfile = function(){
-        // Check whether there is actually a content path in the URL
-        if (contentPath) {
-            $.ajax({
-                url: contentPath + ".2.json",
-                success: function(data){
-                    data.path = contentPath;
-                    profileData = data;
-                    // Load the revisions of this file
+        if (sakai.content_profile.content_data && sakai.content_profile.content_data.data) {
+            profileData = sakai.content_profile.content_data.data;
+            loadRevisions();
+        } else {
+            sakai.content_profile.loadContentProfile(function(success) {
+                if (success) {
+                    profileData = sakai.content_profile.content_data.data;
                     loadRevisions();
-                },
-                error: function(xhr, textStatus, thrownError){
+                } else {
                     sakai.api.Util.notification.show("Failed loading data", "Failed to load file information");
                 }
             });
@@ -173,7 +167,6 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
                     for (var i in managers) {
                         if (managers[i].userid === sakai.data.me.user.userid) {
                             anon = false;
-                            loadContentProfile();
                             break;
                         }
                         else {
@@ -183,8 +176,8 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
                 }
                 else {
                     anon = true;
-                    loadContentProfile();
                 }
+                loadContentProfile();
             },
             error: function(xhr, textStatus, thrownError){
                 anon = true;
@@ -197,28 +190,40 @@ sakai.contentprofilefiledetails = function(tuid, showSettings){
         if (sakai.data.me.user.anon) {
             anon = true;
         }
+
         // Bind an event to window.onhashchange that, when the history state changes,
         // loads all the information for the current resource
         $(window).bind('hashchange', function(e){
-            contentPath = e.getState("content_path") || "";
-
-            if (sakai.data.me.user.anon) {
-                anon = true;
-                loadContentProfile();
-            } else {
-                checkFileManager();
-            }
+            handleHashChange();
         });
+        handleHashChange();
+    };
 
-        // Since the event is only triggered when the hash changes, we need to trigger
-        // the event now, to handle the hash the page may have loaded with.
-        $(window).trigger('hashchange');
+    var handleHashChange = function() {
+        contentPath = $.bbq.getState("content_path") || "";
+
+        if (sakai.data.me.user.anon) {
+            anon = true;
+            loadContentProfile();
+        } else {
+            checkFileManager();
+        }
     };
 
     $(contentProfileFileDetailsViewRevisions).live("click",function(){
-        sakai.filerevisions.initialise(profileData);
+        sakai.filerevisions.initialise(sakai.content_profile.content_data);
     });
 
-    doInit();
+    $(window).bind("sakai-fileupload-complete", function(){
+        doInit();
+    });
+
+    if (sakai.content_profile.content_data && sakai.content_profile.content_data.data) {
+        doInit();
+    } else {
+        $(window).bind("sakai-contentprofile-ready", function() {
+            doInit();
+        });
+    }
 };
 sakai.api.Widgets.widgetLoader.informOnLoad("contentprofilefiledetails");

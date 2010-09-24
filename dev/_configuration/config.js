@@ -29,7 +29,7 @@ sakai.config = {
         LOGOUT_URL: "/dev/logout.html",
         MY_DASHBOARD_URL: "/dev/my_sakai.html",
         PEOPLE_URL: "/dev/people.html",
-        PROFILE_URL: "/dev/profile.html",
+        PROFILE_URL: "/dev/show.html?type=user",
         PROFILE_EDIT_URL: "/dev/profile_edit.html",
         PUBLIC_CONTENT_MEDIA_URL: "/dev/public_content_media.html",
         PUBLIC_COURSES_SITES_URL: "/dev/public_courses_sites.html",
@@ -41,7 +41,7 @@ sakai.config = {
         SEARCH_GENERAL_URL: "/dev/search.html",
         SEARCH_PEOPLE_URL: "search_people.html",
         SEARCH_SITES_URL: "search_sites.html",
-        TINY_MCE_CONTENT_CSS: "/dev/_css/FSS/fss-base.css,/dev/_css/sakai/sakai.core.2.css,/dev/_css/sakai/sakai.css,/dev/_css/sakai/sakai.editor.css",
+        TINY_MCE_CONTENT_CSS: "/dev/_css/FSS/fss-base.css,/dev/_css/sakai/sakai.core.2.css,/dev/_css/sakai/sakai.css,/dev/_css/sakai/sakai.editor.css,/dev/_css/sakai/sakai.show.css",
         USER_DEFAULT_ICON_URL: "/dev/_images/person_icon.jpg",
         USER_DEFAULT_UPLOAD_FOLDER: "/private/uploads",
 
@@ -54,21 +54,26 @@ sakai.config = {
         CHAT_GET_SERVICE: "/var/message/chat/__KIND__.json",
         CHAT_UPDATE_SERVICE: "/var/message.chatupdate.json",
         CONTACTS_ACCEPTED: "/var/contacts/accepted.json",
+        CONTACTS_ALL: "/var/contacts/all.json",
         CONTACTS_INVITED: "/var/contacts/invited.json",
+        CONTACTS_PENDING: "/var/contacts/pending.json",
         CREATE_USER_SERVICE: "/system/userManager/user.create.html",
         DISCUSSION_GETPOSTS_THREADED: "/var/search/discussions/threaded.json?path=__PATH__&marker=__MARKER__",
         DISCUSSION_INITIALPOSTS_SERVICE: "/var/search/discussions/initialdiscussionposts.json?path=__PATH__&items=__ITEMS__&page=__PAGE__",
         FRIEND_ACCEPTED_SERVICE: "/var/contacts/accepted.json",
         GOOGLE_CHARTS_API: "http://chart.apis.google.com/chart",
         GROUP_CREATE_SERVICE: "/system/userManager/group.create.json",
+        GROUPS_MANAGER: "/system/me/managedgroups.json",
+        GROUPS_MEMBER: "/system/me/groups.json",
         HEADER_SERVICE: "/var/proxy/header.json",
         IMAGE_SERVICE: "/var/image/cropit",
         LOGIN_SERVICE: "/system/sling/formlogin",
         LOGOUT_SERVICE: "/system/sling/logout?resource=/dev/index.html",
         ME_SERVICE: "/system/me",
-        MESSAGE_BOX_SERVICE: "/var/message/internal/box.json",
+        MESSAGE_BOX_SERVICE: "/var/message/box.json",
         MESSAGE_BOXCATEGORY_SERVICE: "/var/message/boxcategory.json",
         POOLED_CONTENT_MANAGER: "/var/search/pool/me/manager.json",
+        POOLED_CONTENT_VIEWER: "/var/search/pool/me/viewer.json",
         PRESENCE_CONTACTS_SERVICE: "/var/presence.contacts.json",
         PRESENCE_SERVICE: "/var/presence.json",
         PROXY_RSS_SERVICE: "/var/proxy/rss.json?rss=",
@@ -79,6 +84,7 @@ sakai.config = {
         SDATA_FETCH_URL: "/sites/__PLACEMENT__/__TUID__/__NAME__",
         SDATA_FETCH: "/",
         // --
+        SEARCH_ALL_FILES: "/var/search/pool/all.json",
         SEARCH_ALL_FILES_SERVICE: "/var/search/files/allfiles.json",
         SEARCH_CONTENT_COMPREHENSIVE_SERVICE: "/var/search/sitecontent.json",
         SEARCH_CONTENT_SERVICE: "/var/search/content.json",
@@ -86,6 +92,7 @@ sakai.config = {
         SEARCH_MY_CONTACTS: "/var/search/files/mycontacts.json",
         SEARCH_MY_FILES: "/var/search/files/myfiles.json",
         SEARCH_MY_SITES: "/var/search/files/mysites.json",
+        SEARCH_GROUP_MEMBERS: "/var/search/groupmembers.json",
         SEARCH_GROUPS: "/var/search/groups.json",
         SEARCH_PAGES: "/var/search/page.json",
         SEARCH_SITES: "/var/search/sites.json",
@@ -113,7 +120,11 @@ sakai.config = {
         TWITTER_POST_URL: "/var/proxy/twitter/update_status.json",
         USER_CHANGELOCALE_SERVICE: "/rest/user/changelocale/__USERID__",
         USER_CHANGEPASS_SERVICE: "/system/userManager/user/__USERID__.changePassword.html",
-        USER_EXISTENCE_SERVICE: "/system/userManager/user/__USERID__.json"
+        USER_EXISTENCE_SERVICE: "/system/userManager/user/__USERID__.json",
+
+        // PREFIXES
+        GROUP_PREFIX: "/_group",
+        USER_PREFIX: "/_user"
 
     },
 
@@ -132,14 +143,15 @@ sakai.config = {
          */
         Groups: {
             joinable: {
-                "manager_add": "Managers add people",
-                "user_direct": "People can automatically join",
-                "user_request": "People request to join"
+                "manager_add": "no",        // Managers add people
+                "user_direct": "yes",       // People can automatically join
+                "user_request": "withauth"  // People request to join
             },
             visible: {
-                "members": "Group members only",
-                "allusers": "All logged in users",
-                "public": "Anyone on the Internet"
+                "members": "members-only",     // Group members only (includes managers)
+                "allusers": "logged-in-only",  // All logged in users
+                "public": "public",            // Anyone on the Internet
+                "managers": "managers-only"    // Group managers only
             }
         }
     },
@@ -151,6 +163,9 @@ sakai.config = {
          * When system/me returns profile data for the logged in user the profile_config and profile_data objects could be merged
          * "label": the internationalizable message for the entry label in HTML
          * "required": Whether the entry is compulsory or not
+         * 
+         * For a date entry field use "date" as the type for MM/dd/yyyy and "dateITA" as the type for dd/MM/yyyy
+         * 
          */
         configuration: {
 
@@ -221,7 +236,15 @@ sakai.config = {
                         "label": "__MSG__PROFILE_BASIC_DATEOFBIRTH_LABEL__",
                         "required": false,
                         "display": true,
-                        "type": "date"
+                        "type": "dateITA"
+                        //"type": "date"
+                    },
+                    "tags": {
+                        "label": "__MSG__TAGS__",
+                        "required": false,
+                        "display": true,
+                        "type": "textarea",
+                        "tagField": true
                     }
                 }
             },
@@ -267,13 +290,13 @@ sakai.config = {
                 "elements": {
                     "maintitle": {
                         "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
-                        "required": false,
+                        "required": true,
                         "display": true,
                         "example": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE_EXAMPLE__"
                     },
                     "mainauthor": {
                         "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_AUTHOR__",
-                        "required": false,
+                        "required": true,
                         "display": true
                     },
                     "coauthor": {
@@ -284,12 +307,12 @@ sakai.config = {
                     },
                     "publisher": {
                         "label": "__MSG__PROFILE_PUBLICATIONS_PUBLISHER__",
-                        "required": false,
+                        "required": true,
                         "display": true
                     },
                     "placeofpublication": {
                         "label": "__MSG__PROFILE_PUBLICATIONS_PLACE_OF_PUBLICATION__",
-                        "required": false,
+                        "required": true,
                         "display": true
                     },
                     "volumetitle": {
@@ -305,7 +328,7 @@ sakai.config = {
                     },
                     "year": {
                         "label": "__MSG__PROFILE_PUBLICATIONS_YEAR__",
-                        "required": false,
+                        "required": true,
                         "display": true
                     },
                     "number": {
@@ -344,7 +367,8 @@ sakai.config = {
          * Set the user's short description to appear underneath their name
          * in search results
          */
-        shortDescription: "${role} in ${department} at ${college}"
+        userShortDescription: "${role} in ${department} at ${college}",
+        groupShortDescription: "asdf"
 
     },
 
@@ -438,6 +462,10 @@ sakai.config = {
             URL: "/dev/_images/mimetypes/kmultiple.png",
             description: "Folder"
         },
+        "x-sakai/link": {
+            URL: "/dev/_images/mimetypes/html.png",
+            description: "URL Link"
+        },
         other: {
             URL: "/dev/_images/mimetypes/unknown.png",
             description: "Other document"
@@ -479,24 +507,107 @@ sakai.config = {
             "label" : "MY_SAKAI"
         },
         {
-            "url" : "javascript:;",
+            "url" : "/dev/search_content.html#q=*&facet=manage",
             "label" : "CONTENT_AND_MEDIA"
+        },
+        {
+            "url" : "/dev/search_groups.html#q=*&facet=all",
+            "label" : "GROUPS"
         },
         {
             "url" : "/dev/people.html",
             "label" : "PEOPLE"
         },
         {
-            "url" : "javascript:;",
-            "label" : "COURSES_AND_SITES"
-        },
-        {
-            "url" : "javascript:;",
-            "label" : "CALENDAR"
+            "url" : "/dev/directory.html",
+            "label" : "DIRECTORY"
         }
+    ],
+    
+    /*
+     * List of pages that require a logged in user
+     */
+    requireUser: [
+        "/dev/my_sakai.html",
+        "/dev/account_preferences.html",
+        "/dev/group_edit.html",
+        "/dev/inbox.html",
+        "/dev/people.html",
+        "/dev/profile_edit.html",
+        "/dev/search.html",
+        "/dev/search_content.html",
+        "/dev/search_groups.html",
+        "/dev/search_people.html"
+    ],
+    
+    /*
+     * List of pages that require an anonymous user
+     */
+    requireAnonymous: [
+        "/dev/index.html",
+        "/dev/create_new_account.html",
+        "/dev/",
+        "/dev"
+    ],
+    
+    /*
+     * List op pages that require additional processing to determine
+     * whether the page can be shown to the current user. These pages
+     * are then required to call the sakai.api.Security.showPage
+     * themselves
+     */
+    requireProcessing: [
+        "/dev/content_profile.html",
+        "/dev/group_edit.html",
+        "/dev/show.html"
     ],
 
     displayDebugInfo: true,
+
+    Directory: {
+        "College of Engineering": {
+            "First Year Courses": [
+                "Chemistry 101",
+                "AutoCAD for dummies",
+                "Hierarchy 3",
+                "Hierarchy 3",
+                "Hierarchy 3"
+            ],
+            "Second Year Courses": [
+                "Google Sketchup, 3D is pretty easy",
+                "Theory of Circuitry",
+                "Hierarchy 3",
+                "Hierarchy 3",
+                "Hierarchy 3"
+            ],
+            "Third Year Courses": [
+                "Google Sketchup, 3D is pretty easy",
+                "Theory of Circuitry",
+                "Hierarchy 3",
+                "Hierarchy 3",
+                "Hierarchy 3"
+            ],
+            "Fourth Year Courses": [
+                "Google Sketchup, 3D is pretty easy",
+                "Theory of Circuitry",
+                "Hierarchy 3",
+                "Hierarchy 3",
+                "Hierarchy 3"
+            ]
+        },
+        "College of Liberal Arts": {
+            "First Year Courses": [
+                "Shakespeare in Translation",
+                "Constructing Derrida",
+                "Hierarchy 3",
+                "Hierarchy 3",
+                "Hierarchy 3"
+            ]
+        },
+        "caret": {
+            "employees": ["bert", "oszkar", "nicolaas"]
+        }
+    },
 
     widgets: {}
 };

@@ -199,7 +199,7 @@ sakai.creategroup = function(tuid, showSettings){
      * @param {String} groupdescription the description of the group that's being created
      * @param {String} groupidManagers the id of the managers group for the group that's being created
     */
-    var doSaveGroup = function(groupid, grouptitle, groupdescription, groupidManagers){
+    var doSaveGroup = function(groupid, grouptitle, groupdescription){
     // Create a group with the managers group
 
         $.ajax({
@@ -207,20 +207,29 @@ sakai.creategroup = function(tuid, showSettings){
             data: {
                 "_charset_":"utf-8",
                 ":name": groupid,
-                ":manager": groupidManagers,
-                ":member": groupidManagers,
+                ":sakai:manager": sakai.data.me.user.userid,
                 "sakai:group-title" : grouptitle,
                 "sakai:group-description" : groupdescription,
                 "sakai:group-id": groupid,
-                "sakai:group-joinable": sakai.config.Permissions.Groups.joinable.manager_add,
-                "sakai:group-visible": sakai.config.Permissions.Groups.visible.members,
-                ":sakai:pages-template": "/var/templates/site/" + pagestemplate
+                ":sakai:pages-template": "/var/templates/site/" + pagestemplate,
+                "sakai:pages-visible": sakai.config.Permissions.Groups.visible["public"]
             },
             type: "POST",
             success: function(data, textStatus){
-                //check if the group exists
+                // check if the group exists
                 if (doCheckGroup(groupid)) {
-                    document.location = "/dev/group_edit.html?id=" + groupid;
+                    // set default permissions for this group
+                    sakai.api.Groups.setPermissions(groupid,
+                        sakai.config.Permissions.Groups.joinable.manager_add,
+                        sakai.config.Permissions.Groups.visible["public"],
+                        function (success, errorMessage) {
+                            if(success) {
+                                // show the group
+                                document.location = "/dev/show.html?type=group&id=" + groupid;
+                            } else {
+                                fluid.log("creategroup.js doSaveGroup failed to set group permissions: " + errorMessage);
+                            }
+                        });
                 }
             },
             error: function(xhr, textStatus, thrownError){
@@ -235,50 +244,6 @@ sakai.creategroup = function(tuid, showSettings){
         });
     };
 
-    /**
-     * Create the managers group.
-     * @param {String} groupid the id of the group that's being created
-     * @param {String} grouptitle the title of the group that's being created
-     * @param {String} groupdescription the description of the group that's being created
-    */
-    var doSaveGroupManagers = function(groupid, grouptitle, groupdescription){
-    // Create the groups
-        var groupidManagers = groupid + "-managers";
-        var grouptitleManagers = grouptitle + " Managers";
-
-        $.ajax({
-            url: sakai.config.URL.GROUP_CREATE_SERVICE,
-            data: {
-                "_charset_":"utf-8",
-                ":name": groupidManagers,
-                ":manager": groupidManagers,
-                ":viewer": groupidManagers,
-                ":member": sakai.data.me.user.userid,
-                "sakai:group-title" : grouptitleManagers,
-                "sakai:group-description" : groupdescription,
-                "sakai:group-id": groupidManagers,
-                "sakai:group-joinable": sakai.config.Permissions.Groups.joinable.manager_add,
-                "sakai:group-visible": sakai.config.Permissions.Groups.visible.members
-            },
-            type: "POST",
-            success: function(data, textStatus){
-                // check if the managers group exists proceed
-                if (doCheckGroup(groupidManagers)) {
-                    // create the actual group
-                    doSaveGroup(groupid, grouptitle, groupdescription, groupidManagers);
-                }
-            },
-            error: function(xhr, textStatus, thrownError){
-                var groupCheck = doCheckGroup(groupid);
-                if (groupCheck){
-                    setError(createGroupAddId,createGroupAddIdTaken,true);
-                } else {
-                    fluid.log("An error has occurred: " + xhr.status + " " + xhr.statusText);
-                }
-                showProcess(false);
-            }
-        });
-    };
 
     var saveGroup = function(){
         resetErrorFields();
@@ -315,8 +280,7 @@ sakai.creategroup = function(tuid, showSettings){
         {
             // Hide the buttons and show the process status
             showProcess(true);
-            groupid = 'g-' + groupid;
-            doSaveGroupManagers(groupid, grouptitle, groupdescription);
+            doSaveGroup(groupid, grouptitle, groupdescription);
         }
     };
 
@@ -340,6 +304,8 @@ sakai.creategroup = function(tuid, showSettings){
      * Add binding to the save button (create the group when you click on it)
      */
     $(createGroupAddSave).click(function(){
+        var entered = replaceCharacters($(createGroupAddId).val());
+        $(createGroupAddId).val(entered);
         saveGroup();
     });
 
@@ -347,7 +313,7 @@ sakai.creategroup = function(tuid, showSettings){
      * When you change something in the name of the group, it first removes the bad characters
      * and then it shows the edited url in the span
      */
-    $(createGroupAddName).bind("change", function(ev){
+    $(createGroupAddName + "," + createGroupAddId).bind("keyup", function(ev){
         var entered = replaceCharacters($(this).val());
         $(createGroupAddId).val(entered);
     });
@@ -363,9 +329,9 @@ sakai.creategroup = function(tuid, showSettings){
         $(errorFields).hide();
 
         // Set the text of the span containing the url of the current group
-        // e.g. http://celestine.caret.local:8080/~g-
+        // e.g. http://celestine.caret.local:8080/~
         var url = document.location.protocol + "//" + document.location.host;
-        url += "/~g-";
+        url += "/~";
         // get max length value
         var maxLength = parseInt(MAX_LENGTH,10);
 
@@ -373,9 +339,9 @@ sakai.creategroup = function(tuid, showSettings){
 
         // if url is too long greater than 30 character
         // show only first 15 characters +...+ last 15 characters
-        // e.g.http://sakai3-demo.uits.indiana.edu:8080/~g-
+        // e.g.http://sakai3-demo.uits.indiana.edu:8080/~
         // it will change to shorter form:
-        // http://sakai3-...diana.edu:8080/~g-
+        // http://sakai3-...diana.edu:8080/~
         if (url.length > maxLength) {
             url = url.substr(0,15)+ "..."+ url.substr(url.length-15,url.length-1);
         }

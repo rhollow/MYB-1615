@@ -15,4 +15,8 @@
 "FIRST_CREATED":"First created",
 "LAST_MODIFIED":"Last modified",
 "NO_OF_REVISIONS":"No. of revisions",
+"FILE_DETAILS":"File details",
+"LINK_DETAILS":"Link details",
+"VIEW_REVISIONS":"View revisions",
+"DELETE_LINK":"Delete Link"
 }

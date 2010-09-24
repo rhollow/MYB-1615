@@ -46,6 +46,7 @@ sakai.dashboard = function(tuid, showSettings) {
     var savePath = false;
     var settings = false;
     var widgetPropertyName = false;
+    var tempSettings;
 
     var rootel = "#" + tuid;
     var $rootel = $(rootel);
@@ -107,8 +108,16 @@ sakai.dashboard = function(tuid, showSettings) {
         sakai.api.Widgets.widgetLoader.insertWidgets(newel.parentNode.id, false);
     };
 
-    sakai.api.Widgets.Container.registerFinishFunction(sakai.dashboard.finishEditSettings);
-    sakai.api.Widgets.Container.registerCancelFunction(sakai.dashboard.finishEditSettings);
+    var registerWidgetFunctions = function(){
+        sakai.api.Widgets.Container.registerFinishFunction(sakai.dashboard.finishEditSettings);
+        sakai.api.Widgets.Container.registerCancelFunction(sakai.dashboard.finishEditSettings);
+    }
+    
+    $(window).bind("sakai_sitespages_exitedit", function(ev){
+        registerWidgetFunctions();
+    });
+
+    registerWidgetFunctions();
 
     var showInit = function() {
 
@@ -339,6 +348,12 @@ sakai.dashboard = function(tuid, showSettings) {
                       } else {
                           $("#settings_settings", $rootel).hide();
                       }
+                      if (Widgets.widgets[widgetId] &&
+                          (Widgets.widgets[widgetId].deletable === true || Widgets.widgets[widgetId].deletable === undefined)) {
+                          $("#settings_remove", $rootel).show();
+                      } else {
+                          $("#settings_remove", $rootel).hide();
+                      }
 
                       var el = $("#" + currentSettingsOpen.split("_")[1] + "_container", $rootel);
                       if (el.is(":visible")) {
@@ -383,8 +398,10 @@ sakai.dashboard = function(tuid, showSettings) {
 
                   var el = $("#" + currentSettingsOpen.split("_")[1] + "_container", $rootel);
                   if (el.css('display') == "none") {
+                      el.parent().find(".fl-widget-titlebar").removeClass("hiddenwidget");
                       el.show();
                   } else {
+                      el.parent().find(".fl-widget-titlebar").addClass("hiddenwidget");
                       el.hide();
                   }
                   saveState();
@@ -535,8 +552,10 @@ sakai.dashboard = function(tuid, showSettings) {
             }
         }
 
-        sakai.api.Widgets.saveWidgetData(tuid, settings, checkSuccess);
+        if ($.toJSON(tempSettings) !== $.toJSON(settings))
+            sakai.api.Widgets.saveWidgetData(tuid, settings, checkSuccess);
 
+        tempSettings = settings;
     };
 
     var checkSuccess = function(success) {
@@ -653,6 +672,9 @@ sakai.dashboard = function(tuid, showSettings) {
             newjson.selected = selected;
             currentlySelectedLayout = selected;
             $("#layouts_list", $rootelClass).html($.TemplateRenderer("layouts_template", newjson));
+            // once template is render, it loses the event handling
+            // so need to call again
+            bindLayoutPickerEventHandlers();
         });
     };
 
@@ -876,6 +898,10 @@ sakai.dashboard = function(tuid, showSettings) {
         sakai.api.Widgets.loadWidgetData(tuid, decideExists);
     };
 
+    /**
+     * Send out an event to indicate that the dashboard widget has been
+     * loaded successfully
+     */
     var init = function() {
         $(window).trigger("sakai.dashboard.ready", tuid);
     };

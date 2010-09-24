@@ -39,7 +39,7 @@
         <!-- 3rd party JS -->
         <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
         <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
 
@@ -72,12 +72,16 @@
                                     Sign in to Sakai with an account that has the correct permissions
                                 </li>
                                 <li>
-                                    Go back to the previous page by clicking the back button in your browser
+                                    Try to contact the page administrator to request access permissions if you think you should have
                                 </li>
                             </ul>
                         </div>
                         <div class="login-container">
-                            <a href="/dev/index.html" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">Sign In</span></a>
+                            <a href="/dev/index.html">
+                            	<button class="s3d-button s3d-button-primary" type="submit">
+                            		<span class="s3d-button-inner">Sign In</span>
+                            	</button>
+                            </a>
                             <p>
                                 Sign in to an account that has the right permissions to view this page with the button above.
                             </p>
@@ -99,7 +103,7 @@
                             You can
                             <ul>
                                 <li>
-                                    Go back to the previous page by clicking the back button in your browser
+                                    Try to contact the page administrator to request access permissions if you think you should have
                                 </li>
                             </ul>
                         </div>

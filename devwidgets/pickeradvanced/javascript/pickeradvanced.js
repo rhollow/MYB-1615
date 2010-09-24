@@ -67,15 +67,22 @@ sakai.pickeradvanced = function(tuid, showSettings) {
     var $pickeradvanced_copy_myself = $("#pickeradvanced_copy_myself", $rootel);
     var $pickeradvanced_message = $("#pickeradvanced_message", $rootel);
     var $pickeradvanced_close_dialog = $(".pickeradvanced_close_dialog", $rootel);
-    var $pickeradvanced_search_filter = $(".pickeradvanced_search_filter", $rootel);
+    var $pickeradvanced_search_filter = $(".pickeradvanced_search_filter");
 
     var $pickeradvanced_error_template = $("#pickeradvanced_error_template", $rootel);
     var $pickeradvanced_content_search_pagetemplate = $("#pickeradvanced_content_search_pagetemplate", $rootel);
     var $pickeradvanced_content_search_listtemplate = $("#pickeradvanced_content_search_listtemplate", $rootel);
+    var $pickeradvanced_group_search_template = $("#pickeradvanced_group_search_template", $rootel);
+    var $pickeradvanced_group_specific_filters = $("#pickeradvanced_group_specific_filters", $rootel);
+
+    var $pickeradvanced_search_titles = $(".pickeradvanced_search_titles", $rootel);
+    var $pickeradvanced_search_people = $("#pickeradvanced_search_people", $rootel);
+    var $pickeradvanced_search_files = $("#pickeradvanced_search_files", $rootel);
 
     var pickeradvanced_page = ".pickeradvanced_page";
 
-    var callback = false;
+    var pickerlist = false;
+    var firstTime = true;
 
     var pickerData = {
       "selected": {},
@@ -87,10 +94,11 @@ sakai.pickeradvanced = function(tuid, showSettings) {
       "spaceName": "Space",
       "items": 50,
       "selectable": true,
-      "sortOn": "lastName",
+      "sortOn": "basic/elements/lastName/@value",
       "sortOrder": "ascending",
       "what": "People",
-      "where": "Group"
+      "where": "Group",
+      "limit": false
     };
 
     /**
@@ -113,7 +121,9 @@ sakai.pickeradvanced = function(tuid, showSettings) {
      * @returns void
      */
     var render = function(iConfig) {
-        // Merge user defined config with defaults
+        pickerData["searchIn"] = sakai.config.URL.SEARCH_USERS_ACCEPTED + "?page=0&items=12&_=&q=";
+
+        // Merge user defined config with default
         for (var element in iConfig) {
             if (iConfig.hasOwnProperty(element) && pickerData.hasOwnProperty(element)) {
                 pickerData[element] = iConfig[element];
@@ -121,7 +131,19 @@ sakai.pickeradvanced = function(tuid, showSettings) {
         }
 
         // display the groups list, bind elements and submit a search
-        pickerData["searchIn"] = sakai.config.URL.CONTACTS_ACCEPTED + "?page=0&items=12&_=&q=";
+        $pickeradvanced_search_titles.hide();
+        $(".pickeradvanced_selected_list").removeClass("pickeradvanced_selected_list"); // deselect anything that was selected
+        if (pickerData["type"] === "people") {
+            $("#pickeradvanced_search_contacts").parent("li").addClass("pickeradvanced_selected_list");
+            getGroups();
+            $pickeradvanced_sort_on.show();
+            $pickeradvanced_search_people.show();
+        } else if (pickerData["type"] === "content") {
+            $pickeradvanced_sort_on.hide();
+            $pickeradvanced_search_files.show();
+            pickerData["searchIn"] = sakai.config.URL.POOLED_CONTENT_MANAGER.replace(".json", ".infinity.json") + "?page=0&items=12&_=&q=";
+        }
+        $("ul.pickeradvanced_search_" + pickerData["type"]).show();
         $pickeradvanced_search_query.focus();
         $pickeradvanced_search_button.click(submitSearch);
         $pickeradvanced_content_search_form.submit(submitSearch);
@@ -130,6 +152,17 @@ sakai.pickeradvanced = function(tuid, showSettings) {
             addPeople();
         });
         submitSearch();
+    };
+
+    /**
+     * get groups for this user to search on
+     */
+    var getGroups = function() {
+        $pickeradvanced_group_specific_filters.html('');
+        $(sakai.data.me.groups).each(function(i,val) {
+            var groupItem = $.TemplateRenderer($pickeradvanced_group_search_template, {"data":val});
+            $pickeradvanced_group_specific_filters.append(groupItem);
+        });
     };
 
     /**
@@ -143,6 +176,8 @@ sakai.pickeradvanced = function(tuid, showSettings) {
         if (!searchQuery) {
             searchQuery = "*";
         } else {
+            searchQuery = $.trim(searchQuery);
+            searchQuery = searchQuery.replace(/\s+/g, "* OR *");
             searchQuery = "*" + searchQuery + "*";
         }
 
@@ -196,8 +231,11 @@ sakai.pickeradvanced = function(tuid, showSettings) {
 
         // Aadd relevant config elements to the search query
         searchQuery.page = pageNumber;
-        searchQuery.sortOn = pickerData["sortOn"];
-        searchQuery.sortOrder = pickerData["sortOrder"];
+        if ((pickerData["type"] === "people" && $pickeradvanced_sort_on.is(":visible")) || firstTime) {
+            searchQuery.sortOn = pickerData["sortOn"];
+            searchQuery.sortOrder = pickerData["sortOrder"];
+            if (firstTime) firstTime = false;
+        }
 
         // Construct search query
         var sq = searchQuery.url + "?";
@@ -217,16 +255,31 @@ sakai.pickeradvanced = function(tuid, showSettings) {
             dataType: "json",
             success: function(rawData) {
                 // Eval profile data for now and extend it with additional info
+                var doAdd = true;
+                var newData = [];
                 for (var i = 0, il = rawData.results.length; i < il; i++) {
+                    doAdd = true;
                     if (rawData.results[i].profile) {
                         rawData.results[i] = rawData.results[i].profile;
                     }
+                    if ($.inArray(rawData.results[i].user, pickerlist) !== -1) {
+                        doAdd = false;
+                    }
+                    if (rawData.results[i]['rep:userId'] && (rawData.results[i]['rep:userId'] === "admin" || rawData.results[i]['rep:userId'] === "anonymous")) {
+                        doAdd = false;
+                    }
+                    if (doAdd) {
+                        newData.push(rawData.results[i]);
+                    }
                 }
+                rawData.results = newData;
+                rawData.total = newData.length;
 
                 // Render the results data template
                 var pageHTML = $.TemplateRenderer($pickeradvanced_content_search_pagetemplate, rawData);
 
                 // Remove loading animation
+                $pl_pageContainer = $(".pickeradvanced_page.pickeradvanced_page_list.loadinganim");
                 $pl_pageContainer.removeClass("loadinganim");
 
                 // Inject results into DOM
@@ -244,37 +297,59 @@ sakai.pickeradvanced = function(tuid, showSettings) {
 
                 // Wire item selection
                 if (pickerData.selectable) {
-
+                    $pickeradvanced_select_all_button.unbind("click");
                     $pickeradvanced_select_all_button.click(function(){
                         pickerData.selectCount = 0;
-                        $('.pickeradvanced_content_search ul li').each(function(index) {
+                        $('#pickeradvanced_content_search ul li').each(function(i) {
                             $(this).addClass("pickeradvanced_selected_user");
                             pickerData.selectCount += 1;
                             pickerData["selected"][$(this).attr("id")] = rawData.results[i];
+                            if (rawData.results[i]['rep:userId']) {
+                                pickerData["selected"][$(this).attr("id")].entityType = "user";
+                            } else if (rawData.results[i]['sakai:group-id']) {
+                                pickerData["selected"][$(this).attr("id")].entityType = "group";
+                            } else if (rawData.results[i]['jcr:name']) {
+                                pickerData["selected"][$(this).attr("id")].entityType = "file";
+                            }
+                            if ($pickeradvanced_add_button.is(":disabled")) {
+                                $pickeradvanced_add_button.attr("disabled", "");
+                            }
                         });
                     });
-
-                    $("#pickeradvanced_page_" + pageNumber + " li", $rootel).bind("click", function(e){
+                    $("#pickeradvanced_page_" + pageNumber + " li").unbind("click");
+                    $("#pickeradvanced_page_" + pageNumber + " li").bind("click", function(e){
                         // Check if user click on top of a link
                         if (e.target.tagName.toLowerCase() !== "a") {
                             // Remove from selected list
                             if ($(this).hasClass("pickeradvanced_selected_user")) {
                                 $(this).removeClass("pickeradvanced_selected_user");
                                 delete pickerData["selected"][$(this).attr("id")];
-                                for (var i = 0; i < rawData.results.length; i++) {
-                                    if (rawData.results[i]['rep:userId'] == [$(this).attr("id")]) {
-                                        delete pickerData["selected"][$(this).attr("id")];
-                                        pickerData.selectCount -= 1;
-                                    }
+                                pickerData.selectCount -= 1;
+                                if (pickerData.selectCount < 1) {
+                                    $pickeradvanced_add_button.attr("disabled", "disabled");
                                 }
                             } else {
-                                // Add to selected list
-                                $(this).addClass("pickeradvanced_selected_user");
-                                for (var j = 0; j < rawData.results.length; j++) {
-                                    if (rawData.results[j]['rep:userId'] == [$(this).attr("id")]) {
-                                        pickerData.selectCount += 1;
-                                        pickerData["selected"][$(this).attr("id")] = rawData.results[j];
+                                if ((pickerData.limit && pickerData.selectCount < pickerData.limit) || !pickerData.limit) {
+                                    // Add to selected list
+                                    $(this).addClass("pickeradvanced_selected_user");
+                                    for (var j = 0; j < rawData.results.length; j++) {
+                                        if (rawData.results[j]['rep:userId'] && rawData.results[j]['rep:userId'] == [$(this).attr("id")]) {
+                                            pickerData.selectCount += 1;
+                                            pickerData["selected"][$(this).attr("id")] = rawData.results[j];
+                                            pickerData["selected"][$(this).attr("id")].entityType = "user";
+                                        } else if (rawData.results[j]['sakai:group-id'] && rawData.results[j]['sakai:group-id'] == [$(this).attr("id")]) {
+                                            pickerData.selectCount += 1;
+                                            pickerData["selected"][$(this).attr("id")] = rawData.results[j];
+                                            pickerData["selected"][$(this).attr("id")].entityType = "group";
+                                        } else if (rawData.results[j]['jcr:name'] && rawData.results[j]['jcr:name'] == [$(this).attr("id")]) {
+                                            pickerData.selectCount += 1;
+                                            pickerData["selected"][$(this).attr("id")] = rawData.results[j];
+                                            pickerData["selected"][$(this).attr("id")].entityType = "file";
+                                        }
                                     }
+                                }
+                                if ($pickeradvanced_add_button.is(":disabled")) {
+                                    $pickeradvanced_add_button.attr("disabled", "");
                                 }
                             }
                         }
@@ -304,15 +379,15 @@ sakai.pickeradvanced = function(tuid, showSettings) {
                         $pickeradvanced_count_people.show();
                     }
                 }
-
                 // Wire sorting select dropdown
+                $pickeradvanced_sort_on.unbind("change");
                 $pickeradvanced_sort_on.bind("change", function(e){
                     // Reset everything
                     reset();
 
                     // Set config to new sort key
-                    pickerData["sortOn"] = $(this).val();
-
+                    pickerData["sortOn"] = $(this).val().split("_")[0];
+                    pickerData["sortOrder"] = $(this).val().split("_")[1];
                     // Start from scratch
                     addPage(0, searchQuery);
 
@@ -336,22 +411,15 @@ sakai.pickeradvanced = function(tuid, showSettings) {
     $pickeradvanced_container.jqm({
         modal: true,
         overlay: 20,
-        zIndex: 4000
+        zIndex: 4000,
+        toTop: true
     });
     
     var addPeople = function() {
-      //sakai.api.Communication.sendMessage = function(to, subject, body, category, reply, callback) {  
-      var userList = $("#as-values-" + tuid).val();
       // this value is a comma-delimited list
       // split it and get rid of any empty values in the array
-      userList = userList.split(",");
-      $(userList).each(function(i, val) {
-         if (val === "") {
-             userList.splice(i, 1);
-         } 
-      });
       $pickeradvanced_container.jqmHide();
-      $(window).trigger("sakai-pickeradvanced-finished", {"toAdd":userList});
+      $(window).trigger("sakai-pickeradvanced-finished", {"toAdd":pickerData["selected"]});
     };
 
 
@@ -360,41 +428,70 @@ sakai.pickeradvanced = function(tuid, showSettings) {
     ////////////
     
     $(window).unbind("sakai-pickeradvanced-init");
-    $(window).bind("sakai-pickeradvanced-init", function(e, config, callbackFn) {
+    $(window).bind("sakai-pickeradvanced-init", function(e, config) {
+        firstTime = true;
+        render(config.config);
         $pickeradvanced_container.jqmShow();
-        render(config);
-        callback = callbackFn;
+        pickerlist = config.list;
     });
     
+    $pickeradvanced_close_dialog.unbind("click");
     $pickeradvanced_close_dialog.bind("click", function() {
         $pickeradvanced_container.jqmHide();
     });
 
+    $pickeradvanced_close_button.unbind("click");
     $pickeradvanced_close_button.bind("click", function() {
         $pickeradvanced_container.jqmHide();
     });
 
-    $pickeradvanced_search_filter.bind("click", function() {
+    $pickeradvanced_search_filter.die("click");
+    $pickeradvanced_search_filter.live("click", function() {
        var searchType = $(this).attr("id").split("pickeradvanced_search_")[1];
+       $(".pickeradvanced_selected_list").removeClass("pickeradvanced_selected_list");
+       $(this).parent("li").addClass("pickeradvanced_selected_list");
        var searchURL = false;
+       var searchingInGroup = false;
        switch (searchType) {
            case "contacts":
                searchURL = sakai.config.URL.SEARCH_USERS_ACCEPTED;
+               $pickeradvanced_sort_on.show();
                break;
            case "users":
                searchURL = sakai.config.URL.SEARCH_USERS;
+               $pickeradvanced_sort_on.show();
                break;
            case "groups":
                searchURL = sakai.config.URL.SEARCH_GROUPS;
+               $pickeradvanced_sort_on.hide();
                break;
            case "groups_member":
                searchURL = sakai.config.URL.SEARCH_GROUPS;
+               $pickeradvanced_sort_on.hide();
                break;
            case "groups_manager":
                searchURL = sakai.config.URL.SEARCH_GROUPS;
+               $pickeradvanced_sort_on.hide();
+               break;
+           case "files_mine":
+               searchURL = sakai.config.URL.POOLED_CONTENT_MANAGER.replace(".json", ".infinity.json");
+               $pickeradvanced_sort_on.hide();
+               break;
+           case "files_view":
+               searchURL = sakai.config.URL.POOLED_CONTENT_VIEWER.replace(".json", ".infinity.json");
+               $pickeradvanced_sort_on.hide();
+               break;
+           default: // should be any group specific search
+               searchURL = sakai.config.URL.SEARCH_GROUP_MEMBERS.replace(".json", ".3.json");
+               $pickeradvanced_sort_on.hide();
+               searchingInGroup = true;
                break;
        }
-       pickerData["searchIn"] = searchURL + "?page=0&items=12&_=&q=";
+       if (!searchingInGroup) {
+           pickerData["searchIn"] = searchURL + "?page=0&items=12&_=&q=";
+       } else {
+           pickerData["searchIn"] = searchURL + "?group=" + searchType.split("groups_")[1] + "&q=";
+       }
        submitSearch();
     });
 

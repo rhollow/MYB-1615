@@ -7,7 +7,7 @@ sakai.search = function(){
         Config variables
      */
 
-    var peopleToSearch = 5;
+    var peopleToSearch = 6;
 
     var meObj = false;
     var foundContacts = false;
@@ -20,10 +20,7 @@ sakai.search = function(){
     var doInit = function(){
 
         meObj = sakai.data.me;
-        if (! meObj.user.userid){
-            document.location = "/dev/index.html?url=/dev/people.html";
-        }
-
+        
         loadContacts(1);
         loadInvitations();
         loadPending();
@@ -68,7 +65,7 @@ sakai.search = function(){
         var finaljson = {};
         finaljson.items = [];
 
-        _currentTotal = foundContacts.results.length;
+        _currentTotal = foundContacts.total;
 
         // Pager Init
         $(".jq_pager").pager({ pagenumber: currentpage, pagecount: Math.ceil(_currentTotal/peopleToSearch), buttonClickCallback: pager_click_handler });
@@ -89,8 +86,8 @@ sakai.search = function(){
                         var picture = $.parseJSON(person.picture);
                         finaljson.items[index].picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     }
-                    if (sakai.api.User.getDisplayName(finaljson.items[index]) !== "") {
-                        finaljson.items[index].name = sakai.api.User.getDisplayName(finaljson.items[index]);
+                    if (sakai.api.User.getDisplayName(person) !== "") {
+                        finaljson.items[index].name = sakai.api.User.getDisplayName(person);
                     }
                     else {
                         finaljson.items[index].name = finaljson.items[index].userid;
@@ -99,17 +96,6 @@ sakai.search = function(){
                     var relationships = connection["sakai:types"];
                     if (relationships) {
                         finaljson.items[index].extra = relationships;
-                    } else if (person.basic) {
-                        var basic = $.parseJSON(person.basic);
-                        if (basic.unirole) {
-                            finaljson.items[index].extra = basic.unirole;
-                        }
-                        else if (basic.unicollege) {
-                            finaljson.items[index].extra = basic.unicollege;
-                        }
-                        else if (basic.unidepartment) {
-                            finaljson.items[index].extra = basic.unidepartment;
-                        }
                     }
                     finaljson.items[index].connected = true;
                     if (finaljson.items[index].userid == sakai.data.me.user.userid){
@@ -119,10 +105,11 @@ sakai.search = function(){
             }
         }
 
-        if (finaljson.items.length === 0){
-            $(".jq_pager").hide();
-        } else {
+        // if there is more than one page show the pager
+        if (Math.ceil(_currentTotal/peopleToSearch) > 1) {
             $(".jq_pager").show();
+        } else {
+            $(".jq_pager").hide();
         }
 
         $("#contacts_search_result").html($.TemplateRenderer("contacts_search_result_template", finaljson));
@@ -190,6 +177,7 @@ sakai.search = function(){
             for (var i = 0; i < foundInvitations.results.length; i++) {
                 var item = foundInvitations.results[i];
                 var person = item.profile;
+                var connection = item.details;
                 if (person) {
                     var index = finaljson.items.length;
                     profiles[item.target] = item;
@@ -200,24 +188,18 @@ sakai.search = function(){
                         var picture = $.parseJSON(person.picture);
                         finaljson.items[index].picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     }
-                    if (sakai.api.User.getDisplayName(finaljson.items[index]) !== "") {
-                        finaljson.items[index].name = sakai.api.User.getDisplayName(finaljson.items[index]);
+                    if (sakai.api.User.getDisplayName(person) !== "") {
+                        finaljson.items[index].name = sakai.api.User.getDisplayName(person);
                     }
                     else {
                         finaljson.items[index].name = finaljson.items[index].userid;
                     }
-                    if (person.basic) {
-                        var basic = $.parseJSON(person.basic);
-                        if (basic.unirole) {
-                            finaljson.items[index].extra = basic.unirole;
-                        }
-                        else if (basic.unicollege) {
-                            finaljson.items[index].extra = basic.unicollege;
-                        }
-                        else if (basic.unidepartment) {
-                            finaljson.items[index].extra = basic.unidepartment;
-                        }
+                    var relationships = connection["sakai:types"];
+                    if (relationships) {
+                        finaljson.items[index].extra = relationships;
                     }
+                    finaljson.items[index].connected = true;
+
                     if (finaljson.items[index].userid == sakai.data.me.user.userid){
                         finaljson.items[index].isMe = true;
                     }
@@ -295,6 +277,7 @@ sakai.search = function(){
             for (var i = 0; i < foundPending.results.length; i++) {
                 var item = foundPending.results[i];
                 var person = item.profile;
+                var connection = item.details;
                 if (person) {
                     var index = finaljson.items.length;
                     profiles[item.target] = item;
@@ -305,24 +288,18 @@ sakai.search = function(){
                         var picture = $.parseJSON(person.picture);
                         finaljson.items[index].picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     }
-                    if (sakai.api.User.getDisplayName(finaljson.items[index]) !== "") {
-                        finaljson.items[index].name = sakai.api.User.getDisplayName(finaljson.items[index]);
+                    if (sakai.api.User.getDisplayName(person) !== "") {
+                        finaljson.items[index].name = sakai.api.User.getDisplayName(person);
                     }
                     else {
                         finaljson.items[index].name = finaljson.items[index].userid;
                     }
-                    if (person.basic) {
-                        var basic = $.parseJSON(person.basic);
-                        if (basic.unirole) {
-                            finaljson.items[index].extra = basic.unirole;
-                        }
-                        else if (basic.unicollege) {
-                            finaljson.items[index].extra = basic.unicollege;
-                        }
-                        else if (basic.unidepartment) {
-                            finaljson.items[index].extra = basic.unidepartment;
-                        }
+                    var relationships = connection["sakai:types"];
+                    if (relationships) {
+                        finaljson.items[index].extra = relationships;
                     }
+                    finaljson.items[index].connected = true;
+
                     if (finaljson.items[index].userid == sakai.data.me.user.userid){
                         finaljson.items[index].isMe = true;
                     }
@@ -347,4 +324,4 @@ sakai.search = function(){
 
 };
 
-sakai.api.Widgets.Container.registerForLoad("sakai.search");
+sakai.api.Widgets.Container.registerForLoad("sakai.search");

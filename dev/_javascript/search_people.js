@@ -26,14 +26,23 @@ sakai.search = function() {
     //    Config variables    //
     //////////////////////////
 
-    var resultsToDisplay = 12;
+    var resultsToDisplay = 10;
     var searchterm = "";
+    var tagterm = "";
     var currentpage = 0;
     var foundPeople = [];
     var contactclicked = false;
     var mainSearch = false;
     var max_items = 2000;
 
+    // Search URL mapping
+    var searchURLmap = {
+        allusers : sakai.config.URL.SEARCH_USERS,
+        mycontacts : sakai.config.URL.SEARCH_USERS_ACCEPTED,
+        invitedcontacts : sakai.config.URL.CONTACTS_INVITED,
+        pendingcontacts : sakai.config.URL.CONTACTS_PENDING,
+        onlinecontacts : sakai.config.URL.PRESENCE_CONTACTS_SERVICE
+    };
 
     //    CSS IDs
 
@@ -48,6 +57,7 @@ sakai.search = function() {
             text  :search + '_text',
             numberFound : search + '_numberFound',
             searchTerm : search + "_mysearchterm",
+            tagTerm : search + "_mytagterm",
             searchBarSelectedClass : "search_bar_selected",
             pagerClass : ".jq_pager",
             messageClass : ".search_result_person_link_message",
@@ -101,7 +111,34 @@ sakai.search = function() {
         results : {
             container : search + '_results_container',
             header : search + '_results_header',
+            tagHeader : search +  '_results_tag_header',
             template : 'search_results_template'
+        },
+        facetedConfig : {
+            title : "Refine your search",
+            value : "People",
+            facets: {
+                "all" : {
+                    "category": "All People",
+                    "searchurl": searchURLmap.allusers
+                }, 
+                "contacts" : {
+                    "category": "My Contacts",
+                    "searchurl": searchURLmap.mycontacts
+                },
+                "onlinecontacts" : {
+                    "category": "Contacts Currently Online",
+                    "searchurl": searchURLmap.onlinecontacts
+                }, 
+                "invited" : {
+                    "category": "My Contact Invitations",
+                    "searchurl": searchURLmap.invitedcontacts
+                },
+                "requested" : {
+                    "category": "Pending Invitations",
+                    "searchurl": searchURLmap.pendingcontacts
+                }
+            }
         }
     };
 
@@ -118,8 +155,10 @@ sakai.search = function() {
      */
     var showSearchContent = function() {
         $(searchConfig.global.searchTerm).text(sakai.api.Security.saneHTML(searchterm));
+        $(searchConfig.global.tagTerm).text(sakai.api.Security.saneHTML(tagterm));
         $(searchConfig.global.numberFound).text("0");
         $(searchConfig.results.header).show();
+        $(searchConfig.results.tagHeader).hide();
         $(searchConfig.results.container).html($(searchConfig.global.resultTemp).html());
     };
 
@@ -180,7 +219,7 @@ sakai.search = function() {
      * @param {Integer} page The page you are on (optional / default = 1.)
      * @param {String} searchquery The searchterm you want to look for (optional / default = input box value.)
      */
-    var doHSearch = function(page, searchquery, searchwhere) {
+    sakai._search.doHSearch = function(page, searchquery, searchwhere, facet) {
         if (!page) {
             page = 1;
         }
@@ -190,9 +229,12 @@ sakai.search = function() {
         if (!searchwhere) {
             searchwhere = mainSearch.getSearchWhereSites();
         }
+        if (!facet){
+            facet = $.bbq.getState('facet');
+        }
         currentpage = page;
         //    This will invoke the sakai._search.doSearch function and change the url.
-        History.addBEvent(page, encodeURIComponent(searchquery), searchwhere);
+        History.addBEvent(page, encodeURIComponent(searchquery), searchwhere, facet);
     };
 
     /**
@@ -202,7 +244,7 @@ sakai.search = function() {
     var pager_click_handler = function(pageclickednumber) {
         currentpage = pageclickednumber;
         //    Redo the search
-        doHSearch(currentpage, searchterm);
+        sakai._search.doHSearch(currentpage, searchterm, null, $.bbq.getState('facet'));
     };
 
     /**
@@ -240,11 +282,9 @@ sakai.search = function() {
             // we hide the pager
             if ((results.total < resultsToDisplay) || (results.results.length <= 0)) {
                 $(searchConfig.global.pagerClass).hide();
-                $("#create_site_these_people").hide();
             }
             else {
                 $(searchConfig.global.pagerClass).show();
-                $("#create_site_these_people").show();
             }
 
         }
@@ -278,7 +318,27 @@ sakai.search = function() {
      *  * = entire community
      *  my contacts = the site the user is registered on
      */
-    sakai._search.doSearch = function(page, searchquery, searchwhere) {
+    sakai._search.doSearch = function(page, searchquery, searchwhere, facet) {
+
+        // Get the tag if present.
+        tagterm = mainSearch.getSearchTags();
+
+        facetedurl = mainSearch.getFacetedUrl();
+
+        if (facet){
+            facetedurl = searchConfig.facetedConfig.facets[facet].searchurl;
+        }
+        
+        $(".faceted_category").removeClass("faceted_category_selected");
+        if (facet) {
+            $("#" + facet).addClass("faceted_category_selected");
+        } else {
+            $(".faceted_category:first").addClass("faceted_category_selected");
+        }
+    
+        if (isNaN(page)){
+            page = 1;
+        }
 
         currentpage = parseInt(page,  10);
 
@@ -293,7 +353,7 @@ sakai.search = function() {
         //    Rebind everything
         mainSearch.addEventListeners(searchterm, searchwhere);
 
-        if (searchterm) {
+        if (searchterm && searchterm !== $(searchConfig.global.text).attr("title").toLowerCase()) {
             // Show and hide the correct elements.
             showSearchContent();
 
@@ -314,6 +374,10 @@ sakai.search = function() {
                 searchURL = sakai.config.URL.SEARCH_USERS + "?page=" + (currentpage - 1) + "&items=" + resultsToDisplay + "&q=" + urlsearchterm + "&sortOn=sakai:firstName&sortOrder=ascending";
             }
 
+            // Check if we want to search using a faceted link
+            if (facetedurl)
+                searchURL = facetedurl + "?page=" + (currentpage - 1) + "&items=" + resultsToDisplay + "&q=" + urlsearchterm + "&sortOn=sakai:firstName&sortOrder=ascending";
+
             $.ajax({
                 cache: false,
                 url: searchURL,
@@ -321,6 +385,34 @@ sakai.search = function() {
 
                     // Store found people in data cache
                     sakai.data.search.results_people = {};
+
+                    // if results are returned in a different format
+                    if (!data.results && data.contacts && facetedurl === sakai.config.URL.PRESENCE_CONTACTS_SERVICE) {
+                        var resultsTemp = { results : [] };
+                        var j = 0;
+                        $.each(data.contacts, function(i, val) {
+                            if (val.profile && val["sakai:status"] === "online") {
+                                resultsTemp.results[j] = val.profile;
+                                j++;
+                            }
+                        });
+                        resultsTemp.total = data.total;
+                        data = resultsTemp;
+                    } else if (data.results) {
+                        var resultsTemp = { results : [] };
+                        var updateData = false;
+                        $.each(data.results, function(i, val) {
+                            if (val.profile) {
+                                resultsTemp.results[i] = val.profile;
+                                updateData = true;
+                            }
+                        });
+                        resultsTemp.total = data.total;
+                        if (updateData) {
+                            data = resultsTemp;
+                        }
+                    }
+
                     for (var i = 0, j = data.results.length; i < j; i++) {
                         sakai.data.search.results_people[data.results[i]["rep:userId"]] = data.results[i];
                     }
@@ -333,8 +425,33 @@ sakai.search = function() {
                 }
             });
 
-        }
-        else {
+        } else if (tagterm) {
+            // Show and hide the correct elements.
+            showSearchContent();
+            $(searchConfig.results.header).hide();
+            $(searchConfig.results.tagHeader).show();
+
+            // Search based on tags and render each search section
+            $.ajax({
+                url: tagterm + ".tagged.5.json",
+                cache: false,
+                success: function(data) {
+
+                    var json = {};
+                    if (typeof(data) === 'string') {
+                        data = $.parseJSON(data);
+                    }
+                    json.results = data;
+                    json.items = json.results.length;
+
+                    renderResults(json, true);
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    var json = {};
+                    renderResults(json, false);
+                }
+            });
+        } else {
             sakai._search.reset();
         }
     };
@@ -345,31 +462,6 @@ sakai.search = function() {
     sakai._search.reset = function() {
         $(searchConfig.results.header).hide();
     };
-
-
-    ///////////////////////////////////
-    // Create site with found people //
-    ///////////////////////////////////
-
-    $("#create_site_these_people_link").bind("click", function(ev){
-        var searchterm = $(searchConfig.global.text).val().toLowerCase();
-        var urlsearchterm = mainSearch.prepSearchTermForURL(searchterm);
-        var url = sakai.config.URL.SEARCH_USERS + "?page=" + 0 + "&items=" + results.total + "&q=" + urlsearchterm;
-        $.ajax({
-            cache: false,
-            url: url,
-            success: function(data) {
-                var finaljson = {};
-                finaljson.items = [];
-                finaljson = mainSearch.preparePeopleForRender(data.results, finaljson);
-                sakai.createsite.initialise(finaljson);
-            },
-            error: function(xhr, textStatus, thrownError) {
-                alert(sakai.api.i18n.Widgets.getValueForKey("__MSG__AN_ERROR_HAS_OCCURED__"));
-            }
-        });
-    });
-
 
 
     //////////////////////
@@ -408,7 +500,7 @@ sakai.search = function() {
 
 
     var thisFunctionality = {
-        "doHSearch" : doHSearch
+        "doHSearch" : sakai._search.doHSearch
     };
 
 
@@ -416,14 +508,15 @@ sakai.search = function() {
      * Will fetch the sites and add a new item to the history list.
      */
     var doInit = function() {
+
         mainSearch = sakai._search(searchConfig, thisFunctionality);
-        //    Make sure that we are still logged in.
-        if (mainSearch.isLoggedIn()) {
-            //    Get my friends
-            mainSearch.fetchMyFriends();
-            //    add the bindings
-            mainSearch.addEventListeners();
-        }
+        
+        // add the bindings
+        mainSearch.addEventListeners();
+
+        // display faceted panel
+        mainSearch.addFacetedPanel();
+        
     };
     doInit();
 };

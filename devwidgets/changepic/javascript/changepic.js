@@ -20,6 +20,7 @@
 
 var sakai = sakai || {};
 
+sakai.api.UI.changepic = sakai.api.UI.changepic || {};
 /**
  * @name sakai.changepic
  *
@@ -46,6 +47,8 @@ sakai.changepic = function(tuid, showSettings){
     var userSelection = null; // The object returned by imgAreaSelect that contains the user his choice.
     var me = null;
     var imageareaobject;
+    var id = null;
+    var mode = null;
 
     // These values are just in case there are no css values specified.
     // If you want to change the size of a thumbnail please do this in the CSS.
@@ -54,7 +57,7 @@ sakai.changepic = function(tuid, showSettings){
 
 
     //////////////
-    // CSS IDS    //
+    // CSS IDS  //
     //////////////
 
     var containerTrigger = '#changepic_container_trigger'; // This is the id that will trigger this widget.
@@ -70,12 +73,18 @@ sakai.changepic = function(tuid, showSettings){
     // others
     var container = "#changepic_container";
     var picForm = "#changepic_form";
+    var picInput = "#profilepicture";
+    var picInputError = "#changepic_nofile_error";
+    var uploadProcessing = "#changepic_processing_msg";
+    var uploadNewButtons = "#changepic_uploadnew_buttons";
     var pictureMeasurer = "#picture_measurer";
     var pictureMeasurerImage = "#picture_measurer_image";
     var saveNewSelection = "#save_new_selection";
     var fullPicture = '#changepic_fullpicture';
     var thumbnail = "#thumbnail";
     var thumbnailContainer = "#thumbnail_container";
+    var profilePicture = "#profilepicture";
+    var fileName = false;
 
     // An array with selectors pointing to images that need to be changed.
     var imagesToChange = ["#picture_holder img", "#entity_profile_picture", "#myprofile_pic", "#chat_available_me .chat_available_image img", "#profile_userinfo_picture"];
@@ -147,8 +156,8 @@ sakai.changepic = function(tuid, showSettings){
         userSelection = selection;
 
         // How much has the user scaled down the image?
-        var scaleX = thumbnailWidth / selection.width;
-        var scaleY = thumbnailHeight / selection.height;
+        var scaleX = thumbnailWidth / (selection.width || 1);
+        var scaleY = thumbnailHeight / (selection.height || 1);
 
         // Change the thumbnail according to the user his selection via CSS.
         $(thumbnail).css({
@@ -163,7 +172,10 @@ sakai.changepic = function(tuid, showSettings){
      * Empty upload field by resetting the form
      */
     var resetUploadField = function(){
-        $("#profilepicture").val("");
+        $(picInput).val("");
+        $(picInputError).hide();
+        $(uploadProcessing).hide();
+        $(uploadNewButtons).show();
     };
 
     // Add click event to all cancel buttons in the overlay
@@ -172,20 +184,90 @@ sakai.changepic = function(tuid, showSettings){
         resetUploadField();
     });
 
+    /**
+     * On changepic form submit, check that a file has been selected
+     * and submit the form.
+     */
+    $(picForm).submit(function () {
+        // validate args
+        // file extension allow for image
+        var extensionArray = new Array(".png", ".jpg", ".jpeg",".gif");
+        // get file name
+        fileName = $(picInput).val();
+        // get extension from the file name.
+        var extension = fileName.slice(fileName.indexOf(".")).toLowerCase();
+        var allowSubmit = false;
+
+        for (var i = 0; i < extensionArray.length; i++) {
+             // extension is acceptable image format
+             if (extensionArray[i] === extension) {
+                allowSubmit = true;
+                break;
+             }
+        }
+        // if image format is acceptable
+        if(allowSubmit) {
+            $(picInputError).hide();
+            $(uploadNewButtons).hide();
+            $(uploadProcessing).show();
+            fileName = "tmp" + new Date().getTime() + ".jpg";
+            $(profilePicture).attr("name",fileName);
+            return AIM.submit(this, {
+                'onStart' : sakai.changepic.startCallback,
+                'onComplete' : sakai.changepic.completeCallback
+            });
+        } else {
+            // no input, show error
+            $(picInputError).show();
+            return false;
+        }
+    });
+
     sakai.changepic.doInit = function(newpic){
+        picture = false;
+
+        if (sakai.api.UI.changepic.mode && sakai.api.UI.changepic.id) {
+            id = sakai.api.UI.changepic.id;
+            mode = sakai.api.UI.changepic.mode;
+        } else {
+            id = sakai.data.me.user.userid;
+        }
+
+        var json;
+
+        if (mode === "group") {
+            // fetch group data to check if it has a picture
+            $.ajax({
+                url: "/~" + id + "/public.infinity.json",
+                async: false,
+                success: function(data){
+                    json = data.authprofile;
+                }
+            });
+        } else {
+            // Check whether there is a base picture at all
+            me = sakai.data.me;
+            //var json = me.profile;
+            json = me.profile;
+        }
+
         // If the image is freshly uploaded then reset the imageareaobject to reset all values on init
         if (newpic) {
             resetUploadField();
             imageareaobject = null;
+            picture = {
+                "_name": fileName,
+                "selectedx1":0,
+                "selectedy1":0,
+                "selectedx2":64,
+                "selectedy2":64
+            };
+        }
+        else if (json.picture) {
+            picture = $.parseJSON(json.picture);
         }
 
-        // Check whether there is a base picture at all
-        me = sakai.data.me;
-        var json = me.profile;
-
-        picture = false;
-
-        $(picForm).attr("action", "/~" + sakai.data.me.user.userid + "/public/profile");
+        $(picForm).attr("action", "/~" + id + "/public/profile");
 
         // Get the preferred size for the thumbnail.
         var prefThumbWidth = parseInt($(thumbnailContainer).css("width").replace(/px/gi,""), 10);
@@ -195,10 +277,6 @@ sakai.changepic = function(tuid, showSettings){
         thumbnailWidth  = (prefThumbWidth > 0) ? prefThumbWidth : thumbnailWidth;
         thumbnailHeight  = (prefThumbHeight > 0) ? prefThumbHeight : thumbnailHeight;
 
-        if (json.picture) {
-            picture = $.parseJSON(json.picture);
-        }
-
         if (picture && picture._name) {
             // The user has already uploaded a picture.
             // Show the edit tab.
@@ -206,7 +284,7 @@ sakai.changepic = function(tuid, showSettings){
             $(tabSelect).show();
 
             // Set the unvisible image to the full blown image. (make sure to filter the # out)
-            $(pictureMeasurer).html(sakai.api.Security.saneHTML("<img src='" + "/~" + sakai.data.me.user.userid + "/public/profile/" + picture._name + "?sid=" + Math.random() + "' id='" + pictureMeasurerImage.replace(/#/gi, '') + "' />"));
+            $(pictureMeasurer).html(sakai.api.Security.saneHTML("<img src='" + "/~" + id + "/public/profile/" + picture._name + "?sid=" + Math.random() + "' id='" + pictureMeasurerImage.replace(/#/gi, '') + "' />"));
 
             // Check the current picture's size
             $(pictureMeasurerImage).bind("load", function(ev){
@@ -216,8 +294,8 @@ sakai.changepic = function(tuid, showSettings){
                 realh = $(pictureMeasurerImage).height();
 
                 // Set the images
-                $(fullPicture).attr("src", "/~" + sakai.data.me.user.userid + "/public/profile/" + picture._name + "?sid=" + Math.random());
-                $(thumbnail).attr("src", "/~" + sakai.data.me.user.userid + "/public/profile/" + picture._name + "?sid=" + Math.random());
+                $(fullPicture).attr("src", "/~" + id + "/public/profile/" + picture._name + "?sid=" + Math.random());
+                $(thumbnail).attr("src", "/~" + id + "/public/profile/" + picture._name + "?sid=" + Math.random());
 
                 // Reset ratio
                 ratio = 1;
@@ -278,16 +356,14 @@ sakai.changepic = function(tuid, showSettings){
                     onSelectChange: preview
                 });
 
+                // Check if the imageareaobject exists
+                // After init this structure will show the selection overlay
+                if (imageareaobject){
+                    imageareaobject.setSelection(picture.selectedx1, picture.selectedy1, picture.selectedx2, picture.selectedy2);
+                    imageareaobject.setOptions({show: true});
+                    imageareaobject.update();
+                }
             });
-
-            // Check if the imageareaobject exists
-            // After init this structure will show the selection overlay
-            if (imageareaobject){
-                imageareaobject.setSelection(picture.selectedx1, picture.selectedy1, picture.selectedx2, picture.selectedy2);
-                imageareaobject.setOptions({show: true});
-                imageareaobject.update();
-            }
-
             showSelectTab();
 
         }
@@ -309,8 +385,8 @@ sakai.changepic = function(tuid, showSettings){
 
         // The parameters for the cropit service.
         var data = {
-            img: "/~" + sakai.data.me.user.userid + "/public/profile/" + picture._name,
-            save: "/~" + sakai.data.me.user.userid + "/public/profile",
+            img: "/~" + id + "/public/profile/" + picture._name,
+            save: "/~" + id + "/public/profile",
             x: Math.floor(userSelection.x1 * ratio),
             y: Math.floor(userSelection.y1 * ratio),
             width: Math.floor(userSelection.width * ratio),
@@ -340,7 +416,7 @@ sakai.changepic = function(tuid, showSettings){
                     "selectedx1" : userSelection.x1,
                     "selectedy1" : userSelection.y1,
                     "selectedx2" : userSelection.width + userSelection.x1,
-                    "selectedy2" : userSelection.height + userSelection.y1,
+                    "selectedy2" : userSelection.height + userSelection.y1
                 };
 
                 var stringtosave = $.toJSON(tosave);
@@ -349,7 +425,7 @@ sakai.changepic = function(tuid, showSettings){
 
                 // Do a patch request to the profile info so that it gets updated with the new information.
                 $.ajax({
-                    url: "/~" + sakai.data.me.user.userid + "/public/authprofile.json",
+                    url: "/~" + id + "/public/authprofile.json",
                     type : "POST",
                     data : {
                         "picture" : $.toJSON(tosave),
@@ -359,7 +435,7 @@ sakai.changepic = function(tuid, showSettings){
                         // Change the picture in the page. (This is for my_sakai.html)
                         // Math.random is for cache issues.
                         for (var i = 0; i < imagesToChange.length;i++) {
-                            $(imagesToChange[i]).attr("src", "/~" + sakai.data.me.user.userid + "/public/profile/" + tosave.name + "?sid=" + Math.random());
+                            $(imagesToChange[i]).attr("src", "/~" + id + "/public/profile/" + tosave.name + "?sid=" + Math.random());
                         }
 
                         // Hide the layover.
@@ -437,32 +513,8 @@ sakai.changepic.startCallback = function(){
  */
 sakai.changepic.completeCallback = function(response){
 
-    var tosave = {
-        "_name": "profilepicture"
-    };
-
-    // We edit the profile.json file with the new profile picture.
-    var stringtosave = $.toJSON(tosave);
-
-    // We edit the me object.
-    // This saves a request and will be checked in the doInit function later on.
-    sakai.data.me.profile.picture = stringtosave;
-
-    // the object we wish to insert into the profile.json file.
-    var data = {"picture":stringtosave,"_charset_":"utf-8"};
-
-    $.ajax({
-        url: "/~" + sakai.data.me.user.userid + "/public/authprofile.json",
-        type : "POST",
-        data : data,
-        success : function(data) {
-            // we have saved the profile, now do the widgets other stuff.
-            sakai.changepic.doInit(true);
-        },
-        error: function(xhr, textStatus, thrownError) {
-            alert("An error has occured");
-        }
-    });
+    // we have saved the profile, now do the widgets other stuff.
+    sakai.changepic.doInit(true);
 };
 
 
