@@ -546,7 +546,7 @@ sakai.inbox = function() {
         d.setMinutes(parseInt(dateString.substring(14, 16), 10));
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //format Jan 22, 2009 10:25 PM
-        reminder.date = sakai.inbox.formatDate(d, "M j, Y g:i A");
+        reminder.date = formatDate(d, "M j, Y g:i A");
         
         return reminder;
     }
