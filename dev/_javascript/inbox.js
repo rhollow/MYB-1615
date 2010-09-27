@@ -39,7 +39,6 @@ sakai.inbox = function() {
     var messagesForTypeCat; // The number of messages for this type/cat.
     var box = "";
     var cats = "";
-    var chooseCategory = {"Message": "message", "Reminder": "reminder", "Announcement": "announcement", "Chat": "chat"};
     var inboxComposeNewPanelOpen = false;
     var getAll = true;
 
@@ -107,6 +106,8 @@ sakai.inbox = function() {
     var inboxSubfolderMessages = inboxSubfolder + "_messages";
     var inboxSubfolderInvitations = inboxSubfolder + "_invitations";
     var inboxSubfolderAnnouncements = inboxSubfolder + "_announcements";
+    var inboxSubfolderReminders = inboxSubfolder + "_reminders"; // myBerkeley: added subfolder for reminders
+    var inboxSubfolderArchive = inboxSubfolder + "_archive"; // myBerkeley: added subfolder for reminders archive
 
     var inboxInbox = inboxID + "_inbox";
     var inboxInboxClass = inboxClass + "_inbox";
@@ -115,10 +116,10 @@ sakai.inbox = function() {
     var inboxInboxSortDown = inboxInbox + "_sort_down";
 
     var inboxInboxCheckAll = inboxInbox + "_checkAll";
-    var inboxInboxDelete = inboxInbox + "_delete";
-    var inboxInboxArchiveCompleted = inboxInbox + "_archive_completed";
-    var inboxInboxEmptyTrash = inboxInbox + "_empty_trash";
-    var inboxInboxBackToList = inboxInbox + "_back_to_list";
+    var inboxInboxDeleteButton = inboxInbox + "_delete_button";
+    var inboxInboxArchiveCompletedButton = inboxInbox + "_archive_completed_button";
+    var inboxInboxEmptyTrashButton = inboxInbox + "_empty_trash_button";
+    var inboxInboxBackToListButton = inboxInbox + "_back_to_list_button";
 
     var inboxInboxMessage = inboxInboxClass + "_message";
     var inboxInboxHeader = inboxInboxClass + "_header";
@@ -129,7 +130,7 @@ sakai.inbox = function() {
 
     // Specific message
     var inboxSpecificMessage = inboxID + "_message";
-    var inboxSpecificMessageDelete = inboxSpecificMessage + "_delete";
+    var inboxSpecificMessageDeleteButton = inboxSpecificMessage + "_delete_button";
     var inboxSpecificMessageBackToInbox = inboxSpecificMessage + "_back_to_inbox";
     var inboxSpecificMessagePreviousMessages = inboxSpecificMessage + "_previous_messages";
     var inboxSpecificMessageOption = inboxSpecificMessage + "_option";
@@ -187,8 +188,6 @@ sakai.inbox = function() {
 
     // other IDs
     var chatUnreadMessages = "#chat_unreadMessages";
-    var selectedFilterDiv = "";
-
 
     // Keep JSLint.com happy...
     var pageMessages = function() {};
@@ -284,17 +283,23 @@ sakai.inbox = function() {
         $(inboxTableHeaderFromContent).text("From");
         
         // Show/hide appropriate buttons
-        $(inboxInboxDelete).show();
+        $(inboxInboxDeleteButton).show();
         $(".different").show();
         $(".different_reminders").hide();
-        $(inboxInboxArchiveCompleted).hide();
-        $(inboxSpecificMessageDelete).hide();
-        $(inboxInboxEmptyTrash).hide();
-        $(inboxInboxBackToList).hide();
+        $(inboxInboxArchiveCompletedButton).hide();
+        $(inboxSpecificMessageDeleteButton).hide();
+        $(inboxInboxEmptyTrashButton).hide();
+        $(inboxInboxBackToListButton).hide();
         
         // The small header above the webpage
         $(inboxInboxHeader).hide();
-        $(inboxID + "_" + type + category).show();
+        var temp = type;
+        if(type === "inbox" || type === "archive") { // myBerkeley: check if reminders header needs to be displayed
+            if (category === "Reminder") {
+                temp = "reminders";
+            }
+        }
+        $(inboxID + "_" + temp).show();
 
         // Remember the type and category we want to see.
         selectedType = type;
@@ -528,13 +533,19 @@ sakai.inbox = function() {
     };
     
     /**
-     * Formats the due date property for reminder
+     * Formats the read property and the due date property for a reminder
      * @param {Object} reminder A reminder object
      */
     var formatReminder = function(reminder){
+        if (reminder["sakai:read"] === "true" || reminder["sakai:read"] === true) {
+            reminder.read = true;
+        } else {
+            reminder.read = false;
+        }
+        
         var dateString;
-        /* DEBUG
-if (reminder["sakai:dueDate"] != null) {
+        
+        if (reminder["sakai:dueDate"] != null) {
             dateString = reminder["sakai:dueDate"];
         } else if(reminder["sakai:eventDate"] != null) {
             dateString = reminder["sakai:eventDate"];
@@ -548,7 +559,6 @@ if (reminder["sakai:dueDate"] != null) {
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //format Jan 22, 2009 10:25 PM
         reminder.date = formatDate(d, "M j, Y g:i A");
-*/
         
         return reminder;
     }
@@ -820,6 +830,8 @@ if (reminder["sakai:dueDate"] != null) {
                 cats = "invitation";
             } else if (selectedCategory === "Chat"){
                 cats = "chat";
+            } else if (selectedCategory === "Reminder"){ // myBerkeley: added reminder category
+                cats = "reminder";
             }
             url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats + "&items=" + messagesPerPage + "&page=" + currentPage;
         }
@@ -835,10 +847,18 @@ if (reminder["sakai:dueDate"] != null) {
                 sortBy = "sakai:to";
                 break;
             case "from":
+            case "from_reminder":
                 sortBy = "sakai:from";
                 break;
             case "subject":
+            case "subject_reminder":
                 sortBy = "sakai:subject";
+                break;
+            case "date_reminder": // myBerkeley: added sort by due date
+                sortBy = "sakai:dueDate";
+                break;
+            case "checkbox_reminder": // myBerkeley: added sort by completed
+                sortBy = "sakai:taskState";
                 break;
         }
 
@@ -888,7 +908,7 @@ if (reminder["sakai:dueDate"] != null) {
                         unreadInvitations = data.count[i].count;
                     } else if (data.count[i].group === "chat"){
                         $(inboxFilterChats).append(sakai.api.Security.saneHTML(tpl.replace(/__NR__/gi, data.count[i].count)));
-                    } else if (data.count[i].group === "reminder") {
+                    } else if (data.count[i].group === "reminder") { // myBerkeley: added reminder category
                         unreadReminders = data.count[i].count;
                     }
                     
@@ -908,7 +928,6 @@ if (reminder["sakai:dueDate"] != null) {
 
         if (unreadMessages > 0){
             $("#inbox_unread_nr_messages").text(sakai.api.Security.saneHTML("(" + unreadMessages + ")"));
-            $(chatUnreadMessages).html(sakai.api.Security.saneHTML(unreadMessages));
         } else {
             $("#inbox_unread_nr_messages").text("");
             $(chatUnreadMessages).html("0");
@@ -926,11 +945,15 @@ if (reminder["sakai:dueDate"] != null) {
             $("#inbox_unread_nr_invitations").text("");
         }
 
+        // myBerkeley: added reminders category
         if (unreadReminders > 0) {
             $("#inbox_unread_nr_reminders").text(sakai.api.Security.saneHTML("(" + unreadReminders + ")"));
         } else {
             $("#inbox_unread_nr_reminders").text("");
         }
+        
+        var totalUnread = unreadMessages + unreadReminders;
+        $(chatUnreadMessages).html(sakai.api.Security.saneHTML(totalUnread)); // myBerkeley: moved this line out
     };
 
     /**
@@ -986,7 +1009,7 @@ if (reminder["sakai:dueDate"] != null) {
                         unreadInvitations -= 1;
                     } else if (message["sakai:category"] === "announcement") {
                         unreadAnnouncements -= 1;
-                    } else if (message["sakai:category"] === "reminder") {
+                    } else if (message["sakai:category"] === "reminder") { // myBerkeley: added reminders category
                         unreadReminders -= 1;
                     }
 
@@ -1011,18 +1034,10 @@ if (reminder["sakai:dueDate"] != null) {
         $("#inbox_message_replies").html("");
         
         // Hide/show relevant buttons
-        $(inboxInboxBackToList).show();
-        $(inboxInboxEmptyTrash).hide();
-        $(inboxInboxArchiveCompleted).hide();
-        $(inboxInboxDelete).hide();
-        /* MERGE DEBUG
-if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash) {
-            $(inboxSpecificMessageDelete).show();
-        }
-        else {
-            $(inboxSpecificMessageDelete).hide();
-        }
-*/
+        $(inboxInboxBackToListButton).show();
+        $(inboxInboxEmptyTrashButton).hide();
+        $(inboxInboxArchiveCompletedButton).hide();
+        $(inboxInboxDeleteButton).hide();
 
         // Hide invitation links
         $("#inbox-invitation-accept").hide();
@@ -1033,6 +1048,12 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
 
         showPane(inboxPaneMessage);
         var message = getMessageWithId(id);
+
+        if (message["sakai:category"] === "message" || message["sakai:messagebox"] === "trash") {
+            $(inboxSpecificMessageDeleteButton).show();
+        } else {
+            $(inboxSpecificMessageDeleteButton).hide();
+        }
 
         selectedMessage = message;
         if (typeof message !== "undefined") {
@@ -1388,7 +1409,6 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
      */
 
     $(inboxInboxMessage).live("click", function(e, ui) {
-
         var id = e.target.id;
         id = id.split('_');
         $.bbq.pushState({"message":id[id.length - 1]},2);
@@ -1417,10 +1437,10 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
     $(inboxFilterTrash).click(function() {
         $.bbq.pushState({"box": "trash"},2);
     });
-    $(inboxFilterReminders).click(function(){
+    $(inboxFilterReminders).click(function(){ // myBerkeley: added reminders category
         $.bbq.pushState({"box": "reminders"},2);
     });
-    $(inboxFilterArchive).click(function(){
+    $(inboxFilterArchive).click(function(){ // myBerkeley: added archive for reminders category
         $.bbq.pushState({"box": "archive"},2);
     });
 
@@ -1431,7 +1451,7 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
         tickMessages();
     });
 
-    $(inboxInboxDelete).click(function() {
+    $(inboxInboxDeleteButton).click(function() {
         // Delete all checked messages
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function() {
@@ -1446,7 +1466,7 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
 
 
     // Moving all reminders marked as complete to the archive
-    $(inboxInboxArchiveCompleted).click(function() {
+    $(inboxInboxArchiveCompletedButton).click(function() {
         var pathToMessages = [];
         $(inboxInboxCheckDone + ":checked").each(function(){
             var pathToMessage = $(this).val();
@@ -1486,7 +1506,7 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
     });
     
     // Emptying all the selected messages in Trash
-    $(inboxInboxEmptyTrash).click(function(){
+    $(inboxInboxEmptyTrashButton).click(function(){
         // Delete all checked messages 
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function(){
@@ -1503,12 +1523,6 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
             $(inboxInboxCheckAll).attr("checked", '');
             tickMessages();
         }
-    });
-    
-    // Takes user back to the filter they were on before going into a specific message
-    $(inboxInboxBackToList).click(function(){
-        $(currentFilter).click();
-        showPage(currentPage);
     });
     
     // Sorters for the inbox.
@@ -1537,6 +1551,14 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
      *
      */
 
+    $(inboxInboxBackToListButton).click(function() { // DEBUG: TRY TO MERGE THIS WITH FUNCTION BELOW
+        // Show the inbox.
+        showPane(inboxPaneInbox);
+
+        // Clear all the input fields
+        clearInputFields();
+    });
+
     $(inboxSpecificMessageBackToInbox).click(function() {
         // Show the inbox.
         showPane(inboxPaneInbox);
@@ -1550,7 +1572,23 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
         scrollTo($(inboxSpecificMessageCompose));
     });
 
-    $([inboxSpecificMessageOptionDelete, inboxSpecificMessageDelete]).click(function() {
+    $(inboxSpecificMessageDeleteButton).click(function() { // DEBUG: TRY TO MERGE THIS WITH FUNCTION BELOW
+        var harddelete = false;
+        if ($.inArray(selectedMessage.types, "trash") > -1) {
+            // This is a trashed message, hard delete it.
+            harddelete = true;
+        }
+        // Delete the message
+        deleteMessages([selectedMessage["jcr:path"]], harddelete);
+        
+        // Show the inbox
+        showPane(inboxPaneInbox);
+        
+        // Clear all the input fields
+        clearInputFields();
+    });
+    
+    $(inboxSpecificMessageOptionDelete).click(function() {
         var harddelete = false;
         if ($.inArray(selectedMessage.types, "trash") > -1) {
             // This is a trashed message, hard delete it.
@@ -1631,7 +1669,6 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
                 case "trash":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
-                    $(inboxTableHeaderFromContent).text("From/To");
                     break;
                 case "invitations":
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.invitation, "all", inboxFilterInvitations);
@@ -1641,32 +1678,25 @@ if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash)
                 case "reminders":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
-                    $(inboxSubfolderMessages).show();
-                    
-                    $(inboxInboxDelete).hide();
-                    $(inboxInboxArchiveCompleted).show();
+                    $(inboxInboxDeleteButton).hide();
+                    $(inboxInboxArchiveCompletedButton).show();
                     $(".different").hide();
                     $(".different_reminders").show();
-                    $(selectedFilterDiv).removeClass("selected");
-                    selectedFilterDiv = $(inboxFilterReminders).parent();
-                    $(selectedFilterDiv).addClass("selected");
+                    $(inboxSubfolderReminders).show();
                     break;
                 case "archive":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.archive, sakai.config.Messages.Categories.reminder, "all", inboxFilterArchive);
-                    $(inboxSubfolderMessages).show();
-                            $(inboxInboxDelete).hide();
+                    $(inboxInboxDeleteButton).hide();
                     $(".different").hide();
                     $(".different_reminders").show();
-                    currentFilter = inboxFilterArchive;
-                    $(selectedFilterDiv).removeClass("selected");
-                    selectedFilterDiv = $(inboxFilterArchive).parent();
-                    $(selectedFilterDiv).addClass("selected");
+                    $(inboxSubfolderArchive).show();
                     break;
             }
         } else { // show the inbox
             $(inboxSubfolderClass).hide();
-            filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
+            filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
+            $(inboxSubfolderMessages).show();
         }
     });
 

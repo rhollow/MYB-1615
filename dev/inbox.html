@@ -76,7 +76,8 @@
                 <div class="fl-col fl-fix side_panel">
 
                     <!-- DROP DOWN -->
-                    <button id="inbox_compose_message" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__COMPOSE_A_NEW_MESSAGE__</span></button>
+                    <!-- myBerkeley: changed display to none because peer to peer message sending not supported -->
+                    <button id="inbox_compose_message" class="s3d-button s3d-button-primary" style="display:none;"><span class="s3d-button-inner">__MSG__COMPOSE_A_NEW_MESSAGE__</span></button>
 
                     <!-- FOLDERS -->
 
@@ -87,7 +88,7 @@
                         </div>
                         <div class="if_content">
 
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__INBOX__</a></div></div>
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter">__MSG__INBOX__</a></div></div>
                             
                             <ul>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGES__</a> <span id="inbox_unread_nr_messages"></span></li>
@@ -102,7 +103,7 @@
                             <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__SENT__</a></div></div>
                             -->
                             
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter">__MSG__REMINDERS__</a></div></div>
+                            <div class="tab"><div><a href="javascript:;" class="inbox_filter">__MSG__NOTIFICATIONS__</a></div></div>
                             <ul>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_reminders">__MSG__REMINDERS__</a> <span id="inbox_unread_nr_reminders"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_archive">__MSG__ARCHIVE__</a></li>
@@ -136,7 +137,11 @@
                                 </span>
 
                                 <!-- Delete-->
-                                <a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a>
+                                <!-- myBerkeley: Using delete buttons instead of link -->
+                                <!-- <a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a> -->
+                                <button id="inbox_inbox_delete_button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                                <button id="inbox_inbox_empty_trash_button" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>
+                                <button id="inbox_inbox_archive_completed_button" class="s3d-button"><span class="s3d-button-inner">__MSG__ARCHIVE_COMPLETED_REMINDERS__</span></button>
                             </div>
 
                             <div class="top_decor">
@@ -150,7 +155,7 @@
                                     <span id="inbox_subfolder_announcements" class="inbox_subfolder" style="display:none">&raquo; __MSG__ANNOUNCEMENTS__</span>
                                 </div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_reminders">
-                                    __MSG__REMINDERS__
+                                    __MSG__NOTIFICATIONS__
                                     <span id="inbox_subfolder_reminders" class="inbox_subfolder" style="display:none">&raquo; __MSG__REMINDERS__</span>
                                     <span id="inbox_subfolder_archive" class="inbox_subfolder" style="display:none">&raquo; __MSG__ARCHIVE__</span>
                                 </div>
@@ -158,7 +163,8 @@
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                             </div>
 
-                            <!-- Inbox -->
+                            <!-- Inbox -->                  
+                            
                             <div class="main_content_container">
                                 <table class="inbox-table" id="inbox_table" summary="All your messages.">
                                     <tr class="different">
@@ -217,7 +223,7 @@
                                             {if toMe}
                                                 <td>
                                                 {for fromUser in m.userFrom}
-                                                    <a class="inbox_inbox_message_from" href="/dev/show.html?type=user&amp;id=${fromUser.userid}">__MSG__FROM__:  ${sakai.api.User.getDisplayName(fromUser)}</a></td>
+                                                    <a class="inbox_inbox_message_from" href="/dev/show.html?type=user&amp;id=${fromUser.userid}">${sakai.api.User.getDisplayName(fromUser)}</a></td>
                                                 {/for}
                                                 </td>
                                             {else}
@@ -257,7 +263,7 @@
                                         </td>
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
                                         <td>${m.date}</td>
-                                        <td><input type="checkbox" class="inbox_inbox_check_done" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
+                                        <td class="reminders_checkbox"><input type="checkbox" class="inbox_inbox_check_done" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
                                 </tr>
                                 
                                 {/if}
@@ -282,8 +288,9 @@
 
                     <!-- VIEW A SPECIFIC MESSAGE -->
                     <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
-
+    
                         <!-- Header -->
+                        <!--
                         <div class="top_toolbar fl-fix">
                             <div class="fl-force-left sender-options">
                                 <a href="javascript:;" id="inbox_message_back_to_inbox"><span>&laquo;</span> __MSG__BACK_TO_INBOX__</a>
@@ -293,6 +300,12 @@
                                 <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
                             </div>
                         </div>
+                        --> <!-- myBerkeley: using buttons instead -->
+                       
+                        <div class="top_button_bar">
+                            <button id="inbox_inbox_back_to_list_button" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_LIST__</span></button>
+                            <button id="inbox_message_delete_button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                        </div> 
 
                         <div class="top_decor">
                             <!-- <div class="inbox-heading">__MSG__MESSAGE__</div> -->
@@ -329,7 +342,7 @@
                                             <span id="inbox-sitejoin-already" style="display:none; color: #666">__MSG__YOU_HAVE_REPLIED_TO_THIS_REQUEST_TO_JOIN_THIS_SITE__ |</span>
                                             <span id="inbox-invitation-accept" style="display:none"><a href="javascript:;" id="inbox_message_accept_invitation">__MSG__ACCEPT_INVITATION__</a> |</span>
                                             <span id="inbox-invitation-already" style="display:none; color: #666">__MSG__YOU_HAVE_ACCEPTED_THIS_PERSON_AS_A_CONTACT__ |</span>
-                                            <!-- <a href="javascript:;" id="inbox_message_option_reply">__MSG__REPLY__</a> -->
+                                            <!-- <a href="javascript:;" id="inbox_message_option_reply">__MSG__REPLY__</a> --> <!-- myBerkeley: not supporting replying to messages -->
                                         </div>
 
                                     </div>
@@ -411,15 +424,6 @@
 
                         <div class="bottom_decor"></div>
 
-                    </div>
-                    
-                    <!-- Button List -->
-                    <div class="button-list">
-                        <button id="inbox_inbox_delete" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                        <button id="inbox_inbox_empty_trash" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>
-                        <button id="inbox_inbox_archive_completed" class="s3d-button"><span class="s3d-button-inner">__MSG__ARCHIVE_COMPLETED_REMINDERS__</span></button>
-                        <button id="inbox_inbox_back_to_list" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_LIST__</span></button>
-                        <button id="inbox_message_delete" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                     </div>
 
                     <!-- NEW MESSAGE -->
