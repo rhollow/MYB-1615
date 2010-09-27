@@ -2,33 +2,40 @@
 <link rel="stylesheet" type="text/css" href="/devwidgets/mylinks/css/mylinks.css" />
 
 <div class="mylinks_widget">
-    <div class="fl-widget-content link_list">
-        <ul class="movable_list">
-        </ul>
+    <div class="fl-widget-content">
+        <div class="link_list">            
+            <ul class="movable_list">
+            </ul>
+        </div>
     </div>
 
-        <ul id="mylinks_list_template" style="display:none"><!--
-            {for i in links}
-                <li class="link">
-                    <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
-                </li>
-            {forelse}
-                <span>Sorry, there was a failure loading your list of links.</span>
-            {/for}
-        --></ul>
+    <ul id="mylinks_list_template" style="display:none"><!--
+        {for i in links}
+            <li class="link">
+                <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
+            </li>
+        {forelse}
+            <span>Sorry, there was a failure loading your list of links.</span>
+        {/for}
+    --></ul>
+    
+    <!-- widget footer --> 
 
-    <div class="fl-widget-options fl-fix">
+    <div class="fl-widget-options fl-fix" style="overflow:hidden;">
         <div class="widget-options-inner">
             <ul>
                 <li><a href="/dev/links.html">__MSG__MODIFY_LINKS__</a></li>
             </ul>
         </div>
-    </div>
-    <div class="fl-widget-options-footer-left">
-        <div class="fl-widget-options-footer-right">
+        <div class="fl-widget-options-footer-left">
+            <div class="fl-widget-options-footer-right">
+            </div>
         </div>
     </div>
+    
 </div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/mylinks/javascript/mylinks.js"></script>
+
+

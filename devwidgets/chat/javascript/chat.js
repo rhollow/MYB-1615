@@ -1511,8 +1511,8 @@ sakai.chat = function(tuid, showSettings){
         // This is handled in the topnavigation widget
     }
     else {
-        loadChatWindows();
-        checkOnline();
+        //loadChatWindows();
+        //checkOnline();
         doInit();
     }
     
