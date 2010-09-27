@@ -533,7 +533,8 @@ sakai.inbox = function() {
      */
     var formatReminder = function(reminder){
         var dateString;
-        if (reminder["sakai:dueDate"] != null) {
+        /* DEBUG
+if (reminder["sakai:dueDate"] != null) {
             dateString = reminder["sakai:dueDate"];
         } else if(reminder["sakai:eventDate"] != null) {
             dateString = reminder["sakai:eventDate"];
@@ -547,6 +548,7 @@ sakai.inbox = function() {
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //format Jan 22, 2009 10:25 PM
         reminder.date = formatDate(d, "M j, Y g:i A");
+*/
         
         return reminder;
     }
@@ -1013,12 +1015,14 @@ sakai.inbox = function() {
         $(inboxInboxEmptyTrash).hide();
         $(inboxInboxArchiveCompleted).hide();
         $(inboxInboxDelete).hide();
-        if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash) {
+        /* MERGE DEBUG
+if (currentFilter === inboxFilterMessages || currentFilter === inboxFilterTrash) {
             $(inboxSpecificMessageDelete).show();
         }
         else {
             $(inboxSpecificMessageDelete).hide();
         }
+*/
 
         // Hide invitation links
         $("#inbox-invitation-accept").hide();
