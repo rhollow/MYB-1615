@@ -548,47 +548,51 @@ if (!sakai.composenotification){
             user = userObj;                                       
         };       
         
-        // When someone clicks the send button.
+        // When someone clicks the 'Queue' button.
         $("#cn-queue-button").bind("click", function(ev) {                                              
             // Check the fields if there are any required fields that are not filled in.
             if (checkFieldsForErrors()) {
                 // Common values.
                 var toSend = {
                     "sakai:type": "notice",
-                    "sakai:to": $(messageFieldTo).val(), 
+                    //"sakai:to": $(messageFieldTo).val(), 
+                    "sakai:to" : sakai.data.me.user.userid,
                     "sakai:from": sakai.data.me.user.userid,
                     "sakai:subject": $(messageFieldSubject).val(), 
                     "sakai:body": $(messageFieldBody).val(),
                     "sakai:sendstate": "pending",
                     "sakai:read": false,
-                    "sakai:messagebox": "inbox"
+                    "sakai:messagebox": "queue"                    
                 }                                     
                                
                 // Is this notification required or not?               
-                if($(messageRequiredYes).attr("checked")){                    
+                if($(messageRequiredYes).attr("checked")){     
+                    alert("This message is required!");               
                     // Reminders (could be task or event).
-                    toSend["sakai:category"] = "reminder";                   
+                    toSend["sakai:category"] = "reminder"; 
+                    // See if it is a task or an event and get the appropriate info.
+                    if($(messageTaskCheck).attr("checked")){            
+                        alert("It's a task!");                           
+                        toSend["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate");
+                        toSend["sakai:dueDate@TypeHint"] = "Date";   
+                        toSend["sakai:taskState"] = "created";
+                    }
+                    else{                    
+                        alert("It's an event!");
+                        toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
+                        toSend["sakai:eventDate@TypeHint"] = "Date";
+                        toSend["sakai:eventPlace"] = $(messageEventPlace).val();
+                        toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
+                            
+                        var eventDetails = "Date: "+formatDate(toSend["sakai:eventDate"])+"\nTime: "+toSend["sakai:eventTime"]+"\nPlace: "+toSend["sakai:eventPlace"]+"\n\n";
+                        toSend["sakai:body"] = eventDetails+toSend["sakai:body"];                                                                                                            
+                    }                    
                 }
-                else{                    
+                else{          
+                    alert("This task is not required!");          
                     // Notifications (treated same as a message).  
                     toSend["sakai:category"] = "message";                                           
-                }                                  
-                
-                // See if it is a task or an event and get the appropriate info.
-                if($(messageTaskCheck).attr("checked")){                                       
-                    toSend["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate");
-                    toSend["sakai:dueDate@TypeHint"] = "date";   
-                    toSend["sakai:taskState"] = "created";
-                }
-                else{                    
-                    toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                    toSend["sakai:eventDate@TypeHint"] = "date";
-                    toSend["sakai:eventPlace"] = $(messageEventPlace).val();
-                    toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
-                        
-                    var eventDetails = "Date: "+formatDate(toSend["sakai:eventDate"])+"\nTime: "+toSend["sakai:eventTime"]+"\nPlace: "+toSend["sakai:eventPlace"]+"\n\n";
-                    toSend["sakai:body"] = eventDetails+toSend["sakai:body"];                                                                                                            
-                }            
+                }                                                                           
                               
                 // Post all the data in an Ajax call.    
                 $.ajax({

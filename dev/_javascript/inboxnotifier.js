@@ -25,12 +25,12 @@ sakai.notificationsinbox = function(){
      * CONFIGURATION
      *
      */
-    var messagesPerPage = 13; // The number of messages per page
+    var messagesPerPage = 12; // The number of messages per page
     var allMessages = []; // Array that will hold all the messages
     var me = sakai.data.me;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
     var selectedMessage = {}; // The current message
-    var selectedType = 'inbox';
+    var selectedType = 'drafts';
     var sortOrder = "descending";
     var sortBy = "date";
     var currentPage = 0;
@@ -58,7 +58,7 @@ sakai.notificationsinbox = function(){
     // Filters on the left side menu
     var inboxFilter = inboxID + "_filter";
     var inboxFilterClass = inboxClass + "_filter";
-    var inboxFilterInbox = inboxFilter + "_inbox";   
+    var inboxFilterDrafts = inboxFilter + "_drafts";   
     var inboxFilterQueue = inboxFilter + "_queue";
     var inboxFilterArchive = inboxFilter + "_archive";
     var inboxFilterTrash = inboxFilter + "_trash";  
@@ -218,7 +218,8 @@ sakai.notificationsinbox = function(){
      * @param {String} read Whether we should fetch messages that are read, unread or all of them. (options: true, false, all)
      * @param {String} id The id of the filter that got clicked in the side panel.
      */
-    var filterMessages = function(type, read, id){               
+    var filterMessages = function(type, read, id){     
+        alert("Calling filter messages with type: "+type+"...");          
         // The small header/titlebar above the current pane.
         $(inboxInboxHeader).hide();
         $(inboxID + "_" + type).show();               
@@ -228,6 +229,11 @@ sakai.notificationsinbox = function(){
         
         // Display first page.      
         getAllMessages();
+                     
+        // Display first page.
+        // getCount(read);
+        // getAllMessages();
+        showPage(1);
         
         // Show the inbox pane.
         showPane(inboxPaneInbox);
@@ -496,40 +502,30 @@ sakai.notificationsinbox = function(){
      * Show a certain page of messages.
      * @param {int} pageNumber The page number you want to display.
      */
-//    var showPage = function(pageNumber){
-//        alert("showPage() being called.");
-//        // Remove all messages.
-//        // remove previous messages.
-//        removeAllMessagesOutDOM();
-//        // Set the pager.
-//        pageMessages(pageNumber);
-//        // Remember which page were on.
-//        currentPage = pageNumber - 1;
-//        // Show set of messages.
-//        getAllMessages();
-//    };
-
-    var showPage = function(){
-        alert("showPage() is being called.");    
+    var showPage = function(pageNumber){       
+        // Remove all messages.
+        // remove previous messages.
+        removeAllMessagesOutDOM();
+        // Set the pager.
+        pageMessages(pageNumber);
+        // Remember which page were on.
+        currentPage = pageNumber - 1;
+        // Show set of messages.
+        getAllMessages();
     };
     
     /**
      * Draw up the pager at the bottom of the page.
      * @param {int} pageNumber The number of the current page
      */
-//    pageMessages = function(pageNumber){
-//        $(inboxPager).pager({
-//            pagenumber: pageNumber,
-//            pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
-//            buttonClickCallback: showPage
-//        });
-//        currentPage = pageNumber;
-//    };
-
-    var pageMessages = function(){
-        alert("pageMessages() is being called!");
-    };
-        
+    pageMessages = function(pageNumber){       
+        $(inboxPager).pager({
+            pagenumber: pageNumber,
+            pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
+            buttonClickCallback: showPage
+        });
+        currentPage = pageNumber;
+    };       
     
     /**
      *
@@ -541,7 +537,7 @@ sakai.notificationsinbox = function(){
      * Gets all the messages from the JCR.
      */
     getAllMessages = function(callback){    
-        box = "inbox";
+        box = "drafts";
         if (selectedType === "queue") {
             box = "queue";
         }
@@ -553,7 +549,7 @@ sakai.notificationsinbox = function(){
                 box = "trash";
             }
         
-        var url = sakai.config.URL.MESSAGE_BOX_SERVICE + "?box=" + box + "&items=" + messagesPerPage + "&page=" + currentPage;
+        var url = sakai.config.URL.MESSAGE_BOX_SERVICE + "?box=" + box + "&items=" + messagesPerPage + "&page=" + currentPage;        
         
         var types = "&types=" + selectedType;
         if (typeof selectedType === "undefined" || selectedType === "") {
@@ -780,25 +776,25 @@ sakai.notificationsinbox = function(){
     });
     
     // Various filter functions (left-hand side menu).
-    $(inboxFilterInbox).click(function(){
-        filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
-        correctButtonList("inbox");   
-        correctHighlightedTab("inbox");     
+    $(inboxFilterDrafts).click(function(){       
+        filterMessages("drafts", "", "all", inboxFilterDrafts);
+        correctButtonList("drafts");   
+        correctHighlightedTab("drafts");     
     });
     
-    $(inboxFilterQueue).click(function(){        
-        filterMessages("queue", "", "all", inboxFilterQueue);       
+    $(inboxFilterQueue).click(function(){              
+        filterMessages("queue", "", "all", inboxFilterQueue);  
         correctButtonList("queue");
-        correctHighlightedTab("queue");
+        correctHighlightedTab("queue");             
     });
     
-    $(inboxFilterArchive).click(function(){       
+    $(inboxFilterArchive).click(function(){             
         filterMessages("archive", "", "all", inboxFilterArchive);         
         correctButtonList("archive");
         correctHighlightedTab("archive");
     });
     
-    $(inboxFilterTrash).click(function(){
+    $(inboxFilterTrash).click(function(){        
         filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
         correctButtonList("trash");
         correctHighlightedTab("trash");
@@ -933,7 +929,7 @@ sakai.notificationsinbox = function(){
             }
             else {            
                 // Show messages by default (as if click on "Inbox").
-                filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
+                filterMessages("drafts", "", "all", inboxFilterDrafts);
             }            
         }        
     };    
