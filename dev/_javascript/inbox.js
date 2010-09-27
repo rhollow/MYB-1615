@@ -1658,7 +1658,7 @@ sakai.inbox = function() {
                     break;
                 case "announcements":
                     $(inboxSubfolderClass).hide();
-                    filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);                    
+                    filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
                     $(inboxSubfolderAnnouncements).show();
                     break;
                 case "chats":
