@@ -121,9 +121,9 @@
 
 /** Table **/
 
-/* myBerkeley: fixed width from 670px to 671px */
+/* myBerkeley: fixed width from 670px to 671px and border-right from 3px to 4px */
 .inbox_main .main_content_container
-{ width: 671px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
+{ width: 671px; border-left: 3px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
 
 /* myBerkeley: fixed width from 670px to 671px */
 .inbox_main .inbox-table
@@ -187,7 +187,7 @@
 { color: #333;  text-align: left; height: 26px; border: none; }
 
 .inbox_main .inbox-table tr
-{ color: #666; }
+{ color: #666; border-left: 1px solid #D4DADE; } /* myBerkeley: added border-left */
 
 .inbox_main .inbox-table td
 { border: none; color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; white-space: nowrap; overflow: hidden;}

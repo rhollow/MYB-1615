@@ -188,6 +188,7 @@ sakai.inbox = function() {
 
     // other IDs
     var chatUnreadMessages = "#chat_unreadMessages";
+    var currentFilter = ""; // myBerkeley: added to keep track of current filter
 
     // Keep JSLint.com happy...
     var pageMessages = function() {};
@@ -1452,7 +1453,7 @@ sakai.inbox = function() {
     });
 
     $(inboxInboxDeleteButton).click(function() {
-        // Delete all checked messages
+        // Delete all checked messages    
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function() {
             var pathToMessage = $(this).val();
@@ -1460,8 +1461,13 @@ sakai.inbox = function() {
         });
 
         // If we are in trash we hard delete the messages
-        deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
-
+        deleteMessages([pathToMessages], (currentFilter == inboxFilterTrash));
+        
+        // Show the inbox
+        showPane(inboxPaneInbox);
+        
+        // Clear all the input fields
+        clearInputFields();
     });
 
 
@@ -1557,6 +1563,8 @@ sakai.inbox = function() {
 
         // Clear all the input fields
         clearInputFields();
+        
+        $(currentFilter).click(); // myBerkeley: added to prompt hash change
     });
 
     $(inboxSpecificMessageBackToInbox).click(function() {
@@ -1650,30 +1658,36 @@ sakai.inbox = function() {
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
                     $(inboxSubfolderMessages).show();
+                    currentFilter = inboxFilterMessages;
                     break;
                 case "sent":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
                     $(inboxTableHeaderFromContent).text("To");
+                    currentFilter = inboxFilterSent;
                     break;
                 case "announcements":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
                     $(inboxSubfolderAnnouncements).show();
+                    currentFilter = inboxFilterAnnouncements;
                     break;
                 case "chats":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.chat, "all", inboxFilterChats);
                     $(inboxSubfolderChats).show();
+                    currentFilter = inboxFilterChats;
                     break;
                 case "trash":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
+                    currentFilter = inboxFilterTrash;
                     break;
                 case "invitations":
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.invitation, "all", inboxFilterInvitations);
                     $(inboxSubfolderClass).hide();
                     $(inboxSubfolderInvitations).show();
+                    currentFilter = inboxFilterInvitations;
                     break;
                 case "reminders":
                     $(inboxSubfolderClass).hide();
@@ -1683,6 +1697,7 @@ sakai.inbox = function() {
                     $(".different").hide();
                     $(".different_reminders").show();
                     $(inboxSubfolderReminders).show();
+                    currentFilter = inboxFilterReminders;
                     break;
                 case "archive":
                     $(inboxSubfolderClass).hide();
@@ -1691,6 +1706,7 @@ sakai.inbox = function() {
                     $(".different").hide();
                     $(".different_reminders").show();
                     $(inboxSubfolderArchive).show();
+                    currentFilter = inboxFilterArchive;
                     break;
             }
         } else { // show the inbox
