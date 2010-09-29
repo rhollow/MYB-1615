@@ -1466,10 +1466,40 @@ sakai.inbox = function() {
         deleteMessages(pathToMessages, (currentFilter == inboxFilterTrash));
     });
 
-
-    // Moving all reminders marked as complete to the archive
+    // myBerkeley: added this to make callback function unique for each updateReminder call
+    var removeReminderFromList = function (reminderID) {
+        $(inboxTableMessageID + reminderID).empty();
+        $(inboxTableMessageID + reminderID).remove();
+    };
+    
+    /**
+     * myBerkeley
+     * Returns the id gotten from a jcr:path
+     * @param {Object} path
+     */
+    var idFromPath = function (path) {
+        var id = path.split("/");
+        return id[id.length - 1];
+    };
+    
+    /**
+     * myBerkeley
+     * Returns an object containing the ids and paths of all the checked messages in Reminders filter
+     */
+    var returnCheckedItems = function () {
+        var checkedItems = {};
+        $(inboxInboxCheckDone + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            var id = idFromPath(pathToMessage);
+            checkedItems[id] = pathToMessage;
+        });
+        return checkedItems;
+    }
+    
+    // MyBerkeley: moving all reminders marked as complete to the archive
     $(inboxInboxArchiveCompletedButton).click(function() {
         var pathToMessages = [];
+        var checkedItems = returnCheckedItems();
         $(inboxInboxCheckDone + ":checked").each(function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
@@ -1477,29 +1507,22 @@ sakai.inbox = function() {
         
         if (pathToMessages.length === 0) {
             showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
-        }
-        else {
+        } else {
             var propertyToUpdate = {
                 "sakai:messagebox": "archive"
             };
             
-            var unreadTotal = 0;
-            for (var i = 0, j = pathToMessages.length; i < j; i++) {
-                var id = pathToMessages[i].split("/");
-                id = id[id.length - 1];
+            for (key in checkedItems) {
+                var id = key;
+                var path = checkedItems[key];
                 
                 var reminderData = $(inboxTableMessageID + id).data("data");
                 var path = reminderData["jcr:path"];
-                
                 if(reminderData["sakai:read"] === false){
-                    unreadTotal++;
                     unreadReminders -= 1;
                 }
                 
-                updateReminder(path, propertyToUpdate, function(){
-                    $(inboxTableMessageID + id).empty();
-                    $(inboxTableMessageID + id).remove();
-                });
+                updateReminder(path, propertyToUpdate, removeReminderFromList(id));
             }
             
             updateUnreadNumbers();
@@ -1525,7 +1548,7 @@ sakai.inbox = function() {
         }
         else {
             // If we are in trash we hard delete the messages
-            deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+            deleteMessages(pathToMessages, true);
             $(inboxInboxCheckAll).attr("checked", '');
             tickMessages();
         }
