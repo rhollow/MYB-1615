@@ -581,7 +581,7 @@ sakai.inbox = function() {
         d.setMinutes(parseInt(dateString.substring(14,16),10));
         d.setSeconds(parseInt(dateString.substring(17,19),10));
         //Jan 22, 2009 10:25 PM
-        message.date = formatDate(d, "M j, Y G:i A");
+        message.date = formatDate(d, "M j, Y g:i A"); // myBerkeley: changed time format G -> g so not military time
 
         if (message["sakai:read"] === "true" || message["sakai:read"] === true) {
             message.read = true;
