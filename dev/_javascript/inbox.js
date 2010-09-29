@@ -1343,12 +1343,14 @@ sakai.inbox = function() {
                     type: "POST",
                     success: function(data){
                         deleted++;
+                        alert("Success: " + pathToMessages[d]);
                         if (deleted === toDelete) {
                             deleteMessagesFinished(pathToMessages, true);
                         }
                     },
                     error: function(xhr, textStatus, thrownError) {
                         deleted++;
+                        alert("Error: " + pathToMessages[d]);
                         if (deleted === toDelete) {
                             deleteMessagesFinished(pathToMessages, false);
                         }
@@ -1461,13 +1463,15 @@ sakai.inbox = function() {
         });
 
         // If we are in trash we hard delete the messages
-        deleteMessages([pathToMessages], (currentFilter == inboxFilterTrash));
+        deleteMessages(pathToMessages, (currentFilter == inboxFilterTrash));
         
+/*
         // Show the inbox
         showPane(inboxPaneInbox);
         
         // Clear all the input fields
         clearInputFields();
+*/
     });
 
 
