@@ -182,12 +182,14 @@ sakai.inbox = function() {
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesCompleted = inboxGeneralMessages + "_completed";
     var inboxGeneralMessagesNotCompleted = inboxGeneralMessages + "_not_completed";
-    var inboxGeneralMessagesArchived = inboxGeneralMessages + "_archived";
+    var inboxGeneralMessagesArchived1 = inboxGeneralMessages + "_archived_1";
+    var inboxGeneralMessagesArchivedX = inboxGeneralMessages + "_archived_x";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
 
     // other IDs
     var chatUnreadMessages = "#chat_unreadMessages";
+    var currentFilter = ""; // myBerkeley: added to keep track of current filter
 
     // Keep JSLint.com happy...
     var pageMessages = function() {};
@@ -709,11 +711,9 @@ sakai.inbox = function() {
                     var path = reminderData["jcr:path"];
                     
                     var propertyToUpdate;
-                    var message;
                     var funct;
                     
                     if (reminderData["sakai:taskState"] === "completed") {
-                        message = $(inboxGeneralMessagesNotCompleted).text();
                         if (reminderData["sakai:messagebox"] === "archive") {
                             if(reminderData["sakai:read"] === false) {
                                 unreadReminders += 1;
@@ -725,7 +725,6 @@ sakai.inbox = function() {
                                 "sakai:messagebox": "inbox"
                             };
                             funct = function(){
-                                showGeneralMessage(message);
                                 $(inboxTableMessageID + id).empty();
                                 $(inboxTableMessageID + id).remove();
                             }
@@ -733,18 +732,11 @@ sakai.inbox = function() {
                             propertyToUpdate = {
                                 "sakai:taskState": "created"
                             };
-                            funct = function(){
-                                showGeneralMessage(message);
-                            }
                         }
                     } else {
                         propertyToUpdate = {
                             "sakai:taskState": "completed"
                         };
-                        message = $(inboxGeneralMessagesCompleted).text();
-                        funct = function(){
-                            showGeneralMessage(message);
-                        }
                     }
                     
                     updateReminder(path, propertyToUpdate, funct);
@@ -1335,6 +1327,7 @@ sakai.inbox = function() {
             unreadAnnouncements -= deletedUnreadAnnouncements;
             unreadInvitations -= deletedUnreadInvitations;
             updateUnreadNumbers();
+            $.bbq.removeState("message");
 
             for (var d = 0, e = pathToMessages.length; d < e; d++) {
                 $.ajax({
@@ -1452,7 +1445,7 @@ sakai.inbox = function() {
     });
 
     $(inboxInboxDeleteButton).click(function() {
-        // Delete all checked messages
+        // Delete all checked messages    
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function() {
             var pathToMessage = $(this).val();
@@ -1460,14 +1453,43 @@ sakai.inbox = function() {
         });
 
         // If we are in trash we hard delete the messages
-        deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
-
+        deleteMessages(pathToMessages, (currentFilter == inboxFilterTrash));
     });
 
-
-    // Moving all reminders marked as complete to the archive
+    // myBerkeley: added this to make callback function unique for each updateReminder call
+    var removeReminderFromList = function (reminderID) {
+        $(inboxTableMessageID + reminderID).empty();
+        $(inboxTableMessageID + reminderID).remove();
+    };
+    
+    /**
+     * myBerkeley
+     * Returns the id gotten from a jcr:path
+     * @param {Object} path
+     */
+    var idFromPath = function (path) {
+        var id = path.split("/");
+        return id[id.length - 1];
+    };
+    
+    /**
+     * myBerkeley
+     * Returns an object containing the ids and paths of all the checked messages in Reminders filter
+     */
+    var returnCheckedItems = function () {
+        var checkedItems = {};
+        $(inboxInboxCheckDone + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            var id = idFromPath(pathToMessage);
+            checkedItems[id] = pathToMessage;
+        });
+        return checkedItems;
+    }
+    
+    // MyBerkeley: moving all reminders marked as complete to the archive
     $(inboxInboxArchiveCompletedButton).click(function() {
         var pathToMessages = [];
+        var checkedItems = returnCheckedItems();
         $(inboxInboxCheckDone + ":checked").each(function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
@@ -1475,33 +1497,30 @@ sakai.inbox = function() {
         
         if (pathToMessages.length === 0) {
             showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
-        }
-        else {
+        } else {
             var propertyToUpdate = {
                 "sakai:messagebox": "archive"
             };
             
-            var unreadTotal = 0;
-            for (var i = 0, j = pathToMessages.length; i < j; i++) {
-                var id = pathToMessages[i].split("/");
-                id = id[id.length - 1];
+            for (key in checkedItems) {
+                var id = key;
+                var path = checkedItems[key];
                 
                 var reminderData = $(inboxTableMessageID + id).data("data");
                 var path = reminderData["jcr:path"];
-                
                 if(reminderData["sakai:read"] === false){
-                    unreadTotal++;
                     unreadReminders -= 1;
                 }
                 
-                updateReminder(path, propertyToUpdate, function(){
-                    $(inboxTableMessageID + id).empty();
-                    $(inboxTableMessageID + id).remove();
-                });
+                updateReminder(path, propertyToUpdate, removeReminderFromList(id));
             }
             
             updateUnreadNumbers();
-            showGeneralMessage($(inboxGeneralMessagesArchived).text());
+            if (pathToMessages.length == 1) {
+                showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
+            } else {
+                showGeneralMessage(pathToMessages.length + $(inboxGeneralMessagesArchivedX).text());
+            }
         }
     });
     
@@ -1519,7 +1538,7 @@ sakai.inbox = function() {
         }
         else {
             // If we are in trash we hard delete the messages
-            deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
+            deleteMessages(pathToMessages, true);
             $(inboxInboxCheckAll).attr("checked", '');
             tickMessages();
         }
@@ -1551,15 +1570,26 @@ sakai.inbox = function() {
      *
      */
 
-    $(inboxInboxBackToListButton).click(function() { // DEBUG: TRY TO MERGE THIS WITH FUNCTION BELOW
-        // Show the inbox.
-        showPane(inboxPaneInbox);
+    var removeMessageAddBoxStates = function(boxState) {
+        $.bbq.removeState("message");
+        if (selectedMessage["sakai:messagebox"] === "trash" || boxState === "trash") {
+            $.bbq.pushState({"box": "trash"}, 2);
+        } else if(selectedMessage["sakai:messagebox"] === "archive" || boxState === "archive") {
+            $.bbq.pushState({"box": "archive"}, 2);
+        } else if(selectedMessage["sakai:messagebox"] === "sent" || boxState === "sent") {
+            $.bbq.pushState({"box": "sent"}, 2);
+        } else if(selectedMessage["sakai:messagebox"] === "inbox" || boxState) {
+            if(selectedMessage["sakai:category"] === "reminder") {
+                $.bbq.pushState({"box": "reminders"}, 2);
+            } else {
+                $.bbq.pushState({"box": "messages"}, 2);
+            }
+        }
+    }
 
-        // Clear all the input fields
-        clearInputFields();
-    });
-
-    $(inboxSpecificMessageBackToInbox).click(function() {
+    $(inboxInboxBackToListButton + ", " + inboxSpecificMessageBackToInbox).click(function() {
+        removeMessageAddBoxStates(); // myBerkeley: added to correctly set hash state
+        
         // Show the inbox.
         showPane(inboxPaneInbox);
 
@@ -1572,12 +1602,18 @@ sakai.inbox = function() {
         scrollTo($(inboxSpecificMessageCompose));
     });
 
-    $(inboxSpecificMessageDeleteButton).click(function() { // DEBUG: TRY TO MERGE THIS WITH FUNCTION BELOW
+    $(inboxSpecificMessageDeleteButton + ", " + inboxSpecificMessageOptionDelete).click(function() {
         var harddelete = false;
-        if ($.inArray(selectedMessage.types, "trash") > -1) {
-            // This is a trashed message, hard delete it.
+        var boxState = "message" // myBerkeley: to keep track of what filter to go back to after deletion completes
+        
+        // myBerkeley: replaced using selectedMessage.types to set harddelete with checking sakai:messagebox instead
+        if(selectedMessage["sakai:messagebox"] === "trash"){
             harddelete = true;
+            boxState = "trash"; // to keep track of what filter to go back to after deletion completes
         }
+        
+        removeMessageAddBoxStates(boxState); // myBerkeley: added to correctly set hash state
+        
         // Delete the message
         deleteMessages([selectedMessage["jcr:path"]], harddelete);
         
@@ -1588,22 +1624,6 @@ sakai.inbox = function() {
         clearInputFields();
     });
     
-    $(inboxSpecificMessageOptionDelete).click(function() {
-        var harddelete = false;
-        if ($.inArray(selectedMessage.types, "trash") > -1) {
-            // This is a trashed message, hard delete it.
-            harddelete = true;
-        }
-        // Delete the message
-        deleteMessages([selectedMessage["jcr:path"]], harddelete);
-        
-        // Show the inbox
-        showPane(inboxPaneInbox);
-        
-        // Clear all the input fields
-        clearInputFields();
-    });
-
     $(inboxSpecificMessageComposeCancel).click(function() {
         // Clear all the input fields
         clearInputFields();
@@ -1650,30 +1670,38 @@ sakai.inbox = function() {
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
                     $(inboxSubfolderMessages).show();
+                    currentFilter = inboxFilterMessages;
                     break;
                 case "sent":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.sent, "", "all", inboxFilterSent);
                     $(inboxTableHeaderFromContent).text("To");
+                    currentFilter = inboxFilterSent;
                     break;
                 case "announcements":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.announcement, "all", inboxFilterAnnouncements);
                     $(inboxSubfolderAnnouncements).show();
+                    currentFilter = inboxFilterAnnouncements;
                     break;
                 case "chats":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.chat, "all", inboxFilterChats);
                     $(inboxSubfolderChats).show();
+                    currentFilter = inboxFilterChats;
                     break;
                 case "trash":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
+                    $(inboxInboxDeleteButton).hide();
+                    $(inboxInboxEmptyTrashButton).show();
+                    currentFilter = inboxFilterTrash;
                     break;
                 case "invitations":
                     filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.invitation, "all", inboxFilterInvitations);
                     $(inboxSubfolderClass).hide();
                     $(inboxSubfolderInvitations).show();
+                    currentFilter = inboxFilterInvitations;
                     break;
                 case "reminders":
                     $(inboxSubfolderClass).hide();
@@ -1683,6 +1711,7 @@ sakai.inbox = function() {
                     $(".different").hide();
                     $(".different_reminders").show();
                     $(inboxSubfolderReminders).show();
+                    currentFilter = inboxFilterReminders;
                     break;
                 case "archive":
                     $(inboxSubfolderClass).hide();
@@ -1691,6 +1720,7 @@ sakai.inbox = function() {
                     $(".different").hide();
                     $(".different_reminders").show();
                     $(inboxSubfolderArchive).show();
+                    currentFilter = inboxFilterArchive;
                     break;
             }
         } else { // show the inbox

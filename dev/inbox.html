@@ -122,7 +122,7 @@
 
                 <!-- Main -->
                 <div class="col-main">
-
+                    
                     <!-- MAIN INBOX -->
                     <div id="inbox_pane_inbox" class="inbox_pane">
 
@@ -138,10 +138,10 @@
 
                                 <!-- Delete-->
                                 <!-- myBerkeley: Using delete buttons instead of link -->
-                                <!-- <a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a> -->
-                                <button id="inbox_inbox_delete_button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                                <button id="inbox_inbox_empty_trash_button" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>
-                                <button id="inbox_inbox_archive_completed_button" class="s3d-button"><span class="s3d-button-inner">__MSG__ARCHIVE_COMPLETED_REMINDERS__</span></button>
+                                <!--<a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a>-->
+                                <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                                <button type="button" id="inbox_inbox_empty_trash_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>
+                                <button type="button" id="inbox_inbox_archive_completed_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__ARCHIVE_COMPLETED_REMINDERS__</span></button>
                             </div>
 
                             <div class="top_decor">
@@ -508,7 +508,8 @@
         <span id="inbox_generalmessages_none_selected_reminders" style="display:none;">__MSG__NO_REMINDERS_HAVE_BEEN_MARKED_AS_COMPLETE__.</span>
         <span id="inbox_generalmessages_completed" style="display:none;">__MSG__REMINDER_MARKED_AS_COMPLETE__.</span>
         <span id="inbox_generalmessages_not_completed" style="display:none;">__MSG__REMINDER_UNMARKED_AS_COMPLETE__.</span>
-        <span id="inbox_generalmessages_archived" style="display:none;">__MSG__ALL_COMPLETED_REMINDERS_WERE_MOVED_TO_THE_ARCHIVE__.</span>
+        <span id="inbox_generalmessages_archived_1" style="display:none;">__MSG__COMPLETED_REMINDER_WAS_MOVED_TO_THE_ARCHIVE__.</span>
+        <span id="inbox_generalmessages_archived_x" style="display:none;">__MSG__COMPLETED_REMINDERS_WERE_MOVED_TO_THE_ARCHIVE__.</span>
 
         <script type="text/javascript" src="_javascript/inbox.js"></script>
 
