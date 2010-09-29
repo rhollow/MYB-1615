@@ -182,7 +182,8 @@ sakai.inbox = function() {
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesCompleted = inboxGeneralMessages + "_completed";
     var inboxGeneralMessagesNotCompleted = inboxGeneralMessages + "_not_completed";
-    var inboxGeneralMessagesArchived = inboxGeneralMessages + "_archived";
+    var inboxGeneralMessagesArchived1 = inboxGeneralMessages + "_archived_1";
+    var inboxGeneralMessagesArchivedX = inboxGeneralMessages + "_archived_x";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
 
@@ -1463,14 +1464,6 @@ sakai.inbox = function() {
 
         // If we are in trash we hard delete the messages
         deleteMessages(pathToMessages, (currentFilter == inboxFilterTrash));
-        
-/*
-        // Show the inbox
-        showPane(inboxPaneInbox);
-        
-        // Clear all the input fields
-        clearInputFields();
-*/
     });
 
 
@@ -1510,7 +1503,11 @@ sakai.inbox = function() {
             }
             
             updateUnreadNumbers();
-            showGeneralMessage($(inboxGeneralMessagesArchived).text());
+            if (pathToMessages.length == 1) {
+                showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
+            } else {
+                showGeneralMessage(pathToMessages.length + $(inboxGeneralMessagesArchivedX).text());
+            }
         }
     });
     
@@ -1560,17 +1557,26 @@ sakai.inbox = function() {
      *
      */
 
-    $(inboxInboxBackToListButton).click(function() { // DEBUG: TRY TO MERGE THIS WITH FUNCTION BELOW
-        // Show the inbox.
-        showPane(inboxPaneInbox);
+    var removeMessageAddBoxStates = function(boxState) {
+        $.bbq.removeState("message");
+        if (selectedMessage["sakai:messagebox"] === "trash" || boxState === "trash") {
+            $.bbq.pushState({"box": "trash"}, 2);
+        } else if(selectedMessage["sakai:messagebox"] === "archive" || boxState === "archive") {
+            $.bbq.pushState({"box": "archive"}, 2);
+        } else if(selectedMessage["sakai:messagebox"] === "sent" || boxState === "sent") {
+            $.bbq.pushState({"box": "sent"}, 2);
+        } else if(selectedMessage["sakai:messagebox"] === "inbox" || boxState) {
+            if(selectedMessage["sakai:category"] === "reminder") {
+                $.bbq.pushState({"box": "reminders"}, 2);
+            } else {
+                $.bbq.pushState({"box": "messages"}, 2);
+            }
+        }
+    }
 
-        // Clear all the input fields
-        clearInputFields();
+    $(inboxInboxBackToListButton + ", " + inboxSpecificMessageBackToInbox).click(function() {
+        removeMessageAddBoxStates(); // myBerkeley: added to correctly set hash state
         
-        $(currentFilter).click(); // myBerkeley: added to prompt hash change
-    });
-
-    $(inboxSpecificMessageBackToInbox).click(function() {
         // Show the inbox.
         showPane(inboxPaneInbox);
 
@@ -1583,12 +1589,18 @@ sakai.inbox = function() {
         scrollTo($(inboxSpecificMessageCompose));
     });
 
-    $(inboxSpecificMessageDeleteButton).click(function() { // DEBUG: TRY TO MERGE THIS WITH FUNCTION BELOW
+    $(inboxSpecificMessageDeleteButton + ", " + inboxSpecificMessageOptionDelete).click(function() {
         var harddelete = false;
-        if ($.inArray(selectedMessage.types, "trash") > -1) {
-            // This is a trashed message, hard delete it.
+        var boxState = "message" // myBerkeley: to keep track of what filter to go back to after deletion completes
+        
+        // myBerkeley: replaced using selectedMessage.types to set harddelete with checking sakai:messagebox instead
+        if(selectedMessage["sakai:messagebox"] === "trash"){
             harddelete = true;
+            boxState = "trash"; // to keep track of what filter to go back to after deletion completes
         }
+        
+        removeMessageAddBoxStates(boxState); // myBerkeley: added to correctly set hash state
+        
         // Delete the message
         deleteMessages([selectedMessage["jcr:path"]], harddelete);
         
@@ -1599,22 +1611,6 @@ sakai.inbox = function() {
         clearInputFields();
     });
     
-    $(inboxSpecificMessageOptionDelete).click(function() {
-        var harddelete = false;
-        if ($.inArray(selectedMessage.types, "trash") > -1) {
-            // This is a trashed message, hard delete it.
-            harddelete = true;
-        }
-        // Delete the message
-        deleteMessages([selectedMessage["jcr:path"]], harddelete);
-        
-        // Show the inbox
-        showPane(inboxPaneInbox);
-        
-        // Clear all the input fields
-        clearInputFields();
-    });
-
     $(inboxSpecificMessageComposeCancel).click(function() {
         // Clear all the input fields
         clearInputFields();
@@ -1684,6 +1680,8 @@ sakai.inbox = function() {
                 case "trash":
                     $(inboxSubfolderClass).hide();
                     filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
+                    $(inboxInboxDeleteButton).hide();
+                    $(inboxInboxEmptyTrashButton).show();
                     currentFilter = inboxFilterTrash;
                     break;
                 case "invitations":
