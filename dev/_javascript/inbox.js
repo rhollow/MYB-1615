@@ -711,11 +711,9 @@ sakai.inbox = function() {
                     var path = reminderData["jcr:path"];
                     
                     var propertyToUpdate;
-                    var message;
                     var funct;
                     
                     if (reminderData["sakai:taskState"] === "completed") {
-                        message = $(inboxGeneralMessagesNotCompleted).text();
                         if (reminderData["sakai:messagebox"] === "archive") {
                             if(reminderData["sakai:read"] === false) {
                                 unreadReminders += 1;
@@ -727,7 +725,6 @@ sakai.inbox = function() {
                                 "sakai:messagebox": "inbox"
                             };
                             funct = function(){
-                                showGeneralMessage(message);
                                 $(inboxTableMessageID + id).empty();
                                 $(inboxTableMessageID + id).remove();
                             }
@@ -735,18 +732,11 @@ sakai.inbox = function() {
                             propertyToUpdate = {
                                 "sakai:taskState": "created"
                             };
-                            funct = function(){
-                                showGeneralMessage(message);
-                            }
                         }
                     } else {
                         propertyToUpdate = {
                             "sakai:taskState": "completed"
                         };
-                        message = $(inboxGeneralMessagesCompleted).text();
-                        funct = function(){
-                            showGeneralMessage(message);
-                        }
                     }
                     
                     updateReminder(path, propertyToUpdate, funct);
