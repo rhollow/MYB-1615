@@ -1330,7 +1330,7 @@ sakai.inbox = function(){
         
         // initialise the sendmessage widget
         // we tell it to show it in our id and NOT as a layover.
-        sakai.sendmessage.initialise(null, true, inboxComposeNewContainer, sendMessageFinished);
+        sakai.sendmessage.initialise(null, inboxComposeNewContainer, sendMessageFinished);
     });
     
     //    This is the widget id!

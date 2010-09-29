@@ -244,7 +244,7 @@ var SimpleDateFormat;
         return d;
     };
 
-    Date.prototype.getDifference = function(date) {
+    Date.prototype.getDifference = function(date) {        
         return this.getTime() - date.getTime();
     };
 

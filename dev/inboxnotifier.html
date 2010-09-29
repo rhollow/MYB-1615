@@ -185,13 +185,13 @@
                         
                         <!-- BUTTON LISTS-->
 						<div class="button-list" id="buttons-drafts">
-						    <button id="inbox-delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+						    <button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                             <button id="inbox-copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
                             <button id="inbox-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="inbox-edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>						
 					   </div>                       
 					   <div class="button-list" id="buttons-queue" style="display:none;">
-						    <button id="inbox-delete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+						    <button id="inbox-queuedelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                             <button id="inbox-copytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
                             <button id="inbox-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
                             <button id="inbox-edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>						
@@ -206,7 +206,7 @@
                         
                     </div>                   
                     
-                    <!-- NOTIFICATION COMPOSING -->
+                    <!-- NOTIFICATION COMPOSING & DETAILS -->
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <div class="top_decor">
@@ -226,17 +226,67 @@
                         <div class="bottom_decor"></div>
                         
                         <!-- Button List-->
-                        <div class="button-list" id="editable">
+                        <div class="button-list" id="notifdetail-buttons">
                             <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
                             <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
+                        </div>                                                             
+                    </div>
+                    
+                    <!-- VIEW A SPECIFIC MESSAGE -->
+                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
+
+                        <!-- Header -->
+                        <div class="top_toolbar fl-fix">
+                            <!--
+                            <div class="fl-force-left sender-options">
+                                <a href="javascript:;" id="inbox_message_back_to_inbox"><span>&laquo;</span> __MSG__BACK_TO_INBOX__</a>
+                            </div>
+
+                            <div class="fl-force-right sender-options">
+                                <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
+                            </div>
+                            -->
                         </div>
-                        <div class="button-list" id="noneditable" style="display:none;">
-                            <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
-                            <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-                            <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
+
+                        <div class="top_decor">
+                            <!-- <div class="inbox-heading">__MSG__MESSAGE__</div> -->
+                            <div class="message-header" id="inbox_message_subject"></div>
                         </div>
-                                                                        
+
+                        <div class="main_content_container">
+                            <!-- Sender details -->
+                            <div class="sender_details">
+                                <div class="sender_picture_container">
+                                    <a href="javascript:;" title="__MSG__TO_SEE_THE_SENDERS_PROFILE__"><img src="/dev/_images/profile_picture.gif" class="sender-picture" id="inbox_message_picture" alt="__MSG__SENDERS_PROFILE_PIC__" /></a>
+                                </div>
+                                <div class="inbox_message_user">
+                                    <a href="javascript:;" class="sender-name" id="inbox_message_from" title="__MSG__FROM__"></a>
+                                    <br />
+                                    <div class="sender-timestamp">__MSG__SENT_THIS_ON__ <span id="inbox_message_date"></span></div>
+                                </div>
+                            </div>
+
+                            <!-- Message -->
+                            <div class="sender-body">
+                                <div class="message-arrow"></div>
+
+                                <div class="sender-message">
+                                    <div class="message-body">
+
+                                        <!-- <div class="message-header" id="inbox_message_subject"></div> --> 
+
+                                        <div id="inbox_message_body"></div>                                        
+
+                                    </div>
+                                </div>
+                                
+                            </div>
+                                                        
+                        </div>
+
+                        <div class="bottom_decor"></div>
+
                     </div>                                                                                              
 
                 </div>
@@ -256,8 +306,11 @@
         <span id="inbox_generalmessages_deleted_1" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_DELETED__.</span>
         <span id="inbox_generalmessages_deleted_x" style="display:none;"> __MSG__MESSAGES_HAVE_BEEN_DELETED__.</span>
         <span id="inbox_generalmessages_deleted_failed" style="display:none;">__MSG__UNABLE_TO_DELETE_MESSAGES__.</span>
+        <span id="inbox_generalmessages_queued_1" style="display:none;">The message has been queued.</span>
+        <span id="inbox_generalmessages_queued_x" style="display:none;"> messages have been queued.</span>
+        <spab id="inbox_generalmessages_queued_failed" style="display:none;">There was an error in queueing your messages.</span>
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
-        <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>
+        <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>        
 
         <script type="text/javascript" src="_javascript/inboxnotifier.js"></script>
 
