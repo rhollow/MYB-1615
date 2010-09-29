@@ -1336,6 +1336,7 @@ sakai.inbox = function() {
             unreadAnnouncements -= deletedUnreadAnnouncements;
             unreadInvitations -= deletedUnreadInvitations;
             updateUnreadNumbers();
+            $.bbq.removeState("message");
 
             for (var d = 0, e = pathToMessages.length; d < e; d++) {
                 $.ajax({
@@ -1343,14 +1344,12 @@ sakai.inbox = function() {
                     type: "POST",
                     success: function(data){
                         deleted++;
-                        alert("Success: " + pathToMessages[d]);
                         if (deleted === toDelete) {
                             deleteMessagesFinished(pathToMessages, true);
                         }
                     },
                     error: function(xhr, textStatus, thrownError) {
                         deleted++;
-                        alert("Error: " + pathToMessages[d]);
                         if (deleted === toDelete) {
                             deleteMessagesFinished(pathToMessages, false);
                         }
