@@ -524,11 +524,7 @@ sakai.inbox = function() {
                 }
             },
             error: function(xhr, textStatus, thrownError){
-                alert("Updating " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
-                " and thrownError = " +
-                thrownError +
-                "\n" +
-                xhr.responseText);
+                alert("Updating " + url + " failed with status =" + textStatus + " and thrownError = " + thrownError + "\n" + xhr.responseText);
             },
             dataType: 'json'
         });
@@ -737,8 +733,7 @@ sakai.inbox = function() {
                         propertyToUpdate = {
                             "sakai:taskState": "completed"
                         };
-                    }
-                    
+                    } 
                     updateReminder(path, propertyToUpdate, funct);
                 });
             }
