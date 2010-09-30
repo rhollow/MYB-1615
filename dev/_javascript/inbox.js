@@ -855,7 +855,6 @@ sakai.inbox = function() {
         }
 
         url += "&sortOn=" + sortBy + "&sortOrder=" + sortOrder;
-
         $.ajax({
             url: url,
             cache: false,
@@ -882,38 +881,44 @@ sakai.inbox = function() {
      * Will do a count of all the unread messages and change the values in the DOM.
      * Note: This function will only check the nr of messages there are. It will not fetch them!
      */
+    // myBerkeley: changed ajax call because myBerkeley messages are type=notice, not type=internal
     var showUnreadMessages = function() {
-
         $.ajax({
-            url: "/~" + sakai.data.me.user.userid + "/message.count.json?filters=sakai:messagebox,sakai:read&values=inbox,false&groupedby=sakai:category",
+            url: sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=inbox&category=reminder",
             cache: false,
-            success: function(data) {
-
-                var totalcount = 0;
-
-                for (var i = 0, j = data.count.length; i < j; i++){
-                    if (data.count[i].group === "message"){
-                        unreadMessages = data.count[i].count;
-                    } else if (data.count[i].group === "announcement"){
-                        unreadAnnouncements = data.count[i].count;
-                    } else if (data.count[i].group === "invitation"){
-                        unreadInvitations = data.count[i].count;
-                    } else if (data.count[i].group === "chat"){
-                        $(inboxFilterChats).append(sakai.api.Security.saneHTML(tpl.replace(/__NR__/gi, data.count[i].count)));
-                    } else if (data.count[i].group === "reminder") { // myBerkeley: added reminder category
-                        unreadReminders = data.count[i].count;
+            success: function(data){
+                var temp = 0;
+                for(var i = 0, j = data.results.length; i < j; i++) {
+                    if(data.results[i]["sakai:read"] == false) {
+                        temp++;
                     }
-                    
-                    totalcount += data.count[i].count;
                 }
-
-                updateUnreadNumbers();
-
+                unreadReminders = temp;
             },
-            error: function(xhr, textStatus, thrownError) {
+            error: function(xhr, textStatus, thrownError){
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
             }
         });
+        $.ajax({
+            url: sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=inbox&category=message",
+            cache: false,
+            success: function(data){
+                var temp = 0;
+                for (var i = 0, j = data.results.length; i < j; i++) {
+                    if (data.results[i]["sakai:read"] == false) {
+                        temp++;
+                    }
+                }
+                unreadMessages = temp;
+            },
+            error: function(xhr, textStatus, thrownError){
+                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
+            }
+        });
+        
+        updateUnreadNumbers();
     };
 
     var updateUnreadNumbers = function(){
