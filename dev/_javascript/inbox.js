@@ -1374,18 +1374,9 @@ sakai.inbox = function() {
             inboxComposeNewPanelOpen = true;
         }
     });
-<<<<<<< HEAD
-    $(inboxComposeMessage).click(function(){
-        showPane(inboxPaneCompose);
-        
-        // initialise the sendmessage widget
-        // we tell it to show it in our id and NOT as a layover.
-        sakai.sendmessage.initialise(null, inboxComposeNewContainer, sendMessageFinished);
-=======
 */
     $(inboxComposeMessage).click(function() {
         $.bbq.pushState({"action":"composenew"},2);
->>>>>>> ets-3akai-ux
     });
 
     //    This is the widget id!
