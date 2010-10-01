@@ -25,6 +25,8 @@ sakai.notificationsinbox = function(){
      * CONFIGURATION
      *
      */
+    sakai.config.URL.ALL_MESSAGE_BOX_SERVICE = "/var/message/box.json";
+    
     var messagesPerPage = 12; // The number of messages per page
     var allMessages = []; // Array that will hold all the messages
     var me = sakai.data.me;
@@ -546,7 +548,7 @@ sakai.notificationsinbox = function(){
                 box = "trash";
             }
         
-        var url = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + "message";        
+        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + box + "&category=" + "message";        
         
         var types = "&types=" + selectedType;
         if (typeof selectedType === "undefined" || selectedType === "") {
@@ -841,15 +843,35 @@ sakai.notificationsinbox = function(){
         deleteChecked();        
     });
     
-    // Delete all checked messages on queue page.
-    $("#inbox-queuedelete-button").click(function(){               
-        deleteChecked();            
-    });
-    
     // Queue all checked messages on drafts page.
     $("#inbox-queue-button").click(function() {        
         queueChecked();
     });
+    
+    // Copy the checked messages on the drafts page.
+    $("#inbox-copy-button").click(function() {
+        copyChecked();
+    });
+    
+    // Delete all checked messages on queue page.
+    $("#inbox-queuedelete-button").click(function(){               
+        deleteChecked();            
+    });                
+    
+    var copyChecked = function(){
+        // pathToMessages = an array of all checked messages    
+        var pathToMessages = [];
+        $(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            pathToMessages.push(pathToMessage);
+        });
+        
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);
+        
+        // If we are in trash we hard delete the messages.
+        queueMessages(pathToMessages);
+    }
     
     var queueMessagesFinished = function(pathToMessages, success){        
         if (success) {
