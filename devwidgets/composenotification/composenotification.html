@@ -12,19 +12,7 @@
     <div id="message_form">  
 
         <div id="composenotification_box" class="send_message fl-centered">
-            <form class="compose-form" action="" method="post">                      
-                
-                <!-- TEMPORARY: Validation Test -->
-                <div>
-                    <input type="radio" id="validation-test">
-                    <label for"validation-test">Run validation test?</label>
-                </div>
-                
-                <!-- TEMPORARY: Non-editable Mode Test -->
-                <div>
-                    <input type="radio" id="disabling-test">
-                    <label for "disabling-test">Run non-editable mode test?</label>
-                </div>                               
+            <form class="compose-form" action="" method="post">                                                                                 
                 
                 <!-- REQUIRED CHECK -->
                 <div id="composenotification_required">
@@ -63,8 +51,8 @@
                            Do you want to save your notification before you create a new list?<br>
                            If you don't, any changes you've made will be lost.</p>
                         <div class="dialog_buttons">
-                            <button type="button" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
-                            <button type="button" class="s3d-button"><span class="s3d-button-inner">Don't Save</span></button>
+                            <button type="button" id="dlc-save" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
+                            <button type="button" id="dlc-dontsave" class="s3d-button"><span class="s3d-button-inner">Don't Save</span></button>
                             <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
                         </div>
                     </div>                        
