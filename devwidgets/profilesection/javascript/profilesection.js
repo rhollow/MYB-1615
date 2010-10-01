@@ -131,6 +131,7 @@ sakai.profilesection = function(tuid, showSettings){
                 sakai.profile.main.data[currentsection].elements &&
                 sakai.profile.main.data[currentsection].elements[fieldName]) {
 
+                sakai.profile.main.data[currentsection].elements[fieldName].value = unescape(sakai.profile.main.data[currentsection].elements[fieldName].value)
                 json_config.data = sakai.profile.main.data[currentsection].elements[fieldName];
             }
             json_config.path = currentsection + ".elements." + fieldName;
@@ -140,7 +141,7 @@ sakai.profilesection = function(tuid, showSettings){
     };
 
     /**
-     * Render the template for the sectino
+     * Render the template for the section
      * @param {Object} sectionTemplate jQuery object that contains the template you want to render for the section
      * @param {Object} sectionObject The object you need to pass into the template
      */
@@ -182,7 +183,7 @@ sakai.profilesection = function(tuid, showSettings){
                             var fieldTemplate = sectionObject.elements[j].template ? $("#" + sectionObject.elements[j].template, $rootel) : $profilesection_field_default_template;
 
                             // Render the template field
-                            sections += renderTemplateField(fieldTemplate, j, true, sectionObject.elements.id.value);
+                            sections += unescape(renderTemplateField(fieldTemplate, j, true, sectionObject.elements.id.value));
                         }
                     }
 
@@ -235,7 +236,7 @@ sakai.profilesection = function(tuid, showSettings){
 
         // Set the currentsection variable so this can be used in other methods as well
         currentsection = profilesection;
-
+        setTags();
         // Set the section template, if there is no template defined, user the default one
         var sectionTemplate = sakai.profile.main.config[currentsection].template ? $("#" + sakai.profile.main.config[currentsection].template, $rootel) : $profilesection_default_template;
 
@@ -338,7 +339,15 @@ sakai.profilesection = function(tuid, showSettings){
 
             // Check whether the element has a correct attribute
             // TODO replace title by data-path as soon as the sanitizer allows it SAKIII-543
-            if (title) {
+
+            if (title === "basic.elements.tags") { // tags are special, we save them differently than the rest of the data
+                var currentTags = sakai.profile.main.data["sakai:tags"] || [];
+                var tagsArray = $selected_element.val().split(",");
+                var profileURL = "/~" + sakai.profile.main.data["rep:userId"] + "/public/authprofile";
+                sakai.api.Util.tagEntity(profileURL, tagsArray, currentTags, function() {
+                    fluid.log("user tags saved");
+                });
+            } else if (title) {
 
                 // Get the property if it exists
                 var prop = getProperty(sakai.profile.main.data, title);
@@ -365,17 +374,17 @@ sakai.profilesection = function(tuid, showSettings){
                     // add the property in if it doesn't already exist
                     if (parentProp && parentProp["jcr:name"] == "elements" && prop === undefined) {
                         parentProp[propName] = {};
-                        parentProp[propName].value = $selected_element.val();
+                        parentProp[propName].value = escape($selected_element.val());
                     } else if (prop) { // it exists, just change its value
                         if ($.isPlainObject(prop)) {
                             // Set the correct value
-                            prop.value = $selected_element.val();
+                            prop.value = sakai.api.Security.saneHTML(escape($selected_element.val()));
                         } else {
                             // This is an access attribute
                             sakai.profile.main.data[title.split(".")[0]].access = $selected_element.val();
                         }
                     } else {
-                        sakai.profile.main.data[title.split(".")[0]].access = $selected_element.val();
+                        sakai.profile.main.data[title.split(".")[0]].access = escape($selected_element.val());
                     }
                 } else {
                     if (prop && $.isPlainObject(prop) && parentProp) {
@@ -393,6 +402,16 @@ sakai.profilesection = function(tuid, showSettings){
         // tell the profile that this section has finished saving its data
         $(window).trigger("sakai-profile-data-ready", currentsection);
 
+    };
+
+    // temporary tag fix, revisit this when we do directory tagging for users
+    var setTags = function() {
+        if (sakai.profile.main.data["sakai:tags"]) {
+            if (!sakai.profile.main.data.basic.elements.tags) {
+                sakai.profile.main.data.basic.elements.tags = {};
+            }
+            sakai.profile.main.data.basic.elements.tags.value = sakai.profile.main.data["sakai:tags"];
+        }
     };
 
     ////////////////////

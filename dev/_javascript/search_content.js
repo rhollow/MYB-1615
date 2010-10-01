@@ -28,22 +28,22 @@ sakai.search = function() {
 
     var resultsToDisplay = 10;
     var searchterm = "";
+    var tagterm = "";
     var currentpage = 0;
 
     // Search URL mapping
     var searchURLmap = {
-        allfiles : sakai.config.URL.SEARCH_ALL_FILES_SERVICE,
+        allfiles : sakai.config.URL.SEARCH_ALL_FILES,
         mybookmarks : sakai.config.URL.SEARCH_MY_BOOKMARKS,
         mycontacts : sakai.config.URL.SEARCH_MY_CONTACTS,
         myfiles : sakai.config.URL.SEARCH_MY_FILES,
-        mysites : sakai.config.URL.SEARCH_MY_SITES
+        mysites : sakai.config.URL.SEARCH_MY_SITES,
+        pooledcontentmanager: sakai.config.URL.POOLED_CONTENT_MANAGER,
+        pooledcontentviewer: sakai.config.URL.POOLED_CONTENT_VIEWER
     };
 
     // CSS IDs
     var search = "#search";
-
-    var searchSiteSelect = $(search + "_site_select");
-    var searchSiteSelectTemplate = "search_site_select_template";
 
     var searchConfig = {
         search : "#search",
@@ -53,6 +53,7 @@ sakai.search = function() {
             text  :search + '_text',
             numberFound : search + '_numberFound',
             searchTerm : search + "_mysearchterm",
+            tagTerm : search + "_mytagterm",
             searchBarSelectedClass : "search_bar_selected",
             pagerClass : ".jq_pager"
         },
@@ -81,7 +82,26 @@ sakai.search = function() {
         results : {
             container : search + '_results_container',
             header : search + '_results_header',
+            tagHeader : search +  '_results_tag_header',
             template : 'search_results_template'
+        },
+        facetedConfig : {
+            title : "Refine your search",
+            value : "Content",
+            facets : {
+                "all" : {
+                    "category": "All Files",
+                    "searchurl": searchURLmap.allfiles
+                },
+                "manage" : {
+                    "category": "Files I manage",
+                    "searchurl": searchURLmap.pooledcontentmanager
+                },
+                "member" : {
+                    "category": "Files I'm a Member of",
+                    "searchurl": searchURLmap.pooledcontentviewer
+                }
+            }
         }
     };
 
@@ -95,8 +115,10 @@ sakai.search = function() {
      */
     var showSearchContent = function() {
         $(searchConfig.global.searchTerm).text(sakai.api.Security.saneHTML(searchterm));
+        $(searchConfig.global.tagTerm).text(sakai.api.Security.saneHTML(tagterm));
         $(searchConfig.global.numberFound).text("0");
         $(searchConfig.results.header).show();
+        $(searchConfig.results.tagHeader).hide();
         $(searchConfig.results.container).html($(searchConfig.global.resultTemp).html());
     };
 
@@ -112,7 +134,8 @@ sakai.search = function() {
      * @param {Integer} page The page you are on (optional / default = 1.)
      * @param {String} searchquery The searchterm you want to look for (optional / default = input box value.)
      */
-    var doHSearch = function(page, searchquery, searchwhere) {
+    sakai._search.doHSearch = function(page, searchquery, searchwhere, facet) {
+        
         if (!page) {
             page = 1;
         }
@@ -122,10 +145,13 @@ sakai.search = function() {
         if (!searchwhere) {
             searchwhere = mainSearch.getSearchWhereSites();
         }
+        if (!facet){
+            facet = $.bbq.getState('facet');
+        }
         currentpage = page;
 
         // This will invoke the sakai._search.doSearch function and change the url.
-        History.addBEvent(page, encodeURIComponent(searchquery), searchwhere);
+        History.addBEvent(page, encodeURIComponent(searchquery), searchwhere, facet);
     };
 
     /**
@@ -136,7 +162,7 @@ sakai.search = function() {
         currentpage = pageclickednumber;
 
         // Redo the search
-        doHSearch(currentpage, searchterm);
+        sakai._search.doHSearch(currentpage, searchterm, null, $.bbq.getState('facet'));
     };
 
     /**
@@ -210,17 +236,38 @@ sakai.search = function() {
      *  mysites = the site the user is registered on
      *  /a-site-of-mine = specific site from the user
      */
-    sakai._search.doSearch = function(page, searchquery, searchwhere) {
+    sakai._search.doSearch = function(page, searchquery, searchwhere, facet) {
 
+        // Get the tag if present.
+        tagterm = mainSearch.getSearchTags();
+
+        facetedurl = mainSearch.getFacetedUrl();
+        
+        if (facet){
+            facetedurl = searchConfig.facetedConfig.facets[facet].searchurl;
+        }
+        
+        $(".faceted_category").removeClass("faceted_category_selected");
+        if (facet) {
+            $("#" + facet).addClass("faceted_category_selected");
+        } else {
+            $(".faceted_category:first").addClass("faceted_category_selected");
+        }
+        
         // Check if the searchquery is empty
-        if(searchquery === ""){
+        if(searchquery === "" && tagterm === ""){
 
             // If there is nothing in the search query, remove the html and hide some divs
             $(searchConfig.results.container).html();
             $(".search_results_container").hide();
+            $("#faceted_container").hide();
             $(searchConfig.results.header).hide();
             $(searchConfig.global.pagerClass).hide();
             return;
+        }
+
+        if (isNaN(page)){
+            page = 1;
         }
 
         currentpage = parseInt(page,  10);
@@ -244,7 +291,7 @@ sakai.search = function() {
         // Rebind everything
         mainSearch.addEventListeners(searchterm, searchwhere);
 
-        if (searchterm) {
+        if (searchterm && searchterm !== $(searchConfig.global.text).attr("title")) {
             // Show and hide the correct elements.
             showSearchContent();
 
@@ -262,11 +309,15 @@ sakai.search = function() {
                 url = searchURLmap[searchWhere];
             }
             else if(searchWhere === "*"){
-                url = searchURLmap.allfiles;
+                url = searchURLmap.allfiles.replace(".json", ".infinity.json");
             }else {
-                url = searchURLmap.allfiles;
+                url = searchURLmap.allfiles.replace(".json", ".infinity.json");
                 usedIn = searchWhere;
             }
+            
+            // Check if we want to search using a faceted link
+            if (facetedurl)
+                url = facetedurl.replace(".json", ".infinity.json");
 
             $.ajax({
                 url: url,
@@ -285,8 +336,34 @@ sakai.search = function() {
                 }
             });
 
-        }
-        else {
+        } else if (tagterm) {
+            // Show and hide the correct elements.
+            showSearchContent();
+            $(searchConfig.results.header).hide();
+            $(searchConfig.results.tagHeader).show();
+
+            // Search based on tags and render each search section
+            $.ajax({
+                url: tagterm + ".tagged.5.json",
+                cache: false,
+                success: function(data) {
+
+                    var json = {};
+                    if (typeof(data) === 'string') {
+                        data = $.parseJSON(data);
+                    }
+                    json.results = data;
+                    json.total = data.total;
+                    json.items = json.results.length;
+
+                    renderResults(json, true);
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    var json = {};
+                    renderResults(json, false);
+                }
+            });
+        } else {
             sakai._search.reset();
         }
     };
@@ -308,30 +385,27 @@ sakai.search = function() {
      */
     var doInit = function() {
         // Make sure that we are still logged in.
-        if (mainSearch.isLoggedIn()) {
-
-            $.ajax({
-                url: sakai.config.URL.SITES_SERVICE,
-                cache: false,
-                success: function(data){
-                    data = data.results;
-                    var sites = {
-                        "sites" : data
-                    };
-                    searchSiteSelect.html($.TemplateRenderer(searchSiteSelectTemplate, sites));
-
-                    // Get my sites
-                    mainSearch.getMySites();
-                }
-            });
-        }
+        $.ajax({
+            url: sakai.config.URL.SITES_SERVICE,
+            cache: false,
+            success: function(data){
+                data = data.results;
+                var sites = {
+                    "sites" : data
+                };
+                // Get my sites
+                mainSearch.getMySites();
+            }
+        });
         // Add the bindings
         mainSearch.addEventListeners();
-        
+
+        // display faceted panel
+        mainSearch.addFacetedPanel();
     };
 
     var thisFunctionality = {
-        "doHSearch" : doHSearch
+        "doHSearch" : sakai._search.doHSearch
     };
 
     var mainSearch = sakai._search(searchConfig, thisFunctionality);

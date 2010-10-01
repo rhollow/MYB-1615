@@ -9,7 +9,7 @@
  * with the License. You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ *g
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -100,70 +100,12 @@ sakai.api.Communication.sendMessage = function(to, subject, body, category, repl
     // CONFIGURATION VARIABLES //
     /////////////////////////////
 
-    var numGroupAJAXRequests = 0;  // tracks AJAX requests for group data
     var toUsers = "";              // aggregates all message recipients
     var sendDone = false;          // has the send been issued?
-
 
     ///////////////////////
     // UTILITY FUNCTIONS //
     ///////////////////////
-
-    /**
-     * Initiates an AJAX call to fetch members of a given group.
-     * @param {String} groupid The group's id
-     * @return None
-     */
-    var fetchGroupMembers = function(groupid) {
-        // keep track of AJAX requests
-        numGroupAJAXRequests++;
-
-        // Fetch members
-        $.ajax({
-            url: "/system/userManager/group/" + groupid + ".members.json",
-            type: "GET",
-            success: handleAJAXGroupData,
-            error: function(xhr, textStatus, thrownError) {
-                fluid.log("sakai.api.Communication.sendMessage(): Could not fetch group data for groupid: " + groupid);
-            }
-        });
-    };
-
-    /**
-     * Responds to the AJAX call to fetch members of a given group. Parses data
-     * returned and initiates aggregating list of recipients.
-     * @param {Object} data The data returned from the groupid.members.json AJAX call
-     * @return None
-     */
-    var handleAJAXGroupData = function(data) {
-        // currently, data is being returned as an array with no root object
-        // Not entirely sure, but this may be causing the data not to be read as
-        // JSON directly.
-        // This may be fixed in the future and the following code may break
-        // once JSON is being returned, simply delete the following line
-        data = JSON.parse(data);
-        if(data) {
-            // get user ids
-            var userids = [];
-            for(var i = 1; i < data.length; i++) {
-                if(data[i].userid) {
-                    userids.push(data[i].userid);
-                }
-            }
-            if(userids.length) {
-                addToUsers(userids);
-            }
-        } else {
-            fluid.log("sakai.api.Communication.sendMessage(): group data is empty");
-        }
-
-        // keep track of AJAX callbacks ("thread" safe?)
-        numGroupAJAXRequests--;
-        if(numGroupAJAXRequests === 0) {
-            // once all AJAX requests have returned, commit the message
-            sendMessageToUsers();
-        }
-    };
 
     /**
      * Adds the given userids (String or Array) to the current list of recipients
@@ -171,7 +113,7 @@ sakai.api.Communication.sendMessage = function(to, subject, body, category, repl
      * of userids (Array) to be added to the current list of recipients
      * @return None
      */
-    var addToUsers = function(userids) {
+    var addRecipient = function(userids) {
         // append comma if the list already exists
         if(toUsers) {
             toUsers += ",";
@@ -188,7 +130,7 @@ sakai.api.Communication.sendMessage = function(to, subject, body, category, repl
      * @param None
      * @return None
      */
-    var sendMessageToUsers = function() {
+    var doSendMessage = function() {
         // Basic message details
         var toSend = {
             "sakai:type": "internal",
@@ -242,28 +184,20 @@ sakai.api.Communication.sendMessage = function(to, subject, body, category, repl
     //////////////////
     // MAIN ROUTINE //
     //////////////////
-
-    // check 'to' argument
+    
+    var reqs = [];
     if (typeof(to) === "string") {
-        // single recipient - is it a group?
-        if(to.indexOf("g-") != -1) {
-            // fetch the members and managers in this group
-            fetchGroupMembers(to);
-        } else {
-            // add single recipient & send
-            toUsers = "internal:" + to;
-            sendMessageToUsers();
-        }
-    } else if(typeof(to) === "object") {
-        // array of recipients
-        for(var i = 0; i < to.length; i++) {
-            // is it a group?
-            if(to[i].indexOf("g-") != -1) {
-                // fetch the members and managers in this group
-                fetchGroupMembers(to[i]);
-            } else {
-                addToUsers(to[i]);
-            }
+        var id = to;
+        to = [];
+        to[0] = id;
+    }
+    
+    if (typeof(to) === "object") {
+        for (var i = 0; i < to.length; i++) {
+            reqs[reqs.length] = {
+                "url": "/~" + to[i] + "/public/authprofile.json",
+                "method": "GET"
+            };
         }
     } else {
         // unrecognized type
@@ -272,12 +206,24 @@ sakai.api.Communication.sendMessage = function(to, subject, body, category, repl
         if (typeof callback === "function") {
             callback(false, xhr);
         }
-    }
+    } 
+    
+    $.ajax({
+       url: "/system/batch",
+       method: "POST",
+       data: {
+           "requests": $.toJSON(reqs)
+       },
+       success: function(data){
+           // array of recipients
+           addRecipient(to);
+           // send now if we have only a list of users ("thread" safe?)
+           if (!sendDone) {
+               doSendMessage();
+           }
+       } 
+    });
 
-    // send now if we have only a list of users ("thread" safe?)
-    if(numGroupAJAXRequests === 0 && !sendDone) {
-        sendMessageToUsers();
-    }
 };
 
 /**
@@ -426,6 +372,189 @@ sakai.api.Activity.createActivity = function(nodeUrl, appID, templateID, extraDa
  * Group related convenience functions
  */
 sakai.api.Groups = sakai.api.Groups || {};
+
+
+/**
+ * Public function used to set joinability and visibility permissions for a
+ * group with groupid.  Currently, visibility is only partially complete
+ * (see SAKIII-853, depends on KERN-1064) and joinability is not implemented
+ * at all (depends on KERN-1019).
+ * @param {String} groupid The id of the group that needs permissions set
+ * @param {String} joinable The joinable state for the group (from sakai.config.Permissions.Groups)
+ * @param {String} visible The visibile state for the group (from sakai.config.Permissions.Groups)
+ * @param {Function} callback Function to be called on complete - callback
+ *   args: (success, errorMessage)
+ * @return None
+ */
+sakai.api.Groups.setPermissions = function (groupid, joinable, visible, callback) {
+    if(groupid && typeof(groupid) === "string" &&
+       sakai.api.Security.isValidPermissionsProperty(sakai.config.Permissions.Groups.joinable, joinable) &&
+       sakai.api.Security.isValidPermissionsProperty(sakai.config.Permissions.Groups.visible, visible)) {
+
+        // issue a BATCH POST to update Jackrabbit group & Home Folder group
+        var batchRequests = [];
+        var jackrabbitUrl = "/system/userManager/group/" + groupid + ".update.html";
+        var homeFolderUrl = "/~" + groupid + ".modifyAce.html";
+
+        // determine visibility state (joinability needs to be checked later, depends on KERN-1019)
+        if(visible == sakai.config.Permissions.Groups.visible.members) {
+            // visible to members only
+            batchRequests.push({
+                "url": jackrabbitUrl,
+                "method": "POST",
+                "parameters": {
+                    ":viewer": groupid,
+                    ":viewer@Delete": "everyone",
+                    "sakai:group-visible": visible,
+                    "sakai:group-joinable": joinable
+                }
+            });
+            batchRequests.push({
+                "url": homeFolderUrl,
+                "method": "POST",
+                "parameters": {
+                    "principalId": "everyone",
+                    "privilege@jcr:read": "denied"
+                }
+            });
+            batchRequests.push({
+                "url": homeFolderUrl,
+                "method": "POST",
+                "parameters": {
+                    "principalId": "anonymous",
+                    "privilege@jcr:read": "denied"
+                }
+            });
+        } else if(visible == sakai.config.Permissions.Groups.visible.allusers) {
+            // visible to all logged in users
+            batchRequests.push({
+                "url": jackrabbitUrl,
+                "method": "POST",
+                "parameters": {
+                    ":viewer": "everyone",
+                    "sakai:group-visible": visible,
+                    "sakai:group-joinable": joinable
+                }
+            });
+            batchRequests.push({
+                "url": homeFolderUrl,
+                "method": "POST",
+                "parameters": {
+                    "principalId": "everyone",
+                    "privilege@jcr:read": "granted"
+                }
+            });
+            batchRequests.push({
+                "url": homeFolderUrl,
+                "method": "POST",
+                "parameters": {
+                    "principalId": "anonymous",
+                    "privilege@jcr:read": "denied"
+                }
+            });
+        } else {
+            // visible to the public
+            batchRequests.push({
+                "url": jackrabbitUrl,
+                "method": "POST",
+                "parameters": {
+                    "rep:group-viewers@Delete": "",
+                    "sakai:group-visible": visible,
+                    "sakai:group-joinable": joinable
+                }
+            });
+            batchRequests.push({
+                "url": homeFolderUrl,
+                "method": "POST",
+                "parameters": {
+                    "principalId": "everyone",
+                    "privilege@jcr:read": "granted"
+                }
+            });
+            batchRequests.push({
+                "url": homeFolderUrl,
+                "method": "POST",
+                "parameters": {
+                    "principalId": "anonymous",
+                    "privilege@jcr:read": "granted"
+                }
+            });
+        }
+
+        // issue the BATCH POST
+        $.ajax({
+            url: sakai.config.URL.BATCH,
+            traditional: true,
+            type: "POST",
+            data: {
+                requests: $.toJSON(batchRequests)
+            },
+            success: function(data){
+                // update group context and call callback
+                if(sakai.currentgroup && sakai.currentgroup.data && sakai.currentgroup.data.authprofile) {
+                    sakai.currentgroup.data.authprofile["sakai:group-joinable"] = joinable;
+                    sakai.currentgroup.data.authprofile["sakai:group-visible"] = visible;
+                }
+                if(typeof(callback) === "function") {
+                    callback(true, null);
+                }
+            },
+            error: function(xhr, textStatus, thrownError){
+                // Log an error message
+                fluid.log("sakai.grouppermissions.setPermissions - batch post failed");
+
+                if(typeof(callback) === "function") {
+                    callback(false, textStatus);
+                }
+            }
+        });
+    } else {
+        if(typeof(callback) === "function") {
+            callback(false, "Invalid arguments sent to sakai.api.Groups.setPermissions");
+        }
+    }
+};
+
+
+/**
+ * Determines whether the current user is a manager of the given group.
+ *
+ * @param groupid {String} id of the group to check
+ * @return true if the current user is a manager, false otherwise
+ */
+sakai.api.Groups.isCurrentUserAManager = function (groupid) {
+    if(!groupid || typeof(groupid) !== "string") {
+        return false;
+    }
+
+    var managersGroupId = groupid + "-managers";
+    if($.inArray(managersGroupId, sakai.data.me.user.subjects) !== -1) {
+        // current user is a group manager
+        return true;
+    } else {
+        return false;
+    }
+};
+
+
+/**
+ * Determines whether the current user is a member of the given group.
+ *
+ * @param groupid {String} id of the group to check
+ * @return true if the current user is a member, false otherwise
+ */
+sakai.api.Groups.isCurrentUserAMember = function (groupid) {
+    if(!groupid || typeof(groupid) !== "string") {
+        return false;
+    }
+
+    if($.inArray(groupid, sakai.data.me.user.subjects) !== -1) {
+        // current user is a group member
+        return true;
+    } else {
+        return false;
+    }
+};
 
 
 /**
@@ -583,9 +712,24 @@ sakai.api.i18n.init = function(){
      * and load them into the document
      */
     var finishI18N = function(){
-        $i18nable.show();
+        var currentPage = window.location.pathname;
+        if (sakai.data.me.user.anon) {
+            if ($.inArray(currentPage, sakai.config.requireUser) > -1){
+                sakai.api.Security.sendToLogin();
+                return false;
+            }
+        } else {
+            if ($.inArray(currentPage, sakai.config.requireAnonymous) > -1){
+                document.location = sakai.config.URL.MY_DASHBOARD_URL;
+                return false;
+            }
+        }
+        if ($.inArray(currentPage, sakai.config.requireProcessing) === -1){
+            sakai.api.Security.showPage();
+        }
         sakai.api.Widgets.Container.setReadyToLoad(true);
         sakai.api.Widgets.widgetLoader.insertWidgets(null, false);
+        return true;
     };
 
     /**
@@ -764,8 +908,8 @@ sakai.api.i18n.General.getValueForKey = function(key) {
     // If none of the about found something, log an error message
     else {
         fluid.log("sakai.api.i18n.General.getValueForKey: Not in local & default file. Key: " + key);
+        return false;
     }
-
 };
 
 
@@ -806,10 +950,6 @@ sakai.api.i18n.Widgets.getValueForKey = function(widgetname, locale, key) {
     }
 
 };
-
-
-
-
 
 
 /**
@@ -881,8 +1021,12 @@ sakai.api.Security = sakai.api.Security || {};
  * @returns {String} HTML Encoded string
  */
 sakai.api.Security.escapeHTML = function(inputString){
-    return $("<div/>").text(inputString).html();
-}
+    if (inputString) {
+        return $("<div/>").text(inputString).html();
+    } else {
+        return "";
+    }
+};
 
 /**
  * Sanitizes HTML content. All untrusted (user) content should be run through
@@ -913,7 +1057,14 @@ sakai.api.Security.saneHTML = function(inputHTML) {
 
     };
 
-
+    html4.ELEMENTS["video"] = 0;
+    html4.ATTRIBS["video::src"] = 0;
+    html4.ATTRIBS["video::class"] = 0;
+    html4.ATTRIBS["video::autoplay"] = 0;
+    html4.ELEMENTS["embed"] = 0;
+    html4.ATTRIBS["embed::src"] = 0;
+    html4.ATTRIBS["embed::class"] = 0;
+    html4.ATTRIBS["embed::autostart"] = 0;
     // A slightly modified version of Caja's sanitize_html function to allow style="display:none;"
     var sakaiHtmlSanitize = function(htmlText, opt_urlPolicy, opt_nmTokenPolicy) {
         var out = [];
@@ -965,11 +1116,39 @@ sakai.api.Security.saneHTML = function(inputHTML) {
                 return attribs;
             })(htmlText, out);
         return out.join('');
-    }
+    };
 
     // Call a slightly modified version of Caja's sanitizer
     return sakaiHtmlSanitize(inputHTML, filterUrl, filterNameIdClass);
 
+};
+
+
+/**
+ * Checks whether the given value is valid as defined by the given
+ * permissionsProperty.
+ *
+ * @param {Object} permissionsProperty Permissions property object
+ *   (i.e. sakai.config.Permissions.Groups.joinable) with valid values to check
+ *   against
+ * @param {Object} value Value to investigate
+ * @return true if the value has a valid property value, false otherwise
+ */
+sakai.api.Security.isValidPermissionsProperty = function(permissionsProperty, value) {
+    if(!value || value === "") {
+        // value is empty - not valid
+        return false;
+    }
+    for(index in permissionsProperty) {
+        if(permissionsProperty.hasOwnProperty(index)) {
+            if(value === permissionsProperty[index]) {
+                // value is valid
+                return true;
+            }
+        }
+    }
+    // value is not valid
+    return false;
 };
 
 
@@ -983,9 +1162,45 @@ sakai.api.Security.getPermissions = function(target, type, permissions_object) {
 
 };
 
+/**
+ * Function that can be called by pages that can't find the content they are supposed to
+ * show.
+ */
+sakai.api.Security.send404 = function(){
+    var redurl = window.location.pathname + window.location.hash;
+    document.location = "/dev/404.html?redurl=" + escape(window.location.pathname + window.location.search + window.location.hash);
+    return false;
+};
 
+/**
+ * Function that can be called by pages that don't have the permission to show the content
+ * they should be showing
+ */
+sakai.api.Security.send403 = function(){
+    var redurl = window.location.pathname + window.location.hash;
+    document.location = "/dev/403.html?redurl=" + escape(window.location.pathname + window.location.search + window.location.hash);
+    return false;
+};
 
+/**
+ * Function that can be called by pages that require a login first
+ */
+sakai.api.Security.sendToLogin = function(){
+    var redurl = window.location.pathname + window.location.hash;
+    document.location = sakai.config.URL.GATEWAY_URL + "?url=" + escape(window.location.pathname + window.location.search + window.location.hash);
+    return false;
+};
 
+sakai.api.Security.showPage = function(){
+    // Show the background images used on anonymous user pages
+    if ($.inArray(window.location.pathname, sakai.config.requireAnonymous) > -1){
+        $('html').addClass("requireAnon");
+    // Show the normal background
+    } else {
+        $('html').addClass("requireUser");
+    }
+    $('body').show();
+};
 
 
 /**
@@ -1070,7 +1285,7 @@ sakai.api.Server.saveJSON = function(i_url, i_data, callback) {
         for(var i in obj){
 
             // Check if the element is an array, whether it is empty and if it contains any elements
-            if (obj.hasOwnProperty(i) && $.isArray(obj[i]) && obj[i].length > 0 && $.isPlainObject(obj[i][0])) {
+            if (obj.hasOwnProperty(i) && $.isArray(obj[i]) && obj[i].length > 0) {
 
                 // Deep copy the array
                 var arrayCopy = $.extend(true, [], obj[i]);
@@ -1726,7 +1941,7 @@ sakai.api.User.logout = function(callback) {
         url: sakai.config.URL.PRESENCE_SERVICE,
         type: "POST",
         data: {
-        	"sakai:status": "offline",
+            "sakai:status": "offline",
             "_charset_": "utf-8"
         },
         success: function(data) {
@@ -1791,6 +2006,10 @@ sakai.api.User.loadMeData = function(callback) {
 
             // Log error
             fluid.log("sakai.api.User.loadMeData: Could not load logged in user data from the me service!");
+            
+            if (xhr.status === 500 && window.location.pathname !== "/dev/500.html"){
+                document.location = "/dev/500.html";
+            }
 
             // Call callback function if set
             if (typeof callback === "function") {
@@ -1833,7 +2052,7 @@ sakai.api.User.getDisplayName = function(profile) {
         idx++;
     }
 
-    return sakai.api.Security.saneHTML($.trim(nameToReturn));
+    return unescape(sakai.api.Security.saneHTML($.trim(nameToReturn)));
 };
 
 /**
@@ -1852,7 +2071,7 @@ sakai.api.User.getProfileBasicElementValue = function(profile, eltName) {
         profile.basic.elements[eltName].value !== undefined) {
             ret = profile.basic.elements[eltName].value;
         }
-    return sakai.api.Security.saneHTML($.trim(ret));
+    return unescape(sakai.api.Security.saneHTML($.trim(ret)));
 };
 
 /**
@@ -1997,6 +2216,203 @@ sakai.api.Util.createSakaiDate = function(date, format, offset) {
     return str;
 };
 
+/**
+ * Convert a file's size to a human readable size
+ * example: 2301 = 2.301kB
+ *
+ * @param (Integer) filesize The file's size to convert
+ * @return (String) the file's size in human readable format
+ */
+
+sakai.api.Util.convertToHumanReadableFileSize = function(filesize) {
+    // Divide the length into its largest unit
+    var units = [[1024 * 1024 * 1024, 'GB'], [1024 * 1024, 'MB'], [1024, 'KB'], [1, 'bytes']];
+    var lengthunits;
+    for (var i = 0, j=units.length; i < j; i++) {
+
+        var unitsize = units[i][0];
+        var unittext = units[i][1];
+
+        if (filesize >= unitsize) {
+            filesize = filesize / unitsize;
+            // 1 decimal place
+            filesize = Math.ceil(filesize * 10) / 10;
+            lengthunits = unittext;
+            break;
+        }
+    }
+    // Return the human readable filesize
+    return filesize + " " + lengthunits;
+};
+
+/**
+ * Formats a comma separated string of text to an array of usable tags
+ * Filters out unwanted tags (eg empty tags)
+ * Returns the array of tags, if no tags were provided or none were valid an empty array is returned
+ *
+ * Example: inputTags = "tag1, tag2, , , tag3, , tag4" returns ["tag1","tag2","tag3","tag4"]
+ *
+ * @param {String} inputTags Unformatted, comma separated, string of tags put in by a user
+ * @return {Array} Array of formatted tags
+ */
+sakai.api.Util.formatTags = function(inputTags){
+    if ($.trim(inputTags) !== "") {
+        var tags = [];
+        var splitTags = $(inputTags.split(","));
+        splitTags.each(function(index){
+            if ($.trim(splitTags[index]).length) {
+                tags.push($.trim(splitTags[index]));
+            }
+        });
+        return tags;
+    }
+    else {
+        return [];
+    }
+}
+
+/**
+ * Add and delete tags from an entity
+ * The two arrays, newTags and currentTags, represent the state of tags on the entity
+ * newTags should be the tags that you want on the entity, the whole set
+ * currentTags should be the set of tags the entity had before the user modified it
+ * tagEntity will delete any tags in currentTags but not in newTags, and add any in
+ * newTags that aren't in currentTags
+ *
+ * @param (String) tagLocation the URL to the tag, ie. (~userid/public/authprofile)
+ * @param (Array) newTags The set of tags you wish to be on the entity
+ * @param (Array) currentTags The set of tags on the current entity
+ * @param (Function) callback The callback function
+ */
+
+sakai.api.Util.tagEntity = function(tagLocation, newTags, currentTags, callback) {
+    
+        var setTags = function(tagLocation, tags, callback) {
+        if (tags.length) {
+            $(tags).each(function(i,val) {
+                // check to see that the tag exists
+                $.ajax({
+                    url: "/tags/" + val + ".tagged.json",
+                    success: function(data) {
+                        doSetTag(val);
+                    },
+                    // if it doesn't exist, create the tag before setting it
+                    error: function(data) {
+                        $.ajax({
+                            url: "/tags/" + val,
+                            data: {
+                                "sakai:tag-name": val,
+                                "sling:resourceType": "sakai/tag"
+                            },
+                            type: "POST",
+                            success: function(data) {
+                                doSetTag(val);
+                            },
+                            error: function(xhr, response) {
+                                fluid.log(val + " failed to be created");
+                                if ($.isFunction(callback)) {
+                                    callback();
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        } else {
+            if ($.isFunction(callback)) {
+                callback();
+            }
+        }
+
+        // set the tag on the entity
+        var doSetTag = function(val) {
+            $.ajax({
+                url: tagLocation,
+                data: {
+                    "key": "/tags/" + val,
+                    ":operation": "tag"
+                },
+                type: "POST",
+                error: function(xhr, response) {
+                    fluid.log(tagLocation + " failed to be tagged as " + val);
+                },
+                complete: function() {
+                    if ($.isFunction(callback)) {
+                        callback();
+                    }
+                }
+            });
+        };
+    };
+
+    /**
+     * Delete tags on a given node
+     *
+     * @param (String) tagLocation the URL to the tag, ie. (~userid/public/authprofile)
+     * @param (Array) tags Array of tags to be deleted from the entity
+     * @param (Function) callback The callback function
+     */
+
+    var deleteTags = function(tagLocation, tags, callback) {
+        if (tags.length) {
+            var requests = [];
+            $(tags).each(function(i,val) {
+                requests.push({
+                    "url": tagLocation,
+                    "method": "POST",
+                    "parameters": {
+                        "key": "/tags/" + val,
+                        ":operation": "deletetag"
+                    }
+                });
+            });
+            $.ajax({
+                url: sakai.config.URL.BATCH,
+                traditional: true,
+                type: "POST",
+                data: {
+                    requests: $.toJSON(requests)
+                },
+                error: function(xhr, response) {
+                    fluid.log(val + " tag failed to be removed from " + tagLocation);
+                },
+                complete: function() {
+                    if ($.isFunction(callback)) {
+                        callback();
+                    }
+                }
+            });
+        } else {
+            if ($.isFunction(callback)) {
+                callback();
+            }
+        }
+    };
+    
+    var tagsToAdd = [];
+    var tagsToDelete = [];
+    // determine which tags to add and which to delete
+    $(newTags).each(function(i,val) {
+        val = $.trim(val);
+        if (val && $.inArray(val,currentTags) == -1) {
+            tagsToAdd.push(val);
+        }
+    });
+    $(currentTags).each(function(i,val) {
+        val = $.trim(val);
+        if (val && $.inArray(val,newTags) == -1) {
+            tagsToDelete.push(val);
+        }
+    });
+    deleteTags(tagLocation, tagsToDelete, function() {
+        setTags(tagLocation, tagsToAdd, function() {
+            if ($.isFunction(callback)) {
+                callback();
+            }
+        });
+    });
+
+};
 
 /**
  * @class notification
@@ -2063,7 +2479,7 @@ sakai.api.Util.notification.removeAll = function(){
     // We don't use the $.gritter.removeAll method since that causes pop-ups to flicker
     $('#gritter-notice-wrapper').remove();
 
-}
+};
 
 
 /**
@@ -2656,20 +3072,20 @@ sakai.api.Widgets.widgetLoader = {
                             var jsonpath = requestedURLsResults[i].url;
                             var widgetname = batchWidgets[jsonpath];
 
-                            if (typeof Widgets.widgets[widgetname].i18n === "object") {
+                            if (jQuery.isPlainObject(Widgets.widgets[widgetname].i18n)) {
                                 if (Widgets.widgets[widgetname].i18n["default"]){
                                     var item = {
                                         "url" : Widgets.widgets[widgetname].i18n["default"],
                                         "method" : "GET"
-                                    }
+                                    };
                                     bundles.push(item);
                                 }
                                 if (Widgets.widgets[widgetname].i18n[current_locale_string]) {
-                                    var item = {
+                                    var item1 = {
                                         "url" : Widgets.widgets[widgetname].i18n[current_locale_string],
                                         "method" : "GET"
-                                    }
-                                    bundles.push(item);
+                                    };
+                                    bundles.push(item1);
                                 }
                             }
                         }
@@ -2856,16 +3272,6 @@ sakai.api.Widgets.widgetLoader = {
 };
 
 
-
-
-
-
-
-
-
-
-
-
 /**
  * Save the preference settings or data for a widget
  *
@@ -2901,16 +3307,33 @@ sakai.api.Widgets.removeWidgetData = function(id, callback) {
 
 };
 
+/**
+ * Change the given widget's title
+ *
+ * @param {String} tuid The tuid of the widget
+ * @param {String} title The title to change to
+ */
+sakai.api.Widgets.changeWidgetTitle = function(tuid, title) {
+    $("#"+tuid).parent("div").siblings("div.fl-widget-titlebar").find("h2.widget_title").text(title);
+};
 
 
-
+/**
+ * Check if a widget is on a dashboard
+ *
+ * @param {String} tuid The tuid of the widget
+ * @return {Boolean} true if on a dashboard, false if not (for example, on a page)
+ */
+sakai.api.Widgets.isOnDashboard = function(tuid) {
+    if ($("#"+tuid).parent("div").siblings("div.fl-widget-titlebar").find("h2.widget_title").length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+};
 
 
 })();
-
-
-
-
 
 
 

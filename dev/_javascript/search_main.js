@@ -34,6 +34,7 @@ sakai._search = function(config, callback) {
     var myfriends = {};
     var nrOfCharactersAroundTerm = 300;
     var usernameLengthStrip = 40;
+    var mainFacetedUrl = "";
 
 
     /////////////////////////
@@ -120,12 +121,21 @@ sakai._search = function(config, callback) {
             }
         });
     };
+    
+    fetchMyFriends();
 
     /**
      * Getter for the myFriends var
      */
     var getMyFriends = function() {
         return myfriends;
+    };
+
+    /**
+     * Getter for the facetedurl var
+     */
+    var getFacetedUrl = function() {
+        return mainFacetedUrl;
     };
 
     /**
@@ -137,6 +147,7 @@ sakai._search = function(config, callback) {
             var url = $(this).attr("href").split("#")[0] + "#";
             var frag = $.deparam.fragment();
             frag["filter"] = ""; // clear the filter
+            frag["facet"] = ""; // clear the facet
             url = $.param.fragment(url, frag);
             $(this).attr("href", url);
             return true;
@@ -213,7 +224,7 @@ sakai._search = function(config, callback) {
             finaljson.items[i] = results[i];
 
             // Only modify the description if there is one
-            if (finaljson.items[i]["sakai:description"]) {
+            if (finaljson.items[i]["sakai:description"] && finaljson.items[i]["excerpt"]) {
 
                 // Strip HTML from the description
                 var content = finaljson.items[i]["excerpt"].replace(/<\/?[^>]+(>|$)/g, " ");
@@ -348,22 +359,14 @@ sakai._search = function(config, callback) {
         return searchWhere;
     };
 
-
     /**
-     * Checks if the user is logged in.
-     * If he is not he will be redirected to /dev/index.html
-     * If he is this function will return true.
+     * Returns the tag value
      */
-    var isLoggedIn = function() {
-        var person = sakai.data.me;
-        var uuid = person.user.userid;
-        if (!uuid || person.user.anon) {
-            document.location = "/dev/index.html";
-            return false;
+    var getSearchTags = function() {
+        if ($.bbq.getState('tag')) {
+            return $.bbq.getState('tag');
         }
-        else {
-            return true;
-        }
+        return null;
     };
 
     /**
@@ -371,6 +374,7 @@ sakai._search = function(config, callback) {
      * @param {Object} user The user object we get from the addcontact widget.
      */
     var removeAddContactLinks = function(user) {
+         fetchMyFriends();
          $(searchConfig.addFriend.addToContacts.replace(/\{USERID\}/gi, user.uuid)).hide();
          $(searchConfig.addFriend.addToContactsDivider.replace(/\{USERID\}/gi, user.uuid)).hide();
     };
@@ -381,32 +385,66 @@ sakai._search = function(config, callback) {
      */
     var prepSearchTermForURL = function(term) {
         var urlterm = "";
-        var splitted = term.split(" ");
+        var splitted = $.trim(term).split(/\s/);
         if (splitted.length > 1) {
-            //urlterm += splitted[0] + "~"
             for (var i = 0; i < splitted.length; i++) {
-                urlterm += splitted[i] + "* ";
+                if (splitted[i]) {
+                    urlterm += "*" + splitted[i] + "* "
+                    if (i < splitted.length - 1) {
+                        urlterm += "OR ";
+                    }
+                }
             }
         }
         else {
-            urlterm = term + "*";
+            urlterm = "*" + term + "*";
         }
         return urlterm;
     };
 
+    /**
+     * Adds the faceted panel to the page if a search is performed
+     */
+    var addFacetedPanel = function() {
+        $(window).bind("sakai.api.UI.faceted.ready", function(e){
+            sakai.api.UI.faceted.render(searchConfig.facetedConfig);
+            
+            var currentfacet = $.bbq.getState('facet');
+            if (currentfacet) {
+                $("#" + currentfacet).addClass("faceted_category_selected");
+            } else {
+                $(".faceted_category:first").addClass("faceted_category_selected");
+            }          
+
+            // bind faceted search elements
+            // loop through each faceted category and bind the link to trigger a search
+            
+            $(".faceted_category").bind("click", function(ev){
+                var facet = $(this).attr("id");
+                var searchquery = $(searchConfig.global.text).val();
+                var searchwhere = getSearchWhereSites();
+                mainFacetedUrl = searchConfig.facetedConfig.facets[facet].searchurl;
+                sakai._search.doHSearch(1, searchquery, searchwhere, facet);
+            });
+            
+        });
+    };
+
     return {
         'getMySites': getMySites,
+        'getFacetedUrl': getFacetedUrl,
         'fetchMyFriends': fetchMyFriends,
         'getMyFriends': getMyFriends,
         'getSearchWhereUsers': getSearchWhereUsers,
         'addEventListeners': addEventListeners,
         'getSearchWhereSites': getSearchWhereSites,
+        'getSearchTags': getSearchTags,
         'fillInElements': fillInElements,
-        'isLoggedIn': isLoggedIn,
         'removeAddContactLinks': removeAddContactLinks,
         'prepSearchTermForURL': prepSearchTermForURL,
         'preparePeopleForRender': preparePeopleForRender,
-        'prepareCMforRendering': prepareCMforRendering
+        'prepareCMforRendering': prepareCMforRendering,
+        'addFacetedPanel': addFacetedPanel
 
     };
 };

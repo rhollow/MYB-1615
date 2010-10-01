@@ -11,7 +11,6 @@
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.base.css" />
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.core.2.css" />
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.3.css" />
-        <link rel="stylesheet" type="text/css" href="/devwidgets/pickeruser/css/autoSuggest.css" />
 
         <!-- Sakai Page CSS -->
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.group.css" />
@@ -20,6 +19,7 @@
         <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.components.jq_pager.css" />
         <link rel="stylesheet" type="text/css" href="_lib/jquery/plugins/imgareaselect/imgareaselect-default.css" />
         <link rel="stylesheet" type="text/css" href="/dev/_lib/jquery/plugins/gritter/css/jquery.gritter.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/_css/lib/jquery.autoSuggest.css" />
 
         <!-- Sakai Config JS -->
         <script type="text/javascript" src="_configuration/widgets.js"></script>
@@ -41,10 +41,11 @@
         <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
         <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/gritter/jquery.gritter.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
         <script type="text/javascript" src="_lib/jquery/plugins/imgareaselect/jquery.imgareaselect.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.validate.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js"></script>
 
     </head>
@@ -88,8 +89,8 @@
                             <div class="group_edit_members_acl fl-force-right">
                                 <label for="group_edit_members_access">__MSG__WHO_CAN_VIEW_OR_SEARCH_THIS__</label>
                                 <select id="group_edit_members_access">
-                                    <option{if _access==="public"} selected="selected"{/if}>__MSG__EVERYBODY__</option>
-                                    <option{if _access==="institution"} selected="selected"{/if}>__MSG__INSTITUTION_ONLY__</option>
+                                    <option{if _access==="public"} selected="selected"{/if}>__MSG__PUBLIC__</option>
+                                    <option{if _access==="institution"} selected="selected"{/if}>__MSG__LOGGED_IN_USERS__</option>
                                     <option{if _access==="contacts"} selected="selected"{/if}>__MSG__CONTACTS_ONLY__</option>
                                     <option{if _access==="noone"} selected="selected"{/if}>__MSG__ONLY_ME__</option>
                                 </select>
@@ -98,11 +99,21 @@
                         {/if}
                     --></div>
 
-            <!-- PICKERUSER WIDGET -->
-            <div id="widget_pickeruser" class="widget_inline"></div>
+                    <!-- PICKERUSER WIDGET -->
+                    <div id="widget_pickeruser" class="widget_inline"></div>
+
+                    <span style="display:none;" id="group_edit_group_permissions_text">__MSG__GROUP_PERMISSIONS__</span>
+                    <span style="display:none;" id="group_edit_updated_successfully_text">__MSG__UPDATED_SUCCESSFULLY__</span>
+                    <span style="display:none;" id="group_edit_group_membership_text">__MSG__GROUP_MEMBERSHIP__</span>
+                    <span style="display:none;" id="group_edit_user_added_text">__MSG__USER_HAS_BEEN_ADDED_TO_THE_GROUP__</span>
+                    <span style="display:none;" id="group_edit_users_added_text">__MSG__USERS_HAVE_BEEN_ADDED_TO_THE_GROUP__</span>
+                    <span style="display:none;" id="group_edit_user_removed_text">__MSG__SELECTED_USER_HAS_BEEN_REMOVED_FROM_THE_GROUP__</span>
+                    <span style="display:none;" id="group_edit_users_removed_text">__MSG__SELECTED_USERS_HAVE_BEEN_REMOVED_FROM_THE_GROUP__</span>
+                    <span style="display:none;" id="group_edit_content_removed_text">__MSG__SELECTED_CONTENT_HAS_BEEN_REMOVED_FROM_THE_GROUP__</span>
+                    <span style="display:none;" id="group_edit_cannot_remove_everyone">__MSG__GROUP_CANNOT_REMOVE_ALL_MANAGERS__</span>
 
                     <div class="group_userlist_header">
-                        <h2 class="fl-force-left">__MSG__MEMBERS_OF_THIS_GROUP__</h2>
+                        <h2>__MSG__MEMBERS_OF_THIS_GROUP__</h2>
                         <div id="members_list_permission_container"></div>
                     </div>
                     <!-- LISTPEOPLE WIDGET TO LIST MEMBERS -->
@@ -120,7 +131,7 @@
                     </div>
 
                     <div class="group_userlist_header">
-                        <h2 class="fl-force-left">__MSG__MANAGERS_OF_THIS_GROUP__</h2>
+                        <h2>__MSG__MANAGERS_OF_THIS_GROUP__</h2>
                         <div id="managers_list_permission_container"></div>
                     </div>
                     <!-- LISTPEOPLE WIDGET TO LIST MANAGERS -->
@@ -139,13 +150,23 @@
 
                     <!-- MANAGING GROUP PERMISSIONS -->
                     <div class="group_userlist_header">
-                        <h2 class="fl-force-left">__MSG__GROUP_PERMISSIONS__</h2>
+                        <h2>__MSG__GROUP_PERMISSIONS__</h2>
                         <div id="grouppermissions_permission_container"></div>
                     </div>
                     <div id="widget_grouppermissions" class="widget_inline"></div>
+                    <div class="group_editing" class="fl-push" style="display:none;">
+                        <div class="fl-force-right">
+                            <!-- <button id="group_editing_button_dontupdate" type="button" class="s3d-button">
+                                <span class="s3d-button-inner">__MSG__DONT_UPDATE__</span>
+                            </button> -->
+                            <button id="group_editing_button_update" type="button" class="s3d-button s3d-button-primary">
+                                <span class="s3d-button-inner">__MSG__UPDATE_GROUP__</span>
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="group_userlist_header">
-                        <h2 class="fl-force-left">__MSG__CONTENT_GROUP_CAN_USE__</h2>
+                        <h2>__MSG__CONTENT_GROUP_CAN_USE__</h2>
                         <div id="content_list_permission_container"></div>
                     </div>
                     <!-- LISTPEOPLE WIDGET TO LIST CONTENT -->
@@ -157,32 +178,15 @@
                                 <span class="s3d-button-inner">__MSG__REMOVE_SELECTED_CONTENT__</span>
                             </button>
                             <button id="group_editing_add_content" type="button" class="s3d-button s3d-button-primary">
-                                <span class="s3d-button-inner">__MSG__ADD_CONTENT_AND_SHARE_WITH_GROUP__</span>
+                                <span class="s3d-button-inner">__MSG__SHARE_FILES_WITH_THIS_GROUP__</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="group_editing" class="fl-push" style="display:none;">
-                    <div class="fl-force-right">
-                        <button id="group_editing_button_dontupdate" type="button" class="s3d-button">
-                            <span class="s3d-button-inner">__MSG__DONT_UPDATE__</span>
-                        </button>
-                        <button id="group_editing_button_update" type="button" class="s3d-button s3d-button-primary">
-                            <span class="s3d-button-inner">__MSG__UPDATE_GROUP__</span>
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Add content to this group -->
-                <button id="upload_content" type="button" class="group_content s3d-button s3d-button-primary">
-                    <span class="s3d-button-inner">__MSG__ADD_CONTENT_AND_SHARE_WITH_GROUP__</span>
-                </button>
-                <!-- CONTAINER FOR THE UPLOAD FILES CONTAINER -->
-                <div id="uploadfilescontainer" style="display:none;">
-                    <!-- We need this container to show the pop-up where you can upload files -->
-                    <div id="widget_fileupload" class="widget_inline"></div>
-                </div>
+                <!-- EMBED CONTENT -->
+                <div id="widget_embedcontent" class="widget_inline"></div>
 
                 <!-- FOOTER -->
                 <div id="group_footer" class="fl-push"><!-- --></div>
@@ -190,6 +194,9 @@
             </div>
 
         </div>
+
+        <!-- CHANGEPIC WIDGET -->
+        <div id="widget_changepic" class="widget_inline"></div>
 
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>

@@ -10,9 +10,15 @@
         <!-- NAVIGATION TEMPLATE -->
         <div id="navigation_template" style="display:none"><!--
             {for i in links}
-                <li class="{if i.firstlink}navigation_first_link{else}navigation_link{/if} {if i.url === window.location.pathname}explore_nav_selected{/if}">
-                    <a class="{if i.url === "javascript:;"}navigation_grey_link{else}navigation_normal_link{/if}" href="${i.url}" title="${i.label}">${i.label}</a>
-                </li>
+                {if i.cleanurl === window.location.pathname}
+                    <li class="{if i.firstlink}navigation_first_link{else}navigation_link{/if} explore_nav_selected">
+                        <span class="navigation_normal_link" title="${i.label}">${i.label}</a>
+                    </li>
+                {else}
+                    <li class="{if i.firstlink}navigation_first_link{else}navigation_link{/if}">
+                        <a class="{if i.url === "javascript:;"}navigation_grey_link{else}navigation_normal_link{/if}" href="${i.url}" title="${i.label}">${i.label}</a>
+                    </li>
+                {/if}
             {/for}
         --></div>
 
@@ -21,7 +27,7 @@
 
             <div class="personal">
 
-                <ul>
+                <ul id="top_navigation">
                     <li id="register_button_container" style="display: none;"><a class="register" href="/dev/create_new_account.html">__MSG__REGISTER__</a></li>
                     <li id="login_button_container" style="display: none;"><a class="log_in" href="/dev/index.html">__MSG__LOGIN__</a></li>
 
@@ -33,7 +39,7 @@
                     </li>
 
                     <li><a class="mail" href="/dev/inbox.html"><img src="/dev/_images/mail_icon.png" alt="Mail Icon" /> (<span id="chat_unreadMessages">0</span>)</a></li>
-                    <li><a class="help" href="http://confluence.sakaiproject.org/display/SAKDEV/Sakai+3" target="_blank">__MSG__HELP__</a></li>
+                    <li><a class="help" href="/dev/account_preferences.html">__MSG__MY_ACCOUNT__</a></li>
                     <li><a class="sign_out" href="/dev/logout.html">__MSG__SIGN_OUT__</a></li>
                 </ul>
 
@@ -75,16 +81,13 @@
     </div>
     <div>
         <ul>
-            <li><a href="/dev/inbox.html">__MSG__MY_INBOX__</a></li>
-            <li><a href="/dev/people.html">__MSG__MY_CONTACTS__</a></li>
-            <li><a href="/dev/profile.html">__MSG__MY_PROFILE__</a></li>
-            <li><a href="/dev/account_preferences.html">__MSG__MY_ACCOUNT__</a></li>
+            <li><a href="/dev/show.html?type=user">__MSG__MY_PROFILE__</a></li>
         </ul>
     </div>
 </div>
 
 <!-- SEARCH -->
-<div id="genaral_search_container">
+<div id="general_search_container">
     <form class="fl-force-right" method="post" action="">
         <span style="display:none" id="general_search_default_value">__MSG__SEARCH_FOR__</span>
         <input type="text" id="general_search_input" title="Please input the general search keyword" class="general_search_input" value="__MSG__SEARCH_FOR__" />

@@ -47,7 +47,7 @@
 
 /** TAB VARIANT **/
 .content_search .s3d-primary-tabs {
-    background: url('../../_images/search_tab_bg.png') top right no-repeat;
+    background: url('../../_images/site_tab_bg.png') top right no-repeat;
 }
 
 .search_content_wrapper {
@@ -59,6 +59,7 @@
     border-right: 3px solid #D3DBDE;
     margin: 0;
     padding: 10px;
+    min-height: 350px;
 }
 .search_tab_content_top {
     background: url('../../_images/content_tr.gif') top right no-repeat;
@@ -94,11 +95,23 @@
 .search_content_main .search_bar {
     width: auto;
 }
+.search_content_main .search_results {
+    display: block;
+}
+.search_content_main .search_results_faceted {
+    float: left;
+    width: 25%;
+}
 .search_content_main .search_results_container {
     background-color: #EEF2F5;
     padding: 0;
     margin: 0 0 10px 0;
     display: none;
+    float: left;
+    width: 100%;
+}
+.search_content_main .search_results_container_sub {
+    width: 75% !important;
 }
 .search_top_rounded {
     background: transparent url(../../_images/search_results_tl.png) top left no-repeat;
@@ -130,8 +143,21 @@
     font-weight: bold;
 }
 
+/* 1px padding to avoid scroll bar in older Webkit browsers */
 .search_results_part {
-    padding: 0 10px;
+    padding: 0px 10px;
+}
+
+.search_padded_content {
+    padding: 10px;
+}
+
+.search_padded_groups {
+    padding: 0px 10px;
+}
+
+.search_no_groups{
+    padding: 10px 0px;
 }
 
 .search_results_part_header {
@@ -181,8 +207,6 @@ a.search_results_part_title {
 .search_result_person_picture {
     float: left;
     display: block;
-    background-image: url(../../_images/person_icon.jpg);
-    background-repeat: no-repeat;
     width: 60px;
     height: 60px;
     padding: 0;
@@ -228,7 +252,7 @@ a.search_results_part_title {
 }
 
 .search_result_course_site {
-    padding: 5px 0 10px 0;
+    padding: 5px 0 10px 10px;
 }
 
 .search_result_course_site_title a {

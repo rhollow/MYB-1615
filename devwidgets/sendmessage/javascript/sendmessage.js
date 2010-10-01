@@ -82,6 +82,9 @@ if (!sakai.sendmessage){
         var dialogHeaderClass = ".dialog_header";
         var dialogClass = ".dialog";
 
+        var notificationSuccess = "#sendmessage_message_sent";
+        var notificationError = "#sendmessage_message_error";
+
         var messageOK = "#sendmessage_message_ok";
         var messageError = "#sendmessage_message_error";
         var messageErrorData = "#sendmessage_data_error";
@@ -232,7 +235,7 @@ if (!sakai.sendmessage){
          * Called when the request to the server has been answered
          * @param {Boolean} succes    If the request failed or succeeded.
          */
-        var showMessageSent = function(succes) {
+        var showMessageSent = function(success) {
             // Clear the subject and body input fields
             $(messageFieldSubject).val("");
             $(messageFieldBody).val("");
@@ -247,19 +250,23 @@ if (!sakai.sendmessage){
             $(messageDone).removeClass(normalClass);
 
             // Depending on success we add the correct class and show the appropriate message.
-            if (succes) {
+            if (success) {
                 $(messageDone).addClass(normalClass);
                 $(messageDone).text(sakai.api.Security.saneHTML($(messageOK).text()));
+                var successMsg = $(notificationSuccess).text();
+                sakai.api.Util.notification.show("", successMsg, sakai.api.Util.notification.type.INFORMATION);
             }
             else {
                 $(messageDone).addClass(errorClass);
                 $(messageDone).text(sakai.api.Security.saneHTML($(messageError).text()));
+                var errorMsg = $(notificationError).text();
+                sakai.api.Util.notification.show("", errorMsg, sakai.api.Util.notification.type.ERROR);
             }
 
             // If we have a valid callback function we call that
             // and dont show the message
             // If we dont have a callback we show a default message and fade out the layover.
-            if (succes && callbackWhenDone !== null) {
+            if (success && callbackWhenDone !== null) {
                 callbackWhenDone({"response" : "OK"});
             }
             else {
@@ -280,12 +287,11 @@ if (!sakai.sendmessage){
          * @return None
          */
         var autoSuggestContactsGroups = function(contactsGroupsList) {
-            $("#sendmessage_to_autoSuggest").autoSuggest(contactsGroupsList, {
+            $("#sendmessage_to_autoSuggest").autoSuggest("", {
                 asHtmlID: "sendmessage_to_autoSuggest",
                 startText: "Enter contact or group names",
                 searchObjProps: "name",
                 selectedItemProp: "name",
-                selectedValuesProp: "id",
                 keyDelay: "200",
                 formatList: function(data, elem) {
                     // formats each line to be presented in autosuggest list
@@ -298,95 +304,30 @@ if (!sakai.sendmessage){
                         '<img class="sm_suggestion_img" src="' + imgSrc + '" />' +
                         '<span class="sm_suggestion_name">' + data.name + '</span>');
                     return line_item;
-                }
-            });
-        };
-
-        /**
-         * Aggregates a list of contacts and groups to be loaded into the 'To'
-         * field autoSuggest plugin
-         * @param {Object} list Array containing JSON objects for contacts or
-         * groups that should be added to the current list of contacts & groups.
-         * @return None
-         */
-        var aggregateContactsGroups = function(list) {
-            // concatenate lists of contacts and groups
-            contactsGroups = contactsGroups.concat(list);
-
-            // keep track of AJAX callbacks ("thread" safe?)
-            dataCallbackCount--;
-            if(dataCallbackCount === 0) {
-                // two callbacks have been received, data is complete
-                dataCallbackCount = 2;
-                autoSuggestContactsGroups(contactsGroups);
-            }
-        };
-
-        /**
-         * Fetches this user's contacts and groups using AJAX calls
-         * @param None
-         * @return None
-         */
-        var fetchContactsGroups = function() {
-            // Get contact data
-            $.ajax({
-                url: sakai.config.URL.CONTACTS_ACCEPTED,
-                data: {
-                    "page": 0,
-                    "items": 100
                 },
-                success: function(data){
-                    var contacts = [];
-                    if (data.results) {
-                        for (var i = 0; i < data.results.length; i++) {
-                            // Add each contact to the array
-                            var contact = {
-                                type: "contact",
-                                id: data.results[i].target,
-                                name: sakai.api.User.getDisplayName(data.results[i].profile)
-                            };
-                            contacts.push(contact);
+                source: function(query, add) {
+                    var searchUrl = sakai.config.URL.SEARCH_USERS_GROUPS;
+                    sakai.api.Server.loadJSON(searchUrl.replace(".json", ""), function(success, data){
+                        if (success) {
+                            var suggestions = [];
+                            $.each(data.results, function(i) {
+                                if (data.results[i]["rep:userId"] &&
+                                !(toUser && toUser.uuid == data.results[i]["rep:userId"])) {
+                                    // && data.results[i]["rep:userId"] !== sakai.data.me.user.userid) { // add this to ignore the user sending the message
+                                    suggestions.push({"value": data.results[i]["rep:userId"], "name": sakai.api.Security.saneHTML(sakai.api.User.getDisplayName(data.results[i])), "type": "user"});
+                                } else if (data.results[i]["sakai:group-id"]) {
+                                    suggestions.push({"value": data.results[i]["sakai:group-id"], "name": data.results[i]["sakai:group-title"], "type": "group"});
+                                }
+                            });
+                            add(suggestions);
+                        } else {
+
                         }
-                        // merge these contacts with groups
-                        aggregateContactsGroups(contacts);
-                    }
-                },
-                error: function(xhr, textStatus, thrownError){
-                    fluid.log("sendmessage widget- ERROR fetching contacts data: " + textStatus);
-                    showGeneralMessage(messageDone, $(messageErrorData).text(), true, 0);
-                }
-            });
-
-            // Get group data
-            $.ajax({
-                url: sakai.config.URL.SEARCH_GROUPS,
-                data: {
-                    "q": sakai.data.me.user.userid,
-                    "page": 0,
-                    "items": 100
-                },
-                success: function(data){
-                    var groups = [];
-                    if (data.results) {
-                        for (var i = 0; i < data.results.length; i++) {
-                            // Add each group to the array
-                            var group = {
-                                type: "group",
-                                id: data.results[i]["sakai:group-id"],
-                                name: data.results[i]["sakai:group-title"]
-                            };
-                            groups.push(group);
-                        }
-                        // merge these groups with contacts
-                        aggregateContactsGroups(groups);
-                    }
-                },
-                error: function(xhr, textStatus, thrownError){
-                    fluid.log("sendmessage widget- ERROR fetching group data: " + textStatus);
-                    showGeneralMessage(messageDone, $(messageErrorData).text(), true, 0);
+                    }, {"q": "*" + query.replace(/\s+/g, "* OR *") + "*"});
                 }
             });
         };
+
 
         /**
          * Shows the lightbox and fills in the from and to field.
@@ -403,7 +344,7 @@ if (!sakai.sendmessage){
                 $(messageMultipleToContainer).show();
 
                 // Check if a recipient has already been set
-                if (toUser !== null) {
+                if (toUser !== false) {
                     $(messageSingleToContainer).show();
                     addRecipient(toUser.firstName + " " + toUser.lastName, toUser.uuid);
                 } else {
@@ -412,7 +353,7 @@ if (!sakai.sendmessage){
 
                 // fetch user's contacts and associated groups and set up
                 // autoSuggest field with this content
-                fetchContactsGroups();
+                autoSuggestContactsGroups();
             }
             else {
                 // We send this to a specific user.
@@ -443,7 +384,7 @@ if (!sakai.sendmessage){
          * Initializes the sendmessage widget, optionally preloading the message
          * with a recipient, subject and body. By default, the widget appears as
          * a modal dialog. This function can be called from other widgets or pages.
-         * @param {Object} userObj The user object containing the nescecary information {uuid:  "user1", firstName: "foo", lastName: "bar"}
+         * @param {Object} userObj The user object containing the nescecary information {uuid:  "user1", firstName: "foo", lastName: "bar"}, or a user profile
          * @param {Boolean} allowOtherReceivers If the user can add other users, default = false
          * @param {String} insertInId Insert the HTML into another element instead of showing it as a popup
          * @param {Object} callback When the message is sent this function will be called. If no callback is provided a standard message will be shown that fades out.
@@ -454,7 +395,16 @@ if (!sakai.sendmessage){
             resetView();
 
             // The user we are sending a message to.
-            toUser = userObj;
+            if (userObj && userObj.firstName) {
+                toUser = userObj;
+            } else if (userObj) {
+                toUser = {};
+                toUser.firstName = sakai.api.User.getProfileBasicElementValue(userObj, "firstName");
+                toUser.lastName = sakai.api.User.getProfileBasicElementValue(userObj, "lastName");
+                toUser.uuid = userObj["rep:userId"];
+            } else {
+                toUser = false;
+            }
 
             // Maybe this message can be sent to multiple people.
             allowOthers = false;
@@ -539,17 +489,20 @@ if (!sakai.sendmessage){
          * call to the server for the selected recipients.
          */
         $(buttonSendMessage).bind("click", function(ev) {
-            // fetch list of selected recipients
-            var recipientsString = $(autoSuggestValues).val();
-            // autoSuggest adds unnecessary commas to the beginning and end
-            // of the values string; remove them
-            if(recipientsString[0] === ",") {
-                recipientsString = recipientsString.slice(1);
+            var recipients = [];
+            if (allowOthers) {
+                // fetch list of selected recipients
+                var recipientsString = $(autoSuggestValues).val();
+                // autoSuggest adds unnecessary commas to the beginning and end
+                // of the values string; remove them
+                if(recipientsString[0] === ",") {
+                    recipientsString = recipientsString.slice(1);
+                }
+                if(recipientsString[recipientsString.length - 1] === ",") {
+                    recipientsString = recipientsString.slice(0, -1);
+                }
+                recipients = recipientsString.split(",");
             }
-            if(recipientsString[recipientsString.length - 1] === ",") {
-                recipientsString = recipientsString.slice(0, -1);
-            }
-            var recipients = recipientsString.split(",");
 
             // Check if toUser has been defined
             if(toUser) {
@@ -577,6 +530,7 @@ if (!sakai.sendmessage){
             toTop: true,
             onShow: loadMessageDialog
         });
+        $(window).trigger("sakai-sendmessage-ready");
     };
 }
 

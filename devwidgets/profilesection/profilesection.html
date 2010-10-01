@@ -109,7 +109,7 @@
 <!-- FIELD TEMPLATES -->
 <div id="profilesection_field_default_template"><!--
     {var mode = sakai.profile.main.mode}
-    {var stringtypes = ["string", "date", "email"]}
+    {var stringtypes = ["string", "date", "dateITA", "email"]}
     {if mode.value === "edit"}
         {if data}
             <div class="profilesection_generalinfo_subcontainer">
@@ -127,7 +127,7 @@
                     {elseif config.type} ${config.type}
                     {/if}"
                 {if !config.type || $.inArray(config.type, stringtypes) >= 0}
-                    value="${data.value}"
+                    value="${data.value.replace(/\"/g, "&quot;")}"
                 {/if}
                     id="profilesection_generalinfo_${path.replace(/\./g,"_")}" name="${config.label}" title="${path}"
                 {if !config.type || $.inArray(config.type, stringtypes) >= 0}
@@ -154,7 +154,12 @@
             <div class="profilesection_generalinfo_subcontainer">
                 <span class="profilesection_generalinfo_label">${config.label}:</span>
                 <div class="profilesection_generalinfo_content">
-                {if config.type !== "select"}
+                {if config.tagField}
+                    {var tagsArray = data.value.split(",")}
+                    {for tag in tagsArray}
+                        <a href="/dev/search.html#tag=/tags/${escape(tag)}" class="s3d-action">${tag}</a>{if tag_index < tagsArray.length-1},{/if}
+                    {/for}
+                {elseif config.type !== "select"}
                     ${data.value}
                 {else}
                     ${config.select_elements[data.value]}

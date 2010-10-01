@@ -6,14 +6,15 @@
 
     <div id="pickeruser_container_header" class="dialog_header">
         <div class="dialog_header_inner">
-            <h1>__MSG__ADDING_PEOPLE__</h1>
+            <h1 id="pickeruser_adding_people" class="pickeruser_adding_titles" style="display:none">__MSG__ADDING_PEOPLE__</h1>
+            <h1 id="pickeruser_adding_files"  class="pickeruser_adding_titles" style="display:none">__MSG__ADDING_CONTENT__</h1>
             <a href="javascript:;" class="jqmClose dialog_close_image" title="Close Dialog"></a>
         </div>
     </div>
     <div id="pickeruser_container_search" class="dialog_content">
         <div id="pickeruser_basic">
 			<span class="fl-force-left" id="pickeruser_add_header">__MSG__ADDING__ <span id="pickeruser_add_header_what"></span> __MSG__TO__ <span id="pickeruser_add_header_where"></span></span>
-			<span class="fl-force-left" id="pickeruser_people"><span id="pickeruser_instruction">__MSG__TYPE_NAME_PERSON_GROUP__ __MSG__OR__</span><a href="javascript:;" id="pickeruser_init_search">__MSG__SEARCH__</a></span>
+			<span class="fl-force-left" id="pickeruser_people"><span id="pickeruser_instruction">__MSG__TYPE_NAME_PERSON_GROUP__ __MSG__OR__</span><a href="javascript:;" id="pickeruser_init_search" class="s3d-action">__MSG__SEARCH__</a></span>
 			<span class="fl-force-left" id="pickeruser_people_text" style="display:none;">__MSG__TYPE_NAME_PERSON_GROUP__ __MSG__OR__ </span>
 			<span class="fl-force-left" id="pickeruser_content_text" style="display:none;">__MSG__TYPE_NAME_CONTENT__ </span>
             <span class="fl-force-left" id="pickeruser_form_container">
@@ -28,41 +29,12 @@
 					<input type="checkbox" name="pickeruser_copy_myself" id="pickeruser_copy_myself"/>
 					<label for="pickeruser_copy_myself">__MSG__SEND_COPY_TO_MYSELF__</label>
 				</span>
+				<span style="display:none;" id="pickeruser_subject_text">__MSG__YOU_HAVE_BEEN_ADDED_TO__</span>
 			</div>
         </div>
-		<div id="pickeruser_search"  style="display:none">
-	        <div id="pickeruser_content">
-		        <span class="fl-force-right">
-	                <select id="pickeruser_sort_on">
-	                    <option default="true" value="lastNameAsc">Last name A-Z</option>
-	                    <option value="lastNameDesc">Last name Z-A</option>
-	                    <option value="firstNameAsc">First name A-Z</option>
-	                    <option value="firstNameDesc">First name Z-A</option>
-	                </select>
-	            </span>
-	            <div id="pickeruser_content_list"></div>
-	            <div id="pickeruser_content_search"></div>
-	        </div>
 
-	        <div id="pickeruser_footer">
-	            <div id="pickeruser_footer_select">
-	            <span class="fl-force-left">
-	                <span id="pickeruser_count" style="display: none;">0</span>
-	                <span id="pickeruser_count_person" style="display: none;"> person</span>
-	                <span id="pickeruser_count_people" style="display: none;"> people</span>
-	                <span id="pickeruser_count_of" style="display: none;"> out of</span>
-	                <span id="pickeruser_count_thousands" style="display: none;"> thousands</span>
-	                </span>
-	                <button type="button" class="s3d-button fl-force-right" id="pickeruser_select_all_button">
-	                    <span class="s3d-button-inner">Select All</span>
-	                </button>
-	            </div>
-	            
-	        </div>
-		</div>
-		
 		<div id="pickeruser_footer_options" class="fl-force-left">
-            <button type="button" class="s3d-button s3d-button-primary fl-force-right" id="pickeruser_add_button">
+            <button type="button" class="s3d-button s3d-button-primary fl-force-right" id="pickeruser_add_button" disabled="disabled">
                 <span class="s3d-button-inner">__MSG__ADD__</span>
             </button>
             <button type="button" class="s3d-button fl-force-right" id="pickeruser_close_button">
@@ -90,7 +62,7 @@
                     {else}
                         <img src="/dev/_images/person_icon.jpg" alt="Default profile picture" class="pickeruser_ppicture"/>
                     {/if}
-                    <a class="pickeruser_name" href="/dev/profile.html?user=${i['rep:userId']}">${sakai.api.User.getDisplayName(i)}</a>
+                    <a class="pickeruser_name" href="/dev/show.html?type=user&amp;id=${i['rep:userId']}">${sakai.api.User.getDisplayName(i)}</a>
                     <br />
                     <span class="pickeruser_subnameinfo">${i.subNameInfo}</span>
                 </li>
@@ -101,6 +73,10 @@
         <div id="pickeruser_error_template" style="display:none;">
             <span>Sorry, could not retrieve the list of users form the server!</span>
         </div>
+    </div>
+    <!-- DIALOG FOOTER -->
+    <div class="dialog_footer">
+        <div class="dialog_footer_inner"><!-- --></div>
     </div>
 	<div id="widget_pickeradvanced" class="widget_inline"></div>
 </div>

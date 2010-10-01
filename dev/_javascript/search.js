@@ -29,13 +29,14 @@ sakai.search = function() {
     var mainSearch = false;
     var contactclicked = false;
 
-    var peopleToSearch = 5;
+    var peopleToSearch = 6;
     var cmToSearch = 5;
     var nrOfCharactersAroundTerm = 300;
     var sitesToSearch = 5;
 
     var foundPeople = false;
     var searchterm = "";
+    var tagterm = "";
 
     var totalItemsFound = 0;
 
@@ -54,6 +55,7 @@ sakai.search = function() {
             text : ".search_content_main " + search + '_text',
             numberFound : search + '_numberFound',
             searchTerm : search + "_mysearchterm",
+            tagTerm : search + "_mytagterm",
             searchBarSelectedClass : "search_bar_selected",
             pagerClass : ".jq_pager",
             messageClass : ".search_result_person_link_message",
@@ -61,7 +63,8 @@ sakai.search = function() {
             addToContactsLink : ".link_add_to_contacts",
             addToContactsDialog : '#add_to_contacts_dialog',
             sendmessageContainer : "#sendmessagecontainer",
-            resultTitle : "#search_result_title"
+            resultTitle : "#search_result_title",
+            resultTagTitle : "#search_result_tag_title"
         },
         people : {
             displayMore : "#display_more_people",
@@ -130,6 +133,9 @@ sakai.search = function() {
     var showSearchContent = function() {
         // Set searching messages
         $(searchConfig.global.searchTerm).text(sakai.api.Security.saneHTML(searchterm));
+        if (tagterm) {
+            $(searchConfig.global.tagTerm).text(sakai.api.Security.saneHTML(tagterm.replace("/tags/", "").replace("directory/", "")));
+        }
         $(searchConfig.global.numberFound).text("0");
 
         $(searchConfig.cm.displayMoreNumber).text("0");
@@ -145,6 +151,7 @@ sakai.search = function() {
         $(searchConfig.people.header).show();
         $(searchConfig.sites.header).show();
 
+        $(searchConfig.global.resultTagTitle).hide();
         $(searchConfig.global.introductionText).hide();
         $(searchConfig.cm.displayMore).hide();
         $(searchConfig.sites.displayMore).hide();
@@ -160,6 +167,7 @@ sakai.search = function() {
      * @param {Object} searchquery The searchterm
      */
     var doHSearch = function() {
+        totalItemsFound = 0;
         History.addBEvent("1", encodeURIComponent($(searchConfig.global.text).val()));
     };
 
@@ -238,16 +246,19 @@ sakai.search = function() {
 
         if (foundSites.total > sitesToSearch) {
             $(searchConfig.sites.displayMore).show();
-            $(searchConfig.sites.displayMore).attr("href", "search_sites.html#1|" + searchterm);
+            $(searchConfig.sites.displayMore).attr("href", "search_groups.html#1|" + searchterm);
         }
 
         if (foundSites && foundSites.results) {
 
-            finaljson.items = foundSites.results;
-            
-            for (var site in finaljson.items){
-                if (finaljson.items.hasOwnProperty(site)) {
-                    finaljson.items[site].site.name = sakai.api.Security.escapeHTML(finaljson.items[site].site.name);
+            finaljson.items = [];
+
+            for (var group in foundSites.results){
+                if (foundSites.results.hasOwnProperty(group) && foundSites.results[group]["sling:resourceType"] === "sakai/group-home") {
+                    if (foundSites.results[group]["sakai:group-title"]) {
+                        foundSites.results[group]["sakai:group-title"] = sakai.api.Security.escapeHTML(foundSites.results[group]["sakai:group-title"]);
+                    }
+                    finaljson.items.push(foundSites.results[group]);
                 }
             }
 
@@ -256,8 +267,8 @@ sakai.search = function() {
 
                 //console.log(finaljson.items[i], finaljson.items[i]["jcr:path"], finaljson.items[i]["site"]["jcr:path"]);
 
-                var full_path = finaljson.items[i]["data"]["jcr:path"];
-                var site_path = finaljson.items[i]["site"]["jcr:path"];
+                var full_path = finaljson.items[i]["path"];
+                var site_path = finaljson.items[i]["sakai:group-id"];
                 var page_path = site_path;
                 if (finaljson.items[i]["excerpt"]) {
                     var stripped_excerpt = $(""+finaljson.items[i]["excerpt"] + "").text().replace(/<[^>]*>/g, "");
@@ -321,8 +332,11 @@ sakai.search = function() {
      */
     sakai._search.doSearch = function(page, searchquery, searchwhere) {
 
+        // Get the tag if present.
+        tagterm = mainSearch.getSearchTags();
+
         // Check if the searchquery is empty
-        if(searchquery === "" || searchquery == undefined){
+        if((searchquery === "" || searchquery == undefined) && (tagterm === "" || tagterm == undefined)){
 
             // If there is nothing in the search query, remove the html and hide some divs
             $(".search_results_container").hide();
@@ -340,7 +354,7 @@ sakai.search = function() {
         // Rebind everything
         mainSearch.addEventListeners(searchterm);
 
-        if (searchterm) {
+        if (searchterm && searchterm !== $(searchConfig.global.text).attr("title").toLowerCase() + " ...") {
             // Show and hide the correct elements.
             showSearchContent();
 
@@ -351,7 +365,7 @@ sakai.search = function() {
             // Set off the 3 AJAX requests
             // Content & Media Search
             $.ajax({
-                url: sakai.config.URL.SEARCH_ALL_FILES_SERVICE,
+                url: sakai.config.URL.SEARCH_ALL_FILES.replace(".json", ".infinity.json"),
                 data: {
                     "q" : urlsearchterm,
                     "items" : cmToSearch
@@ -391,7 +405,7 @@ sakai.search = function() {
             // Sites search
             $.ajax({
                 cache: false,
-                url: sakai.config.URL.SEARCH_CONTENT_COMPREHENSIVE_SERVICE + "?page=0&items=5&q=" + urlsearchterm,
+                url: sakai.config.URL.SEARCH_GROUPS + "?page=0&items=5&q=" + urlsearchterm,
                 success: function(data) {
                     renderSites(data);
                 },
@@ -399,8 +413,41 @@ sakai.search = function() {
                     renderSites({});
                 }
             });
-        }
-        else {
+        } else if (tagterm) {
+            // Show and hide the correct elements.
+            showSearchContent();
+            $(searchConfig.global.resultTitle).hide();
+            $(searchConfig.global.resultTagTitle).show();
+
+            // Search based on tags and render each search section
+            $.ajax({
+                url: tagterm + ".tagged.5.json",
+                cache: false,
+                dataType: "json",
+                success: function(data) {
+
+                    var json = {};
+                    if (typeof(data) === 'string') {
+                        data = $.parseJSON(data);
+                    }
+                    json.results = data;
+                    json.items = json.results.length;
+
+                    renderSites(json);
+                    renderCM(json);
+
+                    // Store found people in data cache
+                    sakai.data.search.results_people = {};
+                    for (var i = 0, j = json.results.length; i < j; i++) {
+                        sakai.data.search.results_people[json.results[i]["rep:userId"]] = json.results[i];
+                    }
+                    renderPeople(json);
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    renderCM({});
+                }
+            });
+        } else {
             // There was no search term provided.
             // Reset the whole thing
             sakai._search.reset();
@@ -464,13 +511,8 @@ sakai.search = function() {
 
     var doInit = function() {
         mainSearch = sakai._search(searchConfig, thisFunctionality);
-        // Make sure that we are still logged in.
-        if (mainSearch.isLoggedIn()) {
-            // Get my friends
-            mainSearch.fetchMyFriends();
-            // add the bindings
-            mainSearch.addEventListeners();
-        }
+        // add the bindings
+        mainSearch.addEventListeners();
     };
     doInit();
 };

@@ -130,7 +130,7 @@ sakai.profile = function(){
                     window.location = sakai.config.URL.PROFILE_EDIT_URL + "?user=" + sakai.profile.main.currentuser;
                     break;
                 case "view":
-                    window.location = sakai.config.URL.PROFILE_URL + "?user=" + sakai.profile.main.currentuser;
+                    window.location = sakai.config.URL.PROFILE_URL + "&id=" + sakai.profile.main.currentuser;
                     break;
             }
         }
@@ -165,7 +165,7 @@ sakai.profile = function(){
         sakai.profile.main.acls = {
             "options": {
                 "everybody": {
-                    "label": "__MSG__EVERYBODY__",
+                    "label": "__MSG__PUBLIC__",
                     "postparams": [{
                         "principalId": "anonymous",
                         "privilege@jcr:read": "granted"
@@ -182,7 +182,7 @@ sakai.profile = function(){
                     }]
                 },
                 "institution": {
-                    "label": "__MSG__INSTITUTION_ONLY__",
+                    "label": "__MSG__LOGGED_IN_USERS__",
                     "postparams": [{
                         "principalId": "anonymous",
                         "privilege@jcr:read": "denied"
@@ -199,7 +199,7 @@ sakai.profile = function(){
                     }]
                 },
                 "contacts": {
-                    "label": "__MSG__CONTACTS_ONLY__",
+                    "label": "__MSG__MY_CONTACTS__",
                     "postparams": [{
                         "principalId": "anonymous",
                         "privilege@jcr:read": "denied"
@@ -285,52 +285,49 @@ sakai.profile = function(){
 
         }
         else {
+            sakai.api.Server.loadJSON(authprofileURL, function(success, data) {
+                if (success && data) {
+                    // Set the correct userprofile data
+                    userprofile = $.extend(true, {}, data);
 
-            // We need to fire an Ajax GET request to get the profile data for the user
-            $.ajax({
-                url: authprofileURL + ".3.json",
-                success: function(data){
+                    // Set the profile picture
+                    sakai.profile.main.picture = constructProfilePicture(userprofile);
 
-                    // Check whether there are any results
-                    if(data){
-
-                        // Set the correct userprofile data
-                        userprofile = $.extend(true, {}, data);
-
-                        // Set the profile picture
-                        sakai.profile.main.picture = constructProfilePicture(userprofile);
-
-                        // Set the status for the user you want the information from
-                        if(userprofile.basic && userprofile.basic.elements.status){
-                            sakai.profile.main.status = userprofile.basic.elements.status.value;
-                        }
-
-                        // Set the profile data object
-                        sakai.profile.main.data = $.extend(true, {}, userprofile);
-
+                    // Set the status for the user you want the information from
+                    if(userprofile.basic && userprofile.basic.elements.status){
+                        sakai.profile.main.status = userprofile.basic.elements.status.value;
                     }
 
-                },
-                error: function(){
-                    fluid.log("setProfilePicture: Could not find the user");
-                },
-                complete: function(data){
-
-                    // Execute the callback function
-                    if (callback && typeof callback === "function") {
-                        callback();
-                    }
-
+                    // Set the profile data object
+                    sakai.profile.main.data = $.extend(true, {}, userprofile);
+                } else {
+                    fluid.log("setProfileData: Could not find the user's profile");
+                }
+                if (callback && typeof callback === "function") {
+                    callback();
                 }
             });
-
         }
 
     };
 
     /**
+     * Filter some the tags properties, as they cannot be imported into Sling this way
+     * @param {Object} i_object The object you want to filter
+     */
+    var filterTagsProperties = function(i_object) {
+        // filter out the tags, they don't save this way
+        if (i_object["sakai:tags"]) {
+            delete i_object["sakai:tags"];
+        }
+        if (i_object["sakai:tag-uuid"]) {
+            delete i_object["sakai:tag-uuid"];
+        }
+    };
+
+    /**
      * Filter some JCR properties, we need to do this because some properties
-     * can not be used by the import operation in Slin
+     * can not be used by the import operation in Sling
      * @param {Object} i_object The object you want to filter
      */
     var filterJCRProperties = function(i_object){
@@ -386,7 +383,7 @@ sakai.profile = function(){
                         // Add the object to the requests array
                         requests[requests.length] = {
                             // Construct the right URL
-                            "url": authprofileURL + "/" + i + ".modifyACE.json", // Todo change to JSON
+                            "url": authprofileURL + "/" + i + ".modifyAce.json", // Todo change to JSON
                             "method": "POST",
                             "parameters": aclArray[j]
                         };
@@ -486,6 +483,9 @@ sakai.profile = function(){
 
         // Filter some JCR properties
         filterJCRProperties(sakai.profile.main.data);
+
+        // Filter out the tags
+        filterTagsProperties(sakai.profile.main.data);
 
         // Save the profile properties
         sakai.api.Server.saveJSON(authprofileURL, sakai.profile.main.data, function(success, data){

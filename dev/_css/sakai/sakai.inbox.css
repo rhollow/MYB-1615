@@ -12,12 +12,13 @@
 { padding: 0; }
 
 .inbox_main .col-main
-{ margin-top: -3px; margin-left: 240px; padding: 0; overflow: hidden; width: 676px; height: 521px;}
+{ margin-top: 8px; margin-left: 240px; padding: 0; overflow: hidden; width: 676px; }
 
 
 /** SIDE NAV **/
 
 /** Compose a new ... **/
+
 .inbox_main .side_panel
 { width: 230px; margin:0; padding: 0; }
 
@@ -25,7 +26,7 @@
 { padding: 0 0 5px 15px; position: relative; z-index: 20000; width: 210px;}
 
 .inbox_main .drop-menu .compose_new_link
-{ background: transparent url(../../_images/create_dropdown_bg.png) no-repeat scroll left 0; color:#FFFFFF; display:block; font-weight:bold; height:20px; padding:3px 0 0 13px; }
+{ background: transparent url(../../_images/create_dropdown_bg.png) no-repeat scroll left 0; color:#FFFFFF; display:block; font-weight:bold; height:20px; padding:3px 0 0 19px; }
 
 .inbox_main .drop-box
 { background-color:#FFFFFF; border:1px solid #454A4F; margin: 0; padding:0; position: absolute; left: 22px; top: 22px; width: 128px; }
@@ -38,10 +39,9 @@
 
 
 /** Folders **/
-.inbox_main .inbox-folders
-{ width: 230px; margin:0; padding-top: 2px; overflow: hidden; }
 
-.inbox_main .inbox-folders a:hover {text-decoration: none;}
+.inbox_main .inbox-folders
+{ width: 230px; margin:0; padding: 0; overflow: hidden; }
 
 .inbox_main .inbox-folders .if_titlebar
 { background:transparent url(/dev/_images/block_tr.png) no-repeat scroll right top; padding: 0 10px 0 0; height:50px; }
@@ -50,17 +50,17 @@
 { background:transparent url(/dev/_images/block_tl.png) no-repeat scroll left top; padding: 18px 0 0 17px; height:50px; }
 
 .inbox_main .inbox-folders .if_title
-{ background:transparent url(/dev/_images/recent_activity_icon.png) no-repeat scroll left top; color:#878A8C; font-size:1em; padding-left: 25px; position: relative; top:-15px; }
+{ background:transparent url(/dev/_images/recent_activity_icon.png) no-repeat scroll left top; color:#878A8C; font-size:1em; padding-left: 25px; margin:0;}
 
-
+ /* myBerkeley: changed borders to 4px instead of 3px */
 .inbox_main .inbox-folders .if_content
-{ border-left: 4px solid #D4DADE; border-right: 4px solid #D4DADE; padding: 1px 0px 1px 0px; margin: 0; } /* padding: 1px 5px 1px 12px */
+{ border-left: 4px solid #D4DADE; border-right: 4px solid #D4DADE; padding: 1px 5px 1px 12px; margin: 0; }
 
 .inbox_main .inbox-folders .if_content ul
-{margin: 0; }
+{ padding: 0 0 0 20px; margin: 0; }
 
 .inbox_main .inbox-folders .if_content ul li
-{ list-style-type: none; padding: 3px 0px 3px 20px; }
+{ list-style-type: none; padding: 3px 0 3px 0; }
 
 .inbox_main .inbox-folders .if_content ul li a
 { font-weight: normal; color: #058EC4; }
@@ -69,7 +69,7 @@
 { font-weight: normal; color: #999999; }
 
 .inbox_main .inbox-folders .if_content .tab
-{ padding: 5px 10px 5px 10px; } /* used to be margin: 10px 0 10px 0; */
+{ margin: 10px 0 10px 0; }
 
 .inbox_main .inbox-folders .if_content .tab a
 { font-weight: bold; color: #058EC4; font-size: 1.2em; padding: 0 0 10px 0; }
@@ -120,64 +120,65 @@
 { font-weight: bold; color: #333; font-size: 17px; padding: 4px 0 0 5px; }
 
 /** Table **/
-.inbox_main .main_content_container
-{ width: 670px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; height: 400px;}
 
+/* myBerkeley: fixed width from 670px to 671px and border-right from 3px to 4px */
+.inbox_main .main_content_container
+{ width: 671px; border-left: 3px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
+
+/* myBerkeley: fixed width from 670px to 671px */
 .inbox_main .inbox-table
-{ width: 670px; margin: 0; table-layout: fixed;}
+{ width: 671px; margin: 0; table-layout: fixed;}
 
 .inbox_main .top_decor
-{ background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px; margin-top: 5px;}
+{ background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px; }
 
 /** Buttons **/
 .inbox_main .top_button_bar
-{ padding: 0 12px 0px 0; text-align: right; }
+{ padding: 0 12px 5px 0; text-align: right; }
 
 .inbox_main .inbox_inbox_delete
 { color: #058EC4; }
 
-.inbox_main .button-list
-{position: relative; top: 10px; float: right;}
-
 /** Header **/
-.inbox_main .inbox-table .different_messages, .different_reminders
+.inbox_main .inbox-table .different
 { background: #eaedef; }
 
-.inbox_main .inbox-table .different_messages th
+.inbox_main .inbox-table .different th
 { border-bottom: 4px solid #d5dbdf; }
 
 .inbox_main .inbox-table .different_reminders th
 { border-bottom: 3px solid #d5dbdf; }
 
 .inbox_main .inbox-table #inbox_table_header_chk
-{ width: 15px; }
+{ width: 3%; }
 
-.inbox_main .inbox-table .inbox_inbox_check_done
-{ position: relative; left: 20px; }
+.inbox_main .inbox-table #inbox_table_header_from
+{ width:20%; border-left: 1px solid #D4DADE; color: #666666; }
 
-.inbox_main .inbox-table #inbox_table_header_from_message
-{ width:150px; border-left: 1px solid #D4DADE; color: #666666; }
+.inbox_main .inbox-table #inbox_table_header_subject
+{ width:37%; border-left: 1px solid #D4DADE; color: #666666; }
 
-.inbox_main .inbox-table #inbox_table_header_subject_message
-{ width:300px; border-left: 1px solid #D4DADE; color: #666666; }
-
-.inbox_main .inbox-table #inbox_table_header_type_message
+.inbox_main .inbox-table #inbox_table_header_type
 { width:15%; border-left: 1px solid #D4DADE; color: #666666; }
 
-.inbox_main .inbox-table #inbox_table_header_date_message
-{ width:148px; border-left: 1px solid #D4DADE; color: #666666; }
+.inbox_main .inbox-table #inbox_table_header_date
+{ width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 
+/* myBerkeley: added headers for reminders/archive boxes */
 .inbox_main .inbox-table #inbox_table_header_from_reminder
-{ width:150px; border-left: 1px solid #D4DADE; color: #666666; }
+{ width: 20%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_subject_reminder
-{ width:245px; border-left: 1px solid #D4DADE; color: #666666; }
+{ width: 40%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_date_reminder
-{ width:144px; border-left: 1px solid #D4DADE; color: #666666; }
+{ width: 25%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_checkbox_reminder
-{ width:75px; border-left: 1px solid #D4DADE; color: #666666; }
+{ width: 15%; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table .reminders_checkbox
+{ text-align: center; }
 
 /** List **/
 .inbox_main .inbox-table a:hover {text-decoration: none;}
@@ -186,11 +187,8 @@
 { color: #333;  text-align: left; height: 26px; border: none; }
 
 .inbox_main .inbox-table tr
-{ color: #666; }
+{ color: #666; border-left: 1px solid #D4DADE; } /* myBerkeley: added border-left */
 
-.inbox_main .inbox-table tr.inbox_message:hover {
-    background-color:#d9eaf5;cursor:pointer;
-}
 .inbox_main .inbox-table td
 { border: none; color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; white-space: nowrap; overflow: hidden;}
 
@@ -206,14 +204,11 @@
 .inbox_main .inbox-table tr.inbox-subject-critical a:link
 { font-weight: bold; color: #CC0000;}
 
-.inbox_main .inbox-table td a.inbox_inbox_message 
-{color:#058EC4;}
-
-.inbox_main .inbox-table td a.inbox_inbox_message_from 
-{color:#058EC4;}
+.inbox_main .inbox-table td a.inbox_inbox_message {color:#058EC4}
 
 .inbox_main .inbox-table .inbox_message_none
 { text-align: center; border: none; height: 370px; }
+
 
 .inbox_main .bottom_decor
 { background: transparent url(/dev/_images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
@@ -227,7 +222,7 @@
 { padding: 19px 0 0 0; }
 
 .inbox_main .compose-message
-{ background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; }
+{ background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; border-top: 3px solid #D5DBDF; }
 
 .inbox_main .compose-reply
 { background: #fff; width: 500px; height: auto; position: relative; top:-15px;}
@@ -299,7 +294,7 @@
 { background: url(../../_images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
 
 .inbox_detail .message-body
-{ padding: 20px 37px 30px; color:#333; font-size: 13px; max-height: 306px; overflow: auto;}
+{ padding: 20px 37px 30px; color:#333; font-size: 13px; }
 
 .inbox_detail .message-header
 { font-weight: bold; font-size: 15px; padding: 5px 0px 5px 5px; white-space: nowrap; overflow: hidden;}
@@ -326,7 +321,7 @@
 { margin: 0 0 0 38px; }
 
 .inbox_detail #inbox_message_replies
-{ margin: 0 0 0 38px; background: #f4f4f4; }
+{ margin: 10px 38px 0 38px; background: #f4f4f4; }
 
 .inbox_detail #inbox_compose_replies_template_chats
 { margin: 0 0 0 38px; background: #f4f4f4; }
