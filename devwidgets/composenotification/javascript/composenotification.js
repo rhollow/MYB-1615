@@ -236,25 +236,25 @@ if (!sakai.composenotification){
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.',        
+            buttonText: 'Click to pick a date.'   
         });     
         $("#datepicker-taskduedate-text").datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.',        
+            buttonText: 'Click to pick a date.'      
         });     
         $("#datepicker-eventdate-text").datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.',        
+            buttonText: 'Click to pick a date.'      
         });     
         $("#datepicker-eventstopdate-text").datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.',        
+            buttonText: 'Click to pick a date.'      
         });                                           
                     
         // For dialog-overlay to remind user to save their draft.
@@ -331,18 +331,14 @@ if (!sakai.composenotification){
                 }
             });      
             
-            // Now redirect to the CNDL page. (set to berkeley main page for now)            
-            <!--
-            window.location = "http://www.berkeley.edu/"
-            //-->            
+            // Now redirect to the CNDL page.
+            window.location = "http://localhost:8080/dev/listpage.html";    
          });
          
          // Event handler for when you click on the "Don't Save" button on DLC dialog.
          $("#dlc-dontsave").click(function() {
-             // Just redirect to CDNL page. (set to berkeley main page for now)
-             <!--
-            window.location = "http://www.berkeley.edu/"
-            //--> 
+             // Just redirect to CDNL page.
+            window.location = "http://localhost:8080/dev/listpage.html";
          });
          
          // If 'Yes' is checked for required, then automatically check that it has a date.

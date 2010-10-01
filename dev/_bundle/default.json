@@ -615,5 +615,9 @@
 "SAVE_AS_DRAFT": "Save as Draft",
 "COPY_TO_DRAFTS": "Copy to Drafts",
 "MOVE_TO_DRAFTS": "Move to Drafts",
-"EMPTY_TRASH": "Empty Trash"
+"EMPTY_TRASH": "Empty Trash",
+
+"MY_DYNAMIC_LISTS": "My Dynamic Lists",
+"EXISTING_LISTS": "Existing Lists",
+"CREATE_OR_EDIT_A_DYNAMIC_LIST": "Create or Edit a Dynamic List"
 }
