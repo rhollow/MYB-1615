@@ -180,7 +180,7 @@
 .inbox_detail .message-body
 { padding: 20px 37px 30px; color:#333; font-size: 13px; }
 .inbox_detail .message-header
-{ font-weight: bold; font-size: 15px; padding-bottom: 5px; }
+{ font-weight: bold; font-size: 16px; padding-bottom: 5px; margin-top: 5px; margin-left: 5px; }
 .inbox_detail .message-options
 { padding: 15px 15px 0 0; }
 .inbox_detail .message-options a
