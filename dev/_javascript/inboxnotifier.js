@@ -104,25 +104,12 @@ sakai.notificationsinbox = function(){
     var inboxTableHeaderSort = inboxInboxClass + "_table_header_sort";
         
     // Specific message
-    var inboxSpecificMessage = inboxID + "_message";
-    var inboxSpecificMessageDelete = inboxSpecificMessage + "_delete";
-    var inboxSpecificMessageBackToInbox = inboxSpecificMessage + "_back_to_inbox";
-    var inboxSpecificMessagePreviousMessages = inboxSpecificMessage + "_previous_messages";
-    var inboxSpecificMessageOption = inboxSpecificMessage + "_option";
-    var inboxSpecificMessageOptionReply = inboxSpecificMessageOption + "_reply";
-    var inboxSpecificMessageOptionDelete = inboxSpecificMessageOption + "_delete";
+    var inboxSpecificMessage = inboxID + "_message";    
     var inboxSpecificMessageBody = inboxSpecificMessage + "_body";
     var inboxSpecificMessageDate = inboxSpecificMessage + "_date";
     var inboxSpecificMessageFrom = inboxSpecificMessage + "_from";
     var inboxSpecificMessageSubject = inboxSpecificMessage + "_subject";
-    var inboxSpecificMessagePicture = inboxSpecificMessage + "_picture";
-    
-    // Reply on a message  
-    var inboxSpecificMessageCompose = inboxSpecificMessage + "_compose";
-    var inboxSpecificMessageComposeSubject = inboxSpecificMessageCompose + "_subject";
-    var inboxSpecificMessageComposeBody = inboxSpecificMessageCompose + "_body";
-    var inboxSpecificMessageComposeSend = inboxSpecificMessageCompose + "_send";
-    var inboxSpecificMessageComposeCancel = inboxSpecificMessageCompose + "_cancel";    
+    var inboxSpecificMessagePicture = inboxSpecificMessage + "_picture";          
     
     // Notification Detail (create or edit notifications)
     var inboxCompose = inboxID + "_compose";
@@ -190,10 +177,10 @@ sakai.notificationsinbox = function(){
      * @param {Boolean} isError True for error (red block) or false for normal message(green block).
      */
     var showGeneralMessage = function(msg, isError){    
-        // Check whether to show an error type message or an information one
+        // Check whether to show an error type message or an information one.
         var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
         
-        // Show the message to the user
+        // Show the message to the user.
         sakai.api.Util.notification.show("", msg, type);        
     };
     
@@ -418,7 +405,7 @@ sakai.notificationsinbox = function(){
      * @param {Object} message
      */
     var formatMessage = function(message){            
-        var dateString = message["sakai:created"];
+        var dateString = message["sakai:sendDate"];
         var d = new Date();
         d.setFullYear(parseInt(dateString.substring(0, 4), 10));
         d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
@@ -427,15 +414,8 @@ sakai.notificationsinbox = function(){
         d.setMinutes(parseInt(dateString.substring(14, 16), 10));
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //Jan 22, 2009 10:25 PM
-        message.date = formatDate(d, "M j, Y G:i A");
-        
-        if (message["sakai:read"] === "true" || message["sakai:read"] === true) {
-            message.read = true;
-        }
-        else {
-            message.read = false;
-        }
-        
+        message.date = formatDate(d, "M j, Y");
+              
         if (message.previousMessage) {
             message.previousMessage = formatMessage(message.previousMessage);
         }
@@ -986,40 +966,7 @@ sakai.notificationsinbox = function(){
         sortOrder = (sortOrder === "descending") ? "ascending" : "descending";
         
         getAllMessages();
-    });
-        
-    /**
-     *
-     * Specific message
-     *
-     */
-    $(inboxSpecificMessageBackToInbox).click(function(){
-        // Show the inbox.
-        showPane(inboxPaneInbox);    
-    });
-    
-    $(inboxSpecificMessageOptionDelete).click(function(){
-        var harddelete = false;
-        if ($.inArray(selectedMessage.types, "trash") > -1) {
-            // This is a trashed message, hard delete it.
-            harddelete = true;
-        }
-        // Delete the message
-        deleteMessages([selectedMessage.pathToMessage], harddelete);
-        
-        // Show the inbox
-        showPane(inboxPaneInbox);
-   
-    });     
-    
-    $(inboxSpecificMessageComposeSend).click(function(){
-        // We want to send a message.
-        var subject = $(inboxSpecificMessageComposeSubject).val();
-        var body = $(inboxSpecificMessageComposeBody).val();
-        
-        sakai.api.Communication.sendMessage(selectedMessage["sakai:from"], subject, body, "message", selectedMessage["sakai:id"], sendMessageFinished);
-    });
-    
+    });      
     
     /**
      *
@@ -1035,8 +982,7 @@ sakai.notificationsinbox = function(){
         }
         else {
             // We are logged in. Do all the necessary stuff.
-            // Load the list of messages.
-            // getCount("all");
+            // Load the list of messages.            
             getAllMessages();
             
             var qs = new Querystring();

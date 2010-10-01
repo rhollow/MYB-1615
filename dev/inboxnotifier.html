@@ -164,7 +164,6 @@
                                             {/if}
                                         {/if}
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
-                                        <td>${m.category}</td>
                                         <td>${m.date}</td>
                                 </tr>
                             {forelse}
@@ -225,29 +224,21 @@
 
                         <div class="bottom_decor"></div>
                         
-                        <!-- Button List-->
+                        <!-- Button Lists-->
                         <div class="button-list" id="notifdetail-buttons">
                             <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
                             <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
+                        </div>  
+                        <div class="button-list" id="notifdetail2-buttons" style="display:none;">
+                            <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
+                            <button id="cn-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">Move to Queue</span></button>
+                            <button id="cn-updatedraft-button" class="s3d-button"><span class="s3d-button-inner">Update</span></button>							
                         </div>                                                             
                     </div>
                     
                     <!-- VIEW A SPECIFIC MESSAGE -->
-                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
-
-                        <!-- Header -->
-                        <div class="top_toolbar fl-fix">
-                            <!--
-                            <div class="fl-force-left sender-options">
-                                <a href="javascript:;" id="inbox_message_back_to_inbox"><span>&laquo;</span> __MSG__BACK_TO_INBOX__</a>
-                            </div>
-
-                            <div class="fl-force-right sender-options">
-                                <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
-                            </div>
-                            -->
-                        </div>
+                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">                       
 
                         <div class="top_decor">
                             <!-- <div class="inbox-heading">__MSG__MESSAGE__</div> -->
