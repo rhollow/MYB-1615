@@ -216,6 +216,10 @@ for (var i in sakai.config.Navigation) {
         if (red !== false){
             redirectUrl = $.URLDecode(red);
         }
+        
+        $("#login-external-button").click(function (evt) {
+            window.location = "/system/sling/cas/login?resource=/dev/index.html";
+        });
 
         // Set the cursor in the username field
         $("#" + usernameField).focus();
