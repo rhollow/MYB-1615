@@ -45,13 +45,10 @@ label {color:#888; font-weight: bold; font-size: 1em;}
     padding: 30px 40px;
 }
 
-/* changed the padding for .header-title for our larger myBerkeley logo */
 .header-title { 
     margin: 0 35px 0 10px; 
     padding: 16px 0 0;
 }
-
-/* changed the font-size and padding for .header-byline for our shorter myBerkeley by-line */
 
 .header-byline {
     font-size: 1.7em; 
@@ -74,10 +71,27 @@ label {color:#888; font-weight: bold; font-size: 1em;}
     background: url(/dev/_images/myBerkeley/beta-tag.png) no-repeat 00 scroll;
 }
 
+/* strange redundant styleing on .request-feedback is for the odd case where there is more than one login type */
 .request-feedback {
+    padding: 6px;
     color: #555;
     text-align: center;   
     font-size: 1.85em;
+    clear: both;
+    background-color: white;
+    height: auto;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.login-container-button {
+    margin: 0 0 10px;
+}
+
+.login-container {
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 10px;    
 }
 
 #myBerkeley-CAS .login-external-description a, .request-feedback a {
@@ -86,7 +100,7 @@ label {color:#888; font-weight: bold; font-size: 1em;}
 
 #myBerkeley-CAS {
     text-align: center;
-    height: 220px;
+    height: 210px;
 }
 
 #myBerkeley-CAS p {
@@ -99,6 +113,7 @@ label {color:#888; font-weight: bold; font-size: 1em;}
 
 #myBerkeley-CAS .login-external-description {
     color: #555;
+    background-color: white;
     font-size: 1.1em;
     text-align: left;
     padding: 14px 12px;

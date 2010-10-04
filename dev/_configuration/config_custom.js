@@ -11,7 +11,8 @@ sakai.config.Navigation = [
     }
 ];
 
-//sakai.config.Authentication.internal
+// This is our custom CAS log in information, please note, we're not actually using the configuration yet. 
+// For production and QA, sent internal to false, for dev set it to true.
 
 sakai.config.Authentication = {
     "internal": false,
