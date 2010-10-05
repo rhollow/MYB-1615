@@ -11,11 +11,11 @@ sakai.config.Navigation = [
     }
 ];
 
-// This is our custom CAS log in information, please note, we're not actually using the configuration yet. 
+// This is our custom CAS log in information. Please note, we're not actually using the external object yet 
 // For production and QA, sent internal to false, for dev set it to true.
 
 sakai.config.Authentication = {
-    "internal": false,
+    "internal": true,
     "external": [
         {
           label: "LOGIN_TITLE",
