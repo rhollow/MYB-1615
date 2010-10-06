@@ -157,36 +157,43 @@
                         <!-- VIEW A SPECIFIC LIST -->
                         <div id="create_new_list" class="inbox_pane">
                             <div class="main_content_container">
-                                <form name="createListForm" action="" method="post"> 
-                                    <div class="input_item"><label>List name:</label> <input type="text" id="list_name" size="25" /></div>
-                                    <div class="input_item"><label>Description:</label> <input type="text" id="description" size="25" /></div>
+                                <form name="createListForm" id="createListForm" action="#" method="post"> 
+                                    <div class="input_item"><label>List name:</label> 
+                                        <input type="text" id="list_name" size="25" /> 
+                                        <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
+                                    </div>
+                                    <div class="input_item"><label>Description:</label> 
+                                        <input type="text" id="description" size="25" /> 
+                                        <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
+                                    </div>
                                     <div class="input_item">
                                         <label>Context:</label>
-                                        <select id="context">
-                                            <option value="ced">CED</option>
+                                        <select name="context" id="context" onchange="sakai.listpage.updateListSize()">
+                                            <option value="CED">CED</option>
                                         </select>
                                     </div>
                                     <div class="input_item">
                                         <label>Major:</label>
-                                        <select id="major">
-                                            <option value="architecture">Architecture</option>
-                                            <option value="city_regional_plan">City Regional Plan</option>
-                                            <option value="design">Design</option>
-                                            <option value="landscape_arch">Landscape Arch</option>
-                                            <option value="land_arch_&_env_plan">Land Arch & Env Plan</option>
-                                            <option value="urban_design">Urban Design</option>
-                                            <option value="urban_studies">Urban Studies</option>
+                                        <select name="major" id="major" onchange="sakai.listpage.updateListSize()">
+                                            <option value="Architecture">Architecture</option>
+                                            <option value="City_Regional_Plan">City Regional Plan</option>
+                                            <option value="Design">Design</option>
+                                            <option value="Landscape_Arch">Landscape Arch</option>
+                                            <option value="Land_Arch_&_Env_Plan">Land Arch & Env Plan</option>
+                                            <option value="Urban_Design">Urban Design</option>
+                                            <option value="Urban_Studies">Urban Studies</option>
                                         </select>
                                     </div>
                                     <div class="input_item">
                                         <label>Standing:</label>
-                                        <select id="standing">
-                                            <option value="undergraduate">Undergraduate</option>
-                                            <option value="graduate">Graduate</option>
-                                            <option value="all">All</option>
+                                        <select name="standing" id="standing" onchange="sakai.listpage.updateListSize()">
+                                            <option value="Undergraduate">Undergraduate</option>
+                                            <option value="Graduate">Graduate</option>
+                                            <option value="All">All</option>
                                         </select>
                                     </div>
                                     <div class="input_item" style="float: right;">
+                                        <span id="invalid_size" class="invalid_span" style="display:none;">Empty list</span>
                                         <label>Current list size (students):</label>
                                         <input type="text" id="list_size" size="5" disabled="disabled" />
                                     </div>
@@ -198,13 +205,37 @@
                         </div>
                     </div>
                     
+                <!-- DELETE CHECK DIALOG -->
+                <div id="delete_check_dialog" class="dialog">
+                    <!-- Dialog Header -->
+                    <div class="dialog_header">
+                        <div class="dialog_header_inner">
+                            <h1>Warning</h1>
+                            <a href="javascript:;" class="jqmClose dialog_close_image" title="__MSG__CLOSE_DIALOG__">__MSG__CLOSE_DIALOG__</a>
+                        </div>
+                    </div>                        
+                    <!-- Dialog Content -->
+                    <div class="dialog_content">
+                        <p>Are you sure you want to delete the selected list(s)?<br></p>
+                        <div class="dialog_buttons">
+                            <button type="button" id="dlc-delete" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                            <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                        </div>
+                    </div>                        
+                    <!-- Dialog Footer -->
+                    <div class="dialog_footer">
+                        <div class="dialog_footer_inner"><!-- 
+                        --></div>
+                    </div>                        
+                </div>
+                    
                     <!-- List of buttons for Existing Lists tab and New List tab -->
                     <div class="button-list">
                         <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                         <button type="button" id="inbox_inbox_duplicate_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DUPLICATE__</span></button>
                         <button type="button" id="inbox_inbox_edit_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>
                         <button type="button" id="inbox_inbox_back_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_INBOX__</span></button>
-                        <button type="button" id="inbox_inbox_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                        <button type="button" id="inbox_inbox_reset_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__RESET__</span></button>
                         <button type="button" id="inbox_inbox_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
                     </div>
                 </div>
@@ -220,7 +251,8 @@
        <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
         <span id="inbox_generalmessages_none_selected" style="display:none;">__MSG__NO_LIST_WAS_SELECTED__.</span>
-
+        <span id="inbox_generalmessages_list_saved" style="display:none;">__MSG__LIST_SAVED__.</span>
+        <span id="inbox_generalmessages_edit_multiple" style="display:none;">__MSG__YOU_CAN_ONLY_EDIT_ONE_LIST_AT_A_TIME__.</span>
         <script type="text/javascript" src="_javascript/listpage.js"></script>
 
     </body>

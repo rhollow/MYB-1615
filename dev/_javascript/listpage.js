@@ -81,6 +81,30 @@ sakai.listpage = function(){
         $(".inbox_inbox_check_list").attr("checked", ($("#inbox_inbox_checkAll").is(":checked") ? "checked" : ''));
     };
     
+    /**
+     * Updates the input field that displays the current size of the list being created
+     */
+    sakai.listpage.updateListSize = function(){
+        var index = document.createListForm.context.selectedIndex;
+        var selectedContext = document.createListForm.context.options[index].text;
+        index = document.createListForm.major.selectedIndex;
+        var selectedMajor = document.createListForm.major.options[index].text;
+        index = document.createListForm.standing.selectedIndex;
+        var selectedStanding = document.createListForm.standing.options[index].text;
+
+        // DEBUGGING:
+        // var size = query(selectedContext, selectedMajor, selectedStanding);
+        // document.createListForm.list_size.value = size;
+    }
+    
+    /**
+     * Clears input fields
+     */
+    var clearInputFields = function() {
+        document.getElementById("createListForm").reset();
+        sakai.listpage.updateListSize();
+    };
+    
     // TODO: Document properties.
     /**
      * Used for the date formatter.
@@ -248,25 +272,22 @@ sakai.listpage = function(){
      * Removes all the messages out of the DOM.
      * It will also remove the preloader in the table.
      */
-    var removeAllMessagesOutDOM = function(){
+    var removeAllListsOutDOM = function(){
         $(".inbox_list").remove();
     };
     
     var renderLists = function(response){
         for (var j = 0, l = response.lists.length; j < l; j++) {
-            // style notice according to whether it's a message or reminder
             response.lists[j] = formatList(response.lists[j]);
         }
         
         allLists = response.lists;
         
         // Show messages
-        var tplData = {
-            "messages": response.lists
-        };
+        var tplData = {"messages": response.lists };
         
-        // remove previous messages
-        removeAllMessagesOutDOM();
+        // remove previous lists
+        removeAllListsOutDOM();
         
         // Add them to the DOM
         $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", tplData));
@@ -293,25 +314,16 @@ sakai.listpage = function(){
      * @param {String} id    The id of a list
      */
     var displayList = function(id){
+        // Display edit list tab
+        $.bbq.pushState({"tab": "existing"},2);
         
-        // Hide/show relevant buttons
-        $(".different").hide();
-        $("#inbox_inbox_delete_button").hide();
-        $("#inbox_inbox_duplicate_button").hide();
-        $("#inbox_inbox_edit_button").hide();
-        $("#inbox_inbox_back_button").hide();
-        $("#inbox_inbox_cancel_button").show();
-        $("#inbox_inbox_save_button").show();
-        
+        // Fill in input fields with list data
         var list = getListWithId(id);
-
-        if (typeof list !== "undefined") {
-            // Fill in this message values.
-            $(inboxSpecificMessageSubject).text(sakai.api.Security.saneHTML(message["sakai:subject"]));
-            var messageBody = "" + message["sakai:body"]; // coerce to string in case the body is all numbers
-            $(inboxSpecificMessageBody).html(sakai.api.Security.saneHTML(messageBody.replace(/\n/gi, "<br />")));
-            $(inboxSpecificMessageDate).text(sakai.api.Security.saneHTML(message.date));
-        }
+        $("#list_name").value = list["sakai:name"];
+        $("#description").value = list["sakai:description"];
+        $("#context").val(list.query.contextreplace(/ /gi, "_"));
+        $("#major").val(list.query.majorreplace(/ /gi, "_"));
+        $("#standing").val(list.query.standingreplace(/ /gi, "_"));
     }
     
     /**
@@ -381,7 +393,121 @@ sakai.listpage = function(){
         getAllMessages();
     });
     
+    var deleteLists = function() {
+        var listId = [];
+        $("#inbox_inbox_check_list:checked").each(function(){
+            var id = $(this).val();
+            listId.push(id);
+        });
+        
+        for (var i = 0, j = listId.length; i < j; i++) {
+            // DEBUGGING
+            // need ajax call to delete selected lists
+        }
+    };
+    
+    var saveList = function() {
+        // DEBUGGING
+        // ajax to save list with listName and desc and the three selected states
+        // need some way of checking if saving new list or overwriting existing one
+        
+        // on success:
+        showGeneralMessage($("#inbox_generalmessages_list_saved").text());
+        clearInputFields();
+    };
+    
+    // Button click events
+    $("#inbox_inbox_delete_button").live("click", function(){
+        var listId = [];
+        $("#inbox_inbox_check_list:checked").each(function(){
+            var id = $(this).val();
+            listId.push(id);
+        });
+        
+        if (listId.length < 1) {
+            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
+        } else {
+            $("#delete_check_dialog").jqmShow();
+        }
+    });
+    
+    $("#delete_check_dialog").css("position", "absolute");
+    $("#delete_check_dialog").css("top", "250px");
+    
+    $("#dlc-delete").click(function(){
+        $("#save_reminder_dialog").jqmHide();
+        deleteLists();
+    });
+    
+    $("#inbox_inbox_duplicate_button").live("click", function(){
+        var listId = [];
+        $("#inbox_inbox_check_list:checked").each(function(){
+            var id = $(this).val();
+            listId.push(id);
+        });
+        
+        if(listId.length < 1) {
+            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
+        } else {
+            for(var i = 0, j = listId.length; i < j; i++) {
+                // DEBUGGING
+                // need ajax call to create new lists with same data as the selected lists   
+            }
+            // somehow reload the inbox pane to display new lists - need to force refresh page?
+        }
+    });
+    
+    $("#inbox_inbox_edit_button").live("click", function(){
+        var listId = [];
+        $("#inbox_inbox_check_list:checked").each(function(){
+            var id = $(this).val();
+            listId.push(id);
+        });
+        
+        if(listId.length < 1) {
+            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
+        } else if(listId.length > 1) {
+            showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
+        } else {
+            displayList(listId[0]);   
+        }
+    });
+    
+    $("#inbox_inbox_back_button").live("click", function(){
+        window.location = "http://localhost:8080/dev/inboxnotifier.html";
+    });
+    
+    $("#inbox_inbox_reset_button").live("click", function(){
+        clearInputFields();
+    });
+    
+    $("#inbox_inbox_save_button").live("click", function(){
+        $("#invalid_name").hide();
+        $("#invalid_desc").hide();
+        $("#invalid_size").hide();
+        var listName = $("#list_name").val();
+        var desc = $("#description").val();
+        var size = $("#list_size").val();
+        
+        if(listName.trim() && desc.trim() && size != 0) {
+            saveList();
+        } else {
+            if(!listName.trim()) {
+                $("#invalid_name").show();
+            }
+            if(!desc.trim()) {
+                $("#invalid_desc").show();
+            }
+            if(size == 0) {
+                $("#invalid_size").show();
+            }
+        }
+    });
+    
+    // Tab click events
     $("#existing_link").click(function() {
+        $.bbq.pushState({"tab": "existing"},2);
+        
         // Set headers and tab styling
         $("#inbox_new").hide();
         $("#inbox_existing").show();
@@ -389,7 +515,7 @@ sakai.listpage = function(){
         $("#existing_lists_tab").addClass("selected_tab");
         
         // Show/hide appropriate buttons
-        $("#inbox_inbox_cancel_button").hide();
+        $("#inbox_inbox_reset_button").hide();
         $("#inbox_inbox_save_button").hide();
         $("#inbox_inbox_delete_button").show();
         $("#inbox_inbox_duplicate_button").show();
@@ -398,6 +524,9 @@ sakai.listpage = function(){
     });
     
     $("#create_new_link").click(function() {
+        $.bbq.pushState({"tab": "new"},2);
+        sakai.listpage.updateListSize();
+        
         // Set headers and tab styling
         $("#inbox_existing").hide();
         $("#inbox_new").show();
@@ -409,8 +538,28 @@ sakai.listpage = function(){
         $("#inbox_inbox_duplicate_button").hide();
         $("#inbox_inbox_edit_button").hide();
         $("#inbox_inbox_back_button").hide();
-        $("#inbox_inbox_cancel_button").show();
+        $("#inbox_inbox_reset_button").show();
         $("#inbox_inbox_save_button").show();
+    });
+    
+    var setTabState = function(){
+        var tab = $.bbq.getState("tab");
+        if (tab) {
+            switch (tab) {
+                case "existing":
+                    $("#existing_link").click();
+                    break;
+                case "new":
+                    $("#create_new_link").click();
+                    break;
+            }
+        } else {
+            $("#existing_link").click();
+        }
+    };
+    
+    $(window).bind('hashchange', function(e) {
+        setTabState();
     });
     
     var doInit = function() {
@@ -419,17 +568,13 @@ sakai.listpage = function(){
         var uuid = person.user.userid;
         if (!uuid || person.user.anon) {
             redirectToLoginPage();
-        } else {
+        }
+        else {
             $("#tabs").tabs();
-            $("#existing_link").click();
+            setTabState();  
         }
     }
 
     doInit();
 }
 sakai.api.Widgets.Container.registerForLoad("sakai.listpage");
-
-
-// document.createListForm.list_size.value = 5; // TO SET SIZE FIELD
-
-

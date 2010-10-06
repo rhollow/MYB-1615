@@ -181,4 +181,4 @@
 .selected_tab { border-bottom: 4px solid white; background-color: white; }
 .leftmost_tab { border-right: 0px; }
 .input_item { padding: 10px; }
-
+.invalid_span { padding-left: 10px; color: #CC0000; font-weight: bold; }

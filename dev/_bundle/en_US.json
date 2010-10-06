@@ -227,5 +227,8 @@
 "DUPLICATE": "Duplicate",
 "BACK_TO_INBOX": "Back To Inbox",
 "SELECT_LIST": "Select List",
-"NO_LIST_WAS_SELECTED": "No list was selected"
+"NO_LIST_WAS_SELECTED": "No list was selected",
+"RESET": "Reset",
+"LIST_SAVED": "List saved",
+"YOU_CAN_ONLY_EDIT_ONE_LIST_AT_A_TIME": "You can only edit one list at a time"
 }
