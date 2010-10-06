@@ -4,7 +4,7 @@
     <head>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Sakai 3 R&amp;D - __MSG__MY_MESSAGES__</title>
+        <title>Sakai 3 R&amp;D - __MSG__NOTIFICATIONS__</title>
 
         <!-- Sakai Core CSS -->
         <link rel="stylesheet" type="text/css" href="_css/FSS/fss-base.css" />
@@ -38,7 +38,7 @@
         <!-- 3rd party JS -->
         <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
         <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/gritter/jquery.gritter.js"></script>
@@ -58,10 +58,10 @@
         <div class="fl-container-flex header">
             <div class="fl-fix fl-centered fixed-container">
                 <div class="decor"></div>
-
+            
                 <!-- TITLE BAR  -->
                 <div class="s3d-site-heading">
-                    <h1 id="sitetitle">__MSG__MY_MESSAGES__</h1>
+                    <h1 id="sitetitle">__MSG__GROUP_NOTIFICATION_MANAGER__</h1>
                 </div>
             </div>
         </div>
@@ -164,7 +164,6 @@
                                             {/if}
                                         {/if}
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
-                                        <td>${m.category}</td>
                                         <td>${m.date}</td>
                                 </tr>
                             {forelse}
@@ -225,7 +224,7 @@
 
                         <div class="bottom_decor"></div>
                         
-                        <!-- Button List-->
+                        <!-- Button Lists-->
                         <div class="button-list" id="notifdetail-buttons">
                             <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
                             <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
@@ -234,20 +233,7 @@
                     </div>
                     
                     <!-- VIEW A SPECIFIC MESSAGE -->
-                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
-
-                        <!-- Header -->
-                        <div class="top_toolbar fl-fix">
-                            <!--
-                            <div class="fl-force-left sender-options">
-                                <a href="javascript:;" id="inbox_message_back_to_inbox"><span>&laquo;</span> __MSG__BACK_TO_INBOX__</a>
-                            </div>
-
-                            <div class="fl-force-right sender-options">
-                                <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
-                            </div>
-                            -->
-                        </div>
+                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">                       
 
                         <div class="top_decor">
                             <!-- <div class="inbox-heading">__MSG__MESSAGE__</div> -->
