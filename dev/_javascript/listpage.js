@@ -26,6 +26,7 @@ sakai.listpage = function(){
      *
      */
     var allLists = []; // Array that will hold all the dynamic lists.
+    var userUrl;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
     var sortBy = "name";
     var sortOrder = "descending";
@@ -283,14 +284,11 @@ sakai.listpage = function(){
         
         allLists = response.lists;
         
-        // Show messages
-        var tplData = {"messages": response.lists };
-        
         // remove previous lists
         removeAllListsOutDOM();
         
         // Add them to the DOM
-        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", tplData));
+        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", allLists));
         
         // do checkboxes
         tickMessages();
@@ -308,6 +306,19 @@ sakai.listpage = function(){
         }
         return {};
     };
+    
+    /**
+     * Returns the index of the list wtih the specific id.
+     * @param {Object} id
+     */
+    var getIndexOfList = function(id) {
+        for (var i = 0, j = allLists.length; i < j; i++) {
+            if (allLists[i]["sakai:id"] === id) {
+                return i;
+            }
+        }
+        return -1;
+    }
     
     /**
      * Displays only the list with that id.
@@ -329,7 +340,7 @@ sakai.listpage = function(){
     /**
      * Gets all the messages from the JCR.
      */
-    getAllMessages = function(callback) {
+    getAllMessages = function(callback) { // DEBUGGING: will this function even work? since we're using ajax indirectly now
 
         switch(sortBy) {
             case "date_modified":
@@ -401,9 +412,15 @@ sakai.listpage = function(){
         });
         
         for (var i = 0, j = listId.length; i < j; i++) {
-            // DEBUGGING
-            // need ajax call to delete selected lists
+            var index = getIndexOfList(listId[i]);
+            if(index > 0) {
+                allLists.remove(index);
+            } else {
+                alert("List not found");
+            }
         }
+        
+        sakai.api.Server.saveJSON(userUrl, allLists);
     };
     
     var saveList = function() {
@@ -453,6 +470,7 @@ sakai.listpage = function(){
                 // DEBUGGING
                 // need ajax call to create new lists with same data as the selected lists   
             }
+            // on success:
             // somehow reload the inbox pane to display new lists - need to force refresh page?
         }
     });
@@ -568,12 +586,19 @@ sakai.listpage = function(){
         var uuid = person.user.userid;
         if (!uuid || person.user.anon) {
             redirectToLoginPage();
+        } else {
+            userUrl = "/~" + uuid + "/private/dynamic_lists";
+            sakai.api.Server.loadJSON(url, function(success, data){
+                if (success) {
+                    $("#tabs").tabs();
+                    setTabState();
+                    renderLists(data);
+                } else {
+                    alert("error");
+                }
+            });
         }
-        else {
-            $("#tabs").tabs();
-            setTabState();  
-        }
-    }
+    };
 
     doInit();
 }
