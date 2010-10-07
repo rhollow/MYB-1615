@@ -577,7 +577,7 @@ sakai.notificationsinbox = function(){
         
         // get the specific message data...
         selectedMessage = getMessageWithId(id);
-        if (typeof message !== "undefined") {
+        if (typeof selectedMessage !== "undefined") {
             
             var messageBox = selectedMessage["sakai:messagebox"];
             
