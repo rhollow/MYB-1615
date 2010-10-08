@@ -38,7 +38,6 @@ sakai.notificationsinbox = function(){
     var sortBy = "date";
     var currentPage = 0;
     var messagesForTypeCat; // The number of messages for this type/cat
-    var box = "";          
     var cats = "";
     var chooseCategory = {"Message": "message", "Reminder": "reminder"};
     var inboxComposeNewPanelOpen = false;
@@ -226,7 +225,8 @@ sakai.notificationsinbox = function(){
         selectedType = type;
         
         // Display first page.      
-        getAllMessages();                             
+        //getAllMessages(); // redundantly being called twice    - eli 10.5.10                      
+        
         showPage(1);
         
         // Show the inbox pane.
@@ -486,9 +486,10 @@ sakai.notificationsinbox = function(){
         // remove previous messages.
         removeAllMessagesOutDOM();
         // Set the pager.
-        pageMessages(pageNumber);
+        // removing paging for POC - eli 10.5.10
+        // pageMessages(pageNumber);
         // Remember which page were on.
-        currentPage = pageNumber - 1;
+        // currentPage = pageNumber - 1;
         // Show set of messages.
         getAllMessages();
     };
@@ -516,19 +517,8 @@ sakai.notificationsinbox = function(){
      * Gets all the messages from the JCR.
      */
     getAllMessages = function(callback){    
-        box = "drafts";
-        if (selectedType === "queue") {
-            box = "queue";
-        }
-        if (selectedType === "archive") {
-            box = "archive";
-        }
-        else 
-            if (selectedType === "trash") {
-                box = "trash";
-            }
-        
-        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + box + "&category=" + "message";        
+
+        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message";        
         
         var types = "&types=" + selectedType;
         if (typeof selectedType === "undefined" || selectedType === "") {
@@ -584,13 +574,12 @@ sakai.notificationsinbox = function(){
      * @param {String} id The id of a message.
      */
     var displayMessage = function(id){                  
-        $("#inbox_message_previous_messages").hide();
-                
-        var message = getMessageWithId(id);
         
-        // The message we want to look at...
-        selectedMessage = message;
-        if (typeof message !== "undefined") {
+        // get the specific message data...
+        selectedMessage = getMessageWithId(id);
+        if (typeof selectedMessage !== "undefined") {
+            
+            var messageBox = selectedMessage["sakai:messagebox"];
             
             if (selectedMessage["sakai:messagebox"] == "drafts") {                
                 showPane(inboxPaneCompose);
@@ -599,8 +588,12 @@ sakai.notificationsinbox = function(){
             else if (selectedMessage["sakai:messagebox"] == "trash") {
                 showPane(inboxPaneCompose);
                 sakai.composenotification.initialise(null, inboxComposeNewContainer, "trash", selectedMessage);
-            }
-            else {
+            } else {
+            //this is another spot where we could simplify, replace the previous if/elses with this one and simplify initialize in composenotification.js
+            /*if (messageBox === "drafts" || messageBox === "trash"){                
+                showPane(inboxPaneCompose);
+                sakai.composenotification.initialise(selectedMessage, messageBox);                                
+            } else {*/
                 showPane(inboxPaneMessage);
                 // Fill in this message values.                            
                 $(inboxSpecificMessageSubject).text(sakai.api.Security.saneHTML(message["sakai:subject"]));
@@ -656,6 +649,7 @@ sakai.notificationsinbox = function(){
     var deleteMessagesFinished = function(pathToMessages, success){
         if (success) {
             // Repage the inbox.
+            
             currentPage = currentPage + 1;
             showPage(currentPage);
             
@@ -679,19 +673,30 @@ sakai.notificationsinbox = function(){
      * @param {String[]} path The message that you want to delete.
      * @param {int} index The index of the array that needs to be deleted.
      */
-    var hardDeleteMessage = function(pathToMessages){
+    var hardDeleteMessage = function(pathToMessages) {
+        var requests = [];
+        $(pathToMessages).each(function(i,val) {
+            var req = {
+                "url": val,
+                "method": "POST",
+                "parameters": {
+                    ":operation": "delete"
+                }
+            };
+            requests.push(req);
+        });
         $.ajax({
-            url: "/system/batch/delete",
+            url: sakai.config.URL.BATCH,
+            traditional: true,
             type: "POST",
-            success: function(data){
+            data: {
+                requests: $.toJSON(requests)
+            },
+            success: function(data) {
                 deleteMessagesFinished(pathToMessages, true);
             },
-            error: function(xhr, textStatus, thrownError){
-                deleteMessagesFinished(pathToMessages, false);
-            },
-            data: {
-                "resources": pathToMessages,
-                "_charset_": "utf-8"
+            error: function(xhr, textStatus, thrownError) {
+               deleteMessagesFinished(pathToMessages, false);
             }
         });
     };
@@ -768,8 +773,11 @@ sakai.notificationsinbox = function(){
         showPane(inboxPaneCompose);
         // unhighlight the tabs
         $("[id|=tab]").removeClass("current_tab");
-        // initialise the composenotification widget   
-        sakai.composenotification.initialise(null, inboxComposeNewContainer, null, null);        
+        // initialise the composenotification widget  
+        sakai.composenotification.initialise(null, inboxComposeNewContainer, null, null);
+        // initialize can be simplified as we're not using most of this data
+        // - eli  10.7.10        
+        sakai.composenotification.initialise(null, "drafts");        
     });
     
     // For when user cancels notification authoring (cancel button on pane 2).
@@ -836,7 +844,11 @@ sakai.notificationsinbox = function(){
     // Delete all checked messages on queue page.
     $("#inbox-queuedelete-button").click(function(){               
         deleteChecked();            
-    });                
+    });  
+    
+    $("#inbox-emptytrash-button").click(function(){
+        deleteChecked();
+    });              
     
     var copyChecked = function(){
         // pathToMessages = an array of all checked messages    
@@ -856,6 +868,7 @@ sakai.notificationsinbox = function(){
     var queueMessagesFinished = function(pathToMessages, success){        
         if (success) {
             // Repage the inbox.
+            
             currentPage = currentPage + 1;
             showPage(currentPage);
             

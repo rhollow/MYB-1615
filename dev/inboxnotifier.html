@@ -4,7 +4,7 @@
     <head>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Sakai 3 R&amp;D - __MSG__MY_MESSAGES__</title>
+        <title>Sakai 3 R&amp;D - __MSG__NOTIFICATIONS__</title>
 
         <!-- Sakai Core CSS -->
         <link rel="stylesheet" type="text/css" href="_css/FSS/fss-base.css" />
@@ -23,6 +23,7 @@
         <script type="text/javascript" src="_configuration/widgets.js"></script>
         <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
         <script type="text/javascript" src="_configuration/config.js"></script>
+        <script type="text/javascript" src="_configuration/config_custom.js"></script>
 
         <!-- Core 3rd-party JS -->
         <script type="text/javascript" src="_lib/jquery/jquery.js"></script>
@@ -41,12 +42,10 @@
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.ba-bbq.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/gritter/jquery.gritter.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.bgiframe.min.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.ajaxQueue.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/thickbox-compressed.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.autocomplete.min.js"></script>
-
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js"></script>
+        
     </head>
 
     <body class="fl-centered inbox_main inbox_detail i18nable">               
@@ -61,7 +60,7 @@
             
                 <!-- TITLE BAR  -->
                 <div class="s3d-site-heading">
-                    <h1 id="sitetitle">__MSG__MY_MESSAGES__</h1>
+                    <h1 id="sitetitle">__MSG__GROUP_NOTIFICATION_MANAGER__</h1>
                 </div>
             </div>
         </div>
