@@ -115,6 +115,29 @@ if (!sakai.composenotification){
           'group3id' : 'Group 3'  
         };
         
+         /**
+         * returns a jQuery object containing a set of option elements 
+         * @param {Object} optionArray, name: value pairs of option elements
+         * @param {String} selectedValue the key of the selected option element
+         * @param {Boolean} firstEmpty start with an option element or not
+         */
+        
+        var createOptions = function (optionArray, selectedValue, firstEmpty) {
+            var $container = $("<select>");
+            if (firstEmpty) {
+                $container.append($("<option>"));
+            }
+            for (var key in optionArray) {
+                var $optionObj = {};
+                $optionObj = $("<option>").val(key).text(optionArray[key]);
+                if (key === selectedValue) {
+                    $optionObj.attr("selected", "selected");
+                }
+                $container.append($optionObj);
+            }
+            return $container.contents();
+        };
+
         /**
          * Re-enables previously disabled fields. 
          */
@@ -509,19 +532,13 @@ if (!sakai.composenotification){
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
         var dynamicListInit = function(){
-          // Select the 'options' attribute of the dynamic list drop down menu.
-          var dynamicListOptions = $(messageFieldTo).attr('options');
-          
-          // Clear any pre-existing options that might be there already.
-          // (Helps prevent duplication when user hits the 'Cancel' button.)
-          $(messageFieldTo).html('');
-          
-          // Fill in options for menu based on array.
-          $.each(allDynamicListOptions, function(val, text) {
-              dynamicListOptions[dynamicListOptions.length] = new Option(text, val);
-          });          
-        };                
-
+            var optionsObj = createOptions(allDynamicListOptions, null, true);
+            
+            // clear any old values and then append the new dynamic list options          
+            $(messageFieldTo).empty().append(optionsObj);
+            
+        };
+            
         var formatDate = function(dateStr){           
             dateObj = new Date(dateStr);
             var daysoftheweek = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
