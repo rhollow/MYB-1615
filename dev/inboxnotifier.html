@@ -4,7 +4,7 @@
     <head>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Sakai 3 R&amp;D - __MSG__MY_MESSAGES__</title>
+        <title>Sakai 3 R&amp;D - __MSG__NOTIFICATIONS__</title>
 
         <!-- Sakai Core CSS -->
         <link rel="stylesheet" type="text/css" href="_css/FSS/fss-base.css" />
@@ -23,6 +23,7 @@
         <script type="text/javascript" src="_configuration/widgets.js"></script>
         <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
         <script type="text/javascript" src="_configuration/config.js"></script>
+        <script type="text/javascript" src="_configuration/config_custom.js"></script>
 
         <!-- Core 3rd-party JS -->
         <script type="text/javascript" src="_lib/jquery/jquery.js"></script>
@@ -38,15 +39,13 @@
         <!-- 3rd party JS -->
         <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
         <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.ba-bbq.js"></script>
         <script type="text/javascript" src="/dev/_lib/jquery/plugins/gritter/jquery.gritter.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.bgiframe.min.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.ajaxQueue.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/thickbox-compressed.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.autocomplete.min.js"></script>
-
+        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js"></script>
+        
     </head>
 
     <body class="fl-centered inbox_main inbox_detail i18nable">               
@@ -58,10 +57,10 @@
         <div class="fl-container-flex header">
             <div class="fl-fix fl-centered fixed-container">
                 <div class="decor"></div>
-
+            
                 <!-- TITLE BAR  -->
                 <div class="s3d-site-heading">
-                    <h1 id="sitetitle">__MSG__MY_MESSAGES__</h1>
+                    <h1 id="sitetitle">__MSG__GROUP_NOTIFICATION_MANAGER__</h1>
                 </div>
             </div>
         </div>
@@ -164,7 +163,6 @@
                                             {/if}
                                         {/if}
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
-                                        <td>${m.category}</td>
                                         <td>${m.date}</td>
                                 </tr>
                             {forelse}
@@ -225,29 +223,21 @@
 
                         <div class="bottom_decor"></div>
                         
-                        <!-- Button List-->
+                        <!-- Button Lists-->
                         <div class="button-list" id="notifdetail-buttons">
                             <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
                             <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
+                        </div>  
+                        <div class="button-list" id="notifdetail2-buttons" style="display:none;">
+                            <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
+                            <button id="cn-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">Move to Queue</span></button>
+                            <button id="cn-updatedraft-button" class="s3d-button"><span class="s3d-button-inner">Update</span></button>							
                         </div>                                                             
                     </div>
                     
                     <!-- VIEW A SPECIFIC MESSAGE -->
-                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
-
-                        <!-- Header -->
-                        <div class="top_toolbar fl-fix">
-                            <!--
-                            <div class="fl-force-left sender-options">
-                                <a href="javascript:;" id="inbox_message_back_to_inbox"><span>&laquo;</span> __MSG__BACK_TO_INBOX__</a>
-                            </div>
-
-                            <div class="fl-force-right sender-options">
-                                <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
-                            </div>
-                            -->
-                        </div>
+                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">                       
 
                         <div class="top_decor">
                             <!-- <div class="inbox-heading">__MSG__MESSAGE__</div> -->
@@ -308,7 +298,7 @@
         <span id="inbox_generalmessages_deleted_failed" style="display:none;">__MSG__UNABLE_TO_DELETE_MESSAGES__.</span>
         <span id="inbox_generalmessages_queued_1" style="display:none;">The message has been queued.</span>
         <span id="inbox_generalmessages_queued_x" style="display:none;"> messages have been queued.</span>
-        <spab id="inbox_generalmessages_queued_failed" style="display:none;">There was an error in queueing your messages.</span>
+        <span id="inbox_generalmessages_queued_failed" style="display:none;">There was an error in queueing your messages.</span>
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
         <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>        
 
