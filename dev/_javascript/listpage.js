@@ -25,11 +25,13 @@ sakai.listpage = function(){
      * Configuration
      *
      */
-    var allLists = []; // Array that will hold all the dynamic lists.
+    var allLists = []; // Array of all the lists
     var userUrl;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
     var sortBy = "name";
     var sortOrder = "descending";
+    var editExisting = false;
+    var currList;
 
 
     /**
@@ -254,7 +256,8 @@ sakai.listpage = function(){
     };
     
     var formatList = function(list){
-        var dateString = list.dateModified;
+        var dateString = list["sakai:dateModied"];
+        //var dateString = list["sakai:dateModified"];
         
         var d = new Date();
         d.setFullYear(parseInt(dateString.substring(0, 4), 10));
@@ -265,6 +268,9 @@ sakai.listpage = function(){
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //format Jan 22, 2009 10:25 PM
         list.date = formatDate(d, "M j, Y g:i A");
+        
+        list.name = list["sakai:name"];
+        list.description = list["sakai:description"];
         
         return list;
     }
@@ -281,14 +287,17 @@ sakai.listpage = function(){
         for (var j = 0, l = response.lists.length; j < l; j++) {
             response.lists[j] = formatList(response.lists[j]);
         }
-        
         allLists = response.lists;
+        
+        var data = {
+            "links": response.lists
+        }
         
         // remove previous lists
         removeAllListsOutDOM();
         
         // Add them to the DOM
-        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", allLists));
+        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", data));
         
         // do checkboxes
         tickMessages();
@@ -311,7 +320,7 @@ sakai.listpage = function(){
      * Returns the index of the list wtih the specific id.
      * @param {Object} id
      */
-    var getIndexOfList = function(id) {
+    var getIndexFromId = function(id) {
         for (var i = 0, j = allLists.length; i < j; i++) {
             if (allLists[i]["sakai:id"] === id) {
                 return i;
@@ -336,47 +345,6 @@ sakai.listpage = function(){
         $("#major").val(list.query.majorreplace(/ /gi, "_"));
         $("#standing").val(list.query.standingreplace(/ /gi, "_"));
     }
-    
-    /**
-     * Gets all the messages from the JCR.
-     */
-    getAllMessages = function(callback) { // DEBUGGING: will this function even work? since we're using ajax indirectly now
-
-        switch(sortBy) {
-            case "date_modified":
-                sortBy = "sakai:dateModified";
-                break;
-            case "name":
-                sortBy = "sakai:name";
-                break;
-            case "description":
-                sortBy = "sakai:description";
-                break;
-            case "size":
-                sortBy = "sakai:size";
-                break;
-        }
-
-        url += "&sortOn=" + sortBy + "&sortOrder=" + sortOrder;
-        $.ajax({
-            url: url,
-            cache: false,
-            success: function(data) {
-                if (data.results) {
-                    // Render the messages
-                    renderLists(data);
-                }
-                if (typeof callback !== "undefined") {
-                    callback();
-                }
-
-            },
-            error: function(xhr, textStatus, thrownError) {
-                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
-                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
-            }
-        });
-    };
 
     // Check all messages
     $("#inbox_inbox_checkAll").change(function(){
@@ -404,47 +372,83 @@ sakai.listpage = function(){
         getAllMessages();
     });
     
-    var deleteLists = function() {
-        var listId = [];
-        $("#inbox_inbox_check_list:checked").each(function(){
-            var id = $(this).val();
-            listId.push(id);
-        });
+    var deleteLists = function(listsArray) {
+        var listId = listsArray;
         
         for (var i = 0, j = listId.length; i < j; i++) {
-            var index = getIndexOfList(listId[i]);
-            if(index > 0) {
-                allLists.remove(index);
+            var index = getIndexFromId(listId[i]);
+            if(index >= 0) {
+                allLists.splice(index, 1);
+                $("#inbox_table_list_" + listId[i]).empty();
+                $("#inbox_table_list_" + listId[i]).remove();
             } else {
                 alert("List not found");
             }
         }
-        
         sakai.api.Server.saveJSON(userUrl, allLists);
+        loadData();
     };
     
-    var saveList = function() {
-        // DEBUGGING
-        // ajax to save list with listName and desc and the three selected states
-        // need some way of checking if saving new list or overwriting existing one
+    var saveList = function(index) {
+        var listName = $("#list_name").val();
+        var desc = $("#description").val();
+        var index = document.createListForm.context.selectedIndex;
+        var selectedContext = document.createListForm.context.options[index].text;
+        index = document.createListForm.major.selectedIndex;
+        var selectedMajor = document.createListForm.major.options[index].text;
+        index = document.createListForm.standing.selectedIndex;
+        var selectedStanding = document.createListForm.standing.options[index].text;
+        var size = $("#list_size").val();
         
-        // on success:
-        showGeneralMessage($("#inbox_generalmessages_list_saved").text());
-        clearInputFields();
+        var id = "dl-" + listName + desc + selectedContext + selectedMajor + selectedStanding;
+        
+        if(index != null) { // we are editing an existing list
+            allLists[index]["sakai:id"] = id;
+            allLists[index]["sakai:name"] = listName;
+            allLists[index]["sakai:description"] = desc;
+            allLists[index]["sakai:query"]["sakai:context"] = [" " + selectedContext + " "];
+            allLists[index]["sakai:query"]["sakai:standing"] = [" " + selectedStanding + " "];
+            allLists[index]["sakai:query"]["sakai:major"] = [" " + selectedMajor + " "];
+        } else {
+            if(id === "something") {
+                showGeneralMessage($("#inbox_generalmessages_already_exists").text());
+                return;
+            }
+            
+            var list = {
+                "sakai:id": id,
+                "sakai:name": listName,
+                "sakai:description": desc,
+                "sakai:dateModified": "2010-09-13T13:33:36.927-07:00", // DEBUG: HOW TO MAKE THIS?
+                "sakai:dateModified@TypeHint": "date",
+                "sakai:modifiedBy": sakai.data.me.user.userid,
+                "sakai:size": size,
+                "sakai:query": {
+                    "sakai:context": [" " + selectedContext + " "],
+                    "sakai:standing": [" " + selectedStanding + " "],
+                    "sakai:major": [" " + selectedMajor + " "]
+                }
+            }
+            allLists.push(list);
+        }
+        
+        sakai.api.Server.saveJSON(userUrl, allLists);
+        window.location = "http://localhost:8080/dev/listpage.html#tab=existing";
     };
     
     // Button click events
     $("#inbox_inbox_delete_button").live("click", function(){
         var listId = [];
-        $("#inbox_inbox_check_list:checked").each(function(){
+        $(".inbox_inbox_check_list:checked").each(function(){
             var id = $(this).val();
             listId.push(id);
         });
-        
+
         if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
         } else {
-            $("#delete_check_dialog").jqmShow();
+            //$("#delete_check_dialog").jqmShow();
+            deleteLists(listId);
         }
     });
     
@@ -452,32 +456,30 @@ sakai.listpage = function(){
     $("#delete_check_dialog").css("top", "250px");
     
     $("#dlc-delete").click(function(){
-        $("#save_reminder_dialog").jqmHide();
+        $("#delete_check_dialog").jqmHide();
         deleteLists();
     });
     
+    
     $("#inbox_inbox_duplicate_button").live("click", function(){
         var listId = [];
-        $("#inbox_inbox_check_list:checked").each(function(){
+        $(".linbox_inbox_check_list:checked").each(function(){
             var id = $(this).val();
             listId.push(id);
         });
         
-        if(listId.length < 1) {
+        if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
+        } else if (listId.length > 1) {
+            showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
         } else {
-            for(var i = 0, j = listId.length; i < j; i++) {
-                // DEBUGGING
-                // need ajax call to create new lists with same data as the selected lists   
-            }
-            // on success:
-            // somehow reload the inbox pane to display new lists - need to force refresh page?
+            displayList(listId[0]);
         }
     });
     
     $("#inbox_inbox_edit_button").live("click", function(){
         var listId = [];
-        $("#inbox_inbox_check_list:checked").each(function(){
+        $(".inbox_inbox_check_list:checked").each(function(){
             var id = $(this).val();
             listId.push(id);
         });
@@ -487,6 +489,7 @@ sakai.listpage = function(){
         } else if(listId.length > 1) {
             showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
         } else {
+            editExisting = true;
             displayList(listId[0]);   
         }
     });
@@ -495,8 +498,9 @@ sakai.listpage = function(){
         window.location = "http://localhost:8080/dev/inboxnotifier.html";
     });
     
-    $("#inbox_inbox_reset_button").live("click", function(){
-        clearInputFields();
+    $("#inbox_inbox_cancel_button").live("click", function(){
+        editExisting = false;
+        $.bbq.pushState({"tab": "existing"},2);
     });
     
     $("#inbox_inbox_save_button").live("click", function(){
@@ -508,7 +512,11 @@ sakai.listpage = function(){
         var size = $("#list_size").val();
         
         if(listName.trim() && desc.trim() && size != 0) {
-            saveList();
+            if(editExisting) {
+                saveList(getIndexFromId(currList));
+            } else {
+                saveList();   
+            }
         } else {
             if(!listName.trim()) {
                 $("#invalid_name").show();
@@ -533,7 +541,7 @@ sakai.listpage = function(){
         $("#existing_lists_tab").addClass("selected_tab");
         
         // Show/hide appropriate buttons
-        $("#inbox_inbox_reset_button").hide();
+        $("#inbox_inbox_cancel_button").hide();
         $("#inbox_inbox_save_button").hide();
         $("#inbox_inbox_delete_button").show();
         $("#inbox_inbox_duplicate_button").show();
@@ -556,7 +564,7 @@ sakai.listpage = function(){
         $("#inbox_inbox_duplicate_button").hide();
         $("#inbox_inbox_edit_button").hide();
         $("#inbox_inbox_back_button").hide();
-        $("#inbox_inbox_reset_button").show();
+        $("#inbox_inbox_cancel_button").show();
         $("#inbox_inbox_save_button").show();
     });
     
@@ -580,6 +588,46 @@ sakai.listpage = function(){
         setTabState();
     });
     
+    var createDefaultList = function() {
+        var data = {
+            "_MODIFIERS": {},
+            "lists": []
+        };
+        
+        var defaultData = {
+            "links": data
+        }
+        
+        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", defaultData));
+    }
+    
+    /**
+     * Takes the data returned by the server and formats it to get it ready for posting to the server
+     * @param {Object} data
+     */
+    var formatData = function(data) {
+        var result =  {
+            "_MODIFIERS": {},
+            "lists": data.lists
+        };
+        
+        return result;
+    }
+    
+    var loadData = function() {
+        sakai.api.Server.loadJSON(userUrl, function(success, data){
+            $("#tabs").tabs();
+            setTabState();
+            
+            if (success) {
+                data = formatData(data);
+                renderLists(data);
+            } else {
+                createDefaultList();
+            }
+        });
+    }
+    
     var doInit = function() {
         // Check if we are logged in or out.
         var person = sakai.data.me;
@@ -588,15 +636,7 @@ sakai.listpage = function(){
             redirectToLoginPage();
         } else {
             userUrl = "/~" + uuid + "/private/dynamic_lists";
-            sakai.api.Server.loadJSON(url, function(success, data){
-                if (success) {
-                    $("#tabs").tabs();
-                    setTabState();
-                    renderLists(data);
-                } else {
-                    alert("error");
-                }
-            });
+            loadData();
         }
     };
 
