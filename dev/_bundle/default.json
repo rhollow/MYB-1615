@@ -629,5 +629,10 @@
 "NO_LIST_WAS_SELECTED": "No list was selected",
 "RESET": "Reset",
 "LIST_SAVED": "List saved",
-"YOU_CAN_ONLY_EDIT_ONE_LIST_AT_A_TIME": "You can only edit one list at a time"
+"YOU_CAN_ONLY_EDIT_ONE_LIST_AT_A_TIME": "You can only edit one list at a time",
+"LOGIN_TITLE": "Login using your CalNet ID",
+"LOGIN_BTN": "CAS Login",
+"CAS_NOTE": "<strong>Please note,</strong> in this release you must be a student in the College of Environmental Design to log in.",
+"HEADER_SMALLLINE": "My Berkeley is a new resource for the UC Berkeley community. In this <span class=\"beta-tag\"><strong class=\"fl-offScreen-hidden\">beta</strong></span>release, students can <strong>manage important tasks</strong>, recieve <strong>messages</strong> from school administrators, and find and organize <strong>useful websites</strong>.",
+"REQUEST_FOR_FEEDBACK": "<strong>We want to hear from you!</strong>&nbsp;&nbsp;Email feedback to <a href=\"mailto:portal@berkeley.edu\">portal@berkeley.edu</a>"
 }

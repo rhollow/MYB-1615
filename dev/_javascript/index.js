@@ -95,6 +95,31 @@ sakai.index = function(){
 
     };
 
+        /*
+for (var i in sakai.config.Navigation) {
+            var temp = new Object();
+            temp.url = sakai.config.Navigation[i].url;
+            temp.label = sakai.api.i18n.General.getValueForKey(sakai.config.Navigation[i].label);
+            temp.cleanurl = temp.url || "";
+            if (temp.cleanurl) {
+                if (temp.cleanurl.indexOf('?') && temp.cleanurl.indexOf('?') > 0) {
+                    temp.cleanurl = temp.cleanurl.substring(0, temp.cleanurl.indexOf('?'));
+                }
+                if (temp.cleanurl.indexOf('#') && temp.cleanurl.indexOf('#') > 0) {
+                    temp.cleanurl = temp.cleanurl.substring(0, temp.cleanurl.indexOf('#'));
+                }
+            }
+            if (i == 0) {
+                temp.firstlink = true;
+            }
+            else {
+                temp.firstlink = false;
+            }
+            menulinks.push(temp);
+        }
+        obj.links = menulinks;
+*/
+
     /**
      * This will be executed after the post to the login service has finished.
      * We send a new request to the Me service, explicity disabling cache by
@@ -191,6 +216,10 @@ sakai.index = function(){
         if (red !== false){
             redirectUrl = $.URLDecode(red);
         }
+        
+        $("#login-external-button").click(function (evt) {
+            window.location = "/system/sling/cas/login?resource=/dev/index.html";
+        });
 
         // Set the cursor in the username field
         $("#" + usernameField).focus();
