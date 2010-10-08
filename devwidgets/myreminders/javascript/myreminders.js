@@ -44,9 +44,9 @@ sakai.myreminders = function(tuid, showSettings){
     sakai.myreminders.getDateString = function(date){
         var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-        var d = new Date(date);
-        var year = "" + d.getFullYear();
-        var dateString = days_short[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate() + "/" + year.substring(2, 4);
+        var date = sakai.api.Util.parseSakaiDate(date);
+        var year = "" + date.getFullYear();
+        var dateString = days_short[date.getDay()] + " " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + year.substring(2, 4);
         return dateString;
     }
 
@@ -67,10 +67,10 @@ sakai.myreminders = function(tuid, showSettings){
      * @param {Object} date UTF string
      */
    sakai.myreminders.compareDates = function(date){
-        var dueDate = new Date(date);
+        var dueDate = sakai.api.Util.parseSakaiDate(date);
         var today = new Date();
         var tomorrow = today.setDate(today.getDate() + 1);
-        tomorrow = new Date(tomorrow);
+        tomorrow = sakai.api.Util.parseSakaiDate(tomorrow);
         return (tomorrow > dueDate)? "pastDue" : "";
     }
 

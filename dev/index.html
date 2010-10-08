@@ -59,16 +59,17 @@
             <div class="login-box">
                 <div class="preview-box">
                     <div class="header-smallline">
-<!-- IDIOT PLACEHOLDER TO BE CLEANED UP -->
-<div class="login-container-button"><a href="/system/sling/cas/login?resource=/dev/index.html" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">CAS Login</span></a></div>
                         __MSG__HEADER_SMALLLINE__
                     </div>
 
-                    <!-- PREVIEW IMAGE -->
-                    <img src="_images/panel_thumb.jpg" alt="__MSG__INSTANCE_NAME__" />
+                    <!-- PREVIEW IMAGE 
+                    commented out for myBerkeley Portal - eli 10.2.10 -->
+                    <!-- <img src="_images/panel_thumb.jpg" alt="__MSG__INSTANCE_NAME__" />-->
+
                 </div>
 
-                <!-- LOGIN FUNCTIONALITY -->
+                <!-- NORMAL LOGIN FUNCTIONALITY 
+                     modified for myBerkeley Portal - eli 10.1.10 -->
                 <div id="login-default" style="display:none;">
                     <form class="login-container" id="login-container" method="post" action="javascript:;">
                         <label for="username">__MSG__USERNAME__:</label><br/>
@@ -90,14 +91,36 @@
                     </form>
                 </div>
 
-                <!-- EXTERNAL LOGIN FUNCTIONALITY -->
+                <!-- EXTERNAL LOGIN FUNCTIONALITY 
+                     modified for myBerkeley Portal - eli 10.1.10  -->
+                             <!-- NAVIGATION TEMPLATE -->
+        <div id="login_external_template" style="display:none"><!--
+            {for i in externalauth}
                 <div class="login-external">
                     <div class="login-external-content">
-                        <div id="login-external-system0" class="login-external-system" style="display:none;">
-                            <button id="login-external-button" type="submit" class="s3d-button s3d-button-primary"><span class="s3d-button-inner login-external-label">__MSG__SIGN_IN__</span></button>
-                            <p class="login-external-description"></p>
+                        <div  class="login-external-system">
+                            <p class="login-external-label">${i.label}</p>
+                            <button id="login-external-button" type="submit" class="s3d-button s3d-button-primary"><span class="s3d-button-inner login-external-label">${i.btname}</span></button>
+                            <p class="login-external-description">${i.description}</p>
                         </div>
                     </div>
+                </div>
+            {/for}
+        --></div>
+                <div id="myBerkeley-CAS" class="login-external">
+                    <div class="login-external-content">
+                        <div  class="login-external-system">
+                            <p class="login-external-label">Login using your CalNet ID<a href="https://confluence.media.berkeley.edu/confluence/display/MYB/Portal+Help" target="_blank" class="s3d-help-button"><span class="fl-offScreen-hidden">myBerkeley Help</span></a></p>
+                            <p><button id="login-external-button" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">CAS Login</span></button></p>
+                            <p class="login-external-description"><strong>Please note,</strong> for this release you must be a student in the College of Environmental Design to log in.</p>
+                            <!--<p class="login-external-description"><strong>Please note,</strong>  currently only invited participants may log in. To join the My Berkeley <em>Beta</em> program, contact us at <a href="mailto:portal@berkeley.edu">portal@berkeley.edu</a>.</p>-->
+                            
+                        </div>
+                    </div>
+                </div>
+                    
+                <div class="request-feedback">
+                    __MSG__REQUEST_FOR_FEEDBACK__
                 </div>
             </div>
 
