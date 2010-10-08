@@ -27,7 +27,7 @@ sakai.notificationsinbox = function(){
      */
     sakai.config.URL.ALL_MESSAGE_BOX_SERVICE = "/var/message/box.json";
     
-    var messagesPerPage = 12; // The number of messages per page
+    var messagesPerPage = 3;//12; // The number of messages per page
     var allMessages = []; // Array that will hold all the messages
     var me = sakai.data.me;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
@@ -455,6 +455,12 @@ sakai.notificationsinbox = function(){
         }
         
         allMessages = response.results;
+		
+		//Roman
+		messagesForTypeCat=response.total+(currentPage)*messagesPerPage;
+		//Roman
+		
+	
         
         // show messages
         var tplData = {
@@ -485,14 +491,20 @@ sakai.notificationsinbox = function(){
         // Remove all messages.
         // remove previous messages.
         removeAllMessagesOutDOM();
-        // Set the pager.
-        // removing paging for POC - eli 10.5.10
-        // pageMessages(pageNumber);
+      
         // Remember which page were on.
-        // currentPage = pageNumber - 1;
+        currentPage = pageNumber - 1;
         // Show set of messages.
-        getAllMessages();
+        getAllMessages(test);
+		
+		  // Set the pager.
+        // removing paging for POC - eli 10.5.10
+        //pageMessages(pageNumber);
     };
+	
+	var test = function(){
+		pageMessages(currentPage+1);
+	}
     
     /**
      * Draw up the pager at the bottom of the page.
@@ -505,6 +517,7 @@ sakai.notificationsinbox = function(){
             buttonClickCallback: showPage
         });
         currentPage = pageNumber;
+		//alert("Page count:"+Math.ceil(messagesForTypeCat / messagesPerPage)+ " pageNum:"+pageNumber+" messagesForTypeCat:"+messagesForTypeCat+" messagesPerPage:"+messagesPerPage);
     };       
     
     /**
@@ -518,8 +531,11 @@ sakai.notificationsinbox = function(){
      */
     getAllMessages = function(callback){    
 
-        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message";        
-        
+        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message"
+		// Roman
+		 + "&items=" + messagesPerPage + "&page=" + currentPage;        
+        // Roman
+		
         var types = "&types=" + selectedType;
         if (typeof selectedType === "undefined" || selectedType === "") {
             types = "";
