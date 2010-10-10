@@ -224,9 +224,7 @@ sakai.notificationsinbox = function(){
         // Remember the type we want to see.
         selectedType = type;
         
-        // Display first page.      
-        //getAllMessages(); // redundantly being called twice    - eli 10.5.10                      
-        
+        // Display the first page of msgs.       
         showPage(1);
         
         // Show the inbox pane.
@@ -516,9 +514,9 @@ sakai.notificationsinbox = function(){
     /**
      * Gets all the messages from the JCR.
      */
-    getAllMessages = function(callback){    
+    getAllMessages = function(callback){            
 
-        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message";        
+        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType;        
         
         var types = "&types=" + selectedType;
         if (typeof selectedType === "undefined" || selectedType === "") {
@@ -535,7 +533,7 @@ sakai.notificationsinbox = function(){
             success: function(data){
                 if (data.results) {                
                     // Render the messages
-                    renderMessages(data);
+                    renderMessages(data);                   
                 }
                 if (typeof callback !== "undefined") {
                     callback();
@@ -831,14 +829,14 @@ sakai.notificationsinbox = function(){
         deleteChecked();        
     });
     
-    // Queue all checked messages on drafts page.
-    $("#inbox-queue-button").click(function() {        
-        queueChecked();
-    });
+//    // Queue all checked messages on drafts page.
+//    $("#inbox-queue-button").click(function() {        
+//        queueChecked();
+//    });
     
     // Copy the checked messages on the drafts page.
     $("#inbox-copy-button").click(function() {
-        copyChecked();
+        copyChecked("drafts");
     });
     
     // Delete all checked messages on queue page.
@@ -850,25 +848,85 @@ sakai.notificationsinbox = function(){
         deleteChecked();
     });              
     
-    var copyChecked = function(){
-        // pathToMessages = an array of all checked messages    
+    var copyChecked = function(whereTo){
+        alert("Called copyChecked!");
+        // pathToMessages = an array of all checked messages' urls   
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-            pathToMessages.push(pathToMessage);
+            var pathToMessage = $(this).val();            ;
+            pathToMessages.push(pathToMessage);            
         });
         
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
         
-        // If we are in trash we hard delete the messages.
-        queueMessages(pathToMessages);
+        // Copy all checked messages.
+        copyMessages(pathToMessages, whereTo);
     }
+    
+    var copyMessages = function(pathToMessages, whereTo){
+        alert("Called copyMessages!");
+        var toCopy = pathToMessages.length;
+        var copied = 0;
+        
+        for (var d = 0, e = pathToMessages.length; d < e; d++) {
+            $.ajax({
+                url: pathToMessages[d],
+                type: "POST",
+                success: function(){
+                    alert("SUCCESSS");
+                    $.ajax({
+                        url: "http://localhost:8080/"+me+"/message.create.html",
+                        type: "POST",
+                        data: pathToMessages[d],
+                        success: function(){
+                            alert("Successful copy from drafts.");
+                        },
+                        error: function(){
+                            alert("Unsuccessful copy from drafts.");
+                        }                        
+                    });                    
+                    copied++;
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, true);
+                    }
+                },
+                error: function(xhr, textStatus, thrownError){
+                    alert("BLAH BLAH BLAH FAIL");
+                    copied++;
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, false);
+                    }
+                },
+            });
+        }
+    }
+    
+    var copyMessagesFinished = function(pathToMessages, success){ 
+        alert("Calling copyMessagesFinished!");       
+        if (success) {
+            // Repage the inbox.            
+            currentPage = currentPage + 1;
+            showPage(currentPage);
+            
+            var txt = "";
+            if (pathToMessages.length === 1) {
+                txt = $(inboxGeneralMessagesQueued_1).text();
+            }
+            else {
+                txt = pathToMessages.length + $(inboxGeneralMessagesQueued_x).text();
+            }
+            
+            showGeneralMessage(txt, false);
+        }
+        else {
+            showGeneralMessage($(inboxGeneralMessagesQueuedFailed).text());
+        }
+    };
     
     var queueMessagesFinished = function(pathToMessages, success){        
         if (success) {
-            // Repage the inbox.
-            
+            // Repage the inbox.            
             currentPage = currentPage + 1;
             showPage(currentPage);
             
