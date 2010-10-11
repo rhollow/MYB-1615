@@ -462,12 +462,10 @@ sakai.notificationsinbox = function(){
         
         allMessages = response.results;
 		
-		//Roman
-		messagesForTypeCat=response.total+(currentPage)*messagesPerPage;
-		//Roman
+		// response.total is not actually total number of messages, but the number of messages remaining
+		// We need to add the number of messages already shown to it in order to get the total number of messages
+		messagesForTypeCat = response.total + (currentPage * messagesPerPage);
 		
-	
-        
         // show messages
         var tplData = {
             "messages": response.results
@@ -501,17 +499,11 @@ sakai.notificationsinbox = function(){
         // Remember which page were on.
         currentPage = pageNumber - 1;
         // Show set of messages.
-        getAllMessages(test);
-		
-		  // Set the pager.
-        // removing paging for POC - eli 10.5.10
-        //pageMessages(pageNumber);
+        // Using callback function to update the pager AFTER all messages have been loaded
+		getAllMessages(function(){pageMessages(currentPage+1);});
+
     };
 	
-	var test = function(){
-		pageMessages(currentPage+1);
-	}
-    
     /**
      * Draw up the pager at the bottom of the page.
      * @param {int} pageNumber The number of the current page
@@ -523,7 +515,6 @@ sakai.notificationsinbox = function(){
             buttonClickCallback: showPage
         });
         currentPage = pageNumber;
-		//alert("Page count:"+Math.ceil(messagesForTypeCat / messagesPerPage)+ " pageNum:"+pageNumber+" messagesForTypeCat:"+messagesForTypeCat+" messagesPerPage:"+messagesPerPage);
     };       
     
     /**
@@ -538,9 +529,7 @@ sakai.notificationsinbox = function(){
     getAllMessages = function(callback){    
 
         var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message"
-		// Roman
 		 + "&items=" + messagesPerPage + "&page=" + currentPage;        
-        // Roman
 		
         var types = "&types=" + selectedType;
         if (typeof selectedType === "undefined" || selectedType === "") {
@@ -780,27 +769,22 @@ sakai.notificationsinbox = function(){
             pathToMessages.push(pathToMessage);
         });
 		
-		//Roman
-		
 		var messageCountAfterDeletion = (messagesForTypeCat - pathToMessages.length >= 0) ? messagesForTypeCat - pathToMessages.length : 0; 
 		var pageCountBeforeDeletion = Math.ceil(messagesForTypeCat / messagesPerPage);
 		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
 		var isLastPage = (currentPage == pageCountBeforeDeletion);
 		
+		// Setting a flag for deleteMessagesFinished function
+		// The function needs to know whether to reload the same page or the previous page
 		if(pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage){
 			//It is safe to use the same current page
-			alert("Same page! Page: "+currentPage + " selected messages: "+ pathToMessages.length);
 			goToPreviousPageAfterDeletion = false;
 		} 
 		else {
-			//Last page was deleted, we need to go back one page
-			alert("Previous page! Page: "+(currentPage-1)  + " selected messages: "+ pathToMessages.length);
+			//The last page was deleted, we need to go back one page
 			goToPreviousPageAfterDeletion = true;
 		} 
-		
-		
-		//Roman    
-            
+		    
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
         
