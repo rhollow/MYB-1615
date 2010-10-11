@@ -296,6 +296,9 @@ sakai.listpage = function(){
         //format Jan 22, 2009 10:25 PM
         list.date = formatDate(d, "M j, Y g:i A");
         
+        list.name = list["sakai:name"];
+        list.description = list["sakai:description"];
+        
         return list;
     }
     
@@ -365,6 +368,7 @@ sakai.listpage = function(){
         var list = getListWithId(id);
         document.createListForm.list_name.value = list["sakai:name"];
         document.createListForm.description.value = list["sakai:description"];
+        document.createListForm.list_size.value = list["sakai:size"];
         $("#context").val(list.query.context);
         
         var majorArray = list.query.major;
@@ -423,13 +427,13 @@ sakai.listpage = function(){
         
         submitData.lists = allLists;
         sakai.api.Server.saveJSON(userUrl, submitData);
-        loadData(); // DEBUG: doesn't seem to work - need to refresh page first?
+        // loadData(); // DEBUG: doesn't seem to work - need to refresh page first?
     };
     
     var saveList = function(index) {
         var data = getDataFromInput();
         
-        // DEBUG: need to loop through major/standing array to concatenate values to id
+        // DEBUG: need to loop through major/standing array to concatenate values to id?
         var id = "dl-" + data.listName + data.desc + data.context + data.major + data.standing;
         
         if(index != null) { // we are editing an existing list
@@ -439,8 +443,7 @@ sakai.listpage = function(){
             allLists[index]["sakai:dateModified"] = "2010-09-13T13:33:36.927-07:00"; // DEBUG: HOW TO MAKE THIS?
             allLists[index]["sakai:dateModified@TypeHint"] = "date";
             allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
-            allLists[index]["sakai:size"] = data.size;
-            allLists[index].query.context = [" " + data.context + " "];
+            allLists[index].query.context = "[" + data.context + "]";
             allLists[index].query.standing = data.standing;
             allLists[index].query.major = data.major;
         } else { // we are creating a new list
@@ -456,7 +459,6 @@ sakai.listpage = function(){
                 "sakai:dateModified": "2010-09-13T13:33:36.927-07:00", // DEBUG: HOW TO MAKE THIS?
                 "sakai:dateModified@TypeHint": "date",
                 "sakai:modifiedBy": sakai.data.me.user.userid,
-                "sakai:size": data.size,
                 "query": {
                     "context": [" " + data.selectedContext + " "],
                     "standing": data.standing,

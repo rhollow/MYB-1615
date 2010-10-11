@@ -72,7 +72,7 @@
 { color: #333;  text-align: left; height: 26px; border: none; }
 
 .inbox_main .inbox-table tr
-{ color: #666; border-left: 1px solid #D4DADE; } /* myBerkeley: added border-left */
+{ color: #666; }
 
 .inbox_main .inbox-table td
 { border: none; color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; white-space: nowrap; overflow: hidden;}
