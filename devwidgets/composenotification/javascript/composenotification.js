@@ -538,6 +538,11 @@ if (!sakai.composenotification){
             $(messageFieldTo).empty().append(optionsObj);
             
         };
+        
+        var hideAllButtonLists = function(){
+            alert("Hiding buttons called.");
+            $(".button-list").hide();
+        }        
             
         var formatDate = function(dateStr){           
             dateObj = new Date(dateStr);
@@ -613,23 +618,19 @@ if (!sakai.composenotification){
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)         
          */
-        sakai.composenotification.initialise = function(userObj, callback, calledFrom, message) {                       
+        sakai.composenotification.initialise = function(calledFrom, message) {                       
             // Reset page back to its original condition.
             clearInvalids();
             eventTimeInit();
             dynamicListInit();
             resetView();            
-
-            // The user we are sending a message to.
-            user = userObj;  
-            
+                       
             // Are we calling this from drafts?
             if(calledFrom=="drafts"){                
                 // Now fill out the proper information.
                 fillInMessage(message);     
-                // And hide the button list.
-                $("#notifdetail-buttons").hide();
-                // Then show the correct button list.
+                // Show corrent buttons.
+                hideAllButtonLists();                
                 $("#notifdetail2-buttons").show();
                 
                 // When someone clicks on 'Move to Queue' button.
@@ -644,14 +645,29 @@ if (!sakai.composenotification){
                     updateNotification(saveData("drafts"), message);
                 });                            
             }             
-            if(calledFrom=="trash"){               
+            if(calledFrom=="trash"){
+                alert("Hiding...");               
                 // Now fill out the proper information.
                 fillInMessage(message);
                 // And disable the form, disallowing the user to edit.
                 disableView();
                 // And hide the button list.
-                $("#notifdetail-buttons").hide();
-            }                        
+                hideAllButtonLists();
+            }    
+            if(calledFrom=="queue"){
+                // Now fill out the proper information.
+                fillInMessage(message);
+                // And disable the form, disallowing the user to edit.
+                disableView();
+                // And show the correct button list.
+                hideAllButtonLists();
+                $("#notifdetail3-buttons").show();
+            }
+            else{
+                // Show the standard button list.
+                hideAllButtonLists();
+                $("#notifdetail-buttons").show();
+            }                                   
         };           
         
         var updateNotification = function(toUpdate, original){            

@@ -125,13 +125,13 @@ sakai.notificationsinbox = function(){
     var inboxGeneralMessagesDeleted = inboxGeneralMessages + "_deleted";
     var inboxGeneralMessagesDeleted_1 = inboxGeneralMessagesDeleted + "_1";
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
-    var inboxGeneralMessagesQueued = inboxGeneralMessages + "_queued";
-    var inboxGeneralMessagesQueued_1 = inboxGeneralMessagesQueued + "_1";
-    var inboxGeneralMessagesQueued_x = inboxGeneralMessagesQueued + "_x";
+    var inboxGeneralMessagesMoved = inboxGeneralMessages + "_moved";
+    var inboxGeneralMessagesMoved_1 = inboxGeneralMessagesMoved + "_1";
+    var inboxGeneralMessagesMoved_x = inboxGeneralMessagesMoved + "_x";
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
-    var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesQueued + "_failed";      
+    var inboxGeneralMessagesMovedFailed = inboxGeneralMessagesMoved + "_failed";      
         
     // Keep JSLint.com happy...    
     var getCount = function(){
@@ -571,51 +571,19 @@ sakai.notificationsinbox = function(){
      * Displays only the message with that id.
      * @param {String} id The id of a message.
      */
-    var displayMessage = function(id){                  
-        
-        // get the specific message data...
+    var displayMessage = function(id){                          
+        // Get the specific message data.
         selectedMessage = getMessageWithId(id);
-        if (typeof selectedMessage !== "undefined") {
+        if (typeof selectedMessage !== "undefined") {            
+            var messageBox = selectedMessage["sakai:messagebox"]; 
+                       
+            // Show the correct nofitication detail pane to get ready for the widget.                          
+            showPane(inboxPaneCompose);                       
             
-            var messageBox = selectedMessage["sakai:messagebox"];
-            
-            if (selectedMessage["sakai:messagebox"] == "drafts") {                
-                showPane(inboxPaneCompose);
-                sakai.composenotification.initialise(null, inboxComposeNewContainer, "drafts", selectedMessage);                                
-            }            
-            else if (selectedMessage["sakai:messagebox"] == "trash") {
-                showPane(inboxPaneCompose);
-                sakai.composenotification.initialise(null, inboxComposeNewContainer, "trash", selectedMessage);
-            } else {
-            //this is another spot where we could simplify, replace the previous if/elses with this one and simplify initialize in composenotification.js
-            /*if (messageBox === "drafts" || messageBox === "trash"){                
-                showPane(inboxPaneCompose);
-                sakai.composenotification.initialise(selectedMessage, messageBox);                                
-            } else {*/
-                showPane(inboxPaneMessage);
-                // Fill in this message values.                            
-                $(inboxSpecificMessageSubject).text(sakai.api.Security.saneHTML(message["sakai:subject"]));
-                $(inboxSpecificMessageBody).html(sakai.api.Security.saneHTML(message["sakai:body"].replace(/\n/gi, "<br />")));
-                $(inboxSpecificMessageDate).text(sakai.api.Security.saneHTML(message.date));
-                        
-                if (message.userFrom) {
-                    for (var i = 0, j = message.userFrom.length; i < j; i++) {
-                        $(inboxSpecificMessageFrom).text(sakai.api.Security.saneHTML(message.userFrom[i]["firstName"] + " " + message.userFrom[i]["lastName"]));
-                            if (message.userFrom[i].photo) {
-                                $(inboxSpecificMessagePicture).attr("src", "/~" + message.userFrom[i]["rep:userId"] + "/public/profile/" + message.userFrom[i].photo);
-                             }
-                             else {
-                                 $(inboxSpecificMessagePicture).attr("src", sakai.config.URL.USER_DEFAULT_ICON_URL);
-                             }
-                        }
-                }            
-                else {
-                    $(inboxSpecificMessageFrom).text(sakai.api.Security.saneHTML(message["sakai:from"]));
-                    $(inboxSpecificMessagePicture).attr("src", sakai.config.URL.USER_DEFAULT_ICON_URL);
-                }
-            }                          
-        }        
-    };    
+            // Initialise the widget, which will prepopulate the fields.
+            sakai.composenotification.initialise(messageBox, selectedMessage);                                                              
+        }                          
+    }               
         
     /**
      *
@@ -772,10 +740,7 @@ sakai.notificationsinbox = function(){
         // unhighlight the tabs
         $("[id|=tab]").removeClass("current_tab");
         // initialise the composenotification widget  
-        sakai.composenotification.initialise(null, inboxComposeNewContainer, null, null);
-        // initialize can be simplified as we're not using most of this data
-        // - eli  10.7.10        
-        sakai.composenotification.initialise(null, "drafts");        
+        sakai.composenotification.initialise(null, null);        
     });
     
     // For when user cancels notification authoring (cancel button on pane 2).
@@ -829,14 +794,10 @@ sakai.notificationsinbox = function(){
         deleteChecked();        
     });
     
-//    // Queue all checked messages on drafts page.
-//    $("#inbox-queue-button").click(function() {        
-//        queueChecked();
-//    });
-    
     // Copy the checked messages on the drafts page.
     $("#inbox-copy-button").click(function() {
-        copyChecked("drafts");
+        //copyChecked("drafts");
+        alert("COPY FUNCTIONALITY NEEDS TO BE FINISHED");
     });
     
     // Delete all checked messages on queue page.
@@ -848,62 +809,11 @@ sakai.notificationsinbox = function(){
         deleteChecked();
     });              
     
-    var copyChecked = function(whereTo){
-        alert("Called copyChecked!");
-        // pathToMessages = an array of all checked messages' urls   
-        var pathToMessages = [];
-        $(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();            ;
-            pathToMessages.push(pathToMessage);            
-        });
-        
-        // Reset 'Check All' checkbox just in case it's clicked.
-        $(inboxInboxCheckAll).attr("checked", false);
-        
-        // Copy all checked messages.
-        copyMessages(pathToMessages, whereTo);
-    }
+    $("#inbox-movetodrafts-button").click(function() {
+       moveChecked("drafts"); 
+    });
     
-    var copyMessages = function(pathToMessages, whereTo){
-        alert("Called copyMessages!");
-        var toCopy = pathToMessages.length;
-        var copied = 0;
-        
-        for (var d = 0, e = pathToMessages.length; d < e; d++) {
-            $.ajax({
-                url: pathToMessages[d],
-                type: "POST",
-                success: function(){
-                    alert("SUCCESSS");
-                    $.ajax({
-                        url: "http://localhost:8080/"+me+"/message.create.html",
-                        type: "POST",
-                        data: pathToMessages[d],
-                        success: function(){
-                            alert("Successful copy from drafts.");
-                        },
-                        error: function(){
-                            alert("Unsuccessful copy from drafts.");
-                        }                        
-                    });                    
-                    copied++;
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, true);
-                    }
-                },
-                error: function(xhr, textStatus, thrownError){
-                    alert("BLAH BLAH BLAH FAIL");
-                    copied++;
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, false);
-                    }
-                },
-            });
-        }
-    }
-    
-    var copyMessagesFinished = function(pathToMessages, success){ 
-        alert("Calling copyMessagesFinished!");       
+     var moveMessagesFinished = function(pathToMessages, success, toWhere){        
         if (success) {
             // Repage the inbox.            
             currentPage = currentPage + 1;
@@ -911,69 +821,50 @@ sakai.notificationsinbox = function(){
             
             var txt = "";
             if (pathToMessages.length === 1) {
-                txt = $(inboxGeneralMessagesQueued_1).text();
+                txt = $(inboxGeneralMessagesMoved_1).text()+toWhere+".";
             }
             else {
-                txt = pathToMessages.length + $(inboxGeneralMessagesQueued_x).text();
+                txt = pathToMessages.length+$(inboxGeneralMessagesMoved_x).text()+toWhere+".";
             }
             
             showGeneralMessage(txt, false);
         }
         else {
-            showGeneralMessage($(inboxGeneralMessagesQueuedFailed).text());
+            showGeneralMessage($(inboxGeneralMessagesMovedFailed).text());
         }
     };
     
-    var queueMessagesFinished = function(pathToMessages, success){        
-        if (success) {
-            // Repage the inbox.            
-            currentPage = currentPage + 1;
-            showPage(currentPage);
-            
-            var txt = "";
-            if (pathToMessages.length === 1) {
-                txt = $(inboxGeneralMessagesQueued_1).text();
-            }
-            else {
-                txt = pathToMessages.length + $(inboxGeneralMessagesQueued_x).text();
-            }
-            
-            showGeneralMessage(txt, false);
-        }
-        else {
-            showGeneralMessage($(inboxGeneralMessagesQueuedFailed).text());
-        }
-    };
-    
-    var queueMessages = function(pathToMessages){        
-        var toQueue = pathToMessages.length;
-        var queued = 0;
+    var moveMessages = function(pathToMessages, toWhere){
+        alert("moveMessages called!");
+        var toMove = pathToMessages.length;
+        var moved = 0;
         
         for (var d = 0, e = pathToMessages.length; d < e; d++) {
             $.ajax({
                 url: pathToMessages[d],
                 type: "POST",
                 success: function(data){
-                    queued++;
-                    if (queued === toQueue) {
-                        queueMessagesFinished(pathToMessages, true);
+                    moved++;
+                    if (moved === toMove) {
+                        moveMessagesFinished(pathToMessages, true, toWhere);
                     }
                 },
                 error: function(xhr, textStatus, thrownError){
-                    deleted++;
-                    if (deleted === toDelete) {
-                        queueMessagesFinished(pathToMessages, false);
+                    moved++;
+                    if (moved === toMove) {
+                        moveMessagesFinished(pathToMessages, false);
                     }
                 },
                 data: {
-                    "sakai:messagebox": "queue",
+                    "sakai:messagebox": toWhere,
                     "_charset_": "utf-8"
                 }
             });
-        }
-    };            
+        }        
+    }
     
-    var queueChecked = function(){        
+    var moveChecked = function(toWhere){
+        alert("moveChecked called!");
         // pathToMessages = an array of all checked messages    
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function(){
@@ -983,11 +874,9 @@ sakai.notificationsinbox = function(){
         
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
-        
-        // If we are in trash we hard delete the messages.
-        queueMessages(pathToMessages);
-    };
-         
+                
+        moveMessages(pathToMessages, toWhere);
+    }                 
     
     /**
      *
@@ -1015,7 +904,8 @@ sakai.notificationsinbox = function(){
      * First hides all visible button lists, then displays the correct one.     
      * @param {Object} type The type of filter whose button list we want visible.
      */
-    var correctButtonList = function(type) {     
+    var correctButtonList = function(type) {    
+        alert("Putting "+type); 
         $("[id|=buttons]").hide();
         $("#buttons-"+type).show();
     };           
