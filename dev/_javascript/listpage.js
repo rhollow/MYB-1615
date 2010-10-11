@@ -25,6 +25,7 @@ sakai.listpage = function(){
      * Configuration
      *
      */
+    var submitData; // Data to be passed to saveJSON
     var allLists = []; // Array of all the lists
     var userUrl;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
@@ -84,16 +85,43 @@ sakai.listpage = function(){
         $(".inbox_inbox_check_list").attr("checked", ($("#inbox_inbox_checkAll").is(":checked") ? "checked" : ''));
     };
     
+    var getDataFromInput = function() {
+        var result = {};
+        
+        result.listName = $("#list_name").val();
+        result.desc = $("#description").val();
+        result.size = $("#list_size").val();
+        
+        var index = document.createListForm.context.selectedIndex;
+        var selectedContext = document.createListForm.context.options[index].value;
+        result.context = selectedContext;
+        
+        var selectedMajors = [];
+        $(".major_checkbox:checked").each(function() {
+            var major = $(this).val();
+            selectedMajors.push(major);
+        });
+        result.major = selectedMajors;
+        
+        var standingArray = [];
+        index = document.createListForm.standing.selectedIndex;
+        var selectedStanding = document.createListForm.standing.options[index].value;
+        if(selectedStanding === "all" || selectedStanding === "All") {
+            standingArray.push("undergrad");
+            standingArray.push("grad");
+        } else {
+            standingArray.push(selectedStanding)
+        }
+        result.standing = standingArray;
+        
+        return result;
+    }
+    
     /**
      * Updates the input field that displays the current size of the list being created
      */
     sakai.listpage.updateListSize = function(){
-        var index = document.createListForm.context.selectedIndex;
-        var selectedContext = document.createListForm.context.options[index].text;
-        index = document.createListForm.major.selectedIndex;
-        var selectedMajor = document.createListForm.major.options[index].text;
-        index = document.createListForm.standing.selectedIndex;
-        var selectedStanding = document.createListForm.standing.options[index].text;
+        var data = getDataFromInput();
 
         // DEBUGGING:
         // var size = query(selectedContext, selectedMajor, selectedStanding);
@@ -256,8 +284,7 @@ sakai.listpage = function(){
     };
     
     var formatList = function(list){
-        var dateString = list["sakai:dateModied"];
-        //var dateString = list["sakai:dateModified"];
+        var dateString = list["sakai:dateModified"] || "";
         
         var d = new Date();
         d.setFullYear(parseInt(dateString.substring(0, 4), 10));
@@ -268,9 +295,6 @@ sakai.listpage = function(){
         d.setSeconds(parseInt(dateString.substring(17, 19), 10));
         //format Jan 22, 2009 10:25 PM
         list.date = formatDate(d, "M j, Y g:i A");
-        
-        list.name = list["sakai:name"];
-        list.description = list["sakai:description"];
         
         return list;
     }
@@ -287,7 +311,7 @@ sakai.listpage = function(){
         for (var j = 0, l = response.lists.length; j < l; j++) {
             response.lists[j] = formatList(response.lists[j]);
         }
-        allLists = response.lists;
+        allLists = response.lists || [];
         
         var data = {
             "links": response.lists
@@ -335,15 +359,26 @@ sakai.listpage = function(){
      */
     var displayList = function(id){
         // Display edit list tab
-        $.bbq.pushState({"tab": "existing"},2);
+        $.bbq.pushState({"tab": "new"},2);
         
         // Fill in input fields with list data
         var list = getListWithId(id);
-        $("#list_name").value = list["sakai:name"];
-        $("#description").value = list["sakai:description"];
-        $("#context").val(list.query.contextreplace(/ /gi, "_"));
-        $("#major").val(list.query.majorreplace(/ /gi, "_"));
-        $("#standing").val(list.query.standingreplace(/ /gi, "_"));
+        document.createListForm.list_name.value = list["sakai:name"];
+        document.createListForm.description.value = list["sakai:description"];
+        $("#context").val(list.query.context);
+        
+        var majorArray = list.query.major;
+        for(var i = 0, j = majorArray.length; i < j; i++) {
+            var major = majorArray[i].replace(/ /g, "_");
+            $("#" + major).attr("checked", true);
+        }
+        
+        var standingArray = list.query.standing;
+        if(standingArray.length != 1) {
+             $("#standing").val("all");
+        } else {
+            $("#standing").val(standingArray[0]);
+        }
     }
 
     // Check all messages
@@ -385,55 +420,57 @@ sakai.listpage = function(){
                 alert("List not found");
             }
         }
-        sakai.api.Server.saveJSON(userUrl, allLists);
-        loadData();
+        
+        submitData.lists = allLists;
+        sakai.api.Server.saveJSON(userUrl, submitData);
+        loadData(); // DEBUG: doesn't seem to work - need to refresh page first?
     };
     
     var saveList = function(index) {
-        var listName = $("#list_name").val();
-        var desc = $("#description").val();
-        var index = document.createListForm.context.selectedIndex;
-        var selectedContext = document.createListForm.context.options[index].text;
-        index = document.createListForm.major.selectedIndex;
-        var selectedMajor = document.createListForm.major.options[index].text;
-        index = document.createListForm.standing.selectedIndex;
-        var selectedStanding = document.createListForm.standing.options[index].text;
-        var size = $("#list_size").val();
+        var data = getDataFromInput();
         
-        var id = "dl-" + listName + desc + selectedContext + selectedMajor + selectedStanding;
+        // DEBUG: need to loop through major/standing array to concatenate values to id
+        var id = "dl-" + data.listName + data.desc + data.context + data.major + data.standing;
         
         if(index != null) { // we are editing an existing list
             allLists[index]["sakai:id"] = id;
-            allLists[index]["sakai:name"] = listName;
-            allLists[index]["sakai:description"] = desc;
-            allLists[index]["sakai:query"]["sakai:context"] = [" " + selectedContext + " "];
-            allLists[index]["sakai:query"]["sakai:standing"] = [" " + selectedStanding + " "];
-            allLists[index]["sakai:query"]["sakai:major"] = [" " + selectedMajor + " "];
-        } else {
-            if(id === "something") {
+            allLists[index]["sakai:name"] = data.listName;
+            allLists[index]["sakai:description"] = data.desc;
+            allLists[index]["sakai:dateModified"] = "2010-09-13T13:33:36.927-07:00"; // DEBUG: HOW TO MAKE THIS?
+            allLists[index]["sakai:dateModified@TypeHint"] = "date";
+            allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
+            allLists[index]["sakai:size"] = data.size;
+            allLists[index].query.context = [" " + data.context + " "];
+            allLists[index].query.standing = data.standing;
+            allLists[index].query.major = data.major;
+        } else { // we are creating a new list
+            if(id === "something") { // DEBUGGING: need to compare with existing lists
                 showGeneralMessage($("#inbox_generalmessages_already_exists").text());
                 return;
             }
             
             var list = {
                 "sakai:id": id,
-                "sakai:name": listName,
-                "sakai:description": desc,
+                "sakai:name": data.listName,
+                "sakai:description": data.desc,
                 "sakai:dateModified": "2010-09-13T13:33:36.927-07:00", // DEBUG: HOW TO MAKE THIS?
                 "sakai:dateModified@TypeHint": "date",
                 "sakai:modifiedBy": sakai.data.me.user.userid,
-                "sakai:size": size,
-                "sakai:query": {
-                    "sakai:context": [" " + selectedContext + " "],
-                    "sakai:standing": [" " + selectedStanding + " "],
-                    "sakai:major": [" " + selectedMajor + " "]
+                "sakai:size": data.size,
+                "query": {
+                    "context": [" " + data.selectedContext + " "],
+                    "standing": data.standing,
+                    "major": data.major
                 }
             }
             allLists.push(list);
         }
         
-        sakai.api.Server.saveJSON(userUrl, allLists);
-        window.location = "http://localhost:8080/dev/listpage.html#tab=existing";
+        submitData.lists = allLists;
+        sakai.api.Server.saveJSON(userUrl, submitData);
+        loadData(); // DEBUG: doesn't seem to work - need to refresh page first?
+        clearInputFields();
+        $.bbq.pushState({"tab": "existing"},2);
     };
     
     // Button click events
@@ -447,7 +484,7 @@ sakai.listpage = function(){
         if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
         } else {
-            //$("#delete_check_dialog").jqmShow();
+            // $("#delete_check_dialog").jqmShow(); // DEBUG: not working
             deleteLists(listId);
         }
     });
@@ -463,11 +500,14 @@ sakai.listpage = function(){
     
     $("#inbox_inbox_duplicate_button").live("click", function(){
         var listId = [];
-        $(".linbox_inbox_check_list:checked").each(function(){
+        $(".inbox_inbox_check_list:checked").each(function(){
             var id = $(this).val();
             listId.push(id);
         });
         
+        $(".inbox_inbox_check_list").attr("checked", "");
+        tickMessages();
+
         if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
         } else if (listId.length > 1) {
@@ -477,19 +517,23 @@ sakai.listpage = function(){
         }
     });
     
-    $("#inbox_inbox_edit_button").live("click", function(){
+    $("#inbox_inbox_edit_button").live("click", function(){        
         var listId = [];
         $(".inbox_inbox_check_list:checked").each(function(){
             var id = $(this).val();
             listId.push(id);
         });
         
+        $(".inbox_inbox_check_list").attr("checked", "");
+        tickMessages();
+
         if(listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
         } else if(listId.length > 1) {
             showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
         } else {
             editExisting = true;
+            currList = listId[0];
             displayList(listId[0]);   
         }
     });
@@ -500,6 +544,7 @@ sakai.listpage = function(){
     
     $("#inbox_inbox_cancel_button").live("click", function(){
         editExisting = false;
+        clearInputFields();
         $.bbq.pushState({"tab": "existing"},2);
     });
     
@@ -509,7 +554,8 @@ sakai.listpage = function(){
         $("#invalid_size").hide();
         var listName = $("#list_name").val();
         var desc = $("#description").val();
-        var size = $("#list_size").val();
+        //var size = $("#list_size").val(); // DEBUG
+        var size = 5;
         
         if(listName.trim() && desc.trim() && size != 0) {
             if(editExisting) {
@@ -528,6 +574,11 @@ sakai.listpage = function(){
                 $("#invalid_size").show();
             }
         }
+    });
+    
+    // On selecting checkbox events
+    $(".major_checkbox").click(function() {
+        sakai.listpage.updateListSize();
     });
     
     // Tab click events
@@ -620,8 +671,8 @@ sakai.listpage = function(){
             setTabState();
             
             if (success) {
-                data = formatData(data);
-                renderLists(data);
+                submitData = formatData(data);
+                renderLists(submitData);
             } else {
                 createDefaultList();
             }

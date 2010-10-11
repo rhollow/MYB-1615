@@ -169,27 +169,26 @@
                                     <div class="input_item">
                                         <label>Context:</label>
                                         <select name="context" id="context" onchange="sakai.listpage.updateListSize()">
-                                            <option value="CED">CED</option>
+                                            <option value="g-ced-students">CED</option>
                                         </select>
                                     </div>
                                     <div class="input_item">
-                                        <label>Major:</label>
-                                        <select name="major" id="major" onchange="sakai.listpage.updateListSize()">
-                                            <option value="Architecture">Architecture</option>
-                                            <option value="City_Regional_Plan">City Regional Plan</option>
-                                            <option value="Design">Design</option>
-                                            <option value="Landscape_Arch">Landscape Arch</option>
-                                            <option value="Land_Arch_&_Env_Plan">Land Arch & Env Plan</option>
-                                            <option value="Urban_Design">Urban Design</option>
-                                            <option value="Urban_Studies">Urban Studies</option>
-                                        </select>
+                                        <label>Major: (select all that apply)</label><br />
+                                            <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" /> Architecture <br />
+                                            <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" /> City Regional Plan <br />
+                                            <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN" title="Design" /> Design <br />
+                                            <input type="checkbox" class="major_checkbox" value="LAND ARCH & ENV PLAN" id="LAND_ARCH_&_ENV_PLAN" title="Land Arch & Env Plan" /> Land Arch & Env Plan <br />
+                                            <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" /> Landscape Arch <br />
+                                            <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" /> Urban Design <br />
+                                            <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> Urban Studies <br />
+                                            <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" /> Individual <br />
                                     </div>
                                     <div class="input_item">
                                         <label>Standing:</label>
                                         <select name="standing" id="standing" onchange="sakai.listpage.updateListSize()">
-                                            <option value="Undergraduate">Undergraduate</option>
-                                            <option value="Graduate">Graduate</option>
-                                            <option value="All">All</option>
+                                            <option value="undergrad">Undergraduate</option>
+                                            <option value="grad">Graduate</option>
+                                            <option value="all">All</option>
                                         </select>
                                     </div>
                                     <div class="input_item" style="float: right;">
