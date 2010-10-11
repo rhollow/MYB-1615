@@ -184,13 +184,12 @@
                         <!-- BUTTON LISTS-->
 						<div class="button-list" id="buttons-drafts">
 						    <button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                            <button id="inbox-copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>                            
-                            <button id="inbox-edit-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>						
+                            <button id="inbox-copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>                                                        					
 					   </div>                       
 					   <div class="button-list" id="buttons-queue" style="display:none;">
-						    <button id="inbox-queuedelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                            <button id="inbox-copytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
-                            <button id="inbox-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>                            					
+                            <button id="inbox-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
+						    <button id="inbox-copytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                            <button id="inbox-queuedelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>                                                                                    			
 					   </div>
                        <div class="button-list" id="buttons-archive" style="display:none;">						    
                             <button id="inbox-copytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>                            
@@ -222,20 +221,25 @@
                         <div class="bottom_decor"></div>
                         
                         <!-- Button Lists-->
-                        <div class="button-list" id="notifdetail-buttons">
+                        <div class="button-list notifdetail-buttons" id="createnew-buttons">
                             <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
                             <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
                             <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>							
                         </div>  
-                        <div class="button-list" id="notifdetail2-buttons" style="display:none;">
-                            <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
-                            <button id="cn-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">Move to Queue</span></button>
-                            <button id="cn-updatedraft-button" class="s3d-button"><span class="s3d-button-inner">Update</span></button>							
+                        <div class="button-list notifdetail-buttons" id="editdraft-buttons" style="display:none;">
+                            <button id="cn-queuedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+                            <button id="cn-updatedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>                                                           				
+                            <button id="cn-deletedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                         </div> 
-                        <div class="button-list" id="notifdetail3-buttons" style="display:none;">
-                            <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>    
-                            <button id="cn-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">Move to Drafts</span></button>                            					
-                        </div>                                                             
+                        <div class="button-list notifdetail-buttons" id="queueview-buttons" style="display:none;">
+                            <button id="cn-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>                                                                                  			
+                            <button id="cn-copytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                            <button id="cn-deletequeued-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                        </div>  
+                        <div class="button-list notifdetail-buttons" id="trashview-buttons" style="display:none;">
+                            <button id="cn-editrashed-button" class="s3d-button"><span class="s3d-button-inner">Enable Editing</span></button>                                                                                  			
+                            <button id="cn-deletetrashed-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                        </div>                                                                                                  
                     </div>
                     
                     <!-- VIEW A SPECIFIC MESSAGE -->
@@ -301,6 +305,9 @@
         <span id="inbox_generalmessages_moved_1" style="display:none;">The message has been moved to </span>
         <span id="inbox_generalmessages_moved_x" style="display:none;"> messages have been moved to </span>
         <span id="inbox_generalmessages_moved_failed" style="display:none;">There was an error in moving your messages.</span>
+        <span id="inbox_generalmessages_copied_1" style="display:none;">The message has been copied to </span>
+        <span id="inbox_generalmessages_copied_x" style="display:none;"> messages have been copied to </span>
+        <span id="inbox_generalmessages_copied_failed" style="display:none;">There was an error in copying your messages.</span>
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
         <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>        
 

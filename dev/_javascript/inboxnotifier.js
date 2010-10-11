@@ -128,10 +128,14 @@ sakai.notificationsinbox = function(){
     var inboxGeneralMessagesMoved = inboxGeneralMessages + "_moved";
     var inboxGeneralMessagesMoved_1 = inboxGeneralMessagesMoved + "_1";
     var inboxGeneralMessagesMoved_x = inboxGeneralMessagesMoved + "_x";
+    var inboxGeneralMessagesCopied = inboxGeneralMessages + "_copied";
+    var inboxGeneralMessagesCopied_1 = inboxGeneralMessagesCopied + "_1";
+    var inboxGeneralMessagesCopied_x = inboxGeneralMessagesCopied + "_x";
     var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
-    var inboxGeneralMessagesMovedFailed = inboxGeneralMessagesMoved + "_failed";      
+    var inboxGeneralMessagesMovedFailed = inboxGeneralMessagesMoved + "_failed";
+    var inboxGeneralMessagesCopiedFailed = inboxGeneralMessagesMoved + "_copied    ";      
         
     // Keep JSLint.com happy...    
     var getCount = function(){
@@ -194,13 +198,13 @@ sakai.notificationsinbox = function(){
      * Will show the required pane and hide all the others.
      * @param {String} pane The id of the pane you want to show.
      */
-    var showPane = function(pane){
+    var showPane = function(pane){         
         // We do a check to see if the pane isn't already visible.
         // Otherwise, we get an annoying flicker.
         if (!$(pane).is(":visible")) {
             hideAllPanes();
             $(pane).show();
-        }
+        }             
     };
     
     /**
@@ -580,8 +584,12 @@ sakai.notificationsinbox = function(){
             // Show the correct nofitication detail pane to get ready for the widget.                          
             showPane(inboxPaneCompose);                       
             
-            // Initialise the widget, which will prepopulate the fields.
-            sakai.composenotification.initialise(messageBox, selectedMessage);                                                              
+            // Initialise the widget, which will prepopulate the fields and
+            // set the correct buttonlist based on where it was called from.
+            sakai.composenotification.initialise(messageBox, selectedMessage);
+            
+            // Unhighlight all tabs.
+            $("[id|=tab]").removeClass("current_tab");                                                              
         }                          
     }               
         
@@ -738,9 +746,11 @@ sakai.notificationsinbox = function(){
     $("#inbox-new-button").live("click", function(){
         showPane(inboxPaneCompose);
         // unhighlight the tabs
-        $("[id|=tab]").removeClass("current_tab");
+        $("[id|=tab]").removeClass("current_tab");               
         // initialise the composenotification widget  
-        sakai.composenotification.initialise(null, null);        
+        sakai.composenotification.initialise(null, null);
+        // display the proper buttonlist
+        $("#createnew-buttons").show();        
     });
     
     // For when user cancels notification authoring (cancel button on pane 2).
@@ -797,7 +807,8 @@ sakai.notificationsinbox = function(){
     // Copy the checked messages on the drafts page.
     $("#inbox-copy-button").click(function() {
         //copyChecked("drafts");
-        alert("COPY FUNCTIONALITY NEEDS TO BE FINISHED");
+        alert("Clicked copy from drafts page.");
+        copyChecked("drafts");       
     });
     
     // Delete all checked messages on queue page.
@@ -811,6 +822,10 @@ sakai.notificationsinbox = function(){
     
     $("#inbox-movetodrafts-button").click(function() {
        moveChecked("drafts"); 
+    });
+    
+    $("#inbox-movetodrafts-button").click(function() {
+        moveChecked("drafts");
     });
     
      var moveMessagesFinished = function(pathToMessages, success, toWhere){        
@@ -834,8 +849,7 @@ sakai.notificationsinbox = function(){
         }
     };
     
-    var moveMessages = function(pathToMessages, toWhere){
-        alert("moveMessages called!");
+    var moveMessages = function(pathToMessages, toWhere){        
         var toMove = pathToMessages.length;
         var moved = 0;
         
@@ -861,10 +875,9 @@ sakai.notificationsinbox = function(){
                 }
             });
         }        
-    }
+    }         
     
-    var moveChecked = function(toWhere){
-        alert("moveChecked called!");
+    var moveChecked = function(toWhere){        
         // pathToMessages = an array of all checked messages    
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function(){
@@ -876,6 +889,79 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckAll).attr("checked", false);
                 
         moveMessages(pathToMessages, toWhere);
+    }
+    
+    var copyMessagesFinished = function(pathToMessages, success, toWhere){ 
+        alert("Called copyMessagesFinished!");       
+        if (success) {
+            // Repage the inbox.            
+            currentPage = currentPage + 1;
+            showPage(currentPage);
+            
+            var txt = "";
+            if (pathToMessages.length === 1) {
+                txt = $(inboxGeneralMessagesCopied_1).text()+toWhere+".";
+            }
+            else {
+                txt = pathToMessages.length+$(inboxGeneralMessagesCopied_x).text()+toWhere+".";
+            }
+            
+            showGeneralMessage(txt, false);
+        }
+        else {
+            showGeneralMessage($(inboxGeneralMessagesCopiedFailed).text());
+        }
+    };
+    
+    var copyMessages = function(pathToMessages, toWhere){ 
+        alert("Called copyMessages!");               
+        var toCopy = pathToMessages.length;
+        var copied = 0;
+                
+        for (var d = 0, e = pathToMessages.length; d < e; d++) {
+            // For all the messages, extract the message id from the jcr path url
+            // and then use that to find the appropriate message.
+            var url = pathToMessages[d];
+            var pieces = url.split("/");            
+            var message = getMessageWithId(pieces[pieces.length-1]);
+            
+            // Now post that message to the appropriate messagebox we
+            // are copying it to.
+            message["sakai:messagebox"] = toWhere;
+            
+            $.ajax({
+                url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
+                type: "POST",
+                data: message,
+                success: function(data){
+                    copied++;
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, true, toWhere);
+                    }
+                },
+                error: function(xhr, textStatus, thrownError){
+                    copied++;
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, false);
+                    }
+                },                
+            });
+        }        
+    }
+    
+    var copyChecked = function(toWhere){
+        alert("copyChecked called!");
+        // pathToMessages = an array of all checked messages    
+        var pathToMessages = [];
+        $(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            pathToMessages.push(pathToMessage);
+        });
+        
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);
+                
+        copyMessages(pathToMessages, toWhere);
     }                 
     
     /**
@@ -904,8 +990,7 @@ sakai.notificationsinbox = function(){
      * First hides all visible button lists, then displays the correct one.     
      * @param {Object} type The type of filter whose button list we want visible.
      */
-    var correctButtonList = function(type) {    
-        alert("Putting "+type); 
+    var correctButtonList = function(type) {           
         $("[id|=buttons]").hide();
         $("#buttons-"+type).show();
     };           
