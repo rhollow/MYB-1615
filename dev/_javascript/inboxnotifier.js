@@ -27,7 +27,7 @@ sakai.notificationsinbox = function(){
      */
     sakai.config.URL.ALL_MESSAGE_BOX_SERVICE = "/var/message/box.json";
     
-    var messagesPerPage = 3;//12; // The number of messages per page
+    var messagesPerPage = 12; // The number of messages per page
     var allMessages = []; // Array that will hold all the messages
     var me = sakai.data.me;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
@@ -145,6 +145,12 @@ sakai.notificationsinbox = function(){
      *
      */
     var unreadMessages = 0;
+	
+	/**
+     * If we delete all messages from the last page, the number of pages decreases
+     * and we cannot reload the same page, instead we need to use the previous page. 
+     */
+	var goToPreviousPageAfterDeletion = false;
     
     /**
      * This function will redirect the user to the login page.
@@ -666,7 +672,10 @@ sakai.notificationsinbox = function(){
         if (success) {
             // Repage the inbox.
             
-            currentPage = currentPage + 1;
+			if(goToPreviousPageAfterDeletion){
+				currentPage = currentPage - 1;
+			} // else using the same page 
+            
             showPage(currentPage);
             
             var txt = "";
@@ -769,7 +778,28 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckMessage + ":checked").each(function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
-        });    
+        });
+		
+		//Roman
+		
+		var messageCountAfterDeletion = (messagesForTypeCat - pathToMessages.length >= 0) ? messagesForTypeCat - pathToMessages.length : 0; 
+		var pageCountBeforeDeletion = Math.ceil(messagesForTypeCat / messagesPerPage);
+		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
+		var isLastPage = (currentPage == pageCountBeforeDeletion);
+		
+		if(pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage){
+			//It is safe to use the same current page
+			alert("Same page! Page: "+currentPage + " selected messages: "+ pathToMessages.length);
+			goToPreviousPageAfterDeletion = false;
+		} 
+		else {
+			//Last page was deleted, we need to go back one page
+			alert("Previous page! Page: "+(currentPage-1)  + " selected messages: "+ pathToMessages.length);
+			goToPreviousPageAfterDeletion = true;
+		} 
+		
+		
+		//Roman    
             
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
