@@ -661,7 +661,7 @@ sakai.notificationsinbox = function(){
         if (success) {
             // Repage the inbox.
             
-			if(goToPreviousPageAfterDeletion){
+			if (goToPreviousPageAfterDeletion) {
 				currentPage = currentPage - 1;
 			} // else using the same page 
             
@@ -776,11 +776,10 @@ sakai.notificationsinbox = function(){
 		
 		// Setting a flag for deleteMessagesFinished function
 		// The function needs to know whether to reload the same page or the previous page
-		if(pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage){
+		if (pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage) {
 			//It is safe to use the same current page
 			goToPreviousPageAfterDeletion = false;
-		} 
-		else {
+		} else {
 			//The last page was deleted, we need to go back one page
 			goToPreviousPageAfterDeletion = true;
 		} 
