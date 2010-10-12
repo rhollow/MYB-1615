@@ -145,6 +145,12 @@ sakai.notificationsinbox = function(){
      *
      */
     var unreadMessages = 0;
+	
+	/**
+     * If we delete all messages from the last page, the number of pages decreases
+     * and we cannot reload the same page, instead we need to use the previous page. 
+     */
+	var goToPreviousPageAfterDeletion = false;
     
     /**
      * This function will redirect the user to the login page.
@@ -455,7 +461,11 @@ sakai.notificationsinbox = function(){
         }
         
         allMessages = response.results;
-        
+		
+		// response.total is not actually total number of messages, but the number of messages remaining
+		// We need to add the number of messages already shown to it in order to get the total number of messages
+		messagesForTypeCat = response.total + (currentPage * messagesPerPage);
+		
         // show messages
         var tplData = {
             "messages": response.results
@@ -485,15 +495,15 @@ sakai.notificationsinbox = function(){
         // Remove all messages.
         // remove previous messages.
         removeAllMessagesOutDOM();
-        // Set the pager.
-        // removing paging for POC - eli 10.5.10
-        // pageMessages(pageNumber);
+      
         // Remember which page were on.
-        // currentPage = pageNumber - 1;
+        currentPage = pageNumber - 1;
         // Show set of messages.
-        getAllMessages();
+        // Using callback function to update the pager AFTER all messages have been loaded
+		getAllMessages(function(){pageMessages(currentPage+1);});
+
     };
-    
+	
     /**
      * Draw up the pager at the bottom of the page.
      * @param {int} pageNumber The number of the current page
@@ -518,8 +528,9 @@ sakai.notificationsinbox = function(){
      */
     getAllMessages = function(callback){    
 
-        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message";        
-        
+        var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message"
+		 + "&items=" + messagesPerPage + "&page=" + currentPage;        
+		
         var types = "&types=" + selectedType;
         if (typeof selectedType === "undefined" || selectedType === "") {
             types = "";
@@ -650,7 +661,10 @@ sakai.notificationsinbox = function(){
         if (success) {
             // Repage the inbox.
             
-            currentPage = currentPage + 1;
+			if (goToPreviousPageAfterDeletion) {
+				currentPage = currentPage - 1;
+			} // else using the same page 
+            
             showPage(currentPage);
             
             var txt = "";
@@ -753,8 +767,23 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckMessage + ":checked").each(function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
-        });    
-            
+        });
+		
+		var messageCountAfterDeletion = (messagesForTypeCat - pathToMessages.length >= 0) ? messagesForTypeCat - pathToMessages.length : 0; 
+		var pageCountBeforeDeletion = Math.ceil(messagesForTypeCat / messagesPerPage);
+		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
+		var isLastPage = (currentPage == pageCountBeforeDeletion);
+		
+		// Setting a flag for deleteMessagesFinished function
+		// The function needs to know whether to reload the same page or the previous page
+		if (pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage) {
+			//It is safe to use the same current page
+			goToPreviousPageAfterDeletion = false;
+		} else {
+			//The last page was deleted, we need to go back one page
+			goToPreviousPageAfterDeletion = true;
+		} 
+		    
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
         
