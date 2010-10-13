@@ -113,11 +113,11 @@ if (!sakai.composenotification){
           'group1id' : 'Group 1',
           'group2id' : 'Group 2',
           'group3id' : 'Group 3'  
-        };
+        };                
         
          /**
-         * returns a jQuery object containing a set of option elements 
-         * @param {Object} optionArray, name: value pairs of option elements
+         * Returns a jQuery object containing a set of option elements 
+         * @param {Object} optionArray, name:value pairs of option elements
          * @param {String} selectedValue the key of the selected option element
          * @param {Boolean} firstEmpty start with an option element or not
          */
@@ -306,7 +306,7 @@ if (!sakai.composenotification){
          $("#dlc-dontsave").live('click', function() {
              // Just redirect to CDNL page. (set to berkeley main page for now)
              <!--
-            window.location = "http://www.berkeley.edu/"
+            window.location = "/dev/listpage.html"
             //--> 
          });
          
@@ -533,12 +533,21 @@ if (!sakai.composenotification){
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
         var dynamicListInit = function(){
-            var optionsObj = createOptions(allDynamicListOptions, null, true);
-            
-            // clear any old values and then append the new dynamic list options          
-            $(messageFieldTo).empty().append(optionsObj);
-            
-        };
+            sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/dynamic_lists", function(success, data){
+                if (success) {
+                    // loop through data.lists and make new array for createOptions (id:name)
+                    var dynamicListArray = [];
+                    for (var i = 0; i < data.lists.length; i++) {
+                        dynamicListArray[data.lists["sakai:id"]] = data.lists["sakai:name"];
+                    }
+                    // then call createoptions (key:value array)
+                    createOptions(dynamicListArray, null, true);
+                }
+                
+                // clear any old values and then append the new dynamic list options          
+                $(messageFieldTo).empty().append(optionsObj);
+            });
+        }
         
         var hideAllButtonLists = function(){            
             $(".notifdetail-buttons").hide();

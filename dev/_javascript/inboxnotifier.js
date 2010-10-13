@@ -954,27 +954,24 @@ sakai.notificationsinbox = function(){
             var url = pathToMessages[d];
             var pieces = url.split("/");            
             var message = getMessageWithId(pieces[pieces.length-1]);
+            alert("The message is "+message["sakai:subject"]);
             
             // Now post that message to the appropriate messagebox we
             // are copying it to.
+            alert("The message was in "+message["sakai:messagebox"]);
             message["sakai:messagebox"] = toWhere;
+            alert("but we moved it to "+message["sakai:messagebox"]);
             
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: message,
-                success: function(data){
-                    copied++;
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, true, toWhere);
-                    }
-                },
-                error: function(xhr, textStatus, thrownError){
-                    copied++;
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, false);
-                    }
-                },                
+                success: function(){     
+                    alert("Success on move.");                                 
+                }, 
+                error: function(){
+                    alert("Failure on move.");                        
+                }
             });
         }        
     }
