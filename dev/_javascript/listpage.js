@@ -290,17 +290,9 @@ sakai.listpage = function(){
     
     var formatList = function(list){
         var dateString = list["sakai:dateModified"] || "";
+        var d = sakai.api.Util.parseSakaiDate(dateString);
         
-        var d = new Date();
-        d.setFullYear(parseInt(dateString.substring(0, 4), 10));
-        d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
-        d.setDate(parseInt(dateString.substring(8, 10), 10));
-        d.setHours(parseInt(dateString.substring(11, 13), 10));
-        d.setMinutes(parseInt(dateString.substring(14, 16), 10));
-        d.setSeconds(parseInt(dateString.substring(17, 19), 10));
-        //format Jan 22, 2009 10:25 PM
         list.date = formatDate(d, "M j, Y g:i A");
-        
         list.name = list["sakai:name"];
         list.description = list["sakai:description"];
         
@@ -443,6 +435,14 @@ sakai.listpage = function(){
         sakai.api.Server.saveJSON(userUrl, submitData, reloadData);
     };
     
+    var listAlreadyExists = function(id){
+        if(getIndexFromId(id) < 0){
+            return false;
+        } else {
+            return true;
+        }
+    };
+    
     var finishSaveAndLoad = function() {
         clearInputFields();
         $.bbq.pushState({"tab": "existing"},2);
@@ -459,14 +459,14 @@ sakai.listpage = function(){
             allLists[index]["sakai:id"] = id;
             allLists[index]["sakai:name"] = data.listName;
             allLists[index]["sakai:description"] = data.desc;
-            allLists[index]["sakai:dateModified"] = "2010-09-13T13:33:36.927-07:00"; // DEBUG: HOW TO MAKE THIS?
+            allLists[index]["sakai:dateModified"] = new Date();
             allLists[index]["sakai:dateModified@TypeHint"] = "date";
             allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
             allLists[index].query.context = "[" + data.context + "]";
             allLists[index].query.standing = data.standing;
             allLists[index].query.major = data.major;
         } else { // we are creating a new list
-            if(id === "something") { // DEBUGGING: need to compare with existing lists
+            if(listAlreadyExists(id)) {
                 showGeneralMessage($("#inbox_generalmessages_already_exists").text());
                 return;
             }
@@ -475,7 +475,7 @@ sakai.listpage = function(){
                 "sakai:id": id,
                 "sakai:name": data.listName,
                 "sakai:description": data.desc,
-                "sakai:dateModified": "2010-09-13T13:33:36.927-07:00", // DEBUG: HOW TO MAKE THIS?
+                "sakai:dateModified": new Date(),
                 "sakai:dateModified@TypeHint": "date",
                 "sakai:modifiedBy": sakai.data.me.user.userid,
                 "query": {
@@ -526,7 +526,7 @@ sakai.listpage = function(){
         }
     });
     
-    $(".edit_link").live("click", function(evt){   
+    $(".editLink").live("click", function(evt){   
         editExisting = true;
         var id = evt.target.id;
         currList = id;
