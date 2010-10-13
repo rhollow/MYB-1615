@@ -414,7 +414,6 @@ sakai.notificationsinbox = function(){
      */
     var formatMessage = function(message){            
         var dateString = message["sakai:sendDate"];
-        console.log(typeof dateString);
         if (typeof dateString === "string") {
             var d = new Date();
             d.setFullYear(parseInt(dateString.substring(0, 4), 10));
