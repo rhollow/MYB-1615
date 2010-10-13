@@ -953,19 +953,31 @@ sakai.notificationsinbox = function(){
             // and then use that to find the appropriate message.
             var url = pathToMessages[d];
             var pieces = url.split("/");            
-            var message = getMessageWithId(pieces[pieces.length-1]);
-            alert("The message is "+message["sakai:subject"]);
+            var message = getMessageWithId(pieces[pieces.length-1]); 
+            var newMessage = [];           
+            alert("The message is: "+message["sakai:subject"]);                      
             
             // Now post that message to the appropriate messagebox we
-            // are copying it to.
-            alert("The message was in "+message["sakai:messagebox"]);
-            message["sakai:messagebox"] = toWhere;
-            alert("but we moved it to "+message["sakai:messagebox"]);
+            // are copying it to.            
+            message["sakai:messagebox"] = toWhere; 
+            
+            newMessage["sakai:type"] = message["sakai:type"];
+            //alert(newMessage["sakai:type"]);             
+            newMessage["sakai:sendDate"] = message["sakai:sendDate"];
+            newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
+            newMessage["sakai:to"] = message["sakai:to"];
+            newMessage["sakai:subject"] = message["sakai:subject"];
+            newMessage["sakai:body"] = message["sakai:body"]; 
+            newMessage["sakai:from"] = message["sakai:from"];
+            newMessage["sakai:sendstate"] = message["sakai:sendstate"];
+            newMessage["sakai:read"] = message["sakai:read"];
+            newMessage["sakai:messagebox"] = message["sakai:messagebox"]; 
+            newMessage["sakai:category"] = message["sakai:category"];    
             
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
-                data: message,
+                data: newMessage,
                 success: function(){     
                     alert("Success on move.");                                 
                 }, 

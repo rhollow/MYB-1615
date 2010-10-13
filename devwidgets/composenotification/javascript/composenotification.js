@@ -117,12 +117,12 @@ if (!sakai.composenotification){
         
          /**
          * Returns a jQuery object containing a set of option elements 
-         * @param {Object} optionArray, name:value pairs of option elements
+         * @param {Object} optionArray name:value pairs of option elements
          * @param {String} selectedValue the key of the selected option element
          * @param {Boolean} firstEmpty start with an option element or not
          */
         
-        var createOptions = function (optionArray, selectedValue, firstEmpty) {
+        var createOptions = function (optionArray, selectedValue, firstEmpty) {            
             var $container = $("<select>");
             if (firstEmpty) {
                 $container.append($("<option>"));
@@ -130,7 +130,7 @@ if (!sakai.composenotification){
             for (var key in optionArray) {
                 var $optionObj = {};
                 $optionObj = $("<option>").val(key).text(optionArray[key]);
-                if (key === selectedValue) {
+                if (key === selectedValue) {                    
                     $optionObj.attr("selected", "selected");
                 }
                 $container.append($optionObj);
@@ -535,17 +535,19 @@ if (!sakai.composenotification){
         var dynamicListInit = function(){
             sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/dynamic_lists", function(success, data){
                 if (success) {
-                    // loop through data.lists and make new array for createOptions (id:name)
+                    console.log(data);
+                    // Iterate through data.lists and make new array for createOptions. (id:name)
                     var dynamicListArray = [];
+                                        
                     for (var i = 0; i < data.lists.length; i++) {
-                        dynamicListArray[data.lists["sakai:id"]] = data.lists["sakai:name"];
+                        dynamicListArray[data.lists[i]["sakai:id"]] = data.lists[i]["sakai:name"];                        
                     }
-                    // then call createoptions (key:value array)
-                    createOptions(dynamicListArray, null, true);
+                    // Call createOptions with our new array.
+                    var optionsObj = createOptions(dynamicListArray, null, true);
                 }
                 
-                // clear any old values and then append the new dynamic list options          
-                $(messageFieldTo).empty().append(optionsObj);
+                // Clear any old values and then append the new dynamic list options.          
+                $(messageFieldTo).empty().append(optionsObj);                              
             });
         }
         
@@ -735,7 +737,7 @@ if (!sakai.composenotification){
             });
         };     
         
-        var saveData = function(box){            
+        var saveData = function(box){                      
             var toPost = {
                 "sakai:type": "notice",
                 "sakai:sendDate": $(messageFieldSendDate).datepicker("getDate").toString(),
@@ -783,6 +785,7 @@ if (!sakai.composenotification){
                     toPost["sakai:body"] = eventDetails+toPost["sakai:body"];
                 }                                          
             }             
+            console.log(toPost); 
             return toPost;
         }
         
