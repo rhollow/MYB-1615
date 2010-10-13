@@ -411,7 +411,7 @@ sakai.listpage = function(){
         getAllMessages();
     });
     
-    var deleteLists = function(listsArray) {
+    var deleteLists = function(listsArray) { // DEBUG: removing last dynamic list doesn't work
         var listId = listsArray;
         
         for (var i = 0, j = listId.length; i < j; i++) {
