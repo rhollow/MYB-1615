@@ -541,7 +541,7 @@ if (!sakai.composenotification){
                         dynamicListArray[data.lists["sakai:id"]] = data.lists["sakai:name"];
                     }
                     // then call createoptions (key:value array)
-                    createOptions(dynamicListArray, null, true);
+                    var optionsObj = createOptions(dynamicListArray, null, true);
                 }
                 
                 // clear any old values and then append the new dynamic list options          
@@ -735,10 +735,12 @@ if (!sakai.composenotification){
             });
         };     
         
-        var saveData = function(box){            
+        var saveData = function(box){ 
+            var sendDate = $(messageFieldSendDate).datepicker("getDate") || "";
+            var sendDate = sendDate.toString();
             var toPost = {
                 "sakai:type": "notice",
-                "sakai:sendDate": $(messageFieldSendDate).datepicker("getDate").toString(),
+                "sakai:sendDate": sendDate,
                 "sakai:sendDate@TypeHint": "Date",
                 "sakai:to": $(messageFieldTo).val(),                 
                 "sakai:from": sakai.data.me.user.userid,
@@ -786,13 +788,22 @@ if (!sakai.composenotification){
             return toPost;
         }
         
-        var postNotification = function(toPost){                                                                                                                           
+        var completeSaveToDrafts = function () {
+            resetView();
+            sakai.notificationsinbox.showDrafts();
+        }
+        
+        var postNotification = function(toPost, successCallback){                                                                                                                           
             // Post all the data in an Ajax call.    
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: toPost,
-                success: function(){                                      
+                success: function(){
+                    // If a callback function is specified in argument, call it
+                    if (typeof successCallback === "function") {
+                        successCallback(true);
+                    }
                 }, 
                 error: function(){
                     alert("Failure on posting notification!");                        
@@ -801,18 +812,13 @@ if (!sakai.composenotification){
         }
         
         // When someone clicks on the 'Save as Draft' button from base panel.
-        $("#cn-saveasdraft-button").live('click', function(){
-            if($(messageFieldSubject).val()!=""){
-                if($(messageFieldSendDate).val()!=""){
-                    postNotification(saveData("drafts")); 
-                    resetView();
-                }                
-                
-            }
-            else{
-                $(messageFieldSubject).addClass(invalidClass);
-            }
-        });                                                   
+		$("#cn-saveasdraft-button").live('click', function() {
+			if ($(messageFieldSubject).val() != "") {
+				postNotification(saveData("drafts"), completeSaveToDrafts);
+			} else {
+				$(messageFieldSubject).addClass(invalidClass);
+			}
+		});
     };              
 }
 
