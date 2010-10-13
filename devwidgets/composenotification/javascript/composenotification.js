@@ -571,18 +571,19 @@ if (!sakai.composenotification){
                 if (message["sakai:dueDate"] != null) {
                     $(messageTaskCheck).attr("checked", true);
                     $(".cn-task").show();
-                    taskDate = new Date(message["sakai:dueDate"]);
+                    taskDate = sakai.api.Util.parseSakaiDate(message["sakai:dueDate"]);
                     $(messageTaskDueDate).datepicker("setDate", taskDate);                    
                 }
                 else {
                     $(messageEventCheck).attr("checked", true);
                     $(".cn-event").show();
-                    eventDate = new Date(message["sakai:eventDate"]);                    
+                    eventDate = sakai.api.Util.parseSakaiDate(message["sakai:eventDate"]);                    
                     $(messageEventDate).datepicker("setDate", eventDate);                   
                     $(messageEventPlace).val(message["sakai:eventPlace"]);
-                    $(messageEventTimeHour).val(message["sakai:eventTime"].substr(0,message["sakai:eventTime"].indexOf(":")));
-                    $(messageEventTimeMinute).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+1,2));
-                    $(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+4),5);
+                    // commented out because my data doesn't contain event time so it fails
+                    //$(messageEventTimeHour).val(message["sakai:eventTime"].substr(0,message["sakai:eventTime"].indexOf(":")));
+                    //$(messageEventTimeMinute).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+1,2));
+                    //$(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+4),5);
                 }
             }
             else {
@@ -594,17 +595,18 @@ if (!sakai.composenotification){
                     $(messageReminderCheck).show();
                     $(messageEventCheck).attr("checked", true);
                     $(".cn-event").show();
-                    eventDate = new Date(message["sakai:eventDate"]);                    
+                    eventDate = sakai.api.Util.parseSakaiDate(message["sakai:eventDate"]);                    
                     $(messageEventDate).datepicker("setDate", eventDate);                   
                     $(messageEventPlace).val(message["sakai:eventPlace"]);
-                    $(messageEventTimeHour).val(message["sakai:eventTime"].substr(0,message["sakai:eventTime"].indexOf(":")));
-                    $(messageEventTimeMinute).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+1,2));
-                    $(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+4),5);
+                    // commented out because my data doesn't contain event time so it fails
+                    //$(messageEventTimeHour).val(message["sakai:eventTime"].substr(0,message["sakai:eventTime"].indexOf(":")));
+                    //$(messageEventTimeMinute).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+1,2));
+                    //$(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+4),5);
                 }
             }
             
             // Fill out all the common fields.
-            sendDate = new Date(message["sakai:sendDate"]);
+            sendDate = sakai.api.Util.parseSakaiDate(message["sakai:sendDate"]);
             $(messageFieldSendDate).datepicker("setDate", sendDate);
             $(messageFieldTo).val(message["sakai:to"]);
             $(messageFieldSubject).val(message["sakai:subject"]);
