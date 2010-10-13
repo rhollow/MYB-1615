@@ -703,6 +703,7 @@ sakai.inbox = function() {
                     id = id.split("_");
                     id = id[id.length - 1];
                     
+                    var rowCheckBox = "#inbox_checkbox_" + id;
                     var reminderData = $(inboxTableMessageID + id).data("data");
                     var path = reminderData["jcr:path"];
                     
@@ -733,7 +734,7 @@ sakai.inbox = function() {
                         propertyToUpdate = {
                             "sakai:taskState": "completed"
                         };
-                    } 
+                    }
                     updateReminder(path, propertyToUpdate, funct);
                 });
             }
@@ -1140,85 +1141,6 @@ sakai.inbox = function() {
 
     /**
      *
-     * ACCEPT INVITATION
-     *
-     */
-
-    $("#inbox_message_accept_invitation").live("click", function(ev){
-        var accepting = selectedMessage["sakai:from"];
-        $.ajax({
-            url: "/~" + sakai.data.me.user.userid + "/contacts.accept.html",
-            type: "POST",
-            data : {"targetUserId":accepting},
-            success: function(data){
-                $("#inbox-invitation-accept").hide();
-                $("#inbox-invitation-already").show();
-            }
-        });
-    });
-    
-    /**
-     *
-     * ACCEPT SITE JOIN REQUEST
-     *
-     */
-
-    $("#inbox_message_accept_sitejoin").live("click", function(ev){
-        var from = selectedMessage["sakai:from"];
-        var sitePath = selectedMessage["sakai:sitepath"];
-        $.ajax({
-            url: sitePath + ".approve.html",
-            type: "POST",
-            data : {"user":from},
-            success: function(data){
-                $("#inbox-sitejoin-accept").hide();
-                $("#inbox-sitejoin-deny").hide();
-                $("#inbox-sitejoin-already").show();
-            }
-        });
-    });
-    
-    /**
-     *
-     * DENY SITE JOIN REQUEST
-     *
-     */
-
-    $("#inbox_message_deny_sitejoin").live("click", function(ev){
-        var from = selectedMessage["sakai:from"];
-        var sitePath = selectedMessage["sakai:sitepath"];
-        $.ajax({
-            url: sitePath + ".deny.html",
-            type: "POST",
-            data : {"user":from},
-            success: function(data){
-                $("#inbox-sitejoin-accept").hide();
-                $("#inbox-sitejoin-deny").hide();
-                $("#inbox-sitejoin-already").show();
-            }
-        });
-    });
-
-    /**
-     *
-     * SEND MESSAGE
-     *
-     */
-
-
-    /**
-     * When a message has been sent this function gets called.
-     * @param {Object} data A JSON object that contains the response from the server.
-     */
-    var sendMessageFinished = function(success, data) {
-        clearInputFields();
-        // Show the sent inbox pane.
-        $.bbq.pushState({"box": "sent"},2);
-    };
-
-
-    /**
-     *
      * Delete a message
      *
      */
@@ -1361,20 +1283,6 @@ sakai.inbox = function() {
      *
      */
 
-/*
-    // Compose a new message.
-    $(inboxComposeNew).click(function(){
-        //    show the selector
-        $(inboxComposeNewPanel).toggle();
-        // set variable which tells us if the menu is open or closed
-        if (inboxComposeNewPanelOpen) {
-            inboxComposeNewPanelOpen = false;
-        }
-        else {
-            inboxComposeNewPanelOpen = true;
-        }
-    });
-*/
     $(inboxComposeMessage).click(function() {
         $.bbq.pushState({"action":"composenew"},2);
     });
@@ -1384,17 +1292,7 @@ sakai.inbox = function() {
         //    Jump back to inbox
         $.bbq.pushState({"box":"inbox"},2);
     });
-/*
-    // Bind click event to hide menus
-    $(document).bind("click", function(e){
-        var $clicked = $(e.target);
-        // Check if one of the parents is the element container AND check if menu is open
-        if(!$clicked.parents().is(inboxComposeNew) && inboxComposeNewPanelOpen){
-            $(inboxComposeNewPanel).toggle();
-            inboxComposeNewPanelOpen = false;
-        }
-    });
-*/
+
     /**
      *
      * Show a specific message
@@ -1511,7 +1409,7 @@ sakai.inbox = function() {
                 if(reminderData["sakai:read"] === false){
                     unreadReminders -= 1;
                 }
-                
+
                 updateReminder(path, propertyToUpdate, removeReminderFromList(id));
             }
             
@@ -1621,27 +1519,6 @@ sakai.inbox = function() {
         showPane(inboxPaneInbox);
         
         // Clear all the input fields
-        clearInputFields();
-    });
-    
-    $(inboxSpecificMessageComposeCancel).click(function() {
-        // Clear all the input fields
-        clearInputFields();
-    });
-
-    $(inboxComposeForm).bind("submit", function() {
-        return false;
-    });
-
-    $(inboxSpecificMessageComposeSend).click(function() {
-
-        // We want to send a message.
-        var subject = $(inboxSpecificMessageComposeSubject).val();
-        var body = $(inboxSpecificMessageComposeBody).val();
-
-        sakai.api.Communication.sendMessage(selectedMessage["sakai:from"], subject, body, "message", selectedMessage["sakai:id"], sendMessageFinished);
-        showGeneralMessage($(inboxGeneralMessagesSent).text());
-        // Clear all the input fieldst
         clearInputFields();
     });
 
