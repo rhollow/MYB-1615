@@ -1,0 +1,184 @@
+/** CONTAINER **/
+.fixed-container
+{ background: #fff;}
+
+/** LAYOUT **/
+.inbox_main .main_container
+{ border:medium none; margin:0 0 20px; padding:0; }
+
+.inbox_main .side_panel
+{ padding: 0; }
+
+/* myBerkeley: changed margin-left to 0px, width to 920px; removed margin-top */
+.inbox_main .col-main
+{ margin-left: 0px; padding: 0; overflow: hidden; width: 920px; }
+
+.button-list
+{ margin-top: 10px; float: right; }
+
+
+/** INBOX MAIN PANE **/
+
+ /* myBerkeley: took out padding, added positioning */
+.inbox_main .inbox-heading
+{ font-weight: bold; color: #333; font-size: 17px; position: relative; left: -160px; }
+
+/** Table **/
+
+/* myBerkeley: fixed width to 915px */
+.inbox_main .main_content_container
+{ width: 913px; border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
+
+/* myBerkeley: fixed width to 915 */
+.inbox_main .inbox-table
+{ width: 913px; margin: 0; table-layout: fixed;}
+
+/** Buttons **/
+.inbox_main .top_button_bar
+{ padding: 0 12px 5px 0; text-align: right; }
+
+.inbox_main .inbox_inbox_delete
+{ color: #058EC4; }
+
+/** Header **/
+.inbox_main .inbox-table .different
+{ background: #eaedef; }
+
+.inbox_main .inbox-table .different th
+{ border-bottom: 4px solid #d5dbdf; }
+
+.inbox_main .inbox-table .different_reminders th
+{ border-bottom: 3px solid #d5dbdf; }
+
+.inbox_main .inbox-table #inbox_table_header_chk
+{ width: 3%; }
+
+.inbox_main .inbox-table #inbox_table_header_date_modified
+{ width:17%; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_name
+{ width:26%; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_description
+{ width:37%; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_size
+{ width:12%; border-left: 1px solid #D4DADE; color: #666666; }
+
+/** List **/
+.inbox_main .inbox-table a:hover {text-decoration: none;}
+
+.inbox_main .inbox-table th
+{ color: #333;  text-align: left; height: 26px; border: none; }
+
+.inbox_main .inbox-table tr
+{ color: #666; }
+
+.inbox_main .inbox-table td
+{ border: none; color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; white-space: nowrap; overflow: hidden;}
+
+.inbox_main .inbox-table td a.inbox_inbox_message {color:#058EC4}
+
+.inbox_main .inbox-table .inbox_message_none
+{ text-align: center; border: none; height: 370px; }
+
+/** INBOX MESSAGE VIEW PANE **/
+
+.inbox_detail .top_toolbar
+{ padding: 0; }
+
+.inbox_detail .inbox-heading a
+{ color: #058ec4; font-size: 13px; }
+
+.inbox_detail .inbox-heading span
+{ font-size: 16px; }
+
+.inbox_detail .message-arrow
+{ background: url(../../_images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
+
+.inbox_detail .message-body
+{ padding: 20px 37px 30px; color:#333; font-size: 13px; }
+
+.inbox_detail .message-header
+{ font-weight: bold; font-size: 15px; padding: 5px 0px 5px 5px; white-space: nowrap; overflow: hidden;}
+
+.inbox_detail .message-options
+{ padding: 15px 15px 0 0; }
+
+.inbox_detail .message-options a
+{ color:#058ec4; font-weight: bold; }
+
+.inbox_detail .pipe-divider
+{ color:#d2d2d2; padding: 0 10px 0 10px; }
+
+.inbox_detail .inbox_message_user
+{ position:relative; margin-left: 42px; }
+
+/** NOTIFICATIONS, ERROR MESSAGES **/
+.inbox_error_message
+{ font-weight:bold; padding:10px; border:3px solid #ff0000; background-color:#f7d8d8; width:80%;float:left; }
+
+.inbox_normal_message
+{ padding:10px; border:3px solid #00ff00; background-color:#d9f7d8; width:80%;float:left; }
+
+
+.inbox_main .user-personal a
+{color: #058ec4; font-size: 12px;}
+
+.inbox_main .user-personal strong
+{color: #058ec4;}
+
+.inbox_main .user-personal li
+{border-left: 1px solid #999; padding: 0 2px 0 6px;}
+
+.inbox_main .user-personal .first{border-left: none;}
+
+
+.inbox_main .user-name{color: #058ec4; background: url(../../_images/user_online.gif) no-repeat 7px 2px;}
+
+
+.inbox_main .user-name strong{padding-left: 14px;}
+
+
+.inbox_main .user-arrow-down{position: relative; top: -1px; padding-left: 3px;}
+
+
+.inbox_main .user-mail{background: url(../../_images/user_mail_icon.gif) no-repeat 6px 3px;}
+
+
+.inbox_main .user-mail a{color: #666; padding-left: 16px;}
+
+
+
+.inbox_main .inbox-checkbox{width: 16px;}
+
+
+.inbox_main .inbox-delete{padding: 10px 0 12px 0;}
+
+.inbox_main #inbox_delete {margin:10px 0px 10px 0px;display:inline-block;;}
+
+
+.inbox_main .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}
+
+
+.inbox_main .inbox_inbox_table_header_sort { cursor:pointer;}
+
+
+.inbox_main .inbox_inbox_table_header_sort span { float:left; }
+
+
+.inbox_main #inbox_compose_new img { border:none;}
+
+/** Tabs **/
+
+.ui-tabs .ui-tabs-hide { display: none; }
+.top_decor { border: 4px solid #D4DADE; padding: 5px 0 5px; }
+.bottom_decor { border: 4px solid #D4DADE; height: 30px; background-color: #F0F0F0; }
+
+#tab_list { position: relative; bottom: 11px; padding-top: 1px; }
+.tab { display: block; float: left; padding: 5px 15px; border: 4px solid #D4DADE; background-color: #F0F0F0; }
+.tab a, a:hover { text-decoration: none; outline: none; }
+.selected_tab { border-bottom: 4px solid white; background-color: white; }
+.leftmost_tab { border-right: 0px; }
+.input_item { padding: 10px; }
+.invalid_span { padding-left: 10px; color: #CC0000; font-weight: bold; }
