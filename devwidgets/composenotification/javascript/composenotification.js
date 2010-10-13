@@ -413,8 +413,8 @@ if (!sakai.composenotification){
 		            }
 		            else if(modtoday>taskDueDateObj) {                                              
 		                if (!displayErrors) return false;
-							valid = false;
-		                	taskDueDateEl.addClass(invalidClass);
+						valid = false;
+		                taskDueDateEl.addClass(invalidClass);
 		            }             
 		            else if(sendDateObj>taskDueDateObj) {
 		                if (!displayErrors) return false;
