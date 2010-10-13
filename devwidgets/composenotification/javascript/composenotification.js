@@ -293,16 +293,17 @@ if (!sakai.composenotification){
          $("#save_reminder_dialog").css("top", "250px");    
          
          // Event handler for when user clicks on DLC "Save" button.
-         $("#dlc-save").click(function(){
+         $("#dlc-save").live('click', function(){
              // Save the draft.
              postNotification(saveData("drafts"));
+             resetView();
              
              // Now load the CNDL pane widget.
              alert("CNDL widget initalise should be here!!!");
          });
          
          // Event handler for when you click on the "Don't Save" button on DLC dialog.
-         $("#dlc-dontsave").click(function() {
+         $("#dlc-dontsave").live('click', function() {
              // Just redirect to CDNL page. (set to berkeley main page for now)
              <!--
             window.location = "http://www.berkeley.edu/"
@@ -341,7 +342,7 @@ if (!sakai.composenotification){
          * Returns a boolean that determines if the fields are valid or not.
          * @return valid True = no errors, false = errors found.
          */
-        var checkFieldsForErrors = function() {                        
+        var checkFieldsForErrors = function() {                                         
             var valid = true;
             var today = new Date(); // full today's date
             var month = today.getMonth();
@@ -538,6 +539,10 @@ if (!sakai.composenotification){
             $(messageFieldTo).empty().append(optionsObj);
             
         };
+        
+        var hideAllButtonLists = function(){            
+            $(".notifdetail-buttons").hide();
+        }        
             
         var formatDate = function(dateStr){           
             dateObj = new Date(dateStr);
@@ -613,63 +618,113 @@ if (!sakai.composenotification){
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)         
          */
-        sakai.composenotification.initialise = function(userObj, callback, calledFrom, message) {                       
+        sakai.composenotification.initialise = function(calledFrom, message) {                       
             // Reset page back to its original condition.
             clearInvalids();
             eventTimeInit();
             dynamicListInit();
-            resetView();            
-
-            // The user we are sending a message to.
-            user = userObj;  
+            resetView();     
+            hideAllButtonLists();       
             
+            // Unbind everything to prevent duplicacy issues.                     
+            $("#cn-queuedraft-button").die();
+            $("#cn-updatedraft-button").die();
+            $("#cn-deletedraft-button").die();
+            $("#cn-movetodrafts-button").die();
+            $("#cn-copytodrafts-button").die();
+            $("#cn-deletequeued-button").die();
+            $("#cn-editrashed-button").die();
+                       
             // Are we calling this from drafts?
             if(calledFrom=="drafts"){                
-                // Now fill out the proper information.
-                fillInMessage(message);     
-                // And hide the button list.
-                $("#notifdetail-buttons").hide();
-                // Then show the correct button list.
-                $("#notifdetail2-buttons").show();
+                // Fill out the proper information.
+                fillInMessage(message);    
                 
-                // When someone clicks on 'Move to Queue' button.
-                $("#cn-movetoqueue-button").click(function() {
-                    if(checkFieldsForErrors()){                                                                                                    
+                // Hide all the buttons and show the proper button list.
+                hideAllButtonLists();                                   
+                $("#editdraft-buttons").show();   
+                                
+                // Queueing this draft...                
+                $("#cn-queuedraft-button").live('click', function() {                                                         
+                    if(checkFieldsForErrors()){                                                                                                                                                 
                         updateNotification(saveData("queue"), message); 
                     }
+                    resetView();                                      
                 });         
                 
-                // When someone clicks on the 'Update' button.
-                $("#cn-updatedraft-button").click(function() {
+                // Updating and re-saving this draft...
+                $("#cn-updatedraft-button").live('click', function() {                    
                     updateNotification(saveData("drafts"), message);
-                });                            
-            }             
-            if(calledFrom=="trash"){               
+                    resetView();
+                });         
+                
+                // Deleting the draft...
+                $("#cn-deletedraft-button").live('click', function() {                    
+                    updateNotification(saveData("trash"), message);
+                    resetView();
+                });                   
+            }      
+            
+            // Are we calling this from queue?
+            if(calledFrom=="queue"){
+                // Now fill out the proper information.
+                fillInMessage(message);
+                // And disable the form, disallowing the user to edit.
+                disableView();    
+                // Display the proper buttons.                
+                $("#queueview-buttons").show();   
+                
+                // Moving message from queue to drafts...
+                $("#cn-movetodrafts-button").live('click', function() {
+                   updateNotification(saveData("drafts"), message);
+                   resetView(); 
+                });            
+                
+                // Copying message to drafts...
+                $("#cn-copytodrafts-button").live('click', function() {
+                    postNotification(saveData("drafts"),message);
+                    resetView();
+                });
+                
+                // Deleting message...
+                $("#cn-deletequeued-button").live('click', function() {
+                    updateNotification(saveData("trash"),message);
+                    resetView();
+                });
+            }  
+            
+            // Are we calling this from trash?       
+            if(calledFrom=="trash"){                       
                 // Now fill out the proper information.
                 fillInMessage(message);
                 // And disable the form, disallowing the user to edit.
                 disableView();
-                // And hide the button list.
-                $("#notifdetail-buttons").hide();
-            }                        
+                // Display the proper buttons.                
+                $("#trashview-buttons").show();
+                
+                // Enable editing of message (move it to drafts and re-initialise widget).
+                $("#cn-editrashed-button").live('click', function() {                                       
+                    updateNotification(saveData("drafts"), message);                    
+                    sakai.composenotification.initialise("drafts", message);
+                });                
+            }                                                                                   
         };           
         
-        var updateNotification = function(toUpdate, original){            
+        var updateNotification = function(toUpdate, original){                      
             $.ajax({
-                url: "http://localhost:8080"+original["jcr:path"],
+                url: original["jcr:path"],
                 type: "POST",
                 data: toUpdate,
                 success: function(){
-                    alert("Success!");
-                    resetView();
+                                       
                 },
                 error: function(){
-                    alert("Failure!");
+                    alert("Failure on updating notification!");
                 }
             });
         };     
         
-        var saveData = function(box){
+        var saveData = function(box){            
             var toPost = {
                 "sakai:type": "notice",
                 "sakai:sendDate": $(messageFieldSendDate).datepicker("getDate").toString(),
@@ -720,33 +775,33 @@ if (!sakai.composenotification){
             return toPost;
         }
         
-        var postNotification = function(toPost){                                                                                                                  
+        var postNotification = function(toPost){                                                                                                                           
             // Post all the data in an Ajax call.    
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: toPost,
-                success: function(){
-                    alert("Success!");
-                    resetView();
+                success: function(){                                      
                 }, 
                 error: function(){
-                    alert("Failure!");                        
+                    alert("Failure on posting notification!");                        
                 }
             });
         }
         
-        // When someone clicks on the 'Save as Draft' button.
-        $("#cn-saveasdraft-button").click(function(){
-            postNotification(saveData("drafts")); 
-        });           
-        
-        // When someone clicks the 'Queue' button.
-        $("#cn-queue-button").click(function() {                                              
-            if(checkFieldsForErrors()){
-                postNotification(saveData("queue"));
+        // When someone clicks on the 'Save as Draft' button from base panel.
+        $("#cn-saveasdraft-button").live('click', function(){
+            if($(messageFieldSubject).val()!=""){
+                if($(messageFieldSendDate).val()!=""){
+                    postNotification(saveData("drafts")); 
+                    resetView();
+                }                
+                
             }
-        });                
+            else{
+                $(messageFieldSubject).addClass(invalidClass);
+            }
+        });                                                   
     };              
 }
 
