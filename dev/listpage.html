@@ -115,7 +115,7 @@
                                         <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
                                             <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['sakai:id']}" id="inbox_check_list_${m['sakai:id']}" title="__MSG__SELECT_LIST__" /></td>
                                             <td>$(m.date}</td>
-                                            <td>${m.name}</td>
+                                            <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m.name}</a></td>
                                             <td>${m.description}</td>
                                         </tr>
                                     
@@ -216,7 +216,6 @@
                     <div class="button-list">
                         <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                         <button type="button" id="inbox_inbox_duplicate_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DUPLICATE__</span></button>
-                        <button type="button" id="inbox_inbox_edit_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>
                         <button type="button" id="inbox_inbox_back_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_INBOX__</span></button>
                         <button type="button" id="inbox_inbox_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
                         <button type="button" id="inbox_inbox_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
@@ -233,7 +232,7 @@
        <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
         <span id="inbox_generalmessages_none_selected" style="display:none;">__MSG__NO_LIST_WAS_SELECTED__.</span>
-        <span id="inbox_generalmessages_edit_multiple" style="display:none;">__MSG__YOU_CAN_ONLY_EDIT_ONE_LIST_AT_A_TIME__.</span>
+        <span id="inbox_generalmessages_duplicate_multiple" style="display:none;">__MSG__YOU_CAN_ONLY_DUPLICATE_ONE_LIST_AT_A_TIME__.</span>
         <span id="inbox_generalmessages_already_exists" style="display:none;">__MSG__AN_EXACT_COPY_OF_THIS_LIST_ALREADY_EXISTS__.</span>
         <script type="text/javascript" src="_javascript/listpage.js"></script>
 

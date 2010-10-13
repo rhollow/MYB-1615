@@ -377,7 +377,9 @@ sakai.listpage = function(){
         // NOT SUPPORTED FOR POC
         // document.createListForm.list_size.value = list["sakai:size"];
         
-        $("#context").val(list.query.context);
+        // $("#context").val(list.query.context);
+        // HARD-CODING FOR POC
+        $("#context").val("ced");
         
         var majorArray = list.query.major;
         for(var i = 0, j = majorArray.length; i < j; i++) {
@@ -419,6 +421,10 @@ sakai.listpage = function(){
         getAllMessages();
     });
     
+    var reloadData = function() {
+        loadData();
+    }
+    
     var deleteLists = function(listsArray) { // DEBUG: removing last dynamic list doesn't work
         var listId = listsArray;
         
@@ -434,7 +440,7 @@ sakai.listpage = function(){
         }
         
         submitData.lists = allLists;
-        sakai.api.Server.saveJSON(userUrl, submitData, loadData);
+        sakai.api.Server.saveJSON(userUrl, submitData, reloadData);
     };
     
     var finishSaveAndLoad = function() {
@@ -514,35 +520,21 @@ sakai.listpage = function(){
         if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
         } else if (listId.length > 1) {
-            showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
+            showGeneralMessage($("#inbox_generalmessages_duplicate_multiple").text());
         } else {
             displayList(listId[0]);
         }
     });
     
-    $("#inbox_inbox_edit_button").live("click", function(){        
-        var listId = [];
-        $(".inbox_inbox_check_list:checked").each(function(){
-            var id = $(this).val();
-            listId.push(id);
-        });
-        
-        $(".inbox_inbox_check_list").attr("checked", "");
-        tickMessages();
-
-        if(listId.length < 1) {
-            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
-        } else if(listId.length > 1) {
-            showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
-        } else {
-            editExisting = true;
-            currList = listId[0];
-            displayList(listId[0]);   
-        }
+    $(".edit_link").live("click", function(evt){   
+        editExisting = true;
+        var id = evt.target.id;
+        currList = id;
+        displayList(id);
     });
     
     $("#inbox_inbox_back_button").live("click", function(){
-        window.location = "http://localhost:8080/dev/inboxnotifier.html";
+        window.location = "/dev/inboxnotifier.html";
     });
     
     $("#inbox_inbox_cancel_button").live("click", function(){
@@ -607,7 +599,6 @@ sakai.listpage = function(){
         $("#inbox_inbox_save_button").hide();
         $("#inbox_inbox_delete_button").show();
         $("#inbox_inbox_duplicate_button").show();
-        $("#inbox_inbox_edit_button").show();
         $("#inbox_inbox_back_button").show();
     });
     
@@ -626,7 +617,6 @@ sakai.listpage = function(){
         // Show/hide appropriate buttons
         $("#inbox_inbox_delete_button").hide();
         $("#inbox_inbox_duplicate_button").hide();
-        $("#inbox_inbox_edit_button").hide();
         $("#inbox_inbox_back_button").hide();
         $("#inbox_inbox_cancel_button").show();
         $("#inbox_inbox_save_button").show();
