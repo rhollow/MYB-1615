@@ -468,7 +468,7 @@ sakai.notificationsinbox = function(){
 		// We need to add the number of messages already shown to it in order to get the total number of messages
 		messagesForTypeCat = response.total + (currentPage * messagesPerPage);
 
-		// show messages
+        // show messages
         var tplData = {
             "messages": response.results
         };
@@ -587,7 +587,8 @@ sakai.notificationsinbox = function(){
      * @param {String} id The id of a message.
      */
     var displayMessage = function(id){
-        // Get the specific message data.
+        
+        // get the specific message data...
         selectedMessage = getMessageWithId(id);
         if (typeof selectedMessage !== "undefined") {
             var messageBox = selectedMessage["sakai:messagebox"];
