@@ -115,6 +115,29 @@ if (!sakai.composenotification){
           'group3id' : 'Group 3'  
         };
         
+         /**
+         * returns a jQuery object containing a set of option elements 
+         * @param {Object} optionArray, name: value pairs of option elements
+         * @param {String} selectedValue the key of the selected option element
+         * @param {Boolean} firstEmpty start with an option element or not
+         */
+        
+        var createOptions = function (optionArray, selectedValue, firstEmpty) {
+            var $container = $("<select>");
+            if (firstEmpty) {
+                $container.append($("<option>"));
+            }
+            for (var key in optionArray) {
+                var $optionObj = {};
+                $optionObj = $("<option>").val(key).text(optionArray[key]);
+                if (key === selectedValue) {
+                    $optionObj.attr("selected", "selected");
+                }
+                $container.append($optionObj);
+            }
+            return $container.contents();
+        };
+
         /**
          * Re-enables previously disabled fields. 
          */
@@ -236,25 +259,25 @@ if (!sakai.composenotification){
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.'   
+            buttonText: 'Click to pick a date.'      
         });     
         $("#datepicker-taskduedate-text").datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.'      
+            buttonText: 'Click to pick a date.'     
         });     
         $("#datepicker-eventdate-text").datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.'      
+            buttonText: 'Click to pick a date.'        
         });     
         $("#datepicker-eventstopdate-text").datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.'      
+            buttonText: 'Click to pick a date.'        
         });                                           
                     
         // For dialog-overlay to remind user to save their draft.
@@ -270,75 +293,21 @@ if (!sakai.composenotification){
          $("#save_reminder_dialog").css("top", "250px");    
          
          // Event handler for when user clicks on DLC "Save" button.
-         $("#dlc-save").click(function(){
-             var toSave = {
-                "sakai:type": "notice",
-                "sakai:to": $(messageFieldTo).val(),                 
-                "sakai:from": sakai.data.me.user.userid,
-                "sakai:subject": $(messageFieldSubject).val(), 
-                "sakai:body": $(messageFieldBody).val(),
-                "sakai:sendstate": "pending",
-                "sakai:read": false,
-                "sakai:messagebox": "drafts"                    
-             }                                     
-                               
-            // Is this notification required or not?               
-            if($(messageRequiredYes).attr("checked")){                                     
-                // Reminders (could be task or event).
-                toSave["sakai:category"] = "reminder"; 
-                // See if it is a task or an event and get the appropriate info.
-                if($(messageTaskCheck).attr("checked")){                                                          
-                    toSave["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate");
-                    toSave["sakai:dueDate@TypeHint"] = "Date";   
-                    toSave["sakai:taskState"] = "created";
-                }
-                else{                                       
-                    toSave["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                    toSave["sakai:eventDate@TypeHint"] = "Date";
-                    toSave["sakai:eventPlace"] = $(messageEventPlace).val();
-                    toSave["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
-                        
-                    var eventDetails = "Date: "+formatDate(toSave["sakai:eventDate"])+"\nTime: "+toSave["sakai:eventTime"]+"\nPlace: "+toSave["sakai:eventPlace"]+"\n\n";
-                    toSave["sakai:body"] = eventDetails+toSave["sakai:body"];                                                                                                            
-                }                    
-            }
-            else{                                   
-                // Notifications (treated same as a message).  
-                toSave["sakai:category"] = "message";   
-                // Could still be an Event, meaning it is a non-required event with time, date, and place.
-                if($(messageEventCheck).attr("checked")) {                    
-                    toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                    toSend["sakai:eventDate@TypeHint"] = "Date";
-                    toSend["sakai:eventPlace"] = $(messageEventPlace).val();
-                    toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
-                        
-                    var eventDetails = "Date: "+formatDate(toSend["sakai:eventDate"])+"\nTime: "+toSend["sakai:eventTime"]+"\nPlace: "+toSend["sakai:eventPlace"]+"\n\n";
-                    toSend["sakai:body"] = eventDetails+toSend["sakai:body"];
-                }                                          
-            }                                                                           
-                              
-            // Post all the data in an Ajax call.    
-            $.ajax({
-                url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
-                type: "POST",
-                data: toSave,
-                success: function(){
-                    alert("Success!");
-                    resetView();
-                }, 
-                error: function(){
-                    alert("Failure!");                        
-                }
-            });      
-            
-            // Now redirect to the CNDL page.
-            window.location = "http://localhost:8080/dev/listpage.html";    
+         $("#dlc-save").live('click', function(){
+             // Save the draft.
+             postNotification(saveData("drafts"));
+             resetView();
+             
+             // Now load the CNDL pane widget.
+             alert("CNDL widget initalise should be here!!!");
          });
          
          // Event handler for when you click on the "Don't Save" button on DLC dialog.
-         $("#dlc-dontsave").click(function() {
-             // Just redirect to CDNL page.
-            window.location = "http://localhost:8080/dev/listpage.html";
+         $("#dlc-dontsave").live('click', function() {
+             // Just redirect to CDNL page. (set to berkeley main page for now)
+             <!--
+            window.location = "http://www.berkeley.edu/"
+            //--> 
          });
          
          // If 'Yes' is checked for required, then automatically check that it has a date.
@@ -373,7 +342,7 @@ if (!sakai.composenotification){
          * Returns a boolean that determines if the fields are valid or not.
          * @return valid True = no errors, false = errors found.
          */
-        var checkFieldsForErrors = function() {                        
+        var checkFieldsForErrors = function() {                                         
             var valid = true;
             var today = new Date(); // full today's date
             var month = today.getMonth();
@@ -564,19 +533,17 @@ if (!sakai.composenotification){
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
         var dynamicListInit = function(){
-          // Select the 'options' attribute of the dynamic list drop down menu.
-          var dynamicListOptions = $(messageFieldTo).attr('options');
-          
-          // Clear any pre-existing options that might be there already.
-          // (Helps prevent duplication when user hits the 'Cancel' button.)
-          $(messageFieldTo).html('');
-          
-          // Fill in options for menu based on array.
-          $.each(allDynamicListOptions, function(val, text) {
-              dynamicListOptions[dynamicListOptions.length] = new Option(text, val);
-          });          
-        };                
-
+            var optionsObj = createOptions(allDynamicListOptions, null, true);
+            
+            // clear any old values and then append the new dynamic list options          
+            $(messageFieldTo).empty().append(optionsObj);
+            
+        };
+        
+        var hideAllButtonLists = function(){            
+            $(".notifdetail-buttons").hide();
+        }        
+            
         var formatDate = function(dateStr){           
             dateObj = new Date(dateStr);
             var daysoftheweek = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -590,6 +557,12 @@ if (!sakai.composenotification){
         }
         
         var fillInMessage = function(message){
+            var eventDate;
+            var taskDate;
+            var sendDate;
+            
+            // If it's a reminder, fill in the reminder categories after checking if it
+            // is a task or an event, and show the proper fields for the user.
             if (message["sakai:category"] == "reminder") {
                 $(messageRequiredYes).attr("checked", true);
                 $(messageReminderCheckbox).attr("checked", true);
@@ -597,41 +570,47 @@ if (!sakai.composenotification){
                 // Is it a task or an event?
                 if (message["sakai:dueDate"] != null) {
                     $(messageTaskCheck).attr("checked", true);
-                    $("#task-details").show();
-                    $(messageTaskDueDate).datepicker("setDate", message["sakai:dueDate"]);
+                    $(".cn-task").show();
+                    taskDate = sakai.api.Util.parseSakaiDate(message["sakai:dueDate"]);
+                    $(messageTaskDueDate).datepicker("setDate", taskDate);                    
                 }
                 else {
                     $(messageEventCheck).attr("checked", true);
-                    $("#event-details").show();
-                    $(messageEventDate).datepicker("setDate", message["sakai:eventDate"]);
+                    $(".cn-event").show();
+                    eventDate = sakai.api.Util.parseSakaiDate(message["sakai:eventDate"]);                    
+                    $(messageEventDate).datepicker("setDate", eventDate);                   
                     $(messageEventPlace).val(message["sakai:eventPlace"]);
-                    var colonIndex = message["sakai:eventTime"].indexOf(":");
-                    $(messageEventTimeHour).val(message["sakai:eventTime"].substr(0, colonIndex));
-                    var spaceIndex = message["sakai:eventTime"].indexOf(" ");
-                    $(messageEventTimeMinute).val(message["sakai:eventTime"].substr(colonIndex, spaceIndex));
-                    $(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(spaceIndex, message["sakai:eventTime"].length));
-                    
+                    // commented out because my data doesn't contain event time so it fails
+                    //$(messageEventTimeHour).val(message["sakai:eventTime"].substr(0,message["sakai:eventTime"].indexOf(":")));
+                    //$(messageEventTimeMinute).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+1,2));
+                    //$(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+4),5);
                 }
             }
             else {
                 $(messageRequiredNo).attr("checked", true);
+                // Though not required, it could still be an event, so we should check 
+                // and fill out the fields if necessary and show the correct page elements.
+                if(message["sakai:eventDate"]!=null){
+                    $(messageReminderCheckbox).attr("checked", true);
+                    $(messageReminderCheck).show();
+                    $(messageEventCheck).attr("checked", true);
+                    $(".cn-event").show();
+                    eventDate = sakai.api.Util.parseSakaiDate(message["sakai:eventDate"]);                    
+                    $(messageEventDate).datepicker("setDate", eventDate);                   
+                    $(messageEventPlace).val(message["sakai:eventPlace"]);
+                    // commented out because my data doesn't contain event time so it fails
+                    //$(messageEventTimeHour).val(message["sakai:eventTime"].substr(0,message["sakai:eventTime"].indexOf(":")));
+                    //$(messageEventTimeMinute).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+1,2));
+                    //$(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(message["sakai:eventTime"].indexOf(":")+4),5);
+                }
             }
-            $(messageFieldSendDate).val(message["sakai:sendDate"]);
+            
+            // Fill out all the common fields.
+            sendDate = sakai.api.Util.parseSakaiDate(message["sakai:sendDate"]);
+            $(messageFieldSendDate).datepicker("setDate", sendDate);
             $(messageFieldTo).val(message["sakai:to"]);
             $(messageFieldSubject).val(message["sakai:subject"]);
-            $(messageFieldBody).val(message["sakai:body"]);
-            // Could still be a non-required event, so let's check...
-            if (message["sakai:eventDate"] != null) {
-                $(messageEventCheck).attr("checked", true);
-                $("#event-details").show();
-                $(messageEventDate).datepicker("setDate", message["sakai:eventDate"]);
-                $(messageEventPlace).val(message["sakai:eventPlace"]);
-                var colonIndex = message["sakai:eventTime"].indexOf(":");
-                $(messageEventTimeHour).val(message["sakai:eventTime"].substr(0, colonIndex));
-                var spaceIndex = message["sakai:eventTime"].indexOf(" ");
-                $(messageEventTimeMinute).val(message["sakai:eventTime"].substr(colonIndex, spaceIndex));
-                $(messageEventTimeAMPM).val(message["sakai:eventTime"].substr(spaceIndex, message["sakai:eventTime"].length));
-            }
+            $(messageFieldBody).val(message["sakai:body"]);                                    
         }
 
         /**
@@ -641,159 +620,190 @@ if (!sakai.composenotification){
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)         
          */
-        sakai.composenotification.initialise = function(userObj, callback, calledFrom, message) {                       
+        sakai.composenotification.initialise = function(calledFrom, message) {                       
             // Reset page back to its original condition.
             clearInvalids();
             eventTimeInit();
             dynamicListInit();
-            resetView();            
-
-            // The user we are sending a message to.
-            user = userObj;  
+            resetView();     
+            hideAllButtonLists();       
             
+            // Unbind everything to prevent duplicacy issues.                     
+            $("#cn-queuedraft-button").die();
+            $("#cn-updatedraft-button").die();
+            $("#cn-deletedraft-button").die();
+            $("#cn-movetodrafts-button").die();
+            $("#cn-copytodrafts-button").die();
+            $("#cn-deletequeued-button").die();
+            $("#cn-editrashed-button").die();
+                       
             // Are we calling this from drafts?
             if(calledFrom=="drafts"){                
+                // Fill out the proper information.
+                fillInMessage(message);    
+                
+                // Hide all the buttons and show the proper button list.
+                hideAllButtonLists();                                   
+                $("#editdraft-buttons").show();   
+                                
+                // Queueing this draft...                
+                $("#cn-queuedraft-button").live('click', function() {                                                         
+                    if(checkFieldsForErrors()){                                                                                                                                                 
+                        updateNotification(saveData("queue"), message); 
+                    }
+                    resetView();                                      
+                });         
+                
+                // Updating and re-saving this draft...
+                $("#cn-updatedraft-button").live('click', function() {                    
+                    updateNotification(saveData("drafts"), message);
+                    resetView();
+                });         
+                
+                // Deleting the draft...
+                $("#cn-deletedraft-button").live('click', function() {                    
+                    updateNotification(saveData("trash"), message);
+                    resetView();
+                });                   
+            }      
+            
+            // Are we calling this from queue?
+            if(calledFrom=="queue"){
                 // Now fill out the proper information.
-                fillInMessage(message);                                           
-            }             
-            if(calledFrom=="trash"){               
+                fillInMessage(message);
+                // And disable the form, disallowing the user to edit.
+                disableView();    
+                // Display the proper buttons.                
+                $("#queueview-buttons").show();   
+                
+                // Moving message from queue to drafts...
+                $("#cn-movetodrafts-button").live('click', function() {
+                   updateNotification(saveData("drafts"), message);
+                   resetView(); 
+                });            
+                
+                // Copying message to drafts...
+                $("#cn-copytodrafts-button").live('click', function() {
+                    postNotification(saveData("drafts"),message);
+                    resetView();
+                });
+                
+                // Deleting message...
+                $("#cn-deletequeued-button").live('click', function() {
+                    updateNotification(saveData("trash"),message);
+                    resetView();
+                });
+            }  
+            
+            // Are we calling this from trash?       
+            if(calledFrom=="trash"){                       
                 // Now fill out the proper information.
                 fillInMessage(message);
                 // And disable the form, disallowing the user to edit.
                 disableView();
-                // And hide the button list.
-                $("#notifdetail-buttons").hide();
-            }                        
-        };   
+                // Display the proper buttons.                
+                $("#trashview-buttons").show();
+                
+                // Enable editing of message (move it to drafts and re-initialise widget).
+                $("#cn-editrashed-button").live('click', function() {                                       
+                    updateNotification(saveData("drafts"), message);                    
+                    sakai.composenotification.initialise("drafts", message);
+                });                
+            }                                                                                   
+        };           
         
-        $("#cn-saveasdraft-button").bind("click", function(ev) { 
-            var toSave = {
+        var updateNotification = function(toUpdate, original){                      
+            $.ajax({
+                url: original["jcr:path"],
+                type: "POST",
+                data: toUpdate,
+                success: function(){
+                                       
+                },
+                error: function(){
+                    alert("Failure on updating notification!");
+                }
+            });
+        };     
+        
+        var saveData = function(box){            
+            var toPost = {
                 "sakai:type": "notice",
+                "sakai:sendDate": $(messageFieldSendDate).datepicker("getDate").toString(),
+                "sakai:sendDate@TypeHint": "Date",
                 "sakai:to": $(messageFieldTo).val(),                 
                 "sakai:from": sakai.data.me.user.userid,
                 "sakai:subject": $(messageFieldSubject).val(), 
                 "sakai:body": $(messageFieldBody).val(),
                 "sakai:sendstate": "pending",
                 "sakai:read": false,
-                "sakai:messagebox": "drafts"                    
+                "sakai:messagebox": box              
              }                                     
                                
             // Is this notification required or not?               
             if($(messageRequiredYes).attr("checked")){                                     
                 // Reminders (could be task or event).
-                toSave["sakai:category"] = "reminder"; 
+                toPost["sakai:category"] = "reminder"; 
                 // See if it is a task or an event and get the appropriate info.
                 if($(messageTaskCheck).attr("checked")){                                                          
-                    toSave["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate");
-                    toSave["sakai:dueDate@TypeHint"] = "Date";   
-                    toSave["sakai:taskState"] = "created";
+                    toPost["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate").toString();
+                    toPost["sakai:dueDate@TypeHint"] = "Date";   
+                    toPost["sakai:taskState"] = "created";
                 }
                 else{                                       
-                    toSave["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                    toSave["sakai:eventDate@TypeHint"] = "Date";
-                    toSave["sakai:eventPlace"] = $(messageEventPlace).val();
-                    toSave["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
+                    toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate").toString();
+                    toPost["sakai:eventDate@TypeHint"] = "Date";
+                    toPost["sakai:eventPlace"] = $(messageEventPlace).val();
+                    toPost["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
                         
-                    var eventDetails = "Date: "+formatDate(toSave["sakai:eventDate"])+"\nTime: "+toSave["sakai:eventTime"]+"\nPlace: "+toSave["sakai:eventPlace"]+"\n\n";
-                    toSave["sakai:body"] = eventDetails+toSave["sakai:body"];                                                                                                            
+                    var eventDetails = "Date: "+formatDate(toPost["sakai:eventDate"])+"\nTime: "+toPost["sakai:eventTime"]+"\nPlace: "+toPost["sakai:eventPlace"]+"\n\n";
+                    toPost["sakai:body"] = eventDetails+toPost["sakai:body"];                                                                                                            
                 }                    
             }
             else{                                   
                 // Notifications (treated same as a message).  
-                toSave["sakai:category"] = "message";   
+                toPost["sakai:category"] = "message";   
                 // Could still be an Event, meaning it is a non-required event with time, date, and place.
                 if($(messageEventCheck).attr("checked")) {                    
-                    toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                    toSend["sakai:eventDate@TypeHint"] = "Date";
-                    toSend["sakai:eventPlace"] = $(messageEventPlace).val();
-                    toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
+                    toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate").toString();
+                    toPost["sakai:eventDate@TypeHint"] = "Date";
+                    toPost["sakai:eventPlace"] = $(messageEventPlace).val();
+                    toPost["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
                         
-                    var eventDetails = "Date: "+formatDate(toSend["sakai:eventDate"])+"\nTime: "+toSend["sakai:eventTime"]+"\nPlace: "+toSend["sakai:eventPlace"]+"\n\n";
-                    toSend["sakai:body"] = eventDetails+toSend["sakai:body"];
+                    var eventDetails = "Date: "+formatDate(toPost["sakai:eventDate"])+"\nTime: "+toPost["sakai:eventTime"]+"\nPlace: "+toPost["sakai:eventPlace"]+"\n\n";
+                    toPost["sakai:body"] = eventDetails+toPost["sakai:body"];
                 }                                          
-            }                                                                           
-                              
+            }             
+            return toPost;
+        }
+        
+        var postNotification = function(toPost){                                                                                                                           
             // Post all the data in an Ajax call.    
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
-                data: toSave,
-                success: function(){
-                    alert("Success!");
-                    resetView();
+                data: toPost,
+                success: function(){                                      
                 }, 
                 error: function(){
-                    alert("Failure!");                        
+                    alert("Failure on posting notification!");                        
                 }
-            });                                
-        });
+            });
+        }
         
-        // When someone clicks the 'Queue' button.
-        $("#cn-queue-button").bind("click", function(ev) {                                              
-            // Check the fields if there are any required fields that are not filled in.
-            if (checkFieldsForErrors()) {
-                // Common values.
-                var toSend = {
-                    "sakai:type": "notice",
-                    "sakai:to": $(messageFieldTo).val(),                    
-                    "sakai:from": sakai.data.me.user.userid,
-                    "sakai:subject": $(messageFieldSubject).val(), 
-                    "sakai:body": $(messageFieldBody).val(),
-                    "sakai:sendstate": "pending",
-                    "sakai:read": false,
-                    "sakai:messagebox": "queue"                    
-                }                                     
-                               
-                // Is this notification required or not?               
-                if($(messageRequiredYes).attr("checked")){                                      
-                    // Reminders (could be task or event).
-                    toSend["sakai:category"] = "reminder"; 
-                    // See if it is a task or an event and get the appropriate info.
-                    if($(messageTaskCheck).attr("checked")){                                                             
-                        toSend["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate");
-                        toSend["sakai:dueDate@TypeHint"] = "Date";   
-                        toSend["sakai:taskState"] = "created";
-                    }
-                    else{                                            
-                        toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                        toSend["sakai:eventDate@TypeHint"] = "Date";
-                        toSend["sakai:eventPlace"] = $(messageEventPlace).val();
-                        toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
-                            
-                        var eventDetails = "Date: "+formatDate(toSend["sakai:eventDate"])+"\nTime: "+toSend["sakai:eventTime"]+"\nPlace: "+toSend["sakai:eventPlace"]+"\n\n";
-                        toSend["sakai:body"] = eventDetails+toSend["sakai:body"];                                                                                                            
-                    }                    
-                }
-                else{                                      
-                    // Notifications (treated same as a message).  
-                    toSend["sakai:category"] = "message";            
-                    // Could still be an Event, meaning it is a non-required event with time, date, and place.
-                    if($(messageEventCheck).attr("checked")) {                        
-                        toSend["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                        toSend["sakai:eventDate@TypeHint"] = "Date";
-                        toSend["sakai:eventPlace"] = $(messageEventPlace).val();
-                        toSend["sakai:eventTime"] = $(messageEventTimeHour).val()+":"+$(messageEventTimeMinute).val()+" "+$(messageEventTimeAMPM).val();                                            
-                            
-                        var eventDetails = "Date: "+formatDate(toSend["sakai:eventDate"])+"\nTime: "+toSend["sakai:eventTime"]+"\nPlace: "+toSend["sakai:eventPlace"]+"\n\n";
-                        toSend["sakai:body"] = eventDetails+toSend["sakai:body"];
-                    }                               
-                }                                                                           
-                              
-                // Post all the data in an Ajax call.    
-                $.ajax({
-                    url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
-                    type: "POST",
-                    data: toSend,
-                    success: function(){
-                        alert("Success!");
-                        resetView();
-                    }, 
-                    error: function(){
-                        alert("Failure!");                        
-                    }
-                });            
+        // When someone clicks on the 'Save as Draft' button from base panel.
+        $("#cn-saveasdraft-button").live('click', function(){
+            if($(messageFieldSubject).val()!=""){
+                if($(messageFieldSendDate).val()!=""){
+                    postNotification(saveData("drafts")); 
+                    resetView();
+                }                
+                
             }
-        });
+            else{
+                $(messageFieldSubject).addClass(invalidClass);
+            }
+        });                                                   
     };              
 }
 
