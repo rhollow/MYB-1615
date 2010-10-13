@@ -25,7 +25,7 @@ sakai.listpage = function(){
      * Configuration
      *
      */
-    var submitData; // Data to be passed to saveJSON
+    var submitData = {}; // Data to be passed to saveJSON
     var allLists = []; // Array of all the lists
     var userUrl;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
@@ -437,6 +437,12 @@ sakai.listpage = function(){
         sakai.api.Server.saveJSON(userUrl, submitData, loadData);
     };
     
+    var finishSaveAndLoad = function() {
+        clearInputFields();
+        $.bbq.pushState({"tab": "existing"},2);
+        loadData();
+    };
+    
     var saveList = function(index) {
         var data = getDataFromInput();
         
@@ -476,9 +482,8 @@ sakai.listpage = function(){
         }
         
         submitData.lists = allLists;
-        sakai.api.Server.saveJSON(userUrl, submitData, loadData);
-        clearInputFields();
-        $.bbq.pushState({"tab": "existing"},2);
+        sakai.api.Server.saveJSON(userUrl, submitData, finishSaveAndLoad);
+        
     };
     
     // Button click events
@@ -648,16 +653,11 @@ sakai.listpage = function(){
     });
     
     var createDefaultList = function() {
-        var data = {
-            "_MODIFIERS": {},
-            "lists": []
-        };
-        
-        var defaultData = {
-            "links": data
+       var emptyData = {
+            "links": []
         }
         
-        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", defaultData));
+        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
     }
     
     /**
