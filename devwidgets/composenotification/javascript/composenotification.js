@@ -295,8 +295,7 @@ if (!sakai.composenotification){
          // Event handler for when user clicks on DLC "Save" button.
          $("#dlc-save").live('click', function(){
              // Save the draft.
-
-             postNotification(saveData("drafts", false));
+             postNotification(saveData("drafts", checkFieldsForErrors(false)));
              resetView();
              
              // Now load the CNDL pane widget.
@@ -306,9 +305,7 @@ if (!sakai.composenotification){
          // Event handler for when you click on the "Don't Save" button on DLC dialog.
          $("#dlc-dontsave").live('click', function() {
              // Just redirect to CDNL page. (set to berkeley main page for now)
-             <!--
-            window.location = "http://www.berkeley.edu/"
-            //--> 
+            //window.location = "http://www.berkeley.edu/"
          });
          
          // If 'Yes' is checked for required, then automatically check that it has a date.
@@ -669,7 +666,7 @@ if (!sakai.composenotification){
                                 
                 // Queueing this draft...                
                 $("#cn-queuedraft-button").live('click', function() {                                                         
-                    if(checkFieldsForErrors()){                                                                                                                                                 
+                    if(checkFieldsForErrors(true)){                                                                                                                                                 
                         updateNotification(saveData("queue", true), message);
                     }
                     resetView();                                      
@@ -677,13 +674,13 @@ if (!sakai.composenotification){
                 
                 // Updating and re-saving this draft...
                 $("#cn-updatedraft-button").live('click', function() {                    
-                    updateNotification(saveData("drafts", false), message);
+                    updateNotification(saveData("drafts", checkFieldsForErrors(false)), message);
                     resetView();
                 });         
                 
                 // Deleting the draft...
                 $("#cn-deletedraft-button").live('click', function() {                    
-                    updateNotification(saveData("trash"), message);
+                    updateNotification(saveData("trash", checkFieldsForErrors(false)), message);
                     resetView();
                 });                   
             }      
@@ -699,19 +696,19 @@ if (!sakai.composenotification){
                 
                 // Moving message from queue to drafts...
                 $("#cn-movetodrafts-button").live('click', function() {
-                   updateNotification(saveData("drafts"), message);
+                   updateNotification(saveData("drafts", checkFieldsForErrors(false)), message);
                    resetView(); 
                 });            
                 
                 // Copying message to drafts...
                 $("#cn-copytodrafts-button").live('click', function() {
-                    postNotification(saveData("drafts"),message);
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), message);
                     resetView();
                 });
                 
                 // Deleting message...
                 $("#cn-deletequeued-button").live('click', function() {
-                    updateNotification(saveData("trash"),message);
+                    updateNotification(saveData("trash", false), message);
                     resetView();
                 });
             }  
@@ -728,7 +725,7 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    updateNotification(saveData("drafts"), message);                    
+                    updateNotification(saveData("drafts", false), message);                    
                     sakai.composenotification.initialise("drafts", message);
                 });                
             }                                                                                   
@@ -760,7 +757,8 @@ if (!sakai.composenotification){
                 "sakai:sendstate": "pending",
                 "sakai:read": false,
                 "sakai:messagebox": box,
-				"sakai:validated" : isValidated             
+				"sakai:validated" : isValidated,
+				"sakai:validated@TypeHint": "Boolean"         
              }                                     
                                
             // Is this notification required or not?               
@@ -818,7 +816,7 @@ if (!sakai.composenotification){
         $("#cn-saveasdraft-button").live('click', function(){
             if($(messageFieldSubject).val()!=""){
                 if($(messageFieldSendDate).val()!=""){
-                    postNotification(saveData("drafts")); 
+                    postNotification(saveData("drafts", checkFieldsForErrors(false))); 
                     resetView();
                 }                
                 

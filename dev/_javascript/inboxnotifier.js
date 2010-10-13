@@ -840,6 +840,22 @@ sakai.notificationsinbox = function(){
         alert("Clicked copy from drafts page.");
         copyChecked("drafts");       
     });
+	
+	// Move the checked messages to queue.
+    $("#inbox-movetoqueue-button").click(function(){               
+        //alert("Move to queue");  
+		//moveChecked("queue");  
+		
+		var pathToMessages = [];
+        $(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+			console.log(this);
+            pathToMessages.push(pathToMessage);
+        });
+        
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);    
+    });
     
     // Delete all checked messages on queue page.
     $("#inbox-queuedelete-button").click(function(){               
