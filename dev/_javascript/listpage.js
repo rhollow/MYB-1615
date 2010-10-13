@@ -412,27 +412,30 @@ sakai.listpage = function(){
 
         getAllMessages();
     });
+
     
-    var reloadData = function() {
-        loadData();
-    }
-    
-    var deleteLists = function(listsArray) { // DEBUG: removing last dynamic list doesn't work
+    var deleteLists = function(listsArray) { // DEBUG
         var listId = listsArray;
         
         for (var i = 0, j = listId.length; i < j; i++) {
             var index = getIndexFromId(listId[i]);
             if(index >= 0) {
-                allLists.splice(index, 1);
                 $("#inbox_table_list_" + listId[i]).empty();
                 $("#inbox_table_list_" + listId[i]).remove();
+                
+                if (allLists.length == 1) {
+                    sakai.api.Server.removeJSON(userUrl, finishSaveAndLoad);
+                    return;
+                } else {
+                    allLists.splice(index, 1);
+                }
             } else {
                 alert("List not found");
             }
         }
         
         submitData.lists = allLists;
-        sakai.api.Server.saveJSON(userUrl, submitData, reloadData);
+        sakai.api.Server.saveJSON(userUrl, submitData, loadData);
     };
     
     var listAlreadyExists = function(id){
@@ -452,7 +455,6 @@ sakai.listpage = function(){
     var saveList = function(index) {
         var data = getDataFromInput();
         
-        // DEBUG: need to loop through major/standing array to concatenate values to id?
         var id = "dl-" + data.listName + data.desc + data.context + data.major + data.standing;
         
         if(index != null) { // we are editing an existing list
