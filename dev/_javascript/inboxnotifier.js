@@ -135,7 +135,7 @@ sakai.notificationsinbox = function(){
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
     var inboxGeneralMessagesMovedFailed = inboxGeneralMessagesMoved + "_failed";
-    var inboxGeneralMessagesCopiedFailed = inboxGeneralMessagesMoved + "_copied    ";      
+    var inboxGeneralMessagesCopiedFailed = inboxGeneralMessagesCopied + "_copied";      
         
     // Keep JSLint.com happy...    
     var getCount = function(){
@@ -413,8 +413,7 @@ sakai.notificationsinbox = function(){
      * @param {Object} message
      */
     var formatMessage = function(message){            
-        var dateString = message["sakai:sendDate"];
-        console.log(typeof dateString);
+        var dateString = message["sakai:sendDate"];        
         if (typeof dateString === "string") {
             var d = new Date();
             d.setFullYear(parseInt(dateString.substring(0, 4), 10));
@@ -530,8 +529,7 @@ sakai.notificationsinbox = function(){
     /**
      * Gets all the messages from the JCR.
      */
-    getAllMessages = function(callback){
-
+    getAllMessages = function(callback){        
         var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message"
 		 + "&items=" + messagesPerPage + "&page=" + currentPage;        
 		
@@ -556,7 +554,7 @@ sakai.notificationsinbox = function(){
                     callback();
                 }                
             },
-            error: function(xhr, textStatus, thrownError){
+            error: function(xhr, textStatus, thrownError){                
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
                 $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
             }
@@ -588,8 +586,7 @@ sakai.notificationsinbox = function(){
      * Displays only the message with that id.
      * @param {String} id The id of a message.
      */
-    var displayMessage = function(id){
-        
+    var displayMessage = function(id){        
         // get the specific message data...
         selectedMessage = getMessageWithId(id);
         if (typeof selectedMessage !== "undefined") {
@@ -848,11 +845,19 @@ sakai.notificationsinbox = function(){
         deleteChecked();        
     });
     
-    // Copy the checked messages on the drafts page.
-    $("#inbox-copy-button").click(function() {
-        //copyChecked("drafts");
-        alert("Clicked copy from drafts page.");
+    // Copy the checked messages on the drafts page to drafts.
+    $("#inbox-copy-button").click(function() {                
         copyChecked("drafts");       
+    });
+    
+    // Move all checked messages from queue to drafts.
+    $("#inbox-movetodrafts-button").click(function() {
+        moveChecked("drafts");
+    });
+    
+    // Copy all checked messages from queue to drafts.
+    $("#inbox-copytodrafts-button").click(function() {
+        copyChecked("drafts");
     });
     
     // Delete all checked messages on queue page.
@@ -867,15 +872,11 @@ sakai.notificationsinbox = function(){
     $("#inbox-movetodrafts-button").click(function() {
        moveChecked("drafts"); 
     });
-    
-    $("#inbox-movetodrafts-button").click(function() {
-        moveChecked("drafts");
-    });
-    
+         
      var moveMessagesFinished = function(pathToMessages, success, toWhere){        
         if (success) {
             // Repage the inbox.            
-            currentPage = currentPage + 1;
+            currentPage = currentPage - 1;
             showPage(currentPage);
             
             var txt = "";
@@ -935,11 +936,10 @@ sakai.notificationsinbox = function(){
         moveMessages(pathToMessages, toWhere);
     }
     
-    var copyMessagesFinished = function(pathToMessages, success, toWhere){ 
-        alert("Called copyMessagesFinished!");       
+    var copyMessagesFinished = function(pathToMessages, success, toWhere){              
         if (success) {
             // Repage the inbox.            
-            currentPage = currentPage + 1;
+            currentPage = currentPage - 1;
             showPage(currentPage);
             
             var txt = "";
@@ -957,8 +957,7 @@ sakai.notificationsinbox = function(){
         }
     };
     
-    var copyMessages = function(pathToMessages, toWhere){ 
-        alert("Called copyMessages!");               
+    var copyMessages = function(pathToMessages, toWhere){                      
         var toCopy = pathToMessages.length;
         var copied = 0;
                 
@@ -968,42 +967,58 @@ sakai.notificationsinbox = function(){
             var url = pathToMessages[d];
             var pieces = url.split("/");            
             var message = getMessageWithId(pieces[pieces.length-1]); 
-            var newMessage = [];           
-            alert("The message is: "+message["sakai:subject"]);                      
-            
-            // Now post that message to the appropriate messagebox we
-            // are copying it to.            
-            message["sakai:messagebox"] = toWhere; 
-            
-            newMessage["sakai:type"] = message["sakai:type"];
-            //alert(newMessage["sakai:type"]);             
-            newMessage["sakai:sendDate"] = message["sakai:sendDate"];
-            newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
+            var newMessage={};                                                              
+                        
+            // Common fields.
+            newMessage["sakai:type"] = message["sakai:type"];   
             newMessage["sakai:to"] = message["sakai:to"];
-            newMessage["sakai:subject"] = message["sakai:subject"];
+            newMessage["sakai:from"] = message["sakai:from"];   
+            newMessage["sakai:subject"] = "Copy of "+message["sakai:subject"];   
             newMessage["sakai:body"] = message["sakai:body"]; 
-            newMessage["sakai:from"] = message["sakai:from"];
-            newMessage["sakai:sendstate"] = message["sakai:sendstate"];
+            newMessage["sakai:sendstate"] = message["sakai:sendstate"];   
             newMessage["sakai:read"] = message["sakai:read"];
-            newMessage["sakai:messagebox"] = message["sakai:messagebox"]; 
-            newMessage["sakai:category"] = message["sakai:category"];    
+            newMessage["sakai:messagebox"] = toWhere;   
+            newMessage["sakai:sendDate"] = message["sakai:sendDate"]; 
+            newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
+            newMessage["sakai:category"] = message["sakai:category"];
+            
+            // Is it required (a reminder)?
+            if(newMessage["sakai:category"]=="reminder"){
+                // Is it a task?
+                if(message["sakai:dueDate"]!=null){
+                    newMessage["sakai:dueDate"] = message["sakai:dueDate"];
+                    newMessage["sakai:dueDate@TypeHint"] = message["sakai:dueDate@TypeHint"];   
+                    newMessage["sakai:taskState"] = message["sakai:taskState"];
+                }
+                // Or is it an event?
+                else{
+                    newMessage["sakai:eventDate"] = message["sakai:eventDate"];
+                    newMessage["sakai:eventDate@TypeHint"] = message["sakai:eventDate@TypeHint"];
+                    newMessage["sakai:eventPlace"] = message["sakai:eventPlace"];                   
+                }
+            }                                                         
             
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: newMessage,
-                success: function(){     
-                    alert("Success on move.");                                 
+                success: function(data){
+                    copied++;
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, true, toWhere);
+                    }                                                        
                 }, 
-                error: function(){
-                    alert("Failure on move.");                        
+                error: function(xhr, textStatus, thrownError){                    
+                    copied++;                    
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, false);
+                    }                        
                 }
             });
         }        
     }
     
-    var copyChecked = function(toWhere){
-        alert("copyChecked called!");
+    var copyChecked = function(toWhere){        
         // pathToMessages = an array of all checked messages    
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function(){
