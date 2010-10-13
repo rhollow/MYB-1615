@@ -290,17 +290,9 @@ sakai.listpage = function(){
     
     var formatList = function(list){
         var dateString = list["sakai:dateModified"] || "";
+        var d = sakai.api.Util.parseSakaiDate(dateString);
         
-        var d = new Date();
-        d.setFullYear(parseInt(dateString.substring(0, 4), 10));
-        d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
-        d.setDate(parseInt(dateString.substring(8, 10), 10));
-        d.setHours(parseInt(dateString.substring(11, 13), 10));
-        d.setMinutes(parseInt(dateString.substring(14, 16), 10));
-        d.setSeconds(parseInt(dateString.substring(17, 19), 10));
-        //format Jan 22, 2009 10:25 PM
         list.date = formatDate(d, "M j, Y g:i A");
-        
         list.name = list["sakai:name"];
         list.description = list["sakai:description"];
         
@@ -377,7 +369,9 @@ sakai.listpage = function(){
         // NOT SUPPORTED FOR POC
         // document.createListForm.list_size.value = list["sakai:size"];
         
-        $("#context").val(list.query.context);
+        // $("#context").val(list.query.context);
+        // HARD-CODING FOR POC
+        $("#context").val("ced");
         
         var majorArray = list.query.major;
         for(var i = 0, j = majorArray.length; i < j; i++) {
@@ -418,16 +412,23 @@ sakai.listpage = function(){
 
         getAllMessages();
     });
+
     
-    var deleteLists = function(listsArray) { // DEBUG: removing last dynamic list doesn't work
+    var deleteLists = function(listsArray) { // DEBUG
         var listId = listsArray;
         
         for (var i = 0, j = listId.length; i < j; i++) {
             var index = getIndexFromId(listId[i]);
             if(index >= 0) {
-                allLists.splice(index, 1);
                 $("#inbox_table_list_" + listId[i]).empty();
                 $("#inbox_table_list_" + listId[i]).remove();
+                
+                if (allLists.length == 1) {
+                    sakai.api.Server.removeJSON(userUrl, finishSaveAndLoad);
+                    return;
+                } else {
+                    allLists.splice(index, 1);
+                }
             } else {
                 alert("List not found");
             }
@@ -435,6 +436,14 @@ sakai.listpage = function(){
         
         submitData.lists = allLists;
         sakai.api.Server.saveJSON(userUrl, submitData, loadData);
+    };
+    
+    var listAlreadyExists = function(id){
+        if(getIndexFromId(id) < 0){
+            return false;
+        } else {
+            return true;
+        }
     };
     
     var finishSaveAndLoad = function() {
@@ -446,21 +455,20 @@ sakai.listpage = function(){
     var saveList = function(index) {
         var data = getDataFromInput();
         
-        // DEBUG: need to loop through major/standing array to concatenate values to id?
         var id = "dl-" + data.listName + data.desc + data.context + data.major + data.standing;
         
         if(index != null) { // we are editing an existing list
             allLists[index]["sakai:id"] = id;
             allLists[index]["sakai:name"] = data.listName;
             allLists[index]["sakai:description"] = data.desc;
-            allLists[index]["sakai:dateModified"] = "2010-09-13T13:33:36.927-07:00"; // DEBUG: HOW TO MAKE THIS?
+            allLists[index]["sakai:dateModified"] = new Date();
             allLists[index]["sakai:dateModified@TypeHint"] = "date";
             allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
             allLists[index].query.context = "[" + data.context + "]";
             allLists[index].query.standing = data.standing;
             allLists[index].query.major = data.major;
         } else { // we are creating a new list
-            if(id === "something") { // DEBUGGING: need to compare with existing lists
+            if(listAlreadyExists(id)) {
                 showGeneralMessage($("#inbox_generalmessages_already_exists").text());
                 return;
             }
@@ -469,7 +477,7 @@ sakai.listpage = function(){
                 "sakai:id": id,
                 "sakai:name": data.listName,
                 "sakai:description": data.desc,
-                "sakai:dateModified": "2010-09-13T13:33:36.927-07:00", // DEBUG: HOW TO MAKE THIS?
+                "sakai:dateModified": new Date(),
                 "sakai:dateModified@TypeHint": "date",
                 "sakai:modifiedBy": sakai.data.me.user.userid,
                 "query": {
@@ -514,35 +522,21 @@ sakai.listpage = function(){
         if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
         } else if (listId.length > 1) {
-            showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
+            showGeneralMessage($("#inbox_generalmessages_duplicate_multiple").text());
         } else {
             displayList(listId[0]);
         }
     });
     
-    $("#inbox_inbox_edit_button").live("click", function(){        
-        var listId = [];
-        $(".inbox_inbox_check_list:checked").each(function(){
-            var id = $(this).val();
-            listId.push(id);
-        });
-        
-        $(".inbox_inbox_check_list").attr("checked", "");
-        tickMessages();
-
-        if(listId.length < 1) {
-            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
-        } else if(listId.length > 1) {
-            showGeneralMessage($("#inbox_generalmessages_edit_multiple").text());
-        } else {
-            editExisting = true;
-            currList = listId[0];
-            displayList(listId[0]);   
-        }
+    $(".editLink").live("click", function(evt){   
+        editExisting = true;
+        var id = evt.target.id;
+        currList = id;
+        displayList(id);
     });
     
     $("#inbox_inbox_back_button").live("click", function(){
-        window.location = "http://localhost:8080/dev/inboxnotifier.html";
+        window.location = "/dev/inboxnotifier.html";
     });
     
     $("#inbox_inbox_cancel_button").live("click", function(){
@@ -607,7 +601,6 @@ sakai.listpage = function(){
         $("#inbox_inbox_save_button").hide();
         $("#inbox_inbox_delete_button").show();
         $("#inbox_inbox_duplicate_button").show();
-        $("#inbox_inbox_edit_button").show();
         $("#inbox_inbox_back_button").show();
     });
     
@@ -626,7 +619,6 @@ sakai.listpage = function(){
         // Show/hide appropriate buttons
         $("#inbox_inbox_delete_button").hide();
         $("#inbox_inbox_duplicate_button").hide();
-        $("#inbox_inbox_edit_button").hide();
         $("#inbox_inbox_back_button").hide();
         $("#inbox_inbox_cancel_button").show();
         $("#inbox_inbox_save_button").show();

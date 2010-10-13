@@ -228,7 +228,7 @@
 "BACK_TO_INBOX": "Back To Inbox",
 "SELECT_LIST": "Select List",
 "NO_LIST_WAS_SELECTED": "No list was selected",
-"YOU_CAN_ONLY_EDIT_ONE_LIST_AT_A_TIME": "You can only edit one list at a time",
+"YOU_CAN_ONLY_DUPLICATE_ONE_LIST_AT_A_TIME": "You can only duplicate one list at a time",
 "NO_LISTS_FOUND": "No lists found",
 "AN_EXACT_COPY_OF_THIS_LIST_ALREADY_EXISTS": "An exact copy of this list already exists",
 
