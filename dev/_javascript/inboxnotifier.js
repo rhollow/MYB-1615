@@ -414,16 +414,18 @@ sakai.notificationsinbox = function(){
      */
     var formatMessage = function(message){            
         var dateString = message["sakai:sendDate"];
-        var d = new Date();
-        d.setFullYear(parseInt(dateString.substring(0, 4), 10));
-        d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
-        d.setDate(parseInt(dateString.substring(8, 10), 10));
-        d.setHours(parseInt(dateString.substring(11, 13), 10));
-        d.setMinutes(parseInt(dateString.substring(14, 16), 10));
-        d.setSeconds(parseInt(dateString.substring(17, 19), 10));
-        //Jan 22, 2009 10:25 PM
-        message.date = formatDate(d, "M j, Y");
-              
+        console.log(typeof dateString);
+        if (typeof dateString === "string") {
+            var d = new Date();
+            d.setFullYear(parseInt(dateString.substring(0, 4), 10));
+            d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
+            d.setDate(parseInt(dateString.substring(8, 10), 10));
+            d.setHours(parseInt(dateString.substring(11, 13), 10));
+            d.setMinutes(parseInt(dateString.substring(14, 16), 10));
+            d.setSeconds(parseInt(dateString.substring(17, 19), 10));
+            //Jan 22, 2009 10:25 PM
+            message.date = formatDate(d, "M j, Y");
+        }
         if (message.previousMessage) {
             message.previousMessage = formatMessage(message.previousMessage);
         }
@@ -795,33 +797,45 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckAll).attr("checked", false);
     });
     
-    // Various filter functions.
-    $(inboxFilterDrafts).click(function(){       
-        filterMessages("drafts", "", "all", inboxFilterDrafts);
-        correctButtonList("drafts");   
-        correctHighlightedTab("drafts");     
+    var showFilteredList = function (filter, boxID) {
+        currentFilter = filter
+        filterMessages(filter, "all", boxID);
+        correctButtonList(filter);   
+        correctHighlightedTab(filter);     
         $(inboxInboxCheckAll).attr("checked", false);
+    };
+    
+    sakai.notificationsinbox.showDrafts = function () {
+        showFilteredList("drafts", inboxFilterDrafts);
+    };
+    
+    sakai.notificationsinbox.showQueue = function () {
+        showFilteredList("queue", inboxFilterQueue);
+    };
+
+    sakai.notificationsinbox.showArchive = function () {
+        showFilteredList("archive", inboxFilterArchive);
+    };
+
+    sakai.notificationsinbox.showTrash = function () {
+        showFilteredList("trash", inboxFilterTrash);
+    };
+
+    // Various filter functions.
+    $(inboxFilterDrafts).click(function(){
+        sakai.notificationsinbox.showDrafts();
     });
     
     $(inboxFilterQueue).click(function(){              
-        filterMessages("queue", "", "all", inboxFilterQueue);  
-        correctButtonList("queue");
-        correctHighlightedTab("queue");    
-        $(inboxInboxCheckAll).attr("checked", false);         
+        sakai.notificationsinbox.showQueue();        
     });
     
     $(inboxFilterArchive).click(function(){             
-        filterMessages("archive", "", "all", inboxFilterArchive);         
-        correctButtonList("archive");
-        correctHighlightedTab("archive");
-        $(inboxInboxCheckAll).attr("checked", false);
+        sakai.notificationsinbox.showArchive();
     });
     
     $(inboxFilterTrash).click(function(){        
-        filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
-        correctButtonList("trash");
-        correctHighlightedTab("trash");
-        $(inboxInboxCheckAll).attr("checked", false);
+        sakai.notificationsinbox.showTrash();
     });        
            
     // Check all messages.

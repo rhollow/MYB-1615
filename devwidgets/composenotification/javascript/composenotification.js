@@ -122,7 +122,7 @@ if (!sakai.composenotification){
          * @param {Boolean} firstEmpty start with an option element or not
          */
         
-        var createOptions = function (optionArray, selectedValue, firstEmpty) {            
+        var createOptions = function (optionArray, selectedValue, firstEmpty) {
             var $container = $("<select>");
             if (firstEmpty) {
                 $container.append($("<option>"));
@@ -130,7 +130,7 @@ if (!sakai.composenotification){
             for (var key in optionArray) {
                 var $optionObj = {};
                 $optionObj = $("<option>").val(key).text(optionArray[key]);
-                if (key === selectedValue) {                    
+                if (key === selectedValue) {
                     $optionObj.attr("selected", "selected");
                 }
                 $container.append($optionObj);
@@ -535,7 +535,6 @@ if (!sakai.composenotification){
         var dynamicListInit = function(){
             sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/dynamic_lists", function(success, data){
                 if (success) {
-                    console.log(data);
                     // Iterate through data.lists and make new array for createOptions. (id:name)
                     var dynamicListArray = [];
                                         
@@ -737,10 +736,12 @@ if (!sakai.composenotification){
             });
         };     
         
-        var saveData = function(box){                      
+        var saveData = function(box){ 
+            var sendDate = $(messageFieldSendDate).datepicker("getDate") || "";
+            var sendDate = sendDate.toString();
             var toPost = {
                 "sakai:type": "notice",
-                "sakai:sendDate": $(messageFieldSendDate).datepicker("getDate").toString(),
+                "sakai:sendDate": sendDate,
                 "sakai:sendDate@TypeHint": "Date",
                 "sakai:to": $(messageFieldTo).val(),                 
                 "sakai:from": sakai.data.me.user.userid,
@@ -789,13 +790,22 @@ if (!sakai.composenotification){
             return toPost;
         }
         
-        var postNotification = function(toPost){                                                                                                                           
+        var completeSaveToDrafts = function () {
+            resetView();
+            sakai.notificationsinbox.showDrafts();
+        }
+        
+        var postNotification = function(toPost, successCallback){                                                                                                                           
             // Post all the data in an Ajax call.    
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: toPost,
-                success: function(){                                      
+                success: function(){
+                    // If a callback function is specified in argument, call it
+                    if (typeof successCallback === "function") {
+                        successCallback(true);
+                    }
                 }, 
                 error: function(){
                     alert("Failure on posting notification!");                        
@@ -804,18 +814,13 @@ if (!sakai.composenotification){
         }
         
         // When someone clicks on the 'Save as Draft' button from base panel.
-        $("#cn-saveasdraft-button").live('click', function(){
-            if($(messageFieldSubject).val()!=""){
-                if($(messageFieldSendDate).val()!=""){
-                    postNotification(saveData("drafts")); 
-                    resetView();
-                }                
-                
-            }
-            else{
-                $(messageFieldSubject).addClass(invalidClass);
-            }
-        });                                                   
+		$("#cn-saveasdraft-button").live('click', function() {
+			if ($(messageFieldSubject).val() != "") {
+				postNotification(saveData("drafts"), completeSaveToDrafts);
+			} else {
+				$(messageFieldSubject).addClass(invalidClass);
+			}
+		});
     };              
 }
 
