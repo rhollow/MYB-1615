@@ -90,7 +90,9 @@ sakai.listpage = function(){
         
         result.listName = $("#list_name").val();
         result.desc = $("#description").val();
-        result.size = $("#list_size").val();
+        
+        // NOT SUPPORTED FOR POC
+        // result.size = $("#list_size").val();
         
         var index = document.createListForm.context.selectedIndex;
         var selectedContext = document.createListForm.context.options[index].value;
@@ -117,13 +119,14 @@ sakai.listpage = function(){
         return result;
     }
     
+    // NOT SUPPORTED FOR POC
     /**
      * Updates the input field that displays the current size of the list being created
      */
     sakai.listpage.updateListSize = function(){
         var data = getDataFromInput();
-
-        // DEBUGGING:
+        
+        // STILL NEEDS TO BE IMPLEMENTED
         // var size = query(selectedContext, selectedMajor, selectedStanding);
         // document.createListForm.list_size.value = size;
     }
@@ -133,7 +136,9 @@ sakai.listpage = function(){
      */
     var clearInputFields = function() {
         document.getElementById("createListForm").reset();
-        sakai.listpage.updateListSize();
+        
+        // NOT SUPPORTED FOR POC
+        // sakai.listpage.updateListSize();
     };
     
     // TODO: Document properties.
@@ -368,7 +373,10 @@ sakai.listpage = function(){
         var list = getListWithId(id);
         document.createListForm.list_name.value = list["sakai:name"];
         document.createListForm.description.value = list["sakai:description"];
-        document.createListForm.list_size.value = list["sakai:size"];
+        
+        // NOT SUPPORTED FOR POC
+        // document.createListForm.list_size.value = list["sakai:size"];
+        
         $("#context").val(list.query.context);
         
         var majorArray = list.query.major;
@@ -379,7 +387,7 @@ sakai.listpage = function(){
         
         var standingArray = list.query.standing;
         if(standingArray.length != 1) {
-             $("#standing").val("all");
+            $("#standing").val("all");
         } else {
             $("#standing").val(standingArray[0]);
         }
@@ -426,8 +434,7 @@ sakai.listpage = function(){
         }
         
         submitData.lists = allLists;
-        sakai.api.Server.saveJSON(userUrl, submitData);
-        // loadData(); // DEBUG: doesn't seem to work - need to refresh page first?
+        sakai.api.Server.saveJSON(userUrl, submitData, loadData);
     };
     
     var saveList = function(index) {
@@ -469,8 +476,7 @@ sakai.listpage = function(){
         }
         
         submitData.lists = allLists;
-        sakai.api.Server.saveJSON(userUrl, submitData);
-        loadData(); // DEBUG: doesn't seem to work - need to refresh page first?
+        sakai.api.Server.saveJSON(userUrl, submitData, loadData);
         clearInputFields();
         $.bbq.pushState({"tab": "existing"},2);
     };
@@ -486,19 +492,9 @@ sakai.listpage = function(){
         if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
         } else {
-            // $("#delete_check_dialog").jqmShow(); // DEBUG: not working
             deleteLists(listId);
         }
     });
-    
-    $("#delete_check_dialog").css("position", "absolute");
-    $("#delete_check_dialog").css("top", "250px");
-    
-    $("#dlc-delete").click(function(){
-        $("#delete_check_dialog").jqmHide();
-        deleteLists();
-    });
-    
     
     $("#inbox_inbox_duplicate_button").live("click", function(){
         var listId = [];
@@ -556,10 +552,11 @@ sakai.listpage = function(){
         $("#invalid_size").hide();
         var listName = $("#list_name").val();
         var desc = $("#description").val();
-        //var size = $("#list_size").val(); // DEBUG
-        var size = 5;
         
-        if(listName.trim() && desc.trim() && size != 0) {
+        // NOT SUPPORTED FOR POC
+        // var size = $("#list_size").val();
+        
+        if(listName.trim() && desc.trim()) {
             if(editExisting) {
                 saveList(getIndexFromId(currList));
             } else {
@@ -572,16 +569,23 @@ sakai.listpage = function(){
             if(!desc.trim()) {
                 $("#invalid_desc").show();
             }
+            
+            // NOT SUPPORTED FOR POC
+            /*
             if(size == 0) {
                 $("#invalid_size").show();
             }
+            */
         }
     });
     
+    // NOT SUPPORTED FOR POC
     // On selecting checkbox events
+    /*
     $(".major_checkbox").click(function() {
         sakai.listpage.updateListSize();
     });
+    */
     
     // Tab click events
     $("#existing_link").click(function() {
@@ -604,7 +608,9 @@ sakai.listpage = function(){
     
     $("#create_new_link").click(function() {
         $.bbq.pushState({"tab": "new"},2);
-        sakai.listpage.updateListSize();
+        
+        // NOT SUPPORTED FOR POC
+        // sakai.listpage.updateListSize();
         
         // Set headers and tab styling
         $("#inbox_existing").hide();
