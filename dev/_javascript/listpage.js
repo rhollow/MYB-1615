@@ -88,19 +88,19 @@ sakai.listpage = function(){
     var getDataFromInput = function() {
         var result = {};
         
-        result.listName = $("#list_name").val();
-        result.desc = $("#description").val();
+        result.listName = $("#list_name").val().trim();
+        result.desc = $("#description").val().trim();
         
         // NOT SUPPORTED FOR POC
         // result.size = $("#list_size").val();
         
         var index = document.createListForm.context.selectedIndex;
         var selectedContext = document.createListForm.context.options[index].value;
-        result.context = selectedContext;
+        result.context = selectedContext.trim();
         
         var selectedMajors = [];
         $(".major_checkbox:checked").each(function() {
-            var major = $(this).val();
+            var major = $(this).val().trim();
             selectedMajors.push(major);
         });
         result.major = selectedMajors;
@@ -288,15 +288,10 @@ sakai.listpage = function(){
         return returnStr;
     };
     
-    var formatList = function(list){
-        var dateString = list["sakai:dateModified"] || "";
+    sakai.listpage.getDate = function(dateString){
         var d = sakai.api.Util.parseSakaiDate(dateString);
-        
-        list.date = formatDate(d, "M j, Y g:i A");
-        list.name = list["sakai:name"];
-        list.description = list["sakai:description"];
-        
-        return list;
+        d = formatDate(d, "M j, Y g:i A");
+        return d;
     }
     
     /**
@@ -308,9 +303,6 @@ sakai.listpage = function(){
     };
     
     var renderLists = function(response){
-        for (var j = 0, l = response.lists.length; j < l; j++) {
-            response.lists[j] = formatList(response.lists[j]);
-        }
         allLists = response.lists || [];
         
         var data = {
@@ -452,10 +444,27 @@ sakai.listpage = function(){
         loadData();
     };
     
+    var getIdFromData = function(data) {
+        var id = "dl-" + data.listName + data.desc + data.context;
+        var majorArray = data.major;
+        var standingArray = data.standing;
+        
+        for(var i = 0, j = majorArray.length; i < j; i++) {
+            id += majorArray[i];
+        }
+         
+        for(var i = 0, j = standingArray.length; i < j; i++) {
+            id += standingArray[i];
+        } 
+        
+        id = id.replace(/ /gi, "");
+        
+        return id;
+    }
+    
     var saveList = function(index) {
         var data = getDataFromInput();
-        
-        var id = "dl-" + data.listName + data.desc + data.context + data.major + data.standing;
+        var id = getIdFromData(data);
         
         if(index != null) { // we are editing an existing list
             allLists[index]["sakai:id"] = id;
@@ -464,7 +473,7 @@ sakai.listpage = function(){
             allLists[index]["sakai:dateModified"] = new Date();
             allLists[index]["sakai:dateModified@TypeHint"] = "date";
             allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
-            allLists[index].query.context = "[" + data.context + "]";
+            allLists[index].query.context = [data.context];
             allLists[index].query.standing = data.standing;
             allLists[index].query.major = data.major;
         } else { // we are creating a new list
@@ -481,7 +490,7 @@ sakai.listpage = function(){
                 "sakai:dateModified@TypeHint": "date",
                 "sakai:modifiedBy": sakai.data.me.user.userid,
                 "query": {
-                    "context": [" " + data.selectedContext + " "],
+                    "context": [" " + data.context + " "],
                     "standing": data.standing,
                     "major": data.major
                 }
@@ -491,7 +500,6 @@ sakai.listpage = function(){
         
         submitData.lists = allLists;
         sakai.api.Server.saveJSON(userUrl, submitData, finishSaveAndLoad);
-        
     };
     
     // Button click events
