@@ -548,13 +548,8 @@ sakai.inbox = function() {
         } else if(reminder["sakai:eventDate"] != null) {
             dateString = reminder["sakai:eventDate"];
         }
-        var d = new Date();
-        d.setFullYear(parseInt(dateString.substring(0, 4), 10));
-        d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
-        d.setDate(parseInt(dateString.substring(8, 10), 10));
-        d.setHours(parseInt(dateString.substring(11, 13), 10));
-        d.setMinutes(parseInt(dateString.substring(14, 16), 10));
-        d.setSeconds(parseInt(dateString.substring(17, 19), 10));
+        
+        var d = sakai.api.Util.parseSakaiDate(dateString);
         //format Jan 22, 2009 10:25 PM
         reminder.date = formatDate(d, "M j, Y g:i A");
         
@@ -569,13 +564,7 @@ sakai.inbox = function() {
     var formatMessage = function(message) {
 
         var dateString = message["sakai:created"];
-        var d = new Date();
-        d.setFullYear(parseInt(dateString.substring(0,4),10));
-        d.setMonth(parseInt(dateString.substring(5,7),10) - 1);
-        d.setDate(parseInt(dateString.substring(8,10),10));
-        d.setHours(parseInt(dateString.substring(11,13),10));
-        d.setMinutes(parseInt(dateString.substring(14,16),10));
-        d.setSeconds(parseInt(dateString.substring(17,19),10));
+        var d = sakai.api.Util.parseSakaiDate(dateString);
         //Jan 22, 2009 10:25 PM
         message.date = formatDate(d, "M j, Y g:i A"); // myBerkeley: changed time format G -> g so not military time
 
