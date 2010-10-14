@@ -71,30 +71,13 @@
 
             <!-- MAIN PAGE -->
             <div class="fl-fix fl-col-mixed main_container">
-
-                <!-- Main -->
-                <div class="col-main">
                         
-                    <!-- Tabs -->
+                    <!-- TABS -->
                     <div id="tabs">
                         <ul id="tab_list">
-                            <li id="existing_lists_tab" class="tab leftmost_tab selected_tab"><a id="existing_link" href="#existing_lists"><span>Existing</span></a></li>
-                            <li id="new_list_tab" class="tab"><a id="create_new_link" href="#create_new_list"><span>New</span></a></li>
+                            <li id="new_list_tab" class="tab rightmost_tab"><a id="create_new_link" href="#create_new_list"><span>New</span></a></li>
+                            <li id="existing_lists_tab" class="tab selected_tab"><a id="existing_link" href="#existing_lists"><span>Existing</span></a></li>
                         </ul>
-                        
-                        <!-- MAIN INBOX -->
-                        <div id="inbox_pane_inbox" class="inbox_pane">
-                            <form name="my-inbox" action="" method="post">
- 
-                                <!-- Buttons -->
-                                <div class="top_button_bar">
-    
-                                    <!-- General msg -->
-                                    <span class="light-button">
-                                        <a href="javascript:;" id="inbox_general_message" style="display:none;">__MSG__THE_CONVERSATION_HAS_BEEN_MARKED_AS_READ__.</a>
-                                    </span>
-    
-                                </div>
     
                                 <!-- Header -->
                                 <div class="top_decor">
@@ -103,7 +86,7 @@
                                 </div>
                                 
                                 <!-- Inbox -->  
-                                <div id="existing_lists">              
+                                <div id="existing_lists" class="inbox_pane">              
                                     <div class="main_content_container">
                                         <table class="inbox-table" id="inbox_table" summary="Your existing lists.">
                                             <tr class="different">
@@ -111,7 +94,8 @@
                                                 <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
                                                 <th class="inbox_inbox_table_header_sort" id="inbox_table_header_name"><span>__MSG__NAME__</span></th>
                                                 <th class="inbox_inbox_table_header_sort" id="inbox_table_header_description"><span>__MSG__DESCRIPTION__</span></th>
-                                                <th class="inbox_inbox_table_header_sort" id="inbox_table_header_size"><span>__MSG__CURRENT_LIST_SIZE__</span></th>
+                                                <!-- NOT SUPPORTED IN POC -->
+                                                <!-- <th class="inbox_inbox_table_header_sort" id="inbox_table_header_size"><span>__MSG__CURRENT_LIST_SIZE__</span></th> -->
                                             </tr>
                                         </table>
                                     </div>
@@ -133,7 +117,6 @@
                                             <td>$(m.date}</td>
                                             <td>${m.name}</td>
                                             <td>${m.description}</td>
-                                            <td>${listSize}</td>
                                         </tr>
                                     
                                     {forelse}
@@ -149,10 +132,7 @@
                                         </tr>
                                     --></div>
                                     
-                                    <div id="inbox_results"></div>
                                 </div>
-                            </form>
-                        </div>
                         
                         <!-- VIEW A SPECIFIC LIST -->
                         <div id="create_new_list" class="inbox_pane">
@@ -168,7 +148,7 @@
                                     </div>
                                     <div class="input_item">
                                         <label>Context:</label>
-                                        <select name="context" id="context" onchange="sakai.listpage.updateListSize()">
+                                        <select name="context" id="context" onchange="sakai.listpage.updateListSize()" disabled="disabled">
                                             <option value="g-ced-students">CED</option>
                                         </select>
                                     </div>
@@ -191,11 +171,15 @@
                                             <option value="all">All</option>
                                         </select>
                                     </div>
+                                    
+                                    <!-- NOT SUPPORTED FOR POC -->
+                                    <!--
                                     <div class="input_item" style="float: right;">
                                         <span id="invalid_size" class="invalid_span" style="display:none;">Empty list</span>
                                         <label>Current list size (students):</label>
                                         <input type="text" id="list_size" size="5" disabled="disabled" />
                                     </div>
+                                    -->
                                 </form>
                             </div>
                             
@@ -237,7 +221,6 @@
                         <button type="button" id="inbox_inbox_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
                         <button type="button" id="inbox_inbox_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
                     </div>
-                </div>
             </div>
         </div>
 

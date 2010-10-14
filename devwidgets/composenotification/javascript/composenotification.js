@@ -113,11 +113,11 @@ if (!sakai.composenotification){
           'group1id' : 'Group 1',
           'group2id' : 'Group 2',
           'group3id' : 'Group 3'  
-        };
+        };                
         
          /**
-         * returns a jQuery object containing a set of option elements 
-         * @param {Object} optionArray, name: value pairs of option elements
+         * Returns a jQuery object containing a set of option elements 
+         * @param {Object} optionArray, name:value pairs of option elements
          * @param {String} selectedValue the key of the selected option element
          * @param {Boolean} firstEmpty start with an option element or not
          */
@@ -305,7 +305,9 @@ if (!sakai.composenotification){
          // Event handler for when you click on the "Don't Save" button on DLC dialog.
          $("#dlc-dontsave").live('click', function() {
              // Just redirect to CDNL page. (set to berkeley main page for now)
-            //window.location = "http://www.berkeley.edu/"
+             <!--
+            window.location = "/dev/listpage.html"
+            //--> 
          });
          
          // If 'Yes' is checked for required, then automatically check that it has a date.
@@ -551,12 +553,21 @@ if (!sakai.composenotification){
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
         var dynamicListInit = function(){
-            var optionsObj = createOptions(allDynamicListOptions, null, true);
-            
-            // clear any old values and then append the new dynamic list options          
-            $(messageFieldTo).empty().append(optionsObj);
-            
-        };
+            sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/dynamic_lists", function(success, data){
+                if (success) {
+                    // loop through data.lists and make new array for createOptions (id:name)
+                    var dynamicListArray = [];
+                    for (var i = 0; i < data.lists.length; i++) {
+                        dynamicListArray[data.lists["sakai:id"]] = data.lists["sakai:name"];
+                    }
+                    // then call createoptions (key:value array)
+                    var optionsObj = createOptions(dynamicListArray, null, true);
+                }
+                
+                // clear any old values and then append the new dynamic list options          
+                $(messageFieldTo).empty().append(optionsObj);
+            });
+        }
         
         var hideAllButtonLists = function(){            
             $(".notifdetail-buttons").hide();
@@ -744,11 +755,14 @@ if (!sakai.composenotification){
                 }
             });
         };     
-        
+
         var saveData = function(box, isValidated){
+            var sendDate = $(messageFieldSendDate).datepicker("getDate") || "";
+            var sendDate = sendDate.toString();
+
             var toPost = {
                 "sakai:type": "notice",
-                "sakai:sendDate": $(messageFieldSendDate).datepicker("getDate").toString(),
+                "sakai:sendDate": sendDate,
                 "sakai:sendDate@TypeHint": "Date",
                 "sakai:to": $(messageFieldTo).val(),                 
                 "sakai:from": sakai.data.me.user.userid,
@@ -798,13 +812,27 @@ if (!sakai.composenotification){
             return toPost;
         }
         
-        var postNotification = function(toPost){                                                                                                                           
+        var completeSaveToDrafts = function () {
+            resetView();
+            sakai.notificationsinbox.showDrafts();
+        }
+        
+		var completeSaveToQueue = function () {
+            resetView();
+            sakai.notificationsinbox.showQueue();
+        }
+		
+        var postNotification = function(toPost, successCallback){                                                                                                                           
             // Post all the data in an Ajax call.    
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: toPost,
-                success: function(){                                      
+                success: function(){
+                    // If a callback function is specified in argument, call it
+                    if (typeof successCallback === "function") {
+                        successCallback(true);
+                    }
                 }, 
                 error: function(){
                     alert("Failure on posting notification!");                        
@@ -812,19 +840,22 @@ if (!sakai.composenotification){
             });
         }
         
+		 // Queueing this draft...                
+        $("#cn-queue-button").live('click', function() {                                                         
+            if(true || checkFieldsForErrors(true)){                                                                                                                                                 
+                //updateNotification(saveData("queue", true), message);
+				postNotification(saveData("queue", true), completeSaveToQueue);
+            }                                                  
+        });     
+		
         // When someone clicks on the 'Save as Draft' button from base panel.
-        $("#cn-saveasdraft-button").live('click', function(){
-            if($(messageFieldSubject).val()!=""){
-                if($(messageFieldSendDate).val()!=""){
-                    postNotification(saveData("drafts", checkFieldsForErrors(false))); 
-                    resetView();
-                }                
-                
-            }
-            else{
-                $(messageFieldSubject).addClass(invalidClass);
-            }
-        });                                                   
+		$("#cn-saveasdraft-button").live('click', function() {
+			if ($(messageFieldSubject).val() != "") {
+				postNotification(saveData("drafts", checkFieldsForErrors(false)), completeSaveToDrafts);
+			} else {
+				$(messageFieldSubject).addClass(invalidClass);
+			}
+		});
     };              
 }
 

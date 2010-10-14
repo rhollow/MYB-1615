@@ -414,16 +414,18 @@ sakai.notificationsinbox = function(){
      */
     var formatMessage = function(message){            
         var dateString = message["sakai:sendDate"];
-        var d = new Date();
-        d.setFullYear(parseInt(dateString.substring(0, 4), 10));
-        d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
-        d.setDate(parseInt(dateString.substring(8, 10), 10));
-        d.setHours(parseInt(dateString.substring(11, 13), 10));
-        d.setMinutes(parseInt(dateString.substring(14, 16), 10));
-        d.setSeconds(parseInt(dateString.substring(17, 19), 10));
-        //Jan 22, 2009 10:25 PM
-        message.date = formatDate(d, "M j, Y");
-              
+        console.log(typeof dateString);
+        if (typeof dateString === "string") {
+            var d = new Date();
+            d.setFullYear(parseInt(dateString.substring(0, 4), 10));
+            d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
+            d.setDate(parseInt(dateString.substring(8, 10), 10));
+            d.setHours(parseInt(dateString.substring(11, 13), 10));
+            d.setMinutes(parseInt(dateString.substring(14, 16), 10));
+            d.setSeconds(parseInt(dateString.substring(17, 19), 10));
+            //Jan 22, 2009 10:25 PM
+            message.date = formatDate(d, "M j, Y");
+        }
         if (message.previousMessage) {
             message.previousMessage = formatMessage(message.previousMessage);
         }
@@ -733,7 +735,25 @@ sakai.notificationsinbox = function(){
         }
     };
     
-    /**
+    var isGoToPreviousPage = function(totalMessages, numberOfMessagesToRemove) {
+
+		var messageCountAfterDeletion = (totalMessages - numberOfMessagesToRemove >= 0) ? totalMessages - numberOfMessagesToRemove : 0; 
+		var pageCountBeforeDeletion = Math.ceil(totalMessages / messagesPerPage);
+		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
+		var isLastPage = (currentPage == pageCountBeforeDeletion);
+		
+		// Setting a flag for deleteMessagesFinished moveMessagesFinished functions
+		// The function needs to know whether to reload the same page or the previous page
+		if (pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage) {
+			//It is safe to use the same current page
+			return false;
+		} 
+		
+		//The last page was deleted, we need to go back one page
+		return true;		
+	}
+	
+	/**
      * Delete all checked messages on current page.
      */
     var deleteChecked = function(){   
@@ -744,20 +764,7 @@ sakai.notificationsinbox = function(){
             pathToMessages.push(pathToMessage);
         });
 		
-		var messageCountAfterDeletion = (messagesForTypeCat - pathToMessages.length >= 0) ? messagesForTypeCat - pathToMessages.length : 0; 
-		var pageCountBeforeDeletion = Math.ceil(messagesForTypeCat / messagesPerPage);
-		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
-		var isLastPage = (currentPage == pageCountBeforeDeletion);
-		
-		// Setting a flag for deleteMessagesFinished function
-		// The function needs to know whether to reload the same page or the previous page
-		if (pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage) {
-			//It is safe to use the same current page
-			goToPreviousPageAfterDeletion = false;
-		} else {
-			//The last page was deleted, we need to go back one page
-			goToPreviousPageAfterDeletion = true;
-		} 
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);   
 
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
@@ -795,33 +802,45 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckAll).attr("checked", false);
     });
     
-    // Various filter functions.
-    $(inboxFilterDrafts).click(function(){       
-        filterMessages("drafts", "", "all", inboxFilterDrafts);
-        correctButtonList("drafts");   
-        correctHighlightedTab("drafts");     
+    var showFilteredList = function (filter, boxID) {
+        currentFilter = filter
+        filterMessages(filter, "all", boxID);
+        correctButtonList(filter);   
+        correctHighlightedTab(filter);     
         $(inboxInboxCheckAll).attr("checked", false);
+    };
+    
+    sakai.notificationsinbox.showDrafts = function () {
+        showFilteredList("drafts", inboxFilterDrafts);
+    };
+    
+    sakai.notificationsinbox.showQueue = function () {
+        showFilteredList("queue", inboxFilterQueue);
+    };
+
+    sakai.notificationsinbox.showArchive = function () {
+        showFilteredList("archive", inboxFilterArchive);
+    };
+
+    sakai.notificationsinbox.showTrash = function () {
+        showFilteredList("trash", inboxFilterTrash);
+    };
+
+    // Various filter functions.
+    $(inboxFilterDrafts).click(function(){
+        sakai.notificationsinbox.showDrafts();
     });
     
     $(inboxFilterQueue).click(function(){              
-        filterMessages("queue", "", "all", inboxFilterQueue);  
-        correctButtonList("queue");
-        correctHighlightedTab("queue");    
-        $(inboxInboxCheckAll).attr("checked", false);         
+        sakai.notificationsinbox.showQueue();        
     });
     
     $(inboxFilterArchive).click(function(){             
-        filterMessages("archive", "", "all", inboxFilterArchive);         
-        correctButtonList("archive");
-        correctHighlightedTab("archive");
-        $(inboxInboxCheckAll).attr("checked", false);
+        sakai.notificationsinbox.showArchive();
     });
     
     $(inboxFilterTrash).click(function(){        
-        filterMessages(sakai.config.Messages.Types.trash, "", "all", inboxFilterTrash);
-        correctButtonList("trash");
-        correctHighlightedTab("trash");
-        $(inboxInboxCheckAll).attr("checked", false);
+        sakai.notificationsinbox.showTrash();
     });        
            
     // Check all messages.
@@ -846,15 +865,10 @@ sakai.notificationsinbox = function(){
         //alert("Move to queue");  
 		//moveChecked("queue");  
 		
-		var pathToMessages = [];
-        $(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-			console.log(this);
-            pathToMessages.push(pathToMessage);
-        });
-        
-        // Reset 'Check All' checkbox just in case it's clicked.
-        $(inboxInboxCheckAll).attr("checked", false);    
+		
+		
+		moveSelectedDraftsToQueue();
+    
     });
     
     // Delete all checked messages on queue page.
@@ -877,7 +891,12 @@ sakai.notificationsinbox = function(){
      var moveMessagesFinished = function(pathToMessages, success, toWhere){        
         if (success) {
             // Repage the inbox.            
-            currentPage = currentPage + 1;
+            // Repage the inbox.
+            
+			if (goToPreviousPageAfterDeletion) {
+				currentPage = currentPage - 1;
+			} // else using the same page 
+            
             showPage(currentPage);
             
             var txt = "";
@@ -930,10 +949,12 @@ sakai.notificationsinbox = function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
-        
+
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);             
+
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
-                
+
         moveMessages(pathToMessages, toWhere);
     }
     
@@ -970,27 +991,94 @@ sakai.notificationsinbox = function(){
             var url = pathToMessages[d];
             var pieces = url.split("/");            
             var message = getMessageWithId(pieces[pieces.length-1]);
+            alert("The message is "+message["sakai:subject"]);
             
             // Now post that message to the appropriate messagebox we
             // are copying it to.
+            alert("The message was in "+message["sakai:messagebox"]);
             message["sakai:messagebox"] = toWhere;
+            alert("but we moved it to "+message["sakai:messagebox"]);
             
             $.ajax({
                 url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: message,
-                success: function(data){
-                    copied++;
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, true, toWhere);
-                    }
-                },
-                error: function(xhr, textStatus, thrownError){
-                    copied++;
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, false);
-                    }
-                },                
+                success: function(){     
+                    alert("Success on move.");                                 
+                }, 
+                error: function(){
+                    alert("Failure on move.");                        
+                }
+            });
+        }        
+    }
+	
+	var moveSelectedDraftsToQueue = function(){ 
+        
+		alert("Called moveMessagesToQueue!");               
+        var toWhere="queue";
+		var pathToMessages = [];
+        
+		// Here we store number of skipped not validated messages
+		var numberOfSkippedMessages = 0;
+		
+		$(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+			//console.log(this);
+            
+            //var pieces = pathToMessage.split("/");            
+            //var message = getMessageWithId(pieces[pieces.length-1]);
+			
+			// Flag 'validated' is stored in 'alt' attribute
+			if (this.alt === "true") {//message["sakai:validated"]){
+				pathToMessages.push(pathToMessage);	
+			} else {
+				numberOfSkippedMessages++;
+			}						
+			
+        });
+		   
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
+				    
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);    
+						        
+		moveMessages(pathToMessages, "queue");
+		
+		if (numberOfSkippedMessages != 0) {
+			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);//$(inboxGeneralMessagesQueuedFailed).text()
+		}        
+    }
+	
+	var copyMessages = function(pathToMessages, toWhere){ 
+        alert("Called copyMessages!");               
+        var toCopy = pathToMessages.length;
+        var copied = 0;
+                
+        for (var d = 0, e = pathToMessages.length; d < e; d++) {
+            // For all the messages, extract the message id from the jcr path url
+            // and then use that to find the appropriate message.
+            var url = pathToMessages[d];
+            var pieces = url.split("/");            
+            var message = getMessageWithId(pieces[pieces.length-1]);
+            alert("The message is "+message["sakai:subject"]);
+            
+            // Now post that message to the appropriate messagebox we
+            // are copying it to.
+            alert("The message was in "+message["sakai:messagebox"]);
+            message["sakai:messagebox"] = toWhere;
+            alert("but we moved it to "+message["sakai:messagebox"]);
+            
+            $.ajax({
+                url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
+                type: "POST",
+                data: message,
+                success: function(){     
+                    alert("Success on move.");                                 
+                }, 
+                error: function(){
+                    alert("Failure on move.");                        
+                }
             });
         }        
     }
