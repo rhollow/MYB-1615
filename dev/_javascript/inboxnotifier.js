@@ -846,17 +846,17 @@ sakai.notificationsinbox = function(){
     });
     
     // Copy the checked messages on the drafts page to drafts.
-    $("#inbox-copy-button").click(function() {                
+    $("#inbox-draftscopy-button").click(function() {                
         copyChecked("drafts");       
     });
     
     // Move all checked messages from queue to drafts.
-    $("#inbox-movetodrafts-button").click(function() {
+    $("#inbox-queuetodrafts-button").click(function() {
         moveChecked("drafts");
     });
     
     // Copy all checked messages from queue to drafts.
-    $("#inbox-copytodrafts-button").click(function() {
+    $("#inbox-queuecopytodrafts-button").click(function() {
         copyChecked("drafts");
     });
     
@@ -865,15 +865,22 @@ sakai.notificationsinbox = function(){
         deleteChecked();            
     });  
     
+    // Copy all checked messages from archive to drafts.
+    $("#inbox-archivetodrafts-button").click(function(){
+        copyChecked("drafts");
+    });
+    
+    // Move all checked messages from trash to drafts.
+    $("#inbox-trashtodrafts-button").click(function(){
+        moveChecked("drafts");
+    });
+    
+    // Empty the trash. (currently acts only on checked messages)
     $("#inbox-emptytrash-button").click(function(){
         deleteChecked();
-    });              
-    
-    $("#inbox-movetodrafts-button").click(function() {
-       moveChecked("drafts"); 
-    });
+    });                    
          
-     var moveMessagesFinished = function(pathToMessages, success, toWhere){        
+     var moveMessagesFinished = function(pathToMessages, success, toWhere){            
         if (success) {
             // Repage the inbox.            
             currentPage = currentPage - 1;
@@ -894,19 +901,19 @@ sakai.notificationsinbox = function(){
         }
     };
     
-    var moveMessages = function(pathToMessages, toWhere){        
+    var moveMessages = function(pathToMessages, toWhere){               
         var toMove = pathToMessages.length;
         var moved = 0;
         
-        for (var d = 0, e = pathToMessages.length; d < e; d++) {
+        for (var d = 0, e = pathToMessages.length; d < e; d++) {            
             $.ajax({
                 url: pathToMessages[d],
                 type: "POST",
-                success: function(data){
-                    moved++;
-                    if (moved === toMove) {
+                success: function(data){                    
+                    moved++;                                       
+                    if (moved === toMove) {                        
                         moveMessagesFinished(pathToMessages, true, toWhere);
-                    }
+                    }                                                        
                 },
                 error: function(xhr, textStatus, thrownError){
                     moved++;
@@ -922,7 +929,7 @@ sakai.notificationsinbox = function(){
         }        
     }         
     
-    var moveChecked = function(toWhere){        
+    var moveChecked = function(toWhere){                 
         // pathToMessages = an array of all checked messages    
         var pathToMessages = [];
         $(inboxInboxCheckMessage + ":checked").each(function(){
@@ -939,7 +946,7 @@ sakai.notificationsinbox = function(){
     var copyMessagesFinished = function(pathToMessages, success, toWhere){              
         if (success) {
             // Repage the inbox.            
-            currentPage = currentPage - 1;
+            //currentPage = currentPage - 1;
             showPage(currentPage);
             
             var txt = "";
