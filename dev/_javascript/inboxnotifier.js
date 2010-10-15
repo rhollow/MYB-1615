@@ -856,14 +856,8 @@ sakai.notificationsinbox = function(){
     });
 	
 	// Move the checked messages to queue.
-    $("#inbox-movetoqueue-button").click(function(){               
-        //alert("Move to queue");  
-		//moveChecked("queue");  
-		
-		
-		
-		moveSelectedDraftsToQueue();
-    
+    $("#inbox-movetoqueue-button").click(function(){                       
+		moveSelectedDraftsToQueue();    
     });
     
     // Move all checked messages from queue to drafts.
@@ -1048,9 +1042,7 @@ sakai.notificationsinbox = function(){
         }        
     }
 	
-	var moveSelectedDraftsToQueue = function(){ 
-        
-		alert("Called moveMessagesToQueue!");               
+	var moveSelectedDraftsToQueue = function(){                      
         var toWhere="queue";
 		var pathToMessages = [];
         
@@ -1059,11 +1051,7 @@ sakai.notificationsinbox = function(){
 		
 		$(inboxInboxCheckMessage + ":checked").each(function(){
             var pathToMessage = $(this).val();
-			//console.log(this);
-            
-            //var pieces = pathToMessage.split("/");            
-            //var message = getMessageWithId(pieces[pieces.length-1]);
-			
+            			
 			// Flag 'validated' is stored in 'alt' attribute
 			if (this.alt === "true") {//message["sakai:validated"]){
 				pathToMessages.push(pathToMessage);	
@@ -1083,40 +1071,7 @@ sakai.notificationsinbox = function(){
 		if (numberOfSkippedMessages != 0) {
 			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);//$(inboxGeneralMessagesQueuedFailed).text()
 		}        
-    }
-	
-	var copyMessages = function(pathToMessages, toWhere){ 
-        alert("Called copyMessages!");               
-        var toCopy = pathToMessages.length;
-        var copied = 0;
-                
-        for (var d = 0, e = pathToMessages.length; d < e; d++) {
-            // For all the messages, extract the message id from the jcr path url
-            // and then use that to find the appropriate message.
-            var url = pathToMessages[d];
-            var pieces = url.split("/");            
-            var message = getMessageWithId(pieces[pieces.length-1]);
-            alert("The message is "+message["sakai:subject"]);
-            
-            // Now post that message to the appropriate messagebox we
-            // are copying it to.
-            alert("The message was in "+message["sakai:messagebox"]);
-            message["sakai:messagebox"] = toWhere;
-            alert("but we moved it to "+message["sakai:messagebox"]);
-            
-            $.ajax({
-                url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
-                type: "POST",
-                data: message,
-                success: function(){     
-                    alert("Success on move.");                                 
-                }, 
-                error: function(){
-                    alert("Failure on move.");                        
-                }
-            });
-        }        
-    }
+    }	
     
     var copyChecked = function(toWhere){        
         // pathToMessages = an array of all checked messages    
