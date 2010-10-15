@@ -28,7 +28,7 @@
 
 /* myBerkeley: fixed width to 911 */
 .inbox_main .inbox-table
-{ width: 911px; margin: 0; table-layout: fixed;}
+{ width: 893px; margin: 0; table-layout: fixed;}
 
 /** Buttons **/
 .inbox_main .top_button_bar
@@ -54,10 +54,10 @@
 { width:20%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_name
-{ width:30%; border-left: 1px solid #D4DADE; color: #666666; } /* width should be 26% once we add size field */
+{ width:34%; border-left: 1px solid #D4DADE; color: #666666; } /* width should be 26% once we add size field */
 
 .inbox_main .inbox-table #inbox_table_header_description
-{ width:40%; border-left: 1px solid #D4DADE; color: #666666; } /* width should be 37% once we add size field */
+{ width:44%; border-left: 1px solid #D4DADE; color: #666666; } /* width should be 37% once we add size field */
 
 .inbox_main .inbox-table #inbox_table_header_size
 { width:12%; border-left: 1px solid #D4DADE; color: #666666; }
