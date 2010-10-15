@@ -732,7 +732,25 @@ sakai.notificationsinbox = function(){
         }
     };
     
-    /**
+    var isGoToPreviousPage = function(totalMessages, numberOfMessagesToRemove) {
+
+		var messageCountAfterDeletion = (totalMessages - numberOfMessagesToRemove >= 0) ? totalMessages - numberOfMessagesToRemove : 0; 
+		var pageCountBeforeDeletion = Math.ceil(totalMessages / messagesPerPage);
+		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
+		var isLastPage = (currentPage == pageCountBeforeDeletion);
+		
+		// Setting a flag for deleteMessagesFinished moveMessagesFinished functions
+		// The function needs to know whether to reload the same page or the previous page
+		if (pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage) {
+			//It is safe to use the same current page
+			return false;
+		} 
+		
+		//The last page was deleted, we need to go back one page
+		return true;		
+	}
+	
+	/**
      * Delete all checked messages on current page.
      */
     var deleteChecked = function(){   
@@ -743,20 +761,7 @@ sakai.notificationsinbox = function(){
             pathToMessages.push(pathToMessage);
         });
 		
-		var messageCountAfterDeletion = (messagesForTypeCat - pathToMessages.length >= 0) ? messagesForTypeCat - pathToMessages.length : 0; 
-		var pageCountBeforeDeletion = Math.ceil(messagesForTypeCat / messagesPerPage);
-		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
-		var isLastPage = (currentPage == pageCountBeforeDeletion);
-		
-		// Setting a flag for deleteMessagesFinished function
-		// The function needs to know whether to reload the same page or the previous page
-		if (pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage) {
-			//It is safe to use the same current page
-			goToPreviousPageAfterDeletion = false;
-		} else {
-			//The last page was deleted, we need to go back one page
-			goToPreviousPageAfterDeletion = true;
-		} 
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);   
 
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
@@ -849,6 +854,17 @@ sakai.notificationsinbox = function(){
     $("#inbox-copy-button").click(function() {                
         copyChecked("drafts");       
     });
+	
+	// Move the checked messages to queue.
+    $("#inbox-movetoqueue-button").click(function(){               
+        //alert("Move to queue");  
+		//moveChecked("queue");  
+		
+		
+		
+		moveSelectedDraftsToQueue();
+    
+    });
     
     // Move all checked messages from queue to drafts.
     $("#inbox-movetodrafts-button").click(function() {
@@ -876,7 +892,12 @@ sakai.notificationsinbox = function(){
      var moveMessagesFinished = function(pathToMessages, success, toWhere){        
         if (success) {
             // Repage the inbox.            
-            currentPage = currentPage - 1;
+            // Repage the inbox.
+            
+			if (goToPreviousPageAfterDeletion) {
+				currentPage = currentPage - 1;
+			} // else using the same page 
+            
             showPage(currentPage);
             
             var txt = "";
@@ -929,10 +950,12 @@ sakai.notificationsinbox = function(){
             var pathToMessage = $(this).val();
             pathToMessages.push(pathToMessage);
         });
-        
+
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);             
+
         // Reset 'Check All' checkbox just in case it's clicked.
         $(inboxInboxCheckAll).attr("checked", false);
-                
+
         moveMessages(pathToMessages, toWhere);
     }
     
@@ -1013,6 +1036,76 @@ sakai.notificationsinbox = function(){
                     if (copied === toCopy) {
                         copyMessagesFinished(pathToMessages, false);
                     }                        
+                }
+            });
+        }        
+    }
+	
+	var moveSelectedDraftsToQueue = function(){ 
+        
+		alert("Called moveMessagesToQueue!");               
+        var toWhere="queue";
+		var pathToMessages = [];
+        
+		// Here we store number of skipped not validated messages
+		var numberOfSkippedMessages = 0;
+		
+		$(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+			//console.log(this);
+            
+            //var pieces = pathToMessage.split("/");            
+            //var message = getMessageWithId(pieces[pieces.length-1]);
+			
+			// Flag 'validated' is stored in 'alt' attribute
+			if (this.alt === "true") {//message["sakai:validated"]){
+				pathToMessages.push(pathToMessage);	
+			} else {
+				numberOfSkippedMessages++;
+			}						
+			
+        });
+		   
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
+				    
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);    
+						        
+		moveMessages(pathToMessages, "queue");
+		
+		if (numberOfSkippedMessages != 0) {
+			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);//$(inboxGeneralMessagesQueuedFailed).text()
+		}        
+    }
+	
+	var copyMessages = function(pathToMessages, toWhere){ 
+        alert("Called copyMessages!");               
+        var toCopy = pathToMessages.length;
+        var copied = 0;
+                
+        for (var d = 0, e = pathToMessages.length; d < e; d++) {
+            // For all the messages, extract the message id from the jcr path url
+            // and then use that to find the appropriate message.
+            var url = pathToMessages[d];
+            var pieces = url.split("/");            
+            var message = getMessageWithId(pieces[pieces.length-1]);
+            alert("The message is "+message["sakai:subject"]);
+            
+            // Now post that message to the appropriate messagebox we
+            // are copying it to.
+            alert("The message was in "+message["sakai:messagebox"]);
+            message["sakai:messagebox"] = toWhere;
+            alert("but we moved it to "+message["sakai:messagebox"]);
+            
+            $.ajax({
+                url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
+                type: "POST",
+                data: message,
+                success: function(){     
+                    alert("Success on move.");                                 
+                }, 
+                error: function(){
+                    alert("Failure on move.");                        
                 }
             });
         }        

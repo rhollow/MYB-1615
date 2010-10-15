@@ -288,7 +288,7 @@ if (!sakai.composenotification){
          // Event handler for when user clicks on DLC "Save" button.
          $("#dlc-save").live('click', function(){
              // Save the draft.
-             postNotification(saveData("drafts"));
+             postNotification(saveData("drafts", checkFieldsForErrors(false)));
              resetView();
              
              // Redirect to CDNL page.             
@@ -327,168 +327,188 @@ if (!sakai.composenotification){
            } 
         });                        
 
-        /**         
-         * This method will check if there are any required fields that are not filled in.
-         * If a field is not filled in the invalidClass will be added to that field.
-         * Returns a boolean that determines if the fields are valid or not.
-         * @return valid True = no errors, false = errors found.
-         */
-        var checkFieldsForErrors = function() {                                         
-            var valid = true;
-            var today = new Date(); // full today's date
-            var month = today.getMonth();
-            var day = today.getDate();
-            var year = today.getFullYear();
-            var modtoday = new Date(year, month, day); // today's date with 00:00:00 time                                          
-            
-            // Collect all elements that require validation on the page.         
-            var requiredEl = $(messageFieldRequiredCheck);            
-            var sendDateEl = $(messageFieldSendDate);
-            var sendToEl = $(messageFieldTo);           
-            var subjectEl = $(messageFieldSubject);
-            var bodyEl = $(messageFieldBody);                           
-            var reminderCheckEl = $(messageReminderCheck); 
-            var taskDueDateEl = $(messageTaskDueDate);                                                          
-            var eventDateEl = $(messageEventDate);
-            var eventTimeHourEl = $(messageEventTimeHour);
-            var eventTimeMinuteEl = $(messageEventTimeMinute);
-            var eventTimeAMPMEl = $(messageEventTimeAMPM);
-            var eventPlaceEl = $(messageEventPlace);  
-                       
-            // Collect the values of each of the elements that require validation.
-            var requiredYes = $(messageRequiredYes).attr("checked");
-            var requiredNo = $(messageRequiredNo).attr("checked");
-            var sendDate = sendDateEl.val();
-            var sendTo = sendToEl.val();            
-            var subject = subjectEl.val();
-            var body = bodyEl.val();            
-            var reminderCheck = $(messageReminderCheckbox).attr("checked");
-            var taskCheck = $(messageTaskCheck).attr("checked");
-            var eventCheck = $(messageEventCheck).attr("checked");
-            var taskDueDate = taskDueDateEl.val(); 
-            var eventDate = eventDateEl.val();
-            var eventTimeHour = eventTimeHourEl.val();
-            var eventTimeMinute = eventTimeMinuteEl.val();            
-            var eventTimeAMPM = eventTimeAMPMEl.val();
-            var eventPlace = eventPlaceEl.val();    
-            
-            var sendDateObj = $(sendDateEl).datepicker("getDate");
-            var taskDueDateObj = $(taskDueDateEl).datepicker("getDate");
-            var eventDateObj = $(eventDateEl).datepicker("getDate");                                                                  
-            
-            // Remove the invalidClass from each element first.
-            clearInvalids();
-
-            // Check for invalid values.            
-            if(!requiredYes && !requiredNo){
-                valid = false;
-                requiredEl.addClass(invalidClass);                
-            }           
-            if(!sendDate) {
-                valid = false;
-                sendDateEl.addClass(invalidClass);               
-            }                                    
-            else if(modtoday>sendDateObj){                                              
-                valid = false;
-                sendDateEl.addClass(invalidClass);                
-            }
-            if(!sendTo){
-                valid = false;
-                sendToEl.addClass(invalidClass);                
-            }
-            
-            if (!subject) {
-                valid = false;
-                subjectEl.addClass(invalidClass);              
-            }
-            if (!body) {
-                valid = false;
-                bodyEl.addClass(invalidClass);                
-            }
-            if(reminderCheck){
-                // This notification is a REMINDER. Either task or event must be checked.                
-                if(!taskCheck && !eventCheck){
-                    valid = false;
-                    reminderCheckEl.addClass(invalidClass);                    
-                }
-                else if (taskCheck) {
-                    // The reminder is a TASK.                    
-                    if (!taskDueDate) {
-                        valid = false;
-                        taskDueDateEl.addClass(invalidClass);
-                    }
-                    else if(modtoday>taskDueDateObj) {                                              
-                        valid = false;
-                        taskDueDateEl.addClass(invalidClass);
-                    }             
-                    else if(sendDateObj>taskDueDateObj) {
-                        valid = false;
-                        taskDueDateEl.addClass(invalidClass);
-                    }      
-                }
-                else if (eventCheck) {
-                    // The reminder is an EVENT.                                     
-                    if (!eventDate) {
-                        valid = false;
-                        eventDateEl.addClass(invalidClass);
-                    }
-                    else if(modtoday>eventDateObj){                                                    
-                        valid = false;
-                        eventDateEl.addClass(invalidClass);            
-                    }
-                    else if(sendDateObj>eventDateObj){
-                        valid = false;
-                        eventDateEl.addClass(invalidClass);
-                    }
-                    else{
-                        // If the event date is today, check that the time hasn't already passed.                                        
-                        if((eventDateObj.getTime()-modtoday.getTime())==0){                            
-                            if(eventTimeHour && eventTimeMinute && eventTimeAMPM){                                                    
-                                var compareToHour = parseInt(eventTimeHour);                             
-                                var compareToMin = parseInt(eventTimeMinute);                             
-                                
-                                // Convert to military time.
-                                if(eventTimeAMPM=="PM"){
-                                    if(compareToHour<12){
-                                        compareToHour = compareToHour+12;
-                                    }                                
-                                }                                                                                   
-                                                            
-                                eventDateObj.setHours(compareToHour);
-                                eventDateObj.setMinutes(compareToMin);                                                        
-                                
-                                // If the event is today and the time of the event has already passed...                  
-                                if(today.getTime()>eventDateObj.getTime()){
-                                    valid = false;                                
-                                    eventTimeHourEl.addClass(invalidClass);
-                                    eventTimeMinuteEl.addClass(invalidClass);
-                                    eventTimeAMPMEl.addClass(invalidClass);
-                                }              
-                            }    
-                        }
-                    }
-                    if (!eventTimeHour) {
-                        valid = false;
-                        eventTimeHourEl.addClass(invalidClass);
-                    }                    
-                    if (!eventTimeMinute) {
-                        valid = false;
-                        eventTimeMinuteEl.addClass(invalidClass);
-                    }
-                    if (!eventTimeAMPM) {
-                        valid = false;
-                        eventTimeAMPMEl.addClass(invalidClass);
-                    }
-                    if (!eventPlace) {
-                        valid = false;
-                        eventPlaceEl.addClass(invalidClass);
-                    }                                                                                                                                                                                          
-                }
-            }                                            
-            
-            // Return the status of the form.        
-            return valid;
-        };             
+		/**         
+		 * This method will check if there are any required fields that are not filled in.
+		 * If a field is not filled in the invalidClass will be added to that field.
+		 * Returns a boolean that determines if the fields are valid or not.
+		 * @param {boolean} displayErrors Do we need to display errors or just do a check?
+		 * @return valid True = no errors, false = errors found.
+		 */
+		var checkFieldsForErrors = function(displayErrors) {                        
+		    var valid = true;
+		    var today = new Date(); // full today's date
+		    var month = today.getMonth();
+		    var day = today.getDate();
+		    var year = today.getFullYear();
+		    var modtoday = new Date(year, month, day); // today's date with 00:00:00 time                                          
+		    
+		    // Collect all elements that require validation on the page.         
+		    var requiredEl = $(messageFieldRequiredCheck);            
+		    var sendDateEl = $(messageFieldSendDate);
+		    var sendToEl = $(messageFieldTo);           
+		    var subjectEl = $(messageFieldSubject);
+		    var bodyEl = $(messageFieldBody);                           
+		    var reminderCheckEl = $(messageReminderCheck); 
+		    var taskDueDateEl = $(messageTaskDueDate);                                                          
+		    var eventDateEl = $(messageEventDate);
+		    var eventTimeHourEl = $(messageEventTimeHour);
+		    var eventTimeMinuteEl = $(messageEventTimeMinute);
+		    var eventTimeAMPMEl = $(messageEventTimeAMPM);
+		    var eventPlaceEl = $(messageEventPlace);  
+		               
+		    // Collect the values of each of the elements that require validation.
+		    var requiredYes = $(messageRequiredYes).attr("checked");
+		    var requiredNo = $(messageRequiredNo).attr("checked");
+		    var sendDate = sendDateEl.val();
+		    var sendTo = sendToEl.val();            
+		    var subject = subjectEl.val();
+		    var body = bodyEl.val();            
+		    var reminderCheck = $(messageReminderCheckbox).attr("checked");
+		    var taskCheck = $(messageTaskCheck).attr("checked");
+		    var eventCheck = $(messageEventCheck).attr("checked");
+		    var taskDueDate = taskDueDateEl.val(); 
+		    var eventDate = eventDateEl.val();
+		    var eventTimeHour = eventTimeHourEl.val();
+		    var eventTimeMinute = eventTimeMinuteEl.val();            
+		    var eventTimeAMPM = eventTimeAMPMEl.val();
+		    var eventPlace = eventPlaceEl.val();    
+		    
+		    var sendDateObj = $(sendDateEl).datepicker("getDate");
+		    var taskDueDateObj = $(taskDueDateEl).datepicker("getDate");
+		    var eventDateObj = $(eventDateEl).datepicker("getDate");                                                                  
+		    
+		    // Remove the invalidClass from each element first.
+		    if (displayErrors) clearInvalids();
+		
+		    // Check for invalid values.            
+		    if(!requiredYes && !requiredNo){             
+		        if (!displayErrors) return false;
+				valid = false;
+				requiredEl.addClass(invalidClass);	  
+		    }           
+		    if(!sendDate) {
+		        if (!displayErrors) return false;
+				valid = false;
+	        	sendDateEl.addClass(invalidClass);
+		    }                                    
+		    else if(modtoday>sendDateObj){                                              
+		        if (!displayErrors) return false;
+				valid = false;
+	        	sendDateEl.addClass(invalidClass);		         
+		    }
+		    if(!sendTo){
+		        if (!displayErrors) return false;
+				valid = false;
+	        	sendToEl.addClass(invalidClass);    
+		    }
+		    
+		    if (!subject) {
+		        if (!displayErrors) return false;
+				valid = false;
+	        	subjectEl.addClass(invalidClass);  
+		    }
+		    if (!body) {
+		        if (!displayErrors) return false;
+				valid = false;
+	        	bodyEl.addClass(invalidClass);         
+		    }
+		    if(reminderCheck){
+		        // This notification is a REMINDER. Either task or event must be checked.                
+		        if(!taskCheck && !eventCheck){
+		            if (!displayErrors) return false;
+					valid = false;
+	            	reminderCheckEl.addClass(invalidClass);             
+		        }
+		        else if (taskCheck) {
+		            // The reminder is a TASK.                    
+		            if (!taskDueDate) {
+		                if (!displayErrors) return false;
+						valid = false;
+	                	taskDueDateEl.addClass(invalidClass);
+		            }
+		            else if(modtoday>taskDueDateObj) {                                              
+		                if (!displayErrors) return false;
+						valid = false;
+		                taskDueDateEl.addClass(invalidClass);
+		            }             
+		            else if(sendDateObj>taskDueDateObj) {
+		                if (!displayErrors) return false;
+						valid = false;
+		            	taskDueDateEl.addClass(invalidClass);
+						
+		            }      
+		        }
+		        else if (eventCheck) {
+		            // The reminder is an EVENT.                                     
+		            if (!eventDate) {
+		                if (!displayErrors) return false;
+						valid = false;
+	                	eventDateEl.addClass(invalidClass);
+		            }
+		            else if(modtoday>eventDateObj){                                                    
+		                if (!displayErrors) return false;
+						valid = false;
+	                	eventDateEl.addClass(invalidClass);            
+		            }
+		            else if(sendDateObj>eventDateObj){
+		                if (!displayErrors) return false;
+						valid = false;
+	                	eventDateEl.addClass(invalidClass);
+		            }
+		            else{
+		                // If the event date is today, check that the time hasn't already passed.                                        
+		                if((eventDateObj.getTime()-modtoday.getTime())==0){                            
+		                    if(eventTimeHour && eventTimeMinute && eventTimeAMPM){                                                    
+		                        var compareToHour = parseInt(eventTimeHour);                             
+		                        var compareToMin = parseInt(eventTimeMinute);                             
+		                        
+		                        // Convert to military time.
+		                        if(eventTimeAMPM=="PM"){
+		                            if(compareToHour<12){
+		                                compareToHour = compareToHour+12;
+		                            }                                
+		                        }                                                                                   
+		                                                    
+		                        eventDateObj.setHours(compareToHour);
+		                        eventDateObj.setMinutes(compareToMin);                                                        
+		                        
+		                        // If the event is today and the time of the event has already passed...                  
+		                        if(today.getTime()>eventDateObj.getTime()){
+		                            if (!displayErrors) return false;
+									valid = false;                                
+	                                eventTimeHourEl.addClass(invalidClass);
+	                                eventTimeMinuteEl.addClass(invalidClass);
+	                                eventTimeAMPMEl.addClass(invalidClass);
+		                        }              
+		                    }    
+		                }
+		            }
+		            if (!eventTimeHour) {
+		                if (!displayErrors) return false;
+						valid = false;
+	            	    eventTimeHourEl.addClass(invalidClass);
+		            }                    
+		            if (!eventTimeMinute) {
+		                if (!displayErrors) return false;
+						valid = false;
+	                	eventTimeMinuteEl.addClass(invalidClass);
+		            }
+		            if (!eventTimeAMPM) {
+		                if (!displayErrors) return false;
+						valid = false;
+	                	eventTimeAMPMEl.addClass(invalidClass);
+		            }
+		            if (!eventPlace) {
+		                if (!displayErrors) return false;
+						valid = false;
+	                	eventPlaceEl.addClass(invalidClass);	
+		            }                                                                                                                                                                                          
+		        }
+		    }                                            
+		    
+		    // Return the status of the form.        
+		    return valid;
+		};            
         
         /**
          * Sets up the timepicker drop down menus for the Event Time fields, 
@@ -663,21 +683,21 @@ if (!sakai.composenotification){
                                 
                 // Queueing this draft...                
                 $("#cn-queuedraft-button").live('click', function() {                                                         
-                    if(checkFieldsForErrors()){                                                                                                                                                 
-                        updateNotification(saveData("queue"), message); 
+                    if(checkFieldsForErrors(true)){                                                                                                                                                 
+                        updateNotification(saveData("queue", true), message);
                     }
                     resetView();                                      
                 });         
                 
                 // Updating and re-saving this draft...
                 $("#cn-updatedraft-button").live('click', function() {                    
-                    updateNotification(saveData("drafts"), message);
+                    updateNotification(saveData("drafts", checkFieldsForErrors(false)), message);
                     resetView();
                 });         
                 
                 // Deleting the draft...
                 $("#cn-deletedraft-button").live('click', function() {                    
-                    updateNotification(saveData("trash"), message);
+                    updateNotification(saveData("trash", checkFieldsForErrors(false)), message);
                     resetView();
                 });                   
             }      
@@ -693,25 +713,26 @@ if (!sakai.composenotification){
                 
                 // Moving message from queue to drafts...
                 $("#cn-movetodrafts-button").live('click', function() {
-                   updateNotification(saveData("drafts"), message);
+                   updateNotification(saveData("drafts", checkFieldsForErrors(false)), message);
                    resetView(); 
                 });            
                 
                 // Copying message to drafts...
                 $("#cn-copytodrafts-button").live('click', function() {
-                    postNotification(saveData("drafts"),message);
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), message);
                     resetView();
                 });
                 
                 // Deleting message...
                 $("#cn-deletequeued-button").live('click', function() {
-                    updateNotification(saveData("trash"),message);
+                    updateNotification(saveData("trash", false), message);
                     resetView();
                 });
             }  
             
             // Are we calling this from trash?       
             if(calledFrom=="trash"){                       
+
                 // Now fill out the proper information.
                 fillInMessage(message);
                 // And disable the form, disallowing the user to edit.
@@ -721,7 +742,7 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    updateNotification(saveData("drafts"), message);                    
+                    updateNotification(saveData("drafts", false), message);                    
                     sakai.composenotification.initialise("drafts", message);
                 });                
             }                                                                                   
@@ -739,10 +760,11 @@ if (!sakai.composenotification){
                 }
             });
         };     
-        
-        var saveData = function(box){             
+
+        var saveData = function(box, isValidated){
             var sendDate = $(messageFieldSendDate).datepicker("getDate") || "";
             var sendDate = sendDate.toString();
+
             var toPost = {
                 "sakai:type": "notice",
                 "sakai:sendDate": sendDate,
@@ -753,7 +775,9 @@ if (!sakai.composenotification){
                 "sakai:body": $(messageFieldBody).val(),
                 "sakai:sendstate": "pending",
                 "sakai:read": false,
-                "sakai:messagebox": box              
+                "sakai:messagebox": box,
+				"sakai:validated" : isValidated,
+				"sakai:validated@TypeHint": "Boolean"         
              }                                     
                                
             // Is this notification required or not?               
@@ -811,6 +835,11 @@ if (!sakai.composenotification){
             sakai.notificationsinbox.showDrafts();
         }
         
+		var completeSaveToQueue = function () {
+            resetView();
+            sakai.notificationsinbox.showQueue();
+        }
+		
         var postNotification = function(toPost, successCallback){                                                                                                                           
             // Post all the data in an Ajax call.    
             $.ajax({
@@ -829,10 +858,18 @@ if (!sakai.composenotification){
             });
         }
         
+		 // Queueing this draft...                
+        $("#cn-queue-button").live('click', function() {                                                         
+            if(true || checkFieldsForErrors(true)){                                                                                                                                                 
+                //updateNotification(saveData("queue", true), message);
+				postNotification(saveData("queue", true), completeSaveToQueue);
+            }                                                  
+        });     
+		
         // When someone clicks on the 'Save as Draft' button from base panel.
 		$("#cn-saveasdraft-button").live('click', function() {
 			if ($(messageFieldSubject).val() != "") {
-				postNotification(saveData("drafts"), completeSaveToDrafts);
+				postNotification(saveData("drafts", checkFieldsForErrors(false)), completeSaveToDrafts);
 			} else {
 				$(messageFieldSubject).addClass(invalidClass);
 			}

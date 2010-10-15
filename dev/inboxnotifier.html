@@ -135,12 +135,17 @@
 
                             <div id="inbox_inbox_messages_template" title=""><!--
                             {for m in messages}
-                                {var readClass="inbox-subject-unread"}
+                                {var readClass="inbox-subject-unread"}								
                                 {if m.read}
                                     {var readClass="inbox-subject-read"}
                                 {/if}
-                                <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
-                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
+								{var validatedClass=""}
+								{if !m['sakai:validated'] && m.messagebox === "drafts"}
+                                    {var validatedClass="inbox-message-unvalidated"}
+                                {/if}
+								
+                                <tr class="inbox_message ${readClass} ${validatedClass}" id="inbox_table_message_${m['jcr:name']}">
+                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" alt="${m['sakai:validated']}" /></td>
                                         {if m.messagebox === "outbox"}
                                             {if m.userTo}
                                                 <td>
@@ -183,7 +188,8 @@
                         
                         <!-- BUTTON LISTS-->
 						<div class="button-list" id="buttons-drafts">
-						    <button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+						    <button id="inbox-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+							<button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
                             <button id="inbox-copy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>                                                        					
 					   </div>                       
 					   <div class="button-list" id="buttons-queue" style="display:none;">
