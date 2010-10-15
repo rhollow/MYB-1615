@@ -106,30 +106,36 @@ if (!sakai.composenotification){
         var allAMPMOptions = {         
           'AM' : 'AM',
           'PM' : 'PM'  
-        };                                   
+        };  
         
+                
          /**
-         * Returns a jQuery object containing a set of option elements 
-         * @param {Object} optionArray name:value pairs of option elements
-         * @param {String} selectedValue the key of the selected option element
-         * @param {Boolean} firstEmpty start with an option element or not
-         */
+          * Returns a string containing a set of option elements 
+          * @param {Object} optionArray name:value pairs of option elements
+          * @param {String} selectedValue the key of the selected option element
+          * @param {Boolean} firstEmpty start with an option element or not
+          */
         
         var createOptions = function (optionArray, selectedValue, firstEmpty) {
-            var $container = $("<select>");
+            
+            var makeOption = function (val, title, selectedTorF) {
+                var valString = (val) ? " value='" + val + "'" : "";
+                var selectedString = (selectedTorF) ? " selected='selected'" : "";
+                return "<option " + valString + selectedString + ">" + title + "</option>\n";
+            }
+            
+            var optionsString = "";
+            
             if (firstEmpty) {
-                $container.append($("<option>"));
+                // if the first selected value is empty then select the first element in the list
+                optionsString += makeOption(null, "", (selectedValue === null || selectedValue === ""));
             }
             for (var key in optionArray) {
-                var $optionObj = {};
-                $optionObj = $("<option>").val(key).text(optionArray[key]);
-                if (key === selectedValue) {
-                    $optionObj.attr("selected", "selected");
-                }
-                $container.append($optionObj);
+                optionsString += makeOption(key, optionArray[key], (selectedValue == key));
             }
-            return $container.contents();
+            return optionsString;
         };
+
 
         /**
          * Re-enables previously disabled fields. 
@@ -172,13 +178,11 @@ if (!sakai.composenotification){
             var type = toClear.type;
             var tag = toClear.tagName.toLowerCase();
             
-            if(type=="text" || tag=="textarea"){                
+            if (type === "text" || tag === "textarea") {                
                 toClear.value="";
-            }   
-            else if(type=="checkbox" || type=="radio"){                
+            } else if (type === "checkbox" || type === "radio") {                
                 toClear.checked=false;
-            }
-            else if(tag=="select"){                           
+            } else if (tag === "select") {                           
                 toClear.selectedIndex=-1;                
             }
         };
@@ -544,6 +548,7 @@ if (!sakai.composenotification){
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
         var dynamicListInit = function(){
+           
             sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/dynamic_lists", function(success, data){
                 if (success) {
                     // Iterate through data.lists and make new array for createOptions. (id:name)
