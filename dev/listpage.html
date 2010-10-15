@@ -161,12 +161,13 @@
                                 
                              <div id="inbox_inbox_lists_template" title=""><!--
                                  {for m in links}
-                                                                                
+                                     {var dateString = sakai.listpage.getDate(m['sakai:dateModified'])}
+                                                                 
                                      <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
                                          <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['sakai:id']}" id="inbox_check_list_${m['sakai:id']}" title="__MSG__SELECT_LIST__" /></td>
-                                         <td>${m.date}</td>
-                                         <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m.name}</a></td>
-                                         <td>${m.description}</td>
+                                         <td>${dateString}</td>
+                                         <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m['sakai:name']}</a></td>
+                                         <td>${m['sakai:description']}</td>
                                      </tr>
                                     
                                  {forelse}
