@@ -49,180 +49,156 @@
 
     </head>
 
-    <body class="fl-centered inbox_main inbox_detail i18nable">
+    <body class="fl-centered fl-container inbox_main inbox_detail i18nable">
 
         <!-- NAVIGATION -->
         <div id="widget_topnavigation" class="widget_inline"></div>
 
-        <!-- HEADER -->
-        <div class="fl-container-flex header">
-            <div class="fl-fix fl-centered fixed-container">
-                <div class="decor"></div>
-
-                <!-- TITLE BAR  -->
-                <div class="s3d-site-heading">
-                    <h1 id="sitetitle">__MSG__MY_DYNAMIC_LISTS__</h1>
-                </div>
-            </div>
-        </div>
-
         <!-- CONTENT -->
-        <div class="fl-fix fl-centered fixed-container">
-
-            <!-- MAIN PAGE -->
-            <div class="fl-fix fl-col-mixed main_container">
-            
-                <div class="col-main">
-                    <!-- TABS -->
-                    <div id="tabs">
-                        <ul id="tab_list">
-                            <li id="new_list_tab" class="tab rightmost_tab"><a id="create_new_link" href="#create_new_list"><span>New</span></a></li>
-                            <li id="existing_lists_tab" class="tab selected_tab"><a id="existing_link" href="#existing_lists"><span>Existing</span></a></li>
+        <div class="fl-container fl-fix fl-container-flex content_inbox">
+            <div class="fl-fix fl-centered fixed-container">
+                <div class="decor"><!-- --></div>
+                
+                <!-- TITLE -->
+                <h1 class="title">__MSG__MY_DYNAMIC_LISTS__</h1>
+                    
+                <!-- TAB NAVIGATION -->
+                <div id="tabs">
+                    <div class="s3d-primary-tabs">
+                        <ul id="tab_list" class="fl-tabs fl-tabs-right">
+                            <li id="existing_lists_tab" class="fl-tabs-active"><a id="existing_link" href="#existing_lists"><span>Existing</span></a></li>
+                            <li id="new_list_tab"><a id="create_new_link" href="#create_new_list"><span>New</span></a></li>
                         </ul>
-    
-                        <!-- Header -->
-                        <div class="top_decor">
+                    </div>
+                        
+                    <!-- TAB CONTENT -->
+                    <div class="fl-centered fl-container fl-tab-content search_content_wrapper">
+                    
+                    <!-- List of dynamic lists -->  
+                    <div id="existing_lists">
+                        <div class="search_tab_content_top">
+                            <div class="search_tab_content_top_inner"><!-- --></div>
+                        </div>
+                                        
+                        <div class="main_content_container">
                             <div class="inbox-heading inbox_inbox_header" id="inbox_existing">__MSG__EXISTING_LISTS__</div>
-                            <div class="inbox-heading inbox_inbox_header" id="inbox_new" style="display:none;">__MSG__CREATE_OR_EDIT_A_DYNAMIC_LIST__</div>
-                        </div>
-                        
-                        <!-- VIEW A SPECIFIC LIST -->
-                        <div id="create_new_list">
-                            <div class="main_content_container">
-                                <form name="createListForm" id="createListForm" action="#" method="post"> 
-                                    <div class="input_item"><label>List name:</label> 
-                                        <input type="text" id="list_name" size="25" /> 
-                                        <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
-                                    </div>
-                                    <div class="input_item"><label>Description:</label> 
-                                        <input type="text" id="description" size="25" /> 
-                                        <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
-                                    </div>
-                                    <div class="input_item">
-                                        <label>Context:</label>
-                                        <select name="context" id="context" onchange="sakai.listpage.updateListSize()" disabled="disabled">
-                                            <option value="g-ced-students">CED</option>
-                                        </select>
-                                    </div>
-                                    <div class="input_item">
-                                        <label>Major: (select all that apply)</label>
-                                        <span id="invalid_major" class="invalid_span" style="display:none;">You must select at least one major</span>
-                                        <br />
-                                            <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" /> Architecture <br />
-                                            <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" /> City Regional Plan <br />
-                                            <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN" title="Design" /> Design <br />
-                                            <input type="checkbox" class="major_checkbox" value="LAND ARCH & ENV PLAN" id="LAND_ARCH_&_ENV_PLAN" title="Land Arch & Env Plan" /> Land Arch & Env Plan <br />
-                                            <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" /> Landscape Arch <br />
-                                            <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" /> Urban Design <br />
-                                            <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> Urban Studies <br />
-                                            <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" /> Individual <br />
-                                    </div>
-                                    <div class="input_item">
-                                        <label>Standing:</label>
-                                        <select name="standing" id="standing" onchange="sakai.listpage.updateListSize()">
-                                            <option value="undergrad">Undergraduate</option>
-                                            <option value="grad">Graduate</option>
-                                            <option value="all">All</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <!-- NOT SUPPORTED FOR POC -->
-                                    <!--
-                                    <div class="input_item" style="float: right;">
-                                        <span id="invalid_size" class="invalid_span" style="display:none;">Empty list</span>
-                                        <label>Current list size (students):</label>
-                                        <input type="text" id="list_size" size="5" disabled="disabled" />
-                                    </div>
-                                    -->
-                                </form>
-                            </div>
                             
-                            <div class="bottom_decor"></div>
-                        
+                            <table class="inbox-table" id="inbox_table" summary="Your existing lists.">
+                                <tr class="different">
+                                    <th class="inbox-checkbox" id="inbox_tableHeader_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__"/></th>
+                                    <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
+                                    <th class="inbox_inbox_table_header_sort" id="inbox_table_header_name"><span>__MSG__NAME__</span></th>
+                                    <th class="inbox_inbox_table_header_sort" id="inbox_table_header_description"><span>__MSG__DESCRIPTION__</span></th>
+                                    <!-- NOT SUPPORTED IN POC -->
+                                    <!-- <th class="inbox_inbox_table_header_sort" id="inbox_table_header_size"><span>__MSG__CURRENT_LIST_SIZE__</span></th> -->
+                                </tr>
+                            </table>
                         </div>
-                        
-                        <!-- List of dynamic lists -->  
-                        <div id="existing_lists">              
-                            <div class="main_content_container">
-                                <table class="inbox-table" id="inbox_table" summary="Your existing lists.">
-                                    <tr class="different">
-                                        <th class="inbox-checkbox" id="inbox_tableHeader_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__"/></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_name"><span>__MSG__NAME__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_description"><span>__MSG__DESCRIPTION__</span></th>
-                                        <!-- NOT SUPPORTED IN POC -->
-                                        <!-- <th class="inbox_inbox_table_header_sort" id="inbox_table_header_size"><span>__MSG__CURRENT_LIST_SIZE__</span></th> -->
-                                    </tr>
-                                </table>
-                            </div>
-                                    
-                            <div class="bottom_decor"></div>
         
-                            <div id="inbox_inbox_sort_up" style="display:none;"><img src="_images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
-                            <div id="inbox_inbox_sort_down" style="display:none;"><img src="_images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
+                        <div id="inbox_inbox_sort_up" style="display:none;"><img src="_images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
+                        <div id="inbox_inbox_sort_down" style="display:none;"><img src="_images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
                                 
-                             <div id="inbox_inbox_lists_template" title=""><!--
-                                 {for m in links}
-                                     {var dateString = sakai.listpage.getDate(m['sakai:dateModified'])}
+                        <div id="inbox_inbox_lists_template" title=""><!--
+                            {for m in links}
+                                {var dateString = sakai.listpage.getDate(m['sakai:dateModified'])}
                                                                  
-                                     <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
-                                         <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['sakai:id']}" id="inbox_check_list_${m['sakai:id']}" title="__MSG__SELECT_LIST__" /></td>
-                                         <td>${dateString}</td>
-                                         <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m['sakai:name']}</a></td>
-                                         <td>${m['sakai:description']}</td>
-                                     </tr>
+                                <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
+                                    <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['sakai:id']}" id="inbox_check_list_${m['sakai:id']}" title="__MSG__SELECT_LIST__" /></td>
+                                    <td>${dateString}</td>
+                                    <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m['sakai:name']}</a></td>
+                                    <td>${m['sakai:description']}</td>
+                                </tr>
                                     
-                                 {forelse}
-                                      <tr class="inbox_list">
-                                          <td colspan="5" class="inbox_message_none">__MSG__NO_LISTS_FOUND__.</td>
-                                      </tr>
-                                 {/for}
-                             --></div>
+                            {forelse}
+                                <tr class="inbox_list">
+                                    <td colspan="5" class="inbox_message_none">__MSG__NO_LISTS_FOUND__.</td>
+                                </tr>
+                            {/for}
+                            --></div>
     
-                             <div id="inbox_table_preloader"><!--
-                                 <tr class="inbox_message">
-                                     <td colspan="5" class="inbox_message_none"><img src="/dev/_images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
-                                 </tr>
+                            <div id="inbox_table_preloader"><!--
+                                <tr class="inbox_message">
+                                    <td colspan="5" class="inbox_message_none"><img src="/dev/_images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
+                                </tr>
                              --></div>
-                                    
+                             
+                             <div class="search_tab_content_bottom"><div class="search_tab_content_bottom_inner"><!-- --></div></div>
+                             
                              </div>
-                    </div>
-                    
-                    <!-- List of buttons for Existing Lists tab and New List tab -->
-                    <div class="button-list">
-                        <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                        <button type="button" id="inbox_inbox_duplicate_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DUPLICATE__</span></button>
-                        <button type="button" id="inbox_inbox_back_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_INBOX__</span></button>
-                        <button type="button" id="inbox_inbox_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                        <button type="button" id="inbox_inbox_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
-                    </div>
-                </div>
-                    
-                <!-- DELETE CHECK DIALOG -->
-                <div id="delete_check_dialog" class="dialog">
-                    <!-- Dialog Header -->
-                    <div class="dialog_header">
-                        <div class="dialog_header_inner">
-                            <h1>Warning</h1>
-                            <a href="javascript:;" class="jqmClose dialog_close_image" title="__MSG__CLOSE_DIALOG__">__MSG__CLOSE_DIALOG__</a>
+                             
+                            <!-- VIEW A SPECIFIC LIST -->
+                            <div id="create_new_list">
+                                <div class="search_tab_content_top">
+                                    <div class="search_tab_content_top_inner"><!-- --></div>
+                                </div> 
+                            
+                                <div class="main_content_container">
+                                    <div class="inbox-heading inbox_inbox_header" id="inbox_new">__MSG__CREATE_OR_EDIT_A_DYNAMIC_LIST__</div>
+                                    
+                                    <form name="createListForm" id="createListForm" action="#" method="post"> 
+                                        <div class="input_item"><label>List name:</label> 
+                                            <input type="text" id="list_name" size="25" /> 
+                                            <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
+                                        </div>
+                                        <div class="input_item"><label>Description:</label> 
+                                            <input type="text" id="description" size="25" /> 
+                                            <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
+                                        </div>
+                                        <div class="input_item">
+                                            <label>Context:</label>
+                                            <select name="context" id="context" onchange="sakai.listpage.updateListSize()" disabled="disabled">
+                                                <option value="g-ced-students">CED</option>
+                                            </select>
+                                        </div>
+                                        <div class="input_item">
+                                            <label>Major: (select all that apply)</label>
+                                            <span id="invalid_major" class="invalid_span" style="display:none;">You must select at least one major</span>
+                                            <br />
+                                                <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" /> Architecture <br />
+                                                <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" /> City Regional Plan <br />
+                                                <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN" title="Design" /> Design <br />
+                                                <input type="checkbox" class="major_checkbox" value="LAND ARCH AND ENV PLAN" id="LAND_ARCH_AND_ENV_PLAN" title="Land Arch And Env Plan" /> Land Arch And Env Plan <br />
+                                                <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" /> Landscape Arch <br />
+                                                <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" /> Urban Design <br />
+                                                <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> Urban Studies <br />
+                                                <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" /> Individual <br />
+                                        </div>
+                                        <div class="input_item">
+                                            <label>Standing:</label>
+                                            <select name="standing" id="standing" onchange="sakai.listpage.updateListSize()">
+                                                <option value="undergrad">Undergraduate</option>
+                                                <option value="grad">Graduate</option>
+                                                <option value="all">All</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- NOT SUPPORTED FOR POC -->
+                                        <!--
+                                        <div class="input_item" style="float: right;">
+                                            <span id="invalid_size" class="invalid_span" style="display:none;">Empty list</span>
+                                            <label>Current list size (students):</label>
+                                            <input type="text" id="list_size" size="5" disabled="disabled" />
+                                        </div>
+                                        -->
+                                    </form>
+                                </div>
+                                
+                                <div class="search_tab_content_bottom"><div class="search_tab_content_bottom_inner"><!-- --></div></div>
+                            
+                            </div>
+                        
+                            <!-- List of buttons for Existing Lists tab and New List tab -->
+                            <div class="button-list">
+                                <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                                <button type="button" id="inbox_inbox_duplicate_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DUPLICATE__</span></button>
+                                <button type="button" id="inbox_inbox_back_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_INBOX__</span></button>
+                                <button type="button" id="inbox_inbox_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                                <button type="button" id="inbox_inbox_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
+                            </div>
                         </div>
-                    </div>                        
-                    <!-- Dialog Content -->
-                    <div class="dialog_content">
-                        <p>Are you sure you want to delete the selected list(s)?<br></p>
-                        <div class="dialog_buttons">
-                            <button type="button" id="dlc-delete" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                            <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                        </div>
-                    </div>                        
-                    <!-- Dialog Footer -->
-                    <div class="dialog_footer">
-                        <div class="dialog_footer_inner"><!-- 
-                        --></div>
-                    </div>                        
+                    </div>
                 </div>
             </div>
-        </div>
 
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>

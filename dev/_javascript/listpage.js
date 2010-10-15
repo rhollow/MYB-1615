@@ -405,7 +405,7 @@ sakai.listpage = function(){
         getAllMessages();
     });
     
-    var deleteLists = function(listsArray) { // DEBUG
+    var deleteLists = function(listsArray) {
         var listId = listsArray;
         
         for (var i = 0, j = listId.length; i < j; i++) {
@@ -604,8 +604,8 @@ sakai.listpage = function(){
         // Set headers and tab styling
         $("#inbox_new").hide();
         $("#inbox_existing").show();
-        $("#new_list_tab").removeClass("selected_tab");
-        $("#existing_lists_tab").addClass("selected_tab");
+        $("#new_list_tab").removeClass("fl-tabs-active");
+        $("#existing_lists_tab").addClass("fl-tabs-active");
         
         // Show/hide appropriate buttons
         $("#inbox_inbox_cancel_button").hide();
@@ -624,8 +624,8 @@ sakai.listpage = function(){
         // Set headers and tab styling
         $("#inbox_existing").hide();
         $("#inbox_new").show();
-        $("#existing_lists_tab").removeClass("selected_tab");
-        $("#new_list_tab").addClass("selected_tab");
+        $("#existing_lists_tab").removeClass("fl-tabs-active");
+        $("#new_list_tab").addClass("fl-tabs-active");
         
         // Show/hide appropriate buttons
         $("#inbox_inbox_delete_button").hide();
