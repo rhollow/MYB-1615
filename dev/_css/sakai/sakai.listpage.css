@@ -13,7 +13,7 @@
 { margin-top: 10px; float: right; }
 
 .inbox_main .col-main
-{ margin-top: 8px; padding: 0; overflow: hidden; width: 900px; }
+{ margin-top: 8px; padding: 0; overflow: hidden; width: 899px; }
 
 /** INBOX MAIN PANE **/
 
@@ -28,7 +28,7 @@
 
 /* myBerkeley: fixed width to 911 */
 .inbox_main .inbox-table
-{ width: 911px; margin: 0; table-layout: fixed;}
+{ width: 893px; margin: 0; table-layout: fixed;}
 
 /** Buttons **/
 .inbox_main .top_button_bar

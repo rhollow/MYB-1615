@@ -112,6 +112,8 @@
 .inbox_main .inbox-table td a.inbox_inbox_message {color:#058EC4}
 .inbox_main .inbox-table .inbox_message_none
 { text-align: center; border: none; height: 370px; }
+.inbox_main .inbox-table tr.inbox-message-unvalidated *
+{ font-weight: normal; font-style: italic; }
 
 .inbox_main .bottom_decor
 { background: transparent url(/dev/_images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
