@@ -306,7 +306,7 @@ sakai.listpage = function(){
         allLists = response.lists || [];
         
         var data = {
-            "links": response.lists
+            "links": allLists
         }
         
         // remove previous lists
@@ -404,9 +404,8 @@ sakai.listpage = function(){
 
         getAllMessages();
     });
-
     
-    var deleteLists = function(listsArray) { // DEBUG
+    var deleteLists = function(listsArray) {
         var listId = listsArray;
         
         for (var i = 0, j = listId.length; i < j; i++) {
@@ -416,7 +415,7 @@ sakai.listpage = function(){
                 $("#inbox_table_list_" + listId[i]).remove();
                 
                 if (allLists.length == 1) {
-                    sakai.api.Server.removeJSON(userUrl, finishSaveAndLoad);
+                    sakai.api.Server.removeJSON(userUrl, loadData);
                     return;
                 } else {
                     allLists.splice(index, 1);
@@ -438,12 +437,6 @@ sakai.listpage = function(){
         }
     };
     
-    var finishSaveAndLoad = function() {
-        clearInputFields();
-        $.bbq.pushState({"tab": "existing"},2);
-        loadData();
-    };
-    
     var getIdFromData = function(data) {
         var id = "dl-" + data.listName + data.desc + data.context;
         var majorArray = data.major;
@@ -462,8 +455,13 @@ sakai.listpage = function(){
         return id;
     }
     
-    var saveList = function(index) {
-        var data = getDataFromInput();
+    var finishSaveAndLoad = function() {
+        clearInputFields();
+        $.bbq.pushState({"tab": "existing"},2);
+        loadData();
+    };
+    
+    var saveList = function(data, index) {
         var id = getIdFromData(data);
         
         if(index != null) { // we are editing an existing list
@@ -490,7 +488,7 @@ sakai.listpage = function(){
                 "sakai:dateModified@TypeHint": "date",
                 "sakai:modifiedBy": sakai.data.me.user.userid,
                 "query": {
-                    "context": [" " + data.context + " "],
+                    "context": [data.context],
                     "standing": data.standing,
                     "major": data.major
                 }
@@ -556,25 +554,30 @@ sakai.listpage = function(){
     $("#inbox_inbox_save_button").live("click", function(){
         $("#invalid_name").hide();
         $("#invalid_desc").hide();
-        $("#invalid_size").hide();
-        var listName = $("#list_name").val();
-        var desc = $("#description").val();
+        $("#invalid_major").hide();
+        
+        // NOT SUPPORTED FOR POC
+        //$("#invalid_size").hide();
+        var data = getDataFromInput();
         
         // NOT SUPPORTED FOR POC
         // var size = $("#list_size").val();
         
-        if(listName.trim() && desc.trim()) {
+        if(data.listName.trim() && data.desc.trim() && (data.major.length != 0)) {
             if(editExisting) {
-                saveList(getIndexFromId(currList));
+                saveList(data, getIndexFromId(currList));
             } else {
-                saveList();   
+                saveList(data, null);   
             }
         } else {
-            if(!listName.trim()) {
+            if(!data.listName.trim()) {
                 $("#invalid_name").show();
             }
-            if(!desc.trim()) {
+            if(!data.desc.trim()) {
                 $("#invalid_desc").show();
+            }
+            if(data.major.length == 0) {
+                $("#invalid_major").show();
             }
             
             // NOT SUPPORTED FOR POC
@@ -601,8 +604,8 @@ sakai.listpage = function(){
         // Set headers and tab styling
         $("#inbox_new").hide();
         $("#inbox_existing").show();
-        $("#new_list_tab").removeClass("selected_tab");
-        $("#existing_lists_tab").addClass("selected_tab");
+        $("#new_list_tab").removeClass("fl-tabs-active");
+        $("#existing_lists_tab").addClass("fl-tabs-active");
         
         // Show/hide appropriate buttons
         $("#inbox_inbox_cancel_button").hide();
@@ -621,8 +624,8 @@ sakai.listpage = function(){
         // Set headers and tab styling
         $("#inbox_existing").hide();
         $("#inbox_new").show();
-        $("#existing_lists_tab").removeClass("selected_tab");
-        $("#new_list_tab").addClass("selected_tab");
+        $("#existing_lists_tab").removeClass("fl-tabs-active");
+        $("#new_list_tab").addClass("fl-tabs-active");
         
         // Show/hide appropriate buttons
         $("#inbox_inbox_delete_button").hide();
@@ -653,7 +656,8 @@ sakai.listpage = function(){
     });
     
     var createDefaultList = function() {
-       var emptyData = {
+        allLists = [];
+        var emptyData = {
             "links": []
         }
         
