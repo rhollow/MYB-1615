@@ -461,8 +461,7 @@ sakai.listpage = function(){
         loadData();
     };
     
-    var saveList = function(index) {
-        var data = getDataFromInput();
+    var saveList = function(data, index) {
         var id = getIdFromData(data);
         
         if(index != null) { // we are editing an existing list
@@ -555,25 +554,30 @@ sakai.listpage = function(){
     $("#inbox_inbox_save_button").live("click", function(){
         $("#invalid_name").hide();
         $("#invalid_desc").hide();
-        $("#invalid_size").hide();
-        var listName = $("#list_name").val();
-        var desc = $("#description").val();
+        $("#invalid_major").hide();
+        
+        // NOT SUPPORTED FOR POC
+        //$("#invalid_size").hide();
+        var data = getDataFromInput();
         
         // NOT SUPPORTED FOR POC
         // var size = $("#list_size").val();
         
-        if(listName.trim() && desc.trim()) {
+        if(data.listName.trim() && data.desc.trim() && (data.major.length != 0)) {
             if(editExisting) {
-                saveList(getIndexFromId(currList));
+                saveList(data, getIndexFromId(currList));
             } else {
-                saveList();   
+                saveList(data, null);   
             }
         } else {
-            if(!listName.trim()) {
+            if(!data.listName.trim()) {
                 $("#invalid_name").show();
             }
-            if(!desc.trim()) {
+            if(!data.desc.trim()) {
                 $("#invalid_desc").show();
+            }
+            if(data.major.length == 0) {
+                $("#invalid_major").show();
             }
             
             // NOT SUPPORTED FOR POC
