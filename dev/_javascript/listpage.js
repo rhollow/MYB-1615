@@ -306,7 +306,7 @@ sakai.listpage = function(){
         allLists = response.lists || [];
         
         var data = {
-            "links": response.lists
+            "links": allLists
         }
         
         // remove previous lists
@@ -404,7 +404,6 @@ sakai.listpage = function(){
 
         getAllMessages();
     });
-
     
     var deleteLists = function(listsArray) { // DEBUG
         var listId = listsArray;
@@ -416,7 +415,7 @@ sakai.listpage = function(){
                 $("#inbox_table_list_" + listId[i]).remove();
                 
                 if (allLists.length == 1) {
-                    sakai.api.Server.removeJSON(userUrl, finishSaveAndLoad);
+                    sakai.api.Server.removeJSON(userUrl, loadData);
                     return;
                 } else {
                     allLists.splice(index, 1);
@@ -438,12 +437,6 @@ sakai.listpage = function(){
         }
     };
     
-    var finishSaveAndLoad = function() {
-        clearInputFields();
-        $.bbq.pushState({"tab": "existing"},2);
-        loadData();
-    };
-    
     var getIdFromData = function(data) {
         var id = "dl-" + data.listName + data.desc + data.context;
         var majorArray = data.major;
@@ -461,6 +454,12 @@ sakai.listpage = function(){
         
         return id;
     }
+    
+    var finishSaveAndLoad = function() {
+        clearInputFields();
+        $.bbq.pushState({"tab": "existing"},2);
+        loadData();
+    };
     
     var saveList = function(index) {
         var data = getDataFromInput();
@@ -490,7 +489,7 @@ sakai.listpage = function(){
                 "sakai:dateModified@TypeHint": "date",
                 "sakai:modifiedBy": sakai.data.me.user.userid,
                 "query": {
-                    "context": [" " + data.context + " "],
+                    "context": [data.context],
                     "standing": data.standing,
                     "major": data.major
                 }
@@ -653,7 +652,8 @@ sakai.listpage = function(){
     });
     
     var createDefaultList = function() {
-       var emptyData = {
+        allLists = [];
+        var emptyData = {
             "links": []
         }
         
