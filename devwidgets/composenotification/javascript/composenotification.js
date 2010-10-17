@@ -531,7 +531,7 @@ if (!sakai.composenotification){
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
         var dynamicListInit = function(){
-           //alert("called dynamiclistinit");
+           alert("called dynamiclistinit");
             sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/dynamic_lists", function(success, data){
                 if (success) {
                     // Iterate through data.lists and make new array for createOptions. (id:name)
@@ -778,14 +778,12 @@ if (!sakai.composenotification){
             });
         };     
 
-        var saveData = function(box, isValidated){     
-            var sendDate = $(messageFieldSendDate).datepicker("getDate");                                          
+        var saveData = function(box, isValidated){ 
+            // Filling out all common fields.                    
             var toPost = {
                 "sakai:type": "notice",                
                 "sakai:to": $(messageFieldTo).val(),                 
-                "sakai:from": sakai.data.me.user.userid,
-                "sakai:sendDate": sendDate,
-                "sakai:sendDate@TypeHint": "Date",
+                "sakai:from": sakai.data.me.user.userid,                
                 "sakai:subject": $(messageFieldSubject).val(), 
                 "sakai:body": $(messageFieldBody).val(),
                 "sakai:authoringbody": $(messageFieldBody).val(),
@@ -794,6 +792,15 @@ if (!sakai.composenotification){
                 "sakai:messagebox": box,
 				"sakai:validated": isValidated,
 				"sakai:validated@TypeHint": "Boolean"         
+            }
+            
+            var sendDate = $(messageFieldSendDate).datepicker("getDate");
+            if(sendDate==null){
+                toPost["sakai:sendDate@Delete"] = true                
+            }                                     
+            else{
+                toPost["sakai:sendDate"] = sendDate.toString(),
+                toPost["sakai:sendDate@TypeHint"] = "Date"
             }                                                                       
                                
             // Is this notification required or not?               
