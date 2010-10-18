@@ -41,6 +41,7 @@ sakai.inbox = function() {
     var cats = "";
     var inboxComposeNewPanelOpen = false;
     var getAll = true;
+    var allAllMessages = []; // Array that will truly hold all the messages in inbox, not limited to one page's worth
 
 
     /**
@@ -840,6 +841,24 @@ sakai.inbox = function() {
         }
 
         url += "&sortOn=" + sortBy + "&sortOrder=" + sortOrder;
+        
+        var url2 = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats;
+
+        $.ajax({
+            url: url2,
+            cache: false,
+            success: function(data) {
+                if (data.results) {
+                    allAllMessages = data.results;
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
+            }
+        });
+        
+        
         $.ajax({
             url: url,
             cache: false,
@@ -1199,7 +1218,7 @@ sakai.inbox = function() {
 
     /**
      * Delete all the messages that are in ids
-     * @param {Array} ids    An array of ids that have to be deleted.
+     * @param {Array} pathToMessages    An array of ids that have to be deleted.
      */
     var deleteMessages = function(pathToMessages, hardDelete) {
 
@@ -1341,73 +1360,39 @@ sakai.inbox = function() {
 
         // If we are in trash we hard delete the messages
         deleteMessages(pathToMessages, (currentFilter == inboxFilterTrash));
-    });
-
-    // myBerkeley: added this to make callback function unique for each updateReminder call
-    var removeReminderFromList = function (reminderID) {
-        $(inboxTableMessageID + reminderID).empty();
-        $(inboxTableMessageID + reminderID).remove();
-    };
-    
-    /**
-     * myBerkeley
-     * Returns the id gotten from a jcr:path
-     * @param {Object} path
-     */
-    var idFromPath = function (path) {
-        var id = path.split("/");
-        return id[id.length - 1];
-    };
-    
-    /**
-     * myBerkeley
-     * Returns an object containing the ids and paths of all the checked messages in Reminders filter
-     */
-    var returnCheckedItems = function () {
-        var checkedItems = {};
-        $(inboxInboxCheckDone + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-            var id = idFromPath(pathToMessage);
-            checkedItems[id] = pathToMessage;
-        });
-        return checkedItems;
-    }
+    });    
     
     // MyBerkeley: moving all reminders marked as complete to the archive
     $(inboxInboxArchiveCompletedButton).click(function() {
-        var pathToMessages = [];
-        var checkedItems = returnCheckedItems();
-        $(inboxInboxCheckDone + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-            pathToMessages.push(pathToMessage);
-        });
+        var archived = 0;
         
-        if (pathToMessages.length === 0) {
-            showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
-        } else {
-            var propertyToUpdate = {
+        var propertyToUpdate = {
                 "sakai:messagebox": "archive"
-            };
-            
-            for (key in checkedItems) {
-                var id = key;
-                var path = checkedItems[key];
+        };
+        
+        for(var i = 0, j = allAllMessages.length; i < j; i++){
+            if(allAllMessages[i]["sakai:taskState"] === "completed"){
+                archived++;
                 
-                var reminderData = $(inboxTableMessageID + id).data("data");
-                var path = reminderData["jcr:path"];
-                if(reminderData["sakai:read"] === false){
+                if(allAllMessages[i]["sakai:read"] === false){
                     unreadReminders -= 1;
                 }
-
-                updateReminder(path, propertyToUpdate, removeReminderFromList(id));
+                
+                updateReminder(allAllMessages[i]["jcr:path"], propertyToUpdate);
+            }
+        }
+        
+        if (archived == 0) {
+            showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
+        } else { 
+            if (archived == 1) {
+                showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
+            } else {
+                showGeneralMessage(archived + $(inboxGeneralMessagesArchivedX).text());
             }
             
             updateUnreadNumbers();
-            if (pathToMessages.length == 1) {
-                showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
-            } else {
-                showGeneralMessage(pathToMessages.length + $(inboxGeneralMessagesArchivedX).text());
-            }
+            showPage(0);
         }
     });
     

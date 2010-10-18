@@ -547,7 +547,7 @@ if (!sakai.composenotification){
          * Sets up drop down menu for Dynamic List field (or otherwise known as
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
-        var dynamicListInit = function(){
+        var dynamicListInit = function(selectedID){
            
             sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/private/dynamic_lists", function(success, data){
                 if (success) {
@@ -560,11 +560,11 @@ if (!sakai.composenotification){
                         dynamicListArray[data.lists[i]["sakai:id"]] = data.lists[i]["sakai:name"];                        
                     }
                     // Call createOptions with our new array.
-                    var optionsObj = createOptions(dynamicListArray, null, true);
+                    var optionsHTML = createOptions(dynamicListArray, selectedID, true);
                 }
                 
                 // Clear any old values and then append the new dynamic list options.          
-                $(messageFieldTo).empty().append(optionsObj);                              
+                $(messageFieldTo).empty().append(optionsHTML);                              
             });
         }
         
@@ -650,7 +650,7 @@ if (!sakai.composenotification){
             // Fill out all the common fields.
             sendDate = sakai.api.Util.parseSakaiDate(message["sakai:sendDate"]);
             $(messageFieldSendDate).datepicker("setDate", sendDate);
-            $(messageFieldTo).val(message["sakai:to"]);
+            dynamicListInit(message["sakai:to"]);
             $(messageFieldSubject).val(message["sakai:subject"]);
             $(messageFieldBody).val(message["sakai:body"]);                                    
         }
@@ -665,9 +665,8 @@ if (!sakai.composenotification){
         sakai.composenotification.initialise = function(calledFrom, message) {                       
             // Reset page back to its original condition.
             clearInvalids();
-            eventTimeInit();
-            dynamicListInit();
             resetView();     
+            eventTimeInit();
             hideAllButtonLists();       
             
             // Unbind everything to prevent duplicacy issues.                     
@@ -685,7 +684,6 @@ if (!sakai.composenotification){
                 fillInMessage(message);    
                 
                 // Hide all the buttons and show the proper button list.
-                hideAllButtonLists();                                   
                 $("#editdraft-buttons").show();   
                                 
                 // Queueing this draft...                
