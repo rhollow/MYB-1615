@@ -145,8 +145,9 @@
                                 {/if}
 								
                                 <tr class="inbox_message ${readClass} ${validatedClass}" id="inbox_table_message_${m['jcr:name']}">
-                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" alt="${m['sakai:validated']}" /></td>
-                                        {if m.messagebox === "outbox"}
+                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
+                                        
+										{if m.messagebox === "outbox"}
                                             {if m.userTo}
                                                 <td>
                                                 {for toUser in m.userTo}
@@ -156,8 +157,19 @@
                                             {else}
                                                 <td><a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:to']}">${m['sakai:to']}</a></td>
                                             {/if}
-                                        {else}
-                                            {if m.userFrom}
+                                        {elseif m.messagebox === "drafts"}
+											<td>
+												{if m.userFrom}                                               
+	                                                {for fromUser in m.userFrom}
+	                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${fromUser.firstName} ${fromUser.lastName}</a>
+	                                                {/for}
+	                                            {else}
+	                                                <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:from']}">${m['sakai:to']}</a>
+	                                            {/if}											
+												<input type="hidden" value="${m['sakai:validated']}" id="drafts_message_validated_${m['jcr:name']}" />
+											</td>											
+										{else}                                            
+											{if m.userFrom}
                                                 <td>
                                                 {for fromUser in m.userFrom}
                                                     <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${fromUser.firstName} ${fromUser.lastName}</a>
