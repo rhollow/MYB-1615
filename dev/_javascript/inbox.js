@@ -778,7 +778,6 @@ sakai.inbox = function() {
      * Gets all the messages from the JCR.
      */
     getAllMessages = function(callback) {
-
         box = "inbox";
         if (selectedType === "sent"){
             box = "outbox";
@@ -845,26 +844,10 @@ sakai.inbox = function() {
         var url2 = sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + cats;
 
         $.ajax({
-            url: url2,
-            cache: false,
-            success: function(data) {
-                if (data.results) {
-                    allAllMessages = data.results;
-                }
-            },
-            error: function(xhr, textStatus, thrownError) {
-                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
-                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
-            }
-        });
-        
-        
-        $.ajax({
             url: url,
             cache: false,
-            success: function(data) {
+            success: function(data){
                 if (data.results) {
-
                     // Render the messages
                     renderMessages(data);
                     showUnreadMessages();
@@ -872,7 +855,21 @@ sakai.inbox = function() {
                 if (typeof callback !== "undefined") {
                     callback();
                 }
+                
+            },
+            error: function(xhr, textStatus, thrownError){
+                showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
+            }
+        });
 
+        $.ajax({
+            url: url2,
+            cache: false,
+            success: function(data) {
+                if (data.results) {
+                    allAllMessages = data.results;
+                }
             },
             error: function(xhr, textStatus, thrownError) {
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
@@ -892,12 +889,13 @@ sakai.inbox = function() {
             cache: false,
             success: function(data){
                 var temp = 0;
-                for(var i = 0, j = data.results.length; i < j; i++) {
-                    if(data.results[i]["sakai:read"] == false) {
+                for (var i = 0, j = data.results.length; i < j; i++) {
+                    if (data.results[i]["sakai:read"] == false) {
                         temp++;
                     }
                 }
                 unreadReminders = temp;
+                updateUnreadNumbers();
             },
             error: function(xhr, textStatus, thrownError){
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
@@ -915,18 +913,16 @@ sakai.inbox = function() {
                     }
                 }
                 unreadMessages = temp;
+                updateUnreadNumbers();
             },
             error: function(xhr, textStatus, thrownError){
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
                 $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
             }
         });
-        
-        updateUnreadNumbers();
     };
 
     var updateUnreadNumbers = function(){
-
         if (unreadMessages > 0){
             $("#inbox_unread_nr_messages").text(sakai.api.Security.saneHTML("(" + unreadMessages + ")"));
         } else {
@@ -1595,15 +1591,19 @@ sakai.inbox = function() {
         else {
             // We are logged in. Do all the nescecary stuff.
             // load the list of messages.
-            showUnreadMessages();
             var getMsgsReady = false;
             var sendMsgReady = false;
             getAll = true;
-            getAllMessages(function() {
+            
+            // myBerkeley: commented out this chunk and just kept the hashchange trigger in attempt to speed up page loading
+            /*getAllMessages(function() {
                 getMsgsReady = true;
                 if (getMsgsReady && sendMsgReady)
                     $(window).trigger("hashchange");
-            });
+            });*/
+           
+           $(window).trigger("hashchange");
+           
             $(window).bind("sakai-sendmessage-ready", function() {
                 sendMsgReady = true;
                 if (getMsgsReady && sendMsgReady)
