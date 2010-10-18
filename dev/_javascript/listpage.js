@@ -33,6 +33,7 @@ sakai.listpage = function(){
     var sortOrder = "descending";
     var editExisting = false;
     var currList;
+    var hashMap = new Object(); // hash map to keep track of unique dynamic lists
 
 
     /**
@@ -430,14 +431,10 @@ sakai.listpage = function(){
     };
     
     var listAlreadyExists = function(id){
-        if(getIndexFromId(id) < 0){
-            return false;
-        } else {
-            return true;
-        }
+        return hashMap[id] != null;
     };
     
-    var getIdFromData = function(data) {
+    var getHashId = function(data) {
         var id = "dl-" + data.context;
         var majorArray = data.major;
         var standingArray = data.standing;
@@ -461,11 +458,19 @@ sakai.listpage = function(){
         loadData();
     };
     
+    var generateId = function() {
+        var id = "dl-" + sakai.data.me.user.userid + "-" + new Date().getTime();
+        return id;
+    }
+    
     var saveList = function(data, index) {
-        var id = getIdFromData(data);
+        var hashId = getHashId(data);        
+        if (listAlreadyExists(hashId)) {
+            showGeneralMessage($("#inbox_generalmessages_already_exists").text());
+            return;
+        }
         
         if(index != null) { // we are editing an existing list
-            allLists[index]["sakai:id"] = id;
             allLists[index]["sakai:name"] = data.listName;
             allLists[index]["sakai:description"] = data.desc;
             allLists[index]["sakai:dateModified"] = new Date();
@@ -475,11 +480,9 @@ sakai.listpage = function(){
             allLists[index].query.standing = data.standing;
             allLists[index].query.major = data.major;
         } else { // we are creating a new list
-            if(listAlreadyExists(id)) {
-                showGeneralMessage($("#inbox_generalmessages_already_exists").text());
-                return;
-            }
-            
+            hashMap[hashId] = hashId;
+            var id = generateId();
+
             var list = {
                 "sakai:id": id,
                 "sakai:name": data.listName,
