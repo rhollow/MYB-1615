@@ -28,7 +28,6 @@ sakai.inbox = function() {
      */
     var messagesPerPage = 12; // The number of messages per page.
     var allMessages = []; // Array that will hold all the messages.
-    var allMessagesUnlimited = []; // Array that'll hold all the messages; unlike allMessages, not limited to 12
     var me = sakai.data.me;
     var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
     var selectedMessage = {}; // The current message
@@ -42,6 +41,7 @@ sakai.inbox = function() {
     var cats = "";
     var inboxComposeNewPanelOpen = false;
     var getAll = true;
+    var allAllMessages = []; // Array that will truly hold all the messages in inbox, not limited to one page's worth
 
 
     /**
@@ -849,12 +849,8 @@ sakai.inbox = function() {
             cache: false,
             success: function(data) {
                 if (data.results) {
-                    allMessagesUnlimited = data.results;
+                    allAllMessages = data.results;
                 }
-                if (typeof callback !== "undefined") {
-                    callback();
-                }
-
             },
             error: function(xhr, textStatus, thrownError) {
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
@@ -1222,7 +1218,7 @@ sakai.inbox = function() {
 
     /**
      * Delete all the messages that are in ids
-     * @param {Array} ids    An array of ids that have to be deleted.
+     * @param {Array} pathToMessages    An array of ids that have to be deleted.
      */
     var deleteMessages = function(pathToMessages, hardDelete) {
 
@@ -1364,83 +1360,39 @@ sakai.inbox = function() {
 
         // If we are in trash we hard delete the messages
         deleteMessages(pathToMessages, (currentFilter == inboxFilterTrash));
-    });
-
-    // myBerkeley: added this to make callback function unique for each updateReminder call
-    var removeReminderFromList = function (reminderID) {
-        $(inboxTableMessageID + reminderID).empty();
-        $(inboxTableMessageID + reminderID).remove();
-    };
-    
-    /**
-     * myBerkeley
-     * Returns the id gotten from a jcr:path
-     * @param {Object} path
-     */
-    var idFromPath = function (path) {
-        var id = path.split("/");
-        return id[id.length - 1];
-    };
-    
-    /**
-     * myBerkeley
-     * Returns an object containing the ids and paths of all the checked messages in Reminders filter
-     */
-    var returnCompletedItems = function() {
-        var completedItems = {};
-
-        $(inboxInboxCheckDone + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-            var id = idFromPath(pathToMessage);
-            checkedItems[id] = pathToMessage;
-        });
-        
-        /*for(var i = 0, j = allMessagesUnlimited.length; i < j; i++){
-            if(allMessagesUnlimited[i]["sakai:taskState"] === "completed") {
-                var id = allMessagesUnlimited[i]["sakai:id"];
-                completedItems[id] = allMessagesUnlimited[i]["jcr:path"];
-            }
-        }*/
-        
-        return completedItems;
-    }
+    });    
     
     // MyBerkeley: moving all reminders marked as complete to the archive
     $(inboxInboxArchiveCompletedButton).click(function() {
-        var completedItems = returnCompletedItems();
+        var archived = 0;
         
-        var prop;
-        var propCount = 0;
-        for (prop in completedItems) {
-            propCount++;
-        }
-        
-        if (propCount === 0) {
-            showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
-        } else {
-            var propertyToUpdate = {
+        var propertyToUpdate = {
                 "sakai:messagebox": "archive"
-            };
-            
-            for (key in completedItems) {
-                var id = key;
-                var path = completedItems[key];
-
-                var reminderData = $(inboxTableMessageID + id).data("data");
-                var path = reminderData["jcr:path"];
-                if(reminderData["sakai:read"] === false){
+        };
+        
+        for(var i = 0, j = allAllMessages.length; i < j; i++){
+            if(allAllMessages[i]["sakai:taskState"] === "completed"){
+                archived++;
+                
+                if(allAllMessages[i]["sakai:read"] === false){
                     unreadReminders -= 1;
                 }
-
-                updateReminder(path, propertyToUpdate, removeReminderFromList(id));
+                
+                updateReminder(allAllMessages[i]["jcr:path"], propertyToUpdate);
+            }
+        }
+        
+        if (archived == 0) {
+            showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
+        } else { 
+            if (archived == 1) {
+                showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
+            } else {
+                showGeneralMessage(archived + $(inboxGeneralMessagesArchivedX).text());
             }
             
             updateUnreadNumbers();
-            if (propCount == 1) {
-                showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
-            } else {
-                showGeneralMessage(propCount + $(inboxGeneralMessagesArchivedX).text());
-            }
+            showPage(0);
         }
     });
     
