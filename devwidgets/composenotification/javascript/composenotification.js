@@ -880,7 +880,8 @@ if (!sakai.composenotification){
             // Are we calling this from drafts?
             if(calledFrom=="drafts"){                
                 // Fill out the proper information.
-                fillInMessage(message);    
+                fillInMessage(message); 
+                checkFieldsForErrors(true);   
                 
                 // Hide all the buttons and show the proper button list.
                 hideAllButtonLists();                                   
@@ -889,18 +890,18 @@ if (!sakai.composenotification){
                 // Queueing this draft...                
                 $("#cn-queuedraft-button").live('click', function() {                                                         
                     if(checkFieldsForErrors(true)){                                                                                                                                                 
-                        postNotification(saveData("queue"), backToDrafts, message); 
+                        postNotification(saveData("queue", true), backToDrafts, message); 
                     }                                                         
                 });         
                 
                 // Updating and re-saving this draft...
                 $("#cn-updatedraft-button").live('click', function() {                    
-                    postNotification(saveData("drafts"), backToDrafts, message); 
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, message); 
                 });         
                 
                 // Deleting the draft...
                 $("#cn-deletedraft-button").live('click', function() {                    
-                    postNotification(saveData("trash"), backToDrafts, message);                    
+                    postNotification(saveData("trash", false), backToDrafts, message);                    
                 });                   
             }      
             
@@ -917,17 +918,17 @@ if (!sakai.composenotification){
                 
                 // Moving message from queue to drafts...
                 $("#cn-movetodrafts-button").live('click', function() {
-                   postNotification(saveData("drafts"), backToQueue, message);                   
+                   postNotification(saveData("drafts", true), backToQueue, message);                   
                 });            
                 
                 // Copying message to drafts...
                 $("#cn-copytodrafts-button").live('click', function() {                                    
-                    postNotification(saveData("drafts"), backToQueue);                    
+                    postNotification(saveData("drafts", true), backToQueue);                    
                 });
                 
                 // Deleting message...
                 $("#cn-deletequeued-button").live('click', function() {
-                    postNotification(saveData("trash"), backToQueue, message);                    
+                    postNotification(saveData("trash", false), backToQueue, message);                    
                 });
             }  
             
@@ -942,7 +943,7 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    postNotification(saveData("drafts", false), null, message);                    
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message);                    
                     sakai.composenotification.initialise("drafts", message);
                 });                
             }
@@ -952,13 +953,13 @@ if (!sakai.composenotification){
                 // When someone clicks on the 'Queue' button from base panel.
                 $("#cn-queue-button").live('click', function(){                                      
                     if (checkFieldsForErrors(true)) {
-                        postNotification(saveData("queue"), backToDrafts, null);
+                        postNotification(saveData("queue", true), backToDrafts, null);
                     }                    
                 });
                 // When someone clicks on the 'Save as Draft' button from base panel.
         		$("#cn-saveasdraft-button").live('click', function() {                    
         			if ($(messageFieldSubject).val() != "") {
-        				postNotification(saveData("drafts"), backToDrafts, null);
+        				postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null);
         			} else {
         				$(messageFieldSubject).addClass(invalidClass);
         			}
