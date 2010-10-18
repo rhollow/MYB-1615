@@ -196,7 +196,9 @@ if (!sakai.composenotification){
                 clearElement(this);
             });                                    
             $(".cn-task").hide();
-            $(".cn-event").hide();            
+            $(".cn-event").hide();        
+            $("#must-be-req").hide();    
+            $("#task-radio").removeAttr("disabled");
             $(".composenotification_taskorevent").hide();
         };               
         
@@ -325,10 +327,19 @@ if (!sakai.composenotification){
          * EVENT HANDLERS FOR REMINDERS
          * 
          */               
+         // If 'No' is checked for required, it CANNOT be a task.
+         // Hide the task section if checked, so we don't confuse the user.
+         $(messageRequiredNo).change(function(){
+             $(messageRequiredNo).attr("checked", "checked");             
+             $("#task-radio").attr("disabled", "disabled");
+             $("#must-be-req").show();
+         });        
          // If 'Yes' is checked for required, show the task/event field.
          $(messageRequiredYes).change(function(){                         
             $(messageReminderCheckbox).attr("checked", "checked");                                    
-            $(".composenotification_taskorevent").show();                                                   
+            $(".composenotification_taskorevent").show();
+            $("#must-be-req").hide();
+            $("#task-radio").removeAttr("disabled");                                                   
          });         
         // If we check that this message has a date (and is a task or event),
         // reset and show the task/event information fields.
