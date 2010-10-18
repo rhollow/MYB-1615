@@ -41,7 +41,7 @@ sakai.inbox = function() {
     var cats = "";
     var inboxComposeNewPanelOpen = false;
     var getAll = true;
-    var allAllMessages = []; // Array that will truly hold all the messages in inbox, not limited to one page's worth
+    var allAllMessages = []; // Array that will truly hold all the messages in current filter, not limited to one page's worth
 
 
     /**
@@ -1407,8 +1407,7 @@ sakai.inbox = function() {
         
         if (pathToMessages.length === 0) {
             showGeneralMessage($(inboxGeneralMessagesNoneSelectedMessages).text());
-        }
-        else {
+        } else {
             // If we are in trash we hard delete the messages
             deleteMessages(pathToMessages, true);
             $(inboxInboxCheckAll).attr("checked", '');
