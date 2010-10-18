@@ -865,8 +865,7 @@ if (!sakai.composenotification){
         
 		 // Queueing this draft...                
         $("#cn-queue-button").live('click', function() {                                                         
-            if(true || checkFieldsForErrors(true)){                                                                                                                                                 
-                //updateNotification(saveData("queue", true), message);
+            if (checkFieldsForErrors(true)) {                                                                                                                                                 
 				postNotification(saveData("queue", true), completeSaveToQueue);
             }                                                  
         });     

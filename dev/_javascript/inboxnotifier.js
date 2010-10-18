@@ -731,24 +731,30 @@ sakai.notificationsinbox = function(){
             }
         }
     };
-    
+ 
+ 	/**
+     * Paging related method that checks whether we need to go to the previous page
+     * when something is deleted from the current page.
+     * @param {int} totalMessages Total messages before deletion.
+     * @param {int} numberOfMessagesToRemove Number of messages to delete
+     */   
     var isGoToPreviousPage = function(totalMessages, numberOfMessagesToRemove) {
 
 		var messageCountAfterDeletion = (totalMessages - numberOfMessagesToRemove >= 0) ? totalMessages - numberOfMessagesToRemove : 0; 
 		var pageCountBeforeDeletion = Math.ceil(totalMessages / messagesPerPage);
 		var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
-		var isLastPage = (currentPage == pageCountBeforeDeletion);
+		var isLastPage = (currentPage === pageCountBeforeDeletion);
 		
 		// Setting a flag for deleteMessagesFinished moveMessagesFinished functions
 		// The function needs to know whether to reload the same page or the previous page
-		if (pageCountAfterDeletion == pageCountBeforeDeletion || !isLastPage) {
+		if (pageCountAfterDeletion === pageCountBeforeDeletion || !isLastPage) {
 			//It is safe to use the same current page
 			return false;
 		} 
 		
-		//The last page was deleted, we need to go back one page
+		// We need to go back one page
 		return true;		
-	}
+	};
 	
 	/**
      * Delete all checked messages on current page.
@@ -857,13 +863,7 @@ sakai.notificationsinbox = function(){
 	
 	// Move the checked messages to queue.
     $("#inbox-movetoqueue-button").click(function(){               
-        //alert("Move to queue");  
-		//moveChecked("queue");  
-		
-		
-		
-		moveSelectedDraftsToQueue();
-    
+		moveSelectedDraftsToQueue();  
     });
     
     // Move all checked messages from queue to drafts.
@@ -891,9 +891,7 @@ sakai.notificationsinbox = function(){
          
      var moveMessagesFinished = function(pathToMessages, success, toWhere){        
         if (success) {
-            // Repage the inbox.            
-            // Repage the inbox.
-            
+            // Repage the inbox.                        
 			if (goToPreviousPageAfterDeletion) {
 				currentPage = currentPage - 1;
 			} // else using the same page 
@@ -1041,43 +1039,6 @@ sakai.notificationsinbox = function(){
         }        
     }
 	
-	var moveSelectedDraftsToQueue = function(){ 
-        
-		alert("Called moveMessagesToQueue!");               
-        var toWhere="queue";
-		var pathToMessages = [];
-        
-		// Here we store number of skipped not validated messages
-		var numberOfSkippedMessages = 0;
-		
-		$(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-			//console.log(this);
-            
-            //var pieces = pathToMessage.split("/");            
-            //var message = getMessageWithId(pieces[pieces.length-1]);
-			
-			// Flag 'validated' is stored in 'alt' attribute
-			if (this.alt === "true") {//message["sakai:validated"]){
-				pathToMessages.push(pathToMessage);	
-			} else {
-				numberOfSkippedMessages++;
-			}						
-			
-        });
-		   
-		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
-				    
-        // Reset 'Check All' checkbox just in case it's clicked.
-        $(inboxInboxCheckAll).attr("checked", false);    
-						        
-		moveMessages(pathToMessages, "queue");
-		
-		if (numberOfSkippedMessages != 0) {
-			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);//$(inboxGeneralMessagesQueuedFailed).text()
-		}        
-    }
-	
 	var copyMessages = function(pathToMessages, toWhere){ 
         alert("Called copyMessages!");               
         var toCopy = pathToMessages.length;
@@ -1123,7 +1084,49 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckAll).attr("checked", false);
                 
         copyMessages(pathToMessages, toWhere);
-    }                 
+    }
+	
+	/**
+     * Moves selected drafts to Queue message box.
+     * Messages that have incomplete information are ignored.
+     */	
+	var moveSelectedDraftsToQueue = function(){ 
+                   
+		var pathToMessages = [];
+		
+		// Here we store number of skipped not validated messages
+		var numberOfSkippedMessages = 0;        
+		
+		$(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+						
+			var validated = false;
+			if (this.id) {							
+				// We need to know the name of the hidden input field that contains information about validation
+				// Replacing checkbox id's prefix here to create the hidden validation field's id   
+				var msgValidatedInputId = this.id.replace(/^inbox_check_delete_/, "drafts_message_validated_");
+				// Checking if the message was validated
+				validated = $("#" + msgValidatedInputId).val() === "true";				
+			}
+						
+			if (validated) { 
+				pathToMessages.push(pathToMessage);	
+			} else {
+				numberOfSkippedMessages++;
+			}			 
+        });
+		   
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
+				    
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);    
+						        
+		moveMessages(pathToMessages, "queue");
+		
+		if (numberOfSkippedMessages !== 0) {
+			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);
+		}        
+    };                 
     
     /**
      *
