@@ -460,7 +460,6 @@ sakai.listpage = function(){
     
     var generateId = function() {
         var id = "dl-" + sakai.data.me.user.userid + "-" + new Date().getTime();
-        return id;
     }
     
     var saveList = function(data, index) {

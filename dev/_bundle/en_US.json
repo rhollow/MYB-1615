@@ -225,7 +225,7 @@
 "DESCRIPTION": "Description",
 "CURRENT_LIST_SIZE": "Current List Size",
 "DUPLICATE": "Duplicate",
-"BACK_TO_INBOX": "Back To Inbox",
+"BACK_TO_GROUP_NOTIFICATION_MANAGER": "Back to Group Notification Manager",
 "SELECT_LIST": "Select List",
 "NO_LIST_WAS_SELECTED": "No list was selected",
 "YOU_CAN_ONLY_DUPLICATE_ONE_LIST_AT_A_TIME": "You can only duplicate one list at a time",
