@@ -438,7 +438,7 @@ sakai.listpage = function(){
     };
     
     var getIdFromData = function(data) {
-        var id = "dl-" + data.listName + data.desc + data.context;
+        var id = "dl-" + data.context;
         var majorArray = data.major;
         var standingArray = data.standing;
         
@@ -507,6 +507,9 @@ sakai.listpage = function(){
             var id = $(this).val();
             listId.push(id);
         });
+        
+        $("#inbox_inbox_checkAll").attr("checked", "");
+        tickMessages();
 
         if (listId.length < 1) {
             showGeneralMessage($("#inbox_generalmessages_none_selected").text());
@@ -522,7 +525,7 @@ sakai.listpage = function(){
             listId.push(id);
         });
         
-        $(".inbox_inbox_check_list").attr("checked", "");
+        $("#inbox_inbox_checkAll").attr("checked", "");
         tickMessages();
 
         if (listId.length < 1) {
