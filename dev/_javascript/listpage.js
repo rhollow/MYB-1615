@@ -438,7 +438,7 @@ sakai.listpage = function(){
     };
     
     var getIdFromData = function(data) {
-        var id = "dl-" + data.listName + data.desc + data.context;
+        var id = "dl-" + data.context;
         var majorArray = data.major;
         var standingArray = data.standing;
         
