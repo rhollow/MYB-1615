@@ -364,7 +364,7 @@ sakai.listpage = function(){
         
         // $("#context").val(list.query.context);
         // HARD-CODING FOR POC
-        $("#context").val("ced");
+        $("select option[value='ced']").attr("selected","selected");
         
         var majorArray = list.query.major;
         for(var i = 0, j = majorArray.length; i < j; i++) {
@@ -496,6 +496,7 @@ sakai.listpage = function(){
                     "major": data.major
                 }
             }
+            
             allLists.push(list);
         }
         
