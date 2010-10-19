@@ -240,7 +240,7 @@ if (!sakai.composenotification){
             sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists", function(success, data){
                 if (success) {
                     // Iterate through data.lists and make new array for createOptions. (id:name)
-                    var dynamicListArray = [];
+                    var dynamicListArray = {};
                     
                     var numLists = data.lists.length;
                                         
