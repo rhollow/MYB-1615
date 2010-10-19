@@ -65,6 +65,7 @@ if (!sakai.composenotification){
         
         // Optional, unless messageEventCheck is checked.
         var messageEventDate = "#datepicker-eventdate-text"; 
+		var messageEventStopDate = "#datepicker-eventstopdate-text"; 
         var messageEventTimeHour = "#cn-event-timehour";
         var messageEventTimeMinute = "#cn-event-timeminute";
         var messageEventTimeAMPM = "#cn-event-timeampm";        
@@ -297,30 +298,128 @@ if (!sakai.composenotification){
          * DATEPICKER INITIALISATION FUNCTIONS
          * 
          */
-        $("#datepicker-senddate-text").datepicker({
+        $(messageFieldSendDate).datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.'      
+            buttonText: 'Click to pick a date.',
+			onSelect: function(dateText, inst) { $(messageFieldSendDate).removeClass(invalidClass); } // Clearing validation errors  
         });     
-        $("#datepicker-taskduedate-text").datepicker({
+        $(messageTaskDueDate).datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.'     
+            buttonText: 'Click to pick a date.',
+			onSelect: function(dateText, inst) { $(messageTaskDueDate).removeClass(invalidClass); } // Clearing validation errors
         });     
-        $("#datepicker-eventdate-text").datepicker({
+        $(messageEventDate).datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
-            buttonText: 'Click to pick a date.'        
+            buttonText: 'Click to pick a date.',
+			onSelect: function(dateText, inst) { $(messageEventDate).removeClass(invalidClass); } // Clearing validation errors
         });     
-        $("#datepicker-eventstopdate-text").datepicker({
+
+		// There is no event stop date yet (it will be added later)
+		// This code does nothing
+		$(messageEventStopDate).datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
             buttonText: 'Click to pick a date.'        
         });    
+        
+        /**
+         * 
+         * VALIDATION EVENT HANDLERS
+         * 
+         */
+		$(messageFieldSendDate).change(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		$(messageFieldSendDate).keypress(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		
+		$(messageTaskDueDate).change(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		$(messageTaskDueDate).keypress(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		
+		$(messageEventDate).change(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		$(messageEventDate).keypress(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		
+		// There is no event stop date yet (it will be added later)
+		// This code was commented out on purpose
+		/*
+		$(messageEventStopDate).change(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		$(messageEventStopDate).keypress(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });*/		
+		
+		$(messageFieldSubject).change(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		$(messageFieldSubject).keypress(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		
+		$(messageFieldBody).change(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		$(messageFieldBody).keypress(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		
+		$(messageEventPlace).change(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		$(messageEventPlace).keypress(function(){
+             // Clearing validation errors
+			 $(this).removeClass(invalidClass);      
+        });
+		
+		$(messageFieldTo).change(function(){
+			// Clearing validation errors
+			$(this).removeClass(invalidClass);
+		}); 
+		
+		$(messageEventTimeHour).change(function(){
+			// Clearing validation errors
+			$(this).removeClass(invalidClass);
+		});
+		
+		$(messageEventTimeMinute).change(function(){
+			// Clearing validation errors
+			$(this).removeClass(invalidClass);
+		});
+		
+		$(messageEventTimeAMPM).change(function(){
+			// Clearing validation errors
+			$(this).removeClass(invalidClass);
+		});
+		
         
         /**
          * 
@@ -330,12 +429,14 @@ if (!sakai.composenotification){
          // If 'No' is checked for required, it CANNOT be a task.
          // Hide the task section if checked, so we don't confuse the user.
          $(messageRequiredNo).change(function(){
+             $(messageFieldRequiredCheck).removeClass(invalidClass); // Clearing validation errors
              $(messageRequiredNo).attr("checked", "checked");             
              $("#task-radio").attr("disabled", "disabled");
              $("#must-be-req").show();
          });        
          // If 'Yes' is checked for required, show the task/event field.
          $(messageRequiredYes).change(function(){                         
+            $(messageFieldRequiredCheck).removeClass(invalidClass); // Clearing validation errors
             $(messageReminderCheckbox).attr("checked", "checked");                                    
             $(".composenotification_taskorevent").show();
             $("#must-be-req").hide();
@@ -366,6 +467,7 @@ if (!sakai.composenotification){
         // If task is checked, show the information and make sure the event
         // details are hidden. Restore to their default state.        
         $(messageTaskCheck).change(function() {           
+            $(messageReminderCheck).removeClass(invalidClass); // Clearing validation errors
             $(".cn-task").show();
             $(".cn-event").hide();
             $(".cn-event").find(".compose-form-elm").each(function(){                
@@ -381,6 +483,7 @@ if (!sakai.composenotification){
         // If event is checked, show the information and make sure the task
         // details are hidden. Restore to thier default state.     
         $(messageEventCheck).change(function() {          
+            $(messageReminderCheck).removeClass(invalidClass); // Clearing validation errors
             $(".cn-task").hide();        
             $(".cn-event").show();
             $(".cn-task").find(".compose-form-elm").each(function(){             
@@ -725,7 +828,7 @@ if (!sakai.composenotification){
             // Filling out all common fields.                    
             var toPost = {
                 "sakai:type": "notice",                
-                "sakai:to": $(messageFieldTo).val(),                 
+                "sakai:to": "notice:" + $(messageFieldTo).val(),  // "notice:" is required for notice routing                
                 "sakai:from": me.user.userid,                
                 "sakai:subject": $(messageFieldSubject).val(), 
                 "sakai:body": $(messageFieldBody).val(),
