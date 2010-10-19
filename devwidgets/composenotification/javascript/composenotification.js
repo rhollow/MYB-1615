@@ -844,12 +844,11 @@ if (!sakai.composenotification){
             // by a sakai date parsing util which throws an error if not
             // the proper Date object type.
             var sendDate = $(messageFieldSendDate).datepicker("getDate");
-            if(sendDate==null){
-                toPost["sakai:sendDate@Delete"] = true                
-            }                                     
-            else{
-                toPost["sakai:sendDate"] = sendDate.toString(),
-                toPost["sakai:sendDate@TypeHint"] = "Date"
+            if (sendDate === null) {
+                toPost["sakai:sendDate@Delete"] = true;           
+            } else {
+                toPost["sakai:sendDate"] = sendDate.toString();
+                toPost["sakai:sendDate@TypeHint"] = "Date";
             }                                                                       
                                
             // Is this notification required or not?               
