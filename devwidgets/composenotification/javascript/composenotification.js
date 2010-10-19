@@ -890,6 +890,9 @@ if (!sakai.composenotification){
                        
             // Are we calling this from drafts?
             if(calledFrom=="drafts"){                
+				// Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
+				reenableView();
+				
                 // Fill out the proper information.
                 fillInMessage(message); 
                 checkFieldsForErrors(true);   
@@ -961,6 +964,9 @@ if (!sakai.composenotification){
             
             // Else, user is creating a brand new blank notification.
             if(calledFrom==null){                             
+				// Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
+				reenableView();
+				
                 // When someone clicks on the 'Queue' button from base panel.
                 $("#cn-queue-button").live('click', function(){                                      
                     if (checkFieldsForErrors(true)) {
