@@ -215,8 +215,10 @@ if (!sakai.composenotification){
           * @param {String} selectedValue The key of the element option we want to select.
           * @param {Boolean} firstEmpty Start with an option element or not.
           */        
-        var createOptions = function (optionArray, selectedValue, firstEmpty) {                  
+        var createOptions = function (optionArray, selectedValue, firstEmpty) {
+            //alert("Called createOptions() with "+selectedValue);                  
             var makeOption = function (val, title, selectedTorF) {
+                //alert("The current arguments to makeOption are: "+val+", "+title+", "+selectedTorF);
                 var valString = (val) ? " value='" + val + "'" : "";
                 var selectedString = (selectedTorF) ? " selected='selected'" : "";
                 return "<option " + valString + selectedString + ">" + title + "</option>\n";
@@ -228,7 +230,8 @@ if (!sakai.composenotification){
                 optionsString += makeOption(null, "", (selectedValue === null || selectedValue === ""));
             }
             for (var key in optionArray) {
-                optionsString += makeOption(key, optionArray[key], (selectedValue == key));
+                optionsString += makeOption(key, optionArray[key], (selectedValue == "notice:"+key));
+                //alert("The selectedValue is: "+selectedValue+" with key: "+key+", and the boolean is "+(selectedValue == key));
             }
             return optionsString;
         };
@@ -237,7 +240,8 @@ if (!sakai.composenotification){
          * Sets up drop down menu for Dynamic List field (or otherwise known as
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
-        var dynamicListInit = function(selectedID){                   
+        var dynamicListInit = function(selectedID){     
+            //alert("Called dynamicListInit() with: "+selectedID);              
             sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists", function(success, data){
                 if (success) {
                     // Iterate through data.lists and make new array for createOptions. (id:name)
@@ -555,7 +559,8 @@ if (!sakai.composenotification){
          * Fill in the notification detail page with the message's information.
          * @param {Object} message The message whose info we will extract.
          */
-        var fillInMessage = function(message){            
+        var fillInMessage = function(message){         
+        //alert("Called fillInMessage()...");   
             var eventDate;
             var taskDate;
             var sendDate;                        
@@ -840,6 +845,8 @@ if (!sakai.composenotification){
 				"sakai:validated@TypeHint": "Boolean"         
             }
             
+            //alert(toPost["sakai:to"]);
+            
             // sendDate is handled a little differently, because it is called
             // by a sakai date parsing util which throws an error if not
             // the proper Date object type.
@@ -973,12 +980,14 @@ if (!sakai.composenotification){
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)         
          */
-        sakai.composenotification.initialise = function(calledFrom, message) {                       
+        sakai.composenotification.initialise = function(calledFrom, message) { 
+            //alert("Initialising widget...");                      
             // Reset page back to its original condition.            
             resetView();
             clearInvalids(); 
             hideAllButtonLists();
-            unbindAll();               
+            unbindAll();       
+            reenableView();        
             eventTimeInit(null, null, null);
             dynamicListInit(null);                            
             
@@ -994,7 +1003,7 @@ if (!sakai.composenotification){
             if(calledFrom=="drafts"){                
 				// Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
 				reenableView();
-				
+				//alert("It's a draft...");
                 // Fill out the proper information.
                 fillInMessage(message); 
                 checkFieldsForErrors(true);   
@@ -1030,7 +1039,8 @@ if (!sakai.composenotification){
                 disableView();    
                 
                 // Display the proper buttons.                
-                $("#queueview-buttons").show();   
+                $("#queueview-buttons").show(); 
+                $("#create-new-dynamic-list-button").hide();  
                 
                 // Moving message from queue to drafts...
                 $("#cn-movetodrafts-button").live('click', function() {
@@ -1056,6 +1066,7 @@ if (!sakai.composenotification){
                 disableView();
                 // Display the proper buttons.                
                 $("#trashview-buttons").show();
+                $("#create-new-dynamic-list-button").hide();
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
