@@ -942,11 +942,11 @@ if (!sakai.composenotification){
          * @param {Object} successCallback (optional) Function to call if successful post; usually redirect function.
          * @param {Object} original (optional) The original message, if this is an update.
          */
-        var postNotification = function(toPost, successCallback, original){            
-            var url = "http://localhost:8080/user/"+me.user.userid+"/message.create.html";
+        var postNotification = function (toPost, successCallback, original) {            
+            var url = "/user/" + me.user.userid + "/message.create.html";
             // Check if we are updating or creating a new message. 
             // (Default assumption is that we are creating a new notification.)
-            if(original!=null){                
+            if (original !== null) {                
                 url = original["jcr:path"];
             }                                                                                                                                    
             // Post all the data in an Ajax call.    
