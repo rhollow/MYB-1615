@@ -232,7 +232,7 @@ if (!sakai.composenotification){
                 optionsString += makeOption(null, "", (selectedValue === null || selectedValue === ""));
             }
             for (var key in optionArray) {
-                optionsString += makeOption(key, optionArray[key], (selectedValue == "notice:"+key));
+                optionsString += makeOption(key, optionArray[key], (selectedValue == key));
                 
             }
             return optionsString;
@@ -245,6 +245,10 @@ if (!sakai.composenotification){
         var dynamicListInit = function(selectedID){     
                           
             sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists", function(success, data){
+                
+                // if there is a selectedID remove "notice:" from it
+                selectedID = (selectedID) ? selectedID.substr(selectedID.indexOf(":") + 1) : null;
+                
                 if (success) {
                     // Iterate through data.lists and make new array for createOptions. (id:name)
                     var dynamicListArray = {};
@@ -637,7 +641,7 @@ if (!sakai.composenotification){
             if(message["sakai:sendDate"]!=null){                
                 sendDate = sakai.api.Util.parseSakaiDate(message["sakai:sendDate"]);
                 $(messageFieldSendDate).datepicker("setDate", sendDate);
-            }            
+            }
             dynamicListInit(message["sakai:to"]);           
             $(messageFieldSubject).val(message["sakai:subject"]);
             $(messageFieldBody).val(message["sakai:authoringbody"]);                                    
@@ -987,7 +991,7 @@ if (!sakai.composenotification){
             clearInvalids(); 
             hideAllButtonLists();
             unbindAll();       
-                 
+            
             eventTimeInit(null, null, null);
             dynamicListInit(null);                            
             
