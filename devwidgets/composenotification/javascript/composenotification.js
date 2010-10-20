@@ -124,7 +124,8 @@ if (!sakai.composenotification){
                 var buttonImagePath = $(this).datepicker( "option", "buttonImage" );
                 var buttonImage = $("img[src$='"+buttonImagePath+"']");                
                 $(buttonImage).show();
-            });            
+            });
+            $("#create-new-dynamic-list-button").show(); 
         };
         
         /**
@@ -137,7 +138,8 @@ if (!sakai.composenotification){
                 var buttonImagePath = $(this).datepicker( "option", "buttonImage" );
                 var buttonImage = $("img[src$='"+buttonImagePath+"']");                
                 $(buttonImage).hide();
-            });                          
+            });
+            $("#create-new-dynamic-list-button").hide(); 
         };
         
         /**
@@ -215,8 +217,10 @@ if (!sakai.composenotification){
           * @param {String} selectedValue The key of the element option we want to select.
           * @param {Boolean} firstEmpty Start with an option element or not.
           */        
-        var createOptions = function (optionArray, selectedValue, firstEmpty) {                  
+        var createOptions = function (optionArray, selectedValue, firstEmpty) {
+                              
             var makeOption = function (val, title, selectedTorF) {
+                
                 var valString = (val) ? " value='" + val + "'" : "";
                 var selectedString = (selectedTorF) ? " selected='selected'" : "";
                 return "<option " + valString + selectedString + ">" + title + "</option>\n";
@@ -229,6 +233,7 @@ if (!sakai.composenotification){
             }
             for (var key in optionArray) {
                 optionsString += makeOption(key, optionArray[key], (selectedValue == key));
+                
             }
             return optionsString;
         };
@@ -237,8 +242,13 @@ if (!sakai.composenotification){
          * Sets up drop down menu for Dynamic List field (or otherwise known as
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
-        var dynamicListInit = function(selectedID){                   
+        var dynamicListInit = function(selectedID){     
+                          
             sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists", function(success, data){
+                
+                // if there is a selectedID remove "notice:" from it
+                selectedID = (selectedID) ? selectedID.substr(selectedID.indexOf(":") + 1) : null;
+                
                 if (success) {
                     // Iterate through data.lists and make new array for createOptions. (id:name)
                     var dynamicListArray = {};
@@ -555,7 +565,8 @@ if (!sakai.composenotification){
          * Fill in the notification detail page with the message's information.
          * @param {Object} message The message whose info we will extract.
          */
-        var fillInMessage = function(message){            
+        var fillInMessage = function(message){         
+           
             var eventDate;
             var taskDate;
             var sendDate;                        
@@ -630,7 +641,7 @@ if (!sakai.composenotification){
             if(message["sakai:sendDate"]!=null){                
                 sendDate = sakai.api.Util.parseSakaiDate(message["sakai:sendDate"]);
                 $(messageFieldSendDate).datepicker("setDate", sendDate);
-            }            
+            }
             dynamicListInit(message["sakai:to"]);           
             $(messageFieldSubject).val(message["sakai:subject"]);
             $(messageFieldBody).val(message["sakai:authoringbody"]);                                    
@@ -942,11 +953,11 @@ if (!sakai.composenotification){
          * @param {Object} successCallback (optional) Function to call if successful post; usually redirect function.
          * @param {Object} original (optional) The original message, if this is an update.
          */
-        var postNotification = function(toPost, successCallback, original){            
-            var url = "http://localhost:8080/user/"+me.user.userid+"/message.create.html";
+        var postNotification = function (toPost, successCallback, original) {            
+            var url = "/user/" + me.user.userid + "/message.create.html";
             // Check if we are updating or creating a new message. 
             // (Default assumption is that we are creating a new notification.)
-            if(original!=null){                
+            if (original !== null) {                
                 url = original["jcr:path"];
             }                                                                                                                                    
             // Post all the data in an Ajax call.    
@@ -973,12 +984,14 @@ if (!sakai.composenotification){
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)         
          */
-        sakai.composenotification.initialise = function(calledFrom, message) {                       
+        sakai.composenotification.initialise = function(calledFrom, message) { 
+                                 
             // Reset page back to its original condition.            
             resetView();
             clearInvalids(); 
             hideAllButtonLists();
-            unbindAll();               
+            unbindAll();       
+            
             eventTimeInit(null, null, null);
             dynamicListInit(null);                            
             
@@ -1030,7 +1043,7 @@ if (!sakai.composenotification){
                 disableView();    
                 
                 // Display the proper buttons.                
-                $("#queueview-buttons").show();   
+                $("#queueview-buttons").show(); 
                 
                 // Moving message from queue to drafts...
                 $("#cn-movetodrafts-button").live('click', function() {
