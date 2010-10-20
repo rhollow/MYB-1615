@@ -1595,7 +1595,6 @@ sakai.inbox = function() {
             var sendMsgReady = false;
             getAll = true;
             
-            // myBerkeley: commented out this chunk and just kept the hashchange trigger in attempt to speed up page loading
             getAllMessages(function() {
                 getMsgsReady = true;
                 if (getMsgsReady && sendMsgReady)
