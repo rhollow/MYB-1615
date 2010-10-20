@@ -1027,7 +1027,7 @@ sakai.notificationsinbox = function(){
             }                                                         
             
             $.ajax({
-                url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
+                url: "/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: newMessage,
                 success: function(data){
@@ -1066,7 +1066,7 @@ sakai.notificationsinbox = function(){
             alert("but we moved it to "+message["sakai:messagebox"]);
             
             $.ajax({
-                url: "http://localhost:8080/user/"+sakai.data.me.user.userid+"/message.create.html",
+                url: "/user/"+sakai.data.me.user.userid+"/message.create.html",
                 type: "POST",
                 data: message,
                 success: function(){     
