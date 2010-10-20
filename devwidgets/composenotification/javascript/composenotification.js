@@ -184,9 +184,10 @@ if (!sakai.composenotification){
             $("#cn-deletedraft-button").die();
             $("#cn-deletetrashed-button").die();
             $("#cn-movetodrafts-button").die();
-            $("#cn-copytodrafts-button").die();
+            $("#cn-queuecopytodrafts-button").die();
             $("#cn-deletequeued-button").die();
-            $("#cn-editrashed-button").die();                        
+            $("#cn-editrashed-button").die(); 
+            $("#cn-archivecopytodrafts-button").die();                       
         };
 
         /**
@@ -535,7 +536,12 @@ if (!sakai.composenotification){
         // Return to queue panel.
         var backToQueue = function () {            
             sakai.notificationsinbox.showQueue();
-        };                                                      
+        };  
+        
+        // Return to archive panel.
+        var backToArchive = function () {            
+            sakai.notificationsinbox.showArchive();
+        };                                                     
                     
         /**
          * 
@@ -564,10 +570,19 @@ if (!sakai.composenotification){
          * Fill in the notification detail page with the message's information.
          * @param {Object} message The message whose info we will extract.
          */
-        var fillInMessage = function(message){         
+        var fillInMessage = function(message, callback){                     
             var eventDate;
             var taskDate;
-            var sendDate;                        
+            var sendDate;   
+            
+            // Fill out all the common fields.                    
+            if(message["sakai:sendDate"]!=null){                
+                sendDate = sakai.api.Util.parseSakaiDate(message["sakai:sendDate"]);
+                $(messageFieldSendDate).datepicker("setDate", sendDate);
+            }
+            dynamicListInit(message["sakai:to"]);           
+            $(messageFieldSubject).val(message["sakai:subject"]);
+            $(messageFieldBody).val(message["sakai:authoringbody"]);                     
             
             // If it's a reminder, fill in the reminder categories after checking if it
             // is a task or an event, and show the proper fields for the user.
@@ -633,16 +648,10 @@ if (!sakai.composenotification){
                     eventTimeInit(hours, minutes, AMPM);                                                                                                                                    
                     $(messageEventPlace).val(message["sakai:eventPlace"]);
                 }
-            }
-            
-            // Fill out all the common fields.                    
-            if(message["sakai:sendDate"]!=null){                
-                sendDate = sakai.api.Util.parseSakaiDate(message["sakai:sendDate"]);
-                $(messageFieldSendDate).datepicker("setDate", sendDate);
-            }
-            dynamicListInit(message["sakai:to"]);           
-            $(messageFieldSubject).val(message["sakai:subject"]);
-            $(messageFieldBody).val(message["sakai:authoringbody"]);                                    
+            }   
+            if(callback){
+                callback(true);
+            }                                                                                                
         };
         
         /**         
@@ -652,7 +661,7 @@ if (!sakai.composenotification){
 		 * @param {boolean} displayErrors Do we need to display errors or just do a check?
 		 * @return valid True = no errors, false = errors found.
 		 */
-		var checkFieldsForErrors = function(displayErrors) {                        
+		var checkFieldsForErrors = function(displayErrors) {                                 
 		    var valid = true;
 		    var today = new Date(); // full today's date
 		    var month = today.getMonth();
@@ -987,8 +996,7 @@ if (!sakai.composenotification){
             resetView();
             clearInvalids(); 
             hideAllButtonLists();
-            unbindAll();       
-            
+            unbindAll();                   
             eventTimeInit(null, null, null);
             dynamicListInit(null);                            
             
@@ -1006,9 +1014,8 @@ if (!sakai.composenotification){
 				reenableView();
 				
                 // Fill out the proper information.
-                fillInMessage(message); 
-                checkFieldsForErrors(true);   
-                
+                fillInMessage(message, checkFieldsForErrors); 
+                                
                 // Hide all the buttons and show the proper button list.
                 hideAllButtonLists();                                   
                 $("#editdraft-buttons").show();                                  
@@ -1028,13 +1035,13 @@ if (!sakai.composenotification){
                 // Deleting the draft...
                 $("#cn-deletedraft-button").live('click', function() {                    
                     postNotification(saveData("trash", false), backToDrafts, message);                    
-                });                   
+                });                                 
             }      
             
             // Are we calling this from queue?
             if(calledFrom=="queue"){
                 // Now fill out the proper information.
-                fillInMessage(message);
+                fillInMessage(message, null);
                 
                 // And disable the form, disallowing the user to edit.
                 disableView();    
@@ -1048,28 +1055,47 @@ if (!sakai.composenotification){
                 });            
                 
                 // Copying message to drafts...
-                $("#cn-copytodrafts-button").live('click', function() {                                    
-                    postNotification(saveData("drafts", true), backToQueue);                    
+                $("#cn-queuecopytodrafts-button").live('click', function() {                                    
+                    postNotification(saveData("drafts", true), backToQueue, null);                    
                 });
                 
                 // Deleting message...
                 $("#cn-deletequeued-button").live('click', function() {
                     postNotification(saveData("trash", false), backToQueue, message);                    
                 });
+            } 
+            
+            // Are we calling this from acrhive?
+            if(calledFrom=="archive"){
+                // Now fill out the proper information.
+                fillInMessage(message, null);
+                
+                // And disable the form, disallowing the user to edit.
+                disableView();    
+                
+                // Display the proper buttons.                
+                $("#archiveview-buttons").show(); 
+                
+               // Copying message to drafts...
+               $("#cn-archivecopytodrafts-button").live('click', function() {                                    
+                   postNotification(saveData("drafts", true), backToArchive, null);                    
+               });
             }  
             
             // Are we calling this from trash?       
             if(calledFrom=="trash"){                       
                 // Now fill out the proper information.
-                fillInMessage(message);
+                fillInMessage(message, null);
+                
                 // And disable the form, disallowing the user to edit.
                 disableView();
+                
                 // Display the proper buttons.                
                 $("#trashview-buttons").show();
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message);                    
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), message);                    
                     sakai.composenotification.initialise("drafts", message);
                 });                
             }
