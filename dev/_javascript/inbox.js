@@ -849,6 +849,11 @@ sakai.inbox = function() {
             success: function(data){
                 if (data.results) {
                     // Render the messages
+                    for(var i = 0, j = data.length; i < j; i++) {
+                        if(data[i]["sakai:from"] == person.user.userid) {
+                            data.splice(i, 1);
+                        }
+                    }
                     renderMessages(data);
                     showUnreadMessages();
                 }
