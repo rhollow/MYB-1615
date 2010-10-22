@@ -17,6 +17,10 @@
  */
 
 /* Main */
+.mylinks .widget_title {
+    background: url("/dev/_images/mylinks_widget_icon.png") no-repeat scroll 16px 16px transparent;
+}
+
 .mylinks_widget .fl-widget-content {padding: 0px;}
 
 /* List of links */
