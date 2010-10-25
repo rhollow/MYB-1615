@@ -17,6 +17,11 @@
  */
 
 /* Main */
+
+.myreminders .widget_title {
+    background: url("/devwidgets/myreminders/images/reminders_widget_icon.png") no-repeat scroll 16px 16px transparent;
+}
+
 .myreminders_widget .fl-widget-content {padding: 0px 0px;}
 .myreminders_widget .reminders_header {
     background-color: #D4DADE; 
