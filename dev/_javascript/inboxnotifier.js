@@ -964,6 +964,48 @@ sakai.notificationsinbox = function(){
         moveMessages(pathToMessages, toWhere);
     }
     
+    /**
+     * Moves selected drafts to Queue message box.
+     * Messages that have incomplete information are ignored.
+     */	
+	var moveSelectedDraftsToQueue = function(){ 
+                   
+		var pathToMessages = [];
+		
+		// Here we store number of skipped not validated messages
+		var numberOfSkippedMessages = 0;        
+		
+		$(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+						
+			var validated = false;
+			if (this.id) {							
+				// We need to know the name of the hidden input field that contains information about validation
+				// Replacing checkbox id's prefix here to create the hidden validation field's id   
+				var msgValidatedInputId = this.id.replace(/^inbox_check_delete_/, "drafts_message_validated_");
+				// Checking if the message was validated
+				validated = $("#" + msgValidatedInputId).val() === "true";				
+			}
+						
+			if (validated) { 
+				pathToMessages.push(pathToMessage);	
+			} else {
+				numberOfSkippedMessages++;
+			}			 
+        });
+		   
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
+				    
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);    
+						        
+		moveMessages(pathToMessages, "queue");
+		
+		if (numberOfSkippedMessages !== 0) {
+			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);
+		}        
+    };         
+    
     var copyMessagesFinished = function(pathToMessages, success, toWhere){              
         if (success) {
             // Repage the inbox.            
@@ -1010,6 +1052,7 @@ sakai.notificationsinbox = function(){
             newMessage["sakai:sendDate"] = message["sakai:sendDate"]; 
             newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
             newMessage["sakai:category"] = message["sakai:category"];
+            newMessage["sakai:validated"] = message["sakai:validated"];
             
             // Is it required (a reminder)?
             if(newMessage["sakai:category"]=="reminder"){
@@ -1059,49 +1102,7 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckAll).attr("checked", false);
                 
         copyMessages(pathToMessages, toWhere);
-    }
-	
-	/**
-     * Moves selected drafts to Queue message box.
-     * Messages that have incomplete information are ignored.
-     */	
-	var moveSelectedDraftsToQueue = function(){ 
-                   
-		var pathToMessages = [];
-		
-		// Here we store number of skipped not validated messages
-		var numberOfSkippedMessages = 0;        
-		
-		$(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-						
-			var validated = false;
-			if (this.id) {							
-				// We need to know the name of the hidden input field that contains information about validation
-				// Replacing checkbox id's prefix here to create the hidden validation field's id   
-				var msgValidatedInputId = this.id.replace(/^inbox_check_delete_/, "drafts_message_validated_");
-				// Checking if the message was validated
-				validated = $("#" + msgValidatedInputId).val() === "true";				
-			}
-						
-			if (validated) { 
-				pathToMessages.push(pathToMessage);	
-			} else {
-				numberOfSkippedMessages++;
-			}			 
-        });
-		   
-		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
-				    
-        // Reset 'Check All' checkbox just in case it's clicked.
-        $(inboxInboxCheckAll).attr("checked", false);    
-						        
-		moveMessages(pathToMessages, "queue");
-		
-		if (numberOfSkippedMessages !== 0) {
-			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);
-		}        
-    };                 
+    }		      
     
     /**
      *

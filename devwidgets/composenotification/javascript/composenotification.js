@@ -740,12 +740,14 @@ if (!sakai.composenotification){
 	        	bodyEl.addClass(invalidClass);         
 		    }
 		    if(reminderCheck){
-		        // This notification is a REMINDER. Either task or event must be checked.                
+		        // This notification is a REMINDER. Either task or event must be checked.                              
 		        if(!taskCheck && !eventCheck){
 		            if (!displayErrors) return false;
 					valid = false;
 	            	reminderCheckEl.addClass(invalidClass);             
 		        }
+                
+                // Now check to see what it is (task or event)...
 		        else if (taskCheck) {
 		            // The reminder is a TASK.                    
 		            if (!taskDueDate) {
@@ -830,6 +832,72 @@ if (!sakai.composenotification){
 	                	eventPlaceEl.addClass(invalidClass);	
 		            }                                                                                                                                                                                          
 		        }
+		    }
+            // Even if it isn't a reminder, it could still be a non-required event.
+            if (eventCheck) {	                                              
+	            if (!eventDate) {
+	                if (!displayErrors) return false;
+					valid = false;
+                	eventDateEl.addClass(invalidClass);
+	            }
+	            else if(modtoday>eventDateObj){                                                    
+	                if (!displayErrors) return false;
+					valid = false;
+                	eventDateEl.addClass(invalidClass);            
+	            }
+	            else if(sendDateObj>eventDateObj){
+	                if (!displayErrors) return false;
+					valid = false;
+                	eventDateEl.addClass(invalidClass);
+	            }
+	            else{
+	                // If the event date is today, check that the time hasn't already passed.                                        
+	                if((eventDateObj.getTime()-modtoday.getTime())==0){                            
+	                    if(eventTimeHour && eventTimeMinute && eventTimeAMPM){                                                    
+	                        var compareToHour = parseInt(eventTimeHour);                             
+	                        var compareToMin = parseInt(eventTimeMinute);                             
+	                        
+	                        // Convert to military time.
+	                        if(eventTimeAMPM=="PM"){
+	                            if(compareToHour<12){
+	                                compareToHour = compareToHour+12;
+	                            }                                
+	                        }                                                                                   
+	                                                    
+	                        eventDateObj.setHours(compareToHour);
+	                        eventDateObj.setMinutes(compareToMin);                                                        
+	                        
+	                        // If the event is today and the time of the event has already passed...                  
+	                        if(today.getTime()>eventDateObj.getTime()){
+	                            if (!displayErrors) return false;
+								valid = false;                                
+                                eventTimeHourEl.addClass(invalidClass);
+                                eventTimeMinuteEl.addClass(invalidClass);
+                                eventTimeAMPMEl.addClass(invalidClass);
+	                        }              
+	                    }    
+	                }
+	            }
+	            if (!eventTimeHour) {
+	                if (!displayErrors) return false;
+					valid = false;
+            	    eventTimeHourEl.addClass(invalidClass);
+	            }                    
+	            if (!eventTimeMinute) {
+	                if (!displayErrors) return false;
+					valid = false;
+                	eventTimeMinuteEl.addClass(invalidClass);
+	            }
+	            if (!eventTimeAMPM) {
+	                if (!displayErrors) return false;
+					valid = false;
+                	eventTimeAMPMEl.addClass(invalidClass);
+	            }
+	            if (!eventPlace) {
+	                if (!displayErrors) return false;
+					valid = false;
+                	eventPlaceEl.addClass(invalidClass);	
+	            }                                                                                                                                                                                          
 		    }                                            		    
 		    // Return the status of the form.        
 		    return valid;
@@ -919,19 +987,23 @@ if (!sakai.composenotification){
                 // Could still be an Event, meaning it is a non-required event with time, date, and place.
                 if($(messageEventCheck).attr("checked")) {                    
                     toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");                                        
-                    toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());                    
-                    // Get the event time details and add to the eventDate obj.                    
-                    if($(messageEventTimeAMPM).val()=="PM" && parseInt($(messageEventTimeHour).val())!=12){                                               
-                        toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val())+12);                                            
-                    }
-                    else{
-                        if(parseInt($(messageEventTimeHour).val())==12){
-                            toPost["sakai:eventDate"].setHours(0);    
+                    if($(messageEventTimeMinute).val()!=null){
+                        toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());    
+                    }                                       
+                    if($(messageEventTimeHour).val()!=null){
+                        // Get the event time details and add to the eventDate obj.                    
+                        if($(messageEventTimeAMPM).val()=="PM" && parseInt($(messageEventTimeHour).val())!=12){                                               
+                            toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val())+12);                                            
                         }
                         else{
-                            toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());    
-                        }                                               
-                    }
+                            if(parseInt($(messageEventTimeHour).val())==12){
+                                toPost["sakai:eventDate"].setHours(0);    
+                            }
+                            else{
+                                toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());    
+                            }                                               
+                        }    
+                    }                    
                     toPost["sakai:eventDate"] = toPost["sakai:eventDate"].toString();                                                                                                  
                     toPost["sakai:eventDate@TypeHint"] = "Date";
                     toPost["sakai:eventPlace"] = $(messageEventPlace).val();  
@@ -959,14 +1031,18 @@ if (!sakai.composenotification){
          * @param {Object} toPost Message to post; usually created via saveData() function.
          * @param {Object} successCallback (optional) Function to call if successful post; usually redirect function.
          * @param {Object} original (optional) The original message, if this is an update.
+         * @param {boolean} copyCheck (optional) Are we copying? If we are, we need to append "Copy to" to the subject.
          */
-        var postNotification = function (toPost, successCallback, original) {            
+        var postNotification = function (toPost, successCallback, original, copyCheck) {            
             var url = "/user/" + me.user.userid + "/message.create.html";
             // Check if we are updating or creating a new message. 
             // (Default assumption is that we are creating a new notification.)
             if (original !== null) {                
                 url = original["jcr:path"];
-            }                                                                                                                                    
+            }   
+            if (copyCheck) {
+                toPost["sakai:subject"] = "Copy of "+toPost["sakai:subject"];
+            }                                                                                                                                 
             // Post all the data in an Ajax call.    
             $.ajax({
                 url: url,
@@ -1003,7 +1079,7 @@ if (!sakai.composenotification){
             // Event handler for when user clicks on DLC "Save" button.
              $("#dlc-save").live('click', function(){
                  // Save the draft.
-                 postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message);                                     
+                 postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null);                                     
              });         
              // Event handler for when you click on the "Don't Save" button on DLC dialog.
              $("#dlc-dontsave").live('click', goToCDNLPage);                                      
@@ -1023,18 +1099,18 @@ if (!sakai.composenotification){
                 // Queueing this draft...                
                 $("#cn-queuedraft-button").live('click', function() {                                                         
                     if(checkFieldsForErrors(true)){                                                                                                                                                 
-                        postNotification(saveData("queue", true), backToDrafts, message); 
+                        postNotification(saveData("queue", true), backToDrafts, message, null); 
                     }                                                         
                 });         
                 
                 // Updating and re-saving this draft...
                 $("#cn-updatedraft-button").live('click', function() {                    
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, message); 
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, message, null); 
                 });         
                 
                 // Deleting the draft...
                 $("#cn-deletedraft-button").live('click', function() {                    
-                    postNotification(saveData("trash", false), backToDrafts, message);                    
+                    postNotification(saveData("trash", false), backToDrafts, message, null);                    
                 });                                 
             }      
             
@@ -1051,17 +1127,17 @@ if (!sakai.composenotification){
                 
                 // Moving message from queue to drafts...
                 $("#cn-movetodrafts-button").live('click', function() {
-                   postNotification(saveData("drafts", true), backToQueue, message);                   
+                   postNotification(saveData("drafts", true), backToQueue, message, null);                   
                 });            
                 
                 // Copying message to drafts...
-                $("#cn-queuecopytodrafts-button").live('click', function() {                                    
-                    postNotification(saveData("drafts", true), backToQueue, null);                    
+                $("#cn-queuecopytodrafts-button").live('click', function() {                                             
+                    postNotification(saveData("drafts", true), backToQueue, null, true);                    
                 });
                 
                 // Deleting message...
                 $("#cn-deletequeued-button").live('click', function() {
-                    postNotification(saveData("trash", false), backToQueue, message);                    
+                    postNotification(saveData("trash", false), backToQueue, message, null);                    
                 });
             } 
             
@@ -1078,7 +1154,7 @@ if (!sakai.composenotification){
                 
                // Copying message to drafts...
                $("#cn-archivecopytodrafts-button").live('click', function() {                                    
-                   postNotification(saveData("drafts", true), backToArchive, null);                    
+                   postNotification(saveData("drafts", true), backToArchive, null, true);                    
                });
             }  
             
@@ -1095,7 +1171,7 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message);                    
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message, null);                    
                     sakai.composenotification.initialise("drafts", message);
                 });                
             }
@@ -1108,13 +1184,13 @@ if (!sakai.composenotification){
                 // When someone clicks on the 'Queue' button from base panel.
                 $("#cn-queue-button").live('click', function(){                                      
                     if (checkFieldsForErrors(true)) {
-                        postNotification(saveData("queue", true), backToDrafts, null);
+                        postNotification(saveData("queue", true), backToDrafts, null, null);
                     }                    
                 });
                 // When someone clicks on the 'Save as Draft' button from base panel.
         		$("#cn-saveasdraft-button").live('click', function() {                    
         			if ($(messageFieldSubject).val() != "") {
-        				postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null);
+        				postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null);
         			} else {
         				$(messageFieldSubject).addClass(invalidClass);
         			}
