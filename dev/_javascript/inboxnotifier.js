@@ -1235,7 +1235,8 @@ sakai.notificationsinbox = function(){
             filterMessages("drafts", "", "all", inboxFilterDrafts);
         }            
       
-    };    
+    };  
+      
     doInit();
 };
 
