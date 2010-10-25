@@ -9,7 +9,7 @@
         </div>
     </div>
 
-    <ul id="mylinks_list_template" style="display:none"><!--
+    <ul id="mylinks_list_template" style="display:none">
         {for i in links}
             <li class="link">
                 <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
@@ -17,7 +17,7 @@
         {forelse}
             <span>Sorry, there was a failure loading your list of links.</span>
         {/for}
-    --></ul>
+    </ul>
     
     <!-- widget footer --> 
 
