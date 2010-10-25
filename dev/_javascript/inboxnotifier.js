@@ -1003,6 +1003,7 @@ sakai.notificationsinbox = function(){
             newMessage["sakai:from"] = message["sakai:from"];   
             newMessage["sakai:subject"] = "Copy of "+message["sakai:subject"];   
             newMessage["sakai:body"] = message["sakai:body"]; 
+            newMessage["sakai:authoringbody"] = message["sakai:authoringbody"];
             newMessage["sakai:sendstate"] = message["sakai:sendstate"];   
             newMessage["sakai:read"] = message["sakai:read"];
             newMessage["sakai:messagebox"] = toWhere;   
@@ -1027,7 +1028,7 @@ sakai.notificationsinbox = function(){
             }                                                         
             
             $.ajax({
-                url: "/user/"+sakai.data.me.user.userid+"/message.create.html",
+                url: "/user/" + me.user.userid + "/message.create.html",
                 type: "POST",
                 data: newMessage,
                 success: function(data){
@@ -1041,39 +1042,6 @@ sakai.notificationsinbox = function(){
                     if (copied === toCopy) {
                         copyMessagesFinished(pathToMessages, false);
                     }                        
-                }
-            });
-        }        
-    }
-	
-	var copyMessages = function(pathToMessages, toWhere){ 
-        alert("Called copyMessages!");               
-        var toCopy = pathToMessages.length;
-        var copied = 0;
-                
-        for (var d = 0, e = pathToMessages.length; d < e; d++) {
-            // For all the messages, extract the message id from the jcr path url
-            // and then use that to find the appropriate message.
-            var url = pathToMessages[d];
-            var pieces = url.split("/");            
-            var message = getMessageWithId(pieces[pieces.length-1]);
-            alert("The message is "+message["sakai:subject"]);
-            
-            // Now post that message to the appropriate messagebox we
-            // are copying it to.
-            alert("The message was in "+message["sakai:messagebox"]);
-            message["sakai:messagebox"] = toWhere;
-            alert("but we moved it to "+message["sakai:messagebox"]);
-            
-            $.ajax({
-                url: "/user/"+sakai.data.me.user.userid+"/message.create.html",
-                type: "POST",
-                data: message,
-                success: function(){     
-                    alert("Success on move.");                                 
-                }, 
-                error: function(){
-                    alert("Failure on move.");                        
                 }
             });
         }        
@@ -1193,6 +1161,10 @@ sakai.notificationsinbox = function(){
     var doInit = function(){
         // should check whether there is already some code to do this in 3akai
         var isAMember = function (groupID, personsGroups) {
+            // if we're allowing internal login we're in a dev environment and we'll allow anyone to edit
+            if (sakai.config.Authentication.internal) {
+                return true;
+            } 
             var numGroups = personsGroups.length;
             for (var idx = 0; idx < numGroups; idx++) {
 
