@@ -1095,7 +1095,7 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), message);                    
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message);                    
                     sakai.composenotification.initialise("drafts", message);
                 });                
             }
