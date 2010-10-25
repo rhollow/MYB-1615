@@ -152,8 +152,9 @@
                                         </div>
                                         <div class="input_item">
                                             <label>Major: (select all that apply)</label>
-                                            <span id="invalid_major" class="invalid_span" style="display:none;">You must select at least one major</span>
-                                            <br />
+                                            <span id="invalid_major" class="invalid_span" style="display:none;">You must select at least one major</span><br />
+                                            <table>
+                                                <tr>
                                                 <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" /> Architecture <br />
                                                 <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" /> City Regional Plan <br />
                                                 <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN" title="Design" /> Design <br />
@@ -161,7 +162,10 @@
                                                 <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" /> Landscape Arch <br />
                                                 <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" /> Urban Design <br />
                                                 <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> Urban Studies <br />
+                                                <input type="checkbox" class="major_checkbox" value="LIMITED" id="LIMITED" title="Limited" /> Limited <br />
                                                 <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" /> Individual <br />
+                                                </tr>
+                                            </table>
                                         </div>
                                         <div class="input_item">
                                             <label>Standing:</label>
@@ -204,7 +208,8 @@
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
         <!-- CHAT -->
-        <div id="widget_chat" class="widget_inline"></div>
+        <!-- MYB-36 commented out for myBerkeley 0.1 release 
+        <div id="widget_chat" class="widget_inline"></div>-->
 
        <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>

@@ -1191,32 +1191,52 @@ sakai.notificationsinbox = function(){
      *
      */
     var doInit = function(){
-        // Check if we are logged in or out.
+        // should check whether there is already some code to do this in 3akai
+        var isAMember = function (groupID, personsGroups) {
+            var numGroups = personsGroups.length;
+            for (var idx = 0; idx < numGroups; idx++) {
+
+                if (person.groups[idx].groupid === groupID) {
+                    return true;
+                }
+            }
+            return false;
+        }
+       
         var person = sakai.data.me;
         var uuid = person.user.userid;
+        // if the user is not logged in redirect to login page
         if (!uuid || person.user.anon) {
             redirectToLoginPage();
+            return;
+        } 
+        
+        // if the user is not a member of the advisors group then bail
+        if (!isAMember('g-ced-advisors', person.groups)) {
+            sakai.api.Security.send403();
+            return;
         }
-        else {
-            // We are logged in. Do all the necessary stuff.
-            // Load the list of messages.            
-            getAllMessages();
-            
-            var qs = new Querystring();
-            var qs_messageid = qs.get("message");
-            
-            if (qs_messageid) {            
-                var callback = function(){
-                    displayMessage(qs_messageid);
-                };                
-                getAllMessages(callback);                
-            }
-            else {            
-                // Show messages by default (as if click on "Inbox").
-                filterMessages("drafts", "", "all", inboxFilterDrafts);
-            }            
-        }        
-    };    
+        
+        // We are logged in. Do all the necessary stuff.
+        // Load the list of messages.            
+        getAllMessages();
+        
+        var qs = new Querystring();
+        var qs_messageid = qs.get("message");
+        
+        if (qs_messageid) {            
+            var callback = function(){
+                displayMessage(qs_messageid);
+            };                
+            getAllMessages(callback);                
+        }
+        else {            
+            // Show messages by default (as if click on "Inbox").
+            filterMessages("drafts", "", "all", inboxFilterDrafts);
+        }            
+      
+    };  
+      
     doInit();
 };
 

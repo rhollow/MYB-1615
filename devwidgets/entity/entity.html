@@ -7,7 +7,22 @@
 <!-- ACTIONS CONTAINER -->
 <div id="entity_container_actions" style="display:none"><!-- --></div>
 
+<!-- MYB-35, MYB-36 modified to hide features for the myBerkeley 0.1 Release -->
 <div id="entity_container_template"><!--
+    <div class="fl-col entity_container_left">
+        
+            <div class="fl-force-left entity_picture">
+                <img id="entity_profile_picture" src="/dev/_images/default_profile_picture_64.png" alt="__MSG__PLACEHOLDER_PICTURE_FOR__ ${sakai.api.User.getDisplayName(data.profile)}" />
+            </div>
+            <div class="entity_header">
+                <div class="entity_header_text">${unescape(sakai.api.User.getDisplayName(data.profile))}</div>
+            </div>
+    </div>
+ 
+    -->
+</div>
+<!-- MYB-35, MYB-36 orginal 3akai code, hidden by changing the id of the DIV -->
+<div id="org_entity_container_template"><!--
     <div class="fl-col entity_container_left">
         {if mode === "myprofile" || mode === "profile"}
             <div class="fl-force-left entity_picture">
@@ -149,8 +164,8 @@
         {if mode === "myprofile"}
             <form method="POST" action="javascript:;">
                 <select id="entity_profile_chatstatus" title="__MSG__CHAT_STATUS__">
-            	    <option value="online" {if data.profile.chatstatus === "online"}selected="selected"{/if}>__MSG__AVAILABLE_TO_CHAT__</option>
-            	    <option value="busy" {if data.profile.chatstatus === "busy"}selected="selected"{/if}>__MSG__BUSY__</option>
+                    <option value="online" {if data.profile.chatstatus === "online"}selected="selected"{/if}>__MSG__AVAILABLE_TO_CHAT__</option>
+                    <option value="busy" {if data.profile.chatstatus === "busy"}selected="selected"{/if}>__MSG__BUSY__</option>
                     <option value="offline" {if data.profile.chatstatus === "offline"}selected="selected"{/if}>__MSG__OFFLINE__</option>
                 </select>
             </form>
@@ -258,7 +273,8 @@
             {/if}
         {/if}
     </div>
---></div>
+    -->
+</div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/entity/javascript/entity.js"></script>
