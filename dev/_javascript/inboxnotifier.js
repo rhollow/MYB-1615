@@ -1161,6 +1161,10 @@ sakai.notificationsinbox = function(){
     var doInit = function(){
         // should check whether there is already some code to do this in 3akai
         var isAMember = function (groupID, personsGroups) {
+            // if we're allowing internal login we're in a dev environment and we'll allow anyone to edit
+            if (sakai.config.Authentication.internal) {
+                return true;
+            } 
             var numGroups = personsGroups.length;
             for (var idx = 0; idx < numGroups; idx++) {
 
