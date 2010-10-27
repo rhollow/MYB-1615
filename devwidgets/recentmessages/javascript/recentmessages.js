@@ -73,7 +73,7 @@ sakai.recentmessages = function(tuid, showSettings){
             $recentmessagesContainer.html($.TemplateRenderer(recentmessagesTemplate, response));
 
             // Activate the ThreeDots plug-in
-            $("#recentmessages_container ul li a", rootel).ThreeDots({max_rows:1});
+            $("#recentmessages_container ul li a span", rootel).ThreeDots({max_rows:1});
         }
     };
 
