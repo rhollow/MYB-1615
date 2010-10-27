@@ -27,16 +27,7 @@ if (!sakai.composenotification){
 
         var user = false; // user object that contains the information for the user that should be posted to
         var me = sakai.data.me;        
-        var callbackWhenDone = null; // callback function for when the message gets sent       
-
-        /**
-         * 
-         * GENERAL CSS IDS
-         * 
-         */     
-        var notificationBox = '#composenotification_box';
-        var messageDone = "#message_done";
-        var messageForm = "#message_form";       
+        var callbackWhenDone = null; // callback function for when the message gets sent                 
 
         /**
          * 
@@ -70,17 +61,10 @@ if (!sakai.composenotification){
         var messageEventTimeMinute = "#cn-event-timeminute";
         var messageEventTimeAMPM = "#cn-event-timeampm";        
         var messageEventPlace = "#cn-event-place";
-                
-        var buttonSendMessage = "#send_message";
-
-        var invalidClass = "composenotification_invalid";
-        var errorClass = "composenotification_error_message";
-        var normalClass = "composenotification_normal_message";        
-
-        var messageOK = "#sendmessage_message_ok";
-        var messageError = "#sendmessage_message_error";
-        var messageErrorFriends = "#sendmessage_friends_error"; 
         
+        // Invalid class for field validation.   
+        var invalidClass = "composenotification_invalid";                    
+   
         /**
          * 
          * EVENT TIME KEY-VALUE PAIRS
@@ -113,7 +97,20 @@ if (!sakai.composenotification){
         var allAMPMOptions = {         
           'AM' : 'AM',
           'PM' : 'PM'  
-        };                  
+        };      
+        
+        /**
+         * Shows a general message on the top screen.
+         * @param {String} msg The message you want to display.
+         * @param {Boolean} isError True for error (red block) or false for normal message(green block).
+         */
+        var showGeneralMessage = function(msg, isError){    
+            // Check whether to show an error type message or an information one.
+            var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
+            
+            // Show the message to the user.
+            sakai.api.Util.notification.show("", msg, type);        
+        };            
 
         /**
          * Re-enables previously disabled fields. 
@@ -218,10 +215,8 @@ if (!sakai.composenotification){
           * @param {String} selectedValue The key of the element option we want to select.
           * @param {Boolean} firstEmpty Start with an option element or not.
           */        
-        var createOptions = function (optionArray, selectedValue, firstEmpty) {
-                              
-            var makeOption = function (val, title, selectedTorF) {
-                
+        var createOptions = function (optionArray, selectedValue, firstEmpty) {                              
+            var makeOption = function (val, title, selectedTorF) {                
                 var valString = (val) ? " value='" + val + "'" : "";
                 var selectedString = (selectedTorF) ? " selected='selected'" : "";
                 return "<option " + valString + selectedString + ">" + title + "</option>\n";
@@ -233,8 +228,7 @@ if (!sakai.composenotification){
                 optionsString += makeOption(null, "", (selectedValue === null || selectedValue === ""));
             }
             for (var key in optionArray) {
-                optionsString += makeOption(key, optionArray[key], (selectedValue == key));
-                
+                optionsString += makeOption(key, optionArray[key], (selectedValue == key));                
             }
             return optionsString;
         };
@@ -541,7 +535,12 @@ if (!sakai.composenotification){
         // Return to archive panel.
         var backToArchive = function () {            
             sakai.notificationsinbox.showArchive();
-        };                                                     
+        }; 
+
+        // Return to trash panel.
+        var backToTrash = function(){
+            sakai.notificationsinbox.showTrash();
+        };                                                    
                     
         /**
          * 
@@ -570,7 +569,7 @@ if (!sakai.composenotification){
          * Fill in the notification detail page with the message's information.
          * @param {Object} message The message whose info we will extract.
          */
-        var fillInMessage = function(message, callback){                     
+        var fillInMessage = function(message, callback){                             
             var eventDate;
             var taskDate;
             var sendDate;   
@@ -898,7 +897,13 @@ if (!sakai.composenotification){
 					valid = false;
                 	eventPlaceEl.addClass(invalidClass);	
 	            }                                                                                                                                                                                          
-		    }                                            		    
+		    }                                
+            
+            // Displays an error message if displayErrors is true and valid is false.
+            if(!valid && displayErrors){
+                showGeneralMessage("Please correct invalid fields.");
+            }
+                        		    
 		    // Return the status of the form.        
 		    return valid;
 		};            
@@ -1033,16 +1038,18 @@ if (!sakai.composenotification){
          * @param {Object} original (optional) The original message, if this is an update.
          * @param {boolean} copyCheck (optional) Are we copying? If we are, we need to append "Copy to" to the subject.
          */
-        var postNotification = function (toPost, successCallback, original, copyCheck) {            
-            var url = "/user/" + me.user.userid + "/message.create.html";
-            // Check if we are updating or creating a new message. 
-            // (Default assumption is that we are creating a new notification.)
+        var postNotification = function (toPost, successCallback, original, copyCheck, msgTxt) {            
+            var url = "/user/" + me.user.userid + "/message.create.html";           
+            
+            // Are moving an existing notification?            
             if (original !== null) {                
-                url = original["jcr:path"];
+                url = original["jcr:path"];                
             }   
+            // Are we creating a copy of an existing notification?
             if (copyCheck) {
-                toPost["sakai:subject"] = "Copy of "+toPost["sakai:subject"];
-            }                                                                                                                                 
+                toPost["sakai:subject"] = "Copy of "+toPost["sakai:subject"];               
+            }
+                                                                                                                                         
             // Post all the data in an Ajax call.    
             $.ajax({
                 url: url,
@@ -1051,11 +1058,12 @@ if (!sakai.composenotification){
                 success: function(){
                     // If a callback function is specified in argument, call it.
                     if (typeof successCallback === "function") {
-                        successCallback(true);
+                        showGeneralMessage(msgTxt+" successful.");
+                        successCallback(true);                         
                     }
                 }, 
                 error: function(data){
-                    alert("Failure on posting notification!");                        
+                    showGeneralMessage(msgTxt+" failed.");                      
                 }
             });
         }; 
@@ -1074,23 +1082,23 @@ if (!sakai.composenotification){
             hideAllButtonLists();
             unbindAll();                   
             eventTimeInit(null, null, null);
-            dynamicListInit(null);                            
-            
+            dynamicListInit(null);                        
+                
             // Event handler for when user clicks on DLC "Save" button.
              $("#dlc-save").live('click', function(){
                  // Save the draft.
-                 postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null);                                     
+                 postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null, null);                                     
              });         
              // Event handler for when you click on the "Don't Save" button on DLC dialog.
              $("#dlc-dontsave").live('click', goToCDNLPage);                                      
                        
             // Are we calling this from drafts?
-            if(calledFrom=="drafts"){                
+            if(calledFrom=="drafts"){                       
 				// Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
 				reenableView();
 				
                 // Fill out the proper information.
-                fillInMessage(message, checkFieldsForErrors); 
+                fillInMessage(message, checkFieldsForErrors(false)); 
                                 
                 // Hide all the buttons and show the proper button list.
                 hideAllButtonLists();                                   
@@ -1099,18 +1107,18 @@ if (!sakai.composenotification){
                 // Queueing this draft...                
                 $("#cn-queuedraft-button").live('click', function() {                                                         
                     if(checkFieldsForErrors(true)){                                                                                                                                                 
-                        postNotification(saveData("queue", true), backToDrafts, message, null); 
+                        postNotification(saveData("queue", true), backToDrafts, message, null, "Queue"); 
                     }                                                         
                 });         
                 
                 // Updating and re-saving this draft...
                 $("#cn-updatedraft-button").live('click', function() {                    
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, message, null); 
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, message, null, "Save"); 
                 });         
                 
                 // Deleting the draft...
                 $("#cn-deletedraft-button").live('click', function() {                    
-                    postNotification(saveData("trash", false), backToDrafts, message, null);                    
+                    postNotification(saveData("trash", false), backToDrafts, message, null, "Delete");                    
                 });                                 
             }      
             
@@ -1127,17 +1135,17 @@ if (!sakai.composenotification){
                 
                 // Moving message from queue to drafts...
                 $("#cn-movetodrafts-button").live('click', function() {
-                   postNotification(saveData("drafts", true), backToQueue, message, null);                   
+                   postNotification(saveData("drafts", true), backToQueue, message, null, "Move");                   
                 });            
                 
                 // Copying message to drafts...
                 $("#cn-queuecopytodrafts-button").live('click', function() {                                             
-                    postNotification(saveData("drafts", true), backToQueue, null, true);                    
+                    postNotification(saveData("drafts", true), backToQueue, null, true, "Copy");                    
                 });
                 
                 // Deleting message...
                 $("#cn-deletequeued-button").live('click', function() {
-                    postNotification(saveData("trash", false), backToQueue, message, null);                    
+                    postNotification(saveData("trash", false), backToQueue, message, null, "Delete");                    
                 });
             } 
             
@@ -1154,7 +1162,7 @@ if (!sakai.composenotification){
                 
                // Copying message to drafts...
                $("#cn-archivecopytodrafts-button").live('click', function() {                                    
-                   postNotification(saveData("drafts", true), backToArchive, null, true);                    
+                   postNotification(saveData("drafts", true), backToArchive, null, true, "Copy");                    
                });
             }  
             
@@ -1171,9 +1179,37 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message, null);                    
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message, null, null);                    
                     sakai.composenotification.initialise("drafts", message);
                 });                
+                
+                // Hard delete this message (delete it from the trash).
+                $("#cn-deletetrashed-button").live('click', function() {                
+                   var requests = [];
+                   var toDelete = {
+                       "url": message["jcr:path"],
+                       "method": "POST",
+                       "parameters": {
+                           ":operation": "delete"
+                       }
+                   };
+                   requests.push(toDelete);
+                   $.ajax({
+                       url: sakai.config.URL.BATCH,
+                       traditional: true,
+                       type: "POST",
+                       data: {
+                           requests: $.toJSON(requests)
+                       },
+                       success: function(data){
+                           showGeneralMessage("Delete successful.");
+                           backToTrash();
+                       },
+                       error: function(xhr, textStatus, thrownError){
+                           showGeneralMessage("Delete failed.");                           
+                       }
+                   });
+                });
             }
             
             // Else, user is creating a brand new blank notification.
@@ -1184,13 +1220,13 @@ if (!sakai.composenotification){
                 // When someone clicks on the 'Queue' button from base panel.
                 $("#cn-queue-button").live('click', function(){                                      
                     if (checkFieldsForErrors(true)) {
-                        postNotification(saveData("queue", true), backToDrafts, null, null);
+                        postNotification(saveData("queue", true), backToDrafts, null, null, "Queue");
                     }                    
                 });
                 // When someone clicks on the 'Save as Draft' button from base panel.
         		$("#cn-saveasdraft-button").live('click', function() {                    
         			if ($(messageFieldSubject).val() != "") {
-        				postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null);
+        				postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
         			} else {
         				$(messageFieldSubject).addClass(invalidClass);
         			}

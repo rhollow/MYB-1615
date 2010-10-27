@@ -52,13 +52,10 @@ sakai.notificationsinbox = function(){
     var inboxClass = ".inbox";
     
     // Global vars
-    var inboxGeneralMessage = inboxID + "_general_message";
-    var inboxMessageError = inbox + "_error_message";
-    var inboxMessageNormal = inbox + "_normal_message";
+    var inboxGeneralMessage = inboxID + "_general_message";     
     var inboxPager = inboxID + "_pager";
     var inboxResults = inboxID + "_results";
-    var inboxArrow = inboxClass + "_arrow";
-    var inboxFolders = inboxID + "_folders";
+    var inboxArrow = inboxClass + "_arrow"; 
     
     // Filters on the left side menu
     var inboxFilter = inboxID + "_filter";
@@ -119,9 +116,7 @@ sakai.notificationsinbox = function(){
     // Errors and messages
     var inboxGeneralMessages = inboxID + "_generalmessages";
     var inboxGeneralMessagesError = inboxGeneralMessages + "_error";
-    var inboxGeneralMessagesErrorGeneral = inboxGeneralMessagesError + "_general";
-    var inboxGeneralMessagesErrorReadFail = inboxGeneralMessagesError + "_read_fail";
-    var inboxGeneralMessagesNrNewMessages = inboxGeneralMessages + "_nr_new_messages";
+    var inboxGeneralMessagesErrorGeneral = inboxGeneralMessagesError + "_general";      
     var inboxGeneralMessagesDeleted = inboxGeneralMessages + "_deleted";
     var inboxGeneralMessagesDeleted_1 = inboxGeneralMessagesDeleted + "_1";
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
@@ -130,8 +125,7 @@ sakai.notificationsinbox = function(){
     var inboxGeneralMessagesMoved_x = inboxGeneralMessagesMoved + "_x";
     var inboxGeneralMessagesCopied = inboxGeneralMessages + "_copied";
     var inboxGeneralMessagesCopied_1 = inboxGeneralMessagesCopied + "_1";
-    var inboxGeneralMessagesCopied_x = inboxGeneralMessagesCopied + "_x";
-    var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
+    var inboxGeneralMessagesCopied_x = inboxGeneralMessagesCopied + "_x";   
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
     var inboxGeneralMessagesMovedFailed = inboxGeneralMessagesMoved + "_failed";
@@ -218,6 +212,24 @@ sakai.notificationsinbox = function(){
      */
     var tickMessages = function(){
         $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
+    };
+    
+    var ellipsisSubjects = function(){    
+        // the ThreeDots plugin isn't supported on Chrome at the moment, so
+        // do a browser check and if it's chrome we need to handle it separately         
+        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;  
+        if (is_chrome) {
+            $(".subject-td").each(function(){                                             
+                $(this).css("white-space","nowrap").css("text-overflow","ellipsis").css("overflow","hidden");                                
+            });
+        }        
+        else {
+            $(".subject-td").each(function(){
+                $(this).ThreeDots({
+                    max_rows: 1
+                });
+            });
+        }
     };
     
     /**
@@ -481,7 +493,10 @@ sakai.notificationsinbox = function(){
         $(inboxTable).children("tbody").append($.TemplateRenderer(inboxTableMessagesTemplate, tplData));
         
         // do checkboxes
-        tickMessages();
+        tickMessages();          
+        
+        // do ellipsis
+        ellipsisSubjects();          
     };
     
     /**
@@ -504,7 +519,6 @@ sakai.notificationsinbox = function(){
         // Show set of messages.
         // Using callback function to update the pager AFTER all messages have been loaded
 		getAllMessages(function(){pageMessages(currentPage+1);});
-
     };
 	
     /**
@@ -586,7 +600,7 @@ sakai.notificationsinbox = function(){
      * Displays only the message with that id.
      * @param {String} id The id of a message.
      */
-    var displayMessage = function(id){        
+    var displayMessage = function(id){      
         // get the specific message data...
         selectedMessage = getMessageWithId(id);
         if (typeof selectedMessage !== "undefined") {
@@ -602,22 +616,7 @@ sakai.notificationsinbox = function(){
             // Unhighlight all tabs.
             $("[id|=tab]").removeClass("current_tab");                                                              
         }                          
-    }
-        
-    /**
-     *
-     * SEND MESSAGE
-     *
-     **/
-    
-    /**
-     * When a message has been sent this function gets called.
-     * @param {Object} data A JSON object that contains the response from the server.
-     */
-    var sendMessageFinished = function(success, data){    
-        showGeneralMessage($(inboxGeneralMessagesSent).text(), false);                        
-    };
-    
+    };                
     
     /**
      *
@@ -776,127 +775,7 @@ sakai.notificationsinbox = function(){
         deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
     };        
     
-    
-    /**
-     *
-     * EVENT HANDLING
-     *
-     */
-    // For when user clicks on "Create New" button.
-    $("#inbox-new-button").live("click", function(){
-        showPane(inboxPaneCompose);
-        // unhighlight the tabs
-        $("[id|=tab]").removeClass("current_tab");
-        // initialise the composenotification widget  
-        sakai.composenotification.initialise(null, null);
-        // display the proper buttonlist
-        $("#createnew-buttons").show();        
-    });
-    
-    // For when user cancels notification authoring (cancel button on pane 2).
-    $("#cn-cancel-button").live("click", function(){
-        // jump back to previous pane
-        showPane(inboxPaneInbox);
-        $(".inbox_inbox_header").each(function(){            
-            if ($(this).is(":visible")) {
-                correctHighlightedTab($(this).attr("id").substring(6, $(this).attr("id").length));
-            }
-        });
-        $(inboxInboxCheckAll).attr("checked", false);
-    });
-    
-    var showFilteredList = function (filter, boxID) {
-        currentFilter = filter
-        filterMessages(filter, "all", boxID);
-        correctButtonList(filter);   
-        correctHighlightedTab(filter);     
-        $(inboxInboxCheckAll).attr("checked", false);
-    };
-    
-    sakai.notificationsinbox.showDrafts = function () {
-        showFilteredList("drafts", inboxFilterDrafts);
-    };
-    
-    sakai.notificationsinbox.showQueue = function () {
-        showFilteredList("queue", inboxFilterQueue);
-    };
-
-    sakai.notificationsinbox.showArchive = function () {
-        showFilteredList("archive", inboxFilterArchive);
-    };
-
-    sakai.notificationsinbox.showTrash = function () {
-        showFilteredList("trash", inboxFilterTrash);
-    };
-
-    // Various filter functions.
-    $(inboxFilterDrafts).click(function(){
-        sakai.notificationsinbox.showDrafts();
-    });
-    
-    $(inboxFilterQueue).click(function(){              
-        sakai.notificationsinbox.showQueue();        
-    });
-    
-    $(inboxFilterArchive).click(function(){             
-        sakai.notificationsinbox.showArchive();
-    });
-    
-    $(inboxFilterTrash).click(function(){        
-        sakai.notificationsinbox.showTrash();
-    });        
-           
-    // Check all messages.
-    $(inboxInboxCheckAll).change(function(){
-        tickMessages();
-    });    
-    
-    // Delete all checked messages on drafts page.
-    $("#inbox-draftsdelete-button").click(function(){               
-        deleteChecked();        
-    });
-    
-    // Copy the checked messages on the drafts page to drafts.
-    $("#inbox-draftscopy-button").click(function() {                
-        copyChecked("drafts");       
-    });
-	
-	// Move the checked messages to queue.
-    $("#inbox-movetoqueue-button").click(function(){               
-		moveSelectedDraftsToQueue();  
-    });
-    
-    // Move all checked messages from queue to drafts.
-    $("#inbox-queuetodrafts-button").click(function() {
-        moveChecked("drafts");
-    });
-    
-    // Copy all checked messages from queue to drafts.
-    $("#inbox-queuecopytodrafts-button").click(function() {
-        copyChecked("drafts");
-    });
-    
-    // Delete all checked messages on queue page.
-    $("#inbox-queuedelete-button").click(function(){               
-        deleteChecked();            
-    });  
-    
-    // Copy all checked messages from archive to drafts.
-    $("#inbox-archivetodrafts-button").click(function(){
-        copyChecked("drafts");
-    });
-    
-    // Move all checked messages from trash to drafts.
-    $("#inbox-trashtodrafts-button").click(function(){
-        moveChecked("drafts");
-    });
-    
-    // Empty the trash. (currently acts only on checked messages)
-    $("#inbox-emptytrash-button").click(function(){
-        deleteChecked();
-    });                    
-         
-     var moveMessagesFinished = function(pathToMessages, success, toWhere){            
+    var moveMessagesFinished = function(pathToMessages, success, toWhere){            
         if (success) {
             // Repage the inbox.                        
 			if (goToPreviousPageAfterDeletion) {
@@ -1102,7 +981,132 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckAll).attr("checked", false);
                 
         copyMessages(pathToMessages, toWhere);
-    }		      
+    };
+    
+    
+    /**
+     *
+     * EVENT HANDLING
+     *
+     */
+    // For when user clicks on "Create New" button.
+    $("#inbox-new-button").live("click", function(){
+        showPane(inboxPaneCompose);
+        // unhighlight the tabs
+        $("[id|=tab]").removeClass("current_tab");
+        // initialise the composenotification widget  
+        sakai.composenotification.initialise(null, null);
+        // display the proper buttonlist
+        $("#createnew-buttons").show();        
+    });
+    
+    // For when user cancels notification authoring (cancel button on pane 2).
+    $("#cn-cancel-button").live("click", function(){
+        // jump back to previous pane
+        showPane(inboxPaneInbox);
+        $(".inbox_inbox_header").each(function(){            
+            if ($(this).is(":visible")) {
+                correctHighlightedTab($(this).attr("id").substring(6, $(this).attr("id").length));
+            }
+        });
+        $(inboxInboxCheckAll).attr("checked", false);
+    });
+    
+    var showFilteredList = function (filter, boxID) {
+        currentFilter = filter
+        filterMessages(filter, "all", boxID);
+        correctButtonList(filter);   
+        correctHighlightedTab(filter);     
+        $(inboxInboxCheckAll).attr("checked", false);
+    };
+    
+    sakai.notificationsinbox.showDrafts = function () {
+        showFilteredList("drafts", inboxFilterDrafts);
+    };
+    
+    sakai.notificationsinbox.showQueue = function () {
+        showFilteredList("queue", inboxFilterQueue);
+    };
+
+    sakai.notificationsinbox.showArchive = function () {
+        showFilteredList("archive", inboxFilterArchive);
+    };
+
+    sakai.notificationsinbox.showTrash = function () {
+        showFilteredList("trash", inboxFilterTrash);
+    };
+
+    // Various filter functions.
+    $(inboxFilterDrafts).click(function(){
+        sakai.notificationsinbox.showDrafts();
+    });
+    
+    $(inboxFilterQueue).click(function(){              
+        sakai.notificationsinbox.showQueue();        
+    });
+    
+    $(inboxFilterArchive).click(function(){             
+        sakai.notificationsinbox.showArchive();
+    });
+    
+    $(inboxFilterTrash).click(function(){        
+        sakai.notificationsinbox.showTrash();
+    });        
+           
+    /**
+     * 
+     * OPERATIONS ON MULTIPLE CHECKED MESSAGES
+     * 
+     */
+    // Check all messages.
+    $(inboxInboxCheckAll).change(function(){
+        tickMessages();
+    });    
+    
+    // Delete all checked messages on drafts page.
+    $("#inbox-draftsdelete-button").click(function(){               
+        deleteChecked();        
+    });
+    
+    // Copy the checked messages on the drafts page to drafts.
+    $("#inbox-draftscopy-button").click(function() {                
+        copyChecked("drafts");       
+    });
+	
+	// Move the checked messages to queue.
+    $("#inbox-movetoqueue-button").click(function(){               
+		moveSelectedDraftsToQueue();  
+    });
+    
+    // Move all checked messages from queue to drafts.
+    $("#inbox-queuetodrafts-button").click(function() {
+        moveChecked("drafts");
+    });
+    
+    // Copy all checked messages from queue to drafts.
+    $("#inbox-queuecopytodrafts-button").click(function() {
+        copyChecked("drafts");
+    });
+    
+    // Delete all checked messages on queue page.
+    $("#inbox-queuedelete-button").click(function(){               
+        deleteChecked();            
+    });  
+    
+    // Copy all checked messages from archive to drafts.
+    $("#inbox-archivetodrafts-button").click(function(){
+        copyChecked("drafts");
+    });
+    
+    // Move all checked messages from trash to drafts.
+    $("#inbox-trashtodrafts-button").click(function(){
+        moveChecked("drafts");
+    });
+    
+    // Empty the trash. (currently acts only on checked messages)
+    $("#inbox-emptytrash-button").click(function(){
+        deleteChecked();
+    });                                  		    
     
     /**
      *
@@ -1111,7 +1115,7 @@ sakai.notificationsinbox = function(){
      */
     $(inboxInboxMessage).live("click", function(e, ui){    
         var id = e.target.id;
-        id = id.split('_');
+        id = id.split('_');       
         displayMessage(id[id.length - 1]);
     });
     
