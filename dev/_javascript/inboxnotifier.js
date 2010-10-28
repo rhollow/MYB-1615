@@ -41,6 +41,7 @@ sakai.notificationsinbox = function(){
     var cats = "";
     var chooseCategory = {"Message": "message", "Reminder": "reminder"};
     var inboxComposeNewPanelOpen = false;
+	var groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
     
     /**
      *
@@ -1159,22 +1160,6 @@ sakai.notificationsinbox = function(){
      *
      */
     var doInit = function(){
-        // should check whether there is already some code to do this in 3akai
-        var isAMember = function (groupID, personsGroups) {
-            // if we're allowing internal login we're in a dev environment and we'll allow anyone to edit
-            if (sakai.config.Authentication.internal) {
-                return true;
-            } 
-            var numGroups = personsGroups.length;
-            for (var idx = 0; idx < numGroups; idx++) {
-
-                if (person.groups[idx].groupid === groupID) {
-                    return true;
-                }
-            }
-            return false;
-        }
-       
         var person = sakai.data.me;
         var uuid = person.user.userid;
         // if the user is not logged in redirect to login page
@@ -1184,7 +1169,8 @@ sakai.notificationsinbox = function(){
         } 
         
         // if the user is not a member of the advisors group then bail
-        if (!isAMember('g-ced-advisors', person.groups)) {
+		// checking Sakai group here, not Jackrabbit group        
+        if (!sakai.api.Groups.isCurrentUserAGroupMember(groupCEDAdvisors)) {
             sakai.api.Security.send403();
             return;
         }

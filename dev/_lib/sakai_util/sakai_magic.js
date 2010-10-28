@@ -556,6 +556,28 @@ sakai.api.Groups.isCurrentUserAMember = function (groupid) {
     }
 };
 
+/**
+ * Determines whether the current user is a member of the given Sakai group.
+ * This version checks Sakai user groups, it is different from the
+ * isCurrentUserAMember method above that checks Jackrabbit's groups.
+ * 
+ * @param groupid {String} id of the group to check
+ * @return true if the current user is a member, false otherwise
+ */
+sakai.api.Groups.isCurrentUserAGroupMember = function (groupid) {
+    
+	if (!groupid || typeof(groupid) !== "string") {
+        return false;
+    }
+
+    if ($.inArray(groupid, sakai.data.me.groups) !== -1) {
+        // current user is a group member
+        return true;
+    } else {
+        return false;
+    }
+};
+
 
 /**
  * Adds logged in user to a specified group
