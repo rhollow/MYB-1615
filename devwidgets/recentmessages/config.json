@@ -8,5 +8,5 @@
     "name":"My recent messages",
     "personalportal":true,
     "url":"/devwidgets/recentmessages/recentmessages.html",
-    "deletable":false
+    "deletable":true
 }
