@@ -41,6 +41,7 @@ sakai.notificationsinbox = function(){
     var cats = "";
     var chooseCategory = {"Message": "message", "Reminder": "reminder"};
     var inboxComposeNewPanelOpen = false;
+	var groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
     
     /**
      *
@@ -52,13 +53,10 @@ sakai.notificationsinbox = function(){
     var inboxClass = ".inbox";
     
     // Global vars
-    var inboxGeneralMessage = inboxID + "_general_message";
-    var inboxMessageError = inbox + "_error_message";
-    var inboxMessageNormal = inbox + "_normal_message";
+    var inboxGeneralMessage = inboxID + "_general_message";     
     var inboxPager = inboxID + "_pager";
     var inboxResults = inboxID + "_results";
-    var inboxArrow = inboxClass + "_arrow";
-    var inboxFolders = inboxID + "_folders";
+    var inboxArrow = inboxClass + "_arrow"; 
     
     // Filters on the left side menu
     var inboxFilter = inboxID + "_filter";
@@ -119,9 +117,7 @@ sakai.notificationsinbox = function(){
     // Errors and messages
     var inboxGeneralMessages = inboxID + "_generalmessages";
     var inboxGeneralMessagesError = inboxGeneralMessages + "_error";
-    var inboxGeneralMessagesErrorGeneral = inboxGeneralMessagesError + "_general";
-    var inboxGeneralMessagesErrorReadFail = inboxGeneralMessagesError + "_read_fail";
-    var inboxGeneralMessagesNrNewMessages = inboxGeneralMessages + "_nr_new_messages";
+    var inboxGeneralMessagesErrorGeneral = inboxGeneralMessagesError + "_general";      
     var inboxGeneralMessagesDeleted = inboxGeneralMessages + "_deleted";
     var inboxGeneralMessagesDeleted_1 = inboxGeneralMessagesDeleted + "_1";
     var inboxGeneralMessagesDeleted_x = inboxGeneralMessagesDeleted + "_x";
@@ -130,8 +126,7 @@ sakai.notificationsinbox = function(){
     var inboxGeneralMessagesMoved_x = inboxGeneralMessagesMoved + "_x";
     var inboxGeneralMessagesCopied = inboxGeneralMessages + "_copied";
     var inboxGeneralMessagesCopied_1 = inboxGeneralMessagesCopied + "_1";
-    var inboxGeneralMessagesCopied_x = inboxGeneralMessagesCopied + "_x";
-    var inboxGeneralMessagesSent = inboxGeneralMessages + "_sent";
+    var inboxGeneralMessagesCopied_x = inboxGeneralMessagesCopied + "_x";   
     var inboxGeneralMessagesDeletedFailed = inboxGeneralMessagesDeleted + "_failed";
     var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
     var inboxGeneralMessagesMovedFailed = inboxGeneralMessagesMoved + "_failed";
@@ -218,6 +213,24 @@ sakai.notificationsinbox = function(){
      */
     var tickMessages = function(){
         $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
+    };
+    
+    var ellipsisSubjects = function(){    
+        // the ThreeDots plugin isn't supported on Chrome at the moment, so
+        // do a browser check and if it's chrome we need to handle it separately         
+        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;  
+        if (is_chrome) {
+            $(".subject-td").each(function(){                                             
+                $(this).css("white-space","nowrap").css("text-overflow","ellipsis").css("overflow","hidden");                                
+            });
+        }        
+        else {
+            $(".subject-td").each(function(){
+                $(this).ThreeDots({
+                    max_rows: 1
+                });
+            });
+        }
     };
     
     /**
@@ -481,7 +494,10 @@ sakai.notificationsinbox = function(){
         $(inboxTable).children("tbody").append($.TemplateRenderer(inboxTableMessagesTemplate, tplData));
         
         // do checkboxes
-        tickMessages();
+        tickMessages();          
+        
+        // do ellipsis
+        ellipsisSubjects();          
     };
     
     /**
@@ -504,7 +520,6 @@ sakai.notificationsinbox = function(){
         // Show set of messages.
         // Using callback function to update the pager AFTER all messages have been loaded
 		getAllMessages(function(){pageMessages(currentPage+1);});
-
     };
 	
     /**
@@ -586,7 +601,7 @@ sakai.notificationsinbox = function(){
      * Displays only the message with that id.
      * @param {String} id The id of a message.
      */
-    var displayMessage = function(id){        
+    var displayMessage = function(id){      
         // get the specific message data...
         selectedMessage = getMessageWithId(id);
         if (typeof selectedMessage !== "undefined") {
@@ -602,22 +617,7 @@ sakai.notificationsinbox = function(){
             // Unhighlight all tabs.
             $("[id|=tab]").removeClass("current_tab");                                                              
         }                          
-    }
-        
-    /**
-     *
-     * SEND MESSAGE
-     *
-     **/
-    
-    /**
-     * When a message has been sent this function gets called.
-     * @param {Object} data A JSON object that contains the response from the server.
-     */
-    var sendMessageFinished = function(success, data){    
-        showGeneralMessage($(inboxGeneralMessagesSent).text(), false);                        
-    };
-    
+    };                
     
     /**
      *
@@ -776,6 +776,214 @@ sakai.notificationsinbox = function(){
         deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
     };        
     
+    var moveMessagesFinished = function(pathToMessages, success, toWhere){            
+        if (success) {
+            // Repage the inbox.                        
+			if (goToPreviousPageAfterDeletion) {
+				currentPage = currentPage - 1;
+			} // else using the same page 
+            
+            showPage(currentPage);
+            
+            var txt = "";
+            if (pathToMessages.length === 1) {
+                txt = $(inboxGeneralMessagesMoved_1).text()+toWhere+".";
+            }
+            else {
+                txt = pathToMessages.length+$(inboxGeneralMessagesMoved_x).text()+toWhere+".";
+            }
+            
+            showGeneralMessage(txt, false);
+        }
+        else {
+            showGeneralMessage($(inboxGeneralMessagesMovedFailed).text());
+        }
+    };
+    
+    var moveMessages = function(pathToMessages, toWhere){               
+        var toMove = pathToMessages.length;
+        var moved = 0;
+        
+        for (var d = 0, e = pathToMessages.length; d < e; d++) {            
+            $.ajax({
+                url: pathToMessages[d],
+                type: "POST",
+                success: function(data){                    
+                    moved++;                                       
+                    if (moved === toMove) {                        
+                        moveMessagesFinished(pathToMessages, true, toWhere);
+                    }                                                        
+                },
+                error: function(xhr, textStatus, thrownError){
+                    moved++;
+                    if (moved === toMove) {
+                        moveMessagesFinished(pathToMessages, false);
+                    }
+                },
+                data: {
+                    "sakai:messagebox": toWhere,
+                    "_charset_": "utf-8"
+                }
+            });
+        }        
+    }         
+    
+    var moveChecked = function(toWhere){                 
+        // pathToMessages = an array of all checked messages    
+        var pathToMessages = [];
+        $(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            pathToMessages.push(pathToMessage);
+        });
+
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);             
+
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);
+
+        moveMessages(pathToMessages, toWhere);
+    }
+    
+    /**
+     * Moves selected drafts to Queue message box.
+     * Messages that have incomplete information are ignored.
+     */	
+	var moveSelectedDraftsToQueue = function(){ 
+                   
+		var pathToMessages = [];
+		
+		// Here we store number of skipped not validated messages
+		var numberOfSkippedMessages = 0;        
+		
+		$(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+						
+			var validated = false;
+			if (this.id) {							
+				// We need to know the name of the hidden input field that contains information about validation
+				// Replacing checkbox id's prefix here to create the hidden validation field's id   
+				var msgValidatedInputId = this.id.replace(/^inbox_check_delete_/, "drafts_message_validated_");
+				// Checking if the message was validated
+				validated = $("#" + msgValidatedInputId).val() === "true";				
+			}
+						
+			if (validated) { 
+				pathToMessages.push(pathToMessage);	
+			} else {
+				numberOfSkippedMessages++;
+			}			 
+        });
+		   
+		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
+				    
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);    
+						        
+		moveMessages(pathToMessages, "queue");
+		
+		if (numberOfSkippedMessages !== 0) {
+			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);
+		}        
+    };         
+    
+    var copyMessagesFinished = function(pathToMessages, success, toWhere){              
+        if (success) {
+            // Repage the inbox.            
+            //currentPage = currentPage - 1;
+            showPage(currentPage);
+            
+            var txt = "";
+            if (pathToMessages.length === 1) {
+                txt = $(inboxGeneralMessagesCopied_1).text()+toWhere+".";
+            }
+            else {
+                txt = pathToMessages.length+$(inboxGeneralMessagesCopied_x).text()+toWhere+".";
+            }
+            
+            showGeneralMessage(txt, false);
+        }
+        else {
+            showGeneralMessage($(inboxGeneralMessagesCopiedFailed).text());
+        }
+    };
+    
+    var copyMessages = function(pathToMessages, toWhere){                      
+        var toCopy = pathToMessages.length;
+        var copied = 0;
+                
+        for (var d = 0, e = pathToMessages.length; d < e; d++) {
+            // For all the messages, extract the message id from the jcr path url
+            // and then use that to find the appropriate message.
+            var url = pathToMessages[d];
+            var pieces = url.split("/");            
+            var message = getMessageWithId(pieces[pieces.length-1]); 
+            var newMessage={};                                                              
+                        
+            // Common fields.
+            newMessage["sakai:type"] = message["sakai:type"];   
+            newMessage["sakai:to"] = message["sakai:to"];
+            newMessage["sakai:from"] = message["sakai:from"];   
+            newMessage["sakai:subject"] = "Copy of "+message["sakai:subject"];   
+            newMessage["sakai:body"] = message["sakai:body"]; 
+            newMessage["sakai:authoringbody"] = message["sakai:authoringbody"];
+            newMessage["sakai:sendstate"] = message["sakai:sendstate"];   
+            newMessage["sakai:read"] = message["sakai:read"];
+            newMessage["sakai:messagebox"] = toWhere;   
+            newMessage["sakai:sendDate"] = message["sakai:sendDate"]; 
+            newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
+            newMessage["sakai:category"] = message["sakai:category"];
+            newMessage["sakai:validated"] = message["sakai:validated"];
+            
+            // Is it required (a reminder)?
+            if(newMessage["sakai:category"]=="reminder"){
+                // Is it a task?
+                if(message["sakai:dueDate"]!=null){
+                    newMessage["sakai:dueDate"] = message["sakai:dueDate"];
+                    newMessage["sakai:dueDate@TypeHint"] = message["sakai:dueDate@TypeHint"];   
+                    newMessage["sakai:taskState"] = message["sakai:taskState"];
+                }
+                // Or is it an event?
+                else{
+                    newMessage["sakai:eventDate"] = message["sakai:eventDate"];
+                    newMessage["sakai:eventDate@TypeHint"] = message["sakai:eventDate@TypeHint"];
+                    newMessage["sakai:eventPlace"] = message["sakai:eventPlace"];                   
+                }
+            }                                                         
+            
+            $.ajax({
+                url: "/user/" + me.user.userid + "/message.create.html",
+                type: "POST",
+                data: newMessage,
+                success: function(data){
+                    copied++;
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, true, toWhere);
+                    }                                                        
+                }, 
+                error: function(xhr, textStatus, thrownError){                    
+                    copied++;                    
+                    if (copied === toCopy) {
+                        copyMessagesFinished(pathToMessages, false);
+                    }                        
+                }
+            });
+        }        
+    }
+    
+    var copyChecked = function(toWhere){        
+        // pathToMessages = an array of all checked messages    
+        var pathToMessages = [];
+        $(inboxInboxCheckMessage + ":checked").each(function(){
+            var pathToMessage = $(this).val();
+            pathToMessages.push(pathToMessage);
+        });
+        
+        // Reset 'Check All' checkbox just in case it's clicked.
+        $(inboxInboxCheckAll).attr("checked", false);
+                
+        copyMessages(pathToMessages, toWhere);
+    };
+    
     
     /**
      *
@@ -846,6 +1054,11 @@ sakai.notificationsinbox = function(){
         sakai.notificationsinbox.showTrash();
     });        
            
+    /**
+     * 
+     * OPERATIONS ON MULTIPLE CHECKED MESSAGES
+     * 
+     */
     // Check all messages.
     $(inboxInboxCheckAll).change(function(){
         tickMessages();
@@ -894,214 +1107,7 @@ sakai.notificationsinbox = function(){
     // Empty the trash. (currently acts only on checked messages)
     $("#inbox-emptytrash-button").click(function(){
         deleteChecked();
-    });                    
-         
-     var moveMessagesFinished = function(pathToMessages, success, toWhere){            
-        if (success) {
-            // Repage the inbox.                        
-			if (goToPreviousPageAfterDeletion) {
-				currentPage = currentPage - 1;
-			} // else using the same page 
-            
-            showPage(currentPage);
-            
-            var txt = "";
-            if (pathToMessages.length === 1) {
-                txt = $(inboxGeneralMessagesMoved_1).text()+toWhere+".";
-            }
-            else {
-                txt = pathToMessages.length+$(inboxGeneralMessagesMoved_x).text()+toWhere+".";
-            }
-            
-            showGeneralMessage(txt, false);
-        }
-        else {
-            showGeneralMessage($(inboxGeneralMessagesMovedFailed).text());
-        }
-    };
-    
-    var moveMessages = function(pathToMessages, toWhere){               
-        var toMove = pathToMessages.length;
-        var moved = 0;
-        
-        for (var d = 0, e = pathToMessages.length; d < e; d++) {            
-            $.ajax({
-                url: pathToMessages[d],
-                type: "POST",
-                success: function(data){                    
-                    moved++;                                       
-                    if (moved === toMove) {                        
-                        moveMessagesFinished(pathToMessages, true, toWhere);
-                    }                                                        
-                },
-                error: function(xhr, textStatus, thrownError){
-                    moved++;
-                    if (moved === toMove) {
-                        moveMessagesFinished(pathToMessages, false);
-                    }
-                },
-                data: {
-                    "sakai:messagebox": toWhere,
-                    "_charset_": "utf-8"
-                }
-            });
-        }        
-    }         
-    
-    var moveChecked = function(toWhere){                 
-        // pathToMessages = an array of all checked messages    
-        var pathToMessages = [];
-        $(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-            pathToMessages.push(pathToMessage);
-        });
-
-		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);             
-
-        // Reset 'Check All' checkbox just in case it's clicked.
-        $(inboxInboxCheckAll).attr("checked", false);
-
-        moveMessages(pathToMessages, toWhere);
-    }
-    
-    var copyMessagesFinished = function(pathToMessages, success, toWhere){              
-        if (success) {
-            // Repage the inbox.            
-            //currentPage = currentPage - 1;
-            showPage(currentPage);
-            
-            var txt = "";
-            if (pathToMessages.length === 1) {
-                txt = $(inboxGeneralMessagesCopied_1).text()+toWhere+".";
-            }
-            else {
-                txt = pathToMessages.length+$(inboxGeneralMessagesCopied_x).text()+toWhere+".";
-            }
-            
-            showGeneralMessage(txt, false);
-        }
-        else {
-            showGeneralMessage($(inboxGeneralMessagesCopiedFailed).text());
-        }
-    };
-    
-    var copyMessages = function(pathToMessages, toWhere){                      
-        var toCopy = pathToMessages.length;
-        var copied = 0;
-                
-        for (var d = 0, e = pathToMessages.length; d < e; d++) {
-            // For all the messages, extract the message id from the jcr path url
-            // and then use that to find the appropriate message.
-            var url = pathToMessages[d];
-            var pieces = url.split("/");            
-            var message = getMessageWithId(pieces[pieces.length-1]); 
-            var newMessage={};                                                              
-                        
-            // Common fields.
-            newMessage["sakai:type"] = message["sakai:type"];   
-            newMessage["sakai:to"] = message["sakai:to"];
-            newMessage["sakai:from"] = message["sakai:from"];   
-            newMessage["sakai:subject"] = "Copy of "+message["sakai:subject"];   
-            newMessage["sakai:body"] = message["sakai:body"]; 
-            newMessage["sakai:authoringbody"] = message["sakai:authoringbody"];
-            newMessage["sakai:sendstate"] = message["sakai:sendstate"];   
-            newMessage["sakai:read"] = message["sakai:read"];
-            newMessage["sakai:messagebox"] = toWhere;   
-            newMessage["sakai:sendDate"] = message["sakai:sendDate"]; 
-            newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
-            newMessage["sakai:category"] = message["sakai:category"];
-            
-            // Is it required (a reminder)?
-            if(newMessage["sakai:category"]=="reminder"){
-                // Is it a task?
-                if(message["sakai:dueDate"]!=null){
-                    newMessage["sakai:dueDate"] = message["sakai:dueDate"];
-                    newMessage["sakai:dueDate@TypeHint"] = message["sakai:dueDate@TypeHint"];   
-                    newMessage["sakai:taskState"] = message["sakai:taskState"];
-                }
-                // Or is it an event?
-                else{
-                    newMessage["sakai:eventDate"] = message["sakai:eventDate"];
-                    newMessage["sakai:eventDate@TypeHint"] = message["sakai:eventDate@TypeHint"];
-                    newMessage["sakai:eventPlace"] = message["sakai:eventPlace"];                   
-                }
-            }                                                         
-            
-            $.ajax({
-                url: "/user/" + me.user.userid + "/message.create.html",
-                type: "POST",
-                data: newMessage,
-                success: function(data){
-                    copied++;
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, true, toWhere);
-                    }                                                        
-                }, 
-                error: function(xhr, textStatus, thrownError){                    
-                    copied++;                    
-                    if (copied === toCopy) {
-                        copyMessagesFinished(pathToMessages, false);
-                    }                        
-                }
-            });
-        }        
-    }
-    
-    var copyChecked = function(toWhere){        
-        // pathToMessages = an array of all checked messages    
-        var pathToMessages = [];
-        $(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-            pathToMessages.push(pathToMessage);
-        });
-        
-        // Reset 'Check All' checkbox just in case it's clicked.
-        $(inboxInboxCheckAll).attr("checked", false);
-                
-        copyMessages(pathToMessages, toWhere);
-    }
-	
-	/**
-     * Moves selected drafts to Queue message box.
-     * Messages that have incomplete information are ignored.
-     */	
-	var moveSelectedDraftsToQueue = function(){ 
-                   
-		var pathToMessages = [];
-		
-		// Here we store number of skipped not validated messages
-		var numberOfSkippedMessages = 0;        
-		
-		$(inboxInboxCheckMessage + ":checked").each(function(){
-            var pathToMessage = $(this).val();
-						
-			var validated = false;
-			if (this.id) {							
-				// We need to know the name of the hidden input field that contains information about validation
-				// Replacing checkbox id's prefix here to create the hidden validation field's id   
-				var msgValidatedInputId = this.id.replace(/^inbox_check_delete_/, "drafts_message_validated_");
-				// Checking if the message was validated
-				validated = $("#" + msgValidatedInputId).val() === "true";				
-			}
-						
-			if (validated) { 
-				pathToMessages.push(pathToMessage);	
-			} else {
-				numberOfSkippedMessages++;
-			}			 
-        });
-		   
-		goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);	
-				    
-        // Reset 'Check All' checkbox just in case it's clicked.
-        $(inboxInboxCheckAll).attr("checked", false);    
-						        
-		moveMessages(pathToMessages, "queue");
-		
-		if (numberOfSkippedMessages !== 0) {
-			showGeneralMessage("Some of the messages could not be queued because they are not complete.", true);
-		}        
-    };                 
+    });                                  		    
     
     /**
      *
@@ -1110,7 +1116,7 @@ sakai.notificationsinbox = function(){
      */
     $(inboxInboxMessage).live("click", function(e, ui){    
         var id = e.target.id;
-        id = id.split('_');
+        id = id.split('_');       
         displayMessage(id[id.length - 1]);
     });
     
@@ -1159,22 +1165,6 @@ sakai.notificationsinbox = function(){
      *
      */
     var doInit = function(){
-        // should check whether there is already some code to do this in 3akai
-        var isAMember = function (groupID, personsGroups) {
-            // if we're allowing internal login we're in a dev environment and we'll allow anyone to edit
-            if (sakai.config.Authentication.internal) {
-                return true;
-            } 
-            var numGroups = personsGroups.length;
-            for (var idx = 0; idx < numGroups; idx++) {
-
-                if (person.groups[idx].groupid === groupID) {
-                    return true;
-                }
-            }
-            return false;
-        }
-       
         var person = sakai.data.me;
         var uuid = person.user.userid;
         // if the user is not logged in redirect to login page
@@ -1184,7 +1174,7 @@ sakai.notificationsinbox = function(){
         } 
         
         // if the user is not a member of the advisors group then bail
-        if (!isAMember('g-ced-advisors', person.groups)) {
+        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
             sakai.api.Security.send403();
             return;
         }
