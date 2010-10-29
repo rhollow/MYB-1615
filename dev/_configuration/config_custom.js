@@ -15,7 +15,7 @@ sakai.config.Navigation = [
 // For production and QA, sent internal to false, for dev set it to true.
 
 sakai.config.Authentication = {
-    "internal": true,
+    "internal": false,
     "external": [
         {
           label: "LOGIN_TITLE",
