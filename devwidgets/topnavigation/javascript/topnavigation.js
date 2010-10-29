@@ -420,7 +420,7 @@ sakai.topnavigation = function(tuid, showSettings){
         var obj = {};
         var menulinks = [];
 
-        for (var i in sakai.config.Navigation) {
+        $.each(sakai.config.Navigation, function(i, tab) {
             var temp = new Object();
             temp.url = sakai.config.Navigation[i].url;
             temp.label = sakai.api.i18n.General.getValueForKey(sakai.config.Navigation[i].label);
@@ -440,7 +440,8 @@ sakai.topnavigation = function(tuid, showSettings){
                 temp.firstlink = false;
             }
             menulinks.push(temp);
-        }
+        });
+        
         obj.links = menulinks;
         // Get navigation and render menu template
         $(".explore").html($.TemplateRenderer("navigation_template", obj));
