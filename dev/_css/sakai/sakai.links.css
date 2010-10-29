@@ -1,7 +1,7 @@
-
 /** CONTAINER **/
 .fixed-container
 { background: #fff; }
+
 
 /** TAB CONTENTS **/
 .links .links_container
@@ -25,13 +25,13 @@
 
 /** SUGGESTED LINKS SECTION **/
 .suggested_link_col
-{ float: left; width: 31%; margin: 5px; padding: 5px; border-right: 1px solid #cdcdcd; }
+{ position: relative; float: left; width: 31%; height: 140px; margin: 5px; border-right: 1px solid #cdcdcd; }
 
 .suggested_link_col .suggested_link_header
 { font-size: 14px; font-weight: bold; height: 20px; }
 
 .suggested_link_col .suggested_link_header a
-{ position: relative; top: -17px; left: 30px; }
+{ position: relative; top: -15px; left: 30px; }
 
 .suggested_link_col label
 { width: 0px; }
@@ -75,7 +75,7 @@
 .links .links_section td a{color: #2b9fcd;}
 
 .links .links_section .links_section_header
-{ margin: 0; padding: 0 0 5px 5px; font-weight: normal; font-size: 16px; color: #5a6a7c; }
+{ position: relative; margin: 0; padding: 15px 0 5px 5px; font-weight: normal; font-size: 16px; color: #5a6a7c; }
 
 .links .links_section .links_section_body
 { margin: 0; padding: 5px 0 35px 0; }
@@ -114,37 +114,40 @@
 .LabelUnselected
 {
 	background: url("../../_images/starsprites.png") no-repeat;
+    position: relative;
 	padding-left: 25px;
 	padding-top: 0px;
 	margin: 0px;
 	height: 20px;	
 	width: 150px;
 	display: block;
-    cursor: pointer;
+    cursor: pointer;       
 }
 
 .LabelSelected
 { 
     background-position: 0px -22px; 
+    position: relative;
     padding-left: 25px;
 	padding-top: 0px;
 	margin: 0px;
 	height: 20px;	
 	width: 150px;
 	display: block;
-    cursor: pointer;
+    cursor: pointer;    
 }
 
 .LabelRequired
 { 
     background: url("../../_images/starsprites.png") no-repeat;
+    position: relative;
     background-position: 0px -44px; 
     padding-left: 25px;
 	padding-top: 0px;
 	margin: 0px;
 	height: 20px;	
 	width: 150px;
-	display: block;
+	display: block;    
  }
 
 
@@ -153,13 +156,13 @@
 { border-right: 0px; }
 
 #suggested_sites
-{ border-bottom: 1px solid #cdcdcd; margin-bottom: 20px; }
+{ position: relative; border-bottom: 1px solid #cdcdcd; padding-bottom: 10px; }
+
+#suggested_sites_header
+{ padding-top: 0px; }
 
 #allsite_form
 { padding: -10px; }
-
-#all_sites 
-{ }
 
 #save_button 
 { float: right; }
