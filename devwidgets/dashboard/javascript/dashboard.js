@@ -816,11 +816,23 @@ sakai.dashboard = function(tuid, showSettings) {
 
     var renderGoodies = function(hash) {
 
-        var addingPossible = {};
-        addingPossible.items = [];
-
         $(addGoodiesListContainer, $rootelClass).html("");
+        var addableWidgets = getAddableWidgets();
+        // Render the list of widgets. The template will render a remove and add row for each widget, but will
+        // only show one based on whether that widget is already on my dashboard
 
+        $(addGoodiesListContainer, $rootelClass).html($.TemplateRenderer(addGoodiesListTemplate, addableWidgets));
+        bindGoodiesEventHandlers();
+
+        // Show the modal dialog
+        hash.w.show();
+
+    };
+
+    var getAddableWidgets = function() {
+        var addableWidgets = {};
+        addableWidgets.items = [];
+    
         for (var l in Widgets.widgets) {
             var alreadyIn = false;
             // Run through the list of widgets that are already on my dashboard and decide
@@ -834,21 +846,12 @@ sakai.dashboard = function(tuid, showSettings) {
                 }
             }
             if (Widgets.widgets[l][widgetPropertyName]) {
-                var index = addingPossible.items.length;
-                addingPossible.items[index] = Widgets.widgets[l];
-                addingPossible.items[index].alreadyIn = alreadyIn;
+                var index = addableWidgets.items.length;
+                addableWidgets.items[index] = Widgets.widgets[l];
+                addableWidgets.items[index].alreadyIn = alreadyIn;
             }
         }
-
-        // Render the list of widgets. The template will render a remove and add row for each widget, but will
-        // only show one based on whether that widget is already on my dashboard
-
-        $(addGoodiesListContainer, $rootelClass).html($.TemplateRenderer(addGoodiesListTemplate, addingPossible));
-        bindGoodiesEventHandlers();
-
-        // Show the modal dialog
-        hash.w.show();
-
+        return addableWidgets;
     };
 
      /*
