@@ -1169,8 +1169,7 @@ sakai.notificationsinbox = function(){
         } 
         
         // if the user is not a member of the advisors group then bail
-		// checking Sakai group here, not Jackrabbit group        
-        if (!sakai.api.Groups.isCurrentUserAGroupMember(groupCEDAdvisors)) {
+        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
             sakai.api.Security.send403();
             return;
         }
