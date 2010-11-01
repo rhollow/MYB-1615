@@ -40,11 +40,11 @@
                         <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>  
                         {var dateString = sakai.myreminders.getDateString(i['sakai:dueDate'])}
                         <div class="dueDate" title="Due ${dateString}"><a id="date_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}">${dateString}</a></div>
-                        <div class="subjectLine" title="${i['sakai:subject']}"><a id="subject_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}">${i['sakai:subject']}</a></div>
+                        <div class="subjectLine" title="${i['sakai:subject']}"><a id="subject_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}&from=my_reminders_widget">${i['sakai:subject']}</a></div>
                         <div class="slideButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
                     </li>    
 	                <div class="messageSnippet" id="snippetDiv_${i.id}" title="See full reminder">
-	                    <a href="/dev/inbox.html#message=${i.id}">${i['sakai:body']}</a>
+	                    <a href="/dev/inbox.html#message=${i.id}&from=my_reminders_widget">${i['sakai:body']}</a>
 	                </div>
                 </div>
              {/if}

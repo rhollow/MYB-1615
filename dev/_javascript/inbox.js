@@ -973,6 +973,7 @@ sakai.inbox = function() {
     /**
      * Get the message out of the list with the specific id.
      * @param {String} id    The id of a message
+     * @return The message object or null if there is no such message.
      */
     var getMessageWithId = function(id) {
 
@@ -982,7 +983,7 @@ sakai.inbox = function() {
             }
         }
 
-        return {};
+        return null;
     };
 
     /**
@@ -1034,6 +1035,7 @@ sakai.inbox = function() {
     /**
      * Displays only the message with that id.
      * @param {String} id    The id of a message
+     * @return True = no errors, false = message with the id doesn't exist.
      */
     var displayMessage = function(id) {
 
@@ -1057,6 +1059,8 @@ sakai.inbox = function() {
         showPane(inboxPaneMessage);
         var message = getMessageWithId(id);
 
+		if(!message) return false; //Message was not found
+		
         if (message["sakai:category"] === "message" || message["sakai:messagebox"] === "trash") {
             $(inboxSpecificMessageDeleteButton).show();
         } else {
@@ -1152,6 +1156,7 @@ sakai.inbox = function() {
             }
         }
 
+		return true; // Everything went OK
     };
 
     /**
@@ -1501,6 +1506,36 @@ sakai.inbox = function() {
         // Clear all the input fields
         clearInputFields();
     });
+	
+	/**
+	 * 
+	 * Hashchange event related methods
+	 * 
+	 */
+
+	/**
+	 * Displays inbox - messages view
+	 */	
+	var displayNotificationsReminders = function() {		
+		$(inboxSubfolderClass).hide();
+        filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
+        $(inboxInboxDeleteButton).hide();
+        $(inboxInboxArchiveCompletedButton).show();
+        $(".different").hide();
+        $(".different_reminders").show();
+        $(inboxSubfolderReminders).show();
+        currentFilter = inboxFilterReminders;
+	}
+
+	/**
+	 * Displays notifications - reminders view
+	 */	
+	var displayInboxMessages = function() {
+		$(inboxSubfolderClass).hide();
+        filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
+        $(inboxSubfolderMessages).show();
+        currentFilter = inboxFilterMessages;				
+	}
 
     $(window).bind('hashchange', function(e) {
         var box = $.bbq.getState("box");
@@ -1516,7 +1551,14 @@ sakai.inbox = function() {
                     break;
             }
         } else if (msg) {
-            displayMessage(msg);
+            if(!displayMessage(msg)){				
+				var from = $.bbq.getState("from");
+				if(from === "my_reminders_widget"){
+					displayNotificationsReminders();					
+				} else {
+					displayInboxMessages();					
+				}				
+			}
         } else if (box) {
             switch (box) {
                 case "inbox":
@@ -1524,10 +1566,7 @@ sakai.inbox = function() {
                     filterMessages(sakai.config.Messages.Types.inbox, "", "all", inboxFilterInbox);
                     break;
                 case "messages":
-                    $(inboxSubfolderClass).hide();
-                    filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.message, "all", inboxFilterMessages);
-                    $(inboxSubfolderMessages).show();
-                    currentFilter = inboxFilterMessages;
+                    displayInboxMessages();
                     break;
                 case "sent":
                     $(inboxSubfolderClass).hide();
@@ -1561,14 +1600,7 @@ sakai.inbox = function() {
                     currentFilter = inboxFilterInvitations;
                     break;
                 case "reminders":
-                    $(inboxSubfolderClass).hide();
-                    filterMessages(sakai.config.Messages.Types.inbox, sakai.config.Messages.Categories.reminder, "all", inboxFilterReminders);
-                    $(inboxInboxDeleteButton).hide();
-                    $(inboxInboxArchiveCompletedButton).show();
-                    $(".different").hide();
-                    $(".different_reminders").show();
-                    $(inboxSubfolderReminders).show();
-                    currentFilter = inboxFilterReminders;
+                    displayNotificationsReminders();
                     break;
                 case "archive":
                     $(inboxSubfolderClass).hide();
@@ -1611,8 +1643,6 @@ sakai.inbox = function() {
                 if (getMsgsReady && sendMsgReady)
                     $(window).trigger("hashchange");
             });
-           
-           $(window).trigger("hashchange");
            
             $(window).bind("sakai-sendmessage-ready", function() {
                 sendMsgReady = true;

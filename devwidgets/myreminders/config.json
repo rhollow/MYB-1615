@@ -9,4 +9,5 @@
         "en_US": "/devwidgets/myreminders/bundles/en_US.json",
         "zh_CN": "/devwidgets/myreminders/bundles/zh_CN.json"
     },
+    "deletable":false
 }
