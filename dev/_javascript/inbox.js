@@ -849,10 +849,13 @@ sakai.inbox = function() {
             success: function(data){
                 if (data.results) {
                     // Render the messages
-                    for(var i = 0, j = data.resultslength; i < j; i++) {
-                        if(data.results[i]["sakai:from"] == sakai.data.me.user.userid) {
-                            data.results.splice(i, 1);
-                        }
+                    // Remove messages and reminders that were sent by the user if we're looking at the inbox
+                    if((box == "inbox" && cats == "message") || (box == "inbox" && cats == "reminder")) {
+                        for (var i = 0, j = data.resultslength; i < j; i++) {
+                            if (data.results[i]["sakai:from"] == sakai.data.me.user.userid) {
+                                data.results.splice(i, 1);
+                            }
+                        }   
                     }
                     renderMessages(data);
                     showUnreadMessages();
@@ -873,12 +876,14 @@ sakai.inbox = function() {
             cache: false,
             success: function(data) {
                 if (data.results) {
-                    for(var i = 0, j = data.results.length; i < j; i++) {
-                        if(data.results[i]["sakai:from"] == sakai.data.me.user.userid) {
-                            data.results.splice(i, 1);
+                    // Remove messages and reminders that were sent by the user if we're looking at the inbox
+                    if((box == "inbox" && cats == "message") || (box == "inbox" && cats == "reminder")) {
+                        for (var i = 0, j = data.results.length; i < j; i++) {
+                            if (data.results[i]["sakai:from"] == sakai.data.me.user.userid) {
+                                data.results.splice(i, 1);
+                            }
                         }
                     }
-                    
                     allAllMessages = data.results;
                 }
             },
