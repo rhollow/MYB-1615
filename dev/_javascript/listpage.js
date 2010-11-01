@@ -51,6 +51,11 @@ sakai.listpage = function(){
     var inboxMessageError = inbox + "_error_message";
     
     /**
+     * Other IDs
+     */
+    var groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
+    
+    /**
      * This function will redirect the user to the login page.
      */
     var redirectToLoginPage = function(){
@@ -702,7 +707,13 @@ sakai.listpage = function(){
         var uuid = person.user.userid;
         if (!uuid || person.user.anon) {
             redirectToLoginPage();
-        } else {
+        } else {            
+            // if the user is not a member of the advisors group then bail
+            if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
+                sakai.api.Security.send403();
+                return;
+            }
+            
             userUrl = "/~" + uuid + "/private/dynamic_lists";
             loadData();
         }
