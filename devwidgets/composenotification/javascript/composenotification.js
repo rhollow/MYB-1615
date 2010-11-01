@@ -1086,8 +1086,14 @@ if (!sakai.composenotification){
                 
             // Event handler for when user clicks on DLC "Save" button.
              $("#dlc-save").live('click', function(){
-                 // Save the draft.
-                 postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null, null);                                     
+                 // Check that the subject field isn't empty before saving
+                 if ($(messageFieldSubject).val() != "") {
+                     // Save the draft.
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null, null);
+                } else {
+                    $("#save_reminder_dialog").jqmHide();
+                    $(messageFieldSubject).addClass(invalidClass);
+                }
              });         
              // Event handler for when you click on the "Don't Save" button on DLC dialog.
              $("#dlc-dontsave").live('click', goToCDNLPage);                                      
