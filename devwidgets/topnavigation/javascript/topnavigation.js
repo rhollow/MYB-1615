@@ -174,13 +174,13 @@ sakai.topnavigation = function(tuid, showSettings){
         $(userLink).bind("click", function(){
             showHideUserLinkMenu(false);
         });
-        */
+        
        
         $(userLinkChatStatusClass).bind("click", function(ev){
             showHideUserLinkMenu(false);
             var clicked = ev.currentTarget.id.split("_")[ev.currentTarget.id.split("_").length - 1];
             sendChatStatus(clicked);
-        });
+        });*/
 
         $.each($(topNavigationBar + " a"), function(){
             if (window.location.pathname === $(this).attr("href")){
@@ -470,10 +470,12 @@ sakai.topnavigation = function(tuid, showSettings){
         // Set presence and bind things
         addBinding();
         getCountUnreadMessages();
-        setPresence();
+        // not using for myBerkeley POC
+        //setPresence();
 
         // Get chat status
-        getChatStatus();
+        // not using for myBerkeley POC
+        //getChatStatus();
     };
 
     if (sakai.data.me.user.anon) {
