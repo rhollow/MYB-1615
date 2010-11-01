@@ -562,7 +562,7 @@ if (!sakai.composenotification){
          // Redirect to the Create New Dynamic Lists page.         
          var goToCDNLPage = function(){
              resetView();                         
-             window.location = "/dev/listpage.html#tab=existing";              
+             window.location = "/dev/listpage.html#tab=existing"; // modified link to reflect bbq state        
          };                                                                                              	                                                                    
         
         /**
@@ -1091,12 +1091,16 @@ if (!sakai.composenotification){
                      // Save the draft.
                     postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null, null);
                 } else {
+                    // If subject field is empty, cancel jqm dialog and highlight subject field
                     $("#save_reminder_dialog").jqmHide();
                     $(messageFieldSubject).addClass(invalidClass);
                 }
-             });         
+             });
+             
              // Event handler for when you click on the "Don't Save" button on DLC dialog.
              $("#dlc-dontsave").live('click', function(){
+                 // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
+                 // back to this page with the dialog box still open
                  $("#save_reminder_dialog").jqmHide();
                  goToCDNLPage();
              });                                      
