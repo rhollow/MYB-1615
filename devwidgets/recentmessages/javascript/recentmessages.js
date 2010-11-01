@@ -58,7 +58,6 @@ sakai.recentmessages = function(tuid, showSettings){
      *     If this parameter is a string, it is an error.
      */
     var renderRecentMessages = function(response){
-
         if(response === "NOT_CONNECTED"){
 
             // If it wasn't possible to connect to the server, show the not connected error
@@ -99,7 +98,6 @@ sakai.recentmessages = function(tuid, showSettings){
      * Send a request to the message service.to get your recent messages
      */
     var doInit = function() {
-
         // Set a params object to set which params should be passed into the request
         var params = $.param({
             box: "inbox",

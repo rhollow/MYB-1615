@@ -21,6 +21,13 @@ sakai.links = function(){
     var directory = {};
     
     /**
+     * This function will redirect the user to the login page.
+     */
+    var redirectToLoginPage = function() {
+        document.location = sakai.config.URL.GATEWAY_URL;
+    };
+    
+    /**
      * Write the users links to JCR.
      * @param {object} updatedList The current state of the user's list.
      */
@@ -225,7 +232,15 @@ sakai.links = function(){
     
     // First get user's link list, then populate directory with static directory data.
     var doInit = function(){
-        sakai.api.Server.loadJSON(linksDataNode, loadLinksList);
+        // Check if the user is logged in before loading data
+        var person = sakai.data.me;
+        var uuid = person.user.userid;
+        if (!uuid || person.user.anon) {
+            redirectToLoginPage();
+            return;
+        }
+        
+        sakai.api.Server.loadJSON(linksDataNode, loadLinksList);   
     };
     
     doInit();
