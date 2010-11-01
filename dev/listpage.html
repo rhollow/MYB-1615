@@ -155,15 +155,24 @@
                                             <span id="invalid_major" class="invalid_span" style="display:none;">You must select at least one major</span><br />
                                             <table>
                                                 <tr>
-                                                <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" /> Architecture <br />
-                                                <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" /> City Regional Plan <br />
-                                                <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN" title="Design" /> Design <br />
-                                                <input type="checkbox" class="major_checkbox" value="LAND ARCH AND ENV PLAN" id="LAND_ARCH_AND_ENV_PLAN" title="Land Arch And Env Plan" /> Land Arch And Env Plan <br />
-                                                <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" /> Landscape Arch <br />
-                                                <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" /> Urban Design <br />
-                                                <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> Urban Studies <br />
-                                                <input type="checkbox" class="major_checkbox" value="LIMITED" id="LIMITED" title="Limited" /> Limited <br />
-                                                <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" /> Individual <br />
+                                                <input type="checkbox" class="major_checkbox" name="architecture" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" />
+                                                    <span onClick="document.createListForm.architecture.checked=(!document.createListForm.architecture.checked);">Architecture</span><br />
+                                                <input type="checkbox" class="major_checkbox" name="city_regional_plan" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" />
+                                                    <span onClick="document.createListForm.city_regional_plan.checked=(!document.createListForm.city_regional_plan.checked);">City Regional Plan</span><br />
+                                                <input type="checkbox" class="major_checkbox" name="design" value="DESIGN" id="DESIGN" title="Design" />
+                                                    <span onClick="document.createListForm.design.checked=(!document.createListForm.design.checked);">Design</span><br />
+                                                <input type="checkbox" class="major_checkbox" name="land_arch_and_env_plan" value="LAND ARCH AND ENV PLAN" id="LAND_ARCH_AND_ENV_PLAN" title="Land Arch And Env Plan" />
+                                                    <span onClick="document.createListForm.land_arch_and_env_plan.checked=(!document.createListForm.land_arch_and_env_plan.checked);">Land Arch And Env Plan</span><br />
+                                                <input type="checkbox" class="major_checkbox" name="landscape_arch" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" />
+                                                    <span onClick="document.createListForm.landscape_arch.checked=(!document.createListForm.landscape_arch.checked);">Landscape Arch</span><br />
+                                                <input type="checkbox" class="major_checkbox" name="urban_design" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" />
+                                                    <span onClick="document.createListForm.urban_design.checked=(!document.createListForm.urban_design.checked);">Urban Design</span><br />
+                                                <input type="checkbox" class="major_checkbox" name="urban_studies" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> 
+                                                    <span onClick="document.createListForm.urban_studies.checked=(!document.createListForm.urban_studies.checked);">Urban Studies</span><br />
+                                                <input type="checkbox" class="major_checkbox" name="limited" value="LIMITED" id="LIMITED" title="Limited" />
+                                                    <span onClick="document.createListForm.limited.checked=(!document.createListForm.limited.checked);">Limited</span><br />      
+                                                <input type="checkbox" class="major_checkbox" name="individual" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" />
+                                                    <span onClick="document.createListForm.individual.checked=(!document.createListForm.individual.checked);">Individual</span><br />
                                                 </tr>
                                             </table>
                                         </div>
