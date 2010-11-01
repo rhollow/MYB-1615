@@ -205,7 +205,7 @@ sakai.notificationsinbox = function(){
         if (!$(pane).is(":visible")) {
             hideAllPanes();
             $(pane).show();
-        }
+        }       
     };
     
     /**
@@ -215,11 +215,11 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
     };
     
-    var ellipsisSubjects = function(){    
+    var ellipsisSubjects = function(){           
         // the ThreeDots plugin isn't supported on Chrome at the moment, so
         // do a browser check and if it's chrome we need to handle it separately         
         var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;  
-        if (is_chrome) {
+        if (is_chrome) {                  
             $(".subject-td").each(function(){                                             
                 $(this).css("white-space","nowrap").css("text-overflow","ellipsis").css("overflow","hidden");                                
             });
@@ -497,7 +497,7 @@ sakai.notificationsinbox = function(){
         tickMessages();          
         
         // do ellipsis
-        ellipsisSubjects();          
+        ellipsisSubjects();                  
     };
     
     /**
@@ -571,7 +571,7 @@ sakai.notificationsinbox = function(){
             },
             error: function(xhr, textStatus, thrownError){                
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
-                $(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
+                //$(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
             }
         });
     };
@@ -1173,7 +1173,7 @@ sakai.notificationsinbox = function(){
             return;
         } 
         
-        // if the user is not a member of the advisors group then bail
+        // if the user is not a member of the advisors group then bail      
         if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
             sakai.api.Security.send403();
             return;

@@ -237,7 +237,7 @@ if (!sakai.composenotification){
          * Sets up drop down menu for Dynamic List field (or otherwise known as
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
-        var dynamicListInit = function(selectedID){     
+        var dynamicListInit = function(selectedID){             
             sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists", function(success, data){
                 
                 // if there is a selectedID remove "notice:" from it
@@ -569,7 +569,7 @@ if (!sakai.composenotification){
          * Fill in the notification detail page with the message's information.
          * @param {Object} message The message whose info we will extract.
          */
-        var fillInMessage = function(message, callback){                             
+        var fillInMessage = function(message, callback){                                   
             var eventDate;
             var taskDate;
             var sendDate;   
@@ -915,7 +915,7 @@ if (!sakai.composenotification){
          * @param {Object} isValidated Whether or not the message is validated via checkFieldsForErrors().
          * @return {Object} toPost The message we are going to post.
          */
-        var saveData = function(box, isValidated){ 
+        var saveData = function(box, isValidated){                 
             // Filling out all common fields.                    
             var toPost = {
                 "sakai:type": "notice",                
@@ -933,13 +933,15 @@ if (!sakai.composenotification){
             
             // sendDate is handled a little differently, because it is called
             // by a sakai date parsing util which throws an error if not
-            // the proper Date object type.
-            var sendDate = $(messageFieldSendDate).datepicker("getDate");
-            if (sendDate === null) {
+            // the proper Date object type                               
+            var sendDate = $(messageFieldSendDate).datepicker("getDate");                     
+            if (sendDate === null) {                               
                 toPost["sakai:sendDate@Delete"] = true;           
-            } else {
-                toPost["sakai:sendDate"] = sendDate.toString();
-                toPost["sakai:sendDate@TypeHint"] = "Date";
+            } else {                                
+//            sendDate = new Date(sendDate.toUTCString());
+//            alert(sendDate);
+                toPost["sakai:sendDate"] = sendDate.toString();                
+                toPost["sakai:sendDate@TypeHint"] = "Date";                
             }                                                                       
                                
             // Is this notification required or not?               
@@ -1038,7 +1040,7 @@ if (!sakai.composenotification){
          * @param {Object} original (optional) The original message, if this is an update.
          * @param {boolean} copyCheck (optional) Are we copying? If we are, we need to append "Copy to" to the subject.
          */
-        var postNotification = function (toPost, successCallback, original, copyCheck, msgTxt) {            
+        var postNotification = function (toPost, successCallback, original, copyCheck, msgTxt) {               
             var url = "/user/" + me.user.userid + "/message.create.html";           
             
             // Are moving an existing notification?            
@@ -1075,21 +1077,30 @@ if (!sakai.composenotification){
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)         
          */
-        sakai.composenotification.initialise = function(calledFrom, message) { 
+        sakai.composenotification.initialise = function(calledFrom, message) {         
             // Reset page back to its original condition.            
             resetView();
             clearInvalids(); 
             hideAllButtonLists();
             unbindAll();                   
             eventTimeInit(null, null, null);
-            dynamicListInit(null);                        
-                
+            
+            // There are 2 calls to DLinit when we initialise the widget:
+            // 1) to set up the dropdown with its options
+            // 2) to select an option if there is an existing message
+            // To prevent concurrency issues between these 2 calls, check if we are
+            // NOT creating a new notification, and if this is indeed the case,
+            // then initialise a blank dropdown. Otherwise, fillInMessage should handle it.
+            if(message==null || message["sakai:to"]==null){
+               dynamicListInit(null); 
+            }
+                                                   
             // Event handler for when user clicks on DLC "Save" button.
              $("#dlc-save").live('click', function(){
                  // Save the draft.
                  postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null, null);                                     
              });         
-             // Event handler for when you click on the "Don't Save" button on DLC dialog.
+             // Event handler for when user clicks on DLC "Don't Save" button.
              $("#dlc-dontsave").live('click', goToCDNLPage);                                      
                        
             // Are we calling this from drafts?
@@ -1124,11 +1135,11 @@ if (!sakai.composenotification){
             
             // Are we calling this from queue?
             if(calledFrom=="queue"){
-                // Now fill out the proper information.
-                fillInMessage(message, null);
+                // Disable the form, disallowing the user to edit.
+                disableView();
                 
-                // And disable the form, disallowing the user to edit.
-                disableView();    
+                // Now fill out the proper information.
+                fillInMessage(message, null);                                  
                 
                 // Display the proper buttons.                
                 $("#queueview-buttons").show(); 
@@ -1151,11 +1162,11 @@ if (!sakai.composenotification){
             
             // Are we calling this from acrhive?
             if(calledFrom=="archive"){
-                // Now fill out the proper information.
-                fillInMessage(message, null);
+                // Disable the form, disallowing the user to edit.
+                disableView();  
                 
-                // And disable the form, disallowing the user to edit.
-                disableView();    
+                // Now fill out the proper information.
+                fillInMessage(message, null);                                
                 
                 // Display the proper buttons.                
                 $("#archiveview-buttons").show(); 
@@ -1179,8 +1190,7 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), null, message, null, null);                    
-                    sakai.composenotification.initialise("drafts", message);
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), sakai.composenotification.initialise("drafts", message), message, false, null);                                        
                 });                
                 
                 // Hard delete this message (delete it from the trash).
