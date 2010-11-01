@@ -850,7 +850,7 @@ sakai.inbox = function() {
                 if (data.results) {
                     // Render the messages
                     for(var i = 0, j = data.resultslength; i < j; i++) {
-                        if(data.results[i]["sakai:from"] == person.user.userid) {
+                        if(data.results[i]["sakai:from"] == sakai.data.me.user.userid) {
                             data.results.splice(i, 1);
                         }
                     }
@@ -874,7 +874,7 @@ sakai.inbox = function() {
             success: function(data) {
                 if (data.results) {
                     for(var i = 0, j = data.results.length; i < j; i++) {
-                        if(data.results[i]["sakai:from"] == person.user.userid) {
+                        if(data.results[i]["sakai:from"] == sakai.data.me.user.userid) {
                             data.results.splice(i, 1);
                         }
                     }
