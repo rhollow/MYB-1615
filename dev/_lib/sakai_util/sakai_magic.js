@@ -2006,6 +2006,12 @@ sakai.api.User.loadMeData = function(callback) {
 
             // Log error
             fluid.log("sakai.api.User.loadMeData: Could not load logged in user data from the me service!");
+			
+			// Quick fix, there are many methods in this file that assume that sakai.data.me always exists, which is not true in this case
+			// Creating an empty sakai.data.me object to fix these issues
+			if (!sakai.data.me) {
+				sakai.data.me = {user: {anon: "", locale: "", profile: ""}};
+			} 
             
             if (xhr.status === 500 && window.location.pathname !== "/dev/500.html"){
                 document.location = "/dev/500.html";
