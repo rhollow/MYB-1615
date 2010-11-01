@@ -1635,8 +1635,8 @@ sakai.inbox = function() {
         var uuid = person.user.userid;
         if (!uuid || person.user.anon) {
             redirectToLoginPage();
-        }
-        else {
+            return;
+        } else {
             // We are logged in. Do all the nescecary stuff.
             // load the list of messages.
             var getMsgsReady = false;
