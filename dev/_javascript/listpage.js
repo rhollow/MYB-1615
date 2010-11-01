@@ -707,16 +707,17 @@ sakai.listpage = function(){
         var uuid = person.user.userid;
         if (!uuid || person.user.anon) {
             redirectToLoginPage();
-        } else {            
-            // if the user is not a member of the advisors group then bail
-            if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
-                sakai.api.Security.send403();
-                return;
-            }
-            
-            userUrl = "/~" + uuid + "/private/dynamic_lists";
-            loadData();
+            return;
+        }          
+        
+        // if the user is not a member of the advisors group then bail
+        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
+            sakai.api.Security.send403();
+            return;
         }
+        
+        userUrl = "/~" + uuid + "/private/dynamic_lists";
+        loadData();
     };
 
     doInit();

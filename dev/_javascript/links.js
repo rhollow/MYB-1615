@@ -237,9 +237,10 @@ sakai.links = function(){
         var uuid = person.user.userid;
         if (!uuid || person.user.anon) {
             redirectToLoginPage();
-        } else {
-            sakai.api.Server.loadJSON(linksDataNode, loadLinksList);   
+            return;
         }
+        
+        sakai.api.Server.loadJSON(linksDataNode, loadLinksList);   
     };
     
     doInit();
