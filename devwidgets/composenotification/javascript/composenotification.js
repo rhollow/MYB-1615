@@ -562,7 +562,7 @@ if (!sakai.composenotification){
          // Redirect to the Create New Dynamic Lists page.         
          var goToCDNLPage = function(){
              resetView();                         
-             window.location = "/dev/listpage.html";              
+             window.location = "/dev/listpage.html#tab=existing";              
          };                                                                                              	                                                                    
         
         /**
@@ -1096,7 +1096,10 @@ if (!sakai.composenotification){
                 }
              });         
              // Event handler for when you click on the "Don't Save" button on DLC dialog.
-             $("#dlc-dontsave").live('click', goToCDNLPage);                                      
+             $("#dlc-dontsave").live('click', function(){
+                 $("#save_reminder_dialog").jqmHide();
+                 goToCDNLPage();
+             });                                      
                        
             // Are we calling this from drafts?
             if(calledFrom=="drafts"){                       

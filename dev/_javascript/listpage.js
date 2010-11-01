@@ -653,8 +653,6 @@ sakai.listpage = function(){
                     $("#create_new_link").click();
                     break;
             }
-        } else {
-            $("#existing_link").click();
         }
     };
     
