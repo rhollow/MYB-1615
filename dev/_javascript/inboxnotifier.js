@@ -152,13 +152,6 @@ sakai.notificationsinbox = function(){
 	var goToPreviousPageAfterDeletion = false;
     
     /**
-     * This function will redirect the user to the login page.
-     */
-    var redirectToLoginPage = function(){
-        document.location = sakai.config.URL.GATEWAY_URL;
-    };
-    
-    /**
      * This will show the preloader.
      */
     var showLoader = function(){
@@ -1165,20 +1158,27 @@ sakai.notificationsinbox = function(){
      *
      */
     var doInit = function(){
-        var person = sakai.data.me;
-        var uuid = person.user.userid;
-        // if the user is not logged in redirect to login page
-        if (!uuid || person.user.anon) {
-            redirectToLoginPage();
+        var security = sakai.api.Security;
+		
+		// if the user is not logged in redirect to login page
+        if (!security.isLoggedIn()) {
+            security.sendToLogin();
             return;
         } 
         
-        // if the user is not a member of the advisors group then bail
+        // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+		// redirect him to the participation explanation page
+		if (!security.isMyBerkeleyParticipant()) {
+			security.sendToNotAMyBerkeleyParticipantPage();
+			return;
+		}
+		
+		// if the user is not a member of the advisors group then bail
         if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
-            sakai.api.Security.send403();
+            security.send403();
             return;
         }
-        
+				        
         // We are logged in. Do all the necessary stuff.
         // Load the list of messages.            
         getAllMessages();

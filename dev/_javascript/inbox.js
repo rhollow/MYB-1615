@@ -210,13 +210,6 @@ sakai.inbox = function() {
     var unreadReminders = 0;
 
     /**
-     * This function will redirect the user to the login page.
-     */
-    var redirectToLoginPage = function() {
-        document.location = sakai.config.URL.GATEWAY_URL;
-    };
-
-    /**
      * This will show the preloader.
      */
     var showLoader = function() {
@@ -1631,30 +1624,37 @@ sakai.inbox = function() {
      */
     var doInit = function(){
         // Check if we are logged in or out.
-        var person = sakai.data.me;
-        var uuid = person.user.userid;
-        if (!uuid || person.user.anon) {
-            redirectToLoginPage();
+        var security = sakai.api.Security;
+		if (!security.isLoggedIn()) {
+            security.sendToLogin();
             return;
-        } else {
-            // We are logged in. Do all the nescecary stuff.
-            // load the list of messages.
-            var getMsgsReady = false;
-            var sendMsgReady = false;
-            getAll = true;
-            
-            getAllMessages(function() {
-                getMsgsReady = true;
-                if (getMsgsReady && sendMsgReady)
-                    $(window).trigger("hashchange");
-            });
-           
-            $(window).bind("sakai-sendmessage-ready", function() {
-                sendMsgReady = true;
-                if (getMsgsReady && sendMsgReady)
-                    $(window).trigger("hashchange");
-            });
         }
+
+		// If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+		// redirect him to the participation explanation page
+		if (!security.isMyBerkeleyParticipant()) {
+			security.sendToNotAMyBerkeleyParticipantPage();
+			return;
+		}
+		
+        // We are logged in. Do all the necessary stuff.
+        // load the list of messages.
+        var getMsgsReady = false;
+        var sendMsgReady = false;
+        getAll = true;
+        
+        getAllMessages(function() {
+            getMsgsReady = true;
+            if (getMsgsReady && sendMsgReady)
+                $(window).trigger("hashchange");
+        });
+       
+        $(window).bind("sakai-sendmessage-ready", function() {
+            sendMsgReady = true;
+            if (getMsgsReady && sendMsgReady)
+                $(window).trigger("hashchange");
+        });
+        
     };
 
 

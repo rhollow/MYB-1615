@@ -50,7 +50,7 @@ sakai.nopermissions = function(tuid, showSettings) {
             $(".login-container a").attr("href", gatewayURL + "?url=" + encodeURIComponent(redurl));
         } else {
             // Remove the sakai.index stylesheet as it would mess up the design
-            $("LINK[href*='/dev/_css/sakai/sakai.index.css']").remove();
+            //$("LINK[href*='/dev/_css/sakai/sakai.index.css']").remove();
             // the user is logged in and should get a page in Sakai itself
             var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedInTemplate, {
 				"subject": encodeURIComponent(errorReportEmailSubject)
