@@ -4,7 +4,7 @@ sakai.config = sakai.config || {};
 
 // Insert custom configuration here
 
-sakai.config.env = "dev";
+sakai.config.env = "prod";
 
 sakai.config.Navigation = [
     {

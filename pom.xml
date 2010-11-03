@@ -93,6 +93,7 @@
   </repositories>
   <properties>
     <ant.target>copy_all</ant.target>
+    <env>dev</env>
   </properties>
   <profiles>
     <profile>
@@ -143,7 +144,10 @@
             <phase>generate-resources</phase>
             <configuration>
               <tasks>
-                <ant target="${ant.target}" inheritRefs="true" antfile="./build.xml" />
+                <ant inheritRefs="true" antfile="./build.xml">
+                    <target name="${ant.target}"/>
+                    <property name="env" value="${env}"/>                    
+                </ant>
               </tasks>
             </configuration>
             <goals>

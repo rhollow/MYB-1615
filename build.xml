@@ -11,12 +11,14 @@
         <!-- SETUP - Source and target paths -->
         <property name="SRC_DIR" value="dev" description="Core source folder" />
         <property name="INSTRUMENTED_DIR" value="${SRC_DIR}-i" description="Instrumented source folder" />
+        <property name="SRC_JS_CONFIG_DIR" value="${SRC_DIR}/_configuration" description="Source folder for JS config" />
         <property name="TARGET" value="target" description="Core target folder" />
         <property name="TARGET_RESOURCES" value="${TARGET}/processed-resources" description="Top directory for JARs, archives" />
         <property name="TARGET_DIR" value="${TARGET_RESOURCES}/dev" description="Core target folder" />
         <property name="TARGET_COMPRESSED_DIR" value="${TARGET}/compressed" description="Core compressed folder" />
         <property name="TARGET_DOCUMENTATION_DIR" value="${TARGET}/doc" description="Core documentation folder" />
         <property name="TARGET_REPORTS_DIR" value="${TARGET}/reports" description="Core reports folder" />
+        <property name="TARGET_JS_CONFIG_DIR" value="${TARGET_DIR}/_configuration" description="Target folder for JS config" />        
 
         <property name="SRC_DIR_W" value="devwidgets" description="Source folder for widgets" />
         <property name="TARGET_DIR_W" value="${TARGET_RESOURCES}/devwidgets" description="Target folder for widgets" />
@@ -85,8 +87,25 @@
 
     </target>
 
+    <target name="copy_all" depends="copy_sources, copy_environment_dependent_configs"/>
+
+    <target name="copy_environment_dependent_configs" depends="copy_sources" description="Copying environment-specific JS configs">
+
+        <echo message="Sakai 3 UX Build: Copying common JS configs"/>
+
+        <copy todir="${TARGET_JS_CONFIG_DIR}" failonerror="false" overwrite="true">
+            <fileset dir="${SRC_JS_CONFIG_DIR}" includes="*.js"/>
+        </copy>
+
+        <echo message="Sakai 3 UX Build: Copying environment-specific JS configs from ${env}"/>
+
+        <copy todir="${TARGET_JS_CONFIG_DIR}" failonerror="false" overwrite="true">
+            <fileset dir="${SRC_JS_CONFIG_DIR}/${env}" includes="*.js"/>
+        </copy>
+    </target>
+
     <!-- Target: Copy source tree -->
-    <target name="copy_all" depends="create_target_folders" description="Copy source files to target folders">
+    <target name="copy_sources" depends="create_target_folders" description="Copy source files to target folders">
 
         <echo message="Making a copy of core source files..." />
         <copy todir="${TARGET_DIR}">
