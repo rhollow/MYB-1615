@@ -46,11 +46,20 @@ sakai.mysakai = function(){
             sakai.dashboard.init("/~" + sakai.data.me.user.userid + "/dashboardwidgets/", true, "personalportal", true);
         });
 
+		var security = sakai.api.Security;
+
         // If the user isn't logged in, redirect them to do so, as the dashboard is relevant
         // only when you're logged in
         $(window).bind("sakai.dashboard.notLoggedIn sakai.dashboard.notUsersDashboard", function(e) {
-            document.location = sakai.config.URL.GATEWAY_URL;
+            security.sendToLogin();			
         });
+		
+		// If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+		// redirect him to the participation explanation page		
+		if (!security.isMyBerkeleyParticipant()) {
+			security.sendToNotAMyBerkeleyParticipantPage();
+			return;
+		}
 
     };
 
