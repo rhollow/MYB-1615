@@ -97,10 +97,10 @@
             <fileset dir="${SRC_JS_CONFIG_DIR}" includes="*.js"/>
         </copy>
 
-        <echo message="Sakai 3 UX Build: Copying environment-specific JS configs from ${env}"/>
+        <echo message="Sakai 3 UX Build: Copying environment-specific JS configs from ${myberkeley.env}"/>
 
         <copy todir="${TARGET_JS_CONFIG_DIR}" failonerror="false" overwrite="true">
-            <fileset dir="${SRC_JS_CONFIG_DIR}/${env}" includes="*.js"/>
+            <fileset dir="${SRC_JS_CONFIG_DIR}/${myberkeley.env}" includes="*.js"/>
         </copy>
     </target>
 
