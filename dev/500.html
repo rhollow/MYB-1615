@@ -22,6 +22,7 @@
         <script type="text/javascript" src="/dev/_configuration/widgets.js"></script>
         <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
         <script type="text/javascript" src="/dev/_configuration/config.js"></script>
+		<script type="text/javascript" src="_configuration/config_custom.js"></script>
 
         <!-- Core 3rd-party JS -->
         <script type="text/javascript" src="/dev/_lib/jquery/jquery.js"></script>
@@ -60,28 +61,24 @@
                 <div class="login-box">
                     <div id="permission_error">
                         <div class="preview-box">
-                            <span id="error_title">The user account you are trying to access does not exist in the system</span>
+                            <span id="error_title">Are you part of myBerkeley?</span>
                             <p>
-                                You tried to sign in or view an account which does not exists in the system.
+                                We're sorry, but you don't seem to be part of myBerkeley project.
                             </p>
-                            You can
-                            <ul>
-                                <li>
-                                    sign in to Sakai with a different account
-                                </li>
-                                <li>
-                                    notify helpdesk or your system administrator about this problem
-                                </li>
-                                <li>
-                                    try again later in case the account is scheduled to be ready by a later date
-                                </li>
-                            </ul>
+							<p>
+								At this time, membership is limited to Berkeley's College of Environmental Design.<br />
+								If you have joined the project, there may be a transient system error. Please try again.
+							</p>
+							<p>
+								If you are in CED and want to sign up, please go to the <a href="/dev/index.html" class="default">Sign-In Page</a>.
+							</p>
+							<p>
+                                If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
+                            </p>
                         </div>
                         <div class="login-container">
-                            <a href="/dev/index.html">
-                            	<button class="s3d-button s3d-button-primary" type="submit">
+                            <a href="/dev/index.html" class="s3d-button">
                             		<span class="s3d-button-inner">Go to the sign in page</span>
-                            	</button>
                             </a>
                             <p>
                                 Use the button above to go to the main sign in page where you can try signing in with a different account.
@@ -97,29 +94,27 @@
                         <div class="decor">
                         </div>
                         <div id="permission_error">
-                            <span id="error_title">The user account you are trying to access does not exist in the system</span>
+                            <span id="error_title">Are you part of myBerkeley?</span>
                             <p>
-                                You tried to sign in or view an account which does not exist in the system.
+                                We're sorry, but you don't seem to be part of myBerkeley project.
                             </p>
-                            You can
-                            <ul>
-                                <li>
-                                    sign in to Sakai with a different account
-                                </li>
-                                <li>
-                                    notify helpdesk or your system administrator about this problem
-                                </li>
-                                <li>
-                                    try again later in case the account is schedulred to be ready by a later date.
-                                </li>
-                            </ul>
+							<p>
+								At this time, membership is limited to Berkeley's College of Environmental Design.<br />
+								If you have joined the project, there may be a transient system error. Please try again.
+							</p>
+							<p>
+								If you are in CED and want to sign up, please go to the <a href="/dev/index.html" class="default">Sign-In Page</a>.
+							</p>
+							<p>
+                                If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
+                            </p>
+
                         </div>
                     </div>
                 </div>
 
                 <div id="widget_footer" class="widget_inline footercontainer"></div>
 
-                <div id="widget_chat" class="widget_inline"></div>
                 --></div>
         </div>
     </body>

@@ -43,7 +43,7 @@ sakai.nopermissions = function(tuid, showSettings) {
 		if (sakai.data.me.user.anon) {
             $('html').addClass("requireAnon");
             // the user is anonymous and should be able to log in
-            var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedOutTemplate, sakai.data.me.user).replace(/\r/g, '');
+            var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedOutTemplate, {"subject":encodeURIComponent(errorReportEmailSubject)}).replace(/\r/g, '');
             $(permissionsError).append(renderedTemplate);            
             // Set the link for the sign in button
             $(".login-container a").attr("href", gatewayURL + "?url=" + encodeURIComponent(redurl));
