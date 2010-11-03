@@ -571,6 +571,11 @@ sakai.notificationsinbox = function(){
             },
             error: function(xhr, textStatus, thrownError){                
                 showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+                // Commented out because this displays the tiny bit of text at the bottom of the panel that
+                // says an error has occurred. Felt this was a bit redundant to have both the text and a 
+                // popup alerting the user that there was an error, and also, the error message does not
+                // ever disappear for the remainder of the time the user spends on this page (unless they
+                // refresh or leave and come back).
                 //$(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
             }
         });
@@ -646,7 +651,7 @@ sakai.notificationsinbox = function(){
                 txt = $(inboxGeneralMessagesDeleted_1).text();
             }
             else {
-                txt = pathToMessages.length + $(inboxGeneralMessagesDeleted_x).text();
+                txt = pathToMessages.length+" "+$(inboxGeneralMessagesDeleted_x).text();
             }
             
             showGeneralMessage(txt, false);
@@ -790,7 +795,7 @@ sakai.notificationsinbox = function(){
                 txt = $(inboxGeneralMessagesMoved_1).text()+toWhere+".";
             }
             else {
-                txt = pathToMessages.length+$(inboxGeneralMessagesMoved_x).text()+toWhere+".";
+                txt = pathToMessages.length+" "+$(inboxGeneralMessagesMoved_x).text()+" "+toWhere+".";
             }
             
             showGeneralMessage(txt, false);
@@ -897,7 +902,7 @@ sakai.notificationsinbox = function(){
                 txt = $(inboxGeneralMessagesCopied_1).text()+toWhere+".";
             }
             else {
-                txt = pathToMessages.length+$(inboxGeneralMessagesCopied_x).text()+toWhere+".";
+                txt = pathToMessages.length+" "+$(inboxGeneralMessagesCopied_x).text()+" "+toWhere+".";
             }
             
             showGeneralMessage(txt, false);
