@@ -1,5 +1,4 @@
 var sakai = sakai || {};
 
-sakai.config = sakai.config || {};
+sakai.env = "dev";
 
-sakai.config.env = "dev";
