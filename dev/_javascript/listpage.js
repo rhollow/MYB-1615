@@ -56,13 +56,6 @@ sakai.listpage = function(){
     var groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
     
     /**
-     * This function will redirect the user to the login page.
-     */
-    var redirectToLoginPage = function(){
-        document.location = sakai.config.URL.GATEWAY_URL;
-    };
-    
-    /**
      * This will show the preloader.
      */
     var showLoader = function(){
@@ -702,17 +695,24 @@ sakai.listpage = function(){
     }
     
     var doInit = function() {
-        // Check if we are logged in or out.
-        var person = sakai.data.me;
-        var uuid = person.user.userid;
-        if (!uuid || person.user.anon) {
-            redirectToLoginPage();
+		var security = sakai.api.Security;
+		
+		// Check if we are logged in or out.
+        if (!security.isLoggedIn()) {
+            security.sendToLogin();
             return;
-        }          
+        }
+		
+		// If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+		// redirect him to the participation explanation page
+		if (!security.isMyBerkeleyParticipant()) {
+			security.sendToNotAMyBerkeleyParticipantPage();
+			return;
+		}          
         
         // if the user is not a member of the advisors group then bail
         if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
-            sakai.api.Security.send403();
+            security.send403();
             return;
         }
         

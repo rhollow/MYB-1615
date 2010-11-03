@@ -16,7 +16,8 @@
         <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.error.css" />
 
         <!-- Sakai Page CSS -->
-        <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.index.css" />
+        <!--link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.index.css" /-->
+		<link rel="stylesheet" type="text/css" href="/dev/_css/sakai/myberkeley.error.css" />
 
         <!-- 3rd party CSS -->
 
@@ -50,48 +51,38 @@
 
     <body class="fl-centered index i18nable">
         <div class="index-container fl-centered page_not_found_error">
-            <div id="page_not_found_error_logged_out_template" style="display:none"><!--
-                <div class="header-title">
-                    <img src="/dev/_images/sakai_logo_index.png" alt="__MSG__INSTANCE_NAME__" />
-                </div>
+			<div id="page_not_found_error_logged_out_template" style="display:none;"><!--
+            <div id="widget_topnavigation" class="widget_inline">
+            </div>
+            
+            <div class="fl-container-flex header">
+				<div class="fl-fix fl-centered fixed-container">
+					<div class="decor"></div>
+					<div class="login-box">
+						<div id="permission_error">
+							<div class="preview-box">
+								<span id="error_title">Sorry - We can't find that page.</span>
+								<p>
+									We're sorry, but the page that you requested does not exist.<br />
+									Plese go back to the <a href="/" class="default">Portal Home Page</a> and try again.
+								</p>
+								<p>
+									If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
+								</p>
+							</div>
+							<div class="login-container">
+								<a href="/dev/index.html" class="s3d-button"><span class="s3d-button-inner">Sign In</span></a>
+								<p>
+									If you have an account, you may wish to sign in to search available pages.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-                <div class="header-byline">
-                    __MSG__HEADER_BYLINE__
-                </div>
+            <div id="widget_footer" class="widget_inline footercontainer"></div>
 
-                <div class="login-box">
-                    <div id="page_not_found_error">
-                        <div class="preview-box">
-                            <span id="error_title">The page you requested was not found.</span>
-                            <p>
-                                You may have clicked a broken link or mistyped the web address (some url addresses are case sensitive). It's also possible you don't have permission to access this page.
-                            </p>
-                            You can
-                            <ul>
-                                <li>
-                                    Verify the link in the address bar
-                                </li>
-                                <li>
-                                    Go back to the previous page by clicking the back button in your browser
-                                </li>
-                                <li>
-                                	Try to contact the page administrator to request access permissions if you think you should have
-                                </li>
-                            </ul>
-                            <p>
-                                If you continue to receive this error, the page may have been moved or no longer exists.
-                            </p>
-                        </div>
-                        <div class="login-container">
-							<a href="/dev/index.html">
-                            	<button class="s3d-button s3d-button-primary" type="submit"><span class="s3d-button-inner">Sign In</span></button>
-							</a>
-                            <p>
-                                If you have an account, you may wish to sign in to search available pages.
-                            </p>
-                        </div>
-                    </div>
-                </div>
             --></div>
             <div id="page_not_found_error_logged_in_template" style="display:none;"><!--
                 <div id="widget_topnavigation" class="widget_inline">
@@ -102,25 +93,14 @@
                         </div>
                         <div id="page_not_found_error">
                             <div class="preview-box">
-                                <span id="error_title">The page you requested was not found.</span>
-                                <p>
-                                    You may have clicked a broken link or mistyped the web address (some url addresses are case sensitive). It's also possible you don't have permission to access this page.
-                                </p>
-                                You can
-                                <ul>
-                                    <li>
-                                        Verify the link in the address bar
-                                    </li>
-                                    <li>
-                                        Go back to the previous page by clicking the back button in your browser
-                                    </li>
-                                    <li>
-                                	    Try to contact the page administrator to request access permissions if you think you should have
-                                    </li>
-                                </ul>
-                                <p>
-                                    If you continue to receive this error, the page may have been moved or no longer exists.
-                                </p>
+                                <span id="error_title">Sorry - We can't find that page.</span>
+                            <p>
+                                We're sorry, but the page that you requested does not exist.<br />
+								Plese go back to the <a href="/" class="default">Portal Home Page</a> and try again.
+                            </p>
+							<p>
+                                If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
+                            </p>
                             </div>
                         </div>
                     </div>
