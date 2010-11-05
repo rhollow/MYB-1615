@@ -790,7 +790,7 @@ sakai.inbox = function() {
             types = "&types=" + selectedType.join(",");
         }
 
-        cats = selectedCategory;
+        cats = selectedCategory || "Message";
         if (selectedCategory){
             if (selectedCategory === "Message"){
                 cats = "message";

@@ -697,7 +697,7 @@ sakai.listpage = function(){
     var doInit = function() {
 		var security = sakai.api.Security;
 		
-		// Check if we are logged in or out.
+        // Check if we are logged in or out.
         if (!security.isLoggedIn()) {
             security.sendToLogin();
             return;
@@ -716,7 +716,7 @@ sakai.listpage = function(){
             return;
         }
         
-        userUrl = "/~" + uuid + "/private/dynamic_lists";
+        userUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
         loadData();
     };
 

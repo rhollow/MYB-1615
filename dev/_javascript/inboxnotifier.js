@@ -512,7 +512,10 @@ sakai.notificationsinbox = function(){
         currentPage = pageNumber - 1;
         // Show set of messages.
         // Using callback function to update the pager AFTER all messages have been loaded
-		getAllMessages(function(){pageMessages(currentPage+1);});
+        getAllMessages(function() {
+            pageMessages(currentPage + 1);
+            currentPage = pageNumber - 1;
+        });
     };
 	
     /**
@@ -525,7 +528,6 @@ sakai.notificationsinbox = function(){
             pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
             buttonClickCallback: showPage
         });
-        currentPage = pageNumber;
     };       
     
     /**
