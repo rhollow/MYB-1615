@@ -966,14 +966,14 @@ if (!sakai.composenotification){
                                
             // Is this notification required or not?               
             if($(messageRequiredYes).attr("checked")){                                     
-                // Reminders (could be task or event).
+                // Reminders (could be task or event) ALWAYS have these common fields.
                 toPost["sakai:category"] = "reminder"; 
+                toPost["sakai:taskState"] = "created";
                 // See if it is a task or an event and get the appropriate info.
                 if($(messageTaskCheck).attr("checked")){                             
                     // It is a task.                                                                                                                   
                     toPost["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate").toString();
-                    toPost["sakai:dueDate@TypeHint"] = "Date";   
-                    toPost["sakai:taskState"] = "created"; 
+                    toPost["sakai:dueDate@TypeHint"] = "Date";                      
                     // Clear event details, in case it was an event before.
                     toPost["sakai:eventDate@Delete"]=true;                    
                     toPost["sakai:eventPlace@Delete"]=true;                   
@@ -999,12 +999,11 @@ if (!sakai.composenotification){
                                    
                     toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                    
                     // Clear task fields in case it was previously a task.
-                    toPost["sakai:dueDate@Delete"]=true;               
-                    toPost["sakai:taskState"]="created";                                                                                                                                                                                                                                                                                                                                                      
+                    toPost["sakai:dueDate@Delete"]=true;                                                                                                                                                                                                                                                                                                                                                                                      
                 }                    
             }
             else{                                                
-                // Notifications (treated same as a message).                 
+                // Notifications (treated same as a message); means NON-REQUIRED.           
                 toPost["sakai:category"] = "message";   
                 
                 // Clear task fields in case this message was previously a task.                
@@ -1038,8 +1037,7 @@ if (!sakai.composenotification){
                     var eventDetails = "Date: "+formatDate($(messageEventDate).datepicker("getDate"))+"\n"+
                                        "Time: "+$(messageEventTimeHour+" :selected").text()+":"+$(messageEventTimeMinute+" :selected").text()+" "+$(messageEventTimeAMPM+" :selected").text()+"\n"+
                                        "Place: "+toPost["sakai:eventPlace"]+"\n\n";                                                                         
-                    toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];  
-                    toPost["sakai:taskState"] = "created";                                                                                                                                                                                                                                 
+                    toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                                                                                                                                                                                                                                                    
                 }
                 else{
                     // Clear event fields too, since it may have been (but no longer is) an event.                    
