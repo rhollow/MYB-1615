@@ -401,7 +401,7 @@ sakai.listpage = function(){
         sortBy = $(this).attr("id").replace(/inbox_table_header_/gi, "");
         sortOrder = (sortOrder === "descending") ? "ascending" : "descending";
 
-        getAllMessages();
+        // getAllMessages(); // no such function defined, but the function should sort the data and re-populate the inbox
     });
     
     var deleteLists = function(listsArray) {
