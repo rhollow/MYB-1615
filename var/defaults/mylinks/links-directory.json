@@ -126,7 +126,7 @@
         {
             "id": "campus_bookstore",
             "name": "Campus Bookstore",
-            "url": "http://www.bkstr.com/CategoryDisplay/10001-9604-10433-1",
+            "url": "http://www.bkstr.com/webapp/wcs/stores/servlet/StoreCatalogDisplay?storeId=10433",
             "popup_description": "Find and purchase textbooks by course.",
             "featured_description": "The Cal Student Store sells everything from Cal sweatshirts to textbooks.  Use the site to find which textbooks you need for each of your classes. You can also purchase or rent books directly from the website.",
             "audience": [{
@@ -205,7 +205,7 @@
             "name": "Career Center",
             "url": "http://career.berkeley.edu",
             "popup_description": "Find jobs, internships, and learn about career paths.",
-            "featured_description": "The Career Center is a fantastic resource for exploring a variety of career options. Services include searching for jobs and internships, preparing for graduate school, resumé writing and interview workshops, and much more.",
+            "featured_description": "The Career Center is a fantastic resource for exploring a variety of career options. Services include searching for jobs and internships, preparing for graduate school, resumï¿½ writing and interview workshops, and much more.",
             "audience": [{
                 "name": "student",
                 "required": false
@@ -280,7 +280,7 @@
         {
             "id": "schedule_planning",
             "name": "Schedule Planning Tools",
-            "url": "http://asuc.org/newsite/scheduleplanning",
+            "url": "http://asuc.org/newsite2010/student-services/schedule-planning-tools/",
             "popup_description": "Tools to help you plan your class schedule.",
             "featured_description": "Having trouble planning your class schedule?  The ASUC has compiled a list of helpful schedule planning tools that can help you set up a class schedule, find textbooks, and view class and professor ratings.",
             "audience": [{
