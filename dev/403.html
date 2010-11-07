@@ -4,7 +4,7 @@
     <head>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Sakai 3 R&amp;D - Access denied</title>
+        <title>Access denied - myBerkeley</title>
 
         <!-- Sakai Core CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/_css/FSS/fss-base.css" />
@@ -16,7 +16,8 @@
         <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.error.css" />
 
         <!-- Sakai Page CSS -->
-        <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.index.css" />
+        <!--link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.index.css" /-->
+		<link rel="stylesheet" type="text/css" href="/dev/_css/sakai/myberkeley.error.css" />
 
         <!-- Sakai Config JS -->
         <script type="text/javascript" src="/dev/_configuration/widgets.js"></script>
@@ -49,44 +50,39 @@
 
     <body class="fl-centered index i18nable">
         <div class="index-container fl-centered permissions_error">
-            <div id="permission_error_logged_out_template" style="display:none"><!--
-                <div class="header-title">
-                    <img src="/dev/_images/sakai_logo_index.png" alt="__MSG__INSTANCE_NAME__"/>
-                </div>
-    
-                <div class="header-byline">
-                    __MSG__HEADER_BYLINE__
-                </div>
-    
-                <div class="login-box">
-                    <div id="permission_error">
-                        <div class="preview-box">
-                            <span id="error_title">You don't have permission to view the requested page</span>
-                            <p>
-                                You tried to access a page without the correct permissions.
-                            </p>
-                            You can
-                            <ul>
-                                <li>
-                                    Sign in to Sakai with an account that has the correct permissions
-                                </li>
-                                <li>
-                                    Try to contact the page administrator to request access permissions if you think you should have
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="login-container">
-                            <a href="/dev/index.html">
-                            	<button class="s3d-button s3d-button-primary" type="submit">
-                            		<span class="s3d-button-inner">Sign In</span>
-                            	</button>
-                            </a>
-                            <p>
-                                Sign in to an account that has the right permissions to view this page with the button above.
-                            </p>
-                        </div>
-                    </div>
-                </div>--></div>
+			<div id="permission_error_logged_out_template" style="display:none;"><!--
+            <div id="widget_topnavigation" class="widget_inline">
+            </div>
+            
+            <div class="fl-container-flex header">
+				<div class="fl-fix fl-centered fixed-container">
+					<div class="decor"></div>
+					<div class="login-box">
+						<div id="permission_error">
+							<div class="preview-box">
+								<span id="error_title">Sorry - That page has restricted access.</span>
+								<p>
+									We're sorry, but you do not have permission to view the page that you requested.<br />
+								Plese go back to the <a href="/" class="default">Portal Home Page</a> and try another page.
+								</p>
+								<p>
+									If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
+								</p>
+							</div>
+							<div class="login-container">
+								<a href="/dev/index.html" class="s3d-button"><span class="s3d-button-inner">Sign In</span></a>
+								<p>
+									Sign in to an account that has the right permissions to view this page with the button above.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+            <div id="widget_footer" class="widget_inline footercontainer"></div>
+
+            --></div>
                 <div id="permission_error_logged_in_template" style="display:none;"><!--
                 <div id="widget_topnavigation" class="widget_inline">
                 </div>
@@ -98,10 +94,10 @@
                             <span id="error_title">Sorry - That page has restricted access.</span>
                             <p>
                                 We're sorry, but you do not have permission to view the page that you requested.<br />
-								Plese go back to the <a href="/">Portal Home Page</a> and try another page.
+								Plese go back to the <a href="/" class="default">Portal Home Page</a> and try another page.
                             </p>							
                             <p>
-                                If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}">here</a>.
+                                If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
                             </p>
                         </div>
                     </div>
