@@ -866,8 +866,6 @@ sakai.inbox = function() {
                             }
                         }   
                     }
-                    console.log("using url");
-                    console.log(data);
                     renderMessages(data);
                     showUnreadMessages();
                 }
@@ -895,8 +893,6 @@ sakai.inbox = function() {
                             }
                         }
                     }
-                    console.log("using url2");
-                    console.log(data.results);
                     allAllMessages = data.results;
                 }
             },
