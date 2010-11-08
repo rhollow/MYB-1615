@@ -39,16 +39,32 @@ sakai.nopermissions = function(tuid, showSettings) {
 			}
         }
 		
+		var subject = {
+				"subject": encodeURIComponent(errorReportEmailSubject)
+				};
+		
 		if (sakai.data.me.user.anon){
             // the user is anonymous and should be able to log in
-            var renderedTemplate = $.TemplateRenderer(pageNotFoundErrorLoggedOutTemplate, {"subject":encodeURIComponent(errorReportEmailSubject)}).replace(/\r/g, '');
-            $(pageNotFoundError).append(renderedTemplate);
+            var renderedTemplate = $.TemplateRenderer(pageNotFoundErrorLoggedOutTemplate, subject).replace(/\r/g, '');
+            
+			// Temporary fix for IE not displaying TrimPath templates
+			if(renderedTemplate===""){																
+				renderedTemplate = TrimPath.parseTemplate(str_page_not_found_error_logged_out_template).process(subject).replace(/\r/g, '').replace(/^<!--/,'').replace(/-->$/,'');				
+			}
+			
+			$(pageNotFoundError).append(renderedTemplate);
             // Set the link for the sign in button            
             $(".login-container a").attr("href", gatewayURL + "?url=" + encodeURIComponent(redurl));
         } else {
             // the user is logged in and should get a page in Sakai itself
-            var renderedTemplate = $.TemplateRenderer(pageNotFoundErrorLoggedInTemplate, {"subject":encodeURIComponent(errorReportEmailSubject)}).replace(/\r/g, '');
-            $(pageNotFoundError).append(renderedTemplate);
+            var renderedTemplate = $.TemplateRenderer(pageNotFoundErrorLoggedInTemplate, subject).replace(/\r/g, '');
+            
+			// Temporary fix for IE not displaying TrimPath templates
+			if(renderedTemplate===""){																
+				renderedTemplate = TrimPath.parseTemplate(str_page_not_found_error_logged_in_template).process(subject).replace(/\r/g, '').replace(/^<!--/,'').replace(/-->$/,'');				
+			}
+			
+			$(pageNotFoundError).append(renderedTemplate);
             $("#page_not_found_error").addClass("error_page_bringdown");
         }
     }

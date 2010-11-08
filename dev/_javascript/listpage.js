@@ -384,6 +384,7 @@ sakai.listpage = function(){
     });
     
     // Sorters for the inbox.
+    /* Commented out for the myBerkeley POC since sorting is broken - eli
     $(".inbox_inbox_table_header_sort").bind("mouseenter", function() {
         if (sortOrder === 'descending') {
             $(this).append(sakai.api.Security.saneHTML($(inboxInboxSortUp).html()));
@@ -401,8 +402,9 @@ sakai.listpage = function(){
         sortBy = $(this).attr("id").replace(/inbox_table_header_/gi, "");
         sortOrder = (sortOrder === "descending") ? "ascending" : "descending";
 
-        getAllMessages();
+        getAllMessages(); // no such function defined, but the function should sort the data and re-populate the inbox
     });
+    */
     
     var deleteLists = function(listsArray) {
         var listId = listsArray;
