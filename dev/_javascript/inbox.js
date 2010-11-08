@@ -866,6 +866,8 @@ sakai.inbox = function() {
                             }
                         }   
                     }
+                    console.log("using url");
+                    console.log(data);
                     renderMessages(data);
                     showUnreadMessages();
                 }
@@ -893,6 +895,8 @@ sakai.inbox = function() {
                             }
                         }
                     }
+                    console.log("using url2");
+                    console.log(data.results);
                     allAllMessages = data.results;
                 }
             },
@@ -1405,21 +1409,31 @@ sakai.inbox = function() {
                 }
                 
                 allAllMessages[i]["sakai:messagebox"] = "archive";
-                updateReminder(allAllMessages[i]["jcr:path"], propertyToUpdate);
+                if (i === (j - 1)) {
+                    var updateMessage;
+                    if (archived == 1) {
+                        updateMessage = function(){
+                            showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
+                        }
+       	            } else {
+                        updateMessage = function(){
+                            showGeneralMessage(archived + $(inboxGeneralMessagesArchivedX).text());
+                        }
+                    };
+                            
+                    updateReminder(allAllMessages[i]["jcr:path"], propertyToUpdate, function() {
+                        updateUnreadNumbers();
+                        showPage(0);
+                        updateMessage();
+                    });
+                } else {
+                    updateReminder(allAllMessages[i]["jcr:path"], propertyToUpdate);   
+                }
             }
         }
         
         if (archived == 0) {
             showGeneralMessage($(inboxGeneralMessagesNoneSelectedReminders).text());
-        } else { 
-            if (archived == 1) {
-                showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
-            } else {
-                showGeneralMessage(archived + $(inboxGeneralMessagesArchivedX).text());
-            }
-            
-            updateUnreadNumbers();
-            showPage(0);
         }
     });
     
