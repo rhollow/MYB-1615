@@ -681,7 +681,7 @@ sakai.inbox = function() {
                     rowCheckbox.attr("checked", true);
                 }
                 
-                rowCheckbox.live("click", function(evt){
+                rowCheckbox.one("click", function(evt){
                     var id = evt.target.id;
                     id = id.split("_");
                     id = id[id.length - 1];
@@ -693,13 +693,25 @@ sakai.inbox = function() {
                     var propertyToUpdate;
                     var funct;
                     
-                    if (reminderData["sakai:taskState"] === "completed") {
+                    var index;
+                    for(var i = 0, j = allAllMessages.length; i < j; i++) {
+                        if(allAllMessages[i]["jcr:path"] == path) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    
+                    // unchecking a reminder
+                    if (!$(rowCheckBox).is(":checked") && reminderData["sakai:taskState"] === "completed") {
+                        // unchecking the reminder inside the archive
                         if (reminderData["sakai:messagebox"] === "archive") {
                             if(reminderData["sakai:read"] === false) {
                                 unreadReminders += 1;
                                 $(chatUnreadMessages).html(sakai.api.Security.saneHTML((parseInt($(chatUnreadMessages).text(), 10) + 1)));
                                 updateUnreadNumbers();
                             }
+                            allAllMessages[index]["sakai:taskState"] = "created";
+                            allAllMessages[index]["sakai:messagebox"] = "inbox";
                             propertyToUpdate = {
                                 "sakai:taskState": "created",
                                 "sakai:messagebox": "inbox"
@@ -708,12 +720,16 @@ sakai.inbox = function() {
                                 $(inboxTableMessageID + id).empty();
                                 $(inboxTableMessageID + id).remove();
                             }
+                        // unchecking the reminder inside the inbox
                         } else {
+                            allAllMessages[index]["sakai:taskState"] = "created";
                             propertyToUpdate = {
                                 "sakai:taskState": "created"
                             };
                         }
-                    } else {
+                    // checking the reminder inside the inbox
+                    } else if($(rowCheckBox).is(":checked") && reminderData["sakai:taskState"] === "created") {
+                        allAllMessages[index]["sakai:taskState"] = "completed";
                         propertyToUpdate = {
                             "sakai:taskState": "completed"
                         };
@@ -975,9 +991,9 @@ sakai.inbox = function() {
      */
     var getMessageWithId = function(id) {
 
-        for (var i = 0, j=allMessages.length; i<j; i++) {
-            if (allMessages[i]["jcr:name"] === id) {
-                return allMessages[i];
+        for (var i = 0, j = allAllMessages.length; i<j; i++) {
+            if (allAllMessages[i]["jcr:name"] === id) {
+                return allAllMessages[i];
             }
         }
 
@@ -1377,9 +1393,9 @@ sakai.inbox = function() {
         var archived = 0;
         
         var propertyToUpdate = {
-                "sakai:messagebox": "archive"
+            "sakai:messagebox": "archive"
         };
-        
+
         for(var i = 0, j = allAllMessages.length; i < j; i++){
             if(allAllMessages[i]["sakai:taskState"] === "completed"){
                 archived++;
@@ -1388,6 +1404,7 @@ sakai.inbox = function() {
                     unreadReminders -= 1;
                 }
                 
+                allAllMessages[i]["sakai:messagebox"] = "archive";
                 updateReminder(allAllMessages[i]["jcr:path"], propertyToUpdate);
             }
         }
