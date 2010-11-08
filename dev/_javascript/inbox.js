@@ -1396,26 +1396,23 @@ sakai.inbox = function() {
             "sakai:messagebox": "archive"
         };
 
-        for(var i = 0, j = allAllMessages.length; i < j; i++){
-            if(allAllMessages[i]["sakai:taskState"] === "completed"){
+        for (var i = 0, j = allAllMessages.length; i < j; i++) {
+            if (allAllMessages[i]["sakai:taskState"] === "completed") {
                 archived++;
                 
-                if(allAllMessages[i]["sakai:read"] === false){
+                if (allAllMessages[i]["sakai:read"] === false) {
                     unreadReminders -= 1;
                 }
                 
                 allAllMessages[i]["sakai:messagebox"] = "archive";
                 if (i === (j - 1)) {
-                    var updateMessage;
-                    if (archived == 1) {
-                        updateMessage = function(){
+                    var updateMessage = (archived === 1) 
+                        ? function() {
                             showGeneralMessage(1 + $(inboxGeneralMessagesArchived1).text());
-                        }
-       	            } else {
-                        updateMessage = function(){
+                        } 
+                        : function() {
                             showGeneralMessage(archived + $(inboxGeneralMessagesArchivedX).text());
-                        }
-                    };
+                        };
                             
                     updateReminder(allAllMessages[i]["jcr:path"], propertyToUpdate, function() {
                         updateUnreadNumbers();
