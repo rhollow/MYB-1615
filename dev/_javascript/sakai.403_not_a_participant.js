@@ -43,11 +43,6 @@ sakai.not_a_participant = function(tuid, showSettings) {
         // the user is logged in and should get a page in Sakai itself
         var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedInTemplate, subject).replace(/\r/g, '');
 		
-		// Temporary fix for IE not displaying TrimPath templates
-		if(renderedTemplate===""){																
-			renderedTemplate = TrimPath.parseTemplate(str_permission_error_not_a_participant_template).process(subject).replace(/\r/g, '').replace(/^<!--/,'').replace(/-->$/,'');				
-		}
-		
         $(permissionsError).append(renderedTemplate);
         $("#permission_error").addClass("error_page_bringdown");
     }
