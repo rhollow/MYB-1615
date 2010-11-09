@@ -14,7 +14,7 @@ sakai.config.Navigation = [
 // This is our custom CAS log in information. Please note, we're not actually using the external object yet 
 
 sakai.config.Authentication = {
-    "internal": sakai.env === "dev", 
+    "internal": sakai.isDev, 
     "external": [
         {
           label: "LOGIN_TITLE",

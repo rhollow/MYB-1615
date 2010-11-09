@@ -1,4 +1,3 @@
 var sakai = sakai || {};
 
-sakai.env = "dev";
-
+sakai.isDev = false;
