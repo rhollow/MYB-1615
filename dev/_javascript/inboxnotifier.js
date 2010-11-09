@@ -208,20 +208,24 @@ sakai.notificationsinbox = function(){
         $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
     };
 
+    /**
+     * Cuts off and adds ellipsis to the end of subject titles that exceed 1 row.
+     */
     var ellipsisSubjects = function(){
-        // the ThreeDots plugin isn't supported on Chrome at the moment, so
-        // do a browser check and if it's chrome we need to handle it separately
-        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-        if (is_chrome) {
-            $(".subject-td").each(function(){
-                $(this).css("white-space","nowrap").css("text-overflow","ellipsis").css("overflow","hidden");
-            });
-        }
-        else {
+        // the normal text-overflow: ellipsis doesn't work in Firefox, so do a browser check
+        // and if it's Firefox, use the jQuery ThreeDots plugin instead on long subject titles
+        var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        if (is_firefox) {
             $(".subject-td").each(function(){
                 $(this).ThreeDots({
                     max_rows: 1
                 });
+            });
+        }
+        // otherwise, for all other browsers, use the normal CSS for ellipsis
+        else {
+            $(".subject-td").each(function(){
+                $(this).css("white-space","nowrap").css("text-overflow","ellipsis").css("overflow","hidden");
             });
         }
     };
@@ -1175,16 +1179,16 @@ sakai.notificationsinbox = function(){
 
         // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
         // redirect him to the participation explanation page
-        if (!security.isMyBerkeleyParticipant()) {
-            security.sendToNotAMyBerkeleyParticipantPage();
-            return;
-        }
+//        if (!security.isMyBerkeleyParticipant()) {
+//            security.sendToNotAMyBerkeleyParticipantPage();
+//            return;
+//        }
 
         // if the user is not a member of the advisors group then bail
-        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
-            security.send403();
-            return;
-        }
+//        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
+//            security.send403();
+//            return;
+//        }
 
         // We are logged in. Do all the necessary stuff.
         // Load the list of messages.
