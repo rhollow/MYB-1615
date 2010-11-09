@@ -68,7 +68,7 @@
 { width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 400px; }
 
 .inbox_main .inbox-table
-{ width: 670px; margin: 0; table-layout:fixed; }
+{ width: 670px; margin: 0; table-layout: fixed; }
 
 .inbox_main .top_decor
 { background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px;}
@@ -86,15 +86,16 @@
 { border-bottom: 3px solid #d5dbdf; }
 
 .inbox_main .inbox-table #inbox_table_header_chk
-{ width: 3%; }
+{ width:5%; }
 .inbox_main .inbox-table #inbox_table_header_from
-{ width:20%; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 .inbox_main .inbox-table #inbox_table_header_subject
-{ width:37%; border-left: 1px solid #D4DADE; color: #666666; }
-.inbox_main .inbox-table #inbox_table_header_type
-{ width:15%; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:47%; border-left: 1px solid #D4DADE; color: #666666; }
 .inbox_main .inbox-table #inbox_table_header_date
 { width:25%; border-left: 1px solid #D4DADE; color: #666666; }
+
+#inbox_inbox_checkAll
+{ margin: 5px; }
 
 /** List **/
 .inbox_main .inbox-table th

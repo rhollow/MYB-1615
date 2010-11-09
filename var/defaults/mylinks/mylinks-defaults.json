@@ -34,7 +34,7 @@
         {
              "id"   : "campus_bookstore",
              "name" : "Campus Bookstore",
-             "url"  : "http://www.bkstr.com/CategoryDisplay/10001-9604-10433-1"
+             "url"  : "http://www.bkstr.com/webapp/wcs/stores/servlet/StoreCatalogDisplay?storeId=10433"
         },
         {
              "id"   : "dars",
@@ -59,7 +59,7 @@
         {
              "id"   : "schedule_planning",
              "name" : "Schedule Planning Tools",
-             "url"  : "http://asuc.org/newsite/scheduleplanning"
+             "url"  : "http://asuc.org/newsite2010/student-services/schedule-planning-tools/"
         },
         {
              "id"   : "resource_guide",

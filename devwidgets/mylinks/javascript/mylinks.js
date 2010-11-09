@@ -102,11 +102,14 @@ sakai.mylinks = function (tuid, showSettings) {
         });
     };
 
-    var createLinkList = function (data, isUserList) {
+    var createLinkList = function (data) {
         $draggableList.html($.TemplateRenderer(mylinksListTemplate, data));
         initDraggables();
     };
 
+    /**
+     * retrieve default data, use that and save it back
+     */
     var loadDefaultList = function () {
         $.ajax({
             url: defaultLinksPath,
@@ -115,7 +118,7 @@ sakai.mylinks = function (tuid, showSettings) {
             success: function(data){
                 var parsedData = data;
                 // create the link list from the default list and then save it back
-                createLinkList(parsedData, false);
+                createLinkList(parsedData);
                 // save the default link list back to the server
                 saveLinkList(parsedData);
             },
@@ -125,22 +128,6 @@ sakai.mylinks = function (tuid, showSettings) {
         });
     };
 
-    /**
-     * initializes a list of links for the user
-     * if the user does have any links, uses the default list and saves it back to the users data
-     * @param {Boolean} whether the loadJSON got it's data
-     * @param {Object} contains the users links record
-     */
-
-    var loadUsersLinksList = function (success, data) {
-        if (success) {
-            console.log(data);
-            // load the users link list from data
-            createLinkList(data, true);
-         } else {
-            loadDefaultList();
-        }
-    };
 
     /**
      * Set up the widget
@@ -152,9 +139,10 @@ sakai.mylinks = function (tuid, showSettings) {
     var doInit = function() {
         sakai.api.Server.loadJSON(linksDataNode, function (success, data) {
             if (success) {
-                // load the users link list from data
-                createLinkList(data, true);
+                // load the users link list from their saved link data
+                createLinkList(data);
             } else {
+                // else retrieve default data, use that and save it back
                 loadDefaultList();
             }
 

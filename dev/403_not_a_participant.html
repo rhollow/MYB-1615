@@ -49,7 +49,10 @@
     </head>
 
     <body class="fl-centered index i18nable">
-        <div class="index-container fl-centered permissions_error">            
+        <div class="index-container fl-centered permissions_error">
+        		<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
+        			 see http://tinyurl.com/2bd4v for details -->
+				&nbsp;            
                 <div id="permission_error_not_a_participant_template" style="display:none;"><!--
                 <div id="widget_topnavigation" class="widget_inline">
                 </div>
@@ -67,7 +70,7 @@
 								If you have joined the project, there may be a transient system error. Please try again.
 							</p>
 							<p>
-								If you are in CED and want to sign up, please go to the <a href="/dev/index.html" class="default">Sign-In Page</a>.
+								If you are in CED and want to sign up, please go to the <a href="/dev/logout.html?redurl=/dev/index.html" class="default">Sign-In Page</a>.
 							</p>
 							<p>
                                 If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.

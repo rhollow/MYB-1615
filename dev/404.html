@@ -25,6 +25,7 @@
         <script type="text/javascript" src="/dev/_configuration/widgets.js"></script>
         <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
         <script type="text/javascript" src="/dev/_configuration/config.js"></script>
+		<script type="text/javascript" src="_configuration/config_custom.js"></script>
 
         <!-- Core 3rd-party JS -->
         <script type="text/javascript" src="/dev/_lib/jquery/jquery.js"></script>
@@ -51,6 +52,9 @@
 
     <body class="fl-centered index i18nable">
         <div class="index-container fl-centered page_not_found_error">
+        	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
+        		 see http://tinyurl.com/2bd4v for details -->
+			&nbsp;  
 			<div id="page_not_found_error_logged_out_template" style="display:none;"><!--
             <div id="widget_topnavigation" class="widget_inline">
             </div>

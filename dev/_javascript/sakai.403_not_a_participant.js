@@ -36,10 +36,13 @@ sakai.not_a_participant = function(tuid, showSettings) {
 			}
         }
 		
+		var subject = {
+				"subject": encodeURIComponent(errorReportEmailSubject)
+				};
+		
         // the user is logged in and should get a page in Sakai itself
-        var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedInTemplate, {
-			"subject": encodeURIComponent(errorReportEmailSubject)
-		}).replace(/\r/g, '');
+        var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedInTemplate, subject).replace(/\r/g, '');
+		
         $(permissionsError).append(renderedTemplate);
         $("#permission_error").addClass("error_page_bringdown");
     }

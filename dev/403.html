@@ -51,6 +51,9 @@
 
     <body class="fl-centered index i18nable">
         <div class="index-container fl-centered permissions_error">
+        	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
+        		 see http://tinyurl.com/2bd4v for details -->
+			&nbsp;  
 			<div id="permission_error_logged_out_template" style="display:none;"><!--
             <div id="widget_topnavigation" class="widget_inline">
             </div>
