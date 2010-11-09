@@ -207,25 +207,34 @@ sakai.notificationsinbox = function(){
     var tickMessages = function(){
         $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
     };
+    
+    /**
+     * test if the current browser supports the ellipsis overflow
+     */
+    var browserSupportsCSS3textOverflow = function () {
+        var style = document.documentElement.style;
+        return ('textOverflow' in style || 'OTextOverflow' in style);
+    }
 
     /**
      * Cuts off and adds ellipsis to the end of subject titles that exceed 1 row.
+     * the normal text-overflow: ellipsis doesn't work in some browsers (eg. Firefox)
+     * so we whether this feature exists and then apply the style or the ThreeDots jQuery plugin
      */
-    var ellipsisSubjects = function(){
-        // the normal text-overflow: ellipsis doesn't work in Firefox, so do a browser check
-        // and if it's Firefox, use the jQuery ThreeDots plugin instead on long subject titles
-        var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-        if (is_firefox) {
+    var ellipsisSubjects = function(){       
+        if (browserSupportsCSS3textOverflow()) {
+            $(".subject-td").each(function(){
+                $(this).css({
+                    "white-space": "nowrap",
+                    "text-overflow": "ellipsis",
+                    "overflow": "hidden"
+                });
+            });
+        } else {
             $(".subject-td").each(function(){
                 $(this).ThreeDots({
                     max_rows: 1
                 });
-            });
-        }
-        // otherwise, for all other browsers, use the normal CSS for ellipsis
-        else {
-            $(".subject-td").each(function(){
-                $(this).css("white-space","nowrap").css("text-overflow","ellipsis").css("overflow","hidden");
             });
         }
     };
@@ -1179,16 +1188,16 @@ sakai.notificationsinbox = function(){
 
         // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
         // redirect him to the participation explanation page
-//        if (!security.isMyBerkeleyParticipant()) {
-//            security.sendToNotAMyBerkeleyParticipantPage();
-//            return;
-//        }
+        if (!security.isMyBerkeleyParticipant()) {
+            security.sendToNotAMyBerkeleyParticipantPage();
+            return;
+        }
 
         // if the user is not a member of the advisors group then bail
-//        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
-//            security.send403();
-//            return;
-//        }
+        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
+            security.send403();
+            return;
+        }
 
         // We are logged in. Do all the necessary stuff.
         // Load the list of messages.
