@@ -207,17 +207,30 @@ sakai.notificationsinbox = function(){
     var tickMessages = function(){
         $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
     };
+    
+    /**
+     * test if the current browser supports the ellipsis overflow
+     */
+    var browserSupportsCSS3textOverflow = function () {
+        var style = document.documentElement.style;
+        return ('textOverflow' in style || 'OTextOverflow' in style);
+    }
 
-    var ellipsisSubjects = function(){
-        // the ThreeDots plugin isn't supported on Chrome at the moment, so
-        // do a browser check and if it's chrome we need to handle it separately
-        var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-        if (is_chrome) {
+    /**
+     * Cuts off and adds ellipsis to the end of subject titles that exceed 1 row.
+     * the normal text-overflow: ellipsis doesn't work in some browsers (eg. Firefox)
+     * so we whether this feature exists and then apply the style or the ThreeDots jQuery plugin
+     */
+    var ellipsisSubjects = function(){       
+        if (browserSupportsCSS3textOverflow()) {
             $(".subject-td").each(function(){
-                $(this).css("white-space","nowrap").css("text-overflow","ellipsis").css("overflow","hidden");
+                $(this).css({
+                    "white-space": "nowrap",
+                    "text-overflow": "ellipsis",
+                    "overflow": "hidden"
+                });
             });
-        }
-        else {
+        } else {
             $(".subject-td").each(function(){
                 $(this).ThreeDots({
                     max_rows: 1
