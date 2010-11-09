@@ -39,7 +39,7 @@
                     <li class="reminder" id="li_${i.id}">
                         <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>  
                         {var dateString = sakai.myreminders.getDateString(i['sakai:dueDate'])}
-                        <div class="dueDate" title="Due ${dateString}"><a id="date_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}">${dateString}</a></div>
+                        <div class="dueDate" title="Due ${dateString}"><a id="date_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}&from=my_reminders_widget">${dateString}</a></div>
                         <div class="subjectLine" title="${i['sakai:subject']}"><a id="subject_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}&from=my_reminders_widget">${i['sakai:subject']}</a></div>
                         <div class="slideButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
                     </li>    
