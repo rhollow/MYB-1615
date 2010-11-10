@@ -476,8 +476,8 @@ sakai.topnavigation = function(tuid, showSettings){
         // Set presence and bind things
         addBinding();
         getCountUnreadMessages();
-        // not using for myBerkeley POC
-        //setPresence();
+        
+        setPresence();
 
         // Get chat status
         // not using for myBerkeley POC
