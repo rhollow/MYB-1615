@@ -150,13 +150,13 @@
 { border-bottom: 3px solid #d5dbdf; }
 
 .inbox_main .inbox-table #inbox_table_header_chk
-{ width: 3%; }
+{ width: 4%; }
 
 .inbox_main .inbox-table #inbox_table_header_from
 { width:20%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_subject
-{ width:37%; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:36%; border-left: 1px solid #D4DADE; color: #666666; }
 
 .inbox_main .inbox-table #inbox_table_header_type
 { width:15%; border-left: 1px solid #D4DADE; color: #666666; }
