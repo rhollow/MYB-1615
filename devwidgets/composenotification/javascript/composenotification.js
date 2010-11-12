@@ -919,10 +919,12 @@ if (!sakai.composenotification){
          * @return {Object} toPost The message we are going to post.
          */
         var saveData = function(box, isValidated){              
-            // Filling out all common fields.                    
+            // Filling out all common fields.
+            var msgTo = "notice:" + $(messageFieldTo).val() || ""; // "notice:" is required for notice routing 
+            
             var toPost = {
                 "sakai:type": "notice",                
-                "sakai:to": "notice:" + $(messageFieldTo).val(),  // "notice:" is required for notice routing                
+                "sakai:to": msgTo,                 
                 "sakai:from": me.user.userid,                
                 "sakai:subject": $(messageFieldSubject).val(), 
                 "sakai:body": $(messageFieldBody).val(),
