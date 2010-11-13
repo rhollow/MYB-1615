@@ -162,7 +162,7 @@
 											<td>
 												{if m.userFrom}                                               
 	                                                {for fromUser in m.userFrom}
-	                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${fromUser.firstName} ${fromUser.lastName}</a>
+	                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${sakai.api.User.getDisplayName(fromUser)}</a>
 	                                                {/for}
 	                                            {else}
 	                                                <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:from']}">${m['sakai:to']}</a>

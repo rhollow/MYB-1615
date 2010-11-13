@@ -244,7 +244,7 @@
                                 <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
                                         <td>
                                         {for fromUser in m.userFrom}
-                                            <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${fromUser.firstName} ${fromUser.lastName}</a></td>
+                                            <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${sakai.api.User.getDisplayName(fromUser)}</a></td>
                                         {/for}
                                         </td>
                                         <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>

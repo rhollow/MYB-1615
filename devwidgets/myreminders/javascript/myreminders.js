@@ -42,6 +42,7 @@ sakai.myreminders = function(tuid, showSettings){
      * @param {Object} date UTF string
      */
     sakai.myreminders.getDateString = function(date){
+        if (!date) return null;
         var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
         var date = sakai.api.Util.parseSakaiDate(date);
