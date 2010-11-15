@@ -1573,14 +1573,22 @@ sakai.inbox = function() {
                     break;
             }
         } else if (msg) {
+            // Begin temporary fix
+			// This code is a temporary fix for the paging bug described in https://jira.media.berkeley.edu/jira/browse/MYB-210
+			// and in https://jira.media.berkeley.edu/jira/browse/MYB-313			
             if(!displayMessage(msg)){				
 				var from = $.bbq.getState("from");
 				if(from === "my_reminders_widget"){
-					displayNotificationsReminders();					
+					// Fix for https://jira.media.berkeley.edu/jira/browse/MYB-330
+					// This solves hashchange event not triggering bug
+					$(inboxFilterReminders).trigger("click");
 				} else {
-					displayInboxMessages();					
+					// Fix for https://jira.media.berkeley.edu/jira/browse/MYB-330
+					// This solves hashchange event not triggering bug
+					$(inboxFilterMessages).trigger("click");						
 				}				
 			}
+			// End of temporary fix
         } else if (box) {
             switch (box) {
                 case "inbox":
