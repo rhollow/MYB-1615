@@ -1576,9 +1576,9 @@ sakai.inbox = function() {
             if(!displayMessage(msg)){				
 				var from = $.bbq.getState("from");
 				if(from === "my_reminders_widget"){
-					displayNotificationsReminders();					
+					$(inboxFilterReminders).trigger("click");
 				} else {
-					displayInboxMessages();					
+					$(inboxFilterMessages).trigger("click");						
 				}				
 			}
         } else if (box) {
