@@ -9,5 +9,10 @@
     "img":"/devwidgets/video/images/video.png",
     "name":"Video",
     "showinmedia":true,
-    "url":"/devwidgets/video/video.html"
+    "type":"sakai",
+    "enabled":true,
+    "url":"/devwidgets/video/video.html",
+    "i18n": {
+        "default": "/devwidgets/video/bundles/default.properties"
+    },
 }

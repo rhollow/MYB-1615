@@ -293,12 +293,13 @@ if (!sakai.sendmessage){
                 searchObjProps: "name",
                 selectedItemProp: "name",
                 keyDelay: "200",
+                retrieveLimit: 10,
                 formatList: function(data, elem) {
                     // formats each line to be presented in autosuggest list
                     // add the correct image, wrap name in a class
-                    var imgSrc = "/dev/_images/user_avatar_icon_32x32.png";
+                    var imgSrc = "/dev/images/user_avatar_icon_32x32.png";
                     if(data.type === "group") {
-                        imgSrc = "/dev/_images/group_avatar_icon_32x32.png";
+                        imgSrc = "/dev/images/group_avatar_icon_32x32.png";
                     }
                     var line_item = elem.html(
                         '<img class="sm_suggestion_img" src="' + imgSrc + '" />' +
@@ -320,10 +321,8 @@ if (!sakai.sendmessage){
                                 }
                             });
                             add(suggestions);
-                        } else {
-
                         }
-                    }, {"q": "*" + query.replace(/\s+/g, "* OR *") + "*"});
+                    }, {"q": "*" + query.replace(/\s+/g, "* OR *") + "*", "page": 0, "items": 15});
                 }
             });
         };

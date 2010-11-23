@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, fluid, window, document */
+/*global $ */
 
 var sakai = sakai || {};
 
@@ -39,7 +39,7 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
     var tagsPathForLinking = "/_user/" + userStoragePrefix + "public/tags/";
 
     // JSON
-    var json = {};
+    var data = {};
 
     // Containers
     var contentProfileBasicInfoContainer = "#content_profile_basic_info_container";
@@ -123,144 +123,86 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
     };
 
     /**
-     * Set permissions on the files that were uploaded
-     */
-    var setFilePermissions = function(){
-        // Get the value from the dropdown list
-        var permissions = $(contentProfileBasicInfoFormPermissionsSelect).val();
-        // Check which value was selected and fill in the data object accordingly
-        var data = [];
-        switch (permissions) {
-            // Logged in only
-            case "everyone":
-                var item = {
-                    "url": contentPath + ".members.html",
-                    "method": "POST",
-                    "parameters": {
-                        ":viewer": "everyone",
-                        ":viewer@Delete": "anonymous"
-                    }
-                };
-                data[data.length] = item;
-                break;
-            // Public
-            case "public":
-                var item = {
-                    "url": contentPath + ".members.html",
-                    "method": "POST",
-                    "parameters": {
-                        ":viewer": ["everyone", "anonymous"]
-                    }
-                };
-                data[data.length] = item;
-                break;
-            // Myself only or Members and Managers
-            case "private":
-                var item = {
-                    "url": contentPath + ".members.html",
-                    "method": "POST",
-                    "parameters": {
-                        ":viewer@Delete": ["anonymous", "everyone"]
-                    }
-                };
-                data[data.length] = item;
-                break;
-            case "group":
-                var item = {
-                    "url": contentPath + ".members.html",
-                    "method": "POST",
-                    "parameters": {
-                        ":viewer@Delete": ["anonymous", "everyone"]
-                    }
-                };
-                data[data.length] = item;
-                break;
-            // Delete all viewers of the file and keep the managers
-            case "managers":
-                var viewers = [];
-                for(var viewer in sakai.listpeople.data["viewers"]["userList"]){
-                    viewers.push(viewer);
-                }
-                var item = {
-                    "url": contentPath + ".members.html",
-                    "method": "POST",
-                    "parameters": {
-                        ":viewer@Delete": viewers
-                    }
-                };
-                data[data.length] = item;
-                break;
-        }
-
-        $.ajax({
-            url: sakai.config.URL.BATCH,
-            traditional: true,
-            type: "POST",
-            cache: false,
-            data: {
-                requests: $.toJSON(data)
-            },
-            success: function(data){
-
-            },
-            error: function(xhr, textStatus, thrownError){
-
-            }
-        });
-
-    };
-
-    /**
      * Get the values from the basic information form
      */
-    var getFormValues = function(){
-        // Create a data object
-        var data = {};
+    var getFormValues = function(init){
+        // initialize a data object
+        data = {};
 
         // Set all the different values of the current item
-        data["sakai:pooled-content-file-name"] = $.trim($(contentProfileBasicInfoFormName).val());
-        data["sakai:description"] = $.trim($(contentProfileBasicInfoFormDescription).val());
+        data["sakai:pooled-content-file-name"] = sakai.api.Security.escapeHTML($.trim($(contentProfileBasicInfoFormName).val()));
+        data["sakai:description"] = sakai.api.Security.escapeHTML($.trim($(contentProfileBasicInfoFormDescription).val()));
 
         // For tags we need to do something special, since they are comma separated
-        data["sakai:tags"] = "";
+        data["sakai:tags"] = [];
 
         // Get all the tags
-        data["sakai:tags"] = sakai.api.Util.formatTags($(contentProfileBasicInfoFormTags).val());
-
-        // Create tags for the directory structure
-        // For every content_profile_basic_info_added_directory we create tags
-        // Filter out ',' since that causes unwanted behaviour when rendering
-        $(".content_profile_basic_info_added_directory").each(function(){
-            var directoryString = "directory/";
-            data["sakai:tags"].push($(this).find(contentProfileBasicInfoDirectoryLvlOne).selected().val().replace(/,/g,""));
-            directoryString += $(this).find(contentProfileBasicInfoDirectoryLvlOne).selected().val().replace(/,/g,"");
-
-            if ($(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val() !== "no_value") {
-                data["sakai:tags"].push($(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val().replace(/,/g,""));
-                directoryString += "/" + $(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val().replace(/,/g,"");
-
-                if ($(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val() !== "no_value") {
-                    data["sakai:tags"].push($(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val().replace(/,/g,""));
-                    directoryString += "/" + $(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val().replace(/,/g,"");
+        if ($(contentProfileBasicInfoFormTags).length) {
+            var tags = $(contentProfileBasicInfoFormTags).val().split(",");
+            $(tags).each(function(i, tag){
+                tag = $.trim(tag).replace(/#/g,"");
+                if (sakai.api.Security.escapeHTML(tag) === tag && tag.replace(/\\/g, "").length) {
+                    if ($.inArray(tag, data["sakai:tags"]) < 0) {
+                        data["sakai:tags"].push(tag.replace(/\\/g, ""));
+                    }
                 }
+            });
 
-            }
-            // Add string for all levels to tag array
-            data["sakai:tags"].push(directoryString);
-        });
+            // Create tags for the directory structure
+            // For every content_profile_basic_info_added_directory we create tags
+            // Filter out ',' since that causes unwanted behavior when rendering
+            $(".content_profile_basic_info_added_directory").each(function(){
+                if ($(this).find(contentProfileBasicInfoDirectoryLvlOne).selected().val() !== "no_value" && $(this).find(contentProfileBasicInfoDirectoryLvlOne).selected().val() !== undefined) {
+                    var directoryString = "directory/";
+                    if ($.inArray($(this).find(contentProfileBasicInfoDirectoryLvlOne).selected().val().replace(/,/g, ""), data["sakai:tags"]) < 0) {
+                        data["sakai:tags"].push($(this).find(contentProfileBasicInfoDirectoryLvlOne).selected().val().replace(/,/g, ""));
+                    }
+                    directoryString += $(this).find(contentProfileBasicInfoDirectoryLvlOne).selected().val().replace(/,/g, "");
+
+                    if ($(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val() !== "no_value" && $(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val() !== undefined) {
+                        if ($.inArray($(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val().replace(/,/g, ""), data["sakai:tags"]) < 0) {
+                            data["sakai:tags"].push($(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val().replace(/,/g, ""));
+                        }
+                        directoryString += "/" + $(this).find(contentProfileBasicInfoDirectoryLvlTwo).selected().val().replace(/,/g, "");
+
+                        if ($(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val() !== "no_value" && $(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val() !== undefined) {
+                            if ($.inArray($(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val().replace(/,/g, ""), data["sakai:tags"]) < 0) {
+                                data["sakai:tags"].push($(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val().replace(/,/g, ""));
+                            }
+                            directoryString += "/" + $(this).find(contentProfileBasicInfoDirectoryLvlThree).selected().val().replace(/,/g, "");
+                        }
+
+                    }
+                    // Add string for all levels to tag array
+                    if ($.inArray(directoryString, data["sakai:tags"]) < 0) {
+                        data["sakai:tags"].push(directoryString);
+                    }
+                }
+            });
+        }
 
         // Add the directory tags to the array that were already saved
         $(contentProfileBasicInfoSavedDirectory + " li").each(function(){
-            data["sakai:tags"].push("directory/" + this.className.split(",")[0] + "/" + this.className.split(",")[1] + "/" + this.className.split(",")[2]);
+            var splitValues = this.className.split(",");
+            var savedDirString = "directory/" + splitValues[0];
+            if(splitValues.length > 1){
+                savedDirString += "/" + splitValues[1];
+                if(splitValues.length > 2){
+                    savedDirString += "/" + splitValues[2];
+                }
+            }
+            if ($.inArray(savedDirString, data["sakai:tags"]) < 0) {
+                data["sakai:tags"].push(savedDirString);
+            }
         });
 
-        // Set the tags
-        sakai.api.Util.tagEntity(contentPath, data["sakai:tags"], currentTags, function(){
-            currentTags = data["sakai:tags"];
-            // TODO show a valid message to the user instead of reloading the page
-            $(window).trigger('hashchange');
-            sakai.api.Util.notification.show($(contentProfileBasicInfoUpdatedBasicInfo).html(), $(contentProfileBasicInfoFileBasicInfoUpdated).html());
-        });
+        if (!init) {
+            // Set the tags
+            sakai.api.Util.tagEntity(contentPath, data["sakai:tags"], currentTags, function(){
+                currentTags = data["sakai:tags"];
+                sakai.api.Util.notification.show($(contentProfileBasicInfoUpdatedBasicInfo).html(), $(contentProfileBasicInfoFileBasicInfoUpdated).html());
+            });
+        }
 
         data["sakai:copyright"] = $(contentProfileBasicInfoFormCopyrightSelect).val();
 
@@ -283,11 +225,14 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
     };
 
     var updateBasicInfo = function(){
-        // Set permissions on the file
-        setFilePermissions();
 
         // Get all the value for the form
-        var data = getFormValues();
+        data = getFormValues();
+
+        // Create object of file to be updated
+        var obj = {
+            "hashpath": contentPath.replace("/p/","")
+        };
 
         // Disable basic info fields
         enableDisableBasicInfoFields(true);
@@ -302,6 +247,16 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
                 // Enable basic info fields and show error message
                 enableDisableBasicInfoFields(false);
                 sakai.api.Util.notification.show($(contentProfileBasicInfoFailedUpdatingBasicInfo).html(), $(contentProfileBasicInfoFileBasicInfoNotUpdated).html());
+            },
+            success : function(){
+                // Set permissions on the files
+                sakai.api.Content.setFilePermissions(data["sakai:permissions"], [obj], function(permissionsSet){
+                    // Load content profile
+                    sakai.content_profile.loadContentProfile(function(){
+                        removeBinding();
+                        $(window).trigger('hashchange');
+                    });
+                });
             }
         });
     };
@@ -310,23 +265,19 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
      * Add binding to the basic info
      */
     var addBindingBasicinfo = function(){
-        // Submitting of the form
-        $(contentProfileBasicInfoForm).bind("submit", function(){
-            // Check if there are any faulty values in directory selection
-            var valueSelected = true;
-            $(".content_profile_basic_info_added_directory select").each(function(){
-                if($(this).selected().val() === "no_value"){
-                    if($(this).hasClass("content_profile_basic_info_directory_lvlone")){
-                        valueSelected = false;
-                    }
-                }
-            });
-            // If all values are selected execute the update
-            if (valueSelected) {
+        $(contentProfileBasicInfoForm).validate({
+            debug: true,
+            submitHandler: function(){
                 updateBasicInfo();
-            } else {
-                sakai.api.Util.notification.show($(contentProfileBasicInfoSelectDirectory).html(), $(contentProfileBasicInfoSelectAtLeastOneDirectory).html());
-            }
+            },
+            invalidHandler: function(form, validator){
+                // Remove all the current notifications
+                sakai.api.Util.notification.removeAll();
+                // Show a notification which states that you have errors
+                sakai.api.Util.notification.show("", "Fill in all required fields.", sakai.api.Util.notification.type.ERROR);
+            },
+            errorClass: "infosection_validation_error",
+            validClass: "infosection_validation_valid"
         });
     };
 
@@ -339,6 +290,12 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
             sakai.content_profile.content_data.anon = anon;
             sakai.content_profile.content_data.directory = directoryJSON;
             globalJSON = $.extend(true, {}, sakai.content_profile.content_data);
+            if($(contentProfileBasicInfoFormCopyrightSelect).val()){
+                sakai.content_profile.content_data.data["sakai:copyright"] = $(contentProfileBasicInfoFormCopyrightSelect).val();
+            }
+            if($(contentProfileBasicInfoFormPermissionsSelect).val()){
+                sakai.content_profile.content_data.data["sakai:permissions"] = $(contentProfileBasicInfoFormPermissionsSelect).val();
+            }
             postLoadContentData();
         } else {
             sakai.content_profile.loadContentProfile(function(success) {
@@ -364,6 +321,10 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
         $(contentProfileBasicInfoContainer).show();
 
         addBindingBasicinfo();
+
+        // Data needs to be populated with the initial saved data
+        // A value of 'true' is sent to make clear this is init functionality
+        data = getFormValues(true);
     };
 
     /**
@@ -398,14 +359,14 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
     };
 
     var addAnotherLocation = function(){
-        var renderedTemplate = $.TemplateRenderer("content_profile_basic_info_firstlevel_template", json);
+        var renderedTemplate = $.TemplateRenderer("content_profile_basic_info_firstlevel_template", sakai.content_profile.content_data);
         var renderedDiv = $(document.createElement("div"));
         renderedDiv.html(renderedTemplate);
         $("#content_profile_basic_info_add_another_container").append(renderedDiv);
         // Apply style to the rendered div
         $(renderedDiv).addClass("content_profile_basic_info_added_directory");
         $(contentProfileBasicInfoAddAnotherLocationLink).text(sakai.api.Security.saneHTML($("#content_profile_basic_info_add_another_text").text()));
-    }
+    };
 
     /**
      * Update the select boxes on the stage
@@ -427,24 +388,30 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
     };
 
     var removeDirectoryLocation = function(clickedParent){
+        // Get current tags up to date
+        currentTags = data["sakai:tags"];
         // Extract tags from clickedParent
-        var tags = []
+        var tags = [];
         tags = clickedParent[0].className.split(",");
         tags.push("directory/" + tags.toString().replace(/,/g,"/"));
 
         var tagsAfterDeletion = currentTags.slice(0);
-        for (var tag = 0 in tags){
-            if(jQuery.inArray(tags[tag],tagsAfterDeletion) > -1){
-                tagsAfterDeletion.splice(jQuery.inArray(tags[tag],tagsAfterDeletion), 1);
+        for (var tag in tags){
+            if($.inArray(tags[tag],tagsAfterDeletion) > -1){
+                tagsAfterDeletion.splice($.inArray(tags[tag],tagsAfterDeletion), 1);
             }
         }
 
         sakai.api.Util.tagEntity(contentPath, tagsAfterDeletion, currentTags, function(){
             currentTags = currentTags.splice(tags);
             // TODO show a valid message to the user instead of reloading the page
-            $(window).trigger('hashchange');
-            sakai.api.Util.notification.show($(contentProfileBasicInfoUpdatedBasicInfo).html(), $(contentProfileBasicInfoFileBasicInfoUpdated).html());});
-    }
+            sakai.content_profile.loadContentProfile(function(){
+                    removeBinding();
+                    $(window).trigger('hashchange');
+            });
+            sakai.api.Util.notification.show($(contentProfileBasicInfoUpdatedBasicInfo).html(), $(contentProfileBasicInfoFileBasicInfoUpdated).html());
+        });
+    };
 
     /**
      * Bind the widget's internal Cancel and Save Settings button
@@ -477,7 +444,18 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
         $(contentProfileBasicInfoRemoveNewLocation).live("click", function(){
             $(this).parent().remove();
         });
+    };
 
+    /**
+     * Bind the widget's internal Cancel and Save Settings button
+     */
+    var removeBinding = function(){
+        $(contentProfileBasicInfoDirectoryLvlOne).die("change", function(){});
+        $(contentProfileBasicInfoDirectoryLvlTwo).die("change", function(){});
+        $(contentProfileBasicInfoDirectoryLvlThree).die("change", function(){});
+        $(contentProfileBasicInfoAddAnotherLocation).die("click", function(){});
+        $(contentProfileBasicInfoRemoveLocation).die("click", function(){});
+        $(contentProfileBasicInfoRemoveNewLocation).die("click", function(){});
     };
 
     /**
@@ -494,6 +472,7 @@ sakai.contentprofilebasicinfo = function(tuid, showSettings){
         $(window).bind('hashchange', function(){
             handleHashChange();
         });
+
         handleHashChange();
     };
 

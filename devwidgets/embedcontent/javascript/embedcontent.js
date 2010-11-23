@@ -32,10 +32,11 @@ var sakai = sakai || {};
  * @param {Boolean} showSettings Show the settings of the widget or not
  */
 sakai.embedcontent = function(tuid, showSettings) {
-    
+
     var $rootel = $("#" + tuid);
 
-    var $embedcontent_dialog = $("#embedcontent_dialog", $rootel);
+    var $embedcontent_main_container = $("#embedcontent_main_container", $rootel);
+    var $embedcontent_settings = $("#embedcontent_settings", $rootel);
     var $embedcontent_page_name = $("#embedcontent_page_name", $rootel);
     var $embedcontent_place_content = $("#embedcontent_place_content", $rootel);
     var $embedcontent_cancel = $("#embedcontent_cancel", $rootel);
@@ -51,36 +52,48 @@ sakai.embedcontent = function(tuid, showSettings) {
 
     var $embedcontent_page_name_template = $("#embedcontent_page_name_template", $rootel);
     var $embedcontent_display_options_select_template = $("#embedcontent_display_options_select_template", $rootel);
+    var $embedcontent_content = $("#embedcontent_content", $rootel);
+
     var $embedcontent_content_html_template = $("#embedcontent_content_html_template", $rootel);
     var $embedcontent_new_item_template = $("#embedcontent_new_item_template", $rootel);
 
     var $fileuploadContainer = $("#fileupload_container", $rootel);
+    var $uploadContentLink = $("#upload_content", $rootel);
 
     var selectedItems = [];
     var firstTime = true;
+    var widgetData = false;
 
     var embedConfig = {
-        "mode": "embed", // can be 'embed' or 'picker'
         "name": "Page",
         "limit": false,
-        "filter": false
+        "filter": false,
+        "type": "choose"
     };
 
     /**
      * Render the embed screen
      */
-    var render = function() {
-        selectedItems = [];        
+    var renderSettings = function() {
+        selectedItems = [];
         $.TemplateRenderer($embedcontent_page_name_template, {"name": embedConfig.name}, $embedcontent_page_name);
         if (firstTime) {
             setupAutoSuggest();
+            sakai.api.Widgets.widgetLoader.insertWidgets("embedcontent_settings", false, "#"+tuid);
             firstTime = false;
         } else {
             doReset();
         }
-        console.log("render");
         $("#as-values-" + tuid).val("");
         $(".as-selection-item").remove();
+        if (widgetData && widgetData.items && widgetData.items.length) {
+            setCurrentFiles();
+        }
+    };
+
+    var renderWidget = function() {
+        $.TemplateRenderer($embedcontent_content_html_template, widgetData, $embedcontent_content);
+        sakai.api.Widgets.widgetLoader.insertWidgets("embedcontent_main_container", false, "#"+tuid);
     };
 
     /**
@@ -124,7 +137,8 @@ sakai.embedcontent = function(tuid, showSettings) {
             "description": result["sakai:description"] || "",
             "path": "/p/" + (name || result['jcr:name']),
             "fileSize": sakai.api.Util.convertToHumanReadableFileSize(result["jcr:content"][":jcr:data"]),
-            "link": "/p/" + (name || result['jcr:name']) + "/" + result['sakai:pooled-content-file-name']
+            "link": "/p/" + (name || result['jcr:name']) + "/" + result['sakai:pooled-content-file-name'],
+            "extension": result['sakai:fileextension']
         };
         return dataObj;
     };
@@ -152,11 +166,10 @@ sakai.embedcontent = function(tuid, showSettings) {
                             }
                         });
                         add(suggestions);
-                    } else {
-
                     }
-                }, {"q": "*" + query.replace(/\s+/g, "* OR *") + "*"});
+                }, {"q": "*" + query.replace(/\s+/g, "* OR *") + "*", "page": 0, "items": 15});
             },
+            retrieveLimit: 10,
             asHtmlID: tuid,
             selectedItemProp: "name",
             searchObjProps: "name",
@@ -192,6 +205,19 @@ sakai.embedcontent = function(tuid, showSettings) {
         selectedItems = newItems;
     };
 
+    var setCurrentFiles = function() {
+        $.each(widgetData.items, function(i,val) {
+            selectedItems.push(val);
+            $embedcontent_content_input.autoSuggest.add_selected_item(val, val.value);
+        });
+        $(".as-original input.as-input").val('').focus();
+        $embedcontent_place_content.removeAttr("disabled");
+        showDisplayOptions();
+        $embedcontent_display_options_select.val(widgetData.embedmethod).trigger("change");
+        $embedcontent_alternative_display_name_value.val(widgetData.title);
+        $embedcontent_description_value.val(widgetData.description);
+    };
+
     /**
      * Called when file(s) are selected in the picker advanced widget and need to be added to the list of files that will be embedded.
      * @param {Object} files Array of files selected in the picker advanced widget
@@ -202,7 +228,7 @@ sakai.embedcontent = function(tuid, showSettings) {
             filesPicked++;
         });
         // revisit this next conditional -- right now it'll clear out all selections, not just add up to the limit
-        if (embedConfig.limit && filesPicked && ($(".as-selection-item").length + filesPicked) > embedConfig.limit) { 
+        if (embedConfig.limit && filesPicked && ($(".as-selection-item").length + filesPicked) > embedConfig.limit) {
             $("#as-values-" + tuid).val('');
             $(".as-selection-item").remove();
         }
@@ -211,10 +237,8 @@ sakai.embedcontent = function(tuid, showSettings) {
         }
         $.each(files, function(i,val) {
             var newObj = createDataObject(val, val["jcr:name"]);
-             selectedItems.push(newObj);
-             var itemHTML = $.TemplateRenderer($embedcontent_new_item_template, {"name": newObj.name, "value": newObj.value});
-             $("#as-values-" + tuid).val(newObj.value + "," + $("#as-values-" + tuid).val());
-             $("#as-original-" + tuid).before(itemHTML);
+            selectedItems.push(newObj);
+            $embedcontent_content_input.autoSuggest.add_selected_item(newObj, newObj.value);
         });
         $("input#" + tuid).val('').focus();
     };
@@ -230,9 +254,7 @@ sakai.embedcontent = function(tuid, showSettings) {
              success: function(data) {
                  var newObj = createDataObject(data, val.url.split("/p/")[1]);
                  selectedItems.push(newObj);
-                 var itemHTML = $.TemplateRenderer($embedcontent_new_item_template, {"name": newObj.name, "value": newObj.value});
-                 $("#as-values-" + tuid).val(newObj.value + "," + $("#as-values-" + tuid).val());
-                 $("#as-original-" + tuid).before(itemHTML);
+                 $embedcontent_content_input.autoSuggest.add_selected_item(newObj, newObj.value);
              }
           });
       });
@@ -244,9 +266,7 @@ sakai.embedcontent = function(tuid, showSettings) {
      * Shows the options the user has for displaying the content
      */
     var showDisplayOptions = function() {
-        if (embedConfig.mode === "embed") {
-            $embedcontent_display_options.show();
-        }
+        $embedcontent_display_options.show();
     };
 
     /**
@@ -257,14 +277,16 @@ sakai.embedcontent = function(tuid, showSettings) {
     var associatedEmbeddedItemsWithGroup = function(embeddedItems){
         var data = [];
         for (var embeddedItem in embeddedItems) {
-            var item = {
-                "url": embeddedItems[embeddedItem].path + ".members.json",
-                "method": "POST",
-                "parameters": {
-                    ":viewer": sakai.currentgroup.id
-                }
-            };
-            data[data.length] = item;
+            if (embeddedItems.hasOwnProperty(embeddedItem)) {
+                var item = {
+                    "url": embeddedItems[embeddedItem].path + ".members.json",
+                    "method": "POST",
+                    "parameters": {
+                        ":viewer": sakai.currentgroup.id
+                    }
+                };
+                data[data.length] = item;
+            }
         }
 
         $.ajax({
@@ -274,6 +296,18 @@ sakai.embedcontent = function(tuid, showSettings) {
             cache: false,
             data: {
                 requests: $.toJSON(data)
+            }
+        });
+    };
+
+    var registerVideo = function(videoBatchData){
+        $.ajax({
+            url: sakai.config.URL.BATCH,
+            traditional: true,
+            type: "POST",
+            cache: false,
+            data: {
+                requests: $.toJSON(videoBatchData)
             }
         });
     };
@@ -291,38 +325,79 @@ sakai.embedcontent = function(tuid, showSettings) {
             "items": selectedItems
         };
 
+        var videoBatchData = [];
+        for (var i in objectData.items){
+            if(objectData.items.hasOwnProperty(i)){
+                if(objectData.items[i].filetype === "video"){
+                    // Set random ID to the video
+                    objectData.items[i].uId = Math.ceil(Math.random() * 999999999);
+
+                    var itemUrl;
+                    if (sakai.currentgroup.data.authprofile) {
+                        itemUrl = "/~" + sakai.currentgroup.data.authprofile["sakai:group-title"] + "/pages/_widgets/id" + objectData.items[i].uId + "/video";
+                    } else {
+                        itemUrl = "/~" + sakai.data.me.user.userid + "/pages/_widgets/id" + objectData.items[i].uId + "/video";
+                    }
+
+                    // Create batch request data for the video
+                    var item = {
+                        "url": itemUrl,
+                        "method": "POST",
+                        "parameters": {
+                            "uid": sakai.data.me.user.userid,
+                            "source": " ",
+                            "URL": sakai.config.SakaiDomain + objectData.items[i].link + objectData.items[i].extension,
+                            "selectedvalue": "video_noSource",
+                            "isYoutube": false,
+                            "isSakaiVideoPlayer": false
+                        }
+                    };
+                    videoBatchData.push(item);
+                }
+            }
+        }
+
         // Associate embedded items with the group
         associatedEmbeddedItemsWithGroup(selectedItems);
 
-        if (embedConfig.mode === "embed") {
-            if ($embedcontent_metadata_container.is(":visible")) {
-                var isValid = $embedcontent_metadata.valid();
-                if (isValid) {
-                    embedContentHTML = $.TemplateRenderer($embedcontent_content_html_template, objectData);
-                    tinyMCE.get('elm1').execCommand("mceInsertContent", true, embedContentHTML);
-                    return true;
-                }
-            } else {
-                embedContentHTML = $.TemplateRenderer($embedcontent_content_html_template, objectData);
-                tinyMCE.get('elm1').execCommand("mceInsertContent", true, embedContentHTML);
-                return true;
+        registerVideo(videoBatchData);
+
+        if ($embedcontent_metadata_container.is(":visible")) {
+            var isValid = $embedcontent_metadata.valid();
+            if (isValid) {
+                saveWidgetData(objectData);
             }
-        } else if (embedConfig.mode === "picker") {
-            $(window).trigger("sakai-embedcontent-picker-finished", {"items": selectedItems});
-            return true;
+        } else {
+            saveWidgetData(objectData);
         }
-        return false;
+
+    };
+
+    var saveWidgetData = function(data) {
+        sakai.api.Widgets.saveWidgetData(tuid, data, function() {
+            sakai.api.Widgets.Container.informFinish(tuid, "embedcontent");
+        });
+    };
+
+    var getWidgetData = function(callback) {
+        sakai.api.Widgets.loadWidgetData(tuid, function(success, data) {
+            if (success) {
+                widgetData = data;
+            }
+
+            if ($.isFunction(callback)) {
+                callback();
+            }
+        });
     };
 
     // Bind Events
     $embedcontent_place_content.bind("click", function() {
-        if (doEmbed()) {
-            $embedcontent_dialog.jqmHide();
-        }
+        doEmbed();
     });
 
     $embedcontent_cancel.bind("click", function() {
-        $embedcontent_dialog.jqmHide();
+        sakai.api.Widgets.Container.informFinish(tuid, "embedcontent");
     });
 
     $embedcontent_display_options_select.bind("change", function(e) {
@@ -331,6 +406,10 @@ sakai.embedcontent = function(tuid, showSettings) {
         } else {
             $embedcontent_metadata_container.hide();
         }
+    });
+
+    $uploadContentLink.bind("click", function() {
+        $(window).trigger("sakai-fileupload-init");
     });
 
     $(window).unbind("sakai-fileupload-complete");
@@ -346,13 +425,6 @@ sakai.embedcontent = function(tuid, showSettings) {
         showDisplayOptions();
     });
 
-    $(window).unbind("sakai-embedcontent-init");
-    $(window).bind("sakai-embedcontent-init", function(e, config) {
-        embedConfig = $.extend(true, embedConfig, config);
-        render();
-        $embedcontent_dialog.jqmShow();
-    });
-
     $(window).unbind("sakai-pickeradvanced-ready");
     $(window).bind("sakai-pickeradvanced-ready", function(e) {
         $embedcontent_search_for_content.bind("click", function() {
@@ -366,18 +438,19 @@ sakai.embedcontent = function(tuid, showSettings) {
         });
     });
 
-    $embedcontent_dialog.jqm({
-        modal: true,
-        overlay: 20,
-        zIndex: 3000,
-        toTop: true
-    });
-
     $embedcontent_metadata.validate();
 
     var doInit = function() {
-        $(window).trigger("sakai-embedcontent-ready");
-        sakai.api.Widgets.widgetLoader.insertWidgets("#"+tuid);
+        getWidgetData(function() {
+            if (showSettings) {
+                embedConfig.name = sakai.sitespages.site_info._pages[sakai.sitespages.selectedpage]["pageTitle"];
+                renderSettings();
+                $embedcontent_settings.show();
+            } else {
+                $embedcontent_main_container.show();
+                renderWidget();
+            }
+        });
     };
 
     doInit();

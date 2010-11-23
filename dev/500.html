@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" class="requireAnon">
 
     <head>
 
@@ -7,122 +7,94 @@
         <title>Access denied - myBerkeley</title>
 
         <!-- Sakai Core CSS -->
-        <link rel="stylesheet" type="text/css" href="/dev/_css/FSS/fss-base.css" />
-        <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.base.css" />
-        <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.core.2.css" />
-        <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.3.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/FSS/fss-base.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.base.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.core.2.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.3.css" />
 
         <!-- Sakai Error CSS -->
-        <link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.error.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.error.css" />
 
         <!-- Sakai Page CSS -->
-        <!--link rel="stylesheet" type="text/css" href="/dev/_css/sakai/sakai.index.css" /-->
-		<link rel="stylesheet" type="text/css" href="/dev/_css/sakai/myberkeley.error.css" />
+        <!--link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" /-->
+		<link rel="stylesheet" type="text/css" href="/dev/css/sakai/myberkeley.error.css" />
 
         <!-- Sakai Config JS -->
-        <script type="text/javascript" src="/dev/_configuration/widgets.js"></script>
+        <script type="text/javascript" src="/dev/configuration/widgets.js"></script>
         <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
-        <script type="text/javascript" src="_configuration/env.js"></script>
-        <script type="text/javascript" src="/dev/_configuration/config.js"></script>
-        <script type="text/javascript" src="_configuration/config_custom.js"></script>
+        <script type="text/javascript" src="/dev/configuration/env.js"></script>
+        <script type="text/javascript" src="/dev/configuration/config.js"></script>
+        <script type="text/javascript" src="/dev/configuration/config_custom.js"></script>
 
         <!-- Core 3rd-party JS -->
-        <script type="text/javascript" src="/dev/_lib/jquery/jquery.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/jquery-ui.full.js"></script>
-        <script type="text/javascript" src="/dev/_lib/Fluid/3akai_Infusion.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.json.js"></script>
-        <script type="text/javascript" src="/dev/_lib/google/html-sanitizer-minified.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/jquery.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/jquery-ui.full.js"></script>
+        <script type="text/javascript" src="/dev/lib/fluid/3akai_Infusion.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.json.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/google/html-sanitizer-minified.js"></script>
 
         <!-- Sakai Core JS -->
-        <script type="text/javascript" src="/dev/_lib/sakai_util/sakai_magic.js"></script>
-        <script type="text/javascript" src="/dev/_lib/sakai_util/i18n.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.core.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.util.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.i18n.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.l10n.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.user.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.widgets.js"></script>
 
         <!-- 3rd party JS -->
-        <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
-        <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
-
-        <!-- 403 JS -->
-        <script type="text/javascript" src="/dev/_javascript/sakai.500.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/trimpath.template.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/querystring.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.cookie.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.pager.js"></script>
 
     </head>
 
-    <body class="fl-centered index i18nable">
+    <body class="fl-centered index i18nable" style="display: block;">
         <div class="index-container fl-centered permissions_error">
-        	   	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
-        			 see http://tinyurl.com/2bd4v for details -->
-				&nbsp;  
-				<div id="permission_error_logged_out_template" style="display:none"><!--
-                <div id="widget_topnavigation" class="widget_inline">
-                </div>
-                
-                <div class="fl-container-flex header">
-					<div class="fl-fix fl-centered fixed-container">
-						<div class="decor"></div>
-						<div class="login-box">
-							<div id="permission_error">
-								<div class="preview-box">
-									<span id="error_title">Are you part of myBerkeley?</span>
-									<p>
-										We're sorry, but you don't seem to be part of myBerkeley project.
-									</p>
-									<p>
-										At this time, membership is limited to Berkeley's College of Environmental Design.<br>
-										If you have joined the project, there may be a transient system error. Please try again.
-									</p>
-									<p>
-										If you are in CED and want to sign up, please go to the <a href="/dev/index.html" class="default">Sign-In Page</a>.
-									</p>
-									<p>
-										If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
-									</p>
-								</div>
-								<div class="login-container">
-									<a href="/dev/index.html" class="s3d-button"><span class="s3d-button-inner">Go to the sign in page</span></a>
-									<p>
-										Use the button above to go to the main sign in page where you can try signing in with a different account.
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+        	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
+        		 see http://tinyurl.com/2bd4v for details -->
+			&nbsp;
+            <div class="header-title">
+                <img src="/dev/images/sakai_logo_index.png" alt="__MSG__INSTANCE_NAME__"/>
+            </div>
 
-                <div id="widget_footer" class="widget_inline footercontainer"></div>
+            <div class="header-byline">
+                __MSG__HEADER_BYLINE__
+            </div>
 
-                --></div>
-                <div id="permission_error_logged_in_template" style="display:none;"><!--
-                <div id="widget_topnavigation" class="widget_inline">
-                </div>
-                <div class="fl-container-flex header">
-                    <div class="fl-fix fl-centered fixed-container">
-                        <div class="decor">
-                        </div>
-                        <div id="permission_error">
-                            <span id="error_title">Are you part of myBerkeley?</span>
-                            <p>
-                                We're sorry, but you don't seem to be part of myBerkeley project.
-                            </p>
-							<p>
-								At this time, membership is limited to Berkeley's College of Environmental Design.<br />
-								If you have joined the project, there may be a transient system error. Please try again.
-							</p>
-							<p>
-								If you are in CED and want to sign up, please go to the <a href="/dev/logout.html?redurl=/dev/index.html" class="default">Sign-In Page</a>.
-							</p>
-							<p>
-                                If this is a persistent error, help the project by reporting it <a href="mailto:portal@berkeley.edu?subject=${subject}" class="default">here</a>.
-                            </p>
-
-                        </div>
+            <div class="login-box">
+                <div id="internal_user_error">
+                    <div class="preview-box">
+                        <span id="error_title">__MSG__THE_USER_ACCOUNT_YOU_ARE_TRYING_TO_ACCESS_DOES_NOT_EXIST__</span>
+                        <p>
+                            __MSG__YOU_TRIED_TO_SIGN_IN_OR_VIEW_ACCOUNT_WHICH_DOES_NOT_EXIST__
+                        </p>
+                        __MSG__YOU_CAN__
+                        <ul>
+                            <li>
+                                __MSG__SIGN_INTO_SAKAI_WITH_A_DIFFERENT_ACCOUNT__
+                            </li>
+                            <li>
+                                __MSG__NOTIFY_HELPDESK_OR_SYSADMIN_ABOUT_THIS_PROBLEM__
+                            </li>
+                            <li>
+                                __MSG__TRY_AGAIN_LATER_IN_CASE_ACCOUNT_IS_SCHEDULED_TO_BE_READY_LATER__
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="login-container">
+                        <a href="/dev/logout.html">
+                            <button class="s3d-button s3d-button-primary" type="submit">
+                                <span class="s3d-button-inner">__MSG__TRY_WITH_A_DIFFERENT_USER__</span>
+                            </button>
+                        </a>
+                        <p>
+                            __MSG__USE_BUTTON_ABOVE_TO_TRY_WITH_A_DIFFERENT_ACCOUNT__
+                        </p>
                     </div>
                 </div>
-
-                <div id="widget_footer" class="widget_inline footercontainer"></div>
-
-                --></div>
+            </div>
         </div>
     </body>
 </html>

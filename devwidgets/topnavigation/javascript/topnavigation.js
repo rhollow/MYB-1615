@@ -41,7 +41,6 @@ sakai.topnavigation = function(tuid, showSettings){
     var currentChatStatus = "";
 
     // Links and labels
-    var hiLabel = "#hispan";
     var myprofileName = "#myprofile_name";
     var onlineButton = "#online_button";
     var pictureHolder = "#picture_holder";
@@ -64,11 +63,13 @@ sakai.topnavigation = function(tuid, showSettings){
     var navCalendarLink = "#nav_calendar_link";
     var navSelectedNavItemClass = "explore_nav_selected";
     var topNavigationBar = "#top_navigation";
+    var navMyProfile = "#topnavigation_my_profile";
 
     // Messages
     var chatUnreadMessages = "#chat_unreadMessages";
 
     // Search
+    var $general_search_container = $("#general_search_container");
     var $general_search_form = $("#general_search_container form");
     var $general_search_input = $("#general_search_input");
     var $general_search_default_value = $("#general_search_default_value");
@@ -80,10 +81,6 @@ sakai.topnavigation = function(tuid, showSettings){
 
     // CSS Classes
     var searchInputFocusClass = "search_input_focus";
-    var chatAvailableStatusClass = "chat_available_status";
-    var chatAvailableStatusClassOnline = chatAvailableStatusClass + "_online";
-    var chatAvailableStatusClassBusy = chatAvailableStatusClass + "_busy";
-    var chatAvailableStatusClassOffline = chatAvailableStatusClass + "_offline";
 
     var userLinkChatStatusClass = ".user_link_chat_status";
 
@@ -98,18 +95,6 @@ sakai.topnavigation = function(tuid, showSettings){
         //we have the number of unread messages as a part of the me-feed
         //so get it directly from me object.
         $(chatUnreadMessages).text(sakai.data.me.messages.unread);
-    };
-
-    /**
-     * Update a certain element with a specific chatstatus
-     * @param {Object} element Element that needs to be updated
-     * @param {String} chatstatus The chatstatus that needs to be added
-     */
-    var updateChatStatusElement = function(element, chatstatus){
-        element.removeClass(chatAvailableStatusClassOnline);
-        element.removeClass(chatAvailableStatusClassBusy);
-        element.removeClass(chatAvailableStatusClassOffline);
-        element.addClass(chatAvailableStatusClass + "_" + chatstatus);
     };
 
     /**
@@ -184,7 +169,7 @@ sakai.topnavigation = function(tuid, showSettings){
 
         $.each($(topNavigationBar + " a"), function(){
             if (window.location.pathname === $(this).attr("href")){
-                $(this).attr("href", "javascript:;");
+                $(this).attr("href", "#");
             }
         });
 
@@ -197,8 +182,9 @@ sakai.topnavigation = function(tuid, showSettings){
             }
         });
 
-        $(window).bind("chat_status_change", function(event, currentChatStatus){
-            updateChatStatusElement($(userLink), currentChatStatus);
+        $(window).bind("chat_status_change", function(event, chatstatus){
+            currentChatStatus = chatstatus;
+            sakai.api.Util.updateChatStatusElement($(userLink), chatstatus);
         });
 
         $(window).bind("click", function(e){
@@ -336,17 +322,20 @@ sakai.topnavigation = function(tuid, showSettings){
         $(".help").hide();
         $("#user_link_container").hide();
 
+        // Hide search bar
+        $general_search_container.hide();
+
         // Show anonymous elements
         $("#other_logins_button_container").show();
-        $(".log_in").addClass("help_none"); 
+        $(".log_in").addClass("help_none");
 
         // if config.js is set to external, register link is hidden
         if(!sakai.config.Authentication.internal) {
-            $("#register_button_container").hide();   
+            $("#register_button_container").hide();
         }
         else {
             $("#register_button_container").show();
-        }        
+        }
         $("#login_button_container").show();
 
         // Set up public nav links
@@ -417,6 +406,9 @@ sakai.topnavigation = function(tuid, showSettings){
      * executed on the initial load of the page
      */
     var doInit = function(){
+
+        $(navMyProfile).attr("href", "/~" + sakai.data.me.user.userid);
+
         var obj = {};
         var menulinks = [];
 
@@ -424,27 +416,27 @@ sakai.topnavigation = function(tuid, showSettings){
 
             // We need to add the hasOwnProperty to pass to JSLint and it is also a security issue
             if (sakai.config.Navigation.hasOwnProperty(i)) {
-			
-				var temp = new Object();
-				temp.url = sakai.config.Navigation[i].url;
-				temp.label = sakai.api.i18n.General.getValueForKey(sakai.config.Navigation[i].label);
-				temp.cleanurl = temp.url || "";
-				if (temp.cleanurl) {
-					if (temp.cleanurl.indexOf('?') && temp.cleanurl.indexOf('?') > 0) {
-						temp.cleanurl = temp.cleanurl.substring(0, temp.cleanurl.indexOf('?'));
-					}
-					if (temp.cleanurl.indexOf('#') && temp.cleanurl.indexOf('#') > 0) {
-						temp.cleanurl = temp.cleanurl.substring(0, temp.cleanurl.indexOf('#'));
-					}
-				}
-				if (i == 0) {
-					temp.firstlink = true;
-				}
-				else {
-					temp.firstlink = false;
-				}
-				menulinks.push(temp);
-			}
+
+                var temp = {};
+                temp.url = sakai.config.Navigation[i].url;
+                temp.label = sakai.api.i18n.General.getValueForKey(sakai.config.Navigation[i].label);
+                temp.cleanurl = temp.url || "";
+                if (temp.cleanurl) {
+                    if (temp.cleanurl.indexOf('?') && temp.cleanurl.indexOf('?') > 0) {
+                        temp.cleanurl = temp.cleanurl.substring(0, temp.cleanurl.indexOf('?'));
+                    }
+                    if (temp.cleanurl.indexOf('#') && temp.cleanurl.indexOf('#') > 0) {
+                        temp.cleanurl = temp.cleanurl.substring(0, temp.cleanurl.indexOf('#'));
+                    }
+                }
+                if (i === 0) {
+                    temp.firstlink = true;
+                }
+                else {
+                    temp.firstlink = false;
+                }
+                menulinks.push(temp);
+            }
         }
         
         obj.links = menulinks;
@@ -457,8 +449,7 @@ sakai.topnavigation = function(tuid, showSettings){
 
         // Fill in the name of the user in the different fields
         if (sakai.api.User.getDisplayName(person.profile) !== "") {
-            $(userIdLabel).text(sakai.api.User.getDisplayName(person.profile));
-            $(hiLabel).text(sakai.api.User.getProfileBasicElementValue(person.profile, "firstName"));
+            $(userIdLabel).text(sakai.api.Util.shortenString(sakai.api.User.getDisplayName(person.profile), 25));
         }
 
         // Show the profile picture on the dashboard page

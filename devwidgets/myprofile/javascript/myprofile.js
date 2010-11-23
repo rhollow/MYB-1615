@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global $, Config, jQuery, sakai */
+/*global $ */
 
 var sakai = sakai || {};
 
@@ -41,8 +41,6 @@ sakai.myprofile = function (tuid, showSettings) {
     var rootel = $("#" + tuid);
     var me = sakai.data.me;
     var json = me.profile;
-    var tempChatStatus;
-
 
     //    IDs
     var myprofileId = "#myprofile";
@@ -60,10 +58,7 @@ sakai.myprofile = function (tuid, showSettings) {
     var profileChatStatusPicker = myprofileClass + "_chat_status_picker";
     var profileWidget = myprofileClass + "_widget";
 
-    var availableStatus = "chat_available_status_";
-    var availableStatus_online = availableStatus + "online";
-    var availableStatus_busy = availableStatus + "busy";
-    var availableStatus_offline = availableStatus + "offline";
+    var profilePreviewLink = "#myprofile_preview_profile";
 
     var headerChatUserId = "#user_link"; // The username in the chat bar.
 
@@ -74,20 +69,6 @@ sakai.myprofile = function (tuid, showSettings) {
     /////////////////
     // Chat status //
     /////////////////
-
-    /**
-     * Add the right status css class on an element.
-     * @param {Object} element the jquery element you wish to add the class to
-     * @param {Object} status the status
-     */
-    var updateChatStatusElement = function (element, status) {
-        if (element){
-            element.removeClass(availableStatus_online);
-            element.removeClass(availableStatus_busy);
-            element.removeClass(availableStatus_offline);
-            element.addClass(availableStatus + status);
-        }
-    };
 
     /**
      * Update the chat statuses all across the page.
@@ -106,29 +87,33 @@ sakai.myprofile = function (tuid, showSettings) {
      * @param {Object} status
      */
     var changeStatus = function (chatstatus) {
-        if (tempChatStatus !== chatstatus){
+        if (chatStatus !== chatstatus){
             tempChatStatus = chatstatus;
 
             $(profileStatusContainer).toggle();
 
-            sakai.data.me.profile = $.extend(true, sakai.data.me.profile, {"chatstatus": chatstatus});
+            var data = {
+                "chatstatus": chatstatus,
+                "_charset_": "utf-8"
+            };
 
-            if (sakai.data.me.profile.activity)
-                delete sakai.data.me.profile.activity;
-
-            if (sakai.data.me.profile["rep:policy"])
-                delete sakai.data.me.profile["rep:policy"];
-
-            sakai.api.Server.saveJSON(authprofileURL, sakai.data.me.profile, function(success, data) {
-                if (success) {
+            $.ajax({
+                url: "/~" + sakai.data.me.profile["rep:userId"] + "/public/authprofile",
+                type: "POST",
+                data: data,
+                success: function(data){
                     updateChatStatus(status);
-                } else {
-                    if (typeof callback === "function") {
+                },
+                error: function(xhr, textStatus, thrownError){
+                    if ($.isFunction(callback)) {
                         callback(false, xhr);
                     }
-                    fluid.log("Entity widget - An error occured when sending the status to the server.");
+                    debug.error("Entity widget - An error occured when sending the status to the server.");
                 }
             });
+
+            sakai.data.me.profile = $.extend(true, sakai.data.me.profile, {"chatstatus": chatstatus});
+
         }
     };
 
@@ -139,10 +124,12 @@ sakai.myprofile = function (tuid, showSettings) {
 
     var doInit = function () {
 
+        $(profilePreviewLink, rootel).attr("href", "/~" + sakai.data.me.user.userid);
+
         // Check if we have a first and last name
         if (sakai.api.User.getDisplayName(json) !== "") {
-            $(profileNameID, rootel).text(sakai.api.User.getDisplayName(json));
-            $(profileNameID, rootel).attr("href", sakai.config.URL.PROFILE_URL.replace("&amp;", ""));
+            $(profileNameID, rootel).text(sakai.api.Util.shortenString(sakai.api.User.getDisplayName(json), 30));
+            $(profileNameID, rootel).attr("href", "/~" + sakai.data.me.user.userid);
         }
         else {
             $(profileNameID, rootel).text(sakai.api.Security.saneHTML(me.user.userid));
@@ -154,8 +141,10 @@ sakai.myprofile = function (tuid, showSettings) {
         if (json.picture) {
             var pict = $.parseJSON(json.picture);
             if (pict.name) {
-                $(profilePictureID, rootel).attr('src', "/~" + sakai.data.me.user.userid + "/public/profile/" + pict.name );
+                $(profilePictureID, rootel).attr("src", "/~" + sakai.data.me.user.userid + "/public/profile/" + pict.name );
             }
+        } else {
+            $(profilePictureID, rootel).attr("src", sakai.config.URL.USER_DEFAULT_ICON_URL);
         }
 
         // Any extra information we may have.
@@ -175,10 +164,11 @@ sakai.myprofile = function (tuid, showSettings) {
         }
 
         var chatstatus = "online";
+        chatStatus = "online";
         // Get the user his chatstatus
         if (me.profile.chatstatus) {
             chatstatus = me.profile.chatstatus;
-            tempChatStatus = me.profile.chatstatus;
+            chatStatus = me.profile.chatstatus;
         }
 
         // Set the status in front of the user his name/
@@ -252,13 +242,14 @@ sakai.myprofile = function (tuid, showSettings) {
     // A user selects his status
     $(profileChatStatusPicker).live("click", function (ev) {
         var statusChosen = this.id.split("_")[this.id.split("_").length - 1];
-        chatStatus = statusChosen;
         changeStatus(statusChosen);
+        chatStatus = statusChosen;
     });
 
     // Add binding to set the status
     $(window).bind("chat_status_change", function(event, currentChatStatus){
-        updateChatStatusElement($(profileNameID), currentChatStatus);
+        sakai.api.Util.updateChatStatusElement($(profileNameID), currentChatStatus);
+        chatStatus = currentChatStatus;
         $(profileChatStatusClass).hide();
         $(profileChatStatusID + currentChatStatus).show();
     });

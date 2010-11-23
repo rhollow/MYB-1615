@@ -19,12 +19,15 @@
 /* Global */
 
 /* Settings */
-#remotecontent_settings input[type="text"] {background-color:#f1f1f1;border:1px solid #d6d6d6;margin-top:3px;padding:3px;width:99%;}
+#remotecontent_settings input[type="text"] {background-color:#f1f1f1;border:1px solid #d6d6d6;width:99%;margin:3px 0; height: 22px;}
+.remotecontent_settings_url_input {margin: 0 0 10px 0;width:99%;}
+.remotecontent_settings_url_help {color:#666666;display:block;font-size:11.5px;}
 .remotecontent_settings_error {color:red;}
 .remotecontent_settings_label_head {font-weight:bold;}
 #remotecontent_settings_reset_size {margin-left:15px;}
 .remotecontent_settings_subcontainer {border-bottom:1px solid #dddddd;margin-bottom:15px;padding-bottom:10px;}
 .remotecontent_settings_width_unit_selected {font-weight:bold;text-decoration:underline;}
+.dialog_buttons .remotecontent_buttons {text-align: right;}
 
 /* Preview */
 #remotecontent_settings_preview {text-align:center;}
@@ -48,3 +51,6 @@
 /* Block */
 .remotecontent_settings_block {margin-left:15px;}
 .remotecontent_settings_block label {float:left;margin-right:5px;margin-top:3px;padding-top:5px;width:75px;}
+
+/* Default */
+#remotecontent_container p.remotecontent_default_text {margin-left:15px;margin-bottom:0;padding:0;}

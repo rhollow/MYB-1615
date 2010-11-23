@@ -1,6 +1,6 @@
 var sakai = sakai || {};
 
-var Widgets = {
+sakai.widgets = {
     "relationships": [
         {"name": "Classmate", "definition": "is my classmate"},
         {"name": "Supervisor", "inverse": "Supervised", "definition": "is my supervisor"},
@@ -47,7 +47,7 @@ var Widgets = {
     "defaults": {
         "personalportal": {
             "layout": "dev",
-            "columns": [["mylinks"], ["myreminders"]]
+            "columns": [["mygroups", "mycontacts"], ["myprofile", "mycontent"]]
         },
         "siteportal": {
             "layout": "dev",
@@ -62,5 +62,5 @@ var Widgets = {
  * JSON Object that is an aggregation of all widget config.json files
  */
 sakai.storeWidgets = function(widgets){
-    Widgets.widgets = widgets;
+    sakai.widgets.widgets = widgets;
 };

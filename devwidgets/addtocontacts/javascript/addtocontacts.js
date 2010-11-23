@@ -52,6 +52,7 @@ sakai.addtocontacts = function(tuid, showSettings){
     // Form elements
     var addToContactsForm = addToContacts + "_form";
     var addToContactsFormButtonInvite = addToContactsForm + "_invite";
+    var addToContactsFormButtonCancel = addToContactsForm + "_cancel";
     var addToContactsFormPersonalNote = addToContactsForm + "_personalnote";
     var addToContactsFormPersonalNoteTemplate = addToContactsFormPersonalNote + "_template";
     var addToContactsFormType = addToContactsForm + "_type";
@@ -78,7 +79,7 @@ sakai.addtocontacts = function(tuid, showSettings){
      * It renders the contacts types and the personal note
      */
     var renderTemplates = function(){
-        $.TemplateRenderer(addToContactsFormTypeTemplate.replace(/#/gi, ""), Widgets, $(addToContactsInfoTypes));
+        $.TemplateRenderer(addToContactsFormTypeTemplate.replace(/#/gi, ""), sakai.config.Relationships, $(addToContactsInfoTypes));
         var json = {
             me: me
         };
@@ -91,7 +92,8 @@ sakai.addtocontacts = function(tuid, showSettings){
      */
     var fillInUserInfo = function(user){
         if (user) {
-            $(addToContactsInfoDisplayName).text(sakai.api.User.getProfileBasicElementValue(user, "firstName"));
+            
+            $(addToContactsInfoDisplayName).text(sakai.api.User.getDisplayName(user));
 
             // Check for picture
             if (user.picture && $.parseJSON(user.picture).name) {
@@ -108,21 +110,21 @@ sakai.addtocontacts = function(tuid, showSettings){
      * @param {String} relationshipName
      */
     var getDefinedRelationship = function(relationshipName){
-        for (var i = 0, j = Widgets.relationships.length; i < j; i++) {
-            var definedRelationship = Widgets.relationships[i];
+        for (var i = 0, j = sakai.config.Relationships.contacts.length; i < j; i++) {
+            var definedRelationship = sakai.config.Relationships.contacts[i];
             if (definedRelationship.name === relationshipName) {
                 return definedRelationship;
             }
         }
         return null;
-    }
+    };
 
     /**
      * Does the invitation stuff. Will send a request for an invitation and a message to the user.
      * @param {String} userid
      */
     var doInvite = function(userid){
-        var formValues = sakai.api.UI.Forms.form2json($(addToContactsForm));
+        var formValues = $(addToContactsForm).serializeObject();
         var types = formValues[addToContactsFormType.replace(/#/gi, "")];
         $(addToContactsResponse).text("");
         if (types.length) {
@@ -145,8 +147,8 @@ sakai.addtocontacts = function(tuid, showSettings){
             // send message to other person
             var userstring = sakai.api.User.getDisplayName(me.profile);
 
-            var title = sakai.config.Connections.Invitation.title.replace(/\$\{user\}/gi, userstring);
-            var message = sakai.config.Connections.Invitation.body.replace(/\$\{user\}/gi, userstring).replace(/\$\{comment\}/gi, personalnote);
+            var title = $("#addtocontacts_invitation_title_key").html();
+            var message = $("#addtocontacts_invitation_body_key").html()+","+personalnote;
 
             // Do the invite and send a message
             $.ajax({
@@ -162,6 +164,8 @@ sakai.addtocontacts = function(tuid, showSettings){
                     $(addToContactsDialog).jqmHide();
                     sakai.api.Communication.sendMessage(userid, title, message, "invitation");
                     callbackWhenDone(friend);
+                    //reset the form to set original note 
+                    $(addToContactsForm)[0].reset();
                     sakai.api.Util.notification.show("", $(addToContactsDone).text());
                 },
                 error: function(xhr, textStatus, thrownError){
@@ -212,7 +216,7 @@ sakai.addtocontacts = function(tuid, showSettings){
     /**
      * People should call this function if they want to initiate the widget
      * @param {Object} user The userid or the /rest/me info for this user.
-     * @param {Function} user The callback function that will be executed after the request.
+     * @param {Function} callback The callback function that will be executed after the request.
      */
     sakai.addtocontacts.initialise = function(user, callback){
         callbackWhenDone = callback;
@@ -257,6 +261,11 @@ sakai.addtocontacts = function(tuid, showSettings){
     $(addToContactsFormButtonInvite).bind("click", function(){
         // Invite this person.
         doInvite(friend.uuid);
+    });
+    
+    // Bind the cancel button
+    $(addToContactsFormButtonCancel).click(function(){
+        $(addToContactsForm)[0].reset();
     });
 
     // Bind the jqModal

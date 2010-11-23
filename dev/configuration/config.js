@@ -25,7 +25,7 @@ sakai.config = {
         CONTENT_MEDIA_URL: "/dev/content_media.html",
         COURSES_SITES_URL: "/dev/courses_sites.html",
         GATEWAY_URL: "/dev/index.html",
-        I18N_BUNDLE_ROOT: "/dev/_bundle/",
+        I18N_BUNDLE_ROOT: "/dev/bundle/",
         LOGOUT_URL: "/dev/logout.html",
         MY_DASHBOARD_URL: "/dev/my_sakai.html",
         PEOPLE_URL: "/dev/people.html",
@@ -41,8 +41,8 @@ sakai.config = {
         SEARCH_GENERAL_URL: "/dev/search.html",
         SEARCH_PEOPLE_URL: "search_people.html",
         SEARCH_SITES_URL: "search_sites.html",
-        TINY_MCE_CONTENT_CSS: "/dev/_css/FSS/fss-base.css,/dev/_css/sakai/sakai.core.2.css,/dev/_css/sakai/sakai.css,/dev/_css/sakai/sakai.editor.css,/dev/_css/sakai/sakai.show.css",
-        USER_DEFAULT_ICON_URL: "/dev/_images/person_icon.jpg",
+        TINY_MCE_CONTENT_CSS: "/dev/css/FSS/fss-base.css,/dev/css/sakai/sakai.core.2.css,/dev/css/sakai/sakai.css,/dev/css/sakai/sakai.editor.css,/dev/css/sakai/sakai.show.css",
+        USER_DEFAULT_ICON_URL: "/dev/images/person_icon.jpg",
         USER_DEFAULT_UPLOAD_FOLDER: "/private/uploads",
 
 
@@ -389,12 +389,12 @@ sakai.config = {
             original: {
                 name: "Original sakai theme",
                 image: "_images/sakai_grey.png",
-                URL: "/dev/_skins/original/original.html"
+                URL: "/dev/skins/original/original.html"
             },
             camuniversity: {
                 name: "Cambridge University theme",
-                image: "/dev/_skins/camuniversity/images/camuniversity.png",
-                URL: "/dev/_skins/camuniversity/camuniversity.html"
+                image: "/dev/skins/camuniversity/images/camuniversity.png",
+                URL: "/dev/skins/camuniversity/camuniversity.html"
             }
         },
         DefaultMember: "viewers"
@@ -431,43 +431,43 @@ sakai.config = {
 
     MimeTypes: {
         "application/doc": {
-            URL: "/dev/_images/mimetypes/doc.png",
+            URL: "/dev/images/mimetypes/doc.png",
             description: "Word document"
         },
         "application/pdf": {
-            URL: "/dev/_images/mimetypes/pdf.png",
+            URL: "/dev/images/mimetypes/pdf.png",
             description: "PDF document"
         },
         "text/plain": {
-            URL: "/dev/_images/mimetypes/txt.png",
+            URL: "/dev/images/mimetypes/txt.png",
             description: "Text document"
         },
         "image/png": {
-            URL: "/dev/_images/mimetypes/images.png",
+            URL: "/dev/images/mimetypes/images.png",
             description: "Png image"
         },
         "image/gif": {
-            URL: "/dev/_images/mimetypes/images.png",
+            URL: "/dev/images/mimetypes/images.png",
             description: "Gif image"
         },
         "image/jpeg": {
-            URL: "/dev/_images/mimetypes/images.png",
+            URL: "/dev/images/mimetypes/images.png",
             description: "Jpg image"
         },
         "text/html": {
-            URL: "/dev/_images/mimetypes/html.png",
+            URL: "/dev/images/mimetypes/html.png",
             description: "HTML document"
         },
         folder: {
-            URL: "/dev/_images/mimetypes/kmultiple.png",
+            URL: "/dev/images/mimetypes/kmultiple.png",
             description: "Folder"
         },
         "x-sakai/link": {
-            URL: "/dev/_images/mimetypes/html.png",
+            URL: "/dev/images/mimetypes/html.png",
             description: "URL Link"
         },
         other: {
-            URL: "/dev/_images/mimetypes/unknown.png",
+            URL: "/dev/images/mimetypes/unknown.png",
             description: "Other document"
         }
     },
@@ -491,11 +491,11 @@ sakai.config = {
     notification: {
         type: {
             ERROR: {
-                image: "/dev/_images/notifications_exclamation_icon.png",
+                image: "/dev/images/notifications_exclamation_icon.png",
                 time: 10000
             },
             INFORMATION: {
-                image: "/dev/_images/notifications_info_icon.png",
+                image: "/dev/images/notifications_info_icon.png",
                 time: 5000
             }
         }

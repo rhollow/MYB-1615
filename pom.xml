@@ -16,12 +16,12 @@
   <parent>
     <groupId>org.sakaiproject.nakamura</groupId>
     <artifactId>base</artifactId>
-    <version>0.5</version>
+    <version>0.6</version>
   </parent>
   <groupId>org.sakaiproject.nakamura</groupId>
   <artifactId>org.sakaiproject.nakamura.uxloader-myberkeley</artifactId>
   <packaging>bundle</packaging>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.6.0-SNAPSHOT</version>
   <name>Sakai 3 UX Loader</name>
   <description>Loads the Sakai 3 UI into the JCR</description>
   <url>http://github.com/sakaiproject/3akai-ux</url>
@@ -92,14 +92,19 @@
        </repository>
   </repositories>
   <properties>
-    <ant.target>copy_all</ant.target>
+    <ant.target>development</ant.target>
+    <dev.content>
+        SLING-INF/content/tests;path:=/tests,
+        SLING-INF/content/jsdoc;path:=/jsdoc,
+    </dev.content>
   </properties>
   <profiles>
     <profile>
       <id>sakai-release</id>
       <!-- Begin workaround for maven-bundle-plugin 2.0.1 ignoring processed resources. -->
       <properties>
-        <ant.target>finish</ant.target>
+        <ant.target>release</ant.target>
+        <dev.content></dev.content>
       </properties>
     </profile>
   </profiles>
@@ -122,12 +127,14 @@
         <configuration>
           <instructions>
             <Sling-Initial-Content>
-                SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,
-                SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,
-                SLING-INF/content/var/defaults;path:=/var/defaults;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,
-                SLING-INF/content/var/templates/site;path:=/var/templates/site;overwrite:=true;uninstall:=false,
-                SLING-INF/content/apps;path:=/apps;overwrite:=true;uninstall:=false,
-                SLING-INF/content/root;path:=/
+                SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false,
+                SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false,
+				SLING-INF/content/var/defaults;path:=/var/defaults;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,                
+                SLING-INF/content/var/templates/site;path:=/var/templates/site;uninstall:=false,
+                SLING-INF/content/var/ux-version;path:=/var/ux-version;uninstall:=false;overwriteProperties:=true,
+                SLING-INF/content/apps;path:=/apps;uninstall:=false,
+                ${dev.content}
+                SLING-INF/content/root;path:=/;uninstall:=false
             </Sling-Initial-Content>
           </instructions>
         </configuration>
@@ -143,9 +150,7 @@
             <phase>generate-resources</phase>
             <configuration>
               <tasks>
-                <ant inheritRefs="true" antfile="./build.xml">
-                    <target name="${ant.target}"/>              
-                </ant>
+                <ant target="${ant.target}" inheritRefs="true" antfile="./build.xml" />
               </tasks>
             </configuration>
             <goals>
@@ -154,6 +159,32 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <configuration>
+              <tasks>
+                <exec outputproperty="git.version" executable="git" failifexecutionfails="false" searchpath="true" >
+                  <arg line="describe" />
+                </exec>
+                <condition property="git.version.value" value="${git.version}" else="UnknownVersion" >
+                  <isset property="git.version" />
+                </condition>
+                <echo file="${basedir}/target/scm-version.properties" >
+                  scm.version=${git.version.value}
+                </echo>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>

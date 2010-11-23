@@ -113,9 +113,7 @@ sakai.entity = function(tuid, showSettings){
     var entityGroupLeave = entityGroup + "_leave";
     var entityGroupJoin = entityGroup + "_join";
     var entityGroupJoinRequest = entityGroupJoin + '_request';
-
-    // Content buttons
-    var entityContentDownload = "#entity_content_download";
+    var entityGroupJoinRequestPending = entityGroupJoin + '_request_pending';
 
     var authprofileURL;
 
@@ -144,39 +142,10 @@ sakai.entity = function(tuid, showSettings){
                 $(locationsLink).removeClass("entity_list_open");
             }
             $(menuBox).css("left", Math.round($(menuLink).offset().left) + "px");
-            $(menuBox).css("top", (Math.round($(menuLink).offset().top) + $(menuLink).height() + 11) + "px");
+            $(menuBox).css("top", (Math.round($(menuLink).offset().top) + $(menuLink).height()) + "px");
             $(menuLink).addClass("entity_list_open");
             $(menuBox).show();
         }
-    };
-
-    /**
-     * Convert a file size to a human readable format (4 MB)
-     * @param {Integer} filesize The filesize you want to convert into a human readable one
-     * @return {String} A human readable file size
-     */
-    var convertToHumanReadableFileSize = function(filesize){
-
-        // Divide the length into its largest unit
-        var units = [[1024 * 1024 * 1024, 'GB'], [1024 * 1024, 'MB'], [1024, 'KB'], [1, 'bytes']];
-        var lengthunits;
-        for (var i = 0, j=units.length; i < j; i++) {
-
-            var unitsize = units[i][0];
-            var unittext = units[i][1];
-
-            if (filesize >= unitsize) {
-                filesize = filesize / unitsize;
-                // 1 decimal place
-                filesize = Math.ceil(filesize * 10) / 10;
-                lengthunits = unittext;
-                break;
-            }
-        }
-
-        // Return the human readable filesize
-        return filesize + " " + lengthunits;
-
     };
 
     /**
@@ -185,6 +154,15 @@ sakai.entity = function(tuid, showSettings){
     var renderTemplate = function(){
         $.TemplateRenderer($entity_container_template, entityconfig, $entity_container);
         $entity_container.show();
+        // make sure the newly added content is properly styled with
+        // threedots truncation
+        if ($(".entity_threedots").length) {
+            $(".entity_threedots").ThreeDots({
+                max_rows: 1,
+                text_span_class: "threedots",
+                alt_text_t: true
+            });
+        }
     };
 
     /**
@@ -204,9 +182,9 @@ sakai.entity = function(tuid, showSettings){
 
             var id = null;
             if (profile["rep:userId"]){
-                id = profile["rep:userId"];            
+                id = profile["rep:userId"];
             } else if (profile["sakai:group-id"]){
-                id = profile["sakai:group-id"];            
+                id = profile["sakai:group-id"];
             }
             //change string to json object and get name from picture object
             var picture_name = $.parseJSON(profile.picture).name;
@@ -226,21 +204,25 @@ sakai.entity = function(tuid, showSettings){
      * @param {Function} [callback] A callback function that gets fired after the request
      */
     var changeChatStatus = function(chatstatus){
-        sakai.data.me.profile = $.extend(true, sakai.data.me.profile, {"chatstatus": chatstatus});
+        sakai.data.me.profile = $.extend(true, {}, sakai.data.me.profile, {"chatstatus": chatstatus});
 
-        if (sakai.data.me.profile.activity)
-            delete sakai.data.me.profile.activity;
+        var data = {
+            "chatstatus": chatstatus,
+            "_charset_": "utf-8"
+        };
 
-        if (sakai.data.me.profile["rep:policy"])
-            delete sakai.data.me.profile["rep:policy"];
-
-        sakai.api.Server.saveJSON(authprofileURL, sakai.data.me.profile, function(success, data) {
-            if (success) {
+        $.ajax({
+            url: "/~" + sakai.data.me.profile["rep:userId"] + "/public/authprofile",
+            type: "POST",
+            data: data,
+            success: function(data){
                 $(window).trigger("chat_status_change", chatstatus);
-            } else {
-                fluid.log("Entity widget - An error occured when sending the status to the server.");
+            },
+            error: function(xhr, textStatus, thrownError){
+                debug.error("Entity widget - An error occured when sending the status to the server.");
             }
-        });
+         });
+
     };
 
     /**
@@ -248,12 +230,7 @@ sakai.entity = function(tuid, showSettings){
      * @param {Object} chatstatus status which has to come up in the dropdown list
      */
     var updateChatStatusElement = function(chatstatus){
-        for (var i in $(entityProfileChatstatus)[0].options){
-            if ($(entityProfileChatstatus)[0].options[i].value === chatstatus){
-                $(entityProfileChatstatus)[0].selectedIndex = i;
-                break;
-            }
-        }
+        $(entityProfileChatstatus).val(chatstatus);
     };
 
     /**
@@ -261,14 +238,15 @@ sakai.entity = function(tuid, showSettings){
      */
     var getGroupMembersManagers = function(){
         var requests = []; // Array used to contain all the information we need to send to the batch post
+        var groupid = entityconfig.data.profile["sakai:group-id"];
         requests[0] = {
-                "url": "/system/userManager/group/" + entityconfig.data.profile["sakai:group-id"] + ".members.json",
-                "method": "GET"
-            };
+            "url": "/system/userManager/group/" + groupid + ".members.json",
+            "method": "GET"
+        };
         requests[1] = {
-                "url": "/system/userManager/group/" + entityconfig.data.profile["sakai:group-id"] + "-managers.members.json",
-                "method": "GET"
-            };
+            "url": "/system/userManager/group/" + groupid + "-managers.members.json",
+            "method": "GET"
+        };
 
         $.ajax({
             url: sakai.config.URL.BATCH,
@@ -278,69 +256,154 @@ sakai.entity = function(tuid, showSettings){
                 requests: $.toJSON(requests)
             },
             async: false,
-            success: function(data){
+            success: function (data) {
                 var groupMembers = $.parseJSON(data.results[0].body);
-                entityconfig.data.profile["memberCount"] = groupMembers.length;
-                $.each(groupMembers, function(i, val) {
-                    if (val["userid"] === sakai.data.me.user.userid) {
-                        entityconfig.data.profile["role"] = "member";
-                    }
-                });
                 var groupManagers = $.parseJSON(data.results[1].body);
+
+                // set the number of members and managers in this group
+                entityconfig.data.profile["memberCount"] = groupMembers.length;
                 entityconfig.data.profile["managerCount"] = groupManagers.length;
-                $.each(groupManagers, function(i, val) {
-                    if (val["userid"] === sakai.data.me.user.userid) {
-                        entityconfig.data.profile["role"] = "manager";
+
+                // set whether the current user's role
+                if (sakai.api.Groups.isCurrentUserAManager(groupid)) {
+                    // current user is a manager
+                    entityconfig.data.profile["role"] = "manager";
+                } else if (sakai.api.Groups.isCurrentUserAMember(groupid)) {
+                    // current user must be a member and not a manager
+                    // because of the structure of the if/else if
+                    entityconfig.data.profile["role"] = "member";
+                } else {
+                    // current user is either anonymous or a logged-in non-member
+                    if (sakai.data.me.user.anon) {
+                        entityconfig.data.profile["role"] = "anon";
+                    } else {
+                        entityconfig.data.profile["role"] = "non-member";
                     }
-                });
+                }
+            }
+        });
+    };
+
+
+    /**
+     * Displays the specific type of group membership button
+     * @param {String} type specifies which button to show. Options are:
+     *  - join: "Join group" button
+     *  - leave: "Leave group" button
+     *  - request: "Request to join group" button
+     *  - pending: "Join request pending" button
+     * @return None
+     */
+    var showGroupMembershipButton = function (type) {
+        hideGroupMembershipButton();
+        $entity_container.addClass('joinable');
+        $("div#sitespages_page_options").addClass('joinable');
+        if (type && typeof(type) === "string") {
+            switch(type) {
+                case "join":
+                    $(entityGroupJoin, $rootel).show();
+                    break;
+                case "leave":
+                    $(entityGroupLeave, $rootel).show();
+                    break;
+                case "request":
+                    $(entityGroupJoinRequest, $rootel).show();
+                    break;
+                case "pending":
+                    $(entityGroupJoinRequestPending, $rootel).show();
+                    break;
+            }
+        }
+    };
+
+
+    /**
+     * Hides any showing group membership button
+     */
+    var hideGroupMembershipButton = function () {
+        $entity_container.removeClass('joinable');
+        $("div#sitespages_page_options").removeClass('joinable');
+        $("button.entity_action_button", $rootel).hide();
+    };
+
+
+    /**
+     * Sends a request to the group managers for the user to join as a member
+     */
+    var requestJoinGroup = function () {
+        // add this user to the list of join requests for this group
+        var groupid = entityconfig.data.profile["sakai:group-id"];
+        sakai.api.Groups.addJoinRequest(sakai.data.me.user.userid, groupid,
+        function (success) {
+            if (success) {
+                // send a join request message to all group managers
+                /*
+                 * ... to be fully implemented in Q2 ...
+                 *
+
+                // set up message values
+                var username = sakai.data.me.profile.basic.elements.firstName.value +
+                    " " + sakai.data.me.profile.basic.elements.lastName.value;
+                var groupname = entityconfig.data.profile["sakai:group-title"];
+                var subject = sakai.config.Groups.JoinRequest.title.replace(/\$\{user\}/gi, username);
+                subject = subject.replace(/\$\{group\}/gi, groupname);
+                var body = sakai.config.Groups.JoinRequest.body.replace(/\$\{user\}/gi, username);
+                body = body.replace(/\$\{group\}/gi, groupname);
+                var groupmanagers = groupid + "-managers";
+
+                // send message
+                sakai.api.Communication.sendMessage(groupmanagers,
+                    subject, body, "message", null, function (success, data) {
+                        if (success) {
+                            // show a notification and change the button
+                            sakai.api.Util.notification.show("Group Membership", "Your request has successfully been sent to the group's managers.");
+                            showGroupMembershipButton("pending");
+                        } else {
+                            // show a notification and do not change the button
+                            debug.log("entity.js/requestJoinGroup() ERROR: Could not send join request messages for: " +
+                                sakai.data.me.user.userid + " for groupid: " + groupid +
+                                " to manager group: " + groupmanagers +
+                                " - error status: " + data.textStatus);
+                            sakai.api.Util.notification.show("Group Membership", "Sorry, there was a problem sending your request. We've notified system administrators. Please try again later or contact an administrator if the issue persists.");
+                        }
+                    });
+                */
+
+                // show a notification and change the button
+                sakai.api.Util.notification.show($("#entity_group_membership").text(),
+                                                $("#entity_group_request_sent").text(),
+                                                sakai.api.Util.notification.type.INFORMATION);
+                showGroupMembershipButton("pending");
+            } else {
+                sakai.api.Util.notification.show($("#entity_group_membership").text(),
+                                                $("#entity_group_problem_with_request").text(),
+                                                sakai.api.Util.notification.type.ERROR);
             }
         });
     };
 
     /**
      * Joins the specific group as a member
-     * @param {String} Type tells us which button to show
      */
-    var showGroupMembershipButton = function(type){
-        if (type === "join") {
-            if (entityconfig.data.profile.authprofile["sakai:group-joinable"] ===
-                sakai.config.Permissions.Groups.joinable.user_direct) {
-                $(entityGroupJoin).show();
-            }
-            else if (entityconfig.data.profile.authprofile["sakai:group-joinable"] ===
-                sakai.config.Permissions.Groups.joinable.user_request) {
-                $(entityGroupJoinRequest).show();
-            }
-            $(entityGroupLeave).hide();
-        } else if (type === "leave") {
-            $(entityGroupJoin).hide();
-            $(entityGroupJoinRequest).hide();
-            $(entityGroupLeave).show();
-        }
-    };
-
-    /**
-     * Sends a request to the group managers for the user to join as a member
-     */
-    requestJoinGroup = function(){
-        // todo
-    };
-
-    /**
-     * Joins the specific group as a member
-     */
-    var joinGroup = function(){
+    var joinGroup = function () {
         // add user to group
-        $.ajax({
-            url: "/system/userManager/group/" + entityconfig.data.profile["sakai:group-id"] + ".update.json",
-            data: {
-                "_charset_":"utf-8",
-                ":member": sakai.data.me.user.userid
-            },
-            type: "POST",
-            success: function(data){
-    	        sakai.api.Util.notification.show("Group Membership", "You have been added successfully to the Group.");
-                showGroupMembershipButton('leave');
+        sakai.api.Groups.addUsersToGroup(entityconfig.data.profile["sakai:group-id"], "members", [sakai.data.me.user.userid], function(success) {
+            if (success) {
+                sakai.api.Util.notification.show($("#entity_group_membership").text(),
+                                                $("#entity_group_adding_successful").text(),
+                                                sakai.api.Util.notification.type.INFORMATION);
+                // wait for two seconds and then redirect
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                debug.error("entity.js/joinGroup() ERROR: Could not add member: " +
+                    sakai.data.me.user.userid + " to groupid: " +
+                    entityconfig.data.profile["sakai:group-id"] +
+                    " - error status: " + data.textStatus);
+                    sakai.api.Util.notification.show($("#entity_group_membership").text(),
+                                                    $("#entity_group_problem_adding").text(),
+                                                    sakai.api.Util.notification.type.ERROR);
             }
         });
     };
@@ -348,26 +411,39 @@ sakai.entity = function(tuid, showSettings){
     /**
      * Leaves the specific group as a member
      */
-    var leaveGroup = function(){
+    var leaveGroup = function () {
+        // if this user is a manager, we need to remove them from the manager group
+        var groupid = entityconfig.data.profile["sakai:group-id"],
+            groupType = "members";
+
+        if (entityconfig.data.profile.role === "manager") {
+            groupType = "managers";
+        }
+
         // remove user from group
-        $.ajax({
-            url: "/system/userManager/group/" + entityconfig.data.profile["sakai:group-id"] + ".update.json",
-            data: {
-                "_charset_":"utf-8",
-                ":member@Delete": sakai.data.me.user.userid
-            },
-            type: "POST",
-            success: function(data){
-    	        sakai.api.Util.notification.show("Group Membership", "You have been successfully removed from the Group.");
-                showGroupMembershipButton('join');
+        sakai.api.Groups.removeUsersFromGroup(groupid, groupType, [sakai.data.me.user.userid], function (success) {
+            if (success) {
+                // because the user has left the group, they may not be allowed to
+                // view the current page - refresh the page to check visibility
+                sakai.api.Util.notification.show($("#entity_group_membership").text(),
+                                                $("#entity_group_removal_successful").text(),
+                                                sakai.api.Util.notification.type.INFORMATION);
+                // wait for two seconds and then redirect
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                    sakai.api.Util.notification.show($("#entity_group_membership").text(),
+                                                    $("#entity_group_problem_removing").text(),
+                                                    sakai.api.Util.notification.type.ERROR);
             }
         });
     };
-    
+
     //////////////
     // CONTACTS //
     //////////////
-    
+
     /**
      * Check whether a user is already a contact, invited or pending
      * @param {String} userid    the user's userid
@@ -386,8 +462,28 @@ sakai.entity = function(tuid, showSettings){
             {
                 "url" : "/var/contacts/pending.json?page=0&items=100",
                 "method" : "GET"
+            },
+            {
+                "url" : sakai.config.URL.PRESENCE_CONTACTS_SERVICE,
+                "method" : "GET"
             }
-        ]
+        ];
+
+        var handleChatUpdate = function(e) {
+            var contactProfile = sakai.chat.getOnlineContact(userid).profile;
+            if (contactProfile && contactProfile.chatstatus) {
+                if (entityconfig.data.profile.chatstatus !== contactProfile.chatstatus) {
+                    $("#entity_contact_" + entityconfig.data.profile.chatstatus).hide();
+                    entityconfig.data.profile.chatstatus = contactProfile.chatstatus;
+                    $("#entity_contact_" + entityconfig.data.profile.chatstatus).show();
+                }
+            } else {
+                $("#entity_contact_" + entityconfig.data.profile.chatstatus).hide();
+                entityconfig.data.profile.chatstatus = "offline";
+                $("#entity_contact_" + entityconfig.data.profile.chatstatus).show();
+            }
+        };
+
         $.ajax({
             url: "/system/batch",
             type: "POST",
@@ -395,6 +491,20 @@ sakai.entity = function(tuid, showSettings){
                 "requests": $.toJSON(reqs)
             },
             success: function(data){
+                var presence = $.parseJSON(data.results[3].body);
+                for (var l in presence.contacts){
+                    if (presence.contacts[l].user === userid){
+                        if (presence.contacts[l].profile.chatstatus && presence.contacts[l]["sakai:status"] === "online") {
+                            entityconfig.data.profile.chatstatus = presence.contacts[l].profile.chatstatus;
+                        } else {
+                            entityconfig.data.profile.chatstatus = "offline";
+                        }
+                        $("#entity_contact_" + entityconfig.data.profile.chatstatus).show();
+
+                        // Add binding to chat status updates for the contact
+                        $(window).bind("sakai-chat-update", handleChatUpdate);
+                    }
+                }
                 var contacts = $.parseJSON(data.results[0].body);
                 for (var i in contacts.results){
                     if (contacts.results[i].target === userid){
@@ -403,23 +513,24 @@ sakai.entity = function(tuid, showSettings){
                     }
                 }
                 var invited = $.parseJSON(data.results[1].body);
-                for (var i in invited.results){
-                    if (invited.results[i].target === userid){
+                for (var j in invited.results){
+                    if (invited.results[j].target === userid){
                         $("#entity_contact_invited").show();
                         return true;
                     }
                 }
                 var pending = $.parseJSON(data.results[2].body);
-                for (var i in pending.results){
-                    if (pending.results[i].target === userid){
+                for (var k in pending.results){
+                    if (pending.results[k].target === userid){
                         $("#entity_contact_pending").show();
                         return true;
                     }
                 }
                 $("#entity_add_to_contacts").show();
+                return true;
             }
         });
-    }
+    };
 
     /**
      * Accept a contact invitation
@@ -434,7 +545,7 @@ sakai.entity = function(tuid, showSettings){
                 $("#entity_contact_accepted").show();
             }
         });
-    }
+    };
 
     /////////////
     // BINDING //
@@ -486,28 +597,30 @@ sakai.entity = function(tuid, showSettings){
         });
 
         // Add the submit event to the status form
+        $entity_profile_status.unbind("submit");
         $entity_profile_status.bind("submit", function(){
 
             // Get the correct input value from the user
             var inputValue = $entity_profile_status_input.hasClass(entity_profile_status_input_dummy) ? "" : $.trim($entity_profile_status_input.val());
 
-            if (profile_status_value !== inputValue) {
+            // Escape html
+            inputValue = sakai.api.Security.escapeHTML(inputValue);
+
+            if (!profile_status_value || profile_status_value !== inputValue) {
                 profile_status_value = inputValue;
 
-                sakai.data.me.profile = $.extend(true, sakai.data.me.profile, {"status": inputValue});
-
-                if (sakai.data.me.profile.activity)
+                if (sakai.data.me.profile.activity) {
                     delete sakai.data.me.profile.activity;
+                }
 
-                if (sakai.data.me.profile["rep:policy"])
-                    delete sakai.data.me.profile["rep:policy"];
+                var profileData = $.extend(true, {}, sakai.data.me.profile, {"status": inputValue});
+
+                sakai.api.Server.filterJCRProperties(profileData);
 
                 var originalText = $("button span", $entity_profile_status).text();
                 $("button span", $entity_profile_status).text(sakai.api.Security.saneHTML($entity_profile_status_input_saving.text()));
 
-                //trigger chat_status_message_change to update the status message on chat widget.
-                $(window).trigger("chat_status_message_change", inputValue);
-                sakai.api.Server.saveJSON(authprofileURL, sakai.data.me.profile, function(success, data) {
+                sakai.api.Server.saveJSON(authprofileURL, profileData, function(success, data) {
                     if (success) {
                         // Set the button back to it's original text
                         $("button span", $entity_profile_status).text(sakai.api.Security.saneHTML(originalText));
@@ -519,10 +632,17 @@ sakai.entity = function(tuid, showSettings){
                         var activityData = {
                             "sakai:activityMessage": activityMsg
                         };
+
+                        sakai.data.me.profile = $.extend(true, sakai.data.me.profile, {"status": inputValue});
+
+                        //trigger chat_status_message_change to update the status message on chat widget.
+                        $(window).trigger("chat_status_message_change", inputValue);
+
                         sakai.api.Activity.createActivity(nodeUrl, "status", "default", activityData);
                     } else {
                         // Log an error message
-                        fluid.log("Entity widget - the saving of the profile status failed");
+                        debug.error("Entity widget - the saving of the profile status failed");
+                        profile_status_value = "";
 
                         // Show the message about a saving that failed to the user
                         $("button span", $entity_profile_status).text(sakai.api.Security.saneHTML($entity_profile_status_input_saving_failed.text()));
@@ -558,6 +678,15 @@ sakai.entity = function(tuid, showSettings){
         });
     };
 
+    // Add the click listener to the document
+    $(document).click(function(e){
+        var $clicked = $(e.target);
+        // if element clicked is not tag Link only then hide the menu.
+        if (!$clicked.parents().is(tagsLink)) {
+            showHideListLinkMenu(tagsLinkMenu, tagsLink, true);
+        }
+    });
+
     /**
      * Add binding to elements related to locations drop down
      */
@@ -592,7 +721,7 @@ sakai.entity = function(tuid, showSettings){
      */
     var addBindingGroup = function(){
         // Add the click event to the leave group button
-        $(entityGroupLeave).bind("click", function(){
+        $(entityGroupLeave).bind("click", function () {
             leaveGroup();
         });
 
@@ -606,10 +735,64 @@ sakai.entity = function(tuid, showSettings){
             requestJoinGroup();
         });
 
-        if (entityconfig.data.profile.role === "member")
-            showGroupMembershipButton('leave');
-        else if (entityconfig.data.profile.role !== "manager")
-            showGroupMembershipButton('join');
+        // determine which button to display to the current user
+        var groupid = entityconfig.data.profile["sakai:group-id"];
+        var joinability = entityconfig.data.profile["sakai:group-joinable"];
+        var role = entityconfig.data.profile.role;
+
+        if (role === "member" || (role === "manager" && entityconfig.data.profile.managerCount > 1)) {
+            // we have either a group member or manager, but not the last group manager
+            showGroupMembershipButton("leave");
+        }
+        else if ((role === "manager" && entityconfig.data.profile.managerCount === 1) ||
+            (role === "non-member" && joinability ===
+                sakai.config.Permissions.Groups.joinable.manager_add) || role === "anon") {
+            // we have either the last group manager or a non-member with
+            // joinability set to 'only managers can add' or an anonymous user
+            hideGroupMembershipButton();
+        }
+        else if (role === "non-member" &&
+            joinability === sakai.config.Permissions.Groups.joinable.user_direct) {
+            // we have a non-member with joinability set to 'users can join directly'
+            showGroupMembershipButton("join");
+        }
+        else if (role === "non-member" &&
+            joinability === sakai.config.Permissions.Groups.joinable.user_request) {
+            // we have a non-member with joinability set to 'users must request to join'
+
+            // has this user already requested to join the group? Search the list of join requests
+            sakai.api.Groups.getJoinRequests(groupid, function (success, data) {
+                if (success) {
+                    // search data
+                    var foundRequest = false;
+                    if (data && data.total && data.total > 0) {
+                        for (var i in data.results) {
+                            if (data.results.hasOwnProperty(i) &&
+                                data.results[i].userid === sakai.data.me.user.userid) {
+                                // this user has a pending join request for this group
+                                foundRequest = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (foundRequest) {
+                        // user has a pending join request
+                        showGroupMembershipButton("pending");
+                    } else {
+                        // user has not requested to join
+                        showGroupMembershipButton("request");
+                    }
+                } else {
+                    // not sure if this user has requested, show request button
+                    showGroupMembershipButton("request");
+                }
+            },
+            false);  // this is an non-async call
+        }
+        else {
+            // unrecognized combination of user and joinability setting
+            hideGroupMembershipButton();
+        }
     };
 
     /**
@@ -630,11 +813,11 @@ sakai.entity = function(tuid, showSettings){
 
             // Add binding to available to chat link
             $('#entity_available_to_chat').live("click", function() {
-                // todo
+                sakai.chat.openContactsList();
             });
-            
+
             $("#entity_contact_invited").live("click", function(){
-               acceptInvitation(entityconfig.data.profile["rep:userId"]); 
+               acceptInvitation(entityconfig.data.profile["rep:userId"]);
             });
         }
 
@@ -647,16 +830,6 @@ sakai.entity = function(tuid, showSettings){
         }
 
         if(entityconfig.mode === "content"){
-            // Add binding to content related buttons
-            $(entityContentDownload).bind("click", function(){
-                if (entityconfig.data.profile.mimetype === "x-sakai/link") {
-                    window.open(entityconfig.data.profile.revurl);
-                }
-                else {
-                    window.open(entityconfig.data.profile.path);
-                }
-            });
-
             // Add binding to locations box
             addBindingLocationsLink();
         }
@@ -682,8 +855,9 @@ sakai.entity = function(tuid, showSettings){
         authprofileURL = "/~" + entityconfig.data.profile["rep:userId"] + "/public/authprofile";
 
         if (!entityconfig.data.profile.chatstatus) {
-            entityconfig.data.profile.chatstatus = "online";
+            entityconfig.data.profile.chatstatus = "offline";
         }
+
     };
 
     /**
@@ -691,17 +865,23 @@ sakai.entity = function(tuid, showSettings){
      */
     var setGroupData = function(){
         // Set the profile picture for the group you are looking at
-        entityconfig.data.profile.picture = constructProfilePicture(entityconfig.data.profile)
+        entityconfig.data.profile.picture = constructProfilePicture(entityconfig.data.profile);
 
         // determine users role and get the count of members and managers
-        getGroupMembersManagers()
+        getGroupMembersManagers();
 
         // configure the changepic widget to look at the group profile image
         if (sakai.api.UI.changepic){
             sakai.api.UI.changepic["mode"] = "group";
             sakai.api.UI.changepic["id"] = entityconfig.data.profile["sakai:group-id"];
+        } else {
+            $(window).bind("sakai-changepic-ready", function(e){
+                sakai.api.UI.changepic["mode"] = "group";
+                sakai.api.UI.changepic["id"] = entityconfig.data.profile["sakai:group-id"];
+            });
         }
-    }
+
+    };
 
     /**
      * Set the data for the content object information
@@ -709,7 +889,7 @@ sakai.entity = function(tuid, showSettings){
      */
     var setContentData = function(data){
         if (!data) {
-            fluid.log("Entity widget - setContentData - the data parameter is invalid:'" + data + "'");
+            debug.warn("Entity widget - setContentData - the data parameter is invalid:'" + data + "'");
             return;
         }
 
@@ -732,13 +912,16 @@ sakai.entity = function(tuid, showSettings){
             }
             // Set the size of the file
             if (jcr_content[":jcr:data"]) {
-                entityconfig.data.profile.filesize = convertToHumanReadableFileSize(jcr_content[":jcr:data"]);
+                entityconfig.data.profile.filesize = sakai.api.Util.convertToHumanReadableFileSize(jcr_content[":jcr:data"]);
             }
             // Set the mimetype of the file
             if (jcr_content["jcr:mimeType"]) {
                 entityconfig.data.profile.mimetype = jcr_content["jcr:mimeType"];
             }
         }
+
+        // Set file extension
+        entityconfig.data.profile.extension = filedata["sakai:fileextension"];
 
         // Check if user is a manager or viewer
         entityconfig.data.profile["role"] = "viewer";
@@ -748,7 +931,7 @@ sakai.entity = function(tuid, showSettings){
                 if (resultObject["rep:principalName"] === sakai.data.me.user.userid) {
                     if ($.inArray("jcr:all", resultObject["rep:privileges"]) != 1) {
                         entityconfig.data.profile["role"] = 'manager';
-                    };
+                    }
                 }
             });
         }
@@ -799,6 +982,12 @@ sakai.entity = function(tuid, showSettings){
         if (filedata["sakai:copyright"]) {
             entityconfig.data.profile.copyright = filedata["sakai:copyright"];
         }
+
+        if (document.location.pathname === "/dev/content_profile.html"){
+            entityconfig.data["link_name"] = false;
+        } else {
+            entityconfig.data["link_name"] = true;
+        }
     };
 
     /**
@@ -841,7 +1030,7 @@ sakai.entity = function(tuid, showSettings){
 
         // Render the main template
         renderTemplate();
-        
+
         // Should we show the Add To Contacts button or not
         if (mode === "profile" && !sakai.data.me.user.anon){
             checkContact(entityconfig.data.profile["rep:userId"]);
@@ -877,7 +1066,7 @@ sakai.entity = function(tuid, showSettings){
 
         //no. of groups user is memeber of
         entityconfig.data.count.groups = sakai.data.me.groups.length;
-    }
+    };
 
     /**
      * Get content data and then call method to get data for the appropriate mode
@@ -887,23 +1076,10 @@ sakai.entity = function(tuid, showSettings){
      *
      */
     var getContentData = function(mode, data){
-        //make an ajax call to get content data
-        $.ajax({
-            url: "/var/search/pool/me/manager.json?q=*",
-            type: "GET",
-            success: function(d, textStatus){
-                entityconfig.data.count.contents = d.total;
-
-                // Change the mode for the entity widget
-                entityconfig.mode = mode;
-
-                // Get the data for the appropriate mode
-                getData(entityconfig.mode, data);
-            },
-            error: function(xhr, textStatus, thrownError){
-                alert("An error has occured");
-            }
-        });
+        // Change the mode for the entity widget
+        entityconfig.mode = mode;
+        // Get the data for the appropriate mode
+        getData(entityconfig.mode, data);
     };
 
     ////////////////////
@@ -922,15 +1098,31 @@ sakai.entity = function(tuid, showSettings){
         $entity_container.empty().hide();
         $entity_container_actions.empty();
 
+        //Set initial chat status
+        if (mode === entitymodes[0]) {
+            if (!sakai.data.me.profile.chatstatus) {
+                // Assume online until chat status is persistent since that's what other comonents are doing, and so that the template has a consistent default
+                sakai.data.me.profile.chatstatus = "online";
+            }
+        }
+
         //Get the content data
         getContentData(mode, data);
+
     };
 
     $(window).trigger("sakai.api.UI.entity.ready", {});
     sakai.entity.isReady = true;
+
     // Add binding to update the chat status
     $(window).bind("chat_status_change", function(event, newChatStatus){
-        updateChatStatusElement(newChatStatus)
+        updateChatStatusElement(newChatStatus);
+    });
+
+    $(window).bind("sakai-fileupload-complete", function(){
+        if (sakai.hasOwnProperty("content_profile")) {
+            sakai.api.UI.entity.render("content", sakai.content_profile.content_data);
+        }
     });
 
 };

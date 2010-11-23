@@ -62,6 +62,8 @@ sakai.ggadget = function(tuid, showSettings){
     var remotecontentSettingsPreview = remotecontentSettings + "_preview";
     var remotecontentSettingsPreviewFrame = remotecontentSettingsPreview + "_frame";
     var remotecontentSettingsUrl = remotecontentSettings + "_url";
+    var remotecontentSettingsUrlError = remotecontentSettingsUrl + "_error";
+    var remotecontentSettingsUrlErrorTitle = remotecontentSettingsUrlError + "_title";
     var remotecontentSettingsWidth = remotecontentSettings + "_width";
 
     // Containers
@@ -75,7 +77,6 @@ sakai.ggadget = function(tuid, showSettings){
     var $remotecontentSettingsColorContainerTemplate = $("#remotecontent_settings_color_container_template", rootel);
     var $remotecontentSettingsTemplate = $("#remotecontent_settings_template", rootel);
     var $remotecontentSettingsPreviewTemplate = $("#remotecontent_settings_preview_template", rootel);
-
 
     ///////////////////////
     // Utility functions //
@@ -127,7 +128,7 @@ sakai.ggadget = function(tuid, showSettings){
             jsonDefaultSize.width = defaultWidth;
             jsonDefaultSize.width_unit = defaultWidthUnit;
             jsonDefaultSize.height = defaultHeight;
-            $(remotecontentSettingsPreview).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json));
+            $(remotecontentSettingsPreview).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json, null, false));
         }
         else {
             $(remotecontentSettingsPreviewFrame).attr("style", "border: " + json.border_size + "px #" + json.border_color + " solid");
@@ -139,7 +140,7 @@ sakai.ggadget = function(tuid, showSettings){
      */
     var renderIframe = function(){
         if (json) {
-            $(remotecontentMainContainer, rootel).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json));
+            $(remotecontentMainContainer, rootel).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json, null, false));
 
             // SAKIII-314 We need to show the container, otherwise the second item won't be shown.
             $(remotecontentMainContainer, rootel).show();
@@ -191,7 +192,7 @@ sakai.ggadget = function(tuid, showSettings){
             sakai.api.Widgets.saveWidgetData(tuid, json, savedDataToJCR);
         }
         else {
-            alert("Please specify a URL");
+            sakai.api.Util.notification.show($(remotecontentSettingsUrlErrorTitle).html(), $(remotecontentSettingsUrlError).html());
         }
     };
 
@@ -264,7 +265,7 @@ sakai.ggadget = function(tuid, showSettings){
 
                 renderIframeSettings(true);
             }
-    }
+    };
 
 
     /*
@@ -383,6 +384,7 @@ sakai.ggadget = function(tuid, showSettings){
         addBinding(); // Add binding to the various elements
         changeAdvancedSettingsArrow();
         $(remotecontentSettings).show(); // Show the remotecontent settings
+        $(remotecontentSettingsUrl).focus();
     };
 
     /*
@@ -404,7 +406,6 @@ sakai.ggadget = function(tuid, showSettings){
     var getRemoteContent = function(){
 
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
-
             if (success) {
                 // Get a JSON string that contains the necessary information.
                 var parameters = data;
@@ -417,9 +418,11 @@ sakai.ggadget = function(tuid, showSettings){
                 }
             }
             else {
-                // When the request isn't successful, it means that  there was no existing remotecontent
-                // so we show the basic settings.
-                displaySettings(null, false);
+                if (showSettings) {
+                    // When the request isn't successful, it means that  there was no existing remotecontent
+                    // so we show the basic settings.
+                    displaySettings(null, false);
+                }
             }
         });
     };
