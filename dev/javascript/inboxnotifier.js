@@ -152,7 +152,7 @@ sakai.notificationsinbox = function(){
     var goToPreviousPageAfterDeletion = false;
 
     /**
-     * This will show the preloader.
+     * Th is will show the preloader.
      */
     var showLoader = function(){
         $(inboxTable).append($.TemplateRenderer(inboxTablePreloader.substring(1), {}));
