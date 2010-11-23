@@ -1,0 +1,168 @@
+/** CONTAINER **/
+.fixed-container
+{ background: #fff; }
+
+
+/** TAB CONTENTS **/
+.links .links_container
+{ padding: 0; margin: 0 0 20px 0; color: #454a4f; }
+
+.links .links_contents_main
+{ border-left: 3px solid #D3DBDE; border-right: 3px solid #D3DBDE; margin: 0; padding: 10px; }
+
+.links .content_top
+{ background: url('../../_images/content_tr.gif') top right no-repeat; padding: 0 5px 0 0; margin: 0; }
+
+.links .content_top_inner
+{ background: url('../../_images/content_tl.gif') 0 0 no-repeat; margin: 0; height: 6px; }
+
+.links .content_bottom
+{ background: url('../../_images/content_br.png') top right no-repeat; padding: 0 5px 0 0; margin: 0; }
+
+.links .content_bottom_inner
+{ background: url('../../_images/content_bl.png') 0 0 no-repeat; margin: 0; height: 6px; }
+
+
+/** SUGGESTED LINKS SECTION **/
+.suggested_link_col
+{ position: relative; float: left; width: 31%; height: 140px; margin: 5px; border-right: 1px solid #cdcdcd; }
+
+.suggested_link_col .suggested_link_header
+{ font-size: 14px; font-weight: bold; height: 20px; }
+
+.suggested_link_col .suggested_link_header a
+{ position: relative; top: -15px; left: 30px; }
+
+.suggested_link_col label
+{ width: 0px; }
+
+
+/** ALL LINKS SECTION **/
+.all_links_col
+{ float: left; height: 250px; width: 24%; margin: 0px; padding: 0px; line-height: 30px;}
+
+.all_links_col li.NoBulletNoIndent {
+  list-style-type: none;
+  padding-top: 5px;
+  width: 210px;
+  height: 22px;
+}
+
+.all_links_col a
+{ position: relative; top: -24px; left: 30px; }
+
+.all_links_col ul 
+{ margin: 5px; }
+
+.all_links_col label
+{ width: 0px; }
+
+
+/** TAB VARIANT **/
+.links .s3d-primary-tabs
+{ background: #fff url('../../_images/profile_tab_bg.png') top right no-repeat; }
+
+
+/** GENERAL LINKS SECTION RULES **/
+.links .button.add_con_btn
+{ width: 123px; }
+.links .button.send_msg_btn
+{ width: 123px; margin-top: 7px; }
+
+.links .links_section_body{padding-top: 7px;}
+.links .links_section th{text-align: left; font-weight: bold; font-size: 12px; width: 125px; border:0;}
+.links .links_section td{text-align: left; font-weight: 100; font-size: 12px; border:0;}
+.links .links_section td a{color: #2b9fcd;}
+
+.links .links_section .links_section_header
+{ position: relative; margin: 0; padding: 15px 0 5px 5px; font-weight: normal; font-size: 16px; color: #5a6a7c; }
+
+.links .links_section .links_section_body
+{ margin: 0; padding: 5px 0 35px 0; }
+
+.links .links_section .entry_label
+{ text-align: right; vertical-align: top; }
+
+.links .links_section .multi_entry
+{ padding: 0 0 0 20px; }
+
+.links .links_section .multi_entry table div
+{ padding: 5px; }
+
+
+/** BUTTONS **/
+.links .grey_button
+{ background:transparent url(../../_images/gray_button_left.png) no-repeat scroll left top; float: left; margin: 0 5px 0 0; }
+
+.links .grey_button .button
+{ background:transparent url(../../_images/gray_button_right.png) no-repeat scroll right top; border:medium none; color:#FFFFFF; cursor:pointer; font-weight:bold; height:23px; margin:0 -10px 0 0; }
+
+
+/** CHECKBOXES **/
+.CheckBoxClass
+{
+    position: absolute;
+    left: -2000px;    
+}
+
+.FeaturedCheckBoxClass
+{
+    position: absolute;
+    left: -2000px;    
+}
+
+.LabelUnselected
+{
+	background: url("../../_images/starsprites.png") no-repeat;
+    position: relative;
+	padding-left: 25px;
+	padding-top: 0px;
+	margin: 0px;
+	height: 20px;	
+	width: 150px;
+	display: block;
+    cursor: pointer;       
+}
+
+.LabelSelected
+{ 
+    background-position: 0px -22px; 
+    position: relative;
+    padding-left: 25px;
+	padding-top: 0px;
+	margin: 0px;
+	height: 20px;	
+	width: 150px;
+	display: block;
+    cursor: pointer;    
+}
+
+.LabelRequired
+{ 
+    background: url("../../_images/starsprites.png") no-repeat;
+    position: relative;
+    background-position: 0px -44px; 
+    padding-left: 25px;
+	padding-top: 0px;
+	margin: 0px;
+	height: 20px;	
+	width: 150px;
+	display: block;    
+ }
+
+
+/** IDS **/
+#right_col
+{ border-right: 0px; }
+
+#suggested_sites
+{ position: relative; border-bottom: 1px solid #cdcdcd; padding-bottom: 10px; }
+
+#suggested_sites_header
+{ padding-top: 0px; }
+
+#allsite_form
+{ padding: -10px; }
+
+#save_button 
+{ float: right; }

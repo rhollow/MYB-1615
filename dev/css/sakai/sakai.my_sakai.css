@@ -1,0 +1,14 @@
+/* GENERAL */
+strong {color: #000;}
+.dialog_buttons .button {color: #666;}
+
+/* OPTIONS */
+.mysakai_options {text-align: right; margin: 0 10px 5px 0}
+.mysakai_options a {font-size: 9pt; color: #454A4F; font-weight: bold}
+
+/* TOOLS CONTAINER - RIGHT COLUMN */
+#toolscontainer { margin-left: 20px; }
+
+/* WIDGET CONTAINER */
+#widgetscontainer {background-color: #fff; padding-top: 1px; padding-bottom: 20px;}
+#widgetscontainer .fl-widget {margin-top: 1px}
