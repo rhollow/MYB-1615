@@ -21,15 +21,14 @@ sakai.config = {
 
     URL: {
         // Static URLs
-        INBOX_MESSAGES: "inbox: messages",
         CONTENT_MEDIA_URL: "/dev/content_media.html",
         COURSES_SITES_URL: "/dev/courses_sites.html",
         GATEWAY_URL: "/dev/index.html",
+        I10N_BUNDLE_URL: "/dev/lib/misc/l10n/globinfo/Globalization.__CODE__.min.js",
         I18N_BUNDLE_ROOT: "/dev/bundle/",
         LOGOUT_URL: "/dev/logout.html",
         MY_DASHBOARD_URL: "/dev/my_sakai.html",
         PEOPLE_URL: "/dev/people.html",
-        PROFILE_URL: "/dev/show.html?type=user",
         PROFILE_EDIT_URL: "/dev/profile_edit.html",
         PUBLIC_CONTENT_MEDIA_URL: "/dev/public_content_media.html",
         PUBLIC_COURSES_SITES_URL: "/dev/public_courses_sites.html",
@@ -42,7 +41,8 @@ sakai.config = {
         SEARCH_PEOPLE_URL: "search_people.html",
         SEARCH_SITES_URL: "search_sites.html",
         TINY_MCE_CONTENT_CSS: "/dev/css/FSS/fss-base.css,/dev/css/sakai/sakai.core.2.css,/dev/css/sakai/sakai.css,/dev/css/sakai/sakai.editor.css,/dev/css/sakai/sakai.show.css",
-        USER_DEFAULT_ICON_URL: "/dev/images/person_icon.jpg",
+        TINY_MCE_EDITOR_CSS: "/dev/css/sakai/tinymce_editor_styling.css",
+        USER_DEFAULT_ICON_URL: "/dev/images/user_avatar_icon_48x48.png",
         USER_DEFAULT_UPLOAD_FOLDER: "/private/uploads",
 
 
@@ -53,10 +53,10 @@ sakai.config = {
         CAPTCHA_SERVICE: "/system/captcha",
         CHAT_GET_SERVICE: "/var/message/chat/__KIND__.json",
         CHAT_UPDATE_SERVICE: "/var/message.chatupdate.json",
-        CONTACTS_ACCEPTED: "/var/contacts/accepted.json",
+        CONTACTS_ACCEPTED: "/var/contacts/accepted.infinity.json",
         CONTACTS_ALL: "/var/contacts/all.json",
-        CONTACTS_INVITED: "/var/contacts/invited.json",
-        CONTACTS_PENDING: "/var/contacts/pending.json",
+        CONTACTS_INVITED: "/var/contacts/invited.infinity.json",
+        CONTACTS_PENDING: "/var/contacts/pending.infinity.json",
         CREATE_USER_SERVICE: "/system/userManager/user.create.html",
         DISCUSSION_GETPOSTS_THREADED: "/var/search/discussions/threaded.json?path=__PATH__&marker=__MARKER__",
         DISCUSSION_INITIALPOSTS_SERVICE: "/var/search/discussions/initialdiscussionposts.json?path=__PATH__&items=__ITEMS__&page=__PAGE__",
@@ -93,11 +93,11 @@ sakai.config = {
         SEARCH_MY_FILES: "/var/search/files/myfiles.json",
         SEARCH_MY_SITES: "/var/search/files/mysites.json",
         SEARCH_GROUP_MEMBERS: "/var/search/groupmembers.json",
-        SEARCH_GROUPS: "/var/search/groups.json",
+        SEARCH_GROUPS: "/var/search/groups.infinity.json",
         SEARCH_PAGES: "/var/search/page.json",
         SEARCH_SITES: "/var/search/sites.json",
-        SEARCH_USERS_ACCEPTED: "/var/contacts/find.json",
-        SEARCH_USERS: "/var/search/users.json",
+        SEARCH_USERS_ACCEPTED: "/var/contacts/find.infinity.json",
+        SEARCH_USERS: "/var/search/users.infinity.json",
         SEARCH_USERS_GROUPS: "/var/search/usersgroups.json",
         SITE_ADD_MEMBERS_SERVICE: "/_rest/site/members/add/__SITE__",
         SITE_CONFIGFOLDER: "/sites/__SITEID__",
@@ -120,12 +120,77 @@ sakai.config = {
         TWITTER_POST_URL: "/var/proxy/twitter/update_status.json",
         USER_CHANGELOCALE_SERVICE: "/rest/user/changelocale/__USERID__",
         USER_CHANGEPASS_SERVICE: "/system/userManager/user/__USERID__.changePassword.html",
-        USER_EXISTENCE_SERVICE: "/system/userManager/user/__USERID__.json",
+        USER_EXISTENCE_SERVICE: "/system/userManager/user.exists.html?userid=__USERID__",
 
         // PREFIXES
         GROUP_PREFIX: "/_group",
         USER_PREFIX: "/_user"
 
+    },
+
+    PageTitles: {
+        "prefix": "TITLE_PREFIX",
+        "pages": {
+            /**  403.html  **/
+            /**  404.html  **/
+            /**  500.html  **/
+            /**  account_preferences.html  **/
+            "/dev/account_preferences.html": "ACCOUNT_PREFERENCES",
+            /**  acknowledgements.html  **/
+            "/dev/acknowledgements.html": "ACKNOWLEDGEMENTS",
+            /**  content_profile.html  **/
+            "/dev/content_profile.html": "CONTENT_PROFILE",
+            /**  create_new_account.html  **/
+            "/dev/create_new_account.html": "CREATE_A_NEW_ACCOUNT",
+            /**  directory.html  **/
+            "/dev/directory.html": "DIRECTORY",
+            /**  group_edit.html  **/
+            "/dev/group_edit.html": "MANAGE_GROUP",
+            /**  inbox.html  **/
+            "/dev/inbox.html": "MY_MESSAGES",
+            /**  index.html  **/
+            "/": "SIGN_IN",
+            "/dev": "SIGN_IN",
+            "/dev/": "SIGN_IN",
+            "/index.html": "SIGN_IN",
+            "/dev/index.html": "SIGN_IN",
+            /**  logout.html  **/
+            "/dev/logout.html": "LOGGING_OUT",
+            /**  my_sakai.html  **/
+            "/dev/my_sakai.html": "MY_SAKAI",
+            /**  people.html  **/
+            "/dev/people.html": "PEOPLE",
+            /**  profile_edit.html  **/
+            "/dev/profile_edit.html": "EDIT_MY_PROFILE",
+            /**  search.html  **/
+            "/dev/search.html": "SEARCH_ALL",
+            /**  search_groups.html  **/
+            "/dev/search_groups.html": "SEARCH_GROUPS",
+            /**  search_people.html  **/
+            "/dev/search_people.html": "SEARCH_PEOPLE",
+            /**  search_content.html  **/
+            "/dev/search_content.html": "SEARCH_CONTENT_AND_MEDIA"
+            /**  show.html  **/
+        }
+    },
+
+    Domain: {
+        /*
+         * These domain labels can be used anywhere on the site (i.e in the video
+         * widget) to convert common domains into shorter, more readable labels
+         * for display purposes.
+         */
+        Labels: {
+            "youtube.com": "YouTube",
+            "www.youtube.com": "YouTube",
+            "youtube.co.uk": "YouTube",
+            "www.youtube.co.uk": "YouTube",
+            "vimeo.com": "Vimeo",
+            "www.vimeo.com": "Vimeo",
+            "vimeo.co.uk": "Vimeo",
+            "www.vimeo.co.uk": "Vimeo",
+            "video.google.com": "Google Video"
+        }
     },
 
     Search: {
@@ -138,7 +203,7 @@ sakai.config = {
         /*
          * A collection of permission keys and range of values to be referenced
          * for making permissions decisions. The values of properties are only
-         * for reference, may not match designs and are not to be place in the
+         * for reference, may not match designs and are not to be placed in the
          * UI (message bundles should be used to match up-to-date designs).
          */
         Groups: {
@@ -156,195 +221,210 @@ sakai.config = {
         }
     },
 
+    allowPasswordChange: true,
+
     Profile: {
         /*
          * This is a collection of profile configuration functions and settings
          * The structure of the config object is identical to the storage object
          * When system/me returns profile data for the logged in user the profile_config and profile_data objects could be merged
          * "label": the internationalizable message for the entry label in HTML
-         * "required": Whether the entry is compulsory or not
-         * 
+         * "required": {Boolean} Whether the entry is compulsory or not
+         * "display": {Boolean} Show the entry in the profile or not
+         * "editable": {Boolean} Whether or not the entry is editable
          * For a date entry field use "date" as the type for MM/dd/yyyy and "dateITA" as the type for dd/MM/yyyy
-         * 
+         *
          */
         configuration: {
 
-            "basic": {
-                "label": "__MSG__PROFILE_BASIC_LABEL__",
-                "required": true,
-                "display": true,
-                "access": "everybody",
-                "elements": {
-                    "firstName": {
-                        "label": "__MSG__PROFILE_BASIC_FIRSTNAME_LABEL__",
-                        "required": true,
-                        "display": true
-                    },
-                    "lastName": {
-                        "label": "__MSG__PROFILE_BASIC_LASTNAME_LABEL__",
-                        "required": true,
-                        "display": true
-                    },
-                    "picture": {
-                        "label": "__MSG__PROFILE_BASIC_PICTURE_LABEL__",
-                        "required": false,
-                        "display": false
-                    },
-                    "preferredName": {
-                        "label": "__MSG__PROFILE_BASIC_PREFERREDNAME_LABEL__",
-                        "required": false,
-                        "display": true
-                    },
-                    "email": {
-                        "label": "__MSG__PROFILE_BASIC_EMAIL_LABEL__",
-                        "required": false,
-                        "display": true,
-                        "type": "email"
-                    },
-                    "status": {
-                        "label": "__MSG__PROFILE_BASIC_STATUS_LABEL__",
-                        "required": false,
-                        "display": false
-                    },
-                    "role": {
-                        "label": "__MSG__PROFILE_BASIC_ROLE_LABEL__",
-                        "required": false,
-                        "display": true,
-                        "type": "select",
-                        "select_elements": {
-                            "undergraduate_student":"__MSG__PROFILE_BASIC_ROLE_UNDERGRADUATE_STUDENT_LABEL__",
-                            "graduate_student":"__MSG__PROFILE_BASIC_ROLE_GRADUATE_STUDENT_LABEL__",
-                            "postgraduate_student":"__MSG__PROFILE_BASIC_ROLE_POSTGRADUATE_STUDENT_LABEL__",
-                            "academic_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_STAFF_LABEL__",
-                            "academic_related_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_RELATED_STAFF_LABEL__",
-                            "non_academic_staff":"__MSG__PROFILE_BASIC_ROLE_NON_ACADEMIC_STAFF_LABEL__",
-                            "assistent_staff":"__MSG__PROFILE_BASIC_ROLE_ASSISTENT_STAFF_LABEL__",
-                            "other":"__MSG__PROFILE_BASIC_ROLE_OTHER_LABEL__"
+            defaultConfig: {
+
+                "basic": {
+                    "label": "__MSG__PROFILE_BASIC_LABEL__",
+                    "required": true,
+                    "display": true,
+                    "access": "everybody",
+                    "modifyacl": false,
+                    "elements": {
+                        "firstName": {
+                            "label": "__MSG__PROFILE_BASIC_FIRSTNAME_LABEL__",
+                            "required": true,
+                            "display": true,
+                            "limitDisplayLength": 50
+                        },
+                        "lastName": {
+                            "label": "__MSG__PROFILE_BASIC_LASTNAME_LABEL__",
+                            "required": true,
+                            "display": true,
+                            "limitDisplayLength": 50
+                        },
+                        "picture": {
+                            "label": "__MSG__PROFILE_BASIC_PICTURE_LABEL__",
+                            "required": false,
+                            "display": false
+                        },
+                        "preferredName": {
+                            "label": "__MSG__PROFILE_BASIC_PREFERREDNAME_LABEL__",
+                            "required": false,
+                            "display": true
+                        },
+                        "email": {
+                            "label": "__MSG__PROFILE_BASIC_EMAIL_LABEL__",
+                            "required": false,
+                            "display": true,
+                            "type": "email"
+                        },
+                        "status": {
+                            "label": "__MSG__PROFILE_BASIC_STATUS_LABEL__",
+                            "required": false,
+                            "display": false
+                        },
+                        "role": {
+                            "label": "__MSG__PROFILE_BASIC_ROLE_LABEL__",
+                            "required": false,
+                            "display": true,
+                            "type": "select",
+                            "select_elements": {
+                                "academic_related_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_RELATED_STAFF_LABEL__",
+                                "academic_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_STAFF_LABEL__",
+                                "assistent_staff":"__MSG__PROFILE_BASIC_ROLE_ASSISTENT_STAFF_LABEL__",
+                                "graduate_student":"__MSG__PROFILE_BASIC_ROLE_GRADUATE_STUDENT_LABEL__",
+                                "undergraduate_student":"__MSG__PROFILE_BASIC_ROLE_UNDERGRADUATE_STUDENT_LABEL__",
+                                "non_academic_staff":"__MSG__PROFILE_BASIC_ROLE_NON_ACADEMIC_STAFF_LABEL__",
+                                "postgraduate_student":"__MSG__PROFILE_BASIC_ROLE_POSTGRADUATE_STUDENT_LABEL__",
+                                "research_staff":"__MSG__PROFILE_BASIC_ROLE_RESEARCH_STAFF_LABEL__",
+                                "other":"__MSG__PROFILE_BASIC_ROLE_OTHER_LABEL__"
+                            }
+                        },
+                        "department": {
+                            "label": "__MSG__PROFILE_BASIC_DEPARTMENT_LABEL__",
+                            "required": false,
+                            "display": true
+                        },
+                        "college": {
+                            "label": "__MSG__PROFILE_BASIC_COLLEGE_LABEL__",
+                            "required": false,
+                            "display": true
+                        },
+                        "dateofbirth": {
+                            "label": "__MSG__PROFILE_BASIC_DATEOFBIRTH_LABEL__",
+                            "required": false,
+                            "display": true,
+                            "type": "oldDate",
+                            // note that MM/DD/YYYY will be localized in javascript, so its value is simply a placeholder
+                            // ie do not change MM/DD/YYYY -- keep it in this string
+                            "example": "__MSG__DATE_OF_BIRTH_EXAMPLE__ MM/DD/YYYY __MSG__FORMAT__"
+                        },
+                        "tags": {
+                            "label": "__MSG__TAGS__",
+                            "required": false,
+                            "display": true,
+                            "type": "textarea",
+                            "tagField": true
                         }
-                    },
-                    "department": {
-                        "label": "__MSG__PROFILE_BASIC_DEPARTMENT_LABEL__",
-                        "required": false,
-                        "display": true
-                    },
-                    "college": {
-                        "label": "__MSG__PROFILE_BASIC_COLLEGE_LABEL__",
-                        "required": false,
-                        "display": true
-                    },
-                    "dateofbirth": {
-                        "label": "__MSG__PROFILE_BASIC_DATEOFBIRTH_LABEL__",
-                        "required": false,
-                        "display": true,
-                        "type": "dateITA"
-                        //"type": "date"
-                    },
-                    "tags": {
-                        "label": "__MSG__TAGS__",
-                        "required": false,
-                        "display": true,
-                        "type": "textarea",
-                        "tagField": true
                     }
-                }
-            },
-            "aboutme": {
-                "label": "__MSG__PROFILE_ABOUTME_LABEL__",
-                "required": true,
-                "display": true,
-                "access": "everybody",
-                "elements": {
-                    "aboutme": {
-                        "label": "__MSG__PROFILE_ABOUTME_LABEL__",
-                        "required": false,
-                        "display": true,
-                        "type": "textarea"
-                    },
-                    "academicinterests": {
-                        "label": "__MSG__PROFILE_ABOUTME_ACADEMICINTERESTS_LABEL__",
-                        "required": false,
-                        "display": true,
-                        "type": "textarea"
-                    },
-                    "personalinterests": {
-                        "label": "__MSG__PROFILE_ABOUTME_PERSONALINTERESTS_LABEL__",
-                        "required": false,
-                        "display": true,
-                        "type": "textarea"
-                    },
-                    "hobbies": {
-                        "label": "__MSG__PROFILE_ABOUTME_HOBBIES_LABEL__",
-                        "required": false,
-                        "display": true
+                },
+                "aboutme": {
+                    "label": "__MSG__PROFILE_ABOUTME_LABEL__",
+                    "required": true,
+                    "display": true,
+                    "access": "everybody",
+                    "modifyacl": true,
+                    "elements": {
+                        "aboutme": {
+                            "label": "__MSG__PROFILE_ABOUTME_LABEL__",
+                            "required": false,
+                            "display": true,
+                            "type": "textarea"
+                        },
+                        "academicinterests": {
+                            "label": "__MSG__PROFILE_ABOUTME_ACADEMICINTERESTS_LABEL__",
+                            "required": false,
+                            "display": true,
+                            "type": "textarea"
+                        },
+                        "personalinterests": {
+                            "label": "__MSG__PROFILE_ABOUTME_PERSONALINTERESTS_LABEL__",
+                            "required": false,
+                            "display": true,
+                            "type": "textarea"
+                        },
+                        "hobbies": {
+                            "label": "__MSG__PROFILE_ABOUTME_HOBBIES_LABEL__",
+                            "required": false,
+                            "display": true
+                        }
                     }
-                }
-            },
-            "publications": {
-                "label": "__MSG__PROFILE_PUBLICATIONS_LABEL__",
-                "required": false,
-                "display": true,
-                "access": "everybody",
-                "multiple": true,
-                "multipleLabel": "__MSG__PROFILE_PUBLICATION_LABEL__",
-                //"template": "profile_section_publications_template",
-                "elements": {
-                    "maintitle": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
-                        "required": true,
-                        "display": true,
-                        "example": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE_EXAMPLE__"
-                    },
-                    "mainauthor": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_AUTHOR__",
-                        "required": true,
-                        "display": true
-                    },
-                    "coauthor": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR__",
-                        "required": false,
-                        "display": true,
-                        "example": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR_EXAMPLE__"
-                    },
-                    "publisher": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_PUBLISHER__",
-                        "required": true,
-                        "display": true
-                    },
-                    "placeofpublication": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_PLACE_OF_PUBLICATION__",
-                        "required": true,
-                        "display": true
-                    },
-                    "volumetitle": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_TITLE__",
-                        "required": false,
-                        "display": true
-                    },
-                    "volumeinformation": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION__",
-                        "required": false,
-                        "display": true,
-                        "example": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION_EXAMPLE__"
-                    },
-                    "year": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_YEAR__",
-                        "required": true,
-                        "display": true
-                    },
-                    "number": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_NUMBER__",
-                        "required": false,
-                        "display": true
-                    },
-                    "series title": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_SERIES_TITLE__",
-                        "required": false,
-                        "display": true
-                    },
-                    "url": {
-                        "label": "__MSG__PROFILE_PUBLICATIONS_URL__",
-                        "required": false,
-                        "display": true
+                },
+                "publications": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_LABEL__",
+                    "required": false,
+                    "display": true,
+                    "access": "everybody",
+                    "modifyacl": true,
+                    "multiple": true,
+                    "multipleLabel": "__MSG__PROFILE_PUBLICATION_LABEL__",
+                    //"template": "profile_section_publications_template",
+                    "elements": {
+                        "maintitle": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
+                            "required": true,
+                            "display": true,
+                            "example": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE_EXAMPLE__"
+                        },
+                        "mainauthor": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_AUTHOR__",
+                            "required": true,
+                            "display": true
+                        },
+                        "coauthor": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR__",
+                            "required": false,
+                            "display": true,
+                            "example": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR_EXAMPLE__"
+                        },
+                        "publisher": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_PUBLISHER__",
+                            "required": true,
+                            "display": true
+                        },
+                        "placeofpublication": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_PLACE_OF_PUBLICATION__",
+                            "required": true,
+                            "display": true
+                        },
+                        "volumetitle": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_TITLE__",
+                            "required": false,
+                            "display": true
+                        },
+                        "volumeinformation": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION__",
+                            "required": false,
+                            "display": true,
+                            "example": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION_EXAMPLE__"
+                        },
+                        "year": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_YEAR__",
+                            "required": true,
+                            "display": true
+                        },
+                        "number": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_NUMBER__",
+                            "required": false,
+                            "display": true
+                        },
+                        "series title": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_SERIES_TITLE__",
+                            "required": false,
+                            "display": true
+                        },
+                        "url": {
+                            "label": "__MSG__PROFILE_PUBLICATIONS_URL__",
+                            "required": false,
+                            "display": true,
+                            "validation":"appendhttp url"
+                        }
                     }
                 }
             }
@@ -372,23 +452,40 @@ sakai.config = {
 
     },
 
-    Connections: {
+    Groups: {
         /*
-         * Email message that will be sent when inviting someone to become a connection.
-         * ${user} will be replaced by the name of the current user and ${comment} will
-         * be replaced by the personal message left by the inviter.
+         * Email message that will be sent to group managers when a user requests
+         * to join their group.
+         * ${user} will be replaced by the name of the requesting user and ${group}
+         * will be replaced with the group name.
          */
-        Invitation: {
-            title: "${user} has invited you to become a connection",
-            body: "Hi, \n\n ${user} has invited you to become a connection. \nHe/She has also left the following message: \n\n ${comment} \n\nTo accept this invitation, please click on the accept button. \n\nKind regards,\n\nThe Sakai Team"
+        JoinRequest: {
+            title: "${user} has requested to join your group: ${group}",
+            body: "Hi, \n\n ${user} has requested to join your group: ${group}. Use the links below to respond to this request. \n\n Kind regards,\n\nThe Sakai Team"
         }
+    },
+
+    Relationships: {
+        /*
+         * Relationships used by the add contacts widget to define what relationship the contacts can have
+         */
+        "contacts": [
+            {"name": "Classmate", "definition": "is my classmate", "selected": true},
+            {"name": "Supervisor", "inverse": "Supervised", "definition": "is my supervisor", "selected": false},
+            {"name": "Supervised", "inverse": "Supervisor", "definition": "is being supervised by me", "selected": false},
+            {"name": "Lecturer", "inverse": "Student", "definition": "is my lecturer", "selected": false},
+            {"name": "Student", "inverse": "Lecturer", "definition": "is my student", "selected": false},
+            {"name": "Colleague", "definition": "is my colleague", "selected": false},
+            {"name": "College Mate", "definition": "is my college mate", "selected": false},
+            {"name": "Shares Interests", "definition": "shares an interest with me", "selected": false}
+        ]
     },
 
     Site: {
         Styles: {
             original: {
                 name: "Original sakai theme",
-                image: "_images/sakai_grey.png",
+                image: "/dev/images/sakai_grey.png",
                 URL: "/dev/skins/original/original.html"
             },
             camuniversity: {
@@ -404,12 +501,10 @@ sakai.config = {
         Types: {
             inbox: "inbox",
             sent: "sent",
-            archive: "archive",
             trash: "trash"
         },
         Categories: {
             message: "Message",
-            reminder: "Reminder",
             announcement: "Announcement",
             chat: "Chat",
             invitation: "Invitation"
@@ -421,16 +516,16 @@ sakai.config = {
         read: "read"
     },
 
-    L10N: {
-        DateFormat: "dd/MM/yyyy",
-        TimeFormat: "HH:mm:ss",
-        DateTimeFormat: "EEEEE, d MMMMM yy",
-        DecimalPoint: ",",
-        NumberSeparator: "."
-    },
-
     MimeTypes: {
         "application/doc": {
+            URL: "/dev/images/mimetypes/doc.png",
+            description: "Word document"
+        },
+        "application/msword": {
+            URL: "/dev/images/mimetypes/doc.png",
+            description: "Word document"
+        },
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
             URL: "/dev/images/mimetypes/doc.png",
             description: "Word document"
         },
@@ -438,13 +533,53 @@ sakai.config = {
             URL: "/dev/images/mimetypes/pdf.png",
             description: "PDF document"
         },
+        "application/x-pdf": {
+            URL: "/dev/images/mimetypes/pdf.png",
+            description: "PDF document"
+        },
+        "application/vnd.ms-powerpoint": {
+            URL: "/dev/images/mimetypes/pps.png",
+            description: "PowerPoint document"
+        },
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation": {
+            URL: "/dev/images/mimetypes/pps.png",
+            description: "PowerPoint document"
+        },
+        "application/vnd.oasis.opendocument.text": {
+            URL: "/dev/images/mimetypes/doc.png",
+            description: "Open Office document"
+        },
+        "application/x-shockwave-flash": {
+            URL: "/dev/images/mimetypes/swf.png",
+            description: "Flash player file"
+        },
+        "application/zip": {
+            URL: "/dev/images/mimetypes/zip.png",
+            description: "Archive file"
+        },
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+            URL: "/dev/images/mimetypes/spreadsheet.png",
+            description: "Spreadsheet document"
+        },
+        "application/vnd.ms-excel": {
+            URL: "/dev/images/mimetypes/spreadsheet.png",
+            description: "Spreadsheet document"
+        },
         "text/plain": {
+            URL: "/dev/images/mimetypes/txt.png",
+            description: "Text document"
+        },
+        "text/rtf": {
             URL: "/dev/images/mimetypes/txt.png",
             description: "Text document"
         },
         "image/png": {
             URL: "/dev/images/mimetypes/images.png",
             description: "Png image"
+        },
+        "image/bmp": {
+            URL: "/dev/images/mimetypes/images.png",
+            description: "Bmp image"
         },
         "image/gif": {
             URL: "/dev/images/mimetypes/images.png",
@@ -454,9 +589,21 @@ sakai.config = {
             URL: "/dev/images/mimetypes/images.png",
             description: "Jpg image"
         },
+        "image/pjpeg": {
+            URL: "/dev/images/mimetypes/images.png",
+            description: "Jpg image"
+        },
         "text/html": {
             URL: "/dev/images/mimetypes/html.png",
             description: "HTML document"
+        },
+        "video/x-msvideo": {
+            URL: "/dev/images/mimetypes/video.png",
+            description: "Video file"
+        },
+        "video/mp4": {
+            URL: "/dev/images/mimetypes/video.png",
+            description: "Video file"
         },
         folder: {
             URL: "/dev/images/mimetypes/kmultiple.png",
@@ -473,6 +620,7 @@ sakai.config = {
     },
 
     Authentication: {
+        "allowInternalAccountCreation":true,
         "internal": true,
         "external": [
             {
@@ -511,11 +659,11 @@ sakai.config = {
             "label" : "CONTENT_AND_MEDIA"
         },
         {
-            "url" : "/dev/search_groups.html#q=*&facet=all",
+            "url" : "/dev/search_groups.html#q=*&facet=manage",
             "label" : "GROUPS"
         },
         {
-            "url" : "/dev/people.html",
+            "url" : "/dev/search_people.html#q=*&facet=contacts",
             "label" : "PEOPLE"
         },
         {
@@ -523,7 +671,7 @@ sakai.config = {
             "label" : "DIRECTORY"
         }
     ],
-    
+
     /*
      * List of pages that require a logged in user
      */
@@ -539,7 +687,7 @@ sakai.config = {
         "/dev/search_groups.html",
         "/dev/search_people.html"
     ],
-    
+
     /*
      * List of pages that require an anonymous user
      */
@@ -547,9 +695,11 @@ sakai.config = {
         "/dev/index.html",
         "/dev/create_new_account.html",
         "/dev/",
-        "/dev"
+        "/dev",
+        "/",
+        "/index.html"
     ],
-    
+
     /*
      * List op pages that require additional processing to determine
      * whether the page can be shown to the current user. These pages
@@ -608,6 +758,52 @@ sakai.config = {
             "employees": ["bert", "oszkar", "nicolaas"]
         }
     },
+    // Array of css files to load in each page
+    skinCSS: [],
+
+    Languages: [
+    {
+        "country": "CN",
+        "language": "zh",
+        "displayName": "中文"
+    },
+    {
+        "country": "NL",
+        "language": "nl",
+        "displayName": "Nederlands"
+    },
+    {
+        "country": "GB",
+        "language": "en",
+        "displayName": "English (United Kingdom)"
+    },
+    {
+        "country": "US",
+        "language": "en",
+        "displayName": "English (United States)"
+    },
+    {
+        "country": "JP",
+        "language": "ja",
+        "displayName": "日本語"
+    },
+    {
+        "country": "HU",
+        "language": "hu",
+        "displayName": "Magyar"
+    },
+    {
+        "country": "KR",
+        "language": "ko",
+        "displayName": "한국어"
+    }
+    ],
+
+    // Default Language for the deployment, must be one of the language_COUNTRY pairs that exists above
+    defaultLanguage: "en_US",
+
+    defaultUserTemplate: "defaultuser",
+    defaultGroupTemplate: "defaultgroup",
 
     widgets: {}
 };

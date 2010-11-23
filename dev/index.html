@@ -80,27 +80,9 @@
 
                 <!-- NORMAL LOGIN FUNCTIONALITY 
                      modified for myBerkeley Portal - eli 10.1.10 -->
-                <div id="login-default" style="display:none;">
-                    <form class="login-container" id="login-container" method="post" action="javascript:;">
-                        <label for="username">__MSG__USERNAME__:</label><br/>
-                        <input type="text" alt="__MSG__USERNAME__" maxlength="255" id="username" name="username" class="login-container-textfield" /><br/>
-                        <label for="password">__MSG__PASSWORD__:</label><br/>
-                        <input type="password" alt="__MSG__PASSWORD__" maxlength="255" id="password" name="password" class="login-container-textfield" />
-
-                        <div id="login-failed">__MSG__LOGIN_FAILED__!<br/></div>
-
-                        <div class="login-container-button">
-                            <button id="loginbutton" type="submit" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SIGN_IN__</span></button>
-
-                          <span id="login-loader">__MSG__SIGNING_IN__</span>
-                      </div>
-
-                        <div id="register_here">
-                            __MSG__NO_ACCOUNT_YET__? <a href="create_new_account.html" title="__MSG__CLICK_TO_REGISTER__">__MSG__REGISTER_HERE__</a>
-                        </div>
-                    </form>
-                </div>
-
+                <!-- LOGIN WIDGET -->
+                <div id="widget_login" class="widget_inline"></div>
+                
                 <!-- EXTERNAL LOGIN FUNCTIONALITY 
                      modified for myBerkeley Portal - eli 10.1.10  -->
                              <!-- NAVIGATION TEMPLATE -->
@@ -132,15 +114,6 @@
                 <div class="request-feedback">
                     __MSG__REQUEST_FOR_FEEDBACK__
                 </div>
-
-<!-- normal login from 3akai-ux Q1 -->
-                    <!-- PREVIEW IMAGE -->
-                    <img src="/dev/images/panel_thumb.jpg" alt="__MSG__INSTANCE_NAME__" />
-                </div>
-
-                <!-- LOGIN WIDGET -->
-                <div id="widget_login" class="widget_inline"></div>
-<!-- end normal login from 3akai-ux Q1 -->
 
             </div>
 
