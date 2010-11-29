@@ -4,7 +4,7 @@
     <head>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>__MSG__MY_MESSAGES_AND_MY_REMINDERS__ - myBerkeley</title>
+        <title></title>
 
         <!-- Sakai Core CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/FSS/fss-base.css" />
@@ -71,7 +71,7 @@
 
                 <!-- TITLE BAR  -->
                 <div class="s3d-site-heading">
-                    <h1 id="sitetitle">__MSG__MY_MESSAGES_AND_MY_REMINDERS__</h1>
+                    <h1 id="sitetitle">__MSG__MY_MESSAGES__</h1>
                 </div>
             </div>
         </div>
@@ -101,7 +101,6 @@
 
                             <ul>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGES__</a> <span id="inbox_unread_nr_messages"></span></li>
-                            </ul>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_announcements">__MSG__ANNOUNCEMENTS__</a> <span id="inbox_unread_nr_announcements"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_chats">__MSG__CHATS__</a> <span id="inbox_unread_nr_chats"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_invitations">__MSG__INVITATIONS__</a> <span id="inbox_unread_nr_invitations"></span></li>
@@ -122,7 +121,7 @@
 
                 <!-- Main -->
                 <div class="col-main">
-                    
+
                     <!-- MAIN INBOX -->
                     <div id="inbox_pane_inbox" class="inbox_pane">
 
@@ -137,10 +136,7 @@
                                 </span>
 
                                 <!-- Delete-->
-                                <!-- myBerkeley: Using delete buttons instead of link -->
-                                <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                                <button type="button" id="inbox_inbox_empty_trash_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>
-                                <button type="button" id="inbox_inbox_archive_completed_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__ARCHIVE_COMPLETED_REMINDERS__</span></button>
+                                <a class="inbox_inbox_delete s3d-regular-light-links" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a>
                             </div>
 
                             <div class="top_decor">
@@ -152,11 +148,6 @@
                                     <span id="inbox_subfolder_chats" class="inbox_subfolder" style="display:none">&raquo; __MSG__CHATS__</span>
                                     <span id="inbox_subfolder_invitations" class="inbox_subfolder" style="display:none">&raquo; __MSG__INVITATIONS__</span>
                                     <span id="inbox_subfolder_announcements" class="inbox_subfolder" style="display:none">&raquo; __MSG__ANNOUNCEMENTS__</span>
-                                </div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_reminders">
-                                    __MSG__NOTIFICATIONS__
-                                    <span id="inbox_subfolder_reminders" class="inbox_subfolder" style="display:none">&raquo; __MSG__REMINDERS__</span>
-                                    <span id="inbox_subfolder_archive" class="inbox_subfolder" style="display:none">&raquo; __MSG__ARCHIVE__</span>
                                 </div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_sent" style="display:none;">__MSG__SENT_MESSAGES__</div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
@@ -177,12 +168,6 @@
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_type"><span>__MSG__TYPE__</span></th>
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__DATE_ARRIVED__</span></th>
                                     </tr>
-                                    <tr class="different_reminders" style="display:none;">
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_from_reminder"><span>__MSG__FROM__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_subject_reminder"><span>__MSG__SUBJECT__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date_reminder"><span>__MSG__EVENT_OR_DUE_DATE__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_checkbox_reminder"><span>__MSG__COMPLETED__</span></th>
-                                    </tr>
                                 </table>
                                 <div id="inbox_loading_progress"></div>
                             </div>
@@ -198,9 +183,6 @@
                                 {if m.read}
                                     {var readClass="inbox-subject-read"}
                                 {/if}
-                                
-                                {if m["sakai:category"] === "message"}
-                                
                                 <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
                                     <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
                                         {if m.messagebox === "outbox"}
@@ -227,7 +209,7 @@
                                             {if toMe}
                                                 <td>
                                                 {for fromUser in m.userFrom}
-                                                    <a class="inbox_inbox_message_from" href="/dev/show.html?type=user&amp;id=${fromUser.userid}">${sakai.api.User.getDisplayName(fromUser)}</a></td>
+                                                    <a class="inbox_inbox_message_from" href="/~${fromUser.userid}">__MSG__FROM__:  ${sakai.api.User.getDisplayName(fromUser)}</a></td>
                                                 {/for}
                                                 </td>
                                             {else}
@@ -256,22 +238,6 @@
                                         <td>${m.category}</td>
                                         <td>${m.date}</td>
                                 </tr>
-                                
-                                {elseif m["sakai:category"] === "reminder"}
-                            
-                                <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
-                                        <td>
-                                        {for fromUser in m.userFrom}
-                                            <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${sakai.api.User.getDisplayName(fromUser)}</a></td>
-                                        {/for}
-                                        </td>
-                                        <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
-                                        <td>${m.date}</td>
-                                        <td class="reminders_checkbox"><input type="checkbox" class="inbox_inbox_check_done" value="${m['jcr:path']}" id="inbox_checkbox_${m['jcr:name']}" /></td>
-                                </tr>
-                                
-                                {/if}
-                            
                             {forelse}
                                 <tr class="inbox_message">
                                     <td colspan="5" class="inbox_message_none">__MSG__NO_MESSAGES_FOUND__.</td>
@@ -292,16 +258,19 @@
 
                     <!-- VIEW A SPECIFIC MESSAGE -->
                     <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
-    
+
                         <!-- Header -->
-                        <!-- myBerkeley: using buttons instead -->                    
-                        <div class="top_button_bar">
-                            <button id="inbox_inbox_back_to_list_button" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_LIST__</span></button>
-                            <button id="inbox_message_delete_button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                        </div> 
+                        <div class="top_toolbar fl-fix">
+                            <div class="fl-force-left sender-options">
+                            </div>
+
+                            <div class="fl-force-right sender-options s3d-regular-light-links">
+                                <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
+                            </div>
+                        </div>
 
                         <div class="top_decor">
-                            <div class="message-header" id="inbox_message_subject"></div>
+                            <div class="inbox-heading">__MSG__MESSAGE__</div>
                         </div>
 
                         <div class="main_content_container">
@@ -323,6 +292,8 @@
 
                                 <div class="sender-message">
                                     <div class="message-body">
+
+                                        <div class="message-header" id="inbox_message_subject"></div>
 
                                         <div id="inbox_message_body"></div>
 
@@ -443,6 +414,7 @@
                         <div class="bottom_decor"></div>
 
                     </div>
+
                 </div>
             </div>
         </div>
@@ -451,10 +423,9 @@
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
         <!-- CHAT -->
-        <!-- MYB-36 commented out for myBerkeley 0.1 release 
-        <div id="widget_chat" class="widget_inline"></div>-->
+        <div id="widget_chat" class="widget_inline"></div>
 
-       <!-- ERRORS AND MESSAGES -->
+        <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
         <span id="inbox_generalmessages_error_read_fail" style="display:none;">__MSG__FAILED_TO_MARK_THIS_MESSAGE_AS_READ__.</span>
         <span id="inbox_generalmessages_error_send_fail" style="display:none;">__MSG__UNABLE_TO_SEND_YOUR_MESSAGE__.</span>
@@ -463,13 +434,6 @@
         <span id="inbox_generalmessages_deleted_failed" style="display:none;">__MSG__UNABLE_TO_DELETE_MESSAGES__.</span>
         <span id="inbox_generalmessages_sent" style="display:none;">__MSG__MESSAGE_HAS_BEEN_SENT__.</span>
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
-
-        <span id="inbox_generalmessages_none_selected_messages" style="display:none;">__MSG__NO_MESSAGES_WERE_SELECTED__.</span>
-        <span id="inbox_generalmessages_none_selected_reminders" style="display:none;">__MSG__NO_REMINDERS_HAVE_BEEN_MARKED_AS_COMPLETE__.</span>
-        <span id="inbox_generalmessages_completed" style="display:none;">__MSG__REMINDER_MARKED_AS_COMPLETE__.</span>
-        <span id="inbox_generalmessages_not_completed" style="display:none;">__MSG__REMINDER_UNMARKED_AS_COMPLETE__.</span>
-        <span id="inbox_generalmessages_archived_1" style="display:none;">__MSG__COMPLETED_REMINDER_WAS_MOVED_TO_THE_ARCHIVE__.</span>
-        <span id="inbox_generalmessages_archived_x" style="display:none;">__MSG__COMPLETED_REMINDERS_WERE_MOVED_TO_THE_ARCHIVE__.</span>
 
         <script type="text/javascript" src="/dev/javascript/inbox.js"></script>
 
