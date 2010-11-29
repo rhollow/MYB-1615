@@ -20,7 +20,7 @@ sakai.search = function(){
     var doInit = function(){
 
         meObj = sakai.data.me;
-        
+
         loadContacts(1);
         loadInvitations();
         loadPending();
@@ -37,22 +37,27 @@ sakai.search = function(){
         loadContacts(currentpage);
     };
 
+    var errorText = $("#people_an_error_has_occurred").text();
+    var errorHTML = $("#people_error").html();
+    var loadingHTML = $("#people_loading").html();
+
     loadContacts = function(page){
 
         currentpage = parseInt(page, 10);
 
         // Set searching messages
 
-        $("#contacts_search_result").html("<b>Loading ...</b>");
+        $("#contacts_search_result").html(loadingHTML);
 
         $.ajax({
-            url: "/var/contacts/accepted.json?page=" + (page - 1) + "&items=" + peopleToSearch,
+            url: "/var/contacts/accepted.infinity.json?page=" + (page - 1) + "&items=" + peopleToSearch,
+            cache: false,
             success: function(data){
                 foundContacts = $.extend(data, {}, true);
                 renderContacts();
             },
             error: function(xhr, textStatus, thrownError) {
-                $("#contacts_search_result").html("<b>An error has occurred.</b> Please try again later");
+                $("#contacts_search_result").html(errorHTML);
             }
         });
 
@@ -94,8 +99,11 @@ sakai.search = function(){
                     }
 
                     var relationships = connection["sakai:types"];
-                    if (relationships) {
+                    // if there are more than 3 connection type display 2 connection,...
+                    if (relationships.length < 3) {
                         finaljson.items[index].extra = relationships;
+                    } else {
+                        finaljson.items[index].extra = relationships[0] + ", "+ relationships[1]+ ", ...";
                     }
                     finaljson.items[index].connected = true;
                     if (finaljson.items[index].userid == sakai.data.me.user.userid){
@@ -115,7 +123,7 @@ sakai.search = function(){
         $("#contacts_search_result").html($.TemplateRenderer("contacts_search_result_template", finaljson));
 
         $(".link_remove_contact").bind("click", function(ev){
-            var user = this.id.split("_")[this.id.split("_").length - 1];
+            var user = this.id.substring(20);
 
             $.ajax({
                 url: "/~" + sakai.data.me.user.userid + "/contacts.remove.html",
@@ -137,7 +145,7 @@ sakai.search = function(){
 
                 },
                 error: function(xhr, textStatus, thrownError) {
-                    alert("An error has occured");
+                    sakai.api.Util.notification.show(errorText,"",sakai.api.Util.notification.type.ERROR);
                 }
             });
 
@@ -152,17 +160,17 @@ sakai.search = function(){
 
         // Set searching messages
 
-        $("#invited_search_result").html("<b>Loading ...</b>");
+        $("#invited_search_result").html(loadingHTML);
 
         $.ajax({
-            url: "/var/contacts/invited.json?page=0&items=100",
+            url: "/var/contacts/invited.infinity.json?page=0&items=100",
             cache: false,
             success: function(data){
                 foundInvitations = $.extend(data, {}, true);
                 renderInvitations();
             },
             error: function(xhr, textStatus, thrownError) {
-                $("#invited_search_result").html("<b>An error has occurred.</b> Please try again later");
+                $("#invited_search_result").html(errorHTML);
             }
         });
 
@@ -195,8 +203,12 @@ sakai.search = function(){
                         finaljson.items[index].name = finaljson.items[index].userid;
                     }
                     var relationships = connection["sakai:types"];
-                    if (relationships) {
+
+                    // if there are more than 3 connection type display 2 connection,...
+                    if (relationships.length < 3) {
                         finaljson.items[index].extra = relationships;
+                    } else {
+                        finaljson.items[index].extra = relationships[0] + ", "+ relationships[1]+ ", ...";
                     }
                     finaljson.items[index].connected = true;
 
@@ -210,7 +222,7 @@ sakai.search = function(){
         $("#invited_search_result").html($.TemplateRenderer("invited_search_result_template", finaljson));
 
         $(".link_accept_contact").bind("click", function(ev){
-            var user = this.id.split("_")[this.id.split("_").length - 1];
+            var user = this.id.substring(20);
 
             $.ajax({
                 url: "/~" + sakai.data.me.user.userid + "/contacts.accept.html",
@@ -235,7 +247,7 @@ sakai.search = function(){
 
                 },
                 error: function(xhr, textStatus, thrownError) {
-                    alert("An error has occured");
+                    sakai.api.Util.notification.show(errorText,"",sakai.api.Util.notification.type.ERROR);
                 }
             });
 
@@ -252,17 +264,17 @@ sakai.search = function(){
 
         // Set searching messages
 
-        $("#invited_search_result").html("<b>Loading ...</b>");
+        $("#invited_search_result").html(loadingHTML);
 
         $.ajax({
-            url: "/var/contacts/pending.json?page=0&items=100",
+            url: "/var/contacts/pending.infinity.json?page=0&items=100",
             cache: false,
             success: function(data){
                 foundPending = $.extend(data, {}, true);
                 renderPending();
             },
             error: function(xhr, textStatus, thrownError) {
-                $("#pending_search_result").html("<b>An error has occurred.</b> Please try again later");
+                $("#pending_search_result").html(errorHTML);
             }
         });
 
@@ -295,8 +307,11 @@ sakai.search = function(){
                         finaljson.items[index].name = finaljson.items[index].userid;
                     }
                     var relationships = connection["sakai:types"];
-                    if (relationships) {
+                    // if there are more than 3 connection type display 2 connection,...
+                    if (relationships.length < 3) {
                         finaljson.items[index].extra = relationships;
+                    } else {
+                        finaljson.items[index].extra = relationships[0] + ", "+ relationships[1]+ ", ...";
                     }
                     finaljson.items[index].connected = true;
 
@@ -324,4 +339,4 @@ sakai.search = function(){
 
 };
 
-sakai.api.Widgets.Container.registerForLoad("sakai.search");
+sakai.api.Widgets.Container.registerForLoad("sakai.search");
