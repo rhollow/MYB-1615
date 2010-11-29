@@ -2,12 +2,15 @@
     "description":"My Reminders: A list of things I need to do",
     "name":"My Reminders",
     "id":"myreminders",
-    "personalportal":true,
+    //"personalportal":true,
     "url":"/devwidgets/myreminders/myreminders.html",
     "i18n": {
         "default": "/devwidgets/myreminders/bundles/default.json",
         "en_US": "/devwidgets/myreminders/bundles/en_US.json",
         "zh_CN": "/devwidgets/myreminders/bundles/zh_CN.json"
     },
-    "deletable":false
+    "multipleinstance": false,    
+    "deletable":false,
+    "type":"sakai",
+    "enabled":true
 }

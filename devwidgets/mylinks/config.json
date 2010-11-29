@@ -2,10 +2,13 @@
     "description":"My Links: a list of your favorite Berkeley websites",
     "id":"mylinks",
     "name":"My Links",
-    "personalportal":true,
+    //"personalportal":true,
     "url":"/devwidgets/mylinks/mylinks.html",
     "i18n": {
-        "default": "/devwidgets/mylinks/bundles/default.json"     
+        "default": "/devwidgets/mylinks/bundles/default.properties"     
     },
-    "deletable":false
+    "multipleinstance": false,    
+    "deletable":false,
+    "type":"sakai",
+    "enabled":true
 }
