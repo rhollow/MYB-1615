@@ -49,7 +49,7 @@ sakai.widgets = {
             "layout": "dev",
             //"columns": [["mygroups", "mycontacts"], ["myprofile", "mycontent"]]
             // myberkeley customization:
-            "columns": [["mylinks", "myreminders"]]
+            "columns": [["mylinks", "recentmessages"], ["myreminders"]]
         },
         "siteportal": {
             "layout": "dev",
