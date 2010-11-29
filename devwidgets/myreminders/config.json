@@ -5,9 +5,9 @@
     //"personalportal":true,
     "url":"/devwidgets/myreminders/myreminders.html",
     "i18n": {
-        "default": "/devwidgets/myreminders/bundles/default.json",
-        "en_US": "/devwidgets/myreminders/bundles/en_US.json",
-        "zh_CN": "/devwidgets/myreminders/bundles/zh_CN.json"
+        "default": "/devwidgets/myreminders/bundles/default.properties",
+        "en_US": "/devwidgets/myreminders/bundles/en_US.properties",
+        "zh_CN": "/devwidgets/myreminders/bundles/zh_CN.properties"
     },
     "multipleinstance": false,    
     "deletable":false,
