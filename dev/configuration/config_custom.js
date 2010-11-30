@@ -25,5 +25,10 @@ sakai.config.Authentication = {
     ]
 };
 
+// myBerkeley custom page titles
+sakai.config.PageTitles.pages["/dev/inboxnotifier.html"] = "NOTIFICATIONS";
+sakai.config.PageTitles.pages["/dev/listpage.html"] = "MY_DYNAMIC_LISTS";
+sakai.config.PageTitles.pages["/dev/links.html"] = "LINKS";
+
 // Custom CSS Files to load in
 sakai.config.skinCSS = ["/dev/skins/default/skin.css"];
