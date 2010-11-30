@@ -4,13 +4,6 @@ sakai.config = sakai.config || {};
 
 // Custom config settings unique to myBerkeley go in this file.
 
-sakai.config.Navigation = [
-    {
-        "url" : "/dev/my_sakai.html",
-        "label" : "MY_SAKAI"
-    }
-];
-
 // This is our custom CAS log in information.
 sakai.config.Authentication = {
     "internal": sakai.isDev, 
