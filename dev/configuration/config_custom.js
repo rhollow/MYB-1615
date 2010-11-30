@@ -2,7 +2,7 @@ var sakai = sakai || {};
 
 sakai.config = sakai.config || {};
 
-// Insert custom configuration here
+// Custom config settings unique to myBerkeley go in this file.
 
 sakai.config.Navigation = [
     {
@@ -11,8 +11,7 @@ sakai.config.Navigation = [
     }
 ];
 
-// This is our custom CAS log in information. Please note, we're not actually using the external object yet 
-
+// This is our custom CAS log in information.
 sakai.config.Authentication = {
     "internal": sakai.isDev, 
     "external": [
@@ -25,7 +24,7 @@ sakai.config.Authentication = {
     ]
 };
 
-// myBerkeley custom page titles
+// Page titles for myB-unique pages
 sakai.config.PageTitles.pages["/dev/inboxnotifier.html"] = "NOTIFICATIONS";
 sakai.config.PageTitles.pages["/dev/listpage.html"] = "MY_DYNAMIC_LISTS";
 sakai.config.PageTitles.pages["/dev/links.html"] = "LINKS";
