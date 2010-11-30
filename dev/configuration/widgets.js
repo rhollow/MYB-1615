@@ -47,9 +47,7 @@ sakai.widgets = {
     "defaults": {
         "personalportal": {
             "layout": "dev",
-            //"columns": [["mygroups", "mycontacts"], ["myprofile", "mycontent"]]
-            // myberkeley customization:
-            "columns": [["mylinks", "recentmessages"], ["myreminders"]]
+            "columns": [["mygroups", "mycontacts"], ["myprofile", "mycontent"]]
         },
         "siteportal": {
             "layout": "dev",

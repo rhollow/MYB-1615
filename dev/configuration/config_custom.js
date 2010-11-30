@@ -31,3 +31,6 @@ sakai.config.PageTitles.pages["/dev/links.html"] = "LINKS";
 
 // Custom CSS Files to load in
 sakai.config.skinCSS = ["/dev/skins/default/skin.css"];
+
+// set our own default widget arrangement
+sakai.widgets.defaults.personalportal.columns = [["mylinks", "recentmessages"], ["myreminders"]];
