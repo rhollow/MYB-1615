@@ -72,7 +72,7 @@ strong {
 */
 
 .search_tab_content {
-    background-image: url(../../_images/body_bg2.png);
+    background-image: url(/dev/images/body_bg2.png);
     background-repeat: repeat-x;
 }
 
@@ -181,7 +181,7 @@ strong {
 }
 
 .search_result_star {
-    background-image: url(../../_images//star.png);
+    background-image: url(/dev/images//star.png);
     display: block;
     float: left;
     position: relative;

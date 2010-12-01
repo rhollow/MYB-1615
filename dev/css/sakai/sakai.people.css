@@ -13,7 +13,7 @@
 }
 
 .people .find_more_people a {
-    background: url(../../_images/arrow_right_sm2_blue.png) no-repeat scroll right center;
+    background: url(/dev/images/arrow_right_sm2_blue.png) no-repeat scroll right center;
     color: #058EC4;
     font-size: 14px;
     font-weight: bold;
@@ -34,12 +34,12 @@
     background: #FFF;
 }
 .people .outline-top {
-    background: url('../../_images/content_tr_flip.png') top right no-repeat;
+    background: url('/dev/images/content_tr_flip.png') top right no-repeat;
     padding: 0 5px 0 0;
     margin: 0;
 }
 .people .outline-top-inner {
-    background: url('../../_images/content_tl.gif') 0 0 no-repeat;
+    background: url('/dev/images/content_tl.gif') 0 0 no-repeat;
     margin: 0;
     height: 6px;
 }
@@ -49,12 +49,12 @@
     padding: 8px 10px;
 }
 .people .outline-bottom {
-    background: url('../../_images/content_br.png') top right no-repeat;
+    background: url('/dev/images/content_br.png') top right no-repeat;
     padding: 0 5px 0 0;
     margin: 0 0 20px 0;
 }
 .people .outline-bottom-inner {
-    background: url('../../_images/content_bl.png') 0 0 no-repeat;
+    background: url('/dev/images/content_bl.png') 0 0 no-repeat;
     margin: 0;
     height: 6px;
 }
@@ -77,17 +77,17 @@
     margin-top: 0;
 }
 .people .search_top_rounded {
-    background:transparent url(../../_images/search_results_tl.png) no-repeat scroll left top;
+    background:transparent url(/dev/images/search_results_tl.png) no-repeat scroll left top;
 }
 .people .search_top_rounded_inner {
-    background:transparent url(../../_images/search_results_tr.png) no-repeat scroll right top;
+    background:transparent url(/dev/images/search_results_tr.png) no-repeat scroll right top;
     height:10px;
 }
 .people .search_bottom_rounded {
-    background:transparent url(../../_images/search_results_bl.png) no-repeat scroll left bottom;
+    background:transparent url(/dev/images/search_results_bl.png) no-repeat scroll left bottom;
 }
 .people .search_bottom_rounded_inner {
-    background:transparent url(../../_images/search_results_br.png) no-repeat scroll right bottom;
+    background:transparent url(/dev/images/search_results_br.png) no-repeat scroll right bottom;
     height:10px;
 }
 
@@ -105,7 +105,7 @@
 .search_result_person_picture {
     float: left;
     display: block;
-    background-image: url(../../_images/person_icon.jpg);
+    background-image: url(/dev/images/person_icon.jpg);
     background-repeat: no-repeat;
     width: 60px;
     height: 60px;

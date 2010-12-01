@@ -260,7 +260,7 @@ a.s3d-regular-links, .s3d-regular-links a{
 }
 
 .basic_appearance .site_secondary_heading a {
-    background: #fff url('../../_images/arrow_left_sm2_blue.gif') center left no-repeat;
+    background: #fff url('/dev/images/arrow_left_sm2_blue.gif') center left no-repeat;
     padding: 0 0 0 10px;
 }
 

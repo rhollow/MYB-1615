@@ -11,16 +11,16 @@
 { border-left: 3px solid #D3DBDE; border-right: 3px solid #D3DBDE; margin: 0; padding: 10px; }
 
 .links .content_top
-{ background: url('../../_images/content_tr.gif') top right no-repeat; padding: 0 5px 0 0; margin: 0; }
+{ background: url('/dev/images/content_tr.gif') top right no-repeat; padding: 0 5px 0 0; margin: 0; }
 
 .links .content_top_inner
-{ background: url('../../_images/content_tl.gif') 0 0 no-repeat; margin: 0; height: 6px; }
+{ background: url('/dev/images/content_tl.gif') 0 0 no-repeat; margin: 0; height: 6px; }
 
 .links .content_bottom
-{ background: url('../../_images/content_br.png') top right no-repeat; padding: 0 5px 0 0; margin: 0; }
+{ background: url('/dev/images/content_br.png') top right no-repeat; padding: 0 5px 0 0; margin: 0; }
 
 .links .content_bottom_inner
-{ background: url('../../_images/content_bl.png') 0 0 no-repeat; margin: 0; height: 6px; }
+{ background: url('/dev/images/content_bl.png') 0 0 no-repeat; margin: 0; height: 6px; }
 
 
 /** SUGGESTED LINKS SECTION **/
@@ -60,7 +60,7 @@
 
 /** TAB VARIANT **/
 .links .s3d-primary-tabs
-{ background: #fff url('../../_images/profile_tab_bg.png') top right no-repeat; }
+{ background: #fff url('/dev/images/profile_tab_bg.png') top right no-repeat; }
 
 
 /** GENERAL LINKS SECTION RULES **/
@@ -92,10 +92,10 @@
 
 /** BUTTONS **/
 .links .grey_button
-{ background:transparent url(../../_images/gray_button_left.png) no-repeat scroll left top; float: left; margin: 0 5px 0 0; }
+{ background:transparent url(/dev/images/gray_button_left.png) no-repeat scroll left top; float: left; margin: 0 5px 0 0; }
 
 .links .grey_button .button
-{ background:transparent url(../../_images/gray_button_right.png) no-repeat scroll right top; border:medium none; color:#FFFFFF; cursor:pointer; font-weight:bold; height:23px; margin:0 -10px 0 0; }
+{ background:transparent url(/dev/images/gray_button_right.png) no-repeat scroll right top; border:medium none; color:#FFFFFF; cursor:pointer; font-weight:bold; height:23px; margin:0 -10px 0 0; }
 
 
 /** CHECKBOXES **/
@@ -113,7 +113,7 @@
 
 .LabelUnselected
 {
-	background: url("../../_images/starsprites.png") no-repeat;
+	background: url("/dev/images/starsprites.png") no-repeat;
     position: relative;
 	padding-left: 25px;
 	padding-top: 0px;
@@ -139,7 +139,7 @@
 
 .LabelRequired
 { 
-    background: url("../../_images/starsprites.png") no-repeat;
+    background: url("/dev/images/starsprites.png") no-repeat;
     position: relative;
     background-position: 0px -44px; 
     padding-left: 25px;

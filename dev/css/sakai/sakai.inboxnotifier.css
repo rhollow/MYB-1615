@@ -179,7 +179,7 @@
 { display:inline; height: auto; width: 100%; }
 
 .inbox_detail .message-arrow
-{ background: url(../../_images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
+{ background: url(/dev/images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
 .inbox_detail .message-body
 { padding: 20px 37px 30px; color:#333; font-size: 13px; }
 .inbox_detail .message-header
@@ -224,12 +224,12 @@
 {border-left: 1px solid #999; padding: 0 2px 0 6px;}
 .inbox_main .user-personal .first{border-left: none;}
 
-.inbox_main .user-name{color: #058ec4; background: url(../../_images/user_online.gif) no-repeat 7px 2px;}
+.inbox_main .user-name{color: #058ec4; background: url(/dev/images/user_online.gif) no-repeat 7px 2px;}
 .inbox_main .user-name strong{padding-left: 14px;}
 
 .inbox_main .user-arrow-down{position: relative; top: -1px; padding-left: 3px;}
 
-.inbox_main .user-mail{background: url(../../_images/user_mail_icon.gif) no-repeat 6px 3px;}
+.inbox_main .user-mail{background: url(/dev/images/user_mail_icon.gif) no-repeat 6px 3px;}
 .inbox_main .user-mail a{color: #666; padding-left: 16px;}
 
 .inbox_main .inbox-checkbox{width: 16px;}
