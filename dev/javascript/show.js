@@ -27,7 +27,7 @@ sakai.currentgroup.manager = sakai.currentgroup.manager || false;
 sakai.profile = sakai.profile || {};
 sakai.profile.main = {
     chatstatus: "",
-    config: sakai.config.Profile.configuration,
+    config: sakai.config.Profile.configuration.defaultConfig,
     data: {},
     isme: false,
     currentuser: "",
@@ -47,40 +47,66 @@ sakai.show = function() {
     var entityID = false;
     var entityPrefix = false;
     var entityPath = false;
-    
+
     var canEdit = false;
+    var entityData = false;
     var entityDataReady = false;
     var pagesWidgetReady = false;
     var entityWidgetReady = false;
     var renderedPagesWidget = false;
     var renderedEntityWidget = false;
-    
+
 
     /**
      * Get the group id from the querystring
      */
     var setEntityInfo = function(){
-        var querystring = new Querystring();
-        if (querystring.contains("type")) {
-            entityType = querystring.get("type");
+        if (window.location.pathname.substring(0, 2) === "/~") {
+            entityID = window.location.pathname.substring(2);
+            if (entityID.indexOf("/") != -1){
+                entityID = entity.substring(0, entity.indexOf("/"));
+            }
+        } else {
+            var querystring = new Querystring();
+            if (querystring.contains("id")) {
+                entityID = querystring.get("id");
+            } else if (entityType === "user") { // if there's no ID, assume its meant for you
+                entityID = sakai.data.me.user.userid;
+            }
         }
-        if (querystring.contains("id")) {
-            entityID = querystring.get("id");
-        } else if (entityType === "user") { // if there's no ID, assume its meant for you
-            entityID = sakai.data.me.user.userid;
-        }
-        switch (entityType) {
-            case "user":
-                entityPrefix = sakai.config.URL.USER_PREFIX;
-                break;
-            case "group":
-                entityPrefix = sakai.config.URL.GROUP_PREFIX;
-                break;
-        }
-        if (!(entityID && entityType)) {
-            // Not enough parameters given
-            sakai.api.Security.send404();
-        } 
+        sakai.api.Server.loadJSON("/~" + entityID + "/public/authprofile", function(success, data) {
+            if (success){
+
+                if (data["sakai:group-id"]){
+                    var newdata = {};
+                    newdata["authprofile"] = data;
+                    data = newdata;
+                    entityType = "group";
+                } else {
+                    entityType = "user";
+                }
+                entityData = data;
+                switch (entityType) {
+                    case "user":
+                        entityPrefix = sakai.config.URL.USER_PREFIX;
+                        break;
+                    case "group":
+                        entityPrefix = sakai.config.URL.GROUP_PREFIX;
+                        break;
+                }
+                getEntityData();
+
+            } else {
+
+                if (data.status === 401 || data.status === 403){
+                    sakai.api.Security.send403();
+                } else {
+                    sakai.api.Security.send404();
+                }
+
+            }
+
+        });
     };
 
     sakai.show.canEdit = function() {
@@ -97,8 +123,7 @@ sakai.show = function() {
     var constructProfilePicture = function(profile){
         if (profile.basic.elements.picture && profile.basic.elements.picture.value && profile["rep:userId"]) {
             return "/~" + profile["rep:userId"] + "/public/profile/" + profile.basic.elements.picture.value.name;
-        }
-        else {
+        } else {
             return "";
         }
     };
@@ -107,26 +132,18 @@ sakai.show = function() {
      * Fetch group data
      */
     var getGroupData = function() {
-        $.ajax({
-            url: "/~" + entityID + "/public.infinity.json",
-            success: function(data){
-                sakai.currentgroup.id = entityID;
-                sakai.currentgroup.data = data;
-                postDataRetrieval();
-                sakai.api.Security.showPage();
-            },
-            error: function(xhr, textStatus, thrownError){
-
-	            if (xhr.status === 401 || xhr.status === 403){
-                    sakai.api.Security.send403();
-                } else {
-                    sakai.api.Security.send404();
-                }
-
+        sakai.currentgroup.id = entityID;
+        sakai.currentgroup.data = entityData;
+        postDataRetrieval();
+        sakai.api.Security.showPage(function() {
+            if (sakai.currentgroup.data.authprofile["sakai:customStyle"]) {
+                sakai.api.Util.include.css(sakai.currentgroup.data.authprofile["sakai:customStyle"]);
             }
         });
+        var pageTitle = sakai.api.i18n.General.getValueForKey(sakai.config.PageTitles.prefix);
+        document.title = pageTitle + entityData.authprofile["sakai:group-title"];
     };
-    
+
     /**
      * Set the profile data for the user such as the status and profile picture
      */
@@ -147,50 +164,56 @@ sakai.show = function() {
             // Set the profile data object
             sakai.profile.main.data = $.extend(true, {}, sakai.data.me.profile);
 
-            if (sakai.profile.main.data.activity)
+            if (sakai.profile.main.data.activity) {
                 delete sakai.profile.main.data.activity;
+            }
+
+            postDataRetrieval();
+            sakai.api.Security.showPage(function() {
+                if (sakai.profile.main.data.authprofile["sakai:customStyle"]) {
+                    sakai.api.Util.include.css(sakai.profile.main.data.authprofile["sakai:customStyle"]);
+                }
+            });
+        } else {
+
+            // Set the correct userprofile data
+            userprofile = $.extend(true, {}, entityData);
+
+            // Set the profile picture
+            sakai.profile.main.picture = constructProfilePicture(userprofile);
+
+            // Set the status for the user you want the information from
+            if(userprofile.basic && userprofile.basic.elements.status){
+                sakai.profile.main.status = userprofile.basic.elements.status.value;
+            }
+
+            // Set the profile data object
+            sakai.profile.main.data = $.extend(true, {}, userprofile);
+
+            if (sakai.profile.main.data["sakai:customStyle"]) {
+                sakai.api.Util.include.css(sakai.profile.main.data["sakai:customStyle"]);
+            }
 
             postDataRetrieval();
             sakai.api.Security.showPage();
-
         }
-        else {
-            sakai.api.Server.loadJSON("/~" + entityID + "/public/authprofile", function(success, data) {
-                if (success && data) {
-                    // Set the correct userprofile data
-                    userprofile = $.extend(true, {}, data);
-
-                    // Set the profile picture
-                    sakai.profile.main.picture = constructProfilePicture(userprofile);
-
-                    // Set the status for the user you want the information from
-                    if(userprofile.basic && userprofile.basic.elements.status){
-                        sakai.profile.main.status = userprofile.basic.elements.status.value;
-                    }
-
-                    // Set the profile data object
-                    sakai.profile.main.data = $.extend(true, {}, userprofile);
-                    sakai.api.Security.showPage();
-                } else {
-                    sakai.api.Security.send404();
-                    return false;
-                }
-                postDataRetrieval();
-            });
-        }
+        
+        var pageTitle = sakai.api.i18n.General.getValueForKey(sakai.config.PageTitles.prefix);
+        document.title = pageTitle + sakai.api.User.getDisplayName(sakai.profile.main.data);
+        
     };
 
     var getEntityData = function() {
         switch (entityType) {
             case "user":
                 getUserData();
-                break;            
+                break;
             case "group":
                 getGroupData();
                 break;
         }
     };
-    
+
     var getEditPermissions = function() {
         switch (entityType) {
             case "user":
@@ -198,7 +221,7 @@ sakai.show = function() {
                     sakai.profile.main.isme = true;
                     canEdit = true;
                 }
-                break;            
+                break;
             case "group":
                 if (sakai.api.Groups.isCurrentUserAManager(sakai.currentgroup.id)) {
                     sakai.currentgroup.manager = true;
@@ -207,18 +230,18 @@ sakai.show = function() {
                 break;
         }
     };
-    
+
     var setEntityPath = function() {
         switch (entityType) {
             case "user":
                 entityPath = entityPrefix + sakai.profile.main.data.path;
                 break;
             case "group":
-                entityPath = entityPrefix + "/" + entityID.substring(0,1) + "/" + entityID.substring(0,2) + "/" + entityID;
+                entityPath = entityPrefix + sakai.currentgroup.data.authprofile.path;
                 break;
-        }  
+        }
     };
-    
+
     var postDataRetrieval = function() {
         entityDataReady = true;
         getEditPermissions();
@@ -230,9 +253,9 @@ sakai.show = function() {
             loadEntityWidget();
         }
     };
- 
+
     var loadEntityWidget = function() {
-        renderedEntityWidget = true;        
+        renderedEntityWidget = true;
         switch (entityType) {
             case "user":
                 // Check whether we need to load the myprofile or the profile mode
@@ -254,11 +277,11 @@ sakai.show = function() {
         renderedPagesWidget = true;
         var basepath = "/~" + entityID + "/pages/";
         var fullpath = entityPath + "/pages/";
-        var url = "/dev/show.html?id=" + entityID + "&type=" + entityType;
+        var url = "/~" + entityID;
         var editMode = sakai.currentgroup.manager || sakai.profile.main.isme;
         var homePage = "";
         sakai.sitespages.doInit(basepath, fullpath, url, canEdit, homePage, entityType+"pages", entityType+"dashboard");
-    }
+    };
 
     $(window).bind("sakai.api.UI.entity.ready", function(e){
         entityWidgetReady = true;
@@ -280,10 +303,9 @@ sakai.show = function() {
 
     var doInit = function(){
         setEntityInfo();
-        getEntityData();
     };
 
     doInit();
-}
+};
 
 sakai.api.Widgets.Container.registerForLoad("sakai.show");

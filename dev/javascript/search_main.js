@@ -121,7 +121,7 @@ sakai._search = function(config, callback) {
             }
         });
     };
-    
+
     fetchMyFriends();
 
     /**
@@ -148,6 +148,7 @@ sakai._search = function(config, callback) {
             var frag = $.deparam.fragment();
             frag["filter"] = ""; // clear the filter
             frag["facet"] = ""; // clear the facet
+            frag["page"] = "1";
             url = $.param.fragment(url, frag);
             $(this).attr("href", url);
             return true;
@@ -234,11 +235,16 @@ sakai._search = function(config, callback) {
             }
             // Modify the tags if there are any
             if(finaljson.items[i]["sakai:tags"]){
+                if (typeof(finaljson.items[i]["sakai:tags"]) === 'string') {
+                    finaljson.items[i]["sakai:tags"] = finaljson.items[i]["sakai:tags"].split(",");
+                }
 
                 for(var k = 0, l = finaljson.items[i]["sakai:tags"].length; k < l; k++){
 
                     // If the searchterm occures in the tags, make it bold
-                    finaljson.items[i]["sakai:tags"][k] = convertTermToBold(finaljson.items[i]["sakai:tags"][k], searchterm);
+                    if (finaljson.items[i]["sakai:tags"][k]) {
+                        finaljson.items[i]["sakai:tags"][k] = convertTermToBold(finaljson.items[i]["sakai:tags"][k], searchterm);
+                    }
                 }
             }
         }
@@ -260,7 +266,19 @@ sakai._search = function(config, callback) {
                 user.path = "/~" + user.userid + "/public/";
                 var person = item;
                 if (person.picture) {
-                    var picture = $.parseJSON(person.picture);
+                    var picture;
+                    // if picture is string
+                    if (typeof person.picture === "string") {
+                        picture = $.parseJSON(person.picture);
+                    // if picuture is json object                    
+                    } else {
+                        picture = person.picture;
+                    }
+                    if (picture.name) {
+                        user.picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
+                    } else {
+                        user.picture = sakai.config.URL.USER_DEFAULT_ICON_URL;
+                    }
                     if (picture.name) {
                         user.picture = "/~" + person["rep:userId"] + "/public/profile/" + picture.name;
                     } else {
@@ -291,6 +309,7 @@ sakai._search = function(config, callback) {
                     }
                 }
                 user.connected = false;
+                user.invited = item.invited !== undefined ? item.invited : false;
                 // Check if this user is a friend of us already.
 
                 if (getMyFriends().results) {
@@ -384,22 +403,7 @@ sakai._search = function(config, callback) {
      * @param {String} term The search term that needs to be converted.
      */
     var prepSearchTermForURL = function(term) {
-        var urlterm = "";
-        var splitted = $.trim(term).split(/\s/);
-        if (splitted.length > 1) {
-            for (var i = 0; i < splitted.length; i++) {
-                if (splitted[i]) {
-                    urlterm += "*" + splitted[i] + "* "
-                    if (i < splitted.length - 1) {
-                        urlterm += "OR ";
-                    }
-                }
-            }
-        }
-        else {
-            urlterm = "*" + term + "*";
-        }
-        return urlterm;
+        return sakai.api.Server.createSearchString(term);
     };
 
     /**
@@ -408,25 +412,34 @@ sakai._search = function(config, callback) {
     var addFacetedPanel = function() {
         $(window).bind("sakai.api.UI.faceted.ready", function(e){
             sakai.api.UI.faceted.render(searchConfig.facetedConfig);
-            
+
             var currentfacet = $.bbq.getState('facet');
             if (currentfacet) {
                 $("#" + currentfacet).addClass("faceted_category_selected");
             } else {
                 $(".faceted_category:first").addClass("faceted_category_selected");
-            }          
+            }
 
             // bind faceted search elements
             // loop through each faceted category and bind the link to trigger a search
-            
+
             $(".faceted_category").bind("click", function(ev){
                 var facet = $(this).attr("id");
                 var searchquery = $(searchConfig.global.text).val();
                 var searchwhere = getSearchWhereSites();
+
+                // sometimes page search takes a long time and 
+                // if another link is clicked in between load old link data instead of new link
+                // so need to check if new link is clicked kill the previous ajax request.
+                var killPreviousAjaxCall = false;
+                if (mainFacetedUrl !== searchConfig.facetedConfig.facets[facet].searchurl) {
+                    killPreviousAjaxCall = true;
+                }
+                
                 mainFacetedUrl = searchConfig.facetedConfig.facets[facet].searchurl;
-                sakai._search.doHSearch(1, searchquery, searchwhere, facet);
+                sakai._search.doHSearch(1, searchquery, searchwhere, facet, killPreviousAjaxCall);
             });
-            
+
         });
     };
 
