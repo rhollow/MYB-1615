@@ -155,7 +155,6 @@ sakai.topnavigation = function(tuid, showSettings){
      * Add binding to some elements
      */
     var addBinding = function(){
-        /* MYB-35, MYB-36, commented out for myBerkley 0.1 Release
         $(userLink).bind("click", function(){
             showHideUserLinkMenu(false);
         });
@@ -165,7 +164,7 @@ sakai.topnavigation = function(tuid, showSettings){
             showHideUserLinkMenu(false);
             var clicked = ev.currentTarget.id.split("_")[ev.currentTarget.id.split("_").length - 1];
             sendChatStatus(clicked);
-        });*/
+        });
 
         $.each($(topNavigationBar + " a"), function(){
             if (window.location.pathname === $(this).attr("href")){
