@@ -28,7 +28,7 @@ sakai.profile = function(){
 
     sakai.profile.main = {
         chatstatus: "",
-        config: sakai.config.Profile.configuration,
+        config: sakai.config.Profile.configuration.defaultConfig,
         data: {},
         isme: false,
         currentuser: "",
@@ -95,7 +95,7 @@ sakai.profile = function(){
             sakai.profile.main.mode.value = sakai.profile.main.mode.options[0];
 
             // Print a log message that the supplied mode isn't valid
-            fluid.log("profile - changeProfileMode - the supplied mode '" + mode + "' is not a valid profile mode. Using the default mode instead");
+            debug.warn("profile - changeProfileMode - the supplied mode '" + mode + "' is not a valid profile mode. Using the default mode instead");
 
         }
 
@@ -112,31 +112,6 @@ sakai.profile = function(){
         return false;
 
     };
-
-    /**
-     * Change the profile mode
-     * This will fire a redirect
-     * @param {String} mode The mode you want to change to
-     */
-    var changeProfileMode = function(mode){
-
-         // Check the mode parameter
-        if ($.inArray(mode, sakai.profile.main.mode.options) !== -1) {
-
-            // Perform the redirect
-            //window.location = window.location.pathname + "?mode=" + mode; // TODO fix this, jquery.bbq it, and do not force a refresh
-            switch (mode) {
-                case "edit":
-                    window.location = sakai.config.URL.PROFILE_EDIT_URL + "?user=" + sakai.profile.main.currentuser;
-                    break;
-                case "view":
-                    window.location = sakai.config.URL.PROFILE_URL + "&id=" + sakai.profile.main.currentuser;
-                    break;
-            }
-        }
-
-    };
-
 
     /**
      * Check whether the user is editing/looking at it's own profile or not
@@ -256,6 +231,16 @@ sakai.profile = function(){
     };
 
     /**
+     * Checks if the user has a custom profile type set
+     */
+    var checkProfileType = function() {
+        var userType = sakai.profile.main.data.userType;
+        if (userType && sakai.config.Profile.configuration[userType]) {
+            sakai.profile.main.config = sakai.config.Profile.configuration[userType];
+        }
+    };
+
+    /**
      * Set the profile data for the user such as the status and profile picture
      */
     var setProfileData = function(callback){
@@ -275,11 +260,15 @@ sakai.profile = function(){
             // Set the profile data object
             sakai.profile.main.data = $.extend(true, {}, sakai.data.me.profile);
 
-            if (sakai.profile.main.data.activity)
+            // Check user profile type
+            checkProfileType();
+
+            if (sakai.profile.main.data.activity) {
                 delete sakai.profile.main.data.activity;
+            }
 
             // Execute the callback function
-            if (callback && typeof callback === "function") {
+            if ($.isFunction(callback)) {
                 callback();
             }
 
@@ -300,10 +289,13 @@ sakai.profile = function(){
 
                     // Set the profile data object
                     sakai.profile.main.data = $.extend(true, {}, userprofile);
+
+                    // Check user profile type
+                    checkProfileType();
                 } else {
-                    fluid.log("setProfileData: Could not find the user's profile");
+                    debug.error("setProfileData: Could not find the user's profile");
                 }
-                if (callback && typeof callback === "function") {
+                if ($.isFunction(callback)) {
                     callback();
                 }
             });
@@ -323,27 +315,6 @@ sakai.profile = function(){
         if (i_object["sakai:tag-uuid"]) {
             delete i_object["sakai:tag-uuid"];
         }
-    };
-
-    /**
-     * Filter some JCR properties, we need to do this because some properties
-     * can not be used by the import operation in Sling
-     * @param {Object} i_object The object you want to filter
-     */
-    var filterJCRProperties = function(i_object){
-
-        // Remove the "rep:policy" property
-        if (i_object["rep:policy"]) {
-            delete i_object["rep:policy"];
-        }
-
-        // Also run over the other objects within this object
-        for (var i in i_object) {
-            if (i_object.hasOwnProperty(i) && $.isPlainObject(i_object[i])) {
-              filterJCRProperties(i_object[i]);
-            }
-        }
-
     };
 
 
@@ -395,28 +366,7 @@ sakai.profile = function(){
             }
         }
 
-        /*for(var k = 0, kl = requests.length; k < kl; k++){
-
-            $.ajax({
-                url: requests[k].url,
-                traditional: true,
-                type: requests[k].method,
-                data: requests[k].parameters,
-                async: false,
-                success: function(){
-
-                    if(k === requests.length-1){
-                        alert("ok");
-                    }
-
-                }
-            });
-
-        }*/
-
-
         // Send the Ajax request to the batch servlet
-        // depends on KERN-909
         $.ajax({
             url: sakai.config.URL.BATCH,
             traditional: true,
@@ -424,22 +374,13 @@ sakai.profile = function(){
             data: {
                 requests: $.toJSON(requests)
             },
+            complete: function() {
+                $("#profile_footer_button_update").removeAttr("disabled");
+            },
             success: function(data){
 
                 // Show a successful notification to the user
                 sakai.api.Util.notification.show("", $profile_message_form_successful.text() , sakai.api.Util.notification.type.INFORMATION);
-
-                // Wait for 2 seconds
-                setTimeout(
-
-                    function(){
-
-                        // Change the profile mode if the save was successful
-                        changeProfileMode("view");
-
-                    }
-
-                , 2000);
 
             },
             error: function(xhr, textStatus, thrownError){
@@ -448,22 +389,13 @@ sakai.profile = function(){
                 sakai.api.Util.notification.show("", $profile_error_form_error_server.text() , sakai.api.Util.notification.type.ERROR);
 
                 // Log an error message
-                fluid.log("sakai.profile - saveProfileACL - the profile ACL's couldn't be saved successfully");
+                debug.error("sakai.profile - saveProfileACL - the profile ACL's couldn't be saved successfully");
 
             }
         });
 
     };
 
-    /**
-     * Save the current profile data to the repository
-     */
-    var saveProfileData = function(){
-
-        // Trigger the profile save method, this is event is bound in every sakai section
-        $(window).trigger("sakai-profile-save");
-
-    };
 
     $(window).bind("sakai-profile-data-ready", function(e, sectionName) {
 
@@ -481,8 +413,9 @@ sakai.profile = function(){
             }
         }
 
+        readySections = [];
         // Filter some JCR properties
-        filterJCRProperties(sakai.profile.main.data);
+        sakai.api.Server.filterJCRProperties(sakai.profile.main.data);
 
         // Filter out the tags
         filterTagsProperties(sakai.profile.main.data);
@@ -498,12 +431,12 @@ sakai.profile = function(){
 
             }
             else {
-
+                $("#profile_footer_button_update").removeAttr("disabled");
                 // Show an error message to the user
                 sakai.api.Util.notification.show("", $profile_error_form_error_server.text() , sakai.api.Util.notification.type.ERROR);
 
                 // Log an error message
-                fluid.log("sakai.profile - saveProfileData - the profile data couldn't be saved successfully");
+                debug.error("sakai.profile - saveProfileData - the profile data couldn't be saved successfully");
 
             }
 
@@ -528,7 +461,7 @@ sakai.profile = function(){
         $profile_footer_button_dontupdate.bind("click", function(){
 
             // Change the profile mode
-            changeProfileMode("view");
+            window.location.reload();
 
         });
 
@@ -552,6 +485,15 @@ sakai.profile = function(){
 
     };
 
+    jQuery.validator.addMethod("appendhttp", function(value, element) {
+        if(value.substring(0,7) !== "http://" &&
+        value.substring(0,6) !== "ftp://" &&
+        value.substring(0,8) !== "https://" &&
+        $.trim(value) !== "") {
+            $(element).val("http://" + value);
+        }
+        return true;
+    }, "No error message, this is just an appender");
     /**
      * Add binding to the profile form
      */
@@ -562,13 +504,15 @@ sakai.profile = function(){
 
         // Initialize the validate plug-in
         $profile_form.validate({
-            debug: true,
-            messages: {
-                required: "test"
+            submitHandler: function(form, validator) {
+                $("#profile_footer_button_update").attr("disabled", "disabled");
+                // Trigger the profile save method, this is event is bound in every sakai section
+                $(window).trigger("sakai-profile-save");
             },
-            submitHandler: saveProfileData,
+            onclick:false,
+            onkeyup:false,
+            onfocusout:false,
             invalidHandler: function(form, validator){
-
                 // Remove all the current notifications
                 sakai.api.Util.notification.removeAll();
 
@@ -576,7 +520,6 @@ sakai.profile = function(){
                 sakai.api.Util.notification.show("", $profile_error_form_errors.text(), sakai.api.Util.notification.type.ERROR);
             },
             ignore: ".profile_validation_ignore", // Class
-            errorClass: "profilesection_validation_error",
             validClass: "profilesection_validation_valid",
             ignoreTitle: true // Ignore the title attribute, this can be removed as soon as we use the data-path attribute
         });
@@ -640,7 +583,7 @@ sakai.profile = function(){
         // Bind a global event that can be triggered by the profilesection widgets
         $(window).bind("sakai-" + sectionobject.sectionname, function(eventtype, callback){
 
-            if(callback && typeof callback === "function"){
+            if ($.isFunction(callback)) {
                 callback(sectionname);
             }
 

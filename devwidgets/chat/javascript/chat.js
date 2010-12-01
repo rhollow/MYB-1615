@@ -894,6 +894,7 @@ sakai.chat = function(tuid, showSettings){
             restoreChatWindows();
         });
     }
+
 };
 
 sakai.api.Widgets.widgetLoader.informOnLoad("chat");

@@ -208,10 +208,6 @@ strong {
     font-size: .85em;
 }
 
-.search_result_type a{
-    color: #5fb3d2 !important;
-}
-
 .search_results_part_footer {
 
 }
@@ -268,3 +264,5 @@ strong {
 
 }
 
+/* Search Directory */
+.search_directory_seperator {padding:0 10px 0 10px;}

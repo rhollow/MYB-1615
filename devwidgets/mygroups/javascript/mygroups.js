@@ -121,7 +121,7 @@ sakai.mygroups = function(tuid){
                 }
             }
             $(mygroupsList, rootel).html($.TemplateRenderer(mygroupsListTemplate.replace(/#/, ''), newjson));
- 
+
             // make sure the newly added content is properly styled with
             // threedots truncation
             $(ellipsisContainer).css("width", $(ellipsisContainer).width() + "px");

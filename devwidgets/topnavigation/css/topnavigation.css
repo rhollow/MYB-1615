@@ -40,7 +40,7 @@
 .explore_nav .explore .explore_nav_selected a, .explore_nav .explore .explore_nav_selected span { background: url('/dev/images/topnav_hover_bg.gif') repeat; height:16px;}
 
 
-** Top Right Navbar ***/
+/*** Top Right Navbar ***/
 .explore_nav .personal-container { margin-top: 5px; padding-right: 5px; overflow: hidden; }
 .explore_nav .personal { padding: 4px 0 0 5px; margin: 0; min-height: 30px; }
 .explore_nav .personal li a { font-size: 8.5pt; padding:0 7px 0 7px; border-right: 1px solid #878a8c; color: #fff; }

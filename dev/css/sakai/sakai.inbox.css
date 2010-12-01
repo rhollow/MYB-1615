@@ -1,9 +1,5 @@
 /** inbox_main.html **/
 
-/** CONTAINER **/
-.fixed-container
-{ background: #fff;}
-
 /** LAYOUT **/
 .inbox_main .main_container
 { border:medium none; margin:0 0 20px; padding:0; }
@@ -132,47 +128,21 @@
 .inbox_main .inbox-table #inbox_table_header_date
 { width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 
-/* myBerkeley: added headers for reminders/archive boxes */
-.inbox_main .inbox-table #inbox_table_header_from_reminder
-{ width: 20%; border-left: 1px solid #D4DADE; color: #666666; }
-
-.inbox_main .inbox-table #inbox_table_header_subject_reminder
-{ width: 40%; border-left: 1px solid #D4DADE; color: #666666; }
-
-.inbox_main .inbox-table #inbox_table_header_date_reminder
-{ width: 25%; border-left: 1px solid #D4DADE; color: #666666; }
-
-.inbox_main .inbox-table #inbox_table_header_checkbox_reminder
-{ width: 15%; border-left: 1px solid #D4DADE; color: #666666; }
-
-.inbox_main .inbox-table .reminders_checkbox
-{ text-align: center; }
-
 /** List **/
-.inbox_main .inbox-table a:hover {text-decoration: none;}
-
 .inbox_main .inbox-table th
 { color: #333;  text-align: left; height: 26px; border: none; padding: 3px 5px; }
 
 .inbox_main .inbox-table tr
-{ color: #666; border-left: 1px solid #D4DADE; } /* myBerkeley: added border-left */
+{ color: #666; }
 
 .inbox_main .inbox-table td
-{ border: none; color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; white-space: nowrap; overflow: hidden;}
+{ border: none;  color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; padding: 4px 2px 4px 5px; }
 
 .inbox_main .inbox-table tr.inbox-subject-read *
-{ font-weight: normal; background-color: #E6E6E6;}
+{ font-weight:normal;}
 
 .inbox_main .inbox-table tr.inbox-subject-unread *
-{ font-weight: bold; background-color: white;}
-
-.inbox_main .inbox-table tr.inbox-subject-critical *
-{ font-weight: bold; color: #CC0000;}
-
-.inbox_main .inbox-table tr.inbox-subject-critical a:link
-{ font-weight: bold; color: #CC0000;}
-
-.inbox_main .inbox-table td a.inbox_inbox_message {color:#058EC4}
+{ font-weight: bold; }
 
 .inbox_main .inbox-table .inbox_message_none
 { text-align: center; border: none; height: 370px; }

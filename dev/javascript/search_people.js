@@ -397,6 +397,7 @@ sakai.search = function() {
 
             // The search URL depends on the searchWhere variable
             var searchURL;
+            var params = {};
 
             if(searchWhere === "mycontacts") {
                 searchURL = sakai.config.URL.SEARCH_USERS_ACCEPTED;

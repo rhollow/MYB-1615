@@ -23,42 +23,36 @@ sakai.nopermissions = function(tuid, showSettings) {
     var permissionsErrorLoggedInTemplate = "permission_error_logged_in_template";
     var permissionsError = ".permissions_error";
     var gatewayURL = sakai.config.URL.GATEWAY_URL;
-	var errorReportEmailSubject = "Error accessing a web page"; //default e-mail subject
 
     var doInit = function(){
-        
-        var querystring = new Querystring();
-        var redurl = window.location.pathname + window.location.hash;
-        // Parameter that indicates which page to redirect to. This should be present when
-        // the static 403.html and 404.html page are loaded
-        if (querystring.contains("redurl")){
-            redurl = querystring.get("redurl");
-			
-			// For error reporting			
-			if (redurl.length > 0) {
-				errorReportEmailSubject = "Error accessing '" + redurl + "' page";
-			}
-        }
-		
-		var subject = {
-			"subject": encodeURIComponent(errorReportEmailSubject)
-			};
-		
-		if (sakai.data.me.user.anon) {
+        var renderedTemplate = false;
+        if (sakai.data.me.user.anon){
+            $('html').addClass("requireAnon");
             // the user is anonymous and should be able to log in
-            var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedOutTemplate, subject).replace(/\r/g, '');
-			
-            $(permissionsError).append(renderedTemplate);            
+            renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedOutTemplate, sakai.data.me.user).replace(/\r/g, '');
+            $(permissionsError).append(renderedTemplate);
+            var querystring = new Querystring();
+            var redurl = window.location.pathname + window.location.hash;
+            // Parameter that indicates which page to redirect to. This should be present when
+            // the static 403.html and 404.html page are loaded
+            if (querystring.contains("redurl")){
+                redurl = querystring.get("redurl");
+            }
             // Set the link for the sign in button
-            $(".login-container a").attr("href", gatewayURL + "?url=" + encodeURIComponent(redurl));
+            $(".login-container button").bind("click", function(){
+                document.location = (gatewayURL + "?url=" + escape(redurl));
+            });
         } else {
+            // Remove the sakai.index stylesheet as it would mess up the design
+            $("LINK[href*='/dev/css/sakai/sakai.index.css']").remove();
             // the user is logged in and should get a page in Sakai itself
-            var renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedInTemplate, subject).replace(/\r/g, '');            
-			
-			$(permissionsError).append(renderedTemplate);
+            renderedTemplate = $.TemplateRenderer(permissionsErrorLoggedInTemplate, sakai.data.me.user).replace(/\r/g, '');
+            $(permissionsError).append(renderedTemplate);
             $("#permission_error").addClass("error_page_bringdown");
         }
-    }
+        sakai.api.Security.showPage();
+        document.title = document.title + sakai.api.i18n.General.getValueForKey("ACCESS_DENIED");
+    };
 
     doInit();
 
