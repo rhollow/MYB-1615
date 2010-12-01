@@ -64,7 +64,7 @@
 
 /* Fixed Container */
 .footer_main .fixed-container {
-    background: #454A4F; /* MYB-352: Changed from #454A4F */
+    background: transparent; /* MYB-352: Changed from #454A4F */
     padding: 10px 22px 16px; /* MYB-352: Changed from 0 25px 10px */
     width: 703px; /* MYB-352: Changed from 910px */
 }
@@ -97,10 +97,11 @@
 }
 
 #footer_logo {
-    background: url('../images/myberkeley_logo_footer.png') no-repeat; 
+    background: url('../images/myberkeley/myberkeley_logo_footer.png') no-repeat; /* MYB-352: Changed to myBerkeley logo */
     float: left; 
     height: 42px; 
     width: 166px;
+    margin-right: 22px; /* MYB-352: Added */
 }
 
 /* Footer on the login page */
