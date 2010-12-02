@@ -91,13 +91,11 @@
 
 /** Table **/
 
-/* myBerkeley: fixed width from 670px to 671px and border-right from 3px to 4px */
 .inbox_main .main_content_container
-{ width: 671px; border-left: 3px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
+{ width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
 
-/* myBerkeley: fixed width from 670px to 671px */
 .inbox_main .inbox-table
-{ width: 671px; margin: 0; border-spacing: 0; *border-collapse: collapse; }
+{ width: 670px; margin: 0; border-spacing: 0; *border-collapse: collapse; }
 
 .inbox_main .top_decor
 { background: transparent url(/dev/images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px; }
