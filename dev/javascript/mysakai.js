@@ -112,6 +112,7 @@ sakai.mysakai = function(){
             document.location = sakai.config.URL.GATEWAY_URL;
         });
 
+        // myBerkeley custom code:
         // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
         // redirect him to the participation explanation page
         if (!sakai.api.Security.isMyBerkeleyParticipant()) {
