@@ -25,7 +25,7 @@
 .header-smallline .beta-tag {
     display: inline;
     padding: 13px 41px;
-    background: url(/dev/images/myBerkeley/beta-tag.png) no-repeat 00 scroll;
+    background: url(/dev/images/myb/beta-tag.png) no-repeat 00 scroll;
 }
 
 /* strange redundant styleing on .request-feedback is for the odd case where there is more than one login type */
@@ -85,7 +85,7 @@ a.s3d-help-button {
     width: 16px;
     margin-left: 4px;
     background-color: transparent;
-    background-image: url(/dev/images/myBerkeley/help-icon.png);
+    background-image: url(/dev/images/myb/help-icon.png);
     background-attachment: scroll;
     background-position: 0 0;
     background-repeat: no-repeat;
