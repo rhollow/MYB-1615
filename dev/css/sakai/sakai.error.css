@@ -6,13 +6,6 @@
 #permission_error .login-container, #page_not_found_error .login-container, #internal_user_error .login-container {width:310px;}
 #permission_error a, #page_not_found_error a, #internal_user_error a {text-decoration:none;}
 
-/* Using default html styles for anchor tag */
-/* myBerkeley change */
-#permission_error a.default, #page_not_found_error a.default {text-decoration:underline; color: #0000ff;}
-#permission_error a:visited.default, #page_not_found_error a:visited.default {text-decoration:underline; color: #800080;}
-#permission_error a:hover.default, #page_not_found_error a:hover.default {text-decoration:underline; color: #ff0000;}
-/* myBerkeley change */
-
 #permission_error #error_title {background:url(/dev/images/403_slash.png) no-repeat;}
 
 #page_not_found_error #error_title {background:url(/dev/images/404_exclamation.png) no-repeat;}
