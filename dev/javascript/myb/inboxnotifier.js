@@ -1180,19 +1180,6 @@ sakai.notificationsinbox = function(){
     var doInit = function(){
         var security = sakai.api.Security;
 
-        // if the user is not logged in redirect to login page
-        if (!security.isLoggedIn()) {
-            security.sendToLogin();
-            return;
-        }
-
-        // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
-        // redirect him to the participation explanation page
-        if (!security.isMyBerkeleyParticipant()) {
-            security.sendToNotAMyBerkeleyParticipantPage();
-            return;
-        }
-
         // if the user is not a member of the advisors group then bail
         if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
             security.send403();

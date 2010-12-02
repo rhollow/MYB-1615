@@ -224,21 +224,7 @@ sakai.links = function(){
     };
     
     // First get user's link list, then populate directory with static directory data.
-    var doInit = function(){
-        // Check if the user is logged in before loading data
-        var security = sakai.api.Security;
-		if (!security.isLoggedIn()) {
-            security.sendToLogin();
-            return;
-        }
-		
-		// If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
-		// redirect him to the participation explanation page
-		if (!security.isMyBerkeleyParticipant()) {
-			security.sendToNotAMyBerkeleyParticipantPage();
-			return;
-		}
-        
+    var doInit = function(){        
         sakai.api.Server.loadJSON(linksDataNode, loadLinksList);   
     };
     

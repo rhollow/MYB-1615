@@ -111,15 +111,6 @@ sakai.mysakai = function(){
         $(window).bind("sakai.dashboard.notLoggedIn sakai.dashboard.notUsersDashboard", function(e) {
             document.location = sakai.config.URL.GATEWAY_URL;
         });
-
-        // myBerkeley custom code:
-        // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
-        // redirect him to the participation explanation page
-        if (!sakai.api.Security.isMyBerkeleyParticipant()) {
-            sakai.api.Security.sendToNotAMyBerkeleyParticipantPage();
-            return;
-        }
-
     };
 
     init();

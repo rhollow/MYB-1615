@@ -455,48 +455,6 @@ sakai.api.Security.showPage = function(callback){
     }
 };
 
-/**
- * myberkeley custom function: Checks if the user is logged in
- * @return true if the user is logged in, false otherwise
- */
-sakai.api.Security.isLoggedIn = function(){
-    var person = sakai.data.me;
-    var uuid = person.user.userid;
-	if (!uuid || person.user.anon) {
-    	return false;
-    }
-	return true;
-};
-
-/**
- * myberkeley custom function: Check if the user is a myBerkeley participant.
- * There could be CED members who can log in, but are not myBerkeley participants.
- * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
- * @return true if the user is a myBerkeley participant, false otherwise
- */
-sakai.api.Security.isMyBerkeleyParticipant = function(){
-	try {
-		if (sakai.data.me.profile.myberkeley.elements.participant &&
-			sakai.data.me.profile.myberkeley.elements.participant.value === "true") {
-			return true;
-		}
-	} catch(ex) {
-		// Ignoring the exception
-	}
-
-	return false;
-};
-
-/**
- * myberkeley custom function: Function that can be called by pages that don't have the permission to show the content
- * they should be showing because the user in not a myBerkeley participant
- */
-sakai.api.Security.sendToNotAMyBerkeleyParticipantPage = function(){
-    var redurl = window.location.pathname + window.location.hash;
-    document.location = "/dev/403_not_a_participant.html?redurl=" + escape(window.location.pathname + window.location.search + window.location.hash);
-    return false;
-};
-
 
 /**
  * @class Server
