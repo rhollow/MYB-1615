@@ -489,7 +489,7 @@ sakai.api.Security.isMyBerkeleyParticipant = function(){
  */
 sakai.api.Security.sendToNotAMyBerkeleyParticipantPage = function(){
     var redurl = window.location.pathname + window.location.hash;
-    document.location = "/dev/403_not_a_participant.html?redurl=" + escape(window.location.pathname + window.location.search + window.location.hash);
+    document.location = sakai.config.URL.MY_DASHBOARD_URL;	
     return false;
 };
 
