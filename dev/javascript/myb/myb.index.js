@@ -22,22 +22,15 @@
 
 var sakai = sakai || {};
 
-sakai.index = function(){
-    //////////
-    // Chat //
-    //////////
+sakai.myberkeleyindex = function(){
 
-    /*
-     * The chat bar keeps a cookie during your session that remembers which
-     * chat windows were open or active, so that state can be restored across
-     * all of the pages. When we have reached this page, it means that our
-     * session has ended and we can remove this cookie.
-     */
-    $.cookie('sakai_chat','');
+    var doInit = function() {
+        $("#login-external-button").click(function (evt) {
+            window.location = "/system/sling/cas/login?resource=/dev/index.html";
+        });
+    };
 
-    $("#login-external-button").click(function (evt) {
-        window.location = "/system/sling/cas/login?resource=/dev/index.html";
-    });
+    doInit();
 };
 
-sakai.api.Widgets.Container.registerForLoad("sakai.index");
+sakai.api.Widgets.Container.registerForLoad("sakai.myberkeleyindex");
