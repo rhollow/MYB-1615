@@ -62,7 +62,7 @@ sakai.myberkeleysecurity = function(){
 
     var doInit = function() {
        if (!isLoggedIn()) {
-           sendToLogin();
+           sakai.api.Security.sendToLogin();
            return;
        }
 
