@@ -21,6 +21,12 @@
 var sakai = sakai || {};
 sakai.myberkeleysecurity = function(){
 
+    var groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
+
+    sakai.myberkeleysecurity.isUserAnAdvisor = function() {
+        return sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors);
+    };
+
     /**
      * Checks if the user is logged in
      * @return true if the user is logged in, false otherwise

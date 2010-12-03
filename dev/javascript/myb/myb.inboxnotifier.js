@@ -41,8 +41,7 @@ sakai.notificationsinbox = function(){
     var cats = "";
     var chooseCategory = {"Message": "message", "Reminder": "reminder"};
     var inboxComposeNewPanelOpen = false;
-    var groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
-
+   
     /**
      *
      * CSS IDS
@@ -1181,7 +1180,7 @@ sakai.notificationsinbox = function(){
         var security = sakai.api.Security;
 
         // if the user is not a member of the advisors group then bail
-        if (!sakai.api.Groups.isCurrentUserAMember(groupCEDAdvisors)) {
+        if (!sakai.myberkeleysecurity.isUserAnAdvisor()) {
             security.send403();
             return;
         }
