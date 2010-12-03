@@ -35,6 +35,9 @@ sakai.index = function(){
      */
     $.cookie('sakai_chat','');
 
+    $("#login-external-button").click(function (evt) {
+        window.location = "/system/sling/cas/login?resource=/dev/index.html";
+    });
 };
 
 sakai.api.Widgets.Container.registerForLoad("sakai.index");
