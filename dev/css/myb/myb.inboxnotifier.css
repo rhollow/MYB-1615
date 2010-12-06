@@ -27,11 +27,11 @@
 .inbox_main .inbox-folders
 { width: 230px; margin:0; padding-top: 2px; overflow: hidden; margin-top: 6px; }
 .inbox_main .inbox-folders .if_titlebar
-{ background:transparent url(/dev/_images/block_tr.png) no-repeat scroll right top; padding: 0 10px 0 0; height:50px; }
+{ background:transparent url(/dev/images/block_tr.png) no-repeat scroll right top; padding: 0 10px 0 0; height:50px; }
 .inbox_main .inbox-folders .if_titlebar_inner
-{ background:transparent url(/dev/_images/block_tl.png) no-repeat scroll left top; padding: 18px 0 0 17px; height:50px; }
+{ background:transparent url(/dev/images/block_tl.png) no-repeat scroll left top; padding: 18px 0 0 17px; height:50px; }
 .inbox_main .inbox-folders .if_title
-{ background:transparent url(/dev/_images/recent_activity_icon.png) no-repeat scroll left top; color:#878A8C; font-size:1em; padding-left: 25px; position: relative; top:-15px; }
+{ background:transparent url(/dev/images/recent_activity_icon.png) no-repeat scroll left top; color:#878A8C; font-size:1em; padding-left: 25px; position: relative; top:-15px; }
 .inbox_main .inbox-folders .if_content
 { border-left: 3px solid #D4DADE; border-right: 3px solid #D4DADE; padding: 1px 0px 1px 0px; margin: 0; }
 .inbox_main .inbox-folders .if_content ul
@@ -48,14 +48,14 @@
 { font-weight: bold; color: #058EC4; font-size: 1.2em; padding: 0 0 10px 0; }
 
 .inbox_main .inbox-folders #inbox_filter_inbox
-{ background: transparent url(/dev/_images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
+{ background: transparent url(/dev/images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
 .inbox_main .inbox-folders #inbox_filter_trash
-{ background: transparent url(/dev/_images/inbox_folders_trash.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
+{ background: transparent url(/dev/images/inbox_folders_trash.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
 
 .inbox_main .inbox-folders .if_bottom
-{ background:transparent url(/dev/_images/content_bl.png) no-repeat scroll left bottom; height: 5px; padding: 0 0 0 10px; }
+{ background:transparent url(/dev/images/content_bl.png) no-repeat scroll left bottom; height: 5px; padding: 0 0 0 10px; }
 .inbox_main .inbox-folders .if_bottom_inner
-{ background:transparent url(/dev/_images/content_br.png) no-repeat scroll right bottom; height: 5px; }
+{ background:transparent url(/dev/images/content_br.png) no-repeat scroll right bottom; height: 5px; }
 
 
 /** INBOX PANE & DEFAULT SETUP **/
@@ -71,7 +71,7 @@
 { width: 670px; margin: 0; table-layout: fixed; }
 
 .inbox_main .top_decor
-{ background: transparent url(/dev/_images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px;}
+{ background: transparent url(/dev/images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px;}
 
 /** Buttons **/
 #inbox-new-button
@@ -117,7 +117,7 @@
 { font-weight: normal; font-style: italic; }
 
 .inbox_main .bottom_decor
-{ background: transparent url(/dev/_images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
+{ background: transparent url(/dev/images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
 
 
 /** NOTIFICATION DETAIL **/
