@@ -23,6 +23,10 @@
 var sakai = sakai || {};
 
 sakai.myberkeleyindex = function(){
+	
+	/////////////////////////////
+    // Initialization function //
+    /////////////////////////////
 
     var doInit = function() {
         $("#login-external-button").click(function (evt) {

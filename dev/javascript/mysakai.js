@@ -147,7 +147,6 @@ sakai.mysakai = function(){
 			
 	});
 
-
     /////////////////////////////
     // Initialization function //
     /////////////////////////////
@@ -238,7 +237,7 @@ sakai.mysakai = function(){
 
         // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
         // redirect him to the participation explanation page
-        if (!sakai.api.Security.isMyBerkeleyParticipant()) {
+        if (!sakai.myberkeleysecurity.isMyBerkeleyParticipant()) {
             // We will show a nice Join myBerkeley dialog on this page
 			$("#join_myberkeley_dialog").jqm({
                      modal: true,                     
