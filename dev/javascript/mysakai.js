@@ -239,20 +239,18 @@ sakai.mysakai = function(){
         // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
         // redirect him to the participation explanation page
         if (!sakai.api.Security.isMyBerkeleyParticipant()) {
-            			// We will show a nice Join myBerkeley dialog on this page
+            // We will show a nice Join myBerkeley dialog on this page
 			$("#join_myberkeley_dialog").jqm({
                      modal: true,                     
                      overlay: 20,
                      toTop: true,
                      onShow: null           
                  });
-     		//$("#join_myberkeley_dialog").css("position","absolute");
-     		//$("#join_myberkeley_dialog").css("top", "250px");
+                 
 	 		$("#join_myberkeley_dialog").css("margin-left","-285px");
 	 		$("#join_myberkeley_dialog").css("width","570px");
      		$("#join_myberkeley_dialog").jqmShow();
         }
-
     };
 
     init();

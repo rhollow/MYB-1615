@@ -813,7 +813,7 @@ sakai.chat = function(tuid, showSettings){
     var updateChatStatusElement = function(chatstatus){
         var chatClass = $(".chat_available_name").attr("class");
         // get current chat status
-        var currentStatus = chatClass.substr(str.indexOf("chat_available_status_"),str.length);
+        var currentStatus = chatClass.substr(chatClass.indexOf("chat_available_status_"),chatClass.length);
         // remove the current chat status class
         $(".chat_available_name").removeClass(currentStatus);
         // add new chat status class
@@ -894,6 +894,7 @@ sakai.chat = function(tuid, showSettings){
             restoreChatWindows();
         });
     }
+
 };
 
 sakai.api.Widgets.widgetLoader.informOnLoad("chat");

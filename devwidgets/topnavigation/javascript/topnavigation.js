@@ -155,17 +155,15 @@ sakai.topnavigation = function(tuid, showSettings){
      * Add binding to some elements
      */
     var addBinding = function(){
-        /* MYB-35, MYB-36, commented out for myBerkley 0.1 Release
         $(userLink).bind("click", function(){
             showHideUserLinkMenu(false);
         });
-        
-       
+
         $(userLinkChatStatusClass).bind("click", function(ev){
             showHideUserLinkMenu(false);
             var clicked = ev.currentTarget.id.split("_")[ev.currentTarget.id.split("_").length - 1];
             sendChatStatus(clicked);
-        });*/
+        });
 
         $.each($(topNavigationBar + " a"), function(){
             if (window.location.pathname === $(this).attr("href")){
@@ -417,6 +415,14 @@ sakai.topnavigation = function(tuid, showSettings){
             // We need to add the hasOwnProperty to pass to JSLint and it is also a security issue
             if (sakai.config.Navigation.hasOwnProperty(i)) {
 
+                // myberkeley custom code: tab might be flagged as advisors only, so check, and skip if
+                // tab is restricted and user's not an advisor.
+                if ( sakai.config.Navigation[i].requiresAdvisorMembership ) {
+                    if (!sakai.myberkeleysecurity.isUserAnAdvisor()) {
+                        continue;
+                    }
+                }
+                
                 var temp = {};
                 temp.url = sakai.config.Navigation[i].url;
                 temp.label = sakai.api.i18n.General.getValueForKey(sakai.config.Navigation[i].label);
@@ -438,7 +444,6 @@ sakai.topnavigation = function(tuid, showSettings){
                 menulinks.push(temp);
             }
         }
-        
         obj.links = menulinks;
         // Get navigation and render menu template
         $(".explore").html($.TemplateRenderer("navigation_template", obj));
@@ -467,12 +472,10 @@ sakai.topnavigation = function(tuid, showSettings){
         // Set presence and bind things
         addBinding();
         getCountUnreadMessages();
-        
         setPresence();
 
         // Get chat status
-        // not using for myBerkeley POC
-        //getChatStatus();
+        getChatStatus();
     };
 
     if (sakai.data.me.user.anon) {

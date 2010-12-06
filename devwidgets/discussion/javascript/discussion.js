@@ -49,30 +49,8 @@ sakai.discussion = function(tuid, showSettings){
     // If we are using another discussion this marker will be the ID of that widget.
     var marker = tuid;
     var widgeturl = sakai.api.Widgets.widgetLoader.widgets[tuid] ? sakai.api.Widgets.widgetLoader.widgets[tuid].placement : false;
-    if (widgeturl) {
-        $.ajax({
-            url: widgeturl,
-            type: "GET",
-            dataType: "json",
-            success: function(data){
-                // no op
-            },
-            error: function(xhr, textStatus, thrownError) {
-                if (xhr.status == 404) {
-                    // we need to create the initial message store
-                    $.post(widgeturl, { "jcr:primaryType": "nt:unstructured" } );
-                }
-            }
-        });
-    }
     var currentSite = "";
     var store = "";
-    if (sakai.currentgroup && typeof sakai.currentgroup.id === "string") {
-        currentSite = sakai.currentgroup.id;
-    } else {
-        currentSite = sakai.profile.main.data["rep:userId"];
-    }
-    store = "/~" + currentSite + "/message";
     var widgetSettings = {};
     var allDiscussions = [];
     var initialPost = false;
@@ -163,42 +141,6 @@ sakai.discussion = function(tuid, showSettings){
     var discussionContainerTemplate = "discussion_container_template";
     var discussionSettingsExistingContainerTemplate = "discussion_settings_existing_container_template";
     var discussionCompactContainerTemplate = "discussion_compact_container_template";
-
-
-    ///////////////////////
-    // Utility functions //
-    ///////////////////////
-
-    /**
-     * Format an input date (used by TrimPath)
-     * @param {Date} d Date that needs to be formatted
-     * @return {String} A string that beautifies the date e.g. May 11, 2009 at 9:11AM
-     */
-    var formatDate = function(d){
-        var names_of_months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        var am_or_pm = "";
-
-        var current_hour = d.getHours();
-        if (current_hour < 12) {
-            am_or_pm = "AM";
-        }
-        else {
-            am_or_pm = "PM";
-        }
-        if (current_hour === 0) {
-            current_hour = 12;
-        }
-        if (current_hour > 12) {
-            current_hour = current_hour - 12;
-        }
-
-        var current_minutes = d.getMinutes() + "";
-        if (current_minutes.length === 1) {
-            current_minutes = "0" + current_minutes;
-        }
-
-        return (names_of_months[d.getMonth()].substring(0, 3) + " " + d.getDate() + ", " + d.getFullYear() + " at " + current_hour + ":" + current_minutes + am_or_pm);
-    };
 
     /**
      * Parse a json integer to a valid date
@@ -686,7 +628,7 @@ sakai.discussion = function(tuid, showSettings){
     var createInitialPost = function(post){
         // Use the local store for creating the initial posts.
         $.ajax({
-            url: "/~" + sakai.data.me.user.userid + "/message.create.html",
+            url: store + ".create.html",
             cache: false,
             type: 'POST',
             success: function(data){
@@ -851,11 +793,10 @@ sakai.discussion = function(tuid, showSettings){
                 'sakai:type': 'discussion',
                 'sling:resourceType': 'sakai/message',
                 'sakai:writeto': store,
-                'sakai:marker': tuid,
                 'sakai:initialpost': true,
                 'sakai:messagebox': 'outbox',
                 'sakai:sendstate': 'pending',
-                'sakai:to': "discussion:" + currentSite,
+                'sakai:to': "discussion:w-" + store,
                 '_charset_':"utf-8"
             };
             var url = store + ".create.html";
@@ -917,7 +858,7 @@ sakai.discussion = function(tuid, showSettings){
         var post = {};
         post["sakai:type"] = "discussion";
         post["sling:resourceType"] = "sakai/message";
-        post["sakai:to"] = "discussion:" + currentSite;
+        post["sakai:to"] = "discussion:w-" + store;
         post['sakai:subject'] = $(discussionSettingsNewSubject, rootel).val();
         post['sakai:body'] = $(discussionSettingsNewBody, rootel).val();
         post['sakai:initialpost'] = true;
@@ -1303,7 +1244,7 @@ sakai.discussion = function(tuid, showSettings){
         if (widgeturl) {
             store = widgeturl + "/message";
             $.ajax({
-                url: widgeturl + ".infinity.json",
+                url: widgeturl + ".0.json",
                 type: "GET",
                 dataType: "json",
                 success: function(data){

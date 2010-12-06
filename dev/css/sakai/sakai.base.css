@@ -260,7 +260,7 @@ a.s3d-regular-links, .s3d-regular-links a{
 }
 
 .basic_appearance .site_secondary_heading a {
-    background: #fff url('../../_images/arrow_left_sm2_blue.gif') center left no-repeat;
+    background: #fff url('/dev/images/arrow_left_sm2_blue.gif') center left no-repeat;
     padding: 0 0 0 10px;
 }
 
@@ -340,7 +340,7 @@ a.s3d-action, .s3d-actions a {
     margin: 0;
     height: 23px;
     line-height: 23px;
-    white-space: nowrap;
+    white-space: nowrap !important;
     padding: 0 0 0 15px;
     color: #fff;
 }
@@ -410,10 +410,10 @@ html > body .s3d-button .s3d-button-inner {
     padding-right:4px;
 }
 .s3d-button.s3d-button-inline:hover {
-    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll right -20px transparent;
+    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll right -49px transparent;
 }
 .s3d-button.s3d-button-inline.clicked {
-    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll right -60px transparent;
+    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll right -107px transparent;
 }
 .s3d-button.s3d-button-inline .s3d-button-inner span {
     float:left;
@@ -432,7 +432,7 @@ html > body .s3d-button .s3d-button-inner {
     background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll left -20px transparent;
 }
 .s3d-button.s3d-button-inline.clicked .s3d-button-inner {
-    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll left -60px transparent;
+    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll left -78px transparent;
     color:#fff;
 }
 .s3d-button.s3d-button-inline .s3d-button-inner .s3d-button-inner-text {
@@ -489,7 +489,7 @@ input[type="text"]:hover, input[type="password"]:hover, textarea:hover{backgroun
 .s3d-primary-tabs, .s3d-primary-tabs-inner {
     height: 25px;
     border: none;
-    padding: 3px 10px 0 0;
+    padding: 2px 5px 0 5px;
     display: block;
 }
 
@@ -595,6 +595,8 @@ label.error {color:#9f3333;font-weight:bold;}
 .dialog_footer{background:url(/dev/images/dialog_br.png) top right no-repeat;padding:0 8px 0 0;}
 .dialog_footer_inner{background:url(/dev/images/dialog_bl.png) top left no-repeat;height:6px;}
 
+/* highlighted areas */
+.s3d-highlight_area_background {background-color:#EFF2F4; padding: 10px; margin: 0 0 15px 0;}
 
 /** Chat bullets **/
 .chat_available_status_online { background: url("/dev/images/bullet_green.png") no-repeat scroll -3px -1px transparent; }

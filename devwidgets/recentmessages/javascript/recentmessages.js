@@ -58,6 +58,7 @@ sakai.recentmessages = function(tuid, showSettings){
      *     If this parameter is a string, it is an error.
      */
     var renderRecentMessages = function(response){
+
         if(response === "NOT_CONNECTED"){
 
             // If it wasn't possible to connect to the server, show the not connected error
@@ -72,7 +73,7 @@ sakai.recentmessages = function(tuid, showSettings){
             $recentmessagesContainer.html($.TemplateRenderer(recentmessagesTemplate, response));
 
             // Activate the ThreeDots plug-in
-            $("#recentmessages_container ul li a span", rootel).ThreeDots({max_rows:1});
+            $("#recentmessages_container ul li a", rootel).ThreeDots({max_rows:1});
         }
     };
 
@@ -98,17 +99,17 @@ sakai.recentmessages = function(tuid, showSettings){
      * Send a request to the message service.to get your recent messages
      */
     var doInit = function() {
+
         // Set a params object to set which params should be passed into the request
         var params = $.param({
             box: "inbox",
-			category: "message",
             items: 4,
             page: 0
         });
 
         // Fire an Ajax request to get the recent messages for the current user
         $.ajax({
-            url: sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?" + params,
+            url: sakai.config.URL.MESSAGE_BOX_SERVICE + "?" + params,
             cache: false,
             success: function(data){
                 loadRecentMessages(data);

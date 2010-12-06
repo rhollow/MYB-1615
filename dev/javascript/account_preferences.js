@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config */
+/*global $ */
 
 sakai.account_preferences = function(){
 
@@ -68,6 +68,7 @@ sakai.account_preferences = function(){
     var errorInvalidPass = accountPreferencesID + "_error_invalidPass";
     var errorFailChangeLang = accountPreferencesID + "_error_failChangeLang";
     var messageChangeLang = accountPreferencesID + "_message_ChangeLang";
+    var errorPassSame = accountPreferencesID + "_error_passSame";
 
     // Comboboxes
     var timezonesContainer = "#time_zone";
@@ -75,9 +76,6 @@ sakai.account_preferences = function(){
 
     // templates
     var languagesTemplate = accountPreferences + "_languagesTemplate";
-
-    var regionalSetting;
-    var languageSetting;
 
     ///////////////////////
     // Utility functions //
@@ -207,16 +205,16 @@ sakai.account_preferences = function(){
      * Gets all the languages supported and puts them in a combobox
      */
     var getLanguages = function(){
-        $.ajax({
-            url : "/dev/_configuration/languages.json",
-            success : function(data) {
-                languages = $.extend(data, {}, true);
-                putLangsinCmb(languages);
-            },
-            error: function(xhr, textStatus, thrownError) {
-                alert("Failed to retrieve the language list.");
-            }
-        });
+        var langs = sakai.config.Languages;
+        if (sakai.config.displayDebugInfo === true) {
+            langs.push({
+                "country": "GB",
+                "displayName": "i18n debug",
+                "language": "lu"
+            });
+        }
+        var languages = {languages:$.extend(langs, {}, true)};
+        putLangsinCmb(languages);
     };
 
     /**
@@ -224,12 +222,10 @@ sakai.account_preferences = function(){
      */
     var saveRegionalToMe = function(){
         var language = $(languagesContainer).val();
-        var locale = {"locale" : language, "timezone" : $(timezonesContainer).val(), "_charset_":"utf-8"};
+        var locale = {"locale" : language, "timezone" : $(timezonesContainer).val(), "_charset_":"utf-8", ":sakai:update-profile": false};
 
         // if regional Setting and langauge is changed only then save the changes
-        if (regionalSetting !== $(timezonesContainer).val() || language !== languageSetting) {
-            regionalSetting = $(timezonesContainer).val();
-            languageSetting = language;
+        if (me.user.locale.timezone.name !== $(timezonesContainer).val() || language !== me.user.locale.language+"_"+me.user.locale.country) {
             $.ajax({
                 data: locale,
                 url: "/system/userManager/user/" + me.user.userid + ".update.html",
@@ -238,11 +234,15 @@ sakai.account_preferences = function(){
 
                     if (language !== me.user.locale.language + "_" + me.user.locale.country) {
                         // Reload the page if the language for a user has changed
-                        document.location.reload();
+                        sakai.api.Util.notification.show($(messageChangeLang).html(), $(messageChangeLang).html());
+                            window.setTimeout(function(){
+                            document.location.reload();
+                        },2000);
                     }
                     else {
                         // Show successful regional setting change through gritter
                         sakai.api.Util.notification.show($(messageChangeLang).html(), $(messageChangeLang).html());
+                        me.user.locale.timezone.name = $(timezonesContainer).val();
                     }
 
                 },
@@ -276,10 +276,15 @@ sakai.account_preferences = function(){
                     equalTo: "#new_pass"
                 }
             },
+            messages: {
+                retype_pass:{
+                    "equalTo": "Please enter the same password twice."
+                }
+            },
             debug:true
 
         });
-    }
+    };
 
     /**
      * Disable or enable elements
@@ -303,12 +308,23 @@ sakai.account_preferences = function(){
     /** Binds the submit function on the password change form **/
     $(accountPreferencesPasswordChange).submit(function(){
 
+        var pass = $(currentPassTxt).val();
+        var newPass1 = $(newPassTxt).val();
+        var newPass2 = $(newRetypePassTxt).val();
+
+        if (pass === newPass1) {
+            // Notify the user that he/she is trying to use the same pasword
+            sakai.api.Util.notification.show("", $(errorPassSame).html());
+            return false;
+        }
+
         // check if the user enter valid data for old and new passwords
         if ($(accountPreferencesPasswordChange).valid()) {
 
             // change the password
             changePass();
         }
+        return true;
     });
 
     /** Binds all the regional settings select box change **/
@@ -353,6 +369,11 @@ sakai.account_preferences = function(){
             selectTimezone(me.user.locale.timezone);
             getLanguages();
             initValidation();
+        }
+
+        // if allowpasswordchange is false then hide the regional setting
+        if(!sakai.config.allowPasswordChange){
+            $(passChangeContainer).hide();
         }
     };
 

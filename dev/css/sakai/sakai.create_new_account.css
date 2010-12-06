@@ -33,55 +33,42 @@ body { margin-bottom: 50px !important; }
 { width: 960px; padding: 0; margin: 0 auto; }
 
 .create_account .content_inside
-{ background: #FFFFFF; padding: 10px 15px 20px 15px; }
+{ padding: 10px 15px 20px 15px; }
 
 .create_account h3
 { margin: 0; padding: 0 0 20px 0; color: #454A4F; font-size: 2em; }
 
 .create_account .content_top_corners
-{ background: url(../../_images/content_top.png) top left no-repeat; padding: 0; width: 960px; height: 20px; }
+{ background: url(/dev/images/content_top.png) top left no-repeat; padding: 0; width: 960px; height: 20px; }
 
 .create_account .content_top
-{ background: url(../../_images/content_tr_leftalign.gif) top right no-repeat; padding: 0 5px 0 0; margin: 0; }
+{ background: url(/dev/images/content_tr_leftalign.gif) top right no-repeat; padding: 0 5px 0 0; margin: 0; }
 
 .create_account .content_top_inner
-{ background: url(../../_images/content_tl.gif) 0 0 no-repeat; margin: 0; height: 6px; }
+{ background: url(/dev/images/content_tl.gif) 0 0 no-repeat; margin: 0; height: 6px; }
 
 .create_account .content_main
 { border-left: 3px solid #D3DBDE; border-right: 3px solid #D3DBDE; margin: 0; padding: 10px; }
 
-.create_account .content_bottom
-{ background: url(../../_images/content_br.png) top right no-repeat; padding: 0 5px 0 0; margin: 0; }
-
-.create_account .content_bottom_inner
-{ background: url(../../_images/content_bl.png) 0 0 no-repeat; margin: 0; height: 6px; }
-
-
 /** TABLE/FORM **/
 
-.create_account .create_account_form
+.create_account #create_account_form
 { padding: 10px 0 0 47px; }
 
-.create_account .create_account_form .create_account_input
+.create_account #create_account_form .create_account_input
 { border: 1px solid #999999; width: 400px; height: 26px; font-weight: bold; font-size: 20px; padding: 1px 5px 0 5px; }
 
-.create_account .create_account_form td
+.create_account #create_account_form td
 { border: none; margin: 0; padding: 5px 5px 5px 5px;  }
 
-.create_account .create_account_form .label_container
+.create_account #create_account_form .label_container
 { color: #454A4F; text-align: right; font-weight: bold; font-size: 12px; }
 
-.create_account .create_account_form .input_field_hover
+.create_account #create_account_form .input_field_hover
 { border: 1px solid #454a4f; background: #dceffd; }
 
-.create_account .create_account_form .invalid_field
-{ border: 1px solid #9f3333; background: #ffdede; width: 400px; height: 26px; font-weight: bold; font-size: 20px; padding: 2px 5px 0 5px;  }
-
-.create_account .create_account_form .create_account_error_msg
-{ color: #9f3333; font-weight: bold; padding: 0 0 10px 15px; margin: -5px 0; }
-
-.create_account .create_account_form .username_available
-{ color: #7aa722; font-weight: bold; padding: 0 0 10px 15px; margin: -5px 0; }
+.create_account #create_account_form .username_available
+{ color: #7aa722; font-weight: bold; padding: 0; margin: -5px 0; }
 
 .create_account .success_message
 { font-size: 1.1em; color: #454A4F; padding: 15px 0 0 0; }

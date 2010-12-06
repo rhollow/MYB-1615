@@ -4,13 +4,6 @@ sakai.config = sakai.config || {};
 
 // Custom config settings unique to myBerkeley go in this file.
 
-sakai.config.Navigation = [
-    {
-        "url" : "/dev/my_sakai.html",
-        "label" : "MY_SAKAI"
-    }
-];
-
 // This is our custom CAS log in information.
 sakai.config.Authentication = {
     "internal": sakai.isDev, 
@@ -34,3 +27,10 @@ sakai.config.skinCSS = ["/dev/skins/default/skin.css"];
 
 // set our own default widget arrangement
 sakai.widgets.defaults.personalportal.columns = [["mylinks", "recentmessages"], ["myreminders"]];
+
+// conditional link for notification authoring page
+sakai.config.Navigation[sakai.config.Navigation.length] = {
+    "url" : "/dev/inboxnotifier.html",
+    "label" : "NOTIFICATION_MANAGER",
+    "requiresAdvisorMembership" : true
+};

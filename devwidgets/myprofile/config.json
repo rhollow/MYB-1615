@@ -1,9 +1,8 @@
-/* technically comments are not allowed in json files but this has the effect that we want
-   of temporarily disabling this widget for the 0.1 myBerkeley Portal - eli 10.1.10 */{
+{
     "description":"My Personal Profile",
     "name":"My Profile",
     "id":"myprofile",
-    //"personalportal":true,
+    "personalportal":true,
     "i18n": {
         "default": "/devwidgets/myprofile/bundles/default.properties",
         "en_US": "/devwidgets/myprofile/bundles/en_US.properties",

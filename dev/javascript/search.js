@@ -50,6 +50,7 @@ sakai.search = function() {
         search : "#search",
         global : {
             resultTemp : search + "_result_temp",
+            thousands : search + "_result_thousands",
             introductionText: "#introduction_text",
             button : search + "_button",
             text : ".search_content_main " + search + '_text',
@@ -61,6 +62,7 @@ sakai.search = function() {
             messageClass : ".search_result_person_link_message",
             messageID : "search_result_person_link_message_",
             addToContactsLink : ".link_add_to_contacts",
+            addToContactsFiller : "link_add_to_contacts_",
             addToContactsDialog : '#add_to_contacts_dialog',
             sendmessageContainer : "#sendmessagecontainer",
             resultTitle : "#search_result_title",
@@ -132,9 +134,14 @@ sakai.search = function() {
 
     var showSearchContent = function() {
         // Set searching messages
-        $(searchConfig.global.searchTerm).text(sakai.api.Security.saneHTML(searchterm));
+        $(searchConfig.global.searchTerm).html(sakai.api.Security.saneHTML(sakai.api.Security.escapeHTML(searchterm)));
         if (tagterm) {
-            $(searchConfig.global.tagTerm).text(sakai.api.Security.saneHTML(tagterm.replace("/tags/", "").replace("directory/", "")));
+            var tags = tagterm.replace("/tags/", "").split("/");
+            if(tags[0] === "directory"){
+                $(searchConfig.global.tagTerm).html($("#search_result_results_located_in").html() + " " + tags.splice(1,tags.length).toString().replace(/,/g, "<span class='search_directory_seperator'>&raquo;</span>"));
+            } else {
+                $(searchConfig.global.tagTerm).html($("#search_result_results_tagged_under").html() + " " + sakai.api.Security.saneHTML(tagterm.replace("/tags/", "")));
+            }
         }
         $(searchConfig.global.numberFound).text("0");
 
@@ -188,7 +195,7 @@ sakai.search = function() {
         if (totalItemsFound <= sakai.config.Search.MAX_CORRECT_SEARCH_RESULT_COUNT) {
             $(searchConfig.global.numberFound).text(""+totalItemsFound);
         } else {
-            $(searchConfig.global.numberFound).text("thousands of");
+            $(searchConfig.global.numberFound).text($(searchConfig.global.thousands).html());
         }
 
     };
@@ -211,10 +218,10 @@ sakai.search = function() {
         // Adjust total search result count
         updateTotalHitCount(foundCM.results.length);
 
-
-        if (foundCM.total > cmToSearch) {
+        $("#search_content_title").attr("href", "search_content.html#q=" + searchterm);
+        if (Math.abs(foundCM.total) > cmToSearch) {
             $(searchConfig.cm.displayMore).show();
-            $(searchConfig.cm.displayMore).attr("href", "search_content.html#1|" + searchterm);
+            $(searchConfig.cm.displayMore).attr("href", "search_content.html#q=" + searchterm);
         }
 
         if (foundCM && foundCM.results) {
@@ -223,6 +230,13 @@ sakai.search = function() {
 
         }
         $(searchConfig.cm.searchResult).html($.TemplateRenderer(searchConfig.cm.searchResultTemplate, finaljson));
+
+        $(".search_result_person_threedots").ThreeDots({
+            max_rows: 1,
+            text_span_class: "threedots",
+            alt_text_t: true
+        });
+
     };
 
     /**
@@ -242,49 +256,53 @@ sakai.search = function() {
 
         // Adjust total search result count
         if (foundSites.results) {
-          updateTotalHitCount(foundSites.results.length);
 
-        if (foundSites.total > sitesToSearch) {
-            $(searchConfig.sites.displayMore).show();
-            $(searchConfig.sites.displayMore).attr("href", "search_groups.html#1|" + searchterm);
-        }
+            updateTotalHitCount(foundSites.results.length);
 
-        if (foundSites && foundSites.results) {
+            $("#search_groups_title").attr("href", "search_groups.html#q=" + searchterm);
+            if (Math.abs(foundSites.total) > sitesToSearch) {
+                $(searchConfig.sites.displayMore).show();
+                $(searchConfig.sites.displayMore).attr("href", "search_groups.html#q=" + searchterm);
+            }
 
-            finaljson.items = [];
+            if (foundSites && foundSites.results) {
 
-            for (var group in foundSites.results){
-                if (foundSites.results.hasOwnProperty(group) && foundSites.results[group]["sling:resourceType"] === "sakai/group-home") {
-                    if (foundSites.results[group]["sakai:group-title"]) {
-                        foundSites.results[group]["sakai:group-title"] = sakai.api.Security.escapeHTML(foundSites.results[group]["sakai:group-title"]);
+                finaljson.items = [];
+
+                for (var group in foundSites.results){
+                    if (foundSites.results.hasOwnProperty(group)) {
+                        if (foundSites.results[group]["sakai:group-title"]) {
+                            foundSites.results[group]["sakai:group-title"] = sakai.api.Security.escapeHTML(foundSites.results[group]["sakai:group-title"]);
+                        }
+                        finaljson.items.push(foundSites.results[group]);
                     }
-                    finaljson.items.push(foundSites.results[group]);
+                }
+
+                // If result is page content set up page path
+                for (var i=0, j=finaljson.items.length; i<j; i++ ) {
+
+                    var full_path = finaljson.items[i]["path"];
+                    var site_path = finaljson.items[i]["sakai:group-id"];
+                    var page_path = site_path;
+                    if (finaljson.items[i]["excerpt"]) {
+                        var stripped_excerpt = $(""+finaljson.items[i]["excerpt"] + "").text().replace(/<[^>]*>/g, "");
+                        finaljson.items[i]["excerpt"] = stripped_excerpt;
+                    }
+
+                    if (finaljson.items[i]["type"] === "sakai/pagecontent") {
+                        page_path = full_path.replace(/\/_pages/g, "");
+                        page_path = page_path.replace(/\/pageContent/g, "");
+                        page_path = page_path.replace(/\//g,"");
+                        page_path = site_path + "#" + page_path;
+                    }
+                    finaljson.items[i]["pagepath"] = page_path;
+
+                    if (finaljson.items[i].picture && typeof finaljson.items[i].picture === "string") {
+                        finaljson.items[i].picture = $.parseJSON(finaljson.items[i].picture);
+                        finaljson.items[i].picture.picPath = "/~"+finaljson.items[i]["sakai:group-id"]+"/public/profile/"+finaljson.items[i].picture.name;
+                    }
                 }
             }
-
-            // If result is page content set up page path
-            for (var i=0, j=finaljson.items.length; i<j; i++ ) {
-
-                //console.log(finaljson.items[i], finaljson.items[i]["jcr:path"], finaljson.items[i]["site"]["jcr:path"]);
-
-                var full_path = finaljson.items[i]["path"];
-                var site_path = finaljson.items[i]["sakai:group-id"];
-                var page_path = site_path;
-                if (finaljson.items[i]["excerpt"]) {
-                    var stripped_excerpt = $(""+finaljson.items[i]["excerpt"] + "").text().replace(/<[^>]*>/g, "");
-                    finaljson.items[i]["excerpt"] = stripped_excerpt;
-                }
-
-                if (finaljson.items[i]["type"] === "sakai/pagecontent") {
-                    page_path = full_path.replace(/\/_pages/g, "");
-                    page_path = page_path.replace(/\/pageContent/g, "");
-                    page_path = page_path.replace(/\//g,"");
-                    page_path = site_path + "#" + page_path;
-                }
-                finaljson.items[i]["pagepath"] = page_path;
-
-            }
-        }
         }
 
         $(searchConfig.sites.searchResult).html($.TemplateRenderer(searchConfig.sites.searchResultTemplate, finaljson));
@@ -309,7 +327,8 @@ sakai.search = function() {
         // Adjust total search result count
         updateTotalHitCount(results.results.length);
 
-        if ((results.total > peopleToSearch) && (results.results.length > 0)) {
+        $("#search_people_title").attr("href", "search_people.html#q=" + searchterm);
+        if ((Math.abs(results.total) > peopleToSearch) && (results.results.length > 0)) {
             $(searchConfig.people.displayMore).attr("href", "search_people.html#q=" + searchterm).show();
         }
 
@@ -336,7 +355,7 @@ sakai.search = function() {
         tagterm = mainSearch.getSearchTags();
 
         // Check if the searchquery is empty
-        if((searchquery === "" || searchquery == undefined) && (tagterm === "" || tagterm == undefined)){
+        if((searchquery === "" || searchquery === undefined) && (tagterm === "" || tagterm === undefined)){
 
             // If there is nothing in the search query, remove the html and hide some divs
             $(".search_results_container").hide();
@@ -354,7 +373,7 @@ sakai.search = function() {
         // Rebind everything
         mainSearch.addEventListeners(searchterm);
 
-        if (searchterm && searchterm !== $(searchConfig.global.text).attr("title").toLowerCase() + " ...") {
+        if (searchquery && searchterm && searchterm !== $(searchConfig.global.text).attr("title").toLowerCase() + " ...") {
             // Show and hide the correct elements.
             showSearchContent();
 
@@ -382,8 +401,14 @@ sakai.search = function() {
             // People Search
             $.ajax({
                 cache: false,
-                url: sakai.config.URL.SEARCH_USERS + "?page=0&items=" + peopleToSearch + "&q=" + urlsearchterm + "&sortOn=sakai:firstName&sortOrder=ascending",
-                cache: false,
+                url: sakai.config.URL.SEARCH_USERS,
+                data: {
+                    page: 0,
+                    items: peopleToSearch,
+                    q: urlsearchterm,
+                    sortOn: "public/authprofile/basic/elements/lastName/@value",
+                    sortOrder: "ascending"
+                },
                 success: function(data) {
 
                     // Store found people in data cache
@@ -405,7 +430,12 @@ sakai.search = function() {
             // Sites search
             $.ajax({
                 cache: false,
-                url: sakai.config.URL.SEARCH_GROUPS + "?page=0&items=5&q=" + urlsearchterm,
+                url: sakai.config.URL.SEARCH_GROUPS,
+                data: {
+                     page: 0,
+                     items: 5,
+                     q: urlsearchterm
+                },
                 success: function(data) {
                     renderSites(data);
                 },
@@ -413,6 +443,7 @@ sakai.search = function() {
                     renderSites({});
                 }
             });
+
         } else if (tagterm) {
             // Show and hide the correct elements.
             showSearchContent();
@@ -445,6 +476,9 @@ sakai.search = function() {
                 },
                 error: function(xhr, textStatus, thrownError) {
                     renderCM({});
+                    sakai.data.search.results_people = {};
+                    renderPeople({});
+                    renderSites({});
                 }
             });
         } else {
@@ -496,7 +530,7 @@ sakai.search = function() {
 
     /** A user want to make a new friend */
     $(searchConfig.global.addToContactsLink).live("click", function(ev) {
-        contactclicked = this.id.split("_")[4];
+        contactclicked = (this.id.substring(searchConfig.global.addToContactsFiller.length));
         sakai.addtocontacts.initialise(contactclicked, mainSearch.removeAddContactLinks);
     });
 

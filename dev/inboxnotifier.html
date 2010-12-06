@@ -13,7 +13,7 @@
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.3.css" />
 
         <!-- Sakai Page CSS -->
-        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.inboxnotifier.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.inboxnotifier.css" />
 
         <!-- 3rd party CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.components.jq_pager.css" />
@@ -44,8 +44,8 @@
         <script type="text/javascript" src="/dev/lib/sakai/sakai.api.groups.js"></script>
 
         <!-- 3rd party JS -->
-        <script type="text/javascript" src="/dev/lib/sakai_util/trimpath.template.js"></script>
-        <script type="text/javascript" src="/dev/lib/sakai_util/querystring.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/trimpath.template.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/querystring.js"></script>
         <script type="text/javascript" src="/dev/lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
         <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.cookie.js"></script>
         <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.pager.js"></script>
@@ -53,7 +53,10 @@
         <script type="text/javascript" src="/dev/lib/jquery/plugins/gritter/jquery.gritter.js"></script>
         <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js"></script>
         <script type="text/javascript" src ="/dev/lib/jquery/plugins/jquery.threedots.js"></script>
-        
+
+        <!-- myberkeley JS -->
+        <script type="text/javascript" src="/dev/javascript/myb/myb.security.js"></script>
+
     </head>
 
     <body class="fl-centered inbox_main inbox_detail i18nable">               
@@ -324,8 +327,7 @@
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
         <!-- CHAT -->
-        <!-- MYB-36 commented out for myBerkeley 0.1 release 
-        <div id="widget_chat" class="widget_inline"></div>-->
+        <div id="widget_chat" class="widget_inline"></div>
 
         <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
@@ -343,7 +345,7 @@
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
         <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>        
 
-        <script type="text/javascript" src="/dev/javascript/inboxnotifier.js"></script>
+        <script type="text/javascript" src="/dev/javascript/myb/myb.inboxnotifier.js"></script>
 
     </body>
 

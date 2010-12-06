@@ -6,7 +6,7 @@
     <head>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Page not found - myBerkeley</title>
+        <title></title>
 
         <!-- Sakai Core CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/FSS/fss-base.css" />

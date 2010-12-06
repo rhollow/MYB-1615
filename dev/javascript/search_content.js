@@ -31,6 +31,8 @@ sakai.search = function() {
     var tagterm = "";
     var currentpage = 0;
 
+    var searchAjaxCall = false;
+
     // Search URL mapping
     var searchURLmap = {
         allfiles : sakai.config.URL.SEARCH_ALL_FILES,
@@ -49,6 +51,7 @@ sakai.search = function() {
         search : "#search",
         global : {
             resultTemp : search + "_result_temp",
+            resultExceed: search+"_result_exceed",
             button : search + "_button",
             text  :search + '_text',
             numberFound : search + '_numberFound',
@@ -86,25 +89,26 @@ sakai.search = function() {
             template : 'search_results_template'
         },
         facetedConfig : {
-            title : "Refine your search",
+            title : $("#search_result_title").html(),
             value : "Content",
             facets : {
                 "all" : {
-                    "category": "All Files",
+                    "category": $("#search_result_all_content").html(),
                     "searchurl": searchURLmap.allfiles
                 },
                 "manage" : {
-                    "category": "Files I manage",
+                    "category": $("#search_result_content_I_manage").html(),
                     "searchurl": searchURLmap.pooledcontentmanager
                 },
                 "member" : {
-                    "category": "Files I'm a Member of",
+                    "category": $("#search_result_content_I_m_a_viewer_of").html(),
                     "searchurl": searchURLmap.pooledcontentviewer
                 }
             }
         }
     };
 
+    var $uploadContentLink = $("#upload_content.search_add_content_button");
 
     ///////////////
     // Functions //
@@ -114,10 +118,17 @@ sakai.search = function() {
      * This method will show all the appropriate elements for when a search is executed.
      */
     var showSearchContent = function() {
-        $(searchConfig.global.searchTerm).text(sakai.api.Security.saneHTML(searchterm));
-        $(searchConfig.global.tagTerm).text(sakai.api.Security.saneHTML(tagterm));
+        $(searchConfig.global.searchTerm).html(sakai.api.Security.saneHTML(sakai.api.Security.escapeHTML(searchterm)));
+        if (tagterm) {
+            var tags = tagterm.replace("/tags/", "").split("/");
+            if(tags[0] === "directory"){
+                $(searchConfig.global.tagTerm).html($("#search_result_results_located_in").html() + " " + tags.splice(1,tags.length).toString().replace(/,/g, "<span class='search_directory_seperator'>&raquo;</span>"));
+            } else {
+                $(searchConfig.global.tagTerm).html($("#search_result_results_tagged_under").html() + " " + sakai.api.Security.saneHTML(tagterm.replace("/tags/", "")));
+            }
+        }
         $(searchConfig.global.numberFound).text("0");
-        $(searchConfig.results.header).show();
+        $(searchConfig.results.header).hide();
         $(searchConfig.results.tagHeader).hide();
         $(searchConfig.results.container).html($(searchConfig.global.resultTemp).html());
     };
@@ -134,7 +145,11 @@ sakai.search = function() {
      * @param {Integer} page The page you are on (optional / default = 1.)
      * @param {String} searchquery The searchterm you want to look for (optional / default = input box value.)
      */
-    sakai._search.doHSearch = function(page, searchquery, searchwhere, facet) {
+    sakai._search.doHSearch = function(page, searchquery, searchwhere, facet, killPreviousAjaxCall) {
+        // if killpreviousajaxcall is true then kill the previous ajax request
+        if (killPreviousAjaxCall) {
+            searchAjaxCall.abort();
+        }
         
         if (!page) {
             page = 1;
@@ -182,13 +197,13 @@ sakai.search = function() {
             } else if (results.results.length <= 0) {
                 $(searchConfig.global.numberFound).text(0);
             } else {
-                $(searchConfig.global.numberFound).text("thousands");
+                $(searchConfig.global.numberFound).text($(searchConfig.global.resultExceed).html());
             }
 
             // Reset the pager.
             $(searchConfig.global.pagerClass).pager({
                 pagenumber: currentpage,
-                pagecount: Math.ceil(results.total / resultsToDisplay),
+                pagecount: Math.ceil(Math.abs(results.total) / resultsToDisplay),
                 buttonClickCallback: pager_click_handler
             });
 
@@ -197,9 +212,15 @@ sakai.search = function() {
                 finaljson = mainSearch.prepareCMforRendering(results.results, finaljson, searchterm);
             }
 
+            // if we're searching tags we need to hide the pager since it doesnt work too well
+            if (!results.total) {
+                results.total = resultsToDisplay;
+            }
+
             // We hide the pager if we don't have any results or
             // they are less then the number we should display
-            if (results.total < resultsToDisplay) {
+            results.total = Math.abs(results.total);
+            if (results.total <= resultsToDisplay) {
                 $(searchConfig.global.pagerClass).hide();
             }
             else {
@@ -210,6 +231,7 @@ sakai.search = function() {
             $(searchConfig.global.pagerClass).hide();
         }
 
+        $(searchConfig.results.header).show();
         // Render the results.
         $(searchConfig.results.container).html($.TemplateRenderer(searchConfig.results.template, finaljson));
         $(".search_results_container").show();
@@ -291,7 +313,7 @@ sakai.search = function() {
         // Rebind everything
         mainSearch.addEventListeners(searchterm, searchwhere);
 
-        if (searchterm && searchterm !== $(searchConfig.global.text).attr("title")) {
+        if (searchquery && searchterm && searchterm !== $(searchConfig.global.text).attr("title")) {
             // Show and hide the correct elements.
             showSearchContent();
 
@@ -316,10 +338,11 @@ sakai.search = function() {
             }
             
             // Check if we want to search using a faceted link
-            if (facetedurl)
+            if (facetedurl) {
                 url = facetedurl.replace(".json", ".infinity.json");
+            }
 
-            $.ajax({
+            searchAjaxCall = $.ajax({
                 url: url,
                 data: {
                     "q" : urlsearchterm,
@@ -407,6 +430,14 @@ sakai.search = function() {
     var thisFunctionality = {
         "doHSearch" : sakai._search.doHSearch
     };
+
+    $uploadContentLink.bind("click", function() {
+        $(window).trigger("sakai-fileupload-init");
+    });
+
+    $(window).bind("sakai-fileupload-complete", function(){
+       window.location = window.location + "&_=" + Math.random(); 
+    });
 
     var mainSearch = sakai._search(searchConfig, thisFunctionality);
 

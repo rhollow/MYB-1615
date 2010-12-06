@@ -251,7 +251,8 @@ sakai.api.Security.saneHTML = function(inputHTML) {
 
         // test for javascript in the URL and remove it
         var testUrl = decodeURIComponent(url.replace(/\s+/g,""));
-        var js = "javascript:;";
+        var js = "javascript"; // for JSLint to be happy, this needs to be broken up
+        js += ":;";
         var jsRegex = new RegExp("^(.*)javascript:(.*)+$");
         var vbRegex = new RegExp("^(.*)vbscript:(.*)+$");
         if ((jsRegex.test(testUrl) || vbRegex.test(testUrl)) && testUrl !== js) {
@@ -432,7 +433,7 @@ sakai.api.Security.sendToLogin = function(){
     return false;
 };
 
-sakai.api.Security.showPage = function(){
+sakai.api.Security.showPage = function(callback){
     // Show the background images used on anonymous user pages
     if ($.inArray(window.location.pathname, sakai.config.requireAnonymous) > -1){
         $('html').addClass("requireAnon");
@@ -449,48 +450,9 @@ sakai.api.Security.showPage = function(){
     document.title = pageTitle;
     // Show the actual page content
     $('body').show();
-};
-
-/**
- * myberkeley custom function: Checks if the user is logged in
- * @return true if the user is logged in, false otherwise
- */
-sakai.api.Security.isLoggedIn = function(){
-    var person = sakai.data.me;
-    var uuid = person.user.userid;
-	if (!uuid || person.user.anon) {
-    	return false;
+    if ($.isFunction(callback)) {
+        callback();
     }
-	return true;
-};
-
-/**
- * myberkeley custom function: Check if the user is a myBerkeley participant.
- * There could be CED members who can log in, but are not myBerkeley participants.
- * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
- * @return true if the user is a myBerkeley participant, false otherwise
- */
-sakai.api.Security.isMyBerkeleyParticipant = function(){
-	try {
-		if (sakai.data.me.profile.myberkeley.elements.participant &&
-			sakai.data.me.profile.myberkeley.elements.participant.value === "true") {
-			return true;
-		}
-	} catch(ex) {
-		// Ignoring the exception
-	}
-
-	return false;
-};
-
-/**
- * myberkeley custom function: Function that can be called by pages that don't have the permission to show the content
- * they should be showing because the user in not a myBerkeley participant
- */
-sakai.api.Security.sendToNotAMyBerkeleyParticipantPage = function(){
-    var redurl = window.location.pathname + window.location.hash;
-    document.location = sakai.config.URL.MY_DASHBOARD_URL;	
-    return false;
 };
 
 
@@ -845,6 +807,30 @@ sakai.api.Server.filterJCRProperties = function(data) {
           sakai.api.Server.filterJCRProperties(data[i]);
         }
     }
+};
+
+/**
+ * Create a search string for the server
+ * This method exists to transform a user's search string which
+ * they type in into the string we should pass to the server
+ *
+ * Strings with AND, OR, '"', '-', '_' are treated as advanced search queries
+ * and left alone. Those without are transformed into term* AND term2*
+ *
+ * @param {String} searchString The user's search
+ * @return {String} The string to send to the server
+ */
+sakai.api.Server.createSearchString = function(searchString) {
+    var ret = "";
+    var advancedSearchRegex = new RegExp("(AND|OR|\"|-|_)", "g");
+
+    if (advancedSearchRegex.test(searchString)) {
+        ret = searchString;
+    } else {
+        ret = $.trim(searchString).split(" ").join("* AND ") + "*";
+    }
+
+    return ret;
 };
 
 /**
