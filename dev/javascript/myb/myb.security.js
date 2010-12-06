@@ -51,7 +51,7 @@ sakai.myberkeleysecurity = function(){
 	var sendToNotAMyBerkeleyParticipantPage = function() {		
 		document.location = sakai.config.URL.MY_DASHBOARD_URL;
 		return false;
-	}
+	};
 
     var doInit = function() {
        if (!isLoggedIn()) {
@@ -61,8 +61,8 @@ sakai.myberkeleysecurity = function(){
 		
 		//HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
 		var useRedirect = true;
-		if(typeof(allowRedirectToParticipantPage) !== 'undefined'){
-			useRedirect = allowRedirectToParticipantPage; 
+		if(typeof(sakai.myberkeleysecurity.allowRedirectToParticipantPage) !== 'undefined'){
+			useRedirect = sakai.myberkeleysecurity.allowRedirectToParticipantPage; 
 		}
        // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
        // redirect him to the participation explanation page
