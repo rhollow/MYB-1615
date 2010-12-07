@@ -28,6 +28,7 @@ if (!sakai.composenotification){
         var user = false; // user object that contains the information for the user that should be posted to
         var me = sakai.data.me;        
         var callbackWhenDone = null; // callback function for when the message gets sent                 
+        var isDirty = false; // Determines whether a notification has changed since it was last created or saved               
 
         /**
          * 
@@ -308,24 +309,24 @@ if (!sakai.composenotification){
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
             buttonText: 'Click to pick a date.',
-			onSelect: function(dateText, inst) { $(messageFieldSendDate).removeClass(invalidClass); } // Clearing validation errors  
+			onSelect: function(dateText, inst) { $(messageFieldSendDate).removeClass(invalidClass);isDirty = true; } // Clearing validation errors  
         });     
         $(messageTaskDueDate).datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
             buttonText: 'Click to pick a date.',
-			onSelect: function(dateText, inst) { $(messageTaskDueDate).removeClass(invalidClass); } // Clearing validation errors
+			onSelect: function(dateText, inst) { $(messageTaskDueDate).removeClass(invalidClass); isDirty = true; } // Clearing validation errors
         });     
         $(messageEventDate).datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
     		buttonImageOnly: true,        
             buttonText: 'Click to pick a date.',
-			onSelect: function(dateText, inst) { $(messageEventDate).removeClass(invalidClass); } // Clearing validation errors
+			onSelect: function(dateText, inst) { $(messageEventDate).removeClass(invalidClass); isDirty = true;} // Clearing validation errors
         });     
 
-		// There is no event stop date yet (it will be added later)
+		// There is no event stop date yet (it will be added later; and when you add it don't forget to set isDirty flag to true when you select something)
 		// This code does nothing
 		$(messageEventStopDate).datepicker({
             showOn: 'button',
@@ -342,31 +343,37 @@ if (!sakai.composenotification){
 		$(messageFieldSendDate).change(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		$(messageFieldSendDate).keypress(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		
 		$(messageTaskDueDate).change(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		$(messageTaskDueDate).keypress(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		
 		$(messageEventDate).change(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		$(messageEventDate).keypress(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		
-		// There is no event stop date yet (it will be added later)
+		// There is no event stop date yet (it will be added later; and when you add it don't forget to set isDirty flag to true when you select something)
 		// This code was commented out on purpose
 		/*
 		$(messageEventStopDate).change(function(){
@@ -381,48 +388,58 @@ if (!sakai.composenotification){
 		$(messageFieldSubject).change(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		$(messageFieldSubject).keypress(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		
 		$(messageFieldBody).change(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		$(messageFieldBody).keypress(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		
 		$(messageEventPlace).change(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		$(messageEventPlace).keypress(function(){
              // Clearing validation errors
 			 $(this).removeClass(invalidClass);      
+			 isDirty = true;
         });
 		
 		$(messageFieldTo).change(function(){
 			// Clearing validation errors
 			$(this).removeClass(invalidClass);
+			isDirty = true;
 		}); 
 		
 		$(messageEventTimeHour).change(function(){
 			// Clearing validation errors
 			$(this).removeClass(invalidClass);
+			isDirty = true;
 		});
 		
 		$(messageEventTimeMinute).change(function(){
 			// Clearing validation errors
 			$(this).removeClass(invalidClass);
+			isDirty = true;
 		});
 		
 		$(messageEventTimeAMPM).change(function(){
 			// Clearing validation errors
 			$(this).removeClass(invalidClass);
+			isDirty = true;
 		});
 		
         
@@ -438,6 +455,7 @@ if (!sakai.composenotification){
              $(messageRequiredNo).attr("checked", "checked");             
              $("#task-radio").attr("disabled", "disabled");
              $("#must-be-req").show();
+			 isDirty = true;			 
          });        
          // If 'Yes' is checked for required, show the task/event field.
          $(messageRequiredYes).change(function(){                         
@@ -446,6 +464,7 @@ if (!sakai.composenotification){
             $(".composenotification_taskorevent").show();
             $("#must-be-req").hide();
             $("#task-radio").removeAttr("disabled");                                                   
+			isDirty = true;			
          });         
         // If we check that this message has a date (and is a task or event),
         // reset and show the task/event information fields.
@@ -468,6 +487,7 @@ if (!sakai.composenotification){
                 }); 
                 eventTimeInit(null);               
             };
+			isDirty = true;
         });                             
         // If task is checked, show the information and make sure the event
         // details are hidden. Restore to their default state.        
@@ -484,6 +504,7 @@ if (!sakai.composenotification){
             $(messageEventTimeMinute).removeClass(invalidClass);
             $(messageEventTimeAMPM).removeClass(invalidClass);
             $(messageEventPlace).removeClass(invalidClass);
+			isDirty = true;
         });             
         // If event is checked, show the information and make sure the task
         // details are hidden. Restore to thier default state.     
@@ -495,6 +516,7 @@ if (!sakai.composenotification){
                 clearElement(this);
             });            
             $(messageTaskDueDate).removeClass(invalidClass);                                                                                                         
+			isDirty = true;
         });     
         // If this event is marked as required, it MUST be a reminder (task or event).                                 
          $(messageReminderCheckbox).change(function() {            
@@ -516,6 +538,7 @@ if (!sakai.composenotification){
                  $("#required_must_have_date_dialog").jqmShow();                                 
                }
            } 
+		   isDirty = true;
         });
         
         /**
@@ -552,13 +575,22 @@ if (!sakai.composenotification){
         // (When user clicks on 'Create New Dyanmic List' button.)
         $("#save_reminder_dialog").jqm({
              modal: true,
-             trigger: $("#create-new-dynamic-list-button"),
              overlay: 20,
              toTop: true,
              onShow: null           
          }); 
          $("#save_reminder_dialog").css("position","absolute");
          $("#save_reminder_dialog").css("top", "250px"); 
+                  
+		 $("#create-new-dynamic-list-button").live("click", function() {        	
+			 if (isDirty) {			     
+             	$('#save_reminder_dialog').jqmShow();				
+			 }
+			 else {
+			 	goToCDNLPage();
+			 }
+			return false;       
+         }); 
                   
          // Redirect to the Create New Dynamic Lists page.         
          var goToCDNLPage = function(){
@@ -1087,6 +1119,7 @@ if (!sakai.composenotification){
             hideAllButtonLists();
             unbindAll();                   
             eventTimeInit(null, null, null);
+			isDirty = false;
             
             // There are 2 calls to DLinit when we initialise the widget:
             // 1) to set up the dropdown with its options
