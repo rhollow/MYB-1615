@@ -81,20 +81,22 @@ sakai.listpage = function(){
     
     var getDataFromInput = function() {
         var result = {};
-        
-        result.listName = $("#list_name").val().trim();
-        result.desc = $("#description").val().trim();
+        // In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()
+		// It should be called like this $.trim($('#selector').text())
+		// See http://bit.ly/d8mDx2
+        result.listName = $.trim($("#list_name").val());
+        result.desc = $.trim($("#description").val());
         
         // NOT SUPPORTED FOR POC
         // result.size = $("#list_size").val();
         
         var index = document.createListForm.context.selectedIndex;
         var selectedContext = document.createListForm.context.options[index].value;
-        result.context = selectedContext.trim();
+        result.context = $.trim(selectedContext);
         
         var selectedMajors = [];
         $(".major_checkbox:checked").each(function() {
-            var major = $(this).val().trim();
+            var major = $.trim($(this).val());
             selectedMajors.push(major);
         });
         result.major = selectedMajors;
@@ -359,6 +361,7 @@ sakai.listpage = function(){
         // HARD-CODING FOR POC
         $("select option[value='ced']").attr("selected","selected");
         
+		$(".major_checkbox").removeAttr("checked"); // Resetting the list of majors   
         var majorArray = list.query.major;
         for(var i = 0, j = majorArray.length; i < j; i++) {
             var major = majorArray[i].replace(/ /g, "_");
@@ -565,17 +568,20 @@ sakai.listpage = function(){
         // NOT SUPPORTED FOR POC
         // var size = $("#list_size").val();
         
-        if(data.listName.trim() && data.desc.trim() && (data.major.length != 0)) {
+		// In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()
+		// It should be called like this $.trim($('#selector').text())
+		// See http://bit.ly/d8mDx2
+        if($.trim(data.listName) && $.trim(data.desc) && (data.major.length != 0)) {
             if(editExisting) {
                 saveList(data, getIndexFromId(currList));
             } else {
                 saveList(data, null);   
             }
         } else {
-            if(!data.listName.trim()) {
+            if(!$.trim(data.listName)) {
                 $("#invalid_name").show();
             }
-            if(!data.desc.trim()) {
+            if(!$.trim(data.desc)) {
                 $("#invalid_desc").show();
             }
             if(data.major.length == 0) {
