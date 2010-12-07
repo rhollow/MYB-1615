@@ -19,13 +19,14 @@
 /* global $, Config, opensocial */
 
 var sakai = sakai || {};
-sakai.mybapi = sakai.mybapi || {};
-sakai.mybapi.security = sakai.mybapi.security || {};
+sakai.myb = sakai.myb || {};
+sakai.myb.api = sakai.myb.api || {};
+sakai.myb.api.security = sakai.myb.api.security || {};
 
-sakai.mybapi.security.groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
+sakai.myb.api.security.groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
 
-sakai.mybapi.security.isUserAnAdvisor = function() {
-    return sakai.mybapi.security.isCurrentUserAMember(sakai.mybapi.security.groupCEDAdvisors);
+sakai.myb.api.security.isUserAnAdvisor = function() {
+    return sakai.myb.api.security.isCurrentUserAMember(sakai.myb.api.security.groupCEDAdvisors);
 };
 
 /**
@@ -34,7 +35,7 @@ sakai.mybapi.security.isUserAnAdvisor = function() {
  * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
  * @return true if the user is a myBerkeley participant, false otherwise
  */
-sakai.mybapi.security.isMyBerkeleyParticipant = function() {
+sakai.myb.api.security.isMyBerkeleyParticipant = function() {
     try {
         if (sakai.data.me.profile.myberkeley.elements.participant &&
                 sakai.data.me.profile.myberkeley.elements.participant.value === "true") {
@@ -47,7 +48,7 @@ sakai.mybapi.security.isMyBerkeleyParticipant = function() {
     return false;
 };
 
-sakai.mybapi.security.isCurrentUserAMember = function(groupid) {
+sakai.myb.api.security.isCurrentUserAMember = function(groupid) {
     if(!groupid || typeof(groupid) !== "string") {
         return false;
     }

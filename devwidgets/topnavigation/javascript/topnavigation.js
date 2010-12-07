@@ -418,7 +418,7 @@ sakai.topnavigation = function(tuid, showSettings){
                 // myberkeley custom code: tab might be flagged as advisors only, so check, and skip if
                 // tab is restricted and user's not an advisor.
                 if ( sakai.config.Navigation[i].requiresAdvisorMembership ) {
-                    if (!sakai.mybapi.security.isUserAnAdvisor()) {
+                    if (!sakai.myb.api.security.isUserAnAdvisor()) {
                         continue;
                     }
                 }

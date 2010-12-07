@@ -50,12 +50,12 @@ sakai.myberkeleysecurity = function(){
 		
 		//HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
 		var useRedirect = true;
-		if(typeof(sakai.mybapi.security.allowRedirectToParticipantPage) !== 'undefined'){
-			useRedirect = sakai.mybapi.security.allowRedirectToParticipantPage; 
+		if(typeof(sakai.myb.api.security.allowRedirectToParticipantPage) !== 'undefined'){
+			useRedirect = sakai.myb.api.security.allowRedirectToParticipantPage;
 		}
        // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
        // redirect him to the participation explanation page
-       if (!sakai.mybapi.security.isMyBerkeleyParticipant() && useRedirect) {
+       if (!sakai.myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
            sendToNotAMyBerkeleyParticipantPage();
        }
     };
