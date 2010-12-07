@@ -1180,7 +1180,7 @@ sakai.notificationsinbox = function(){
         var security = sakai.api.Security;
 
         // if the user is not a member of the advisors group then bail
-        if (!sakai.myberkeleysecurity.isUserAnAdvisor()) {
+        if (!sakai.mybapi.security.isUserAnAdvisor()) {
             security.send403();
             return;
         }

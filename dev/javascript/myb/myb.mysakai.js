@@ -23,8 +23,8 @@
 var sakai = sakai || {};
 
 /* HACK : Preventing redirection to 'not-a-participant' page from this page because this page IS the 'not-a-participant' page
- See myb.security.js for details. */
-sakai.myberkeleysecurity.allowRedirectToParticipantPage = false;
+ See myb.securepage.js for details. */
+sakai.mybapi.security.allowRedirectToParticipantPage = false;
 
 sakai.myberkeleymysakai = function(){
 
@@ -159,7 +159,7 @@ sakai.myberkeleymysakai = function(){
     var doInit = function() {
         // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
         // redirect him to the participation explanation page
-        if (!sakai.myberkeleysecurity.isMyBerkeleyParticipant()) {
+        if (!sakai.mybapi.security.isMyBerkeleyParticipant()) {
             // We will show a nice Join myBerkeley dialog on this page
 			$("#join_myberkeley_dialog").jqm({
                      modal: true,

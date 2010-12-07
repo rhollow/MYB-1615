@@ -18,21 +18,10 @@
 
 /* global $, Config, opensocial */
 
+/* Include this file in any html page to secure the whole page against non-MyBerkeley Participants. */
+
 var sakai = sakai || {};
 sakai.myberkeleysecurity = function(){
-
-    var groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
-
-    sakai.myberkeleysecurity.isUserAnAdvisor = function() {
-        return isCurrentUserAMember(groupCEDAdvisors);
-    };
-
-    var isCurrentUserAMember = function(groupid) {
-        if(!groupid || typeof(groupid) !== "string") {
-            return false;
-        }
-        return ($.inArray(groupid, sakai.data.me.user.subjects) !== -1);
-    };
         
     /**
      * Checks if the user is logged in
@@ -61,12 +50,12 @@ sakai.myberkeleysecurity = function(){
 		
 		//HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
 		var useRedirect = true;
-		if(typeof(sakai.myberkeleysecurity.allowRedirectToParticipantPage) !== 'undefined'){
-			useRedirect = sakai.myberkeleysecurity.allowRedirectToParticipantPage; 
+		if(typeof(sakai.mybapi.security.allowRedirectToParticipantPage) !== 'undefined'){
+			useRedirect = sakai.mybapi.security.allowRedirectToParticipantPage; 
 		}
        // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
        // redirect him to the participation explanation page
-       if (!sakai.myberkeleysecurity.isMyBerkeleyParticipant() && useRedirect) {
+       if (!sakai.mybapi.security.isMyBerkeleyParticipant() && useRedirect) {
            sendToNotAMyBerkeleyParticipantPage();
        }
     };
@@ -74,25 +63,5 @@ sakai.myberkeleysecurity = function(){
     doInit();
 
 };
-
-/**
- * Check if the user is a myBerkeley participant.
- * There could be CED members who can log in, but are not myBerkeley participants.
- * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
- * @return true if the user is a myBerkeley participant, false otherwise
- */
-sakai.myberkeleysecurity.isMyBerkeleyParticipant = function() {
-    try {
-        if (sakai.data.me.profile.myberkeley.elements.participant &&
-            sakai.data.me.profile.myberkeley.elements.participant.value === "true") {
-            return true;
-        }
-    } catch(ex) {
-        // Ignoring the exception
-    }
-
-    return false;
-};
-
 
 sakai.api.Widgets.Container.registerForLoad("sakai.myberkeleysecurity");
