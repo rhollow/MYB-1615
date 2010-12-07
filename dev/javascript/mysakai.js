@@ -23,8 +23,9 @@ var sakai = sakai || {};
 
 sakai.mysakai = function(){
 
+
     /////////////////////////////
-    // Initialization function //
+    // Initialisation function //
     /////////////////////////////
 
     var showHideMoreMenu = function(hideOnly){
@@ -110,7 +111,6 @@ sakai.mysakai = function(){
         $(window).bind("sakai.dashboard.notLoggedIn sakai.dashboard.notUsersDashboard", function(e) {
             document.location = sakai.config.URL.GATEWAY_URL;
         });
-
     };
 
     init();
