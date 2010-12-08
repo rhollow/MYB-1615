@@ -415,14 +415,15 @@ sakai.topnavigation = function(tuid, showSettings){
             // We need to add the hasOwnProperty to pass to JSLint and it is also a security issue
             if (sakai.config.Navigation.hasOwnProperty(i)) {
 
-                // myberkeley custom code: tab might be flagged as advisors only, so check, and skip if
+                // myberkeley custom begin: tab might be flagged as advisors only, so check, and skip if
                 // tab is restricted and user's not an advisor.
                 if ( sakai.config.Navigation[i].requiresAdvisorMembership ) {
                     if (!sakai.myb.api.security.isUserAnAdvisor()) {
                         continue;
                     }
                 }
-                
+                // myberkeley custom end
+
                 var temp = {};
                 temp.url = sakai.config.Navigation[i].url;
                 temp.label = sakai.api.i18n.General.getValueForKey(sakai.config.Navigation[i].label);

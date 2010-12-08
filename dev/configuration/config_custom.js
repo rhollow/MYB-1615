@@ -2,11 +2,13 @@ var sakai = sakai || {};
 
 sakai.config = sakai.config || {};
 
-// Custom config settings unique to myBerkeley go in this file.
+// Insert custom configuration here
+
+// myberkeley custom begin
 
 // This is our custom CAS log in information.
 sakai.config.Authentication = {
-    "internal": sakai.isDev, 
+    "internal": sakai.isDev,
     "external": [
         {
           label: "LOGIN_TITLE",
@@ -22,9 +24,6 @@ sakai.config.PageTitles.pages["/dev/inboxnotifier.html"] = "NOTIFICATIONS";
 sakai.config.PageTitles.pages["/dev/listpage.html"] = "MY_DYNAMIC_LISTS";
 sakai.config.PageTitles.pages["/dev/links.html"] = "LINKS";
 
-// Custom CSS Files to load in
-sakai.config.skinCSS = ["/dev/skins/default/skin.css"];
-
 // set our own default widget arrangement
 sakai.widgets.defaults.personalportal.columns = [["mylinks", "recentmessages"], ["myreminders"]];
 
@@ -34,3 +33,8 @@ sakai.config.Navigation[sakai.config.Navigation.length] = {
     "label" : "NOTIFICATION_MANAGER",
     "requiresAdvisorMembership" : true
 };
+
+// myberkeley custom end
+
+// Custom CSS Files to load in
+sakai.config.skinCSS = ["/dev/skins/default/skin.css"];
