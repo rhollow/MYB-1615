@@ -573,7 +573,7 @@ sakai.inbox = function() {
                     renderMessages(data);
                     showUnreadMessages();
                 }
-                if (typeof callback !== "undefined") {
+                if ($.isFunction(callback)) {
                     callback();
                 }
 

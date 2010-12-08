@@ -125,7 +125,7 @@ sakai.myreminders = function(tuid, showSettings){
               url: url,
               data: props,
               success: function(data, textStatus, xhr){
-                  if (typeof callback !== "undefined") {
+                  if ($.isFunction(callback)) {
                       callback();
                   }
               },
@@ -222,7 +222,7 @@ sakai.myreminders = function(tuid, showSettings){
                 if (data.results) {
                     createRemindersList(data);
                 }
-                if (typeof callback !== "undefined") {
+                if ($.isFunction(callback)) {
                     callback();
                 }
             },
