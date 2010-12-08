@@ -35,6 +35,3 @@ sakai.config.Navigation[sakai.config.Navigation.length] = {
 };
 
 // myberkeley custom end
-
-// Custom CSS Files to load in
-sakai.config.skinCSS = ["/dev/skins/default/skin.css"];
