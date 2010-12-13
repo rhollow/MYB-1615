@@ -22,6 +22,10 @@
     background: url("/devwidgets/myreminders/images/reminders_widget_icon.png") no-repeat scroll 16px 16px transparent;
 }
 
+.myreminders .s3d-widget-titlebar {
+    height: 47px;
+}
+
 .myreminders_widget .fl-widget-content {
     padding: 0;
     border-right: 3px solid #D4DADE;
