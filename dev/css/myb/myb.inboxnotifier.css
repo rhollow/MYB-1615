@@ -115,6 +115,10 @@
 { text-align: center; border: none; height: 370px; }
 .inbox_main .inbox-table tr.inbox-message-unvalidated *
 { font-weight: normal; font-style: italic; }
+.inbox_main .inbox-table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
 
 .inbox_main .bottom_decor
 { background: transparent url(/dev/images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
