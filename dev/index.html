@@ -58,6 +58,9 @@
         <!-- TOP BANNER -->
         <div id="top_banner"><!-- --></div>
 
+        <!-- NAVIGATION -->
+        <div id="widget_topnavigation" class="widget_inline"></div>
+
         <div class="index-container fl-centered">
 
             <!-- HEADER -->
@@ -66,12 +69,22 @@
                 <img src="/dev/images/myb/myb-beta-lrg-logotype.png" alt="__MSG__INSTANCE_NAME__" />
             </div>
 
-            <div class="header-byline">
-                __MSG__HEADER_BYLINE__
-            </div>
+            <!-- LOGIN WIDGET -->
+            <div id="widget_login" class="widget_inline"></div>
 
-            <div class="login-box">
-                <div class="preview-box">
+
+            <div class="login-box fl-container">
+                <div class="preview-box fl-left">
+
+                    <!-- HEADER -->
+                    <div class="header-title">
+                        <p class="sakai_logo_index"></p>
+                    </div>
+
+                    <div class="header-byline">
+                        __MSG__HEADER_BYLINE__
+                    </div>
+
                     <div class="header-smallline">
                         __MSG__HEADER_SMALLLINE__
                     </div>
@@ -84,25 +97,9 @@
 
                 <!-- NORMAL LOGIN FUNCTIONALITY 
                      modified for myBerkeley Portal - eli 10.1.10 -->
-                <!-- LOGIN WIDGET -->
-                <div id="widget_login" class="widget_inline"></div>
-                
+               
                 <!-- EXTERNAL LOGIN FUNCTIONALITY 
-                     modified for myBerkeley Portal - eli 10.1.10  -->
-                             <!-- NAVIGATION TEMPLATE -->
-        <div id="login_external_template" style="display:none"><!--
-            {for i in externalauth}
-                <div class="login-external">
-                    <div class="login-external-content">
-                        <div  class="login-external-system">
-                            <p class="login-external-label">${i.label}</p>
-                            <button id="login-external-button" type="submit" class="s3d-button s3d-button-primary"><span class="s3d-button-inner login-external-label">${i.btname}</span></button>
-                            <p class="login-external-description">${i.description}</p>
-                        </div>
-                    </div>
-                </div>
-            {/for}
-        --></div>
+                     modified for myBerkeley Portal - eli 10.1.10  -->                      
                 <div id="myBerkeley-CAS" class="login-external">
                     <div class="login-external-content">
                         <div  class="login-external-system">
@@ -119,6 +116,15 @@
                     __MSG__REQUEST_FOR_FEEDBACK__
                 </div>
 
+                <!-- WIDGET COLUMN
+                    commented out for myBerkeley - chris 12.13.2010
+                <div id="login_right_col" class="fl-right fl-fix" style="display:none;">
+                    <div id="widget_tags" class="widget_inline"></div>
+                    <div id="widget_activegroups" class="widget_inline"></div>
+                    <div id="widget_popularcontent" class="widget_inline"></div>
+                </div>
+                -->
+                
             </div>
 
             <!-- FOOTER WIDGET -->
