@@ -1086,11 +1086,11 @@ if (!sakai.composenotification){
                 type: "POST",
                 data: toPost,
                 success: function(){
+                    if (msgTxt != null) {
+                    	showGeneralMessage(msgTxt + " successful.");
+                    }
                     // If a callback function is specified in argument, call it.
-                    if (typeof successCallback === "function") {
-                        if (msgTxt != null) {
-                            showGeneralMessage(msgTxt + " successful.");
-                        }
+                    if ($.isFunction(successCallback)) {
                         successCallback(true);                         
                     }
                 }, 
