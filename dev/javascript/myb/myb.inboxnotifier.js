@@ -572,7 +572,7 @@ sakai.notificationsinbox = function(){
                     // Render the messages
                     renderMessages(data);
                 }
-                if (typeof callback !== "undefined") {
+                if ($.isFunction(callback)) {
                     callback();
                 }
             },
