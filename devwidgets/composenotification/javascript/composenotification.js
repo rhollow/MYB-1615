@@ -683,7 +683,7 @@ if (!sakai.composenotification){
                     $(messageEventPlace).val(message["sakai:eventPlace"]);
                 }
             }   
-            if(callback){
+            if($.isFunction(callback)){
                 callback(true);
             }                                                                                                
         };
