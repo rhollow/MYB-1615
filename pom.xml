@@ -192,7 +192,7 @@
                 <condition property="git.version.value" value="${git.version}" else="UnknownVersion" >
                   <isset property="git.version" />
                 </condition>
-                <echo file="${basedir}/target/scm-version.properties" >
+                <echo file="${project.basedir}/target/scm-version.properties">
                   scm.version=${git.version.value}
                 </echo>
               </tasks>
