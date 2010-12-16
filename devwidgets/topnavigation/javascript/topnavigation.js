@@ -406,6 +406,9 @@ sakai.topnavigation = function(tuid, showSettings){
         $(".personal .sign_out").hide();
         $(".help").hide();
         $("#user_link_container").hide();
+		
+		// MyB: removing vertical bar after Login link
+		$("#login_button_container a").css("border-right","none");
 
         // Show Nav Container
         if (sakai.config.anonAllowed){
@@ -593,6 +596,12 @@ sakai.topnavigation = function(tuid, showSettings){
 
     if (sakai.data.me.user.anon) {
         addBinding();
+		
+		// MyB: Setting login url
+		$("#login_button_container a").attr("href", sakai.config.Authentication.external[0].url);
+		// MyB: when only login link is displayed its parent container has incorrect margin, fixing
+		$("#login_button_container").css("margin-bottom", "1em");
+        
         // If a user is not logged in -> switch to anonymous mode
         switchToAnonymousMode();
     }

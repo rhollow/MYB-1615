@@ -80,9 +80,6 @@ sakai.login = function(){
                 }
                 // Set the cursor in the username field
                 $("#" + usernameField).focus();
-            } else {
-                $("#login-external-container").html($.TemplateRenderer("login-external-template", sakai.config.Authentication));
-                $(loginExternal).show();
             }
         }
     };
