@@ -1,0 +1,15 @@
+{
+    "description":"My Events: A list of events",
+    "name":"My Events",
+    "id":"mybevents",
+    "personalportal":true,
+    "url":"/devwidgets/mybevents/mybevents.html",
+    "i18n": {
+        "default": "/devwidgets/mybevents/bundles/default.properties",
+        "en_US": "/devwidgets/mybevents/bundles/en_US.properties"
+    },
+    "multipleinstance": false,
+    "deletable":true,
+    "type":"sakai",
+    "enabled":true
+}
