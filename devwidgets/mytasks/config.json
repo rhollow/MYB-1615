@@ -1,12 +1,12 @@
 {
     "description":"My Tasks: A list of things I need to do",
     "name":"My Tasks",
-    "id":"mybtasks",
+    "id":"mytasks",
     "personalportal":true,
-    "url":"/devwidgets/mybtasks/mybtasks.html",
+    "url":"/devwidgets/mytasks/mytasks.html",
     "i18n": {
-        "default": "/devwidgets/mybtasks/bundles/default.properties",
-        "en_US": "/devwidgets/mybtasks/bundles/en_US.properties"
+        "default": "/devwidgets/mytasks/bundles/default.properties",
+        "en_US": "/devwidgets/mytasks/bundles/en_US.properties"
     },
     "multipleinstance": false,
     "deletable":true,

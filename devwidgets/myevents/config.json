@@ -1,12 +1,12 @@
 {
     "description":"My Events: A list of events",
     "name":"My Events",
-    "id":"mybevents",
+    "id":"myevents",
     "personalportal":true,
-    "url":"/devwidgets/mybevents/mybevents.html",
+    "url":"/devwidgets/myevents/myevents.html",
     "i18n": {
-        "default": "/devwidgets/mybevents/bundles/default.properties",
-        "en_US": "/devwidgets/mybevents/bundles/en_US.properties"
+        "default": "/devwidgets/myevents/bundles/default.properties",
+        "en_US": "/devwidgets/myevents/bundles/en_US.properties"
     },
     "multipleinstance": false,
     "deletable":true,

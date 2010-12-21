@@ -24,13 +24,13 @@ var sakai = sakai || {};
   * @param {String} tuid unique id of the widget
   * @param {Boolean} showSettings show the settings of the widget or not
   */
-sakai.mybevents = function(tuid, showSettings){
+sakai.myevents = function(tuid, showSettings){
 
     var doInit = function() {
-        alert("events here");
+
     };
 
     doInit();
 };
 
-sakai.api.Widgets.widgetLoader.informOnLoad("mybevents");
+sakai.api.Widgets.widgetLoader.informOnLoad("myevents");

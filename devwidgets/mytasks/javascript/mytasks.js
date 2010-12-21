@@ -24,13 +24,13 @@ var sakai = sakai || {};
   * @param {String} tuid unique id of the widget
   * @param {Boolean} showSettings show the settings of the widget or not
   */
-sakai.mybtasks = function(tuid, showSettings){
+sakai.mytasks = function(tuid, showSettings){
 
     var doInit = function() {
-        alert("tasks here");
+
     };
 
     doInit();
 };
 
-sakai.api.Widgets.widgetLoader.informOnLoad("mybtasks");
+sakai.api.Widgets.widgetLoader.informOnLoad("mytasks");
