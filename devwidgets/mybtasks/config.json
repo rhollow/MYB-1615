@@ -1,0 +1,15 @@
+{
+    "description":"My Tasks: A list of things I need to do",
+    "name":"My Tasks",
+    "id":"mybtasks",
+    "personalportal":true,
+    "url":"/devwidgets/mybtasks/mybtasks.html",
+    "i18n": {
+        "default": "/devwidgets/mybtasks/bundles/default.properties",
+        "en_US": "/devwidgets/mybtasks/bundles/en_US.properties"
+    },
+    "multipleinstance": false,
+    "deletable":true,
+    "type":"sakai",
+    "enabled":true
+}
