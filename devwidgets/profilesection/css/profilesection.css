@@ -12,7 +12,7 @@
     font-weight: bold;
 }
 #profilesection_generalinfo .profilesection_generalinfo_header {
-    border-bottom:1px solid #999;
+    border-top:1px solid #999;
     margin:15px 0;
     padding:7px 0 15px;
     width:100%;
@@ -74,7 +74,7 @@
 #profilesection_generalinfo a.profilesection_add_section {
     font-size:14px;
     float:left;
-    margin:10px 0px 0px 240px;
+    margin:10px 5px 20px 240px;
 }
 #profilesection_generalinfo a.profilesection_add_section img {
     margin-right:5px;
@@ -94,6 +94,13 @@
     color:transparent;
     height:1px;
     width:90%;
+}
+#profilesection_generalinfo a.calnetlink {		
+	color:blue;
+	text-decoration:underline;
+}
+#profilesection_generalinfo div.worldview {
+	background:url(../images/globe-icon.png) no-repeat bottom right;
 }
 /* Validation errors */
 /* Errors */
