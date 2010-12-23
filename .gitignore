@@ -2,3 +2,7 @@
 .project
 /target
 *.kpf
+nginx.*
+/dev-i
+.DS_Store
+*.swp

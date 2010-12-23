@@ -16,8 +16,20 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, jQuery, sakai, sdata */
+/*global $, Config, jQuery, sakai */
 
+/**
+ * @name sakai.sites
+ *
+ * @class sites
+ *
+ * @description
+ * Initialize the sites widget
+ *
+ * @version 0.0.1
+ * @param {String} tuid Unique id of the widget
+ * @param {Boolean} showSettings Show the settings of the widget or not
+ */
 sakai.sites = function(tuid,showSettings){
 
 
@@ -35,6 +47,8 @@ sakai.sites = function(tuid,showSettings){
     var sitesErrorNoSettings = "#sites_error_nosettings";
     var sitesCreateNewSite = "#create_new_site_link";
     var createSiteContainer = "#createsitecontainer";
+
+    var sites_error_class = "sites_error";
 
 
     ///////////////////////
@@ -75,11 +89,16 @@ sakai.sites = function(tuid,showSettings){
 
         // If the user is not registered for any sites, show the no sites error.
         if (newjson.entry.length === 0){
-            $(sitesList, rootel).html($(sitesErrorNoSites).html());
+            $(sitesList, rootel).html(sakai.api.Security.saneHTML($(sitesErrorNoSites).html())).addClass(sites_error_class);
         }
         else {
             // Sort the sites by their name
             newjson.entry = newjson.entry.sort(doSort);
+            for (var site in newjson.entry){
+                if (newjson.entry.hasOwnProperty(site)) {
+                    newjson.entry[site].site.name = sakai.api.Security.escapeHTML(newjson.entry[site].site.name);
+                }
+            }
             $(sitesList, rootel).html($.TemplateRenderer(sitesListTemplate.replace(/#/,''), newjson));
         }
     };
@@ -92,12 +111,11 @@ sakai.sites = function(tuid,showSettings){
     var loadSiteList = function(response, succes){
         // Check if the request was ok
         if (succes) {
-            var json = $.parseJSON(response);
             var newjson = {
                 entry : []
             };
-            for (var i = 0, il = json.length; i < il; i++) {
-                newjson.entry.push(json[i]);
+            for (var i = 0, il = response.length; i < il; i++) {
+                newjson.entry.push(response[i]);
             }
             // Render all the sites.
             doRender(newjson);
@@ -111,7 +129,9 @@ sakai.sites = function(tuid,showSettings){
         $.ajax({
             url: sakai.config.URL.SITES_SERVICE,
             cache: false,
+            dataType: "json",
             success: function(data){
+                data = data.results;
                 loadSiteList(data, true);
             },
             error: function(xhr, textStatus, thrownError) {
@@ -130,12 +150,12 @@ sakai.sites = function(tuid,showSettings){
     });
 
     if (showSettings) {
-        $(sitesMainContainer, rootel).html(sitesErrorNoSettings);
+        $(sitesMainContainer, rootel).html(sakai.api.Security.saneHTML($(sitesErrorNoSettings).html())).addClass(sites_error_class);
     }
     else {
-        sdata.widgets.WidgetLoader.insertWidgets(tuid);
+        sakai.api.Widgets.widgetLoader.insertWidgets(tuid);
         // Start the request
         doInit();
     }
 };
-sdata.widgets.WidgetLoader.informOnLoad("sites");
+sakai.api.Widgets.widgetLoader.informOnLoad("sites");

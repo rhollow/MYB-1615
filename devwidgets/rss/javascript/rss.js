@@ -16,12 +16,19 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata, Querystring, DOMParser */
+/*global $, Config, Querystring, DOMParser */
 
 var sakai = sakai || {};
 
 /**
+ * @name sakai.rss
+ *
+ * @class rss
+ *
+ * @description
  * Initialize the rss widget
+ *
+ * @version 0.0.1
  * @param {String} tuid Unique id of the widget
  * @param {Boolean} showSettings Show the settings of the widget or not
  */
@@ -64,6 +71,7 @@ sakai.rss = function(tuid, showSettings){
 
     // Paging
     var rssPager = rssClass + "_jq_pager";
+    var pageClicked = 1;
 
     // Buttons
     var rssAddUrl = rssClass + "_settings_btnAddUrl";
@@ -73,10 +81,87 @@ sakai.rss = function(tuid, showSettings){
     var rssOrderBySource = rssId + "_output_order_source";
     var rssOrderByDate = rssId + "_output_order_date";
     var rssSendToFriend = rssClass + "_sendToFriend";
+    var rssRemoveFeed = "#rss_settings_removeFeed";
 
-    //Buttons (no dot)
+    // Buttons (no dot)
     var rssRemoveNoDot = rssName + "_settings_removeFeed";
     var rssSendToFriendNoDot = rssName + "_sendToFriend";
+
+    // Messages
+    var rssCannotConnectToRssFeed = "#rss_cannot_connect_to_rss_feed";
+    var rssFeedAlreadyEntered = "#rss_feed_already_entered";
+    var rssPasteValidRssAddress = "#rss_paste_valid_rss_address";
+    var rssIncorrectRssFeed = "#rss_incorrect_rss_feed";
+    var rssUnableToConnect = "#rss_unable_to_connect";
+    var rssFeedAlreadyAdded = "#rss_feed_already_added";
+    var rssNumberOfItemsShouldBeNumber = "#rss_number_of_items_should_be_number";
+    var rssPagesShouldBeBiggerThan = "#rss_pages_should_be_bigger_than";
+    var rssAddedNoFeeds = "#rss_added_no_feeds";
+
+
+    ////////////////////
+    // Event Handlers //
+    ////////////////////
+    var addBinding = function(){
+        $(rssAddUrl,rootel).bind("click", function(e, ui){
+            addRssFeed();
+        });
+        $(rssTxtUrl, rootel).bind("keydown", function(e, ui) {
+            if (e.keyCode === 13) {
+                addRssFeed();
+            }
+        });
+        $(rssCancel, rootel).bind("click",function(e,ui){
+            sakai.api.Widgets.Container.informCancel(tuid, "rss");
+        });
+        $(rssSubmit, rootel).bind("click",function(e,ui){
+            var object = getSettingsObject();
+            if(object !== false){
+                sakai.api.Widgets.saveWidgetData(tuid, object, function(success, data){
+                    if ($(".sakai_dashboard_page").is(":visible")) {
+                        showSettings = false;
+                        showHideSettings(showSettings);
+                    }
+                    else {
+                        sakai.api.Widgets.Container.informFinish(tuid, "rss");
+                    }
+                });
+            }
+        });
+
+        $(rssSendToFriend, rootel).bind("click", function(e, ui){
+            var index = parseInt(e.target.id.replace(rssSendToFriendNoDot, ""), 10);
+            // retrieve the title and body of the entry
+            var subject = resultJSON.entries[((pageClicked - 1) * 3) + index].title;
+            var body = resultJSON.entries[((pageClicked - 1) * 3) + index].description + "\n";
+            body += "read more: " + resultJSON.entries[((pageClicked - 1) * 3) + index].link;
+            // initialize the sendmessage-widget
+            var o = sakai.sendmessage.initialise(null, true, false);
+            o.setSubject(subject);
+            o.setBody(body);
+        });
+
+        $(rootel + " " + rssOrderBySource).bind("click", function(e, ui){
+            if (currentSort === "sourceD") {
+                currentSort = "sourceA";
+            }
+            else {
+                currentSort = "sourceD";
+            }
+            resultJSON.entries.sort(sortBySourcefunction);
+            pagerClickHandler(1);
+        });
+        $(rootel + " " + rssOrderByDate).bind("click", function(e, ui){
+            if (currentSort === "dateD") {
+                currentSort = "dateA";
+            }
+            else {
+                currentSort = "dateD";
+            }
+            resultJSON.entries.sort(sortByDatefunction);
+            pagerClickHandler(1);
+        });
+    };
 
 
     ////////////////////////
@@ -97,59 +182,49 @@ sakai.rss = function(tuid, showSettings){
     };
 
     /**
-     * Formats a dateobject to
-     * @param {Object} date-object
-     * @return {String} date in the following format: 20/3/2009 10:20 AM
-     */
-    var formatDate = function(d){
-        var am_or_pm = "";
-
-        var current_hour = d.getHours();
-        if (current_hour < 12) {am_or_pm = "AM";} else{am_or_pm = "PM";}
-        if (current_hour === 0){current_hour = 12;}
-        if (current_hour > 12){current_hour = current_hour - 12;}
-
-        var current_minutes = d.getMinutes() + "";
-        if (current_minutes.length === 1){current_minutes = "0" + current_minutes;}
-        // make a string out of a date in the correct format
-        return(d.getDate() + "/" + (d.getMonth() + 1) + "/" +  d.getFullYear() + " " + current_hour + ":" + current_minutes +  " " + am_or_pm);
-    };
-
-    /**
      * converts the xml-feed to a json-object
      * @param {Object} feed
      */
     var printFeed = function(feed){
+
         try{
+
             // Make the json-object where the rss-data will be saved
             var rss = {"items" : []};
             var xmlobject = feed;
+
             // retrieve data from the xmlobject and put it in the JSON-object
             var channel = $(xmlobject).find("channel");
+
             // put all the nodes in JSON-props
-            rss.title = getContent(channel.find("title")[0]);
-            rss.link = getContent(channel.find("link")[0]);
+            rss.title = $("title",channel).text();
+            rss.link = $("link",channel).text();
             rss.id = feedUrl;
-            rss.description = getContent(channel.find("description")[0]);
+            rss.description = $("description",channel).text();
             $(xmlobject).find("item").each(function() {
                 var item = $(this);
-                var parsedDate = "";
-                if (item.find("pubDate")[0]){
-                    parsedDate = formatDate(new Date(getContent(item.find("pubDate")[0])));
+                var pubDate = "";
+                var timeNow = new Date();
+                var parseDate = formatDate(timeNow);
+                if ($("pubDate",item).length > 0){
+
+                    // We have to parse the RFC 822 date to help IE understand it, as it is something dodgy there...
+                    pubDate = sakai.api.l10n.transformDateTimeShort(sakai.api.Util.parseRFC822Date($("pubDate",item).text()));
+
                 }
                   rss.items.push({
-                    "title" : getContent(item.find("title")[0]),
-                    "link" : getContent(item.find("link")[0]),
-                    "description" : getContent(item.find("description")[0]),
-                    "pubDate" : Date.parse(getContent(item.find("pubDate")[0])),
-                    "guid" : getContent(item.find("guid")[0]),
-                    "parsedDate" : parsedDate
+                    "title" : $("title",item).text(),
+                    "link" : $("link",item).text(),
+                    "description" : $("description",item).text(),
+                    "pubDate" : pubDate,
+                    "guid" : $("guid",item).text(),
+                    "parsedDate" : parseDate
                 });
           });
           return rss;
         }
         catch(ex){
-            alert("Incorrect rss-feed");
+            sakai.api.Util.notification.show($(rssIncorrectRssFeed).html(), $(rssPasteValidRssAddress).html());
         }
         // return false if some kind of error occured
         // this will be mostly rss format errors and will also work as a tester to see if the rss format is correct
@@ -175,10 +250,10 @@ sakai.rss = function(tuid, showSettings){
            url : sakai.config.URL.PROXY_RSS +  url,
            type : "GET",
            success : function(data) {
-                   onResponse(printFeed(data));
+                onResponse(printFeed(data));
            },
            error: function(xhr, textStatus, thrownError) {
-                   alert("Unable to connect to the rss feed.");
+               sakai.api.Util.notification.show($(rssUnableToConnect).html(), $(rssCannotConnectToRssFeed).html());
            }
         });
     };
@@ -194,7 +269,7 @@ sakai.rss = function(tuid, showSettings){
     var currentSort = "dateA";
 
     /**
-     * sorts an array of feeds on the pubDate, this can be used with the javascript sort function
+     * sorts an array of feeds on the pubDate, this can be used with the JavaScript sort function
      * @param {Object} a
      * @param {Object} b
      */
@@ -254,6 +329,11 @@ sakai.rss = function(tuid, showSettings){
             // if all the feed are retrieved render the rss
             else{
                 $(rssFeedListContainer, rootel).html($.TemplateRenderer(rssFeedListTemplate, resultJSON));
+                $(rootel + " " + rssRemove).bind("click", function(e,ui){
+                    var index = parseInt(e.target.parentNode.id.replace(rssRemoveNoDot, ""),10);
+                    resultJSON.feeds.splice(index,1);
+                    $(rssRemoveFeed + index).parent().remove();
+                });
             }
         });
     };
@@ -284,17 +364,19 @@ sakai.rss = function(tuid, showSettings){
      * and connects the pager again
      * @param {Object} pageClicked
      */
-    var pagerClickHandler = function(pageClicked){
+    var pagerClickHandler = function(clicked){
+        pageClicked = parseInt(clicked, 10);
         // first get the entries that need to be shown on this page
-        resultJSON.shownEntries = getShownEntries(pageClicked);
+        resultJSON.shownEntries = getShownEntries(clicked);
         // render these entries
         $(rssOutput, rootel).html($.TemplateRenderer(rssOutputTemplate, resultJSON));
         // change the pageNumeber
         $(rssPager,rootel).pager({
-            pagenumber: pageClicked,
+            pagenumber: clicked,
             pagecount: Math.ceil(resultJSON.entries.length / 3),
             buttonClickCallback: pagerClickHandler
         });
+        addBinding();
     };
 
     /**
@@ -343,8 +425,8 @@ sakai.rss = function(tuid, showSettings){
             resultJSON.feeds = resultJSON.feeds || [];
             $(rssTxtTitle,rootel).val(resultJSON.title);
             $(rssNumEntries,rootel).val(resultJSON.numEntries);
-             $(rssDisplaySource, rootel).attr("checked", resultJSON.displaySource);
-             $(rssDisplayHeadlines, rootel).attr("checked", resultJSON.displayHeadlines);
+            $(rssDisplaySource, rootel).attr("checked", resultJSON.displaySource);
+            $(rssDisplayHeadlines, rootel).attr("checked", resultJSON.displayHeadlines);
             resultJSON.feeds = [];
             fillRssFeed(resultJSON.urlFeeds);
         }
@@ -359,7 +441,7 @@ sakai.rss = function(tuid, showSettings){
     var checkIfRssAlreadyAdded = function(rssFeedUrl){
         resultJSON.feeds = resultJSON.feeds || [];
         for(var i = 0; i < resultJSON.feeds.length; i++){
-            if($.trim(resultJSON.feeds[i].id) === $.trim(rssFeedUrl)){
+            if($.trim(resultJSON.feeds[i].id).replace("http://", "") === $.trim(rssFeedUrl)){
                 return true;
             }
         }
@@ -377,7 +459,7 @@ sakai.rss = function(tuid, showSettings){
             $(rootel + " " + rssRemove).bind("click", function(e,ui){
                 var index = parseInt(e.target.parentNode.id.replace(rssRemoveNoDot, ""),10);
                 resultJSON.feeds.splice(index,1);
-                $(rssFeedListContainer, rootel).html($.TemplateRenderer(rssFeedListTemplate, resultJSON));
+                $(rssRemoveFeed + index).parent().remove();
             });
         }
     };
@@ -391,7 +473,7 @@ sakai.rss = function(tuid, showSettings){
             getFeed(rssURL, getFeedResponse);
         }
         else{
-            alert("This rss-feed is already added to the widget");
+            sakai.api.Util.notification.show($(rssFeedAlreadyAdded).html(), $(rssFeedAlreadyEntered).html());
         }
         $(rssTxtUrl,rootel).val("");
     };
@@ -402,17 +484,17 @@ sakai.rss = function(tuid, showSettings){
     var getSettingsObject = function(){
         resultJSON.feeds = resultJSON.feeds || [];
         if(resultJSON.feeds.length === 0){
-            alert("You haven't added any feeds");
+            sakai.api.Util.notification.show("", $(rssPasteValidRssAddress).html());
             return false;
         }
         resultJSON.title = $(rssTxtTitle,rootel).val();
         resultJSON.numEntries = parseInt($(rssNumEntries,rootel).val(),10);
         if((resultJSON.numEntries + "") === "NaN"){
-            alert("Number of entries should be a number");
+            sakai.api.Util.notification.show("", $(rssNumberOfItemsShouldBeNumber).html());
             return false;
         }
         else if(resultJSON.numEntries < 1){
-            alert("Pages should be bigger then 0");
+            sakai.api.Util.notification.show("", $(rssPagesShouldBeBiggerThan).html() + resultJSON.numEntries);
             return false;
         }
         resultJSON.displaySource =  $(rssDisplaySource, rootel).attr("checked");
@@ -424,70 +506,6 @@ sakai.rss = function(tuid, showSettings){
         resultJSON.feeds = [];
         return resultJSON;
     };
-
-
-    ////////////////////
-    // Event Handlers //
-    ////////////////////
-
-    $(rssAddUrl,rootel).bind("click", function(e, ui){
-        addRssFeed();
-    });
-    $(rssTxtUrl, rootel).bind("keydown", function(e, ui) {
-        if (e.keyCode === 13) {
-            addRssFeed();
-        }
-    });
-    $(rssCancel, rootel).bind("click",function(e,ui){
-        sdata.container.informCancel(tuid, "rss");
-    });
-    $(rssSubmit, rootel).bind("click",function(e,ui){
-        var object = getSettingsObject();
-        if(object !== false){
-            sakai.api.Widgets.saveWidgetData(tuid, object, function(success, data){
-                if ($(".sakai_dashboard_page").is(":visible")) {
-                    showSettings = false;
-                    showHideSettings(showSettings);
-                }
-                else {
-                    sdata.container.informFinish(tuid);
-                }
-            });
-        }
-    });
-
-    $(rssSendToFriend, rootel).live("click", function(e, ui){
-        var index = parseInt(e.target.id.replace(rssSendToFriendNoDot, ""), 10);
-        // retrieve the title and body of the entry
-        var subject = resultJSON.entries[index].title;
-        var body = resultJSON.entries[index].description + "\n";
-        body += "read more: " + resultJSON.entries[index].link;
-        // Show the sendmessage widget
-        //$(rssSendMessage).show();
-        // initialize the sendmessage-widget
-        var o = sakai.sendmessage.initialise(null, true, false);
-        o.setSubject(subject);
-        o.setBody(body);
-    });
-
-    $(rootel + " " + rssOrderBySource).bind("click", function(e,ui){
-        if (currentSort === "sourceD"){
-            currentSort = "sourceA";
-        } else {
-            currentSort = "sourceD";
-        }
-        resultJSON.entries.sort(sortBySourcefunction);
-        pagerClickHandler(1);
-    });
-    $(rootel + " " + rssOrderByDate).bind("click", function(e,ui){
-        if (currentSort === "dateD"){
-            currentSort = "dateA";
-        } else {
-            currentSort = "dateD";
-        }
-        resultJSON.entries.sort(sortByDatefunction);
-        pagerClickHandler(1);
-    });
 
 
     /////////////////////////////
@@ -531,9 +549,11 @@ sakai.rss = function(tuid, showSettings){
 
     showHideSettings(showSettings);
 
+    addBinding();
+
     // Inserts the sendmessage-widget
-    sdata.widgets.WidgetLoader.insertWidgets(tuid);
+    sakai.api.Widgets.widgetLoader.insertWidgets(tuid);
 };
 
 
-sdata.widgets.WidgetLoader.informOnLoad("rss");
+sakai.api.Widgets.widgetLoader.informOnLoad("rss");

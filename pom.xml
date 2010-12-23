@@ -16,45 +16,31 @@
   <parent>
     <groupId>org.sakaiproject.nakamura</groupId>
     <artifactId>base</artifactId>
-    <version>0.4</version>
+    <version>0.9</version>
   </parent>
   <groupId>org.sakaiproject.nakamura</groupId>
-  <artifactId>org.sakaiproject.nakamura.uxloader</artifactId>
+  <artifactId>org.sakaiproject.nakamura.uxloader-myberkeley</artifactId>
   <packaging>bundle</packaging>
-  <version>0.4.0-SNAPSHOT</version>
+  <version>0.6.0-SNAPSHOT</version>
   <name>Sakai 3 UX Loader</name>
   <description>Loads the Sakai 3 UI into the JCR</description>
-  <url>http://github.com/oszkarnagy/3akai-ux</url>
+  <url>http://github.com/sakaiproject/3akai-ux</url>
   <scm>
-    <connection>scm:git:git://github.com/oszkarnagy/3akai-ux.git</connection>
-    <developerConnection>scm:git:git://git@github.com/oszkarnagy/3akai-ux.git</developerConnection>
-    <url>http://github.com/oszkarnagy/3akai-ux/</url>
+    <connection>scm:git:git://github.com/sakaiproject/3akai-ux.git</connection>
+    <developerConnection>scm:git:git://git@github.com/sakaiproject/3akai-ux.git</developerConnection>
+    <url>http://github.com/sakaiproject/3akai-ux/</url>
   </scm>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.sakaiproject.org/jira/browse/SAKIII</url>
   </issueManagement>
   <distributionManagement>
-        <downloadUrl>http://source.sakaiproject.org/maven2/</downloadUrl>
-        <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>sakai-maven-snapshots-scp</id>
-            <name>Sakai snapshot Repo</name>
-            <url>scp://source.sakaiproject.org/var/www/html/maven2-snapshots</url>
-            <layout>default</layout>
-        </snapshotRepository>
-        <repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>sakai-maven2-scp</id>
-            <name>Sakai maven2 repository</name>
-            <url>scp://source.sakaiproject.org/var/www/html/maven2</url>
-            <layout>default</layout>
-        </repository>
-        <site>
-            <id>sakai-site</id>
-            <name>Sakai release Site</name>
-            <url>scp://source.sakaiproject.org/var/www/html/release/nakamura/${project.version}</url>
-        </site>
+    <snapshotRepository>
+      <id>myberkeley-snapshots</id>
+      <name>MyBerkeley Snapshots</name>
+      <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley-snapshots/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
   </distributionManagement>
   <repositories>
         <repository>
@@ -106,16 +92,40 @@
        </repository>
   </repositories>
   <properties>
-    <ant.target>copy_all</ant.target>
+    <ant.target>development</ant.target>
+    <dev.content>
+        SLING-INF/content/tests;path:=/tests,
+        SLING-INF/content/jsdoc;path:=/jsdoc,
+    </dev.content>
   </properties>
   <profiles>
     <profile>
       <id>sakai-release</id>
       <!-- Begin workaround for maven-bundle-plugin 2.0.1 ignoring processed resources. -->
       <properties>
-        <ant.target>finish</ant.target>
+        <ant.target>release</ant.target>
+        <dev.content></dev.content>
       </properties>
     </profile>
+	<profile>
+	  <id>redeploy</id>
+	  <build>
+	   <plugins>
+	     <plugin>
+	      <groupId>org.apache.sling</groupId>
+	      <artifactId>maven-sling-plugin</artifactId>
+	      <executions>
+	        <execution>
+	          <id>install-bundle</id>
+	          <goals>
+	            <goal>install</goal>
+	          </goals>
+	        </execution>
+	      </executions>
+	     </plugin>
+	   </plugins>
+	  </build>
+	</profile>     
   </profiles>
   <build>
     <resources>
@@ -136,9 +146,14 @@
         <configuration>
           <instructions>
             <Sling-Initial-Content>
-                SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,
-                SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,
-                SLING-INF/content/var;path:=/var
+                SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false,
+                SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false,
+				SLING-INF/content/var/defaults;path:=/var/defaults;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,                
+                SLING-INF/content/var/templates/site;path:=/var/templates/site;uninstall:=false,
+                SLING-INF/content/var/ux-version;path:=/var/ux-version;uninstall:=false;overwriteProperties:=true,
+                SLING-INF/content/apps;path:=/apps;uninstall:=false,
+                ${dev.content}
+                SLING-INF/content/root;path:=/;uninstall:=false
             </Sling-Initial-Content>
           </instructions>
         </configuration>
@@ -163,6 +178,32 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <configuration>
+              <tasks>
+                <exec outputproperty="git.version" executable="git" failifexecutionfails="false" searchpath="true" >
+                  <arg line="describe" />
+                </exec>
+                <condition property="git.version.value" value="${git.version}" else="UnknownVersion" >
+                  <isset property="git.version" />
+                </condition>
+                <echo file="${project.basedir}/target/scm-version.properties">
+                  scm.version=${git.version.value}
+                </echo>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>

@@ -4,60 +4,74 @@
     <head>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Sakai 3 R&amp;D - __MSG__MY_MESSAGES__</title>
+        <title></title>
 
         <!-- Sakai Core CSS -->
-        <link rel="stylesheet" type="text/css" href="_css/FSS/fss-base.css" />
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.base.css" />
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.core.2.css" />
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.3.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/FSS/fss-base.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.base.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.core.2.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.3.css" />
 
         <!-- Sakai Page CSS -->
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.inbox.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.inbox.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.inbox.css" />
 
         <!-- 3rd party CSS -->
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.components.jq_pager.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.components.jq_pager.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/lib/jquery/plugins/gritter/css/jquery.gritter.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/lib/jquery.autoSuggest.css" />
 
         <!-- Sakai Config JS -->
-        <script type="text/javascript" src="_configuration/widgets.js"></script>
-        <script type="text/javascript" src="_configuration/config.js"></script>
+        <script type="text/javascript" src="/dev/configuration/widgets.js"></script>
+        <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
+        <script type="text/javascript" src="/dev/configuration/env.js"></script>
+        <script type="text/javascript" src="/dev/configuration/config.js"></script>
+        <script type="text/javascript" src="/dev/configuration/config_custom.js"></script>
 
         <!-- Core 3rd-party JS -->
-        <script type="text/javascript" src="_lib/jquery/jquery.js"></script>
-        <script type="text/javascript" src="_lib/jquery/jquery-ui.full.js"></script>
-        <script type="text/javascript" src="_lib/Fluid/3akai_Infusion.js"></script>
-        <script type="text/javascript" src="_lib/jquery/plugins/jquery.json.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/jquery.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/jquery-ui.full.js"></script>
+        <script type="text/javascript" src="/dev/lib/fluid/3akai_Infusion.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/l10n/globalization.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.json.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/google/html-sanitizer-minified.js"></script>
 
         <!-- Sakai Core JS -->
-        <script type="text/javascript" src="_lib/sakai_util/sakai_magic.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/sdata.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/i18n.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/notifications.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.core.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.util.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.i18n.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.l10n.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.user.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.widgets.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.communication.js"></script>
 
         <!-- 3rd party JS -->
-        <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
-        <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.bgiframe.min.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.ajaxQueue.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/thickbox-compressed.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.autocomplete.min.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/BrowserDetect.js"></script>
-        <script type="text/javascript" src="_lib/AutoComplete/jquery.autocomplete.min.js"></script>
-    
+        <script type="text/javascript" src="/dev/lib/misc/trimpath.template.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/querystring.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.cookie.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.pager.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.ba-bbq.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/gritter/jquery.gritter.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js"></script>
+
+        <!-- myberkeley JS -->
+        <script type="text/javascript" src="/dev/lib/myb/myb.api.security.js"></script>
+
     </head>
 
     <body class="fl-centered inbox_main inbox_detail i18nable">
 
-        <!-- EXPLORE BAR -->
-        <div id="widget_navigationchat" class="widget_inline"></div>
+        <!-- TOP BANNER -->
+        <div id="top_banner"><!-- --></div>
+
+        <!-- NAVIGATION -->
+        <div id="widget_topnavigation" class="widget_inline"></div>
 
         <!-- HEADER -->
-        <div class="fl-container-flex header">
-            <div class="fl-fix fl-centered fixed-container">
-                <div class="decor"></div>
+        <div class="fl-container-flex header s3d-header">
+            <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
+                <div class="s3d-decor"></div>
 
                 <!-- TITLE BAR  -->
                 <div class="s3d-site-heading">
@@ -67,7 +81,7 @@
         </div>
 
         <!-- CONTENT -->
-        <div class="fl-fix fl-centered fixed-container">
+        <div class="fl-fix fl-centered fixed-container s3d-main-container">
 
             <!-- MAIN PAGE -->
             <div class="fl-fix fl-col-mixed main_container">
@@ -76,41 +90,33 @@
                 <div class="fl-col fl-fix side_panel">
 
                     <!-- DROP DOWN -->
-                    <div class="drop-menu" id="inbox_compose_new">
-                        <a class="compose_new_link" href="javascript:;">__MSG__COMPOSE_A_NEW__ ...</a>
-                        <div class="drop-box" id="inbox_compose_new_panel" style="display:none;">
-                            <ul>
-                                <li id="inbox_compose_message"><a href="javascript:;">__MSG__MESSAGE__</a></li>
-                                <li id="inbox_compose_announcement"><a href="javascript:;">__MSG__ANNOUNCEMENT__</a></li>
-                        </ul>
-                        </div>
-                    </div>
+                    <span id="inbox_compose_message" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__COMPOSE_A_NEW_MESSAGE__</span></span>
 
                     <!-- FOLDERS -->
 
                     <div class="inbox-folders" id="inbox_folders">
 
-                        <div class="if_titlebar">
-                            <div class="if_titlebar_inner"><h2 class="if_title">__MSG__INBOX__</h2></div>
+                        <div class="if_titlebar s3d-widget-titlebar">
+                            <div class="if_titlebar_inner s3d-widget-titlebar-inner"><h2 class="if_title">__MSG__INBOX__</h2></div>
                         </div>
-                        <div class="if_content">
+                        <div class="if_content s3d-content s3d-regular-light-links">
 
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__INBOX__</a></div></div>
+                            <div class="tab s3d-bold"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_inbox">__MSG__INBOX__</a></div></div>
 
                             <ul>
-                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGE__</a> <span id="inbox_unread_nr_messages"></span></li>
+                                <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_messages">__MSG__MESSAGES__</a> <span id="inbox_unread_nr_messages"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_announcements">__MSG__ANNOUNCEMENTS__</a> <span id="inbox_unread_nr_announcements"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_chats">__MSG__CHATS__</a> <span id="inbox_unread_nr_chats"></span></li>
                                 <li><a href="javascript:;" class="inbox_filter" id="inbox_filter_invitations">__MSG__INVITATIONS__</a> <span id="inbox_unread_nr_invitations"></span></li>
                             </ul>
 
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__SENT__</a></div></div>
+                            <div class="tab s3d-bold"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_sent">__MSG__SENT__</a></div></div>
 
-                            <div class="tab"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
+                            <div class="tab s3d-bold"><div><a href="javascript:;" class="inbox_filter" id="inbox_filter_trash">__MSG__TRASH__</a></div></div>
 
                         </div>
-                        <div class="if_bottom">
-                            <div class="if_bottom_inner"></div>
+                        <div class="s3d-no-options">
+                            <div class="s3d-no-options-inner"></div>
                         </div>
 
                     </div>
@@ -134,16 +140,27 @@
                                 </span>
 
                                 <!-- Delete-->
-                                <a class="inbox_inbox_delete" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a>
+                                <a class="inbox_inbox_delete s3d-regular-light-links" href="javascript:;" id="inbox_inbox_delete">__MSG__DELETE__</a>
                             </div>
 
                             <div class="top_decor">
 
                                 <!-- Header -->
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_inbox">__MSG__INBOX__</div>
+                                <div class="inbox-heading s3d-regular-light-links inbox_inbox_header" id="inbox_inbox">
+                                    __MSG__INBOX__
+                                    <span id="inbox_subfolder_messages" class="inbox_subfolder" style="display:none">&raquo; __MSG__MESSAGES__</span>
+                                    <span id="inbox_subfolder_chats" class="inbox_subfolder" style="display:none">&raquo; __MSG__CHATS__</span>
+                                    <span id="inbox_subfolder_invitations" class="inbox_subfolder" style="display:none">&raquo; __MSG__INVITATIONS__</span>
+                                    <span id="inbox_subfolder_announcements" class="inbox_subfolder" style="display:none">&raquo; __MSG__ANNOUNCEMENTS__</span>
+                                </div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_sent" style="display:none;">__MSG__SENT_MESSAGES__</div>
                                 <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
                             </div>
+
+                            <!--INBOX TABLE HEADER FROM CONTENT -->
+                            <span style="display:none;" id="inbox_table_header_from_content_from">__MSG__FROM__</span>
+                            <span style="display:none;" id="inbox_table_header_from_content_to">__MSG__TO__</span>
+                            <span style="display:none;" id="inbox_table_header_from_content_from_to">__MSG__FROM_TO__</span>
 
                             <!-- Inbox -->
                             <div class="main_content_container">
@@ -156,12 +173,13 @@
                                         <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__DATE_ARRIVED__</span></th>
                                     </tr>
                                 </table>
+                                <div id="inbox_loading_progress"></div>
                             </div>
 
                             <div class="bottom_decor"></div>
 
-                            <div id="inbox_inbox_sort_up" style="display:none;"><img src="_images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
-                            <div id="inbox_inbox_sort_down" style="display:none;"><img src="_images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
+                            <div id="inbox_inbox_sort_up" style="display:none;"><span class="inbox_arrow inbox_arrow_up"></span></div>
+                            <div id="inbox_inbox_sort_down" style="display:none;"><span class="inbox_arrow inbox_arrow_down"></span></div>
 
                             <div id="inbox_inbox_messages_template" title=""><!--
                             {for m in messages}
@@ -169,30 +187,58 @@
                                 {if m.read}
                                     {var readClass="inbox-subject-read"}
                                 {/if}
-                                <tr class="inbox_message ${readClass}" id="inbox_table_message_${m.id}">
-                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m.id}" title="__MSG__DELETE__" /></td>
+                                <tr class="inbox_message ${readClass}" id="inbox_table_message_${m['jcr:name']}">
+                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
                                         {if m.messagebox === "outbox"}
                                             {if m.userTo}
                                                 <td>
-                                                {for toUser in m.userFrom}
-                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:to']}">${toUser.firstName} ${toUser.lastName}</a>
+                                                {for toUser in m.userTo}
+                                                    {if toUser["sakai:group-title"]}
+                                                    <a class="inbox_inbox_message_from" href="/~${toUser.groupid}">${toUser["sakai:group-title"]}</a>{if toUser_index < m.userTo.length - 1},{/if}
+                                                    {else}
+                                                    <a class="inbox_inbox_message_from" href="/~${toUser.userid}">${sakai.api.User.getDisplayName(toUser)}</a>{if toUser_index < m.userTo.length - 1},{/if}
+                                                    {/if}
                                                 {/for}
                                                 </td>
                                             {else}
-                                                <td><a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m.to}">${m.to}</a></td>
+                                                <td><a class="inbox_inbox_message_from" href="/~${m['sakai:to']}">${m['sakai:to']}</a></td>
+                                            {/if}
+                                        {elseif m.messagebox === "trash"}
+                                            {var toMe = false}
+                                            {for toUser in m.userTo}
+                                                {if toUser.userid == sakai.data.me.user.userid }
+                                                    {var toMe = true}
+                                                {/if}
+                                            {/for}
+                                            {if toMe}
+                                                <td>
+                                                {for fromUser in m.userFrom}
+                                                    <a class="inbox_inbox_message_from" href="/~${fromUser.userid}">__MSG__FROM__:  ${sakai.api.User.getDisplayName(fromUser)}</a></td>
+                                                {/for}
+                                                </td>
+                                            {else}
+                                                <td>
+                                                {for toUser in m.userTo}
+                                                    {if toUser["sakai:group-title"]}
+                                                    <a class="inbox_inbox_message_from" href="/~${toUser.groupid}">__MSG__TO__: ${toUser["sakai:group-title"]}</a>{if toUser_index < m.userTo.length - 1},{/if}
+                                                    {else}
+                                                    <a class="inbox_inbox_message_from" href="/~${toUser.userid}">__MSG__TO__: ${sakai.api.User.getDisplayName(toUser)}</a>{if toUser_index < m.userTo.length - 1},{/if}
+                                                    {/if}
+                                                {/for}
+                                                </td>
                                             {/if}
                                         {else}
                                             {if m.userFrom}
                                                 <td>
                                                 {for fromUser in m.userFrom}
-                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:from']}">${fromUser.firstName} ${fromUser.lastName}</a></td>
+                                                    <a class="inbox_inbox_message_from" href="/~${fromUser.userid}">${sakai.api.User.getDisplayName(fromUser)}</a></td>
                                                 {/for}
                                                 </td>
                                             {else}
-                                                <td><a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:from']}">${m.from}</a></td>
+                                                <td><a class="inbox_inbox_message_from" href="/~${m['sakai:from']}">${m['sakai:to']}</a></td>
                                             {/if}
                                         {/if}
-                                        <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message" id="inbox_inbox_message_${m.id}">${m.subject}</a></td>
+                                        <td id="inbox_table_subject_${m.id}"><a href="javascript:;" class="inbox_inbox_message s3d-regular-light-links" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></td>
                                         <td>${m.category}</td>
                                         <td>${m.date}</td>
                                 </tr>
@@ -205,7 +251,7 @@
 
                             <div id="inbox_table_preloader"><!--
                                 <tr class="inbox_message">
-                                    <td colspan="5" class="inbox_message_none"><img src="/dev/_images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
+                                    <td colspan="5" class="inbox_message_none"><img src="/dev/images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
                                 </tr>
                             --></div>
 
@@ -220,10 +266,9 @@
                         <!-- Header -->
                         <div class="top_toolbar fl-fix">
                             <div class="fl-force-left sender-options">
-                                <a href="javascript:;" id="inbox_message_back_to_inbox"><span>&laquo;</span> __MSG__BACK_TO_INBOX__</a>
                             </div>
 
-                            <div class="fl-force-right sender-options">
+                            <div class="fl-force-right sender-options s3d-regular-light-links">
                                 <a href="javascript:;" id="inbox_message_option_delete">__MSG__DELETE__</a>
                             </div>
                         </div>
@@ -236,10 +281,10 @@
                             <!-- Sender details -->
                             <div class="sender_details">
                                 <div class="sender_picture_container">
-                                    <a href="javascript:;" title="__MSG__TO_SEE_THE_SENDERS_PROFILE__"><img src="/dev/_images/profile_picture.gif" class="sender-picture" id="inbox_message_picture" alt="__MSG__SENDERS_PROFILE_PIC__" /></a>
+                                    <a href="javascript:;" title="__MSG__TO_SEE_THE_SENDERS_PROFILE__" id="inbox_message_from_picture"><img src="/dev/images/profile_picture.gif" class="sender-picture" id="inbox_message_picture" alt="__MSG__SENDERS_PROFILE_PIC__" /></a>
                                 </div>
                                 <div class="inbox_message_user">
-                                    <a href="javascript:;" class="sender-name" id="inbox_message_from" title="__MSG__FROM__"></a>
+                                    <a href="javascript:;" class="sender-name s3d-regular-light-links s3d-bold" id="inbox_message_from" title="__MSG__FROM__"><!-- --></a>
                                     <br />
                                     <div class="sender-timestamp">__MSG__SENT_THIS_ON__ <span id="inbox_message_date"></span></div>
                                 </div>
@@ -256,8 +301,12 @@
 
                                         <div id="inbox_message_body"></div>
 
-                                        <div class="message-options">
+                                        <div class="message-options s3d-regular-light-links s3d-bold">
+                                            <span id="inbox-sitejoin-accept" style="display:none"><a href="javascript:;" id="inbox_message_accept_sitejoin">__MSG__ACCEPT_SITEJOIN__</a> |</span>
+                                            <span id="inbox-sitejoin-deny" style="display:none"><a href="javascript:;" id="inbox_message_deny_sitejoin">__MSG__DENY_SITEJOIN__</a> |</span>
+                                            <span id="inbox-sitejoin-already" style="display:none; color: #666">__MSG__YOU_HAVE_REPLIED_TO_THIS_REQUEST_TO_JOIN_THIS_SITE__ |</span>
                                             <span id="inbox-invitation-accept" style="display:none"><a href="javascript:;" id="inbox_message_accept_invitation">__MSG__ACCEPT_INVITATION__</a> |</span>
+                                            <span id="inbox-invitation-ignore" style="display:none"><a href="javascript:;" id="inbox_message_ignore_invitation">__MSG__IGNORE_INVITATION__</a> |</span>
                                             <span id="inbox-invitation-already" style="display:none; color: #666">__MSG__YOU_HAVE_ACCEPTED_THIS_PERSON_AS_A_CONTACT__ |</span>
                                             <a href="javascript:;" id="inbox_message_option_reply">__MSG__REPLY__</a>
                                         </div>
@@ -271,18 +320,18 @@
                             <div id="inbox_message_replies"></div>
                             <div id="inbox_message_replies_template"><!--
                             {macro showReply(r)}
-                            <div style="padding: 10px 0px;">
-                                <span style="float:left;">
+                            <div class="sender_details">
+                                <div class="sender_picture_container">
                                     <a href="javascript:;" title="__MSG__TO_SEE_THE_PERSON_PROFILE__">
                                     {if r.userFrom[0].picture}
-                                        <img src="/_user${r.userFrom[0].hash}/public/profile/${r.userFrom[0].photo}" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" class="sender-picture" id="inbox_message_picture" />
+                                        <img src="/~${r.userFrom[0]["userid"]}/public/profile/${r.userFrom[0].photo}" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" class="sender-picture" id="inbox_message_picture" />
                                     {else}
-                                        <img src="/dev/_images/person_icon.jpg" class="sender-picture" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" id="inbox_message_picture" />
+                                        <img src="/dev/images/person_icon.jpg" class="sender-picture" alt="__MSG__TO_SEE_THE_USERS_PROFILE_INFORMATION__" id="inbox_message_picture" />
                                     {/if}
-                                </span>
+                                </div>
                                 <div class="inbox_message_user">
                                     {for fromUser in r.userFrom}
-                                        <a href="/dev/profile.html?user=${r["sakai:from"]}" class="sender-name" id="inbox_message_from">${fromUser.firstName} ${fromUser.lastName}</a><br />
+                                        <a href="/~${r["sakai:from"]}" class="sender-name s3d-regular-light-link s3d-bold" id="inbox_message_from">${sakai.api.User.getDisplayName(fromUser)}</a><br />
                                     {/for}
                                     <div class="sender-timestamp">Sent this on <span id="inbox_message_date">${r.date}</span></div>
                                 </div>
@@ -294,8 +343,8 @@
                                 <div class="sender-message">
                                     <div class="message-body" style="padding-top:0px">
                                         <div class="message-header" id="inbox_message_subject">${r["sakai:subject"]}</div>
-                                        <div id="inbox_message_body">${r["sakai:body"]}</div>
-                                        <div class="message-options" style="display:none">
+                                        <div id="inbox_message_body s3d-regular-light-links s3d-bold">${r["sakai:body"].replace(/\n/gi, "<br />")}</div>
+                                        <div class="message-options s3d-regular-light-links s3d-bold" style="display:none">
                                             <a href="javascript:;" id="inbox_message_option_reply_${r["sakai:id"]}">__MSG__REPLY__</a>
                                         </div>
                                     </div>
@@ -315,7 +364,7 @@
                                 {for r in replies}
                                     ${r.date} -
                                     {for fromUser in r.userFrom}
-                                        ${fromUser.profile.firstName} ${fromUser.profile.lastName}
+                                        ${sakai.api.User.getDisplayName(fromUser)}
                                     {/for}
                                     : ${r.bodyText}<br />
                                 {/for}
@@ -323,7 +372,7 @@
 
                             <!-- Compose Message -->
                             <div class="compose-message" id="inbox_message_compose" style="display:none;">
-                                <form class="compose-form" method="post" action="">
+                                <form class="compose-form">
                                     <div>
                                         <label for="inbox_message_compose_subject">__MSG__SUBJECT__</label><br />
                                         <input type="text" maxlength="255" class="compose-subject" id="inbox_message_compose_subject" />
@@ -332,10 +381,9 @@
                                         <label for="inbox_message_compose_body">__MSG__BODY__</label><br />
                                         <textarea class="compose-body" id="inbox_message_compose_body" rows="0" cols="0"></textarea>
                                     </div>
-
-                                    <div class="button_container">
-                                        <div class="greybutton"><a class="button-default submit_button inbox_bold" href="javascript:;" id="inbox_message_compose_send">__MSG__SEND_MESSAGE__</a></div>
-                                        <div class="lightgreybutton"><a class="button-default cancel-button" href="javascript:;" id="inbox_message_compose_cancel">__MSG__CANCEL__</a></div>
+                                    <div class="fl-force-right inbox_reply_buttons">
+                                        <button type="button" class="s3d-button" id="inbox_message_compose_cancel"><span class="s3d-button-inner">__MSG__DONT_SEND__</span></button>
+                                        <button class="s3d-button s3d-button-primary" id="inbox_message_compose_send"><span class="s3d-button-inner">__MSG__SEND_MESSAGE__</span></button>
                                     </div>
                                 </form>
                             </div>
@@ -378,6 +426,9 @@
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
+        <!-- CHAT -->
+        <div id="widget_chat" class="widget_inline"></div>
+
         <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
         <span id="inbox_generalmessages_error_read_fail" style="display:none;">__MSG__FAILED_TO_MARK_THIS_MESSAGE_AS_READ__.</span>
@@ -385,10 +436,11 @@
         <span id="inbox_generalmessages_deleted_1" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_DELETED__.</span>
         <span id="inbox_generalmessages_deleted_x" style="display:none;"> __MSG__MESSAGES_HAVE_BEEN_DELETED__.</span>
         <span id="inbox_generalmessages_deleted_failed" style="display:none;">__MSG__UNABLE_TO_DELETE_MESSAGES__.</span>
+        <span id="inbox_generalmessages_sent" style="display:none;">__MSG__MESSAGE_HAS_BEEN_SENT__.</span>
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
-        <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>
 
-        <script type="text/javascript" src="_javascript/inbox.js"></script>
+        <script type="text/javascript" src="/dev/javascript/inbox.js"></script>
+        <script type="text/javascript" src="/dev/javascript/myb/myb.securepage.js"></script>
 
     </body>
 

@@ -1,0 +1,43 @@
+/* strange redundant styleing on .request-feedback is for the odd case where there is more than one login type */
+.request-feedback {
+    padding: 6px;
+    color: #555;
+    text-align: center;
+    background-color: white;
+    height: auto;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.header-title {
+    float: none;
+}
+
+.header-title .sakai_logo_index {
+    background: url("/dev/images/myb/myb-beta-lrg-logotype.png") no-repeat scroll 0 7px transparent;
+    height: 102px;
+    padding: 0 5px;
+    width: 386px;
+    margin-bottom: 0;
+}
+
+.header-byline {
+    font-size: 1.7em;
+}
+
+.header-smallline {
+    padding: 10px 0 40px;
+    color: #555;
+    font-size: 1.85em;
+}
+
+.header-smallline strong {
+    font-size: 1.19em;
+}
+
+.header-smallline .beta-tag {
+    display: inline;
+    padding: 13px 41px;
+    background: url(/dev/images/myb/beta-tag.png) no-repeat 00 scroll;
+}

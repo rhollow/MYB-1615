@@ -18,6 +18,18 @@
 
 var sakai = sakai || {};
 
+/**
+ * @name sakai.basiclti
+ *
+ * @class basiclti
+ *
+ * @description
+ * Basiclti widget
+ *
+ * @version 0.0.1
+ * @param {String} tuid Unique id of the widget
+ * @param {Boolean} showSettings Show the settings of the widget or not
+ */
 sakai.basiclti = function(tuid, showSettings){
 
 
@@ -114,8 +126,6 @@ sakai.basiclti = function(tuid, showSettings){
         if(url1 == url2) {
             return true;
         }
-        // console.log(isUrl(url1) + ": " + url1 + "=" + urlRegExp.exec(url1)[4]);
-        // console.log(isUrl(url2) + ": " + url2 + "=" + urlRegExp.exec(url2)[4]);
         // i.e. protocol, domain (and optional port numbers) must match
         if((urlRegExp.exec(url1)[2] == urlRegExp.exec(url2)[2]) &&
            (urlRegExp.exec(url1)[4] == urlRegExp.exec(url2)[4])){
@@ -123,13 +133,13 @@ sakai.basiclti = function(tuid, showSettings){
         } else {
             return false;
         }
-    }
+    };
 
     /**
      * Called when the data has been saved to the JCR.
      */
     var savedDataToJCR = function(data, textStatus, XMLHttpRequest){
-        sdata.container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "basiclti");
     };
 
 
@@ -159,6 +169,8 @@ sakai.basiclti = function(tuid, showSettings){
             json.launchDataUrl = sakai.config.URL.SDATA_FETCH_URL.replace(/__PLACEMENT__/, sakai.site.currentsite.id + "/_widgets").replace(/__TUID__/, tuid).replace(/__NAME__/, "basiclti") + '.launch.html';
             json.tuidFrame = basicltiSettingsPreviewId;
             $(basicltiMainContainer, rootel).html($.TemplateRenderer($basicltiSettingsPreviewTemplate, json));
+            // SAKIII-542 Basic LTI no longer renders IFRAME content (workaround)
+            $("#" + json.tuidFrame).attr("src", json.launchDataUrl);
             // resize the iframe to match inner body height if in the same origin (i.e. same protocol/domain/port)
             if(isSameOriginPolicy(window.location.href, json.ltiurl)) {
                 $(basicltiSettingsPreviewFrame).load(function() {
@@ -200,19 +212,19 @@ sakai.basiclti = function(tuid, showSettings){
      */
     var displayRemoteContent = function(parameters){
         // default to some reasonable vaules if the settings node does not have them (maybe a legacy node)
-        if (parameters.border_size == null) {
+        if (parameters.border_size === null) {
             parameters.border_size = 0;
         }
-        if (parameters.border_color == null) {
+        if (parameters.border_color === null) {
             parameters.border_color = "cccccc";
         }
-        if (parameters.width == null) {
+        if (parameters.width === null) {
             parameters.width = defaultWidth;
         }
-        if (parameters.width_unit == null) {
+        if (parameters.width_unit === null) {
             parameters.width_unit = defaultWidthUnit;
         }
-        if (parameters.frame_height == null) {
+        if (parameters.frame_height === null) {
             parameters.frame_height = defaultHeight;
         }
         json = parameters;
@@ -230,13 +242,13 @@ sakai.basiclti = function(tuid, showSettings){
             json.ltikey = $(basicltiSettingsLtiKey).val() || "";
             json.ltisecret = $(basicltiSettingsLtiSecret).val() || "";
             json["debug@TypeHint"] = "Boolean";
-            json.debug = $('#basiclti_settings_debug:checked').val() != null;
+            json.debug = $('#basiclti_settings_debug:checked').val() !== null;
             json["release_names@TypeHint"] = "Boolean";
-            json.release_names = $('#basiclti_settings_release_names:checked').val() != null;
+            json.release_names = $('#basiclti_settings_release_names:checked').val() !== null;
             json["release_principal_name@TypeHint"] = "Boolean";
-            json.release_principal_name = $('#basiclti_settings_release_principal_name:checked').val() != null;
+            json.release_principal_name = $('#basiclti_settings_release_principal_name:checked').val() !== null;
             json["release_email@TypeHint"] = "Boolean";
-            json.release_email = $('#basiclti_settings_release_email:checked').val() != null;
+            json.release_email = $('#basiclti_settings_release_email:checked').val() !== null;
             json.launchDataUrl = ""; // does not need to be persisted
             json.tuidFrame = ""; // does not need to be persisted
             json.defined = ""; // what the heck is this? Where does it come from?
@@ -250,7 +262,8 @@ sakai.basiclti = function(tuid, showSettings){
             });
         }
         else {
-            alert("Please specify a URL");
+            sakai.api.Util.notification.show("", sakai.api.i18n.General.getValueForKey("PLEASE_SPECIFY_A_URL"),
+                                             sakai.api.Util.notification.type.ERROR);
         }
     };
 
@@ -360,7 +373,7 @@ sakai.basiclti = function(tuid, showSettings){
 
         // Cancel it
         $(basicltiSettingsCancel).click(function(){
-            sdata.container.informCancel(tuid);
+            sakai.api.Widgets.Container.informCancel(tuid, "basiclti");
         });
 
         addColorBinding();
@@ -444,4 +457,4 @@ sakai.basiclti = function(tuid, showSettings){
     getRemoteContent();
 };
 
-sdata.widgets.WidgetLoader.informOnLoad("basiclti");
+sakai.api.Widgets.widgetLoader.informOnLoad("basiclti");

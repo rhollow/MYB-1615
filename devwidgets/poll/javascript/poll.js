@@ -16,12 +16,19 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata */
+/*global $ */
 
 var sakai = sakai || {};
 
 /**
+ * @name sakai.poll
+ *
+ * @class poll
+ *
+ * @description
  * Initialize the poll widget
+ *
+ * @version 0.0.1
  * @param {String} tuid Unique id of the widget
  * @param {Boolean} showSettings Show the settings of the widget or not
  */
@@ -495,13 +502,13 @@ sakai.poll = function(tuid, showSettings){
         if(me){
 
             // A user can only vote once
-            if(!$.inArray(me.user.userid, json.poll.users) > -1){
+            if($.inArray(me.user.userid, json.poll.users) === -1){
 
                 // Double check (it is already checked in the bindUnbindVote function)
                 // if the user has checked an element. We do this double check to make it
                 // more secure.
                 if($('input[name=' + pollQuestionViewOptionsClass + ']:checked').length === 0){
-                    alert("Please select at least one option.");
+                    sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("PLEASE_SELECT_AN_OPTION"),"",sakai.api.Util.notification.type.ERROR);
 
                 // If the user selected one or multiple options
                 }else{
@@ -515,10 +522,10 @@ sakai.poll = function(tuid, showSettings){
                 }
             }
             else{
-                alert("You already registered a vote.");
+                sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("YOU_ALREADY_VOTED"),"",sakai.api.Util.notification.type.ERROR);
             }
         }else{
-            alert("Can not get the current user.");
+            sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("CANT_GET_CURRENT_USER"),"",sakai.api.Util.notification.type.ERROR);
         }
     };
 
@@ -628,14 +635,14 @@ sakai.poll = function(tuid, showSettings){
                         }
                     }
                 } catch (err){
-                    alert(err);
+                    sakai.api.Util.notification.show(err,"",sakai.api.Util.notification.type.ERROR);
                 }
             }
             else {
                 showPoll(response, exists);
             }
         } else {
-            alert('Failed to show the posts.');
+            debug.error('Failed to show the posts.');
         }
     };
 
@@ -693,7 +700,7 @@ sakai.poll = function(tuid, showSettings){
             a.appendChild(text);
 
             // Add the a tag to the div
-            $("#"+input+"_div").append(a);
+            $("#"+input+"_div").append(sakai.api.Security.saneHTML(a));
         }
 
         // If you click on a field, insert the value into the input box and change class
@@ -734,16 +741,16 @@ sakai.poll = function(tuid, showSettings){
      * Function that will be executed after the save to the database
      */
     var finishSettingsAfterSave = function(){
-        // Informes the sdata container that you are finished editing the widget.
+        // Informs the container that you are finished editing the widget.
         // This will close the lightbox
-        sdata.container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "poll");
     };
 
     /**
      * Executed after clicking on the save button
      */
     var finishNewSettings = function(){
-        sdata.container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "poll");
     };
 
     /**
@@ -1050,9 +1057,9 @@ sakai.poll = function(tuid, showSettings){
 
         // Bind the settings cancel button
         $(pollCancel, rootel).bind("click",function(e,ui){
-            // Informs the sdata container that you pressed cancel and
+            // Informs the container that you pressed cancel and
             // this will close the pop up
-            sdata.container.informCancel(tuid);
+            sakai.api.Widgets.Container.informCancel(tuid, "poll");
         });
 
         // Bind the preview button
@@ -1231,4 +1238,4 @@ sakai.poll = function(tuid, showSettings){
         $(pollMainContainer, rootel).show();
     }
 };
-sdata.widgets.WidgetLoader.informOnLoad("poll");
+sakai.api.Widgets.widgetLoader.informOnLoad("poll");

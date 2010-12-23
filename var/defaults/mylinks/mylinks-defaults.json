@@ -1,0 +1,75 @@
+{
+    "links" : [
+        {    "id"   : "asuc",
+             "name" : "ASUC",
+             "url"  : "http://www.asuc.org"
+        },
+        {
+             "id"   : "atoz_sites",
+             "name" : "Berkeley Sites (A-Z)",
+             "url"  : "http://www.berkeley.edu/a-z/a.shtml"
+        },
+        {
+             "id"   : "bear_facts",
+             "name" : "Bear Facts",
+             "url"  : "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome"
+        },
+        {
+             "id"   : "student_services",
+             "name" : "Student Services",
+             "url"  : "http://www.berkeley.edu/students"
+        },
+        {
+             "id"   : "bspace",
+             "name" : "bSpace",
+             "url"  : "http://bspace.berkeley.edu",
+             "popup_description" : "Homework assignments, lecture slides, syllabi, and class resources."
+        },
+        {
+             "id"   : "calmail",
+             "name" : "CalMail",
+             "url"  : "http://calmail.berkeley.edu",
+             "popup_description" : "Read and manage your university email."
+        },
+        {
+             "id"   : "campus_bookstore",
+             "name" : "Campus Bookstore",
+             "url"  : "http://www.bkstr.com/webapp/wcs/stores/servlet/StoreCatalogDisplay?storeId=10433"
+        },
+        {
+             "id"   : "dars",
+             "name" : "DARS",
+             "url"  : "https://marin.berkeley.edu/darsweb/servlet/ListAuditsServlet"
+        },
+        {
+             "id"   : "decal",
+             "name" : "DeCal Courses",
+             "url"  : "http://www.decal.org"
+        },
+        {
+             "id"   : "public_service",
+             "name" : "Public Service",
+             "url"  : "http://calcorps.berkeley.edu"
+        },
+        {
+             "id"   : "class_schedule",
+             "name" : "Schedule of Classes",
+             "url"  : "http://schedule.berkeley.edu"
+        },
+        {
+             "id"   : "schedule_planning",
+             "name" : "Schedule Planning Tools",
+             "url"  : "http://asuc.org/newsite2010/student-services/schedule-planning-tools/"
+        },
+        {
+             "id"   : "resource_guide",
+             "name" : "Resource Guide for Students",
+             "url"  : "http://resource.berkeley.edu"
+        },
+        {
+            "id"   : "tele-bears",
+            "name" : "Tele-BEARS",
+            "url"  : "http://telebears.berkeley.edu"
+        }
+    ]
+}

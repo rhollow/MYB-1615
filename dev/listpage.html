@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+
+        <!-- Sakai Core CSS -->
+        <link rel="stylesheet" type="text/css" href="/dev/css/FSS/fss-base.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.base.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.core.2.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.3.css" />
+        
+        <!-- Sakai Page CSS -->
+        <link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.listpage.css" />
+
+        <!-- 3rd party CSS -->
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.components.jq_pager.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/lib/jquery/plugins/gritter/css/jquery.gritter.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/lib/jquery.autoSuggest.css" />
+
+        <!-- Sakai Config JS -->
+        <script type="text/javascript" src="/dev/configuration/widgets.js"></script>
+        <script type="text/javascript" src="/var/widgets.json?callback=sakai.storeWidgets"></script>
+        <script type="text/javascript" src="/dev/configuration/env.js"></script>
+        <script type="text/javascript" src="/dev/configuration/config.js"></script>
+        <script type="text/javascript" src="/dev/configuration/config_custom.js"></script>
+
+        <!-- Core 3rd-party JS -->
+        <script type="text/javascript" src="/dev/lib/jquery/jquery.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/jquery-ui.full.js"></script>
+        <script type="text/javascript" src="/dev/lib/fluid/3akai_Infusion.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/l10n/globalization.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.json.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/google/html-sanitizer-minified.js"></script>
+
+        <!-- Sakai Core JS -->
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.core.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.util.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.i18n.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.l10n.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.user.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.widgets.js"></script>
+        <script type="text/javascript" src="/dev/lib/sakai/sakai.api.groups.js"></script>
+        
+        <!-- 3rd party JS -->
+        <script type="text/javascript" src="/dev/lib/misc/trimpath.template.js"></script>
+        <script type="text/javascript" src="/dev/lib/misc/querystring.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jqmodal.sakai-edited.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.cookie.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.pager.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.ba-bbq.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/gritter/jquery.gritter.js"></script>
+        <script type="text/javascript" src="/dev/lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js"></script>
+
+        <!-- myberkeley JS -->
+        <script type="text/javascript" src="/dev/lib/myb/myb.api.security.js"></script>
+
+    </head>
+
+    <body class="fl-centered fl-container inbox_main inbox_detail i18nable">
+
+        <!-- NAVIGATION -->
+        <div id="widget_topnavigation" class="widget_inline"></div>
+
+        <!-- CONTENT -->
+        <div class="fl-container fl-fix fl-container-flex content_inbox">
+            <div class="fl-fix fl-centered fixed-container">
+                <div class="decor"><!-- --></div>
+                
+                <!-- TITLE -->
+                <h1 class="title">__MSG__MY_DYNAMIC_LISTS__</h1>
+                    
+                <!-- TAB NAVIGATION -->
+                <div id="tabs">
+                    <div class="s3d-primary-tabs">
+                        <ul id="tab_list" class="fl-tabs fl-tabs-right">
+                            <li id="existing_lists_tab" class="fl-tabs-active"><a id="existing_link" href="#existing_lists"><span>Existing</span></a></li>
+                            <li id="new_list_tab"><a id="create_new_link" href="#create_new_list"><span>New</span></a></li>
+                        </ul>
+                    </div>
+                        
+                    <!-- TAB CONTENT -->
+                    <div class="fl-centered fl-container fl-tab-content search_content_wrapper">
+                    
+                    <!-- List of dynamic lists -->  
+                    <div id="existing_lists">
+                        <div class="search_tab_content_top">
+                            <div class="search_tab_content_top_inner"><!-- --></div>
+                        </div>
+                                        
+                        <div class="main_content_container">
+                            <div class="inbox-heading inbox_inbox_header" id="inbox_existing">__MSG__EXISTING_LISTS__</div>
+                            
+                            <table class="inbox-table" id="inbox_table" summary="Your existing lists.">
+                                <tr class="different">
+                                    <th class="inbox-checkbox" id="inbox_tableHeader_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__"/></th>
+                                    <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
+                                    <th class="inbox_inbox_table_header_sort" id="inbox_table_header_name"><span>__MSG__NAME__</span></th>
+                                    <th class="inbox_inbox_table_header_sort" id="inbox_table_header_description"><span>__MSG__DESCRIPTION__</span></th>
+                                    <!-- NOT SUPPORTED IN POC -->
+                                    <!-- <th class="inbox_inbox_table_header_sort" id="inbox_table_header_size"><span>__MSG__CURRENT_LIST_SIZE__</span></th> -->
+                                </tr>
+                            </table>
+                        </div>
+        
+                        <div id="inbox_inbox_sort_up" style="display:none;"><img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
+                        <div id="inbox_inbox_sort_down" style="display:none;"><img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
+                                
+                        <div id="inbox_inbox_lists_template" title=""><!--
+                            {for m in links}
+                                {var dateString = sakai.listpage.getDate(m['sakai:dateModified'])}
+                                                                 
+                                <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
+                                    <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['sakai:id']}" id="inbox_check_list_${m['sakai:id']}" title="__MSG__SELECT_LIST__" /></td>
+                                    <td>${dateString}</td>
+                                    <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m['sakai:name']}</a></td>
+                                    <td>${m['sakai:description']}</td>
+                                </tr>
+                                    
+                            {forelse}
+                                <tr class="inbox_list">
+                                    <td colspan="5" class="inbox_message_none">__MSG__NO_LISTS_FOUND__.</td>
+                                </tr>
+                            {/for}
+                            --></div>
+    
+                            <div id="inbox_table_preloader"><!--
+                                <tr class="inbox_message">
+                                    <td colspan="5" class="inbox_message_none"><img src="/dev/images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
+                                </tr>
+                             --></div>
+                             
+                             <div class="search_tab_content_bottom"><div class="search_tab_content_bottom_inner"><!-- --></div></div>
+                             
+                             </div>
+                             
+                            <!-- VIEW A SPECIFIC LIST -->
+                            <div id="create_new_list">
+                                <div class="search_tab_content_top">
+                                    <div class="search_tab_content_top_inner"><!-- --></div>
+                                </div> 
+                            
+                                <div class="main_content_container">
+                                    <div class="inbox-heading inbox_inbox_header" id="inbox_new">__MSG__CREATE_OR_EDIT_A_DYNAMIC_LIST__</div>
+                                    
+                                    <form name="createListForm" id="createListForm" action="#" method="post"> 
+                                        <div class="input_item"><label>List name:</label> 
+                                            <input type="text" id="list_name" size="25" /> 
+                                            <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
+                                        </div>
+                                        <div class="input_item"><label>Description:</label> 
+                                            <input type="text" id="description" size="25" /> 
+                                            <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
+                                        </div>
+                                        <div class="input_item">
+                                            <label>Context:</label>
+                                            <select name="context" id="context" onchange="sakai.listpage.updateListSize()" disabled="disabled">
+                                                <option selected="selected" value="g-ced-students">CED</option>
+                                            </select>
+                                        </div>
+                                        <div class="input_item">
+                                            <label>Major: (select all that apply)</label>
+                                            <span id="invalid_major" class="invalid_span" style="display:none;">You must select at least one major</span><br />
+                                            <table>
+                                                <tr>
+                                                <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" />
+                                                    <label for="ARCHITECTURE">Architecture</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" />
+                                                    <label for="CITY_REGIONAL_PLAN">City Regional Plan</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN" title="Design" />
+                                                    <label for="DESIGN">Design</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="LAND ARCH AND ENV PLAN" id="LAND_ARCH_AND_ENV_PLAN" title="Land Arch And Env Plan" />
+                                                    <label for="LAND_ARCH_AND_ENV_PLAN">Land Arch and Env Plan</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" />
+                                                    <label for="LANDSCAPE_ARCH">Landscape Arch</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" />
+                                                    <label for="URBAN_DESIGN">Urban Design</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> 
+                                                    <label for="URBAN_STUDIES">Urban Studies</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="LIMITED" id="LIMITED" title="Limited" />
+                                                    <label for="LIMITED">Limited</label><br />
+                                                <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" />
+                                                    <label for="INDIVIDUAL">Individual</label><br />
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="input_item">
+                                            <label>Standing:</label>
+                                            <select name="standing" id="standing" onchange="sakai.listpage.updateListSize()">
+                                                <option value="undergrad">Undergraduate</option>
+                                                <option value="grad">Graduate</option>
+                                                <option value="all">All</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- NOT SUPPORTED FOR POC -->
+                                        <!--
+                                        <div class="input_item" style="float: right;">
+                                            <span id="invalid_size" class="invalid_span" style="display:none;">Empty list</span>
+                                            <label>Current list size (students):</label>
+                                            <input type="text" id="list_size" size="5" disabled="disabled" />
+                                        </div>
+                                        -->
+                                    </form>
+                                </div>
+                                
+                                <div class="search_tab_content_bottom"><div class="search_tab_content_bottom_inner"><!-- --></div></div>
+                            
+                            </div>
+                        
+                            <!-- List of buttons for Existing Lists tab and New List tab -->
+                            <div class="button-list">
+                                <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                                <button type="button" id="inbox_inbox_duplicate_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DUPLICATE__</span></button>
+                                <button type="button" id="inbox_inbox_back_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_GROUP_NOTIFICATION_MANAGER__</span></button>
+                                <button type="button" id="inbox_inbox_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                                <button type="button" id="inbox_inbox_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <!-- FOOTER WIDGET -->
+        <div id="widget_footer" class="widget_inline footercontainer"></div>
+
+        <!-- CHAT -->
+        <div id="widget_chat" class="widget_inline"></div>
+
+       <!-- ERRORS AND MESSAGES -->
+        <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
+        <span id="inbox_generalmessages_none_selected" style="display:none;">__MSG__NO_LIST_WAS_SELECTED__.</span>
+        <span id="inbox_generalmessages_duplicate_multiple" style="display:none;">__MSG__YOU_CAN_ONLY_DUPLICATE_ONE_LIST_AT_A_TIME__.</span>
+        <span id="inbox_generalmessages_already_exists" style="display:none;">__MSG__AN_EXACT_COPY_OF_THIS_LIST_ALREADY_EXISTS__.</span>
+        <script type="text/javascript" src="/dev/javascript/myb/myb.listpage.js"></script>
+        <script type="text/javascript" src="/dev/javascript/myb/myb.securepage.js"></script>
+
+    </body>
+
+</html>

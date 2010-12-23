@@ -15,16 +15,23 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global Config, $, sdata */
+/*global Config, $ */
 
 var sakai = sakai || {};
 
 /**
+ * @name sakai.discussion
+ *
+ * @class discussion
+ *
+ * @description
  * Initialize the discussion widget
+ *
+ * @version 0.0.1
  * @param {String} tuid Unique id of the widget
  * @param {Boolean} showSettings Show the settings of the widget or not
  */
-sakai.discussion = function(tuid, showSettings) {
+sakai.discussion = function(tuid, showSettings){
 
 
     /////////////////////////////
@@ -41,8 +48,9 @@ sakai.discussion = function(tuid, showSettings) {
     // Each post gets a marker which is basicly the widget ID.
     // If we are using another discussion this marker will be the ID of that widget.
     var marker = tuid;
-    var currentSite = sakai.site.currentsite.id;
-    var store = "/sites/" + currentSite + "/store/";
+    var widgeturl = sakai.api.Widgets.widgetLoader.widgets[tuid] ? sakai.api.Widgets.widgetLoader.widgets[tuid].placement : false;
+    var currentSite = "";
+    var store = "";
     var widgetSettings = {};
     var allDiscussions = [];
     var initialPost = false;
@@ -73,6 +81,15 @@ sakai.discussion = function(tuid, showSettings) {
     // Container
     var discussionContainer = discussion + "_container";
     var discussionMainContainer = discussion + "_main_container";
+
+    // Add new topic
+    var discussionAdd = discussion + "_add";
+    var discussionAddContainer = discussionAdd + "_container";
+    var discussionAddNewTopic = discussionAdd + "_newtopic";
+    var discussionAddTopicSubject = discussionAdd + "_subject";
+    var discussionAddTopicBody = discussionAdd + "_body";
+    var discussionAddTopicSubmit = discussionAdd + "_submit";
+    var discussionAddTopicCancel = discussionAdd + "_cancel";
 
     // Content
     var discussionContent = discussion + "_content";
@@ -125,42 +142,6 @@ sakai.discussion = function(tuid, showSettings) {
     var discussionSettingsExistingContainerTemplate = "discussion_settings_existing_container_template";
     var discussionCompactContainerTemplate = "discussion_compact_container_template";
 
-
-    ///////////////////////
-    // Utility functions //
-    ///////////////////////
-
-    /**
-     * Format an input date (used by TrimPath)
-     * @param {Date} d Date that needs to be formatted
-     * @return {String} A string that beautifies the date e.g. May 11, 2009 at 9:11AM
-     */
-    var formatDate = function(d){
-        var names_of_months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        var am_or_pm = "";
-
-        var current_hour = d.getHours();
-        if (current_hour < 12) {
-            am_or_pm = "AM";
-        }
-        else {
-            am_or_pm = "PM";
-        }
-        if (current_hour === 0) {
-            current_hour = 12;
-        }
-        if (current_hour > 12) {
-            current_hour = current_hour - 12;
-        }
-
-        var current_minutes = d.getMinutes() + "";
-        if (current_minutes.length === 1) {
-            current_minutes = "0" + current_minutes;
-        }
-
-        return (names_of_months[d.getMonth()].substring(0, 3) + " " + d.getDate() + ", " + d.getFullYear() + " at " + current_hour + ":" + current_minutes + am_or_pm);
-    };
-
     /**
      * Parse a json integer to a valid date
      * @param {Integer} dateInput Integer of a date that needs to be parsed
@@ -191,9 +172,11 @@ sakai.discussion = function(tuid, showSettings) {
      * @param {Object} element The element you want to scroll to
      */
     var scrollTo = function(element){
-        $('html, body').animate({
-            scrollTop: element.offset().top
-        }, 1);
+        if (element.offset() && element.offset().top) {
+            $('html, body').animate({
+                scrollTop: element.offset().top
+            }, 1);
+        }
     };
 
     /**
@@ -202,9 +185,10 @@ sakai.discussion = function(tuid, showSettings) {
      * @param {String} firstName Firstname of the user
      * @param {String} lastName Lastname of the user
      */
-    var parseName = function(uuid, firstName, lastName){
-        if (firstName && lastName) {
-            return firstName + " " + lastName;
+    var parseName = function(uuid, profile){
+        var displayName = sakai.api.User.getDisplayName(profile);
+        if (displayName) {
+            return displayName;
         }
         else {
             return uuid;
@@ -213,17 +197,20 @@ sakai.discussion = function(tuid, showSettings) {
 
     /**
      * Parse the picture for a user
-     * @param {String} picture The picture path for a user
-     * @param {String} userStoragePrefix The user's storage prefix
+     * @param {String} profile The profile for a user
+     * @param {String} uuid Uuid of the user
      */
-    var parsePicture = function(uuid, picture){
+    var parsePicture = function(uuid, profile){
         // Check if the picture is undefined or not
         // The picture name will be undefined if the other user is in process of
         // changing his/her picture
-        if (picture && $.parseJSON(picture).name) {
-            return "/_user/public/" + uuid + "/" + $.parseJSON(picture).name;
+        if (profile.picture && $.parseJSON(profile.picture).name) {
+            var picture = $.parseJSON(profile.picture);
+            return "/~" + uuid + "/public/profile/" + picture.name;
         }
-        return sakai.config.URL.USER_DEFAULT_ICON_URL;
+        else {
+            return "/dev/images/user_avatar_icon_32x32.png";
+        }
     };
 
 
@@ -254,8 +241,8 @@ sakai.discussion = function(tuid, showSettings) {
         // Show new values
         stopEditing(id);
 
-        $(discussionContentSubject + "_" + id, rootel).html(subject);
-        $(discussionContentMessage + "_" + id, rootel).html(body.replace(/\n/g, "<br />"));
+        $(discussionContentSubject + "_" + id, rootel).html(sakai.api.Security.saneHTML(subject));
+        $(discussionContentMessage + "_" + id, rootel).html(sakai.api.Security.saneHTML(body.replace(/\n/g, "<br />")));
 
     };
 
@@ -270,26 +257,39 @@ sakai.discussion = function(tuid, showSettings) {
         var post = {
             'sakai:subject': subject,
             'sakai:body': body,
-            'sakai:editedby': me.user.userid
+            'sakai:editedby': me.user.userid,
+            '_charset_':'utf-8'
         };
 
         $.ajax({
-            url: store + id,
+            url: store + "/" + shardedId(id),
             cache: false,
             success: function(data){
                 if (showSettings) {
-                    sdata.container.informFinish(tuid);
+                    sakai.api.Widgets.Container.informFinish(tuid, "discussion");
                 }
                 else {
                     editComplete(id, subject, body);
                 }
             },
-            error: function(xhr, textStatus, thrownError) {
-                alert("Failed to edit this post.");
+            error: function(xhr, textStatus, thrownError){
+                sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("FAILED_EDIT_POST"),"",sakai.api.Util.notification.type.ERROR);
             },
             data: post,
             type: 'POST'
         });
+    };
+
+    /**
+     * Return hashed URL for the given ID.
+     * e.g Id =testings
+     * return te/st/in/gs/testings
+     * @param {String} id Id of the post that needs to be edited
+     *
+     *
+     */
+    var shardedId = function(id){
+        return id.substring(0, 2) + '/' + id.substring(2, 4) + '/' + id.substring(4, 6) + '/' + id.substring(6, 8) + '/' + id;
     };
 
     /**
@@ -320,6 +320,9 @@ sakai.discussion = function(tuid, showSettings) {
 
         var sMessage = "";
         sMessage = $(discussionContentMessage + "_" + id, rootel).html();
+        if (!sMessage) {
+            sMessage = $(discussionContentMessage + "_" + id).html();
+        }
         sMessage = sMessage.replace(/<br\s*\/?>/g, "\n"); // Replace br or br/ tags with \n tags
         $(discussionEditMessage, editContainer).val(sMessage);
 
@@ -368,25 +371,25 @@ sakai.discussion = function(tuid, showSettings) {
     /**
      * Renders the compact view of the current posts.
      */
-    var renderCompactPostsView = function(event) {
+    var renderCompactPostsView = function(event){
 
-    // If we are currently in full mode, re-render
-    if(currentDisplayMode === 'full') {
+        // If we are currently in full mode, re-render
+        if (currentDisplayMode === 'full') {
 
-        // Render the compact view template
-        $(discussionContainer, rootel).html($.TemplateRenderer(discussionCompactContainerTemplate, event.data));
-        $('#discussion_post' + event.data.posts[0].post["sakai:id"]).show();
+            // Render the compact view template
+            $(discussionContainer, rootel).html($.TemplateRenderer(discussionCompactContainerTemplate, event.data));
+            $('#discussion_post' + event.data.posts[0].post["sakai:id"]).show();
 
-    }
+        }
 
-    $('#discussion_compact_link',rootel).hide();
-    $('#discussion_expand_link',rootel).hide();
-    $('#discussion_collapse_link',rootel).show();
-    $('#discussion_full_link',rootel).show();
+        $('#discussion_compact_link', rootel).hide();
+        $('#discussion_expand_link', rootel).hide();
+        $('#discussion_collapse_link', rootel).show();
+        $('#discussion_full_link', rootel).show();
 
-    $('#discussion_container',rootel).show();
+        $('#discussion_container', rootel).show();
 
-    currentDisplayMode = 'compact';
+        currentDisplayMode = 'compact';
     };
 
     /**
@@ -417,11 +420,11 @@ sakai.discussion = function(tuid, showSettings) {
      * Makes sure the post is properly formatted so the template engine can interpret it.
      * @param {Object} o
      */
-    var doMarkUpOnPost = function(o) {
+    var doMarkUpOnPost = function(o){
         var post = o.post;
         var uid = post["sakai:from"];
-        post.date = formatDate(parseDate(post["sakai:created"]));
-        post['sakai:body'] = post['sakai:body'].replace(/\n/g, "<br />");
+        post.date = sakai.api.l10n.transformDateTimeShort(parseDate(post["sakai:created"]));
+        post['sakai:body'] = (""+post['sakai:body']).replace(/\n/g, "<br />");
         post.showEdit = false;
         post.showDelete = false;
 
@@ -432,20 +435,20 @@ sakai.discussion = function(tuid, showSettings) {
         }
 
         // Get the user's firstName, lastName and picture if it's in the database
-        var profile = post.profile;
-        post.profile.fullName = parseName(uid, profile.firstName, profile.lastName);
-        post.profile.picture = parsePicture(uid, profile.picture);
+        var profile = post.profile[0];
+        post.profile.fullName = parseName(uid, profile);
+        post.profile.picture = parsePicture(uid, profile);
 
         // Check if someone edited the post
         // post.sakai:editedbyprofiles is an array of objects that contain all the editers for this post.
         // TODO: Fix this weird assignment bug.
         var editedByProfiles = post['sakai:editedbyprofiles'];
         if (editedByProfiles) {
-            var lastEditter = editedByProfiles[editedByProfiles.length - 1].editter;
+            var lastEditter = editedByProfiles[editedByProfiles.length - 1];
 
             // Get the profile info from the user that edited the post
-            post.editedByUserid = lastEditter["rep:userId"][0];
-            post.editedByName = parseName(lastEditter["rep:userId"][0], lastEditter.firstName, lastEditter.lastName);
+            post.editedByUserid = lastEditter.userid;
+            post.editedByName = parseName(lastEditter.userid, lastEditter);
             //post.editedByDate = formatDate(parseDate(lastEditter.date));
         }
         o.post = post;
@@ -459,18 +462,22 @@ sakai.discussion = function(tuid, showSettings) {
         // weird json bug.
         o.post["sakai:deleted"] = (o.post["sakai:deleted"] && (o.post["sakai:deleted"] === "true" || o.post["sakai:deleted"] === true)) ? true : false;
 
+        displayReplies(o);
+
+        return o;
+    };
+
+    var displayReplies = function(o) {
         for (var i = 0, j = o.replies.length; i < j; i++) {
             o.replies[i] = doMarkUpOnPost(o.replies[i]);
         }
-
-        return o;
     };
 
     /**
      * Get the information for a post.
      * @param {Object[]} arrPosts An array containing all the post
      */
-    var getPostInfo = function(arrPosts) {
+    var getPostInfo = function(arrPosts){
 
         // Clear the old posts
         $(discussionPosts, rootel).empty();
@@ -478,7 +485,10 @@ sakai.discussion = function(tuid, showSettings) {
         // Hide the reply form
         $(discussionReplyContainer, rootel).hide();
 
-        for (var i = 0, j = arrPosts.length; i<j; i++) {
+        // Hide the add new topic form
+        $(discussionAddContainer, rootel).hide();
+
+        for (var i = 0, j = arrPosts.length; i < j; i++) {
             arrPosts[i] = doMarkUpOnPost(arrPosts[i]);
         }
 
@@ -491,59 +501,61 @@ sakai.discussion = function(tuid, showSettings) {
         else {
             jsonPosts.loggedIn = true;
         }
-
+        if (jsonPosts.posts[0]) {
         var firstPostSubject = jsonPosts.posts[0].post['sakai:subject'];
-        $('#discussion_widget_title',rootel).html(firstPostSubject);
 
-        $('#discussion_compact_link',rootel).bind('click', jsonPosts, renderCompactPostsView);
+        $('#discussion_compact_link', rootel).unbind('click');
+        $('#discussion_compact_link', rootel).bind('click', jsonPosts, renderCompactPostsView);
 
-        $('#discussion_full_link',rootel).bind('click', jsonPosts, renderFullPostsView);
+        $('#discussion_full_link', rootel).unbind('click');
+        $('#discussion_full_link', rootel).bind('click', jsonPosts, renderFullPostsView);
 
-        $('#discussion_expand_link',rootel).bind('click', function (e,ui)
-            {
-                $('#discussion_container',rootel).show();
+        $('#discussion_expand_link', rootel).unbind('click');
+        $('#discussion_expand_link', rootel).bind('click', function(e, ui){
+            $('#discussion_container', rootel).show();
 
-                if(currentDisplayMode === 'full') {
-                    $('#discussion_compact_link',rootel).show();
-                    $('#discussion_full_link',rootel).hide();
-                }
-                else {
-                    $('#discussion_compact_link',rootel).hide();
-                    $('#discussion_full_link',rootel).show();
-                }
+            if (currentDisplayMode === 'full') {
+                $('#discussion_compact_link', rootel).show();
+                $('#discussion_full_link', rootel).hide();
+            }
+            else {
+                $('#discussion_compact_link', rootel).hide();
+                $('#discussion_full_link', rootel).show();
+            }
 
-                $('#li_divider',rootel).show();
+            $('#li_divider', rootel).show();
 
-                $('#discussion_expand_link',rootel).hide();
-                $('#discussion_collapse_link',rootel).show();
-            });
+            $('#discussion_expand_link', rootel).hide();
+            $('#discussion_collapse_link', rootel).show();
+        });
 
-
-        $('#discussion_collapse_link',rootel).bind('click', function (e,ui)
-            {
-                $('#discussion_container',rootel).hide();
-                $('#discussion_collapse_link',rootel).hide();
-                $('#discussion_expand_link',rootel).show();
-                $('#discussion_compact_link',rootel).hide();
-                $('#discussion_full_link',rootel).hide();
-                $('#li_divider',rootel).hide();
-            });
+        $('#discussion_collapse_link', rootel).unbind('click');
+        $('#discussion_collapse_link', rootel).bind('click', function(e, ui){
+            $('#discussion_container', rootel).hide();
+            $('#discussion_collapse_link', rootel).hide();
+            $('#discussion_expand_link', rootel).show();
+            $('#discussion_compact_link', rootel).hide();
+            $('#discussion_full_link', rootel).hide();
+            $('#li_divider', rootel).hide();
+        });
 
         renderPosts(jsonPosts);
 
         $(discussionToggleShowAllClass, rootel).hide();
 
 
-        if(!widgetSettings.displayMode || widgetSettings.displayMode === 'inline') {
-            $('#discussion_collapse_link',rootel).show();
-            $('#discussion_compact_link',rootel).show();
-            $('#discussion_container',rootel).show();
-            $('#li_divider',rootel).show();
+        if (!widgetSettings.displayMode || widgetSettings.displayMode === 'inline') {
+            $('#discussion_collapse_link', rootel).show();
+            $('#discussion_compact_link', rootel).show();
+            $('#discussion_container', rootel).show();
+            $('#li_divider', rootel).show();
         }
-        else if(widgetSettings.displayMode === 'link') {
-            $('#discussion_expand_link',rootel).show();
-            $('#discussion_container',rootel).hide();
-            $('#li_divider',rootel).hide();
+        else
+            if (widgetSettings.displayMode === 'link') {
+                $('#discussion_expand_link', rootel).show();
+                $('#discussion_container', rootel).hide();
+                $('#li_divider', rootel).hide();
+            }
         }
     };
 
@@ -552,17 +564,17 @@ sakai.discussion = function(tuid, showSettings) {
      * @param {String} response Json response with all the posts
      * @param {Boolean} exists Check if the discussion exists
      */
-    var showPosts = function(response, exists) {
+    var showPosts = function(response, exists){
         if (exists) {
             try {
                 getPostInfo(response.results);
             }
             catch (err) {
-                alert(err);
+                debug.error(err);
             }
         }
         else {
-            alert('Failed to show the posts.');
+            debug.warn('Failed to show the posts.');
         }
     };
 
@@ -570,16 +582,16 @@ sakai.discussion = function(tuid, showSettings) {
     /**
      * Get the id of the dicussion widget and show the post including replies
      */
-    var getPostsFromJCR = function() {
-        var s = store.substring(0, store.length - 1);
+    var getPostsFromJCR = function(){
+        var s = store;
         var url = sakai.config.URL.DISCUSSION_GETPOSTS_THREADED.replace(/__PATH__/, s).replace(/__MARKER__/, marker);
         $.ajax({
             url: url,
             cache: false,
-            success: function(data) {
+            success: function(data){
                 showPosts(data, true);
             },
-            error: function(xhr, textStatus, thrownError) {
+            error: function(xhr, textStatus, thrownError){
                 showPosts(xhr.status, false);
             }
         });
@@ -594,7 +606,7 @@ sakai.discussion = function(tuid, showSettings) {
      * Takes the widgetSettings object and saves the settings.
      * @param {Object} callback a function that can be called when the settings were successfully saved.
      */
-    var saveWidgetSettings = function(callback) {
+    var saveWidgetSettings = function(callback){
         var data = widgetSettings;
 
         widgetSettings['sling:resourceType'] = 'sakai/settings';
@@ -603,6 +615,9 @@ sakai.discussion = function(tuid, showSettings) {
         // JCR properties are not necessary.
         delete data["jcr:primaryType"];
 
+        // don't save messages this way
+        delete data["message"];
+
         sakai.api.Widgets.saveWidgetData(tuid, data, callback);
     };
 
@@ -610,18 +625,18 @@ sakai.discussion = function(tuid, showSettings) {
      * Creates an initial post.
      * @param {Object} post The object with all the data that should be sent to the create service.
      */
-    var createInitialPost = function(post) {
+    var createInitialPost = function(post){
         // Use the local store for creating the initial posts.
         $.ajax({
-            url: "/_user" + sakai.data.me.profile.path + "/message.create.html",
+            url: store + ".create.html",
             cache: false,
             type: 'POST',
-            success: function(data) {
+            success: function(data){
                 saveWidgetSettings();
-                sdata.container.informFinish(tuid);
+                sakai.api.Widgets.Container.informFinish(tuid, "discussion");
             },
-            error: function(xhr, textStatus, thrownError) {
-                alert("Unable to save your post.");
+            error: function(xhr, textStatus, thrownError){
+                debug.error("Unable to save your post.");
             },
             data: post
         });
@@ -635,9 +650,18 @@ sakai.discussion = function(tuid, showSettings) {
     /**
      * Clear the input fields for the reply form
      */
-    var clearReplyFields = function() {
-        $(discussionReplySubject, rootel).val('');
-        $(discussionReplyBody, rootel).val('');
+    var clearReplyFields = function(){
+        $(discussionReplySubject, rootel).val("");
+        $(discussionReplyBody, rootel).val("");
+    };
+
+    /**
+     * Clear the input fields for the add topic form
+     */
+    var clearAddTopicFields = function(){
+        $(discussionAddTopicSubject, rootel).val("");
+        $(discussionAddTopicBody, rootel).val("");
+        $(discussionAddTopicSubmit).removeAttr("disabled");
     };
 
 
@@ -645,44 +669,46 @@ sakai.discussion = function(tuid, showSettings) {
      * Reply to a post.
      * @param {String} id
      */
-    var replyPost = function(id) {
+    var replyPost = function(id){
         var subject = $(discussionReplySubject, rootel).val();
         var body = $(discussionReplyBody, rootel).val();
-        if (subject.replace(/ /g, "") !== "" && body.replace(/ /g, "") !== "") {
+        if ((""+subject).replace(/ /g, "") !== "" && (""+body).replace(/ /g, "") !== "") {
 
-            var data = {
+            var object = {
                 'sakai:subject': subject,
                 'sakai:body': body,
                 'sakai:marker': marker,
                 'sakai:type': 'discussion',
+                'sling:resourceType': 'sakai/message',
                 'sakai:replyon': id,
                 'sakai:messagebox': 'outbox',
                 'sakai:sendstate': 'pending',
-                'sakai:to': "discussion:s-" + currentSite
+                'sakai:to': "discussion:w-" + store,
+                '_charset_':'utf-8'
             };
-            var url = sakai.site.currentsite["jcr:path"] + "/store.create.html";
+            var url = store + ".create.html";
             $.ajax({
                 url: url,
                 type: 'POST',
-                success: function(data) {
+                success: function(data){
                     // Get all the other posts
                     clearReplyFields();
                     getPostsFromJCR();
                 },
-                error: function(xhr, textStatus, thrownError) {
+                error: function(xhr, textStatus, thrownError){
                     if (xhr.status === 401) {
                         clearReplyFields();
-                        alert("You are not allowed to add a reply.");
+                        sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("YOU_CANT_REPLY"),"",sakai.api.Util.notification.type.ERROR);
                     }
                     else {
-                        alert("Failed to add a reply.");
+                        sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("FAILED_ADD_REPLY"),"",sakai.api.Util.notification.type.ERROR);
                     }
                 },
-                data: data
+                data: object
             });
         }
         else {
-            alert("Please enter all the fields.");
+            sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("PLEASE_ENTER_ALL_FIELDS"),"",sakai.api.Util.notification.type.ERROR);
         }
     };
 
@@ -692,7 +718,7 @@ sakai.discussion = function(tuid, showSettings) {
      * RE: in front of the subject.
      * @param {String} id Id of the post that is replied to
      */
-    var showReply = function(id) {
+    var showReply = function(id){
         $(discussionReplyContainer, rootel).show();
 
         // Jump to reply form
@@ -705,6 +731,18 @@ sakai.discussion = function(tuid, showSettings) {
         $(discussionReplySubject, rootel).val("Re: " + $(discussionContentSubject + "_" + id, rootel).text());
     };
 
+    var showAddTopic = function(id){
+        $(discussionAddContainer, rootel).show();
+
+        // Jump to reply form
+        scrollTo($(discussionAddContainer, rootel));
+
+        // Focus on the subject field
+        $(discussionAddTopicSubject, rootel).focus();
+
+        $(discussionAddContainer + " form", rootel).validate().resetForm();
+    };
+
 
     ////////////
     // DELETE //
@@ -715,22 +753,77 @@ sakai.discussion = function(tuid, showSettings) {
      * @param {String} id The id of the post.
      * @param {boolean} deleteValue true = delete, false = undelete
      */
-    var deletePost = function(id, deleteValue) {
-        var url = store + id;
+    var deletePost = function(id, deleteValue){
+        var url = store + "/" + shardedId(id);
         var data = {
-            "sakai:deleted": deleteValue
+            "sakai:deleted": deleteValue,
+            "sakai:deletedByID": me.user.userid,
+            "sakai:deletedBy": sakai.api.User.getDisplayName(me.profile)
         };
         $.ajax({
             url: url,
             type: 'POST',
-            success: function() {
+            success: function(){
                 getPostsFromJCR();
             },
-            error: function(xhr, textStatus, thrownError) {
-                alert("Failed to delete this post.");
+            error: function(xhr, textStatus, thrownError){
+                sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("FAILED_DELETE_POST"),"",sakai.api.Util.notification.type.ERROR);
             },
             data: data
         });
+    };
+
+    ///////////////////
+    // ADD NEW TOPIC //
+    ///////////////////
+
+    /**
+     * Add a new topic.
+     * @param {String} id
+     */
+    var addNewTopic = function(){
+        var subject = $(discussionAddTopicSubject, rootel).val();
+        var body = $(discussionAddTopicBody, rootel).val();
+        if ((""+subject).replace(/ /g, "") !== "" && (""+body).replace(/ /g, "") !== "") {
+
+            var object = {
+                'sakai:subject': subject,
+                'sakai:body': body,
+                'sakai:marker': marker,
+                'sakai:type': 'discussion',
+                'sling:resourceType': 'sakai/message',
+                'sakai:writeto': store,
+                'sakai:initialpost': true,
+                'sakai:messagebox': 'outbox',
+                'sakai:sendstate': 'pending',
+                'sakai:to': "discussion:w-" + store,
+                '_charset_':"utf-8"
+            };
+            var url = store + ".create.html";
+            $.ajax({
+                url: url,
+                type: 'POST',
+                success: function(data){
+                    // Get all the other posts
+                    clearAddTopicFields();
+                    getPostsFromJCR();
+                },
+                error: function(xhr, textStatus, thrownError){
+                    if (xhr.status === 401) {
+                        clearReplyFields();
+                        sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("YOU_CANT_REPLY"),"",sakai.api.Util.notification.type.ERROR);
+                    }
+                    else {
+                        sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("FAILED_ADD_REPLY"),"",sakai.api.Util.notification.type.ERROR);
+                    }
+                    $(discussionAddTopicSubmit).removeAttr("disabled");
+                },
+                data: object
+            });
+        }
+        else {
+            sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("PLEASE_ENTER_ALL_FIELDS"),"",sakai.api.Util.notification.type.ERROR);
+        }
     };
 
 
@@ -741,8 +834,8 @@ sakai.discussion = function(tuid, showSettings) {
     /**
      * Closes the settings container.
      */
-    var finishSettingsContainer = function() {
-        sdata.container.informFinish(tuid);
+    var finishSettingsContainer = function(){
+        sakai.api.Widgets.Container.informFinish(tuid, "discussion");
     };
 
     /**
@@ -750,7 +843,7 @@ sakai.discussion = function(tuid, showSettings) {
      * @param {String} the id of the post.
      * @return {object} the selected post.
      */
-    var getSelectedDiscussion = function(id) {
+    var getSelectedDiscussion = function(id){
         if (selectedExistingDiscussionID) {
             for (var i = 0, j = allDiscussions.length; i < j; i++) {
                 if (allDiscussions[i]["sakai:id"] === id) {
@@ -764,7 +857,8 @@ sakai.discussion = function(tuid, showSettings) {
     var createPostObject = function(){
         var post = {};
         post["sakai:type"] = "discussion";
-        post["sakai:to"] = "discussion:s-" + currentSite;
+        post["sling:resourceType"] = "sakai/message";
+        post["sakai:to"] = "discussion:w-" + store;
         post['sakai:subject'] = $(discussionSettingsNewSubject, rootel).val();
         post['sakai:body'] = $(discussionSettingsNewBody, rootel).val();
         post['sakai:initialpost'] = true;
@@ -772,13 +866,14 @@ sakai.discussion = function(tuid, showSettings) {
         post['sakai:marker'] = tuid;
         post['sakai:messagebox'] = "outbox";
         post['sakai:sendstate'] = "pending";
+        post['_charset_'] = "utf-8";
         return post;
     };
 
     /**
      * Should be called when the submit button gets clicked.
      */
-    var submitSettings = function() {
+    var submitSettings = function(){
         // Determine which view we are on.
         var post = {};
         if ($(discussionSettingsExistingContainer, rootel).is(":visible")) {
@@ -788,57 +883,62 @@ sakai.discussion = function(tuid, showSettings) {
             var callback = finishSettingsContainer;
             saveWidgetSettings(callback);
         }
-        else if ($(discussionSettingsNewContainer, rootel).is(":visible")) {
-            // The user wants to write his own post.
-            widgetSettings.marker = tuid;
+        else
+            if ($(discussionSettingsNewContainer, rootel).is(":visible")) {
+                // The user wants to write his own post.
+                widgetSettings.marker = tuid;
 
-            post = createPostObject();
+                post = createPostObject();
 
-            if (post['sakai:subject'].replace(/ /g, "") === "" || post['sakai:body'].replace(/ /g, "") === "") {
-                alert("Please fill in all the fields.");
-            }
-            else {
-                if (initialPost !== false) {
-                    // We already have an initalpost.
-                    // edit this one.
-                    editPost(initialPost["sakai:id"], post['sakai:subject'], post['sakai:body']);
+                if ((""+post['sakai:subject']).replace(/ /g, "") === "" || (""+post['sakai:body']).replace(/ /g, "") === "") {
+                    sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("PLEASE_ENTER_ALL_FIELDS"),"",sakai.api.Util.notification.type.ERROR);
                 }
                 else {
-                    // create a new post.
-                    createInitialPost(post);
-                }
-            }
-        }
-        else if ($(discussionSettingsDisplayOptionsContainer, rootel).is(":visible")) {
-
-            if(initialPost === false) {
-                var subject = $(discussionSettingsNewSubject, rootel).val();
-                var body = $(discussionSettingsNewBody, rootel).val();
-                if (subject.replace(/ /g, "") !== "" && body.replace(/ /g, "") !== "") {
-                    post = createPostObject();
-                    createInitialPost(post);
-                }
-                else {
-                    post = getSelectedDiscussion(selectedExistingDiscussionID);
-
-                    if(post === false) {
-                        alert("You need to either post a new discussion or select an existing discussion");
-                        return;
+                    if (initialPost !== false) {
+                        // We already have an initalpost.
+                        // edit this one.
+                        editPost(initialPost["sakai:id"], post['sakai:subject'], post['sakai:body']);
                     }
-                    widgetSettings.marker = post["sakai:marker"];
+                    else {
+                        // create a new post.
+                        createInitialPost(post);
+                    }
                 }
             }
+            else
+                if ($(discussionSettingsDisplayOptionsContainer, rootel).is(":visible")) {
 
-            if($('#' + tuid + ' #discussion_settings_link_display_button').is(":checked")) {
-                widgetSettings.displayMode = 'link';
-            }
-            else if($('#' + tuid + ' #discussion_settings_inline_display_button').is(":checked")) {
-                widgetSettings.displayMode = 'inline';
-            }
+                    if (initialPost === false) {
+                        var subject = $(discussionSettingsNewSubject, rootel).val();
+                        var body = $(discussionSettingsNewBody, rootel).val();
+                        if (subject.replace(/ /g, "") !== "" && body.replace(/ /g, "") !== "") {
+                            post = createPostObject();
+                            createInitialPost(post);
+                        }
+                        else {
+                            post = getSelectedDiscussion(selectedExistingDiscussionID);
 
-            var callback = finishSettingsContainer;
-            saveWidgetSettings(callback);
-        }
+                            if (post === false) {
+                                sakai.api.Util.notification.show($("#discussion_discussion").text(),
+                                                                $("#discussion_post_to_new_discussion").text(),
+                                                                sakai.api.Util.notification.type.ERROR);
+                                return;
+                            }
+                            widgetSettings.marker = post["sakai:marker"];
+                        }
+                    }
+
+                    if ($('#' + tuid + ' #discussion_settings_link_display_button').is(":checked")) {
+                        widgetSettings.displayMode = 'link';
+                    }
+                    else
+                        if ($('#' + tuid + ' #discussion_settings_inline_display_button').is(":checked")) {
+                            widgetSettings.displayMode = 'inline';
+                        }
+
+                    var callback1 = finishSettingsContainer;
+                    saveWidgetSettings(callback1);
+                }
     };
 
 
@@ -877,7 +977,7 @@ sakai.discussion = function(tuid, showSettings) {
                     $(discussionNoDiscussions, rootel).show();
                 }
             },
-            error: function(xhr, textStatus, thrownError) {
+            error: function(xhr, textStatus, thrownError){
                 // No discussions available.
                 $(discussionNoDiscussions, rootel).show();
             }
@@ -888,12 +988,12 @@ sakai.discussion = function(tuid, showSettings) {
      * Shows a setting tab.
      * @param {String} tab Available options: new, existing
      */
-
-    var showTab = function(tab) {
+    var showTab = function(tab){
+        $(".fl-tabs-active").removeClass("fl-tabs-active");
         if (tab === "new") {
             $(discussionSettingsExistingContainer, rootel).hide();
             $(discussionSettingsNewTab, rootel).removeClass(discussionSettingsTabClass);
-            $(discussionSettingsNewTab, rootel).addClass(discussionSettingsTabSelectedClass);
+            $(discussionSettingsNewTab, rootel).parent("li").addClass("fl-tabs-active");
             $(discussionSettingsExistingTab, rootel).removeClass(discussionSettingsTabSelectedClass);
             $(discussionSettingsExistingTab, rootel).addClass(discussionSettingsTabClass);
             $(discussionSettingsNewContainer, rootel).show();
@@ -910,10 +1010,9 @@ sakai.discussion = function(tuid, showSettings) {
             $(discussionSettingsDisplayOptionsTab, rootel).removeClass(discussionSettingsTabSelectedClass);
             $(discussionSettingsDisplayOptionsTab, rootel).addClass(discussionSettingsTabClass);
             $(discussionSettingsExistingTab, rootel).removeClass(discussionSettingsTabClass);
-            $(discussionSettingsExistingTab, rootel).addClass(discussionSettingsTabSelectedClass);
+            $(discussionSettingsExistingTab, rootel).parent("li").addClass("fl-tabs-active");
             $(discussionSettingsExistingContainer, rootel).show();
-        }
-        else if (tab === "display_options") {
+        } else if (tab === "display_options") {
             $(discussionSettingsNewContainer, rootel).hide();
             $(discussionSettingsNewTab, rootel).removeClass(discussionSettingsTabSelectedClass);
             $(discussionSettingsNewTab, rootel).addClass(discussionSettingsTabClass);
@@ -921,14 +1020,13 @@ sakai.discussion = function(tuid, showSettings) {
             $(discussionSettingsExistingTab, rootel).removeClass(discussionSettingsTabSelectedClass);
             $(discussionSettingsExistingTab, rootel).addClass(discussionSettingsTabClass);
             $(discussionSettingsDisplayOptionsTab, rootel).removeClass(discussionSettingsTabClass);
-            $(discussionSettingsDisplayOptionsTab, rootel).addClass(discussionSettingsTabSelectedClass);
+            $(discussionSettingsDisplayOptionsTab, rootel).parent("li").addClass("fl-tabs-active");
             $(discussionSettingsDisplayOptionsContainer, rootel).show();
 
-            if(widgetSettings.displayMode === 'inline') {
-                $('#' + tuid + ' #discussion_settings_inline_display_button').attr('checked',true);
-            }
-            else if(widgetSettings.displayMode === 'link') {
-                $('#' + tuid + ' #discussion_settings_link_display_button').attr('checked',true);
+            if (widgetSettings.displayMode === 'inline') {
+                $('#' + tuid + ' #discussion_settings_inline_display_button').attr('checked', true);
+            } else if (widgetSettings.displayMode === 'link') {
+                $('#' + tuid + ' #discussion_settings_link_display_button').attr('checked', true);
             }
         }
     };
@@ -951,12 +1049,11 @@ sakai.discussion = function(tuid, showSettings) {
     /**
      * Fetches the widget settings and places it in the widgetSettings var.
      */
-    var getWidgetSettings = function() {
+    var getWidgetSettings = function(){
 
         sakai.api.Widgets.loadWidgetData(tuid, function(success, data){
 
             if (success) {
-
                 widgetSettings = $.extend(data, {}, true);
                 if (widgetSettings.marker !== undefined) {
                     marker = widgetSettings.marker;
@@ -986,136 +1083,226 @@ sakai.discussion = function(tuid, showSettings) {
     ////////////////////
     // Event Handlers //
     ////////////////////
+    var addBindings = function() {
 
-    $('.discussion_compact_post_link a', rootel).live('click', function(e, ui){
-        var id = this.id.split("_")[this.id.split("_").length - 1];
+        $("div form", rootel).validate();
 
-        $('.discussion_compact_post', rootel).hide();
-        $('#discussion_post' + id, rootel).show();
-        $('#discussion_post_link' + id, rootel).hide(300);
+        $('.discussion_compact_post_link a', rootel).live('click', function(e, ui){
+            var id = this.id.split("_")[this.id.split("_").length - 1];
 
-        // Stop that annoying jump to top of the screen
-        return false;
+            $('.discussion_compact_post', rootel).hide();
+            $('#discussion_post' + id, rootel).show();
+            $('#discussion_post_link' + id, rootel).hide(300);
 
-    });
+            // Stop that annoying jump to top of the screen
+            return false;
 
-    $(discussionToggleShowHideAllClass, rootel).live("click", function(e, ui){
-        var id = this.id.split("_")[this.id.split("_").length - 1];
-        $(discussionPosts + id, rootel).toggle();
-        $(discussionToggleShowHideAllTextClass + id, rootel).toggle();
-    });
+        });
 
-    // Bind the reply button
-    $(discussionContentReplyClass, rootel).live("click", function(e, ui) {
-        currentReplyId = $(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1];
-        showReply(currentReplyId);
-    });
-    // Bind the delete button
-    $(discussionContentDeleteClass, rootel).live("click", function(e, ui) {
-        deletePost($(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1], true);
-    });
-    // Bind the undelete button
-    $(discussionContentUnDeleteClass, rootel).live("click", function(e, ui) {
-        deletePost($(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1], false);
-    });
+        $(discussionToggleShowHideAllClass, rootel).live("click", function(e, ui){
+            var id = this.id.split("_")[this.id.split("_").length - 1];
+            $(discussionPosts + id, rootel).toggle();
+            $(discussionToggleShowHideAllTextClass + id, rootel).toggle();
+        });
 
-    // Bind the edit button
-    $(discussionContentEditClass, rootel).live("click", function(e, ui){
-        showEditPost($(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1]);
-    });
+        // Bind the reply button
+        $(discussionContentReplyClass, rootel).live("click", function(e, ui){
+            if (editing) {
+                stopEditing(currentEditId);
+            }
+            currentReplyId = $(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1];
+            showReply(currentReplyId);
+        });
+        // Bind the delete button
+        $(discussionContentDeleteClass, rootel).live("click", function(e, ui){
+            deletePost($(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1], true);
+        });
+        // Bind the undelete button
+        $(discussionContentUnDeleteClass, rootel).live("click", function(e, ui){
+            deletePost($(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1], false);
+        });
 
-    /*
-     * Bind the submit button
-     */
-    $(discussionReplySubmit, rootel).bind("click", function(e, ui){
-        replyPost(currentReplyId);
-    });
+        // Bind the edit button
+        $(discussionContentEditClass, rootel).live("click", function(e, ui){
+            clearReplyFields();
+            // Hide the input form
+            $(discussionReplyContainer, rootel).hide();
+            showEditPost($(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1]);
+        });
 
-    /*
-     * Bind the cancel button
-     */
-    $(discussionReplyCancel, rootel).bind("click", function(e, ui){
+        /*
+         * Bind the submit button
+         */
+        $(discussionReplySubmit, rootel).bind("click", function(e, ui){
+            replyPost(currentReplyId);
+        });
 
-        // Clear everything in the reply fields
-        clearReplyFields();
+        // Bind the add topic button
+        $(discussionAddNewTopic, rootel).bind("click", function(e, ui){
+            showAddTopic();
+        });
 
-        // Hide the input form
-        $(discussionReplyContainer, rootel).hide();
-    });
+        // Bind the add topic submit
+        $(discussionAddContainer + " form", rootel).bind("submit", function(e, ui){
+            if ($(discussionAddContainer + " form").valid()) {
+                $(discussionAddTopicSubmit).attr("disabled", "disabled");
+                addNewTopic();
+            }
+            return false;
+        });
 
-    // Bind the settings submit button.
-    $(discussionSettingsSubmit, rootel).bind("click", function(e, ui){
-        submitSettings();
-    });
+        // Bind the add topic cancel
+        $(discussionAddTopicCancel, rootel).bind("click", function(e, ui){
 
-    /*
-     * Bind the settings cancel button
-     */
-    $("#discussion_settings_cancel", rootel).bind("click", function(e, ui) {
-        sdata.container.informCancel(tuid);
-    });
+            // Clear everything in the add topic fields
+            clearAddTopicFields();
 
-    /*
-     * Bind the new discussion tab
-     */
-    $(discussionSettingsNewTab, rootel).bind("click", function(e, ui) {
-        showTab("new");
-    });
+            // Hide the input form
+            $(discussionAddContainer, rootel).hide();
+        });
 
-    /*
-     * Bind the existing discussion tab
-     */
-    $(discussionSettingsExistingTab, rootel).bind("click", function(e, ui) {
-        showTab("existing");
-    });
+        /*
+         * Bind the cancel button
+         */
+        $(discussionReplyCancel, rootel).bind("click", function(e, ui){
 
-    /*
-     * Bind the display_options discussion tab
-     */
-    $(discussionSettingsDisplayOptionsTab, rootel).bind("click", function(e, ui) {
-        showTab("display_options");
-    });
+            // Clear everything in the reply fields
+            clearReplyFields();
+
+            // Hide the input form
+            $(discussionReplyContainer, rootel).hide();
+        });
+
+        // Bind the settings submit button.
+        $(discussionSettingsSubmit, rootel).bind("click", function(e, ui){
+            submitSettings();
+        });
+
+        /*
+         * Bind the settings cancel button
+         */
+        $("#discussion_settings_cancel", rootel).bind("click", function(e, ui){
+            sakai.api.Widgets.Container.informCancel(tuid, "discussion");
+        });
+
+        /*
+         * Bind the new discussion tab
+         */
+        $(discussionSettingsNewTab, rootel).bind("click", function(e, ui){
+            showTab("new");
+        });
+
+        /*
+         * Bind the existing discussion tab
+         */
+        $(discussionSettingsExistingTab, rootel).bind("click", function(e, ui){
+            showTab("existing");
+        });
+
+        /*
+         * Bind the display_options discussion tab
+         */
+        $(discussionSettingsDisplayOptionsTab, rootel).bind("click", function(e, ui){
+            showTab("display_options");
+        });
 
 
-    /**
-     * User clicks something he hasn't selected in the existing discussions tab
-     * @param {Object} e
-     * @param {Object} ui
-     */
-    $("." + discussionSettingsListItemClass, rootel).live("click", function(e, ui){
-        // Unselect the other one.
-        $("." + discussionSettingsListItemSelectedClass, rootel).addClass(discussionSettingsListItemClass);
-        $("." + discussionSettingsListItemSelectedClass, rootel).removeClass(discussionSettingsListItemSelectedClass);
+        /**
+         * User clicks something he hasn't selected in the existing discussions tab
+         * @param {Object} e
+         * @param {Object} ui
+         */
+        $("." + discussionSettingsListItemClass, rootel).live("click", function(e, ui){
+            // Unselect the other one.
+            $("." + discussionSettingsListItemSelectedClass, rootel).addClass(discussionSettingsListItemClass);
+            $("." + discussionSettingsListItemSelectedClass, rootel).removeClass(discussionSettingsListItemSelectedClass);
 
-        selectedExistingDiscussionID = e.target.id.split("_")[e.target.id.split("_").length - 1];
-        e.target.className = discussionSettingsListItemSelectedClass;
-    });
+            selectedExistingDiscussionID = e.target.id.split("_")[e.target.id.split("_").length - 1];
+            e.target.className = discussionSettingsListItemSelectedClass;
+        });
 
-    /**
-     * User clicks a discussion he already selected.
-     * @param {Object} e
-     * @param {Object} ui
-     */
-    $("." + discussionSettingsListItemSelectedClass, rootel).live("click", function(e, ui){
-        selectedExistingDiscussionID = false;
-        e.target.className = discussionSettingsListItemClass;
-    });
+        /**
+         * User clicks a discussion he already selected.
+         * @param {Object} e
+         * @param {Object} ui
+         */
+        $("." + discussionSettingsListItemSelectedClass, rootel).live("click", function(e, ui){
+            selectedExistingDiscussionID = false;
+            e.target.className = discussionSettingsListItemClass;
+        });
 
+    };
 
     //////////////////////
     // Initial function //
     //////////////////////
 
     // Get the widget settings
-    getWidgetSettings();
-    if (showSettings) {
-        $(discussionMainContainer, rootel).hide();
-        $(discussionSettings, rootel).show();
-    }
-    else {
-        $(discussionMainContainer, rootel).show();
-        $(discussionSettings, rootel).hide();
-    }
+    var init = function() {
+        addBindings();
+
+        if (widgeturl) {
+            store = widgeturl + "/message";
+            $.ajax({
+                url: widgeturl + ".0.json",
+                type: "GET",
+                dataType: "json",
+                success: function(data){
+                    // no op
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    if (xhr.status == 404) {
+                        // we need to create the initial message store
+                        $.post(store, {"sling:resourceType":"sakai/messagestore"} );
+                    }
+                }
+            });
+        }
+        var isGroup = false;
+        if (sakai.currentgroup && typeof sakai.currentgroup.id === "string") {
+            currentSite = sakai.currentgroup.id;
+            isGroup = true;
+        } else {
+            currentSite = sakai.profile.main.data["rep:userId"];
+        }
+        getWidgetSettings();
+        if (showSettings) {
+            $(discussionMainContainer, rootel).hide();
+            $(discussionSettings, rootel).show();
+            if (isGroup) {
+                $("#discussion_settings_visibility_group", rootel).show();
+            } else {
+                $("#discussion_settings_visibility_user", rootel).show();
+            }
+        }
+        else {
+            $(discussionMainContainer, rootel).show();
+            $(discussionSettings, rootel).hide();
+
+            var canAddTopics = false;
+            if (isGroup) {
+                if (sakai.api.Groups.isCurrentUserAManager(currentSite) || sakai.api.Groups.isCurrentUserAMember(currentSite)) {
+                    canAddTopics = true;
+                }
+            } else {
+                if (sakai.data.me.user.userid === currentSite) {
+                    canAddTopics = true;
+                } else {
+                    canAddTopics = sakai.api.User.checkIfConnected(currentSite);
+                }
+            }
+
+            if (canAddTopics) {
+                $(discussionAddNewTopic).show();
+            }
+
+            if (!sakai.api.Widgets.isOnDashboard(tuid)) {
+                $("#discussion_widget_header", rootel).show();
+            }
+        }
+    };
+
+    init();
 };
 
-sdata.widgets.WidgetLoader.informOnLoad("discussion");
+sakai.api.Widgets.widgetLoader.informOnLoad("discussion");

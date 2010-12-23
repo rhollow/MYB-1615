@@ -15,10 +15,22 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global $, sdata, Config */
+/*global $ */
 
-var sakai = sakai ||
-{};
+var sakai = sakai || {};
+
+/**
+ * @name sakai.sitemembers
+ *
+ * @class sitemembers
+ *
+ * @description
+ * Initialize the sitemembers widget
+ *
+ * @version 0.0.1
+ * @param {String} tuid Unique id of the widget
+ * @param {Boolean} showSettings Show the settings of the widget or not
+ */
 sakai.sitemembers = function(tuid, showSettings){
 
 
@@ -275,12 +287,12 @@ sakai.sitemembers = function(tuid, showSettings){
 
     var getTotalAmountOfMembers = function(){
         $.ajax({
-            url: "/var/search/sites.json?q=" + siteid,
+            url: sakai.config.URL.SEARCH_SITES + "?q=" + siteid,
             success: function(data){
                 var json = data;
                 if (json.results.length === 1) {
                     totalMembers = json.results[0]["member-count"];
-                    $(sitemembers_normal_count, rootel).text(totalMembers);
+                    $(sitemembers_normal_count, rootel).text(sakai.api.Security.saneHTML(totalMembers));
                 }
             }
         });
@@ -359,7 +371,7 @@ sakai.sitemembers = function(tuid, showSettings){
             if (typeof user.picture === "object") {
                 user.picture = user.picture[0];
             } else if (user.picture && $.parseJSON(user.picture).name) {
-                user.picture = "/_user" + user.path + "/public/profile/" + $.parseJSON(user.picture).name;
+                user.picture = "/~" + user["rep:userId"] + "/public/profile/" + $.parseJSON(user.picture).name;
             }
             if (typeof user["rep:userId"] === "object") {
                 user.userid = user["rep:userId"][0];
@@ -460,7 +472,7 @@ sakai.sitemembers = function(tuid, showSettings){
         $.ajax({
             url: url,
             success: function(data){
-                var json = $.parseJSON(data).results;
+                var json = data.results;
 
                 // If we get an emty list, then we assume we have received all the members.
                 if (json.length === 0) {
@@ -502,7 +514,7 @@ sakai.sitemembers = function(tuid, showSettings){
      */
     var getContacts = function(){
         $.ajax({
-            url: sakai.config.URL.FRIEND_ACCEPTED_SERVICE,
+            url: sakai.config.URL.CONTACTS_FIND + "?state=ACCEPTED",
             success: function(data){
                 if (data.results) {
                     contacts = data.results;
@@ -510,7 +522,7 @@ sakai.sitemembers = function(tuid, showSettings){
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("An error occured");
+                sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("AN_ERROR_HAS_OCCURRED"),"",sakai.api.Util.notification.type.ERROR);
             }
         });
     };
@@ -613,7 +625,7 @@ sakai.sitemembers = function(tuid, showSettings){
             init();
         }
         else {
-            sdata.container.informFinish(tuid);
+            sakai.api.Widgets.Container.informFinish(tuid, "sitemembers");
         }
     };
 
@@ -637,7 +649,7 @@ sakai.sitemembers = function(tuid, showSettings){
                 closeSettings();
             }
             else {
-                alert("Failed to save settings");
+                sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("FAILED_SAVE_SETTINGS"),"",sakai.api.Util.notification.type.ERROR);
             }
 
         });
@@ -658,7 +670,7 @@ sakai.sitemembers = function(tuid, showSettings){
     /**
      * Cancel the settings.
      */
-    $(sitemembers_settings_cancel, rootel).live("click", function(){
+    $(sitemembers_settings_cancel, rootel).click(function(){
         closeSettings();
     });
 
@@ -761,7 +773,7 @@ sakai.sitemembers = function(tuid, showSettings){
         }
         else {
             // Inserts the sendmessage-widget
-            sdata.widgets.WidgetLoader.insertWidgets(tuid);
+            sakai.api.Widgets.widgetLoader.insertWidgets(tuid);
         }
         // Get the settings, when the settings are received we either fill in the settings view or get all the members for the normal view.
         getSiteMembersSettingsFromJCR();
@@ -771,4 +783,4 @@ sakai.sitemembers = function(tuid, showSettings){
 
 };
 
-sdata.widgets.WidgetLoader.informOnLoad("sitemembers");
+sakai.api.Widgets.widgetLoader.informOnLoad("sitemembers");

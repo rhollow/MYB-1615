@@ -16,29 +16,42 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, sdata, opensocial, Config */
+/*global $, opensocial, Config */
 
 var sakai = sakai || {};
 if (!sakai.sendmessage){
+
+    /**
+     * @name sakai.sendmessage
+     *
+     * @class sendmessage
+     *
+     * @description
+     * Initialize the sendmessage widget
+     *
+     * @version 0.0.1
+     * @param {String} tuid Unique id of the widget
+     * @param {Boolean} showSettings Show the settings of the widget or not
+     */
     sakai.sendmessage = function(tuid, showSettings) {
 
 
         /////////////////////////////
-        // Configuration variables //
+        // CONFIGURATION VARIABLES //
         /////////////////////////////
 
         var rootel = $(tuid);
 
-        var user = false; // user object that contains the information for the user that should be posted to.
+        var toUser = false;  // configurable user to include as a message recipient
         var allowOthers = false;    //    If the user can add other receivers.
-        var allFriends = [];        //    Array that will contain all the info about this users friends.
-        var selectedFriendsToPostTo = [];
+        var contactsGroups = [];  // array to hold list of user's contacts & groups (potential message recipients)
         var me = sakai.data.me;
         var fadeOutTime = 1500; //    The time it takes for the lightbox to fade out (in ms).
         var layover = true;        //    Will this widget be in a popup or inside another element.
         var putContentInId = null;    //     if the widget runs in another element, this variable contains the id
         var callbackWhenDone = null;    //    Callback function for when the message gets sent
         var generalMessageFadeOutTime = 5000;
+        var dataCallbackCount = 2;  // keeps track of AJAX data returned
 
 
         // CSS IDs
@@ -48,149 +61,90 @@ if (!sakai.sendmessage){
         var messageDialogContainer = '#message_dialog';
         var messageDone = "#message_done";
         var messageForm = "#message_form";
+        var messageTo = "#message_to";
 
         var messageSingleToContainer = "#sendmessage_fixed_to_user";
-        var messageMultipleToContainer = "#sendmessage_multiple_to_container";
-        var messageMultipleToInputContainer = "#sendmessage_multiple_to_input_container";
-        var messageMultipleToBox = "#sendmessage_box_template";
-        var messageMultipleToBoxResult = ".sendmessage_multipleBox_result";
-        var messageMultipleToBoxDelete = ".sendmessage_multipleBox_delete";
-        var messageMultipleToWhat = "#sendmessage_multiple_to_what";
+        var messageMultipleToContainer = "#sendmessage_to_container";
+        var messageMultipleLabel = "#sendmessage_to_autoSuggest_label";
 
         var messageFieldSubject = "#comp-subject";
         var messageFieldBody = "#comp-body";
         var messageFieldFrom = "#message_from";
         var messageFieldToSingle = "#message_to";
-        var messageFieldMultipleTo = "#sendmessage_multiple_to";
-
-        var messageToResult = ".sendmessage_compose_to_result";
 
         var buttonSendMessage = "#send_message";
 
         var invalidClass = "sendmessage_invalid";
-        var errorClass = 'sendmessage_error_message';
-        var normalClass = 'sendmessage_normal_message';
+        var errorClass = "sendmessage_error_message";
+        var normalClass = "sendmessage_normal_message";
         var dialogBoxClass = "dialogue_box";
         var dialogFooterClass = "dialog_footer";
         var dialogHeaderClass = ".dialog_header";
         var dialogClass = ".dialog";
 
+        var notificationSuccess = "#sendmessage_message_sent";
+        var notificationError = "#sendmessage_message_error";
+
         var messageOK = "#sendmessage_message_ok";
         var messageError = "#sendmessage_message_error";
-        var messageErrorFriends = "#sendmessage_friends_error";
+        var messageErrorData = "#sendmessage_data_error";
+
+        var autoSuggestContainer = "#as-selections-sendmessage_to_autoSuggest";
+        var autoSuggestResults = "#as-results-sendmessage_to_autoSuggest";
+        var autoSuggestInput = "#sendmessage_to_autoSuggest";
+        var autoSuggestValues = "#as-values-sendmessage_to_autoSuggest";
 
 
-        /**
-         * This function will show a message in either a red or a green square.
-         * @param {String} idToAppend The id of the element you wish to set this message in.
-         * @param {String} msg The message you want to display.
-         * @param {Boolean} isError true for error (red block)/false for normal message(green block).
-         * @param {Number} timeout The amount of milliseconds you want the message to be displayed, 0 = always (till the next message)
-         */
-        var showGeneralMessage = function(idToAppend, msg, isError, timeout) {
-            $(idToAppend).html(msg);
-            if (isError) {
-                $(idToAppend).addClass(errorClass);
-                $(idToAppend).removeClass(normalClass);
-            }
-            else {
-                $(idToAppend).removeClass(errorClass);
-                $(idToAppend).addClass(normalClass);
-            }
-
-            $(idToAppend).show();
-            if (typeof timeout === "undefined" || timeout !== 0) {
-                $(idToAppend).fadeOut(generalMessageFadeOutTime);
-            }
-        };
-
-
-        //////////////////////////
-        // Autocomplete friends //
-        //////////////////////////
+        ///////////////////////
+        // UTILITY FUNCTIONS //
+        ///////////////////////
 
         /**
-         * This will start the auto complete functionality.
-         *
-         * @param {Array} allFriends Array of all the friends
-         */
-        var autoCompleteFriends = function(allFriends) {
-            var bindSearchTo = messageMultipleToInputContainer;
-            if (!layover) {
-                bindSearchTo = putContentInId + " " + bindSearchTo;
-            }
-            $(messageFieldMultipleTo).autocomplete(allFriends, {
-                minChars: 1,
-                matchContains: true,
-                multiple: true,
-                width: 490,
-                bindTo: bindSearchTo,    // THIS REQUIRES A MODIFIED VERSION OF AUTOCOMPLETE!
-
-                formatMatch: function(row){
-                    return row.profile.firstName + ' ' + row.profile.lastName;
-                },
-                // The formatting of the results in the dropdown list.
-                formatItem: function(row){
-                    var s = '<img src="/dev/_images/profile_icon.png" alt="profile icon" width="24" height="24" /> ';
-                    if (row.profile.picture && $.parseJSON(row.profile.picture).name) {
-                        s = '<img src="/_user' + sakai.data.me.profile.path + '/public/profile/' + $.parseJSON(row.profile.picture).name + '" alt="profile icon" width="24" height="24" /> ';
-                    }
-                    return s + "<span>" + row.profile.firstName + ' ' + row.profile.lastName + "</span>";
-                }
-            });
-        };
-
-        /**
-         * This will create a box with the user his name in and add it to the users that need to receive this message.
-         * @param {String} name The first and last name of the user
+         * Adds the configured user to the recipient list in the 'To' field.
+         * @param {String} name The display name (first and last name) of the user
          * @param {String} uid The user his uuid.
          */
-        var createToBox = function(name, uid){
-            var json = {"name" : name, "uid" : uid};
-            // Get the tpl
-            var box = $.TemplateRenderer(messageMultipleToBox.replace(/#/,""), json);
-
-            // Add it too the DOM tree.
-            $(messageFieldMultipleTo).before(box);
-
-            // Clear the input box
-            $(messageFieldMultipleTo).val("");
-
-            // add it too the selected list.
-            selectedFriendsToPostTo.push(uid);
+        var addRecipient = function(name, uid) {
+            // add an autoSuggest selection to the DOM
+            $(messageTo).text(name);
         };
 
         /**
-         * Will fetch all the friends of this user and start the autoComplete method.
+         * This method will check if there are any required fields that are not filled in.
+         * If a field is not filled in the invalidClass will be added to that field.
+         * @return true = no errors, false = error
          */
-        var getAllFriends = function(){
-            $.ajax({
-                url: "/var/contacts/accepted.json?page=0&items=100",
-                success: function(data){
-                    allFriends = [];
-                    if (data.results) {
-                        var searchArray = [];
-                        for (var i = 0, j = data.results.length; i < j; i++) {
-                            // Add it too the array.
-                            allFriends.push(data.results[i]);
-                        }
-                        // This will give a nice drop down list with our friends.
-                        autoCompleteFriends(allFriends);
-                        $(messageFieldSubject).focus();
-                        $(messageFieldMultipleTo).focus();
-                    }
+        var checkFieldsForErrors = function(recipients) {
+            var subjectEl = $(messageFieldSubject);
+            var bodyEl = $(messageFieldBody);
 
-                },
-                error: function(xhr, textStatus, thrownError){
-                    showGeneralMessage(messageDone, $(messageErrorFriends).text(), true, 0);
-                }
-            });
+            var valid = true;
+            var subject = subjectEl.val();
+            var body = bodyEl.val();
+
+            subjectEl.removeClass(invalidClass);
+            bodyEl.removeClass(invalidClass);
+
+            if (!subject) {
+                valid = false;
+                subjectEl.addClass(invalidClass);
+            }
+            if (!body) {
+                valid = false;
+                bodyEl.addClass(invalidClass);
+            }
+            // check if there are recipients
+            if((recipients.length === 0 && !toUser) ||
+                recipients.length === 1 && recipients[0] === "") {
+                // no recipients are selected
+                valid = false;
+                // in the event allowOthers is false, the following will not be seen
+                $(autoSuggestContainer).addClass(invalidClass);
+                $(autoSuggestInput).addClass(invalidClass);
+            }
+
+            return valid;
         };
-
-
-        ///////////////////////////////
-        // Aid functions             //
-        ///////////////////////////////
 
         /**
          * Fade the message and close it.
@@ -211,28 +165,24 @@ if (!sakai.sendmessage){
             $(dialogBoxContainer).addClass(dialogBoxClass);
             $(dialogFooterContainer).addClass(dialogFooterClass);
 
-            // Clear all the input fields
-            $(messageFieldSubject + ", " + messageFieldBody + ", " + messageFieldMultipleTo).val('');
+            // Clear the input fields
+            $(messageFieldSubject + ", " + messageFieldBody).val('');
 
-            // Remove classes
+            // remove autoSuggest if it exists
+            if($(autoSuggestContainer).length) {
+                $(autoSuggestContainer).remove();
+                $(autoSuggestResults).remove();
+                contactsGroups = [];
+                // replace original input
+                $("<input/>", {
+                    "id": "sendmessage_to_autoSuggest",
+                    "type": "text"
+                }).insertAfter(messageMultipleLabel);
+            }
+
+            // Remove error status styling classes
             $(messageFieldSubject).removeClass(invalidClass);
             $(messageFieldBody).removeClass(invalidClass);
-            $(messageMultipleToInputContainer).removeClass(invalidClass);
-            $(messageFieldMultipleTo).removeClass(invalidClass);
-
-            // Remove al the inputted friends
-            $(messageMultipleToInputContainer + " span").remove();
-            selectedFriendsToPostTo = [];
-
-            // Remove all the results.
-            $(messageToResult).remove();
-
-            // Reset the array with the selected friends.
-            selectedFriendsToPostTo = [];
-
-            // Hide the multiple container and show the single (since is the default view)
-            $(messageMultipleToContainer).hide();
-            $(messageSingleToContainer).show();
 
             // Show the form and hide any previous messages.
             $(messageDone).hide();
@@ -240,97 +190,52 @@ if (!sakai.sendmessage){
         };
 
         /**
-         * Shows the lightbox and fills in the from and to field.
-         * @param {Object} hash The jqModal hash.
+         * Wrapper function to set HTML message body element
+         * @param {String} body Message body text
+         * @return None
          */
-        var loadMessageDialog = function(hash) {
-            // Fill in the userdata
-            $(messageFieldFrom).text(me.user.properties.firstName + " " + me.user.properties.lastName);
-
-            // Depending on the allowOthers variable we show the appropriate input
-            if (allowOthers) {
-                // We have to get all the other friends.
-                getAllFriends();
-
-                // We send this to multiple users.
-                $(messageSingleToContainer).hide();
-                $(messageMultipleToContainer).show();
-
-                // Check if the user exists
-                if (user !== null) {
-                    // Fill in the username in a small box
-                    createToBox(user.firstName + " " + user.lastName, user.uuid);
-                }
-            }
-            else {
-                // We send this to a specific user.
-                // Show the correct input box and fill in the name.
-                $(messageMultipleToContainer).hide();
-                $(messageSingleToContainer).show();
-
-                // check for null
-                if (user !== null) {
-                    // Fill in the username
-                    $(messageFieldToSingle).text(user.firstName + " " + user.lastName);
-                }
-
-                // We add it to the selectedFriendsList
-                // Although it will only be one item in the array.
-                // This is for our own convenience.
-                selectedFriendsToPostTo.push(user.uuid);
-            }
-
-            //    If this is a layover we show the popup.
-            if (layover) {
-                hash.w.show();
-            }
+        var setBody = function(body) {
+            $(messageFieldBody).val(sakai.api.Security.saneHTML(body));
         };
 
         /**
-         * This method will check if there are any required fields that are not filled in.
-         * If a field is not filled in the invalidClass will be added to that field.
-         * @return true = no errors, false = error
+         * Wrapper function to set HTML message subject element
+         * @param {String} subject Message subject text
+         * @return None
          */
-        var checkFieldsForErrors = function() {
-            var subjectEl = $(messageFieldSubject);
-            var bodyEl = $(messageFieldBody);
-
-            var valid = true;
-            var subject = subjectEl.val();
-            var body = bodyEl.val();
-
-            subjectEl.removeClass(invalidClass);
-            bodyEl.removeClass(invalidClass);
-
-            if (!subject) {
-                valid = false;
-                subjectEl.addClass(invalidClass);
-            }
-            if (!body) {
-                valid = false;
-                bodyEl.addClass(invalidClass);
-            }
-
-            if (selectedFriendsToPostTo.length === 0) {
-                //    No user selected.
-                valid = false;
-                //    This can only happen when a user wants to add multiple persons.
-                $(messageMultipleToInputContainer).addClass(invalidClass);
-                $(messageFieldMultipleTo).addClass(invalidClass);
-            }
-            return valid;
+        var setSubject = function(subject) {
+            $(messageFieldSubject).val(sakai.api.Security.saneHTML(subject));
         };
 
+        /**
+         * This function will show a message in either a red or a green square.
+         * @param {String} idToAppend The id of the element you wish to set this message in.
+         * @param {String} msg The message you want to display.
+         * @param {Boolean} isError true for error (red block)/false for normal message(green block).
+         * @param {Number} timeout The amount of milliseconds you want the message to be displayed, 0 = always (till the next message)
+         */
+        var showGeneralMessage = function(idToAppend, msg, isError, timeout) {
+            $(idToAppend).html(sakai.api.Security.saneHTML(msg));
+            if (isError) {
+                $(idToAppend).addClass(errorClass);
+                $(idToAppend).removeClass(normalClass);
+            }
+            else {
+                $(idToAppend).removeClass(errorClass);
+                $(idToAppend).addClass(normalClass);
+            }
 
-        //////////////////////////////
-        // Send message functions   //
-        //////////////////////////////
+            $(idToAppend).show();
+            if (typeof timeout === "undefined" || timeout !== 0) {
+                $(idToAppend).fadeOut(generalMessageFadeOutTime);
+            }
+        };
 
         /**
          * Called when the request to the server has been answered
          * @param {Boolean} succes    If the request failed or succeeded.
          */
-        var showMessageSent = function(succes) {
+        var showMessageSent = function(success) {
             // Clear the subject and body input fields
             $(messageFieldSubject).val("");
             $(messageFieldBody).val("");
@@ -345,19 +250,24 @@ if (!sakai.sendmessage){
             $(messageDone).removeClass(normalClass);
 
             // Depending on success we add the correct class and show the appropriate message.
-            if (succes) {
+            if (success) {
                 $(messageDone).addClass(normalClass);
-                $(messageDone).text($(messageOK).text());
+                $(messageDone).text(sakai.api.Security.saneHTML($(messageOK).text()));
+                var successMsg = $(notificationSuccess).text();
+                sakai.api.Util.notification.show("", successMsg, sakai.api.Util.notification.type.INFORMATION);
             }
             else {
                 $(messageDone).addClass(errorClass);
-                $(messageDone).text($(messageError).text());
+                $(messageDone).text(sakai.api.Security.saneHTML($(messageError).text()));
+                var errorMsg = $(notificationError).text();
+                sakai.api.Util.notification.show("", errorMsg, sakai.api.Util.notification.type.ERROR);
             }
 
+            $(messageDialogContainer).jqmHide();
             // If we have a valid callback function we call that
             // and dont show the message
             // If we dont have a callback we show a default message and fade out the layover.
-            if (succes && callbackWhenDone !== null) {
+            if (success && callbackWhenDone !== null) {
                 callbackWhenDone({"response" : "OK"});
             }
             else {
@@ -365,21 +275,116 @@ if (!sakai.sendmessage){
             }
         };
 
-        var setSubject = function(subject) {
-            $(messageFieldSubject).val(subject);
+
+        ///////////////////////////////////
+        // CONTACTS, GROUPS, AUTOSUGGEST //
+        ///////////////////////////////////
+
+        /**
+         * Initiates the 'To' field autoSuggest plugin with contact and group data
+         * @param {Object} contactsGroupsList Array containing JSON objects for
+         * each contact and group that should appear in the autoSuggest 'To'
+         * field.
+         * @return None
+         */
+        var autoSuggestContactsGroups = function(contactsGroupsList) {
+            $("#sendmessage_to_autoSuggest").autoSuggest("", {
+                asHtmlID: "sendmessage_to_autoSuggest",
+                startText: "Enter contact or group names",
+                searchObjProps: "name",
+                selectedItemProp: "name",
+                keyDelay: "200",
+                retrieveLimit: 10,
+                formatList: function(data, elem) {
+                    // formats each line to be presented in autosuggest list
+                    // add the correct image, wrap name in a class
+                    var imgSrc = "/dev/images/user_avatar_icon_32x32.png";
+                    if(data.type === "group") {
+                        imgSrc = "/dev/images/group_avatar_icon_32x32.png";
+                    }
+                    var line_item = elem.html(
+                        '<img class="sm_suggestion_img" src="' + imgSrc + '" />' +
+                        '<span class="sm_suggestion_name">' + data.name + '</span>');
+                    return line_item;
+                },
+                source: function(query, add) {
+                    var searchUrl = sakai.config.URL.SEARCH_USERS_GROUPS;
+                    sakai.api.Server.loadJSON(searchUrl.replace(".json", ""), function(success, data){
+                        if (success) {
+                            var suggestions = [];
+                            $.each(data.results, function(i) {
+                                if (data.results[i]["rep:userId"] &&
+                                !(toUser && toUser.uuid == data.results[i]["rep:userId"])) {
+                                    // && data.results[i]["rep:userId"] !== sakai.data.me.user.userid) { // add this to ignore the user sending the message
+                                    suggestions.push({"value": data.results[i]["rep:userId"], "name": sakai.api.Security.saneHTML(sakai.api.User.getDisplayName(data.results[i])), "type": "user"});
+                                } else if (data.results[i]["sakai:group-id"]) {
+                                    suggestions.push({"value": data.results[i]["sakai:group-id"], "name": data.results[i]["sakai:group-title"], "type": "group"});
+                                }
+                            });
+                            add(suggestions);
+                        }
+                    }, {"q": sakai.api.Server.createSearchString(query), "page": 0, "items": 15});
+                }
+            });
         };
-        var setBody = function(body) {
-            $(messageFieldBody).val(body);
+
+
+        /**
+         * Shows the lightbox and fills in the from and to field.
+         * @param {Object} hash The jqModal hash.
+         * @return None
+         */
+        var loadMessageDialog = function(hash) {
+            // Fill in the 'From' text with the current user's name
+            $(messageFieldFrom).text(sakai.api.User.getDisplayName(me.profile));
+
+            // Depending on the allowOthers variable we show the appropriate input
+            if (allowOthers) {
+                // Enable multiple recipients
+                $(messageMultipleToContainer).show();
+
+                // Check if a recipient has already been set
+                if (toUser !== false) {
+                    $(messageSingleToContainer).show();
+                    addRecipient(toUser.firstName + " " + toUser.lastName, toUser.uuid);
+                } else {
+                    $(messageMultipleLabel).text("To");
+                }
+
+                // fetch user's contacts and associated groups and set up
+                // autoSuggest field with this content
+                autoSuggestContactsGroups();
+            }
+            else {
+                // We send this to a specific user.
+                // Show the correct input box and fill in the name.
+                $(messageMultipleToContainer).hide();
+                $(messageSingleToContainer).show();
+
+                // check for null
+                if (toUser !== null) {
+                    // Fill in the username
+                    $(messageFieldToSingle).text(sakai.api.Security.saneHTML(
+                        toUser.firstName + " " + toUser.lastName));
+                }
+            }
+
+            // If this is a layover we show the popup.
+            if (layover) {
+                hash.w.show();
+            }
         };
 
 
         ///////////////////////////
-        // Initialise function   //
+        // INITIALISE FUNCTION   //
         ///////////////////////////
 
         /**
-         * This is the method that can be called from other widgets or pages
-         * @param {Object} userObj The user object containing the nescecary information {uuid:  "user1", firstName: "foo", lastName: "bar"}
+         * Initializes the sendmessage widget, optionally preloading the message
+         * with a recipient, subject and body. By default, the widget appears as
+         * a modal dialog. This function can be called from other widgets or pages.
+         * @param {Object} userObj The user object containing the nescecary information {uuid:  "user1", firstName: "foo", lastName: "bar"}, or a user profile
          * @param {Boolean} allowOtherReceivers If the user can add other users, default = false
          * @param {String} insertInId Insert the HTML into another element instead of showing it as a popup
          * @param {Object} callback When the message is sent this function will be called. If no callback is provided a standard message will be shown that fades out.
@@ -390,7 +395,16 @@ if (!sakai.sendmessage){
             resetView();
 
             // The user we are sending a message to.
-            user = userObj;
+            if (userObj && userObj.firstName) {
+                toUser = userObj;
+            } else if (userObj) {
+                toUser = {};
+                toUser.firstName = sakai.api.User.getProfileBasicElementValue(userObj, "firstName");
+                toUser.lastName = sakai.api.User.getProfileBasicElementValue(userObj, "lastName");
+                toUser.uuid = userObj["rep:userId"];
+            } else {
+                toUser = false;
+            }
 
             // Maybe this message can be sent to multiple people.
             allowOthers = false;
@@ -399,8 +413,12 @@ if (!sakai.sendmessage){
             }
 
             // Putting the subject and body which have been send in the textboxes
-            $(messageFieldBody).val(body);
-            $(messageFieldSubject).val(subject);
+            if(body) {
+                $(messageFieldBody).val(sakai.api.Security.saneHTML(body));
+            }
+            if(subject) {
+                $(messageFieldSubject).val(sakai.api.Security.saneHTML(subject));
+            }
 
             // Maybe we dont want to display a popup but instead want to add it in another div.
             if (insertInId) {
@@ -448,96 +466,57 @@ if (!sakai.sendmessage){
 
 
         ////////////////////
-        // Event handling //
+        // EVENT HANDLING //
         ////////////////////
 
-        // When someone clicks the send button.
+        /**
+         * Callback function called after a call to send a message has completed
+         * @param {Boolean} success Status of the 'sendMessage' AJAX call
+         * @param {Object} data Data returned from the 'sendMessage' AJAX call
+         * @return None
+         */
+        var handleSentMessage = function(success, data) {
+            if(success) {
+                showMessageSent(success);
+            } else {
+                sakai.api.Util.notification.show(sakai.api.i18n.General.getValueForKey("YOUR_MESSAGE_FAILED_DELIVERED"),"",sakai.api.Util.notification.type.ERROR);
+            }
+        };
+
+        /**
+         * Event handler to respond when the Send Message button is clicked.
+         * Checks that user input is valid and initiates a 'sendMessage' AJAX
+         * call to the server for the selected recipients.
+         */
         $(buttonSendMessage).bind("click", function(ev) {
+            var recipients = [];
+            if (allowOthers) {
+                // fetch list of selected recipients
+                var recipientsString = $(autoSuggestValues).val();
+                // autoSuggest adds unnecessary commas to the beginning and end
+                // of the values string; remove them
+                if(recipientsString[0] === ",") {
+                    recipientsString = recipientsString.slice(1);
+                }
+                if(recipientsString[recipientsString.length - 1] === ",") {
+                    recipientsString = recipientsString.slice(0, -1);
+                }
+                recipients = recipientsString.split(",");
+            }
+
+            // Check if toUser has been defined
+            if(toUser) {
+                recipients.push(toUser.uuid);
+            }
 
             // Check the fields if there are any required fields that are not filled in.
-            if (checkFieldsForErrors()) {
-
-                var body = $(messageFieldBody).val();
-                var subject = $(messageFieldSubject).val();
-
-                var tosend = selectedFriendsToPostTo.length;
-                var sent = 0;
-
-                for (var i = 0; i < selectedFriendsToPostTo.length; i++){
-
-                    sakai.api.Communication.sendMessage(selectedFriendsToPostTo[i], subject, body, "message", null, function(success, data){
-                        sent++;
-                        if (sent === tosend){
-                            showMessageSent(success);
-                        }
-                    });
-
-                }
+            if(checkFieldsForErrors(recipients)) {
+                sakai.api.Communication.sendMessage(recipients,
+                    $(messageFieldSubject).val(), $(messageFieldBody).val(),
+                    "message", null, handleSentMessage);
+            } else {
+                sakai.api.Util.notification.show("All fields are required.","",sakai.api.Util.notification.type.ERROR);
             }
-        });
-
-
-        //////////////////////////
-        // AUTOCOMPLETE EVENTS  //
-        //////////////////////////
-
-
-        // When the container gets clicked we focus the input box.
-        $(messageMultipleToInputContainer).click(function(){
-            $(messageFieldMultipleTo).focus();
-        });
-
-        // When the input box looses focus
-        $(messageFieldMultipleTo).blur(function(){
-            // Fadeout the "tooltip"
-            $(messageMultipleToWhat).fadeOut("normal");
-
-            // Clear the input box
-            $(this).val('');
-        });
-
-        // When someone focuses the to input field
-        // we will show the tooltip.
-        $(messageFieldMultipleTo).focus(function(){
-            $(messageMultipleToWhat).show();
-        });
-
-
-        /*
-        //    Typing in the search box
-        $(messageFieldMultipleTo).keydown(function(e){
-            if ($(messageFieldMultipleTo).val() !== '') {
-                //    If someone types in some text the tooltip can fade out.
-                $(messageMultipleToWhat).fadeOut("normal");
-            }
-            else {
-                //    If the inputbox is empty we show the tooltip
-                $(messageMultipleToWhat).show();
-            }
-            return true;
-        });
-        */
-
-
-        // If we delete a user
-        $(messageMultipleToBoxDelete).live("click", function(){
-            // The userid resides in the id of the image.
-            // We filter it out.
-            var userid = $(this).attr('id').replace(/sendmessage_to_result_img_/gi,'');
-
-            // Remove it out of the list with all the people were sending to.
-            selectedFriendsToPostTo.splice(selectedFriendsToPostTo.indexOf(userid), 1);
-
-            // remove it out of the DOM
-            $(this).parent().remove();
-        });
-
-        //    When we get a result
-        $(messageFieldMultipleTo).result(function(event, data, formatted) {
-            if ($.inArray(data.target, selectedFriendsToPostTo) === -1) {
-                createToBox(data.profile.firstName + ' ' + data.profile.lastName, data.target);
-            }
-            $(this).val("");
         });
 
 
@@ -551,7 +530,8 @@ if (!sakai.sendmessage){
             toTop: true,
             onShow: loadMessageDialog
         });
+        $(window).trigger("sakai-sendmessage-ready");
     };
 }
 
-sdata.widgets.WidgetLoader.informOnLoad("sendmessage");
+sakai.api.Widgets.widgetLoader.informOnLoad("sendmessage");

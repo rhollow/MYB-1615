@@ -1,0 +1,44 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/mylinks/css/mylinks.css" />
+
+<div class="mylinks_widget">
+    <div class="fl-widget-content s3d-widget-content">
+        <div class="link_list">            
+            <ul class="movable_list">
+            	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
+        			 see http://tinyurl.com/2bd4v for details -->
+				&nbsp;
+            </ul>
+        </div>
+    </div>
+
+    <ul id="mylinks_list_template" style="display:none"><!--
+        {for i in links}
+            <li class="link">
+                <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
+            </li>
+        {forelse}
+            <span>Sorry, there was a failure loading your list of links.</span>
+        {/for}
+    --></ul>
+    
+    <!-- widget footer --> 
+
+    <div class="fl-widget-options fl-fix" style="overflow:hidden;">
+        <div class="widget-options-inner">
+            <ul>
+                <li><a href="/dev/links.html">__MSG__MODIFY_LINKS__</a></li>
+            </ul>
+        </div>
+        <div class="s3d-widget-options-footer-left">
+            <div class="s3d-widget-options-footer-right">
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/mylinks/javascript/mylinks.js"></script>
+
+

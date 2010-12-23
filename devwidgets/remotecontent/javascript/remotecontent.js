@@ -15,10 +15,22 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-/*global $, sdata, get_cookie, Config */
+/*global $,  get_cookie, Config */
 
 var sakai = sakai || {};
 
+/**
+ * @name sakai.remotecontent
+ *
+ * @class remotecontent
+ *
+ * @description
+ * Initialize the remotecontent widget
+ *
+ * @version 0.0.1
+ * @param {String} tuid Unique id of the widget
+ * @param {Boolean} showSettings Show the settings of the widget or not
+ */
 sakai.remotecontent = function(tuid, showSettings){
 
 
@@ -34,9 +46,11 @@ sakai.remotecontent = function(tuid, showSettings){
     var defaultWidth = 100;
     var defaultWidthUnit = "%";
     var defaultHeight = 200;
+    var clickSubmit = false;
 
     // Links and labels
     var remotecontent = "#remotecontent";
+    var remotecontentTitle = remotecontent + "_title";
     var remotecontentSettings = remotecontent + "_settings";
     var remotecontentSettingsAdvanced = remotecontentSettings + "_advanced";
     var remotecontentSettingsAdvancedDown = remotecontentSettingsAdvanced + "_down";
@@ -50,6 +64,8 @@ sakai.remotecontent = function(tuid, showSettings){
     var remotecontentSettingsPreview = remotecontentSettings + "_preview";
     var remotecontentSettingsPreviewFrame = remotecontentSettingsPreview + "_frame";
     var remotecontentSettingsUrl = remotecontentSettings + "_url";
+    var remotecontentSettingsUrlError = remotecontentSettingsUrl + "_error";
+    var remotecontentSettingsUrlBlank = remotecontentSettingsUrl + "_blank";
     var remotecontentSettingsWidth = remotecontentSettings + "_width";
 
     // Containers
@@ -63,6 +79,7 @@ sakai.remotecontent = function(tuid, showSettings){
     var $remotecontentSettingsColorContainerTemplate = $("#remotecontent_settings_color_container_template", rootel);
     var $remotecontentSettingsTemplate = $("#remotecontent_settings_template", rootel);
     var $remotecontentSettingsPreviewTemplate = $("#remotecontent_settings_preview_template", rootel);
+    var $noRemoteContentSet = $("#remotecontent_no_content_set", rootel);
 
 
     ///////////////////////
@@ -81,7 +98,7 @@ sakai.remotecontent = function(tuid, showSettings){
     };
 
     /**
-     * Check if the input url is in fact an url or not
+     * Check if the input url is missing http/s or not
      * @param {String} url Url that needs to be tested
      * @return {Boolean}
      *     true: is an url
@@ -92,10 +109,22 @@ sakai.remotecontent = function(tuid, showSettings){
     };
 
     /**
+     * Check if the input url is in fact a complete url or not
+     * @param {String} url Url that needs to be tested
+     * @return {Boolean}
+     *     true: is an url
+     *     false: is not an url
+     */
+    var isCompleteUrl = function(url){
+        var regEx = new RegExp(/^(?:ftp|https?):\/\/(?:(?:[\w\.\-\+%!$&'\(\)*\+,;=]+:)*[\w\.\-\+%!$&'\(\)*\+,;=]+@)?(?:[a-z0-9\-\.%]+)(?::[0-9]+)?(?:[\/|\?][\w#!:\.\?\+=&%@!$'~*,;\/\(\)\[\]\-]*)?$/);
+        return regEx.test(url);
+    };
+
+    /**
      * Called when the data has been saved to the JCR.
      */
     var savedDataToJCR = function(){
-        sdata.container.informFinish(tuid);
+        sakai.api.Widgets.Container.informFinish(tuid, "remotecontent");
     };
 
 
@@ -115,7 +144,7 @@ sakai.remotecontent = function(tuid, showSettings){
             jsonDefaultSize.width = defaultWidth;
             jsonDefaultSize.width_unit = defaultWidthUnit;
             jsonDefaultSize.height = defaultHeight;
-            $(remotecontentSettingsPreview).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json));
+            $(remotecontentSettingsPreview).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json, null, false));
         }
         else {
             $(remotecontentSettingsPreviewFrame).attr("style", "border: " + json.border_size + "px #" + json.border_color + " solid");
@@ -127,7 +156,7 @@ sakai.remotecontent = function(tuid, showSettings){
      */
     var renderIframe = function(){
         if (json) {
-            $(remotecontentMainContainer, rootel).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json));
+            $(remotecontentMainContainer, rootel).html($.TemplateRenderer($remotecontentSettingsPreviewTemplate, json, null, false));
 
             // SAKIII-314 We need to show the container, otherwise the second item won't be shown.
             $(remotecontentMainContainer, rootel).show();
@@ -170,11 +199,10 @@ sakai.remotecontent = function(tuid, showSettings){
      * Save the remotecontent to the jcr
      */
     var saveRemoteContent = function(){
-        if (json.url !== "") {
+        clickSubmit = true;
+        if ($("#remotecontent_form").valid()) {
+            $(remotecontentSettingsPreview).html("");
             sakai.api.Widgets.saveWidgetData(tuid, json, savedDataToJCR);
-        }
-        else {
-            alert("Please specify a URL");
         }
     };
 
@@ -213,16 +241,46 @@ sakai.remotecontent = function(tuid, showSettings){
      * Add binding to all the elements
      */
     var addBinding = function(){
+        // this method append http:// or ftp:// or https:// 
+        $.validator.addMethod("appendhttp", function(value, element) {
+            if(value.substring(0,7) !== "http://" &&
+            value.substring(0,6) !== "ftp://" &&
+            value.substring(0,8) !== "https://" &&
+            $.trim(value) !== "") {
+                $(element).val("http://" + value);
+                json.url = "http://" + value;
+            } else {
+              json.url = value;
+            }
+            return true;
+        }, "No error message, this is just an appender");
+
+        // FORM VALIDATION 
+        $("#remotecontent_form").validate({
+            onkeyup: false,
+            errorPlacement: function(error, element){
+                if (clickSubmit) {
+                    sakai.api.Util.notification.show($(remotecontentTitle).html(), $(error).html());
+                    clickSubmit = false;
+                }
+            }
+        });
+    
+        // define rules for the url
+        $(remotecontentSettingsUrl).rules("add", {
+            required: true,
+            appendhttp: true,
+            url: true,
+            messages: {
+                required: $(remotecontentSettingsUrlBlank).html(),
+                url: $(remotecontentSettingsUrlError).html()
+            }
+        });
 
         // Change the url for the iFrame
         $(remotecontentSettingsUrl).change(function(){
             var urlValue = $(this).val();
-            if (urlValue !== "") {
-                // Check if someone already wrote http inside the url
-                if (!isUrl(urlValue)) {
-                    urlValue = 'http://' + urlValue;
-                }
-                json.url = urlValue;
+            if ($("#remotecontent_form").valid()) {
                 renderIframeSettings(true);
             }
         });
@@ -284,7 +342,7 @@ sakai.remotecontent = function(tuid, showSettings){
 
         // Cancel it
         $(remotecontentSettingsCancel).click(function(){
-            sdata.container.informCancel(tuid);
+            sakai.api.Widgets.Container.informCancel(tuid, "remotecontent");
         });
 
         addColorBinding();
@@ -356,7 +414,12 @@ sakai.remotecontent = function(tuid, showSettings){
             else {
                 // When the request isn't successful, it means that  there was no existing remotecontent
                 // so we show the basic settings.
-                displaySettings(null, false);
+                if (showSettings) {
+                    displaySettings(null, false);
+                } else {
+                    $(remotecontentMainContainer, rootel).html($.TemplateRenderer($noRemoteContentSet, {}));
+                    $(remotecontentMainContainer, rootel).show();
+                }
             }
         });
     };
@@ -364,4 +427,4 @@ sakai.remotecontent = function(tuid, showSettings){
     getRemoteContent();
 };
 
-sdata.widgets.WidgetLoader.informOnLoad("remotecontent");
+sakai.api.Widgets.widgetLoader.informOnLoad("remotecontent");

@@ -1,0 +1,8 @@
+
+/* myBerkeley: fixed width from 670px to 671px and border-right from 3px to 4px */
+.inbox_main .main_content_container
+{ width: 671px; border-left: 3px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
+
+/* myBerkeley: fixed width from 670px to 671px */
+.inbox_main .inbox-table
+{ width: 671px; margin: 0; border-spacing: 0; *border-collapse: collapse;}

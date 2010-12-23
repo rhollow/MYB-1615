@@ -1,0 +1,132 @@
+/** CONTAINER **/
+.inbox_main .fixed-container
+{ background: #fff; }
+
+/** LAYOUT **/
+.inbox_main .main_container
+{ border:medium none; margin:0 0 20px; padding:0; }
+
+.inbox_main .side_panel
+{ padding: 0; }
+
+.inbox_main .button-list
+{ float: right; margin-top: -10px; padding-bottom: 10px; }
+
+/** INBOX MAIN PANE **/
+
+.inbox_main .inbox-heading
+{ font-weight: bold; color: #333; font-size: 17px; padding-left: 5px; }
+
+.inbox_main .s3d-primary-tabs
+{ background: url('/dev/images/site_tab_bg.png') top right no-repeat; }
+
+/** Table **/
+
+.inbox_main .main_content_container
+{ border-left: 4px solid #d5dbdf; border-right: 4px solid #d5dbdf; min-height: 400px; padding-bottom: 10px; }
+
+.inbox_main .inbox-table
+{ width: 914px; margin: 0; table-layout: fixed;}
+
+/** Buttons **/
+.inbox_main .top_button_bar
+{ padding: 0 12px 5px 0; text-align: right; }
+
+/** Header **/
+.inbox_main .inbox_inbox_header
+{ padding: 5px 5px 5px 7px; border-bottom: 3px solid #D4DADE; }
+
+.inbox_main .inbox-table .different
+{ background: #eaedef; }
+
+.inbox_main .inbox-table .different th
+{ border-bottom: 4px solid #d5dbdf; }
+
+.inbox_main .inbox-table .different_reminders th
+{ border-bottom: 3px solid #d5dbdf; }
+
+.inbox_main .inbox-table #inbox_table_header_chk
+{ width: 3%; }
+
+.inbox_main .inbox-table #inbox_tableHeader_chk
+{ width: 2%; }
+
+.inbox_main .inbox-table #inbox_table_header_date_modified
+{ width:20%; border-left: 1px solid #D4DADE; color: #666666; }
+
+.inbox_main .inbox-table #inbox_table_header_name
+{ width:34%; border-left: 1px solid #D4DADE; color: #666666; } /* width should be 26% once we add size field */
+
+.inbox_main .inbox-table #inbox_table_header_description
+{ width:44%; border-left: 1px solid #D4DADE; color: #666666; } /* width should be 37% once we add size field */
+
+.inbox_main .inbox-table #inbox_table_header_size
+{ width:12%; border-left: 1px solid #D4DADE; color: #666666; }
+
+/** List **/
+.inbox_main .inbox-table a:hover {text-decoration: none;}
+
+.inbox_main .inbox-table th
+{ color: #333;  text-align: left; height: 26px; border: none; }
+
+.inbox_main .inbox-table tr
+{ color: #666; }
+
+.inbox_main .inbox-table td
+{ border: none; color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; white-space: nowrap; overflow: hidden;}
+
+.inbox_main .inbox-table td a.inbox_inbox_message {color:#058EC4}
+
+.inbox_main .inbox-table .inbox_message_none
+{ text-align: center; border: none; height: 370px; }
+
+
+/** NOTIFICATIONS, ERROR MESSAGES **/
+.inbox_error_message
+{ font-weight:bold; padding:10px; border:3px solid #ff0000; background-color:#f7d8d8; width:80%;float:left; }
+
+.inbox_normal_message
+{ padding:10px; border:3px solid #00ff00; background-color:#d9f7d8; width:80%;float:left; }
+
+
+.inbox_main .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}
+
+
+.inbox_main .inbox_inbox_table_header_sort { cursor:pointer;}
+
+
+.inbox_main .inbox_inbox_table_header_sort span { float:left; }
+
+/** Tabs **/
+
+.inbox_main .ui-tabs .ui-tabs-hide { display: none; }
+.inbox_main .top_decor { border: 4px solid #D4DADE; padding: 5px 0 5px; }
+.inbox_main .bottom_decor { border: 4px solid #D4DADE; height: 30px; background-color: #F0F0F0; }
+
+.inbox_main a.editLink:link { text-decoration: underline; }
+.inbox_main .content_inbox .fixed-container { background: #fff url('/dev/images/header_l.png') top left no-repeat; }
+.inbox_main .content_inbox { padding: 12px 0 0 0; }
+.inbox_main .decor { background: url('/dev/images/header_r.png') top right no-repeat; height: 5px; margin-right: -20px; }
+.inbox_main .input_item { padding: 10px; }
+.inbox_main .invalid_span { padding-left: 10px; color: #CC0000; font-weight: bold; }
+
+.inbox_main .search_tab_content_top {
+    background: url('/dev/images/content_tr.gif') top right no-repeat;
+    padding: 0 5px 0 0;
+    margin: 0;
+}
+.inbox_main .search_tab_content_top_inner {
+    background: url('/dev/images/content_tl.gif') 0 0 no-repeat;
+    margin: 0;
+    height: 6px;
+}
+.inbox_main .search_tab_content_bottom {
+    background: url('/dev/images/content_br.png') top right no-repeat;
+    padding: 0 5px 0 0;
+    margin: 0 0 20px;
+}
+.inbox_main .search_tab_content_bottom_inner {
+    background: url('/dev/images/content_bl.png') 0 0 no-repeat;
+    margin: 0;
+    height: 6px;
+}

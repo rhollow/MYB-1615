@@ -1,0 +1,325 @@
+{
+    "colset": 4,
+    "featured": ["calmail", "dars", "rsf"],
+    "links": [
+        {
+            "id": "asuc",
+            "name": "ASUC",
+            "url": "http://www.asuc.org",
+            "popup_description": "UC Berkeley's student government home.",
+            "featured_description": "The official website of the ASUC, the independent student government group on campus. Learn how to get involved, apply for office positions, and find out about ASUC student services.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "bear_facts",
+            "name": "Bear Facts",
+            "url": "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome",
+            "popup_description": "See your registration and financial info, grades, online bill, and personal data.",
+            "featured_description": "N/A",
+            "audience": [{
+                "name": "student",
+                "required": true
+            }]
+        },
+        {
+            "id": "atoz_sites",
+            "name": "Berkeley Sites (A-Z)",
+            "url": "http://www.berkeley.edu/a-z/a.shtml",
+            "popup_description": "Comprehensive list of official campus websites.",
+            "featured_description": "N/A",
+            "audience": [{
+                "name": "student",
+                "required": true
+            }]
+        },
+        {
+            "id": "student_services",
+            "name": "Student Services",
+            "url": "http://www.berkeley.edu/students",
+            "popup_description": "Several student sites grouped by function.",
+            "featured_description": "A wealth of important and useful links for managing your life at Berkeley. Find links to academic planning tools, financial aid information, internship and career resources, transportation tools, and more.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "bspace",
+            "name": "bSpace",
+            "url": "http://bspace.berkeley.edu",
+            "popup_description": "Homework assignments, lecture slides, syllabi, and class resources.",
+            "featured_description": "N/A",
+            "audience": [{
+                "name": "student",
+                "required": true
+            }]
+        },
+        {
+            "id": "cal1card",
+            "name": "Cal-1-Card",
+            "url": "http://services.housing.berkeley.edu/c1c/static/aboutc1c.htm",
+            "popup_description": "Manage and learn about your Cal 1 Card.",
+            "featured_description": "All the resources related to your Cal 1 Card.  Manage your debit account balance, check your meal points balance, and learn about the many functions of your student ID.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "caldining",
+            "name": "CalDining",
+            "url": "http://caldining.berkeley.edu",
+            "popup_description": "View daily menus and check your meal points.",
+            "featured_description": "The home of Cal Dining services. View menus for different campus restaurants and dining halls, check your meal points, check hours of operation, and find out about special Cal Dining events. ",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "calmail",
+            "name": "CalMail",
+            "url": "http://calmail.berkeley.edu",
+            "popup_description": "Read and manage your university email.",
+            "featured_description": "Login to your berkeley.edu email account.  Manage your email and mailing lists, create your own mailing lists, and manage email forwarding options.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "campus_calendar",
+            "name": "Campus Events Calendar",
+            "url": "http://events.berkeley.edu",
+            "popup_description": "View upcoming events on campus.",
+            "featured_description": "Browse and search for upcoming campus events. All university events are listed on this website and can be sorted by category.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "campus_map",
+            "name": "Campus Map",
+            "url": "http://berkeley.edu/map",
+            "popup_description": "View campus maps and find buildings using the interactive map.",
+            "featured_description": "View a number of different campus maps.  Print up a map to carry along with you, or use the interactive map to find specific buildings on campus.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "campus_safety",
+            "name": "Campus Safety / Police",
+            "url": "http://police.berkeley.edu",
+            "popup_description": "Learn about UCPD services.",
+            "featured_description": "Learn about the many UCPD services including Bear Walk and bicycle registration, and view crime reports and important safety messages.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "campus_bookstore",
+            "name": "Campus Bookstore",
+            "url": "http://www.bkstr.com/webapp/wcs/stores/servlet/StoreCatalogDisplay?storeId=10433",
+            "popup_description": "Find and purchase textbooks by course.",
+            "featured_description": "The Cal Student Store sells everything from Cal sweatshirts to textbooks.  Use the site to find which textbooks you need for each of your classes. You can also purchase or rent books directly from the website.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "course_catalog",
+            "name": "Course Catalog",
+            "url": "http://sis.berkeley.edu/catalog/gcc_search_menu",
+            "popup_description": "Detailed course descriptions.",
+            "featured_description": "Browse and search for courses through the official online Berkeley catalog. View course descriptions and prerequisites, sort by deparments, professors, and campus requirements.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "dars",
+            "name": "DARS",
+            "url": "https://marin.berkeley.edu/darsweb/servlet/ListAuditsServlet",
+            "popup_description": "Track progress toward a major.",
+            "featured_description": "Degree Audit Reporting System.  Use this service to see what course requirements you've completed for your college and major, and which course requirements you still need to complete to graduate.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "decal",
+            "name": "DeCal Courses",
+            "url": "http://www.decal.org",
+            "popup_description": "Explore student-taught courses.",
+            "featured_description": "The official website of Berkeley's DeCal program. DeCal is a student-run education program at the UC Berkeley - here, students create and run their own classes on a variety of (often unorthodox) subjects. Browse and search for DeCal courses.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "finaid",
+            "name": "Financial Aid",
+            "url": "http://students.berkeley.edu/finaid",
+            "popup_description": "Learn about financial aid and scholarships.",
+            "featured_description": "Everything you need to know about Financial Aid and Scholarships.  Find out general information about financial aid, view and accept loans and scholarships through MyFinAid, and report outside scholarships",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "future_campus_calendars",
+            "name": "Future Campus Calendars",
+            "url": "http://opa.berkeley.edu/AcademicCalendar",
+            "popup_description": "Look at campus calendars for upcoming semesters.",
+            "featured_description": "View upcoming academic calendars for upcoming semesters through the Office of Planning and Analysis. See when academic and administrative holidays will be in future semesters.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "uhs",
+            "name": "University Health Services",
+            "url": "http://uhs.berkeley.edu",
+            "popup_description": "Health and medical services for students.",
+            "featured_description": "Website for the Tang Center, which provides health and medical services to students. Find out information about Tang Center Services, SHIP (university sponsored health insurance), and schedule doctor appointments online.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "career_center",
+            "name": "Career Center",
+            "url": "http://career.berkeley.edu",
+            "popup_description": "Find jobs, internships, and learn about career paths.",
+            "featured_description": "The Career Center is a fantastic resource for exploring a variety of career options. Services include searching for jobs and internships, preparing for graduate school, resum� writing and interview workshops, and much more.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "library",
+            "name": "Library",
+            "url": "http://www.lib.berkeley.edu",
+            "popup_description": "Search for materials in the UC library system.",
+            "featured_description": "Search through both Berkeley's library catalog and the entire UC system's catalog.  Check book availability, find a book's location in the library, request a book to be delivered, and find general library information.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "parking",
+            "name": "Parking",
+            "url": "http://pt.berkeley.edu/park",
+            "popup_description": "Find and pay for parking.",
+            "featured_description": "The official website of Parking and Transportation services at Berkeley. Learn about bicycle and automobile parking, view maps, and purchase parking permits and  public transit passes.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "public_service",
+            "name": "Public Service",
+            "url": "http://calcorps.berkeley.edu",
+            "popup_description": "Get involved in public service.",
+            "featured_description": "Cal Corps Public Service Center facilitates partnerships between the University and the community to create educational programs, promote leadership through service, and foster civic engagement. View available jobs and internships, and learn about public service training, workshops, and courses.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "rsf",
+            "name": "Recreational Sports Facility",
+            "url": "http://www.recsports.berkeley.edu",
+            "popup_description": "Explore RSF programs and intramural sports.",
+            "featured_description": "RecSports offers a variety of services for students to stay active. View information about the various facilities on campus, buy RSF membership, sign up for intramural sports, make massage appointments, and join a fitness class.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "rescomp",
+            "name": "Residential Computing",
+            "url": "http://rescomp.berkeley.edu",
+            "popup_description": "Computing help for the residence halls.",
+            "featured_description": "Residential Computing supports and sustains technology services in the campus residence halls. View internet bandwidth usage, set up technical support appointments and learn about security tips.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "class_schedule",
+            "name": "Schedule of Classes",
+            "url": "http://schedule.berkeley.edu",
+            "popup_description": "See current and upcoming courses.",
+            "featured_description": "Visit the official online schedule for the times and locations of current and upcoming Berkeley courses. Browse and search for all classes and sort by departments, professors, and time and location.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "schedule_planning",
+            "name": "Schedule Planning Tools",
+            "url": "http://asuc.org/newsite2010/student-services/schedule-planning-tools/",
+            "popup_description": "Tools to help you plan your class schedule.",
+            "featured_description": "Having trouble planning your class schedule?  The ASUC has compiled a list of helpful schedule planning tools that can help you set up a class schedule, find textbooks, and view class and professor ratings.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "student_groups",
+            "name": "Student Groups and Programs",
+            "url": "http://students.berkeley.edu/osl",
+            "popup_description": "Student organizations, leadership programs, and GenEq.",
+            "featured_description": "The official website for Campus Life and Leadership. Search for a variety of student organizations on campus, learn how to manage a group, or even start your own organization. ",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "resource_guide",
+            "name": "Resource Guide for Students",
+            "url": "http://resource.berkeley.edu",
+            "popup_description": "Information about campus resources.",
+            "featured_description": "A resources of campus resources!  Everything you ever wanted to know about Berkeley, and much much more.  Find anything from the best classes to take to the best lounges to sleep in between classes.",
+            "audience": [{
+                "name": "student",
+                "required": false
+            }]
+        },
+        {
+            "id": "tele_bears",
+            "name": "Tele-BEARS",
+            "url": "http://telebears.berkeley.edu",
+            "popup_description": "Register for classes.",
+            "featured_description": "N/A",
+            "audience": [{
+                "name": "student",
+                "required": true
+            }]
+        }
+    ]
+}

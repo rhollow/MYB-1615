@@ -1,0 +1,78 @@
+/*
+ * Licensed to the Sakai Foundation (SF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The SF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
+/* Main */
+.mylinks .widget_title {
+    background: url("/devwidgets/mylinks/images/mylinks_widget_icon.png") no-repeat scroll 16px 16px transparent;
+}
+
+.myreminders .s3d-widget-titlebar {
+    height: 47px;
+}
+
+.mylinks_widget .fl-widget-content {
+    padding: 0;
+    border-right: 3px solid #D4DADE;
+    border-left: 3px solid #D4DADE;
+    margin: 0;
+}
+
+/* List of links */
+.mylinks_widget .link_list {overflow: auto; max-height: 200px;}
+.mylinks_widget .link_list li {list-style: none;}
+
+.mylinks_widget .link_list a {
+    display: block;
+    padding: 6px 10px 5px 40px;
+    border-bottom: 1px solid #E8E8E8;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    outline: none;
+}
+.mylinks_widget .link_list a:hover 
+{
+    background-image: url("/devwidgets/mylinks/images/grab_handle.png");
+    background-repeat: no-repeat;
+    background-position: 10px 3px;
+    background-color: #C6DEFF;
+    text-decoration: none;
+}
+
+/* Movable links */
+.mylinks_widget .fl-reorderer-movable-selected {outline: none;}
+
+.mylinks_widget .fl-reorderer-movable-dragging {background-color: #C6DEFF; outline: none;}
+
+.mylinks_widget .fl-reorderer-dropMarker {background-color: #469AC8; height: 2px;}
+
+.fl-reorderer-movable-hover {
+    cursor: -moz-grabbing; 
+    cursor: grabbing; 
+    background-color: #C6DEFF;
+}
+
+.fl-reorderer-avatar {
+    opacity: 0.55;
+    filter: alpha(opacity=55);
+    width: 300px;
+    border: 1px solid gray;
+    line-height: 2em;
+    text-indent: 40px;
+}
+

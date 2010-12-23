@@ -16,8 +16,20 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, jQuery, sakai, sdata */
+/*global $, Config, jQuery, sakai */
 
+/**
+ * @name sakai.recentmessages
+ *
+ * @class recentmessages
+ *
+ * @description
+ * Initialize the recentmessages widget
+ *
+ * @version 0.0.1
+ * @param {String} tuid Unique id of the widget
+ * @param {Boolean} showSettings Show the settings of the widget or not
+ */
 sakai.recentmessages = function(tuid, showSettings){
 
 
@@ -91,14 +103,13 @@ sakai.recentmessages = function(tuid, showSettings){
         // Set a params object to set which params should be passed into the request
         var params = $.param({
             box: "inbox",
-            category: "message",
             items: 4,
             page: 0
         });
 
         // Fire an Ajax request to get the recent messages for the current user
         $.ajax({
-            url: sakai.config.URL.MESSAGE_BOXCATEGORY_SERVICE + "?" + params,
+            url: sakai.config.URL.MESSAGE_BOX_SERVICE + "?" + params,
             cache: false,
             success: function(data){
                 loadRecentMessages(data);
@@ -117,4 +128,4 @@ sakai.recentmessages = function(tuid, showSettings){
     doInit();
 
 };
-sdata.widgets.WidgetLoader.informOnLoad("recentmessages");
+sakai.api.Widgets.widgetLoader.informOnLoad("recentmessages");

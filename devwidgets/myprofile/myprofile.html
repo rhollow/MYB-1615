@@ -2,11 +2,11 @@
 <link rel="stylesheet" type="text/css" href="/devwidgets/myprofile/css/myprofile.css" />
 
 <div class="myprofile_widget" style="display:none;">
-    <div class="fl-widget-content">
+    <div class="fl-widget-content s3d-widget-content">
         <div class="profile">
-            <img alt="Profile photo" src="/dev/_images/person_icon.jpg" id="myprofile_pic" class="myprofile_picture" />
-            <a href="javascript:;" id="myprofile_name" class="myprofile_name"></a>
-            <a href="javascript:;" id="myprofile_dept" class="myprofile_dept"></a>
+            <img alt="Profile photo" src="" id="myprofile_pic" class="myprofile_picture" />
+            <a href="javascript:;" id="myprofile_name" class="myprofile_name s3d-regular-light-links"><!-- --></a>
+            <a href="javascript:;" id="myprofile_dept" class="myprofile_dept"><!-- --></a>
 
             <div id="profile_chat_status">
                 <p class="profile_chat_status_dropdown_link">
@@ -31,13 +31,17 @@
             <br class="fl-push" />
         </div>
     </div>
-    <div class="fl-widget-options fl-fix">
+    <div class="fl-widget-options fl-fix" style="overflow:hidden;">
         <div class="widget-options-inner">
             <ul>
                 <li><a href="profile_edit.html">__MSG__EDIT_PROFILE__</a></li>
                 <li><span class="pipe_divider">|</span></li>
-                <li><a href="profile.html">__MSG__PREVIEW_PROFILE__</a></li>
+                <li><a href="javascript:;" id="myprofile_preview_profile">__MSG__PREVIEW_PROFILE__</a></li>
             </ul>
+        </div>
+        <div class="s3d-widget-options-footer-left">
+            <div class="s3d-widget-options-footer-right">
+            </div>
         </div>
     </div>
 </div>

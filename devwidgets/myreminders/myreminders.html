@@ -1,0 +1,75 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/myreminders/css/myreminders.css" />
+
+<div class="myreminders_widget">
+
+    <div class="fl-widget-content s3d-widget-content">        
+        <div class="reminders_header">
+            <span class="left_header">__MSG__DUE__</span>
+            <span class="right_header">__MSG__SUBJECT__</span>
+        </div>
+        <div class="reminders_div">
+            <ul class="reminders_list"><!--
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="transcripts" /></span><span class="middle_column">Fri Aug 22 2010</span>
+                    <span class="right_column">Transcripts Due</span>
+                </li>
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="lab_fees" /></span><span class="middle_column">Wed Aug 27 2010</span>
+                    <span class="right_column">Lab Fees</span>
+                </li>
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="submit_food" /></span><span class="middle_column">Fri Aug 29 2010</span>
+                    <span class="right_column">Submit Food</span>
+                </li>
+                <li class="reminder">
+                    <span class="left_column"><input type="checkbox" name="reminder" value="drop_classes" /></span><span class="middle_column">Sun Sep 12 2010</span>
+                    <span class="right_column">Drop Classes</span>
+                </li>
+            --></ul>
+        </div>
+    </div>
+    
+    <ul id="myreminders_template" style="display:none"><!--
+        {var isEmpty = true}
+        {for i in results}
+            {if i["sakai:messagebox"] === "inbox"}
+                {var isEmpty = false}
+                <div id="div_${i.id}">
+                    <li class="reminder" id="li_${i.id}">
+                        <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>  
+                        {var dateString = sakai.myreminders.getDateString(i['sakai:dueDate']) || sakai.myreminders.getDateString(i['sakai:eventDate'])}
+                        <div class="dueDate" title="Due ${dateString}"><a id="date_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}&from=my_reminders_widget">${dateString}</a></div>
+                        <div class="subjectLine" title="${i['sakai:subject']}"><a id="subject_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}&from=my_reminders_widget">${i['sakai:subject']}</a></div>
+                        <div class="slideButton" id="showSnippetDiv_${i.id}" title="Show snippet"></div>
+                    </li>    
+	                <div class="messageSnippet" id="snippetDiv_${i.id}" title="See full reminder">
+	                    <a href="/dev/inbox.html#message=${i.id}&from=my_reminders_widget">${i['sakai:body']}</a>
+	                </div>
+                </div>
+             {/if}
+        {/for}
+        
+        {if isEmpty == true}
+            <div class="noReminders">You have no reminders</div>
+        {/if}
+        -->
+    </ul>
+     
+    <div class="fl-widget-options fl-fix">
+        <div class="widget-options-inner">
+            <ul>
+                <li>
+                    <a href="inbox.html#box=reminders">__MSG__MANAGE_REMINDERS__</a>
+                </li>
+            </ul>
+        </div>
+        <div class="s3d-widget-options-footer-left">
+            <div class="s3d-widget-options-footer-right">
+            </div>
+        </div>        
+    </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/myreminders/javascript/myreminders.js"></script>
