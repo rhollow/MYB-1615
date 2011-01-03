@@ -4,6 +4,48 @@
 <div class="mytasks_widget">
 
     <div class="fl-widget-content s3d-widget-content">
+
+        <div id="mytasks_filter_control">Filter</div>
+
+        <div id="mytasks_filter" style="display:none;">
+            <div class="mytasks_filter_status">
+                Display item status:
+                <div>
+                    <input type="radio" name="item_status" id="mytasks_item_status_all" value="">
+                    <label for="mytasks_item_status_all">All</label>
+                </div>
+                <div>
+                    <input type="radio" name="item_status" id="mytasks_item_status_required" value="required">
+                    <label for="mytasks_item_status_required">Only required</label>
+                </div>
+
+                <div>
+                    <input type="radio" name="item_status" id="mytasks_item_status_unrequired" value="unrequired">
+                    <label for="mytasks_item_status_unrequired">Only unrequired</label>
+                </div>
+            </div>
+            <div class="mytasks_filter_daterange">
+                Display date range:
+                <div>
+                    <input type="radio" name="date_range" id="mytasks_date_range_all" value="">
+                    <label for="mytasks_date_range_all">All</label>
+                </div>
+                <div>
+                    <input type="radio" name="date_range" id="mytasks_date_range_overdue" value="overdue">
+                    <label for="mytasks_date_range_overdue">Overdue</label>
+                </div>
+                <div>
+                    <input type="radio" name="date_range" id="mytasks_date_range_next7" value="next7">
+                    <label for="mytasks_date_range_next7">Next 7 days</label>
+                </div>
+                <div>
+                    <input type="radio" name="date_range" id="mytasks_date_range_next30" value="next30">
+                    <label for="mytasks_date_range_next30">Next 30 days</label>
+                </div>
+            </div>
+
+        </div>
+
         <table class="mytasks">
             <thead>
                 <th title="__MSG__DUE__">__MSG__DUE__</th>
@@ -16,7 +58,7 @@
         </table>
     </div>
     
-    <ul id="mytasks_template" style="display:none"><!--
+    <div id="mytasks_template" style="display:none"><!--
         {var isEmpty = true}
         {for i in results}
             {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
@@ -35,7 +77,7 @@
             <tr class="notasks"><td>You have no tasks</td></tr>
         {/if}
         -->
-    </ul>
+    </div>
     
     <div class="fl-widget-options fl-fix">
         <div class="widget-options-inner">

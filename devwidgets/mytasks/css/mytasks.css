@@ -32,3 +32,22 @@ table.mytasks td.subjectLine {
     text-align: left;
 }
 
+#mytasks_filter {
+    background-color: #fff;
+    border: 1px solid black;
+    z-index: 15;
+    width: 25em;
+    position: absolute;
+    padding: 10px;
+}
+
+#mytasks_filter .mytasks_filter_status {
+    float: left;
+    padding-right: 10px;
+}
+
+#mytasks_filter .mytasks_filter_daterange {
+    border-left: 1px solid black;
+    float: left;
+    padding-left: 10px;
+}
