@@ -1,4 +1,4 @@
- /*
+/*
  * Licensed to the Sakai Foundation (SF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -18,13 +18,46 @@
 /* global $, Config, jQuery, sakai, sdata */
 
 var sakai = sakai || {};
+sakai.myb = sakai.myb || {};
 
- /**
-  * Initialize the My Tasks widget
-  * @param {String} tuid unique id of the widget
-  * @param {Boolean} showSettings show the settings of the widget or not
-  */
-sakai.mytasks = function(tuid, showSettings){
+sakai.myb.noticewidgets = {};
+
+sakai.myb.noticewidgets.getNotices = function(dataURL) {
+
+    $.ajax({
+        url: dataURL,
+        cache: false,
+        success: function(data) {
+            if (data.results) {
+                sakai.myb.noticewidgets.formatNotices(data);
+            }
+        },
+        error: function(xhr, textStatus, thrownError) {
+            alert("Getting notices failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
+                    " and thrownError=" + thrownError + "\n" + xhr.responseText);
+        }
+    })
+};
+
+sakai.myb.noticewidgets.formatNotices = function(data) {
+    console.dir(data);
+};
+
+/*
+ * Initialize the My Tasks widget
+ * @param {String} tuid unique id of the widget
+ * @param {Boolean} showSettings show the settings of the widget or not
+ */
+sakai.mytasks = function(tuid, showSettings) {
+
+    var doInit = function() {
+        sakai.myb.noticewidgets.getNotices(sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created");
+    };
+
+    doInit();
+};
+
+sakai.myevents = function(tuid, showSettings) {
 
     var doInit = function() {
 
@@ -34,3 +67,4 @@ sakai.mytasks = function(tuid, showSettings){
 };
 
 sakai.api.Widgets.widgetLoader.informOnLoad("mytasks");
+sakai.api.Widgets.widgetLoader.informOnLoad("myevents");

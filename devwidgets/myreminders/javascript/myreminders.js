@@ -19,10 +19,6 @@
 
 var sakai = sakai || {};
 
-// move this to the global config.js ??
-// the query at this URL will get sakai:type='notice' of sakai:category='reminder' with taskState as a request parameter
-sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE = "/var/message/notice/reminder_taskstate.json";
-
 /**
  * Initialize the My Reminders widget
  * @param {String} tuid unique id of the widget
