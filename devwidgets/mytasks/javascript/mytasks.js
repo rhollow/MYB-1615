@@ -22,7 +22,7 @@ sakai.myb = sakai.myb || {};
 
 sakai.myb.noticewidgets = {};
 
-sakai.myb.noticewidgets.getNotices = function(dataURL) {
+sakai.myb.noticewidgets.getNotices = function(dataURL, formatter) {
 
     $.ajax({
         url: dataURL,
@@ -30,6 +30,7 @@ sakai.myb.noticewidgets.getNotices = function(dataURL) {
         success: function(data) {
             if (data.results) {
                 sakai.myb.noticewidgets.formatNotices(data);
+                formatter(data);
             }
         },
         error: function(xhr, textStatus, thrownError) {
@@ -41,6 +42,20 @@ sakai.myb.noticewidgets.getNotices = function(dataURL) {
 
 sakai.myb.noticewidgets.formatNotices = function(data) {
     console.dir(data);
+
+};
+
+/**
+ * Formats a date to something like Mon 1/1/10
+ * @param {Object} date UTF string
+ */
+sakai.myb.noticewidgets.formatDateAsString = function(date) {
+    if (!date) return null;
+    var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    date = sakai.api.Util.parseSakaiDate(date);
+    var year = "" + date.getFullYear();
+    return days_short[date.getDay()] + " " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + year.substring(2, 4);
 };
 
 /*
@@ -50,8 +65,16 @@ sakai.myb.noticewidgets.formatNotices = function(data) {
  */
 sakai.mytasks = function(tuid, showSettings) {
 
+    var $rootel = $("#" + tuid);
+    var $tasksList = $(".tasks_list", $rootel);
+    var template = "mytasks_template";
+    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
+    var formatTasks = function(data) {
+        $tasksList.html($.TemplateRenderer(template, data));
+    };
+
     var doInit = function() {
-        sakai.myb.noticewidgets.getNotices(sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created");
+        sakai.myb.noticewidgets.getNotices(dataURL, formatTasks);
     };
 
     doInit();

@@ -4,9 +4,43 @@
 <div class="mytasks_widget">
 
     <div class="fl-widget-content s3d-widget-content">
-        task content goes here
+        <div class="tasks_header">
+            <span class="due_header">__MSG__DUE__</span>
+            <span class="subj_header">__MSG__SUBJECT__</span>
+            <span class="req_header">__MSG__REQ__</span>
+            <span class="checkbox_header" title="__MSG__COMPLETED__">IMAGE TK</span>
+        </div>
+        <div class="tasks_div">
+            <ul class="tasks_list"></ul>
+        </div>
     </div>
-
+    
+    <ul id="mytasks_template" style="display:none"><!--
+        {var isEmpty = true}
+        {for i in results}
+            {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
+                {var isEmpty = false}
+                <div id="div_${i.id}">
+                    <li class="reminder" id="li_${i.id}">
+                        {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate']) || sakai.myb.noticewidgets.formatDateAsString(i['sakai:eventDate'])}
+                        <div class="dueDate" title="Due ${dateString}"><a id="date_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}&from=my_tasks_widget">${dateString}</a></div>
+                        <div class="subjectLine" title="${i['sakai:subject']}"><a id="subject_pastDue_${i.id}" href="/dev/inbox.html#message=${i.id}&from=my_tasks_widget">${i['sakai:subject']}</a></div>
+                        <div class="requiredLine">!</div>
+                        <div class="checkDone"><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></div>
+                    </li>    
+	                <div class="messageSnippet" id="snippetDiv_${i.id}" title="See full reminder">
+	                    <a href="/dev/inbox.html#message=${i.id}&from=my_tasks_widget">${i['sakai:body']}</a>
+	                </div>
+                </div>
+             {/if}
+        {/for}
+        
+        {if isEmpty == true}
+            <div class="notasks">You have no tasks</div>
+        {/if}
+        -->
+    </ul>
+    
     <div class="fl-widget-options fl-fix">
         <div class="widget-options-inner">
             <ul>
