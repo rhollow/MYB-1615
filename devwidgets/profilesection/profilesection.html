@@ -65,7 +65,7 @@
                 <h2 class="fl-force-left">${config.label}</h2>
 
                 {if (mode.value === "viewmy" || mode.value === "edit") && config.modifyacl !== false}
-                        {var _access = "everybody"}
+                        {var _access = "institution"}
                     {if data && data.access}
                         {var _access = data.access}
                     {/if}
@@ -82,6 +82,11 @@
                             </select>
                         {/if}
                     </div>
+				{elseif true}
+					<div class="profilesection_generalinfo_acl fl-force-right">                    
+                            <div class="worldview">__MSG__VIEWABLE_BY_THE_WORLD__</div>
+                            <div><a href="https://calnet.berkeley.edu/directory/update/" class="calnetlink" target="_blank">__MSG__UPDATE_LISTED_INFORMATION__</a></div>
+					</div>
                 {/if}
             </div>
         {/if}
@@ -124,6 +129,9 @@
                     {elseif config.type === "select"}
                         <select
                     {/if}
+					{if config.readonly === true}
+						disabled="disabled"					
+					{/if}
                         class="profilesection_generalinfo_content
                         {if config.required} required{/if}
                         {if config.validation} ${config.validation}
