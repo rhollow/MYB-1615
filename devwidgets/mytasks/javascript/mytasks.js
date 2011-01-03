@@ -40,16 +40,13 @@ sakai.myb.noticewidgets.getNotices = function(dataURL, formatter) {
 };
 
 /**
- * Formats a date to something like Mon 1/1/10
+ * Formats a date to "mm/dd" format
  * @param {Object} date UTF string
  */
 sakai.myb.noticewidgets.formatDateAsString = function(date) {
     if (!date) return null;
-    var days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
     date = sakai.api.Util.parseSakaiDate(date);
-    var year = "" + date.getFullYear();
-    return days_short[date.getDay()] + " " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + year.substring(2, 4);
+    return date.getMonth() + 1 + "/" + date.getDate();
 };
 
 /*

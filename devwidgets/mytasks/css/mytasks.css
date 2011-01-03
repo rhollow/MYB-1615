@@ -1,3 +1,34 @@
 .mytasks .widget_title {
     background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat scroll 16px 16px transparent;
 }
+
+table.mytasks {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid black;
+    margin: 10px;
+    overflow: auto;
+    max-height: 300px;
+}
+
+table.mytasks thead {
+    background-color: #D4DADE;
+}
+
+table.mytasks th {
+    border-bottom: 1px solid black;
+}
+
+table.mytasks td, table.mytasks th {
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    width: 30px;
+    text-align: center;
+    padding: 0 5px 0 5px;
+}
+
+table.mytasks td.subjectLine {
+    width: 300px;
+    text-align: left;
+}
+
