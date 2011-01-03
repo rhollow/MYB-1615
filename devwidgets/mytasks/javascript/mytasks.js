@@ -29,7 +29,6 @@ sakai.myb.noticewidgets.getNotices = function(dataURL, formatter) {
         cache: false,
         success: function(data) {
             if (data.results) {
-                sakai.myb.noticewidgets.formatNotices(data);
                 formatter(data);
             }
         },
@@ -38,11 +37,6 @@ sakai.myb.noticewidgets.getNotices = function(dataURL, formatter) {
                     " and thrownError=" + thrownError + "\n" + xhr.responseText);
         }
     })
-};
-
-sakai.myb.noticewidgets.formatNotices = function(data) {
-    console.dir(data);
-
 };
 
 /**
