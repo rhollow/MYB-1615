@@ -36,6 +36,11 @@ table.noticewidget_listing td.subjectLine {
     text-align: left;
 }
 
+table.noticewidget_listing tr.empty_list td {
+    width: 300px;
+    text-align: left;
+}
+
 .noticewidget_filter {
     background-color: #fff;
     border: 1px solid black;
