@@ -81,37 +81,62 @@ sakai.listpage = function(){
     
     var getDataFromInput = function() {
         var result = {};
-        // In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()
-		// It should be called like this $.trim($('#selector').text())
-		// See http://bit.ly/d8mDx2
+		
+		result.context = "CED";
         result.listName = $.trim($("#list_name").val());
+		if(result.listName == null) {
+			$("#invalid_name").show();
+			return -1;
+		}
         result.desc = $.trim($("#description").val());
         
         // NOT SUPPORTED FOR POC
         // result.size = $("#list_size").val();
         
-        var index = document.createListForm.context.selectedIndex;
-        var selectedContext = document.createListForm.context.options[index].value;
-        result.context = $.trim(selectedContext);
-        
+		// Gathering the data on standing
+		var standingArray = [{"undergrad": {"major": []}}, {"grad": {"major": []}}];
+		if($("#undergrad:checked").val() == null && $("#grad:checked").val() == null) {
+			$("#invalid_major").show();
+				return -1;
+		}
+		
+		// Gathering the data on majors
         var selectedMajors = [];
-        $(".major_checkbox:checked").each(function() {
-            var major = $.trim($(this).val());
-            selectedMajors.push(major);
-        });
-        result.major = selectedMajors;
-        
-        var standingArray = [];
-        index = document.createListForm.standing.selectedIndex;
-        var selectedStanding = document.createListForm.standing.options[index].value;
-        if(selectedStanding === "all" || selectedStanding === "All") {
-            standingArray.push("undergrad");
-            standingArray.push("grad");
-        } else {
-            standingArray.push(selectedStanding)
-        }
+		if ($("#undergrad:checked").val() && $("#byMajor:checked").val()) {
+        	$("#ugrad_majors .major_checkbox:checked").each(function() {
+            	var major = $.trim($(this).val());
+            	selectedMajors.push(major);
+        	});
+			if(selectedMajors.length == 0) {
+				$("#invalid_major").show();
+				return -1;
+			}
+		} else if($("#undergrad:checked").val() && $("#allUgrads:checked").val()) {
+			$("#ugrad_majors .major_checkbox").each(function() {
+            	var major = $.trim($(this).val());
+            	selectedMajors.push(major);
+        	});
+		}
+		standingArray[0].undergrad.major = selectedMajors;
+		selectedMajors = [];
+		if ($("#grad:checked").val() && $("#byProgram:checked").val()) {
+			$("#grad_majors .major_checkbox:checked").each(function(){
+				var major = $.trim($(this).val());
+				selectedMajors.push(major);
+			});
+			if(selectedMajors.length == 0) {
+				$("#invalid_major").show();
+				return -1;
+			}
+		} else if($("#grad:checked").val() && $("#allGrads:checked").val()) {
+			$("#grad_majors .major_checkbox").each(function() {
+            	var major = $.trim($(this).val());
+            	selectedMajors.push(major);
+        	});
+		}
+		
+		standingArray[1].grad.major = selectedMajors;
         result.standing = standingArray;
-        
         return result;
     }
     
@@ -121,6 +146,9 @@ sakai.listpage = function(){
      */
     sakai.listpage.updateListSize = function(){
         var data = getDataFromInput();
+		if(data < 0) {
+			alert("Error");
+		}
         
         // STILL NEEDS TO BE IMPLEMENTED
         // var size = query(selectedContext, selectedMajor, selectedStanding);
@@ -132,9 +160,6 @@ sakai.listpage = function(){
      */
     var clearInputFields = function() {
         document.getElementById("createListForm").reset();
-        
-        // NOT SUPPORTED FOR POC
-        // sakai.listpage.updateListSize();
     };
     
     // TODO: Document properties.
@@ -325,11 +350,11 @@ sakai.listpage = function(){
                 return allLists[i];
             }
         }
-        return {};
+        return null;
     };
     
     /**
-     * Returns the index of the list wtih the specific id.
+     * Returns the index of the list with the specific id.
      * @param {Object} id
      */
     var getIndexFromId = function(id) {
@@ -348,6 +373,7 @@ sakai.listpage = function(){
     var displayList = function(id){
         // Display edit list tab
         $.bbq.pushState({"tab": "new"},2);
+		clearInputFields();
         
         // Fill in input fields with list data
         var list = getListWithId(id);
@@ -357,23 +383,54 @@ sakai.listpage = function(){
         // NOT SUPPORTED FOR POC
         // document.createListForm.list_size.value = list["sakai:size"];
         
-        // $("#context").val(list.query.context);
-        // HARD-CODING FOR POC
-        $("select option[value='ced']").attr("selected","selected");
-        
-		$(".major_checkbox").removeAttr("checked"); // Resetting the list of majors   
-        var majorArray = list.query.major;
-        for(var i = 0, j = majorArray.length; i < j; i++) {
-            var major = majorArray[i].replace(/ /g, "_");
-            $("#" + major).attr("checked", true);
-        }
-        
-        var standingArray = list.query.standing;
-        if(standingArray.length != 1) {
-            $("#standing").val("all");
-        } else {
-            $("#standing").val(standingArray[0]);
-        }
+		var ugradMajorArray = list.query.standing[0].undergrad.major;
+		var gradMajorArray = list.query.standing[1].grad.major;
+        if(ugradMajorArray != null && ugradMajorArray.length > 0) {
+			$("#undergrad").click();
+			enableAll(document.getElementById("choose_ugrad"));
+            
+			for (var i = 0, j = ugradMajorArray.length; i < j; i++) {
+                var major = ugradMajorArray[i].replace(/ /g, "_");
+                $("#ugrad_majors #" + major).attr("checked", true);
+            }
+			
+            var allChecked = true;
+            $("#ugrad_majors .major_checkbox").each(function(){
+                if (!this.checked) {
+                    allChecked = false;
+                }
+            })
+            if (allChecked) {
+                document.getElementById("allUgrads").checked = true;
+                $("#ugrad_majors .major_checkbox").removeAttr("checked");
+            } else {
+                document.getElementById("byMajor").checked = true;
+                enableAll(document.getElementById("ugrad_majors"));
+            }
+		}
+        if(gradMajorArray != null && gradMajorArray.length > 0) {
+			$("#grad").click();
+			enableAll(document.getElementById("choose_grad"));
+			
+            for (var i = 0, j = gradMajorArray.length; i < j; i++) {
+                var major = gradMajorArray[i].replace(/ /g, "_");
+                $("#grad_majors #" + major).attr("checked", true);
+            }
+			
+            var allChecked = true;
+            $("#grad_majors .major_checkbox").each(function(){
+                if (!this.checked) {
+                    allChecked = false;
+                }
+            })            
+            if (allChecked) {
+                document.getElementById("allGrads").checked = true;
+                $("#grad_majors .major_checkbox").removeAttr("checked");
+            } else if ($("#grad:checked").val() != null) {
+                document.getElementById("byProgram").checked = true;
+                enableAll(document.getElementById("grad_majors"));
+            } 
+		}
     }
 
     // Check all messages
@@ -420,7 +477,7 @@ sakai.listpage = function(){
                     allLists.splice(index, 1);
                 }
             } else {
-                alert("List not found");
+                alert("Error: list not found");
             }
         }
         
@@ -432,21 +489,23 @@ sakai.listpage = function(){
         return hashMap[id] != null;
     };
     
-    var getHashId = function(data) {
-        var id = "dl-" + data.context;
-        var majorArray = data.major;
+    var getHashId = function(data){
+		var id = "dl-" + data.context;
+		id += data.listName;
+		id += data.desc;
         var standingArray = data.standing;
         
-        for(var i = 0, j = majorArray.length; i < j; i++) {
-            id += majorArray[i];
+		id += "undergrad";
+        for(var i = 0, j = standingArray[0].undergrad.major.length; i < j; i++) {
+            id += standingArray[0].undergrad.major[i];
         }
          
-        for(var i = 0, j = standingArray.length; i < j; i++) {
-            id += standingArray[i];
+		id += "grad";
+        for(var i = 0, j = standingArray[1].grad.major.length; i < j; i++) {
+            id += standingArray[1].grad.major[i];
         } 
         
         id = id.replace(/ /gi, "");
-        
         return id;
     }
     
@@ -468,7 +527,7 @@ sakai.listpage = function(){
             return;
         }
         
-        if(index != null) { // we are editing an existing list
+        if(index != null && index >= 0) { // we are editing an existing list
             allLists[index]["sakai:name"] = data.listName;
             allLists[index]["sakai:description"] = data.desc;
             allLists[index]["sakai:dateModified"] = new Date();
@@ -476,7 +535,6 @@ sakai.listpage = function(){
             allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
             allLists[index].query.context = [data.context];
             allLists[index].query.standing = data.standing;
-            allLists[index].query.major = data.major;
         } else { // we are creating a new list
             hashMap[hashId] = hashId;
             var id = generateId();
@@ -490,18 +548,85 @@ sakai.listpage = function(){
                 "sakai:modifiedBy": sakai.data.me.user.userid,
                 "query": {
                     "context": [data.context],
-                    "standing": data.standing,
-                    "major": data.major
+                    "standing": data.standing
                 }
             }
-            
             allLists.push(list);
         }
-        
         submitData.lists = allLists;
         sakai.api.Server.saveJSON(userUrl, submitData, finishSaveAndLoad);
     };
     
+	// List creation events
+    $("#undergrad").live("click", function() {
+		if(this.checked) {
+			enableAll(document.getElementById("choose_ugrad"));
+		} else {
+			disableAll(document.getElementById("choose_ugrad"));
+		}
+    });
+    
+    $("#grad").live("click", function() {
+		if (this.checked) {
+			enableAll(document.getElementById("choose_grad"));
+		} else {
+			disableAll(document.getElementById("choose_grad"));
+		}
+    });
+    
+    $("#byMajor").live("click", function() {
+		if(this.checked) {
+			enableAll(document.getElementById("ugrad_majors"));
+		} else {
+			disableAll(document.getElementById("ugrad_majors"));
+		}
+    });
+    
+    $("#allUgrads").live("click", function() {
+		if(this.checked) {
+		 	disableAll(document.getElementById("ugrad_majors"));
+		 }
+    });
+    
+    $("#byProgram").live("click", function() {
+         if(this.checked) {
+			enableAll(document.getElementById("grad_majors"));
+		} else {
+			disableAll(document.getElementById("grad_majors"));
+		}
+    });
+    
+    $("#allGrads").live("click", function() {
+        if(this.checked) {
+		 	disableAll(document.getElementById("grad_majors"));
+		 }
+    });
+    
+	var enableAll = function(el) {
+		try {
+			el.disabled = false;
+		} catch (E) {}
+		
+		if (el && el.childNodes && el.childNodes.length > 0) {
+            for (var x = 0; x < el.childNodes.length; x++) {
+                el.childNodes[x].disabled = false;
+            }
+        }
+	}
+	
+	var disableAll = function(el) {
+		try {
+			el.disabled = true;
+			el.checked = false;
+		} catch (E) {}
+		
+		if (el && el.childNodes && el.childNodes.length > 0) {
+            for (var x = 0; x < el.childNodes.length; x++) {
+                disableAll(el.childNodes[x]);
+            }
+        }
+	}
+	  
     // Button click events
     $("#inbox_inbox_delete_button").live("click", function(){
         var listId = [];
@@ -558,12 +683,14 @@ sakai.listpage = function(){
     
     $("#inbox_inbox_save_button").live("click", function(){
         $("#invalid_name").hide();
-        $("#invalid_desc").hide();
         $("#invalid_major").hide();
-        
         // NOT SUPPORTED FOR POC
         //$("#invalid_size").hide();
+		
         var data = getDataFromInput();
+		if(data < 0) {
+			return;
+		}
         
         // NOT SUPPORTED FOR POC
         // var size = $("#list_size").val();
@@ -571,29 +698,11 @@ sakai.listpage = function(){
 		// In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()
 		// It should be called like this $.trim($('#selector').text())
 		// See http://bit.ly/d8mDx2
-        if($.trim(data.listName) && $.trim(data.desc) && (data.major.length != 0)) {
-            if(editExisting) {
-                saveList(data, getIndexFromId(currList));
-            } else {
-                saveList(data, null);   
-            }
+        if (editExisting) {
+            saveList(data, getIndexFromId(currList));
+			editExisting = false;
         } else {
-            if(!$.trim(data.listName)) {
-                $("#invalid_name").show();
-            }
-            if(!$.trim(data.desc)) {
-                $("#invalid_desc").show();
-            }
-            if(data.major.length == 0) {
-                $("#invalid_major").show();
-            }
-            
-            // NOT SUPPORTED FOR POC
-            /*
-            if(size == 0) {
-                $("#invalid_size").show();
-            }
-            */
+            saveList(data, null);
         }
     });
     
@@ -679,7 +788,6 @@ sakai.listpage = function(){
             "_MODIFIERS": {},
             "lists": data.lists
         };
-        
         return result;
     }
     
@@ -712,4 +820,5 @@ sakai.listpage = function(){
 
     doInit();
 }
+
 sakai.api.Widgets.Container.registerForLoad("sakai.listpage");
