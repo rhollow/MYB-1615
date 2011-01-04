@@ -22,6 +22,10 @@ sakai.myb = sakai.myb || {};
 
 sakai.myb.noticewidgets = {};
 
+/**
+ * Generic constructor for noticewidgets (of which tasks is one type, and events is another).
+ * @param cfgObject
+ */
 sakai.myb.noticewidgets.Widget = function(cfgObject) {
     var that = function() {
     };
@@ -114,6 +118,10 @@ sakai.myb.noticewidgets.formatDateAsString = function(date) {
     date = sakai.api.Util.parseSakaiDate(date);
     return date.getMonth() + 1 + "/" + date.getDate();
 };
+
+/*
+ * Begin the definition of specific widgets, which instantiate the generic Widget defined above.
+ */
 
 sakai.mytasks = function(tuid) {
     var rootContainer = $("#" + tuid);
