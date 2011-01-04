@@ -70,8 +70,8 @@ sakai.myb.noticewidgets.widget = function(config) {
     $(window).bind("click", function(e) {
         // if filter is visible and the target element clicked is not filter or its control then hide filter
         if (that.config.filterContainer.is(":visible")
-                && !$(e.target).is(".noticewidget_filter_control")
-                && !$(e.target).parents().is(".noticewidget_filter")) {
+                && !$(e.target).is("#" + that.config.widgetname + "_filter_control")
+                && !$(e.target).parents().is("#" + that.config.widgetname + "_filter")) {
             hideFilters();
         }
     });
@@ -96,8 +96,8 @@ sakai.mytasks = function(tuid) {
     var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
-    var filterContainer = $(".noticewidget_filter", rootContainer);
-    var filterControl = $(".noticewidget_filter_control", rootContainer);
+    var filterContainer = $("#mytasks_filter", rootContainer);
+    var filterControl = $("#mytasks_filter_control", rootContainer);
     var widgetname = "mytasks";
 
     var filterSelectionToMessage = function() {
@@ -149,8 +149,8 @@ sakai.myevents = function(tuid) {
     var tasksListContainer = $(".events_list", rootContainer);
     var template = "myevents_template";
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
-    var filterContainer = $(".noticewidget_filter", rootContainer);
-    var filterControl = $(".noticewidget_filter_control", rootContainer);
+    var filterContainer = $("#myevents_filter", rootContainer);
+    var filterControl = $("#myevents_filter_control", rootContainer);
     var widgetname = "myevents";
 
     var filterSelectionToMessage = function() {

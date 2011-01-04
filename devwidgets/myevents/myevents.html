@@ -1,13 +1,14 @@
 <!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/mytasks/css/mytasks.css" />
 <link rel="stylesheet" type="text/css" href="/devwidgets/myevents/css/myevents.css" />
 
 <div class="myevents_widget">
 
     <div class="fl-widget-content s3d-widget-content">
         
-        <div class="noticewidget_filter_control">Filter</div>
+        <div id="myevents_filter_control" class="noticewidget_filter_control">Filter</div>
 
-        <div class="noticewidget_filter" style="display:none;">
+        <div id="myevents_filter" class="noticewidget_filter" style="display:none;">
             <div class="noticewidget_filter_status">
                 Display item status:
                 <div>
@@ -24,7 +25,7 @@
                     <label for="myevents_item_status_unrequired">Only unrequired</label>
                 </div>
             </div>
-            <div class="noticewidget_filter_daterange">
+            <div class="myevents_filter_daterange">
                 Display date range:
                 <div>
                     <input type="radio" name="myevents_date_range" id="myevents_date_range_all" value="all">
@@ -42,14 +43,14 @@
 
         </div>
 
-        <table class="myevents">
+        <table class="noticewidget_listing myevents_listing">
             <thead>
                 <th title="__MSG__DUE__">__MSG__DUE__</th>
                 <th title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
                 <th title="__MSG__REQUIRED__">__MSG__REQ__</th>
             </thead>
 
-            <tbody class="events_list"><!-- filled by trimpath --></tbody>
+            <tbody class="noticewidget_list events_list"><!-- filled by trimpath --></tbody>
         </table>
     </div>
 

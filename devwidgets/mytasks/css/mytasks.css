@@ -2,7 +2,11 @@
     background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat scroll 16px 16px transparent;
 }
 
-table.mytasks {
+/**
+    Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
+**/
+
+table.noticewidget_listing {
     border-collapse: collapse;
     border-spacing: 0;
     border: 1px solid black;
@@ -11,15 +15,15 @@ table.mytasks {
     max-height: 300px;
 }
 
-table.mytasks thead {
+table.noticewidget_listing thead {
     background-color: #D4DADE;
 }
 
-table.mytasks th {
+table.noticewidget_listing th {
     border-bottom: 1px solid black;
 }
 
-table.mytasks td, table.mytasks th {
+table.noticewidget_listing td, table.noticewidget_listing th {
     border-right: 1px solid black;
     border-left: 1px solid black;
     width: 30px;
@@ -27,7 +31,7 @@ table.mytasks td, table.mytasks th {
     padding: 0 5px 0 5px;
 }
 
-table.mytasks td.subjectLine {
+table.noticewidget_listing td.subjectLine {
     width: 300px;
     text-align: left;
 }
