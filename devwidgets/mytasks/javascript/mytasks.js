@@ -28,24 +28,6 @@ sakai.myb.noticewidgets.widget = function(config) {
     that.config = config;
     that.data = null;
 
-    // set up click listeners
-    config.filterControl.live("click", function() {
-        if (config.filterContainer.is(":visible")) {
-            hideFilters();
-        } else {
-            config.filterContainer.show();
-        }
-    });
-
-    $(window).bind("click", function(e) {
-        // if filter is visible and the target element clicked is not filter or its control then hide filter
-        if (config.filterContainer.is(":visible")
-                && !$(e.target).is(".mytasks_filter_control")
-                && !$(e.target).parents().is(".mytasks_filter")) {
-            hideFilters();
-        }
-    });
-
     that.getNotices = function() {
 
         $.ajax({
@@ -66,8 +48,32 @@ sakai.myb.noticewidgets.widget = function(config) {
 
     var hideFilters = function() {
         config.filterContainer.hide();
+        updateFilterStatus();
+    };
+
+    var updateFilterStatus = function() {
         config.filterControl.html(sakai.myb.noticewidgets.i18n("FILTER") + " " + config.convertFilterToMessages());
     };
+
+    // set up click listeners
+    config.filterControl.live("click", function() {
+        if (config.filterContainer.is(":visible")) {
+            hideFilters();
+        } else {
+            config.filterContainer.show();
+        }
+    });
+
+    $(window).bind("click", function(e) {
+        // if filter is visible and the target element clicked is not filter or its control then hide filter
+        if (config.filterContainer.is(":visible")
+                && !$(e.target).is(".mytasks_filter_control")
+                && !$(e.target).parents().is(".mytasks_filter")) {
+            hideFilters();
+        }
+    });
+
+    updateFilterStatus();
 
     return that;
 };
