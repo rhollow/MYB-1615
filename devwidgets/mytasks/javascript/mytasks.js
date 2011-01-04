@@ -67,8 +67,8 @@ sakai.myb.noticewidgets.widget = function(config) {
     $(window).bind("click", function(e) {
         // if filter is visible and the target element clicked is not filter or its control then hide filter
         if (config.filterContainer.is(":visible")
-                && !$(e.target).is(".mytasks_filter_control")
-                && !$(e.target).parents().is(".mytasks_filter")) {
+                && !$(e.target).is(".noticewidget_filter_control")
+                && !$(e.target).parents().is(".noticewidget_filter")) {
             hideFilters();
         }
     });
@@ -92,19 +92,13 @@ sakai.myb.noticewidgets.i18n = function(key) {
     return sakai.api.i18n.Widgets.getValueForKey("mytasks", "default", key);
 };
 
-/*
- * Initialize the My Tasks widget
- * @param {String} tuid unique id of the widget
- * @param {Boolean} showSettings show the settings of the widget or not
- */
 sakai.mytasks = function(tuid) {
-
     var rootContainer = $("#" + tuid);
     var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
-    var filterContainer = $(".mytasks_filter", rootContainer);
-    var filterControl = $(".mytasks_filter_control", rootContainer);
+    var filterContainer = $(".noticewidget_filter", rootContainer);
+    var filterControl = $(".noticewidget_filter_control", rootContainer);
 
     var filterSelectionToMessage = function() {
         var itemStatus = $("input[name=item_status]:radio:checked", filterContainer).val();
@@ -146,14 +140,55 @@ sakai.mytasks = function(tuid) {
         taskWidget.getNotices();
     };
 
-
     doInit();
 };
 
 sakai.myevents = function(tuid) {
+    var rootContainer = $("#" + tuid);
+    var tasksListContainer = $(".events_list", rootContainer);
+    var template = "myevents_template";
+    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
+    var filterContainer = $(".noticewidget_filter", rootContainer);
+    var filterControl = $(".noticewidget_filter_control", rootContainer);
+
+    var filterSelectionToMessage = function() {
+        var itemStatus = $("input[name=item_status]:radio:checked", filterContainer).val();
+        var dateRange = $("input[name=date_range]:radio:checked", filterContainer).val();
+        // translate every possible combo of the 2 radio buttons to a human readable message using
+        // an associative array instead of a giant switch-case statement, since it's prettier this way.
+        var msgs = {
+            all : {
+                all : "ALL_TASKS",
+                overdue : "OVERDUE_TASKS",
+                next7 : "TASKS_DUE_THIS_WEEK",
+                next30 : "TASKS_DUE_THIS_MONTH"
+            },
+            required : {
+                all : "REQUIRED_TASKS",
+                overdue : "REQUIRED_OVERDUE_TASKS",
+                next7 : "REQUIRED_TASKS_DUE_THIS_WEEK",
+                next30 : "REQUIRED_TASKS_DUE_THIS_MONTH"
+            },
+            unrequired : {
+                all : "UNREQUIRED_TASKS",
+                overdue : "UNREQUIRED_OVERDUE_TASKS",
+                next7 : "UNREQUIRED_TASKS_DUE_THIS_WEEK",
+                next30 : "UNREQUIRED_TASKS_DUE_THIS_MONTH"
+            }
+        };
+        return sakai.myb.noticewidgets.i18n(msgs[itemStatus][dateRange]);
+    };
 
     var doInit = function() {
-
+        var eventWidget = sakai.myb.noticewidgets.widget({
+            dataURL : dataURL,
+            template : template,
+            container : tasksListContainer,
+            filterControl : filterControl,
+            filterContainer : filterContainer,
+            convertFilterToMessages : filterSelectionToMessage
+        });
+        eventWidget.getNotices();
     };
 
     doInit();
