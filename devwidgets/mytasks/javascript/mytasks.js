@@ -55,7 +55,7 @@ sakai.myb.noticewidgets.widget = function(config) {
     };
 
     var translate = function(key) {
-        return sakai.api.i18n.Widgets.getValueForKey(that.config.widgetname, "default", key);
+        return sakai.api.i18n.Widgets.getValueForKey(that.config.widgetName, "default", key);
     };
 
     // set up click listeners
@@ -70,8 +70,8 @@ sakai.myb.noticewidgets.widget = function(config) {
     $(window).bind("click", function(e) {
         // if filter is visible and the target element clicked is not filter or its control then hide filter
         if (that.config.filterContainer.is(":visible")
-                && !$(e.target).is("#" + that.config.widgetname + "_filter_control")
-                && !$(e.target).parents().is("#" + that.config.widgetname + "_filter")) {
+                && !$(e.target).is("#" + that.config.widgetName + "_filter_control")
+                && !$(e.target).parents().is("#" + that.config.widgetName + "_filter")) {
             hideFilters();
         }
     });
@@ -98,7 +98,7 @@ sakai.mytasks = function(tuid) {
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
     var filterContainer = $("#mytasks_filter", rootContainer);
     var filterControl = $("#mytasks_filter_control", rootContainer);
-    var widgetname = "mytasks";
+    var widgetName = "mytasks";
 
     var filterSelectionToMessage = function() {
         var itemStatus = $("input[name=mytasks_item_status]:radio:checked", filterContainer).val();
@@ -130,7 +130,7 @@ sakai.mytasks = function(tuid) {
 
     var doInit = function() {
         var taskWidget = sakai.myb.noticewidgets.widget({
-            widgetname : widgetname,
+            widgetName : widgetName,
             dataURL : dataURL,
             template : template,
             container : tasksListContainer,
@@ -151,7 +151,7 @@ sakai.myevents = function(tuid) {
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
     var filterContainer = $("#myevents_filter", rootContainer);
     var filterControl = $("#myevents_filter_control", rootContainer);
-    var widgetname = "myevents";
+    var widgetName = "myevents";
 
     var filterSelectionToMessage = function() {
         var itemStatus = $("input[name=myevents_item_status]:radio:checked", filterContainer).val();
@@ -180,7 +180,7 @@ sakai.myevents = function(tuid) {
 
     var doInit = function() {
         var eventWidget = sakai.myb.noticewidgets.widget({
-            widgetname : widgetname,
+            widgetName : widgetName,
             dataURL : dataURL,
             template : template,
             container : tasksListContainer,
