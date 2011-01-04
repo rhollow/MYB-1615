@@ -29,14 +29,13 @@ sakai.myb.noticewidgets.widget = function(config) {
     that.data = null;
 
     that.getNotices = function() {
-
         $.ajax({
-            url: config.dataURL,
+            url: that.config.dataURL,
             cache: false,
             success: function(data) {
                 if (data.results) {
                     that.data = data;
-                    config.container.html($.TemplateRenderer(config.template, that.data));
+                    that.config.container.html($.TemplateRenderer(that.config.template, that.data));
                 }
             },
             error: function(xhr, textStatus, thrownError) {
@@ -47,27 +46,30 @@ sakai.myb.noticewidgets.widget = function(config) {
     };
 
     var hideFilters = function() {
-        config.filterContainer.hide();
+        that.config.filterContainer.hide();
         updateFilterStatus();
     };
 
     var updateFilterStatus = function() {
-        config.filterControl.html(sakai.myb.noticewidgets.i18n(config.widgetname, "FILTER")
-                + " " + config.convertFilterToMessages());
+        that.config.filterControl.html(translate("FILTER") + " " + translate(that.config.convertFilterStateToMessage()));
+    };
+
+    var translate = function(key) {
+        return sakai.api.i18n.Widgets.getValueForKey(that.config.widgetname, "default", key);
     };
 
     // set up click listeners
-    config.filterControl.live("click", function() {
-        if (config.filterContainer.is(":visible")) {
+    that.config.filterControl.live("click", function() {
+        if (that.config.filterContainer.is(":visible")) {
             hideFilters();
         } else {
-            config.filterContainer.show();
+            that.config.filterContainer.show();
         }
     });
 
     $(window).bind("click", function(e) {
         // if filter is visible and the target element clicked is not filter or its control then hide filter
-        if (config.filterContainer.is(":visible")
+        if (that.config.filterContainer.is(":visible")
                 && !$(e.target).is(".noticewidget_filter_control")
                 && !$(e.target).parents().is(".noticewidget_filter")) {
             hideFilters();
@@ -87,10 +89,6 @@ sakai.myb.noticewidgets.formatDateAsString = function(date) {
     if (!date) return null;
     date = sakai.api.Util.parseSakaiDate(date);
     return date.getMonth() + 1 + "/" + date.getDate();
-};
-
-sakai.myb.noticewidgets.i18n = function(widgetname, key) {
-    return sakai.api.i18n.Widgets.getValueForKey(widgetname, "default", key);
 };
 
 sakai.mytasks = function(tuid) {
@@ -127,7 +125,7 @@ sakai.mytasks = function(tuid) {
                 next30 : "UNREQUIRED_TASKS_DUE_THIS_MONTH"
             }
         };
-        return sakai.myb.noticewidgets.i18n(widgetname, msgs[itemStatus][dateRange]);
+        return msgs[itemStatus][dateRange];
     };
 
     var doInit = function() {
@@ -138,7 +136,7 @@ sakai.mytasks = function(tuid) {
             container : tasksListContainer,
             filterControl : filterControl,
             filterContainer : filterContainer,
-            convertFilterToMessages : filterSelectionToMessage
+            convertFilterStateToMessage : filterSelectionToMessage
         });
         taskWidget.getNotices();
     };
@@ -177,7 +175,7 @@ sakai.myevents = function(tuid) {
                 next30 : "UNREQUIRED_EVENTS_THIS_MONTH"
             }
         };
-        return sakai.myb.noticewidgets.i18n(widgetname, msgs[itemStatus][dateRange]);
+        return msgs[itemStatus][dateRange];
     };
 
     var doInit = function() {
@@ -188,7 +186,7 @@ sakai.myevents = function(tuid) {
             container : tasksListContainer,
             filterControl : filterControl,
             filterContainer : filterContainer,
-            convertFilterToMessages : filterSelectionToMessage
+            convertFilterStateToMessage : filterSelectionToMessage
         });
         eventWidget.getNotices();
     };
