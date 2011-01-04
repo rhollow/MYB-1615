@@ -65,10 +65,10 @@ table.noticewidget_listing tr.empty_list td {
     cursor: pointer;
 }
 
-.noticewidget_arrow_asc {
+.noticewidget_sort_indicator_asc {
     background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -60px top transparent;
 }
 
-.noticewidget_arrow_desc {
+.noticewidget_sort_indicator_desc {
     background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -40px top transparent;
 }

@@ -95,10 +95,10 @@ sakai.myb.noticewidgets.widget = function(cfgObject) {
                 that.sortOrder = that.sortOrder === "asc" ? "desc" : "asc";
             }
             // clear old sort arrows
-            $(".noticewidget_arrow_asc", that.config.rootContainer).removeClass("noticewidget_arrow_asc");
-            $(".noticewidget_arrow_desc", that.config.rootContainer).removeClass("noticewidget_arrow_desc");
+            $(".noticewidget_sort_indicator_asc", that.config.rootContainer).removeClass("noticewidget_sort_indicator_asc");
+            $(".noticewidget_sort_indicator_desc", that.config.rootContainer).removeClass("noticewidget_sort_indicator_desc");
             // set the new sort arrow
-            $("#" + event.target.id).addClass("noticewidget_arrow_" + that.sortOrder);
+            $("#" + event.target.id).addClass("noticewidget_sort_indicator_" + that.sortOrder);
         });
     };
 
