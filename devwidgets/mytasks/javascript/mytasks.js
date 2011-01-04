@@ -27,6 +27,14 @@ sakai.myb.noticewidgets.widget = function(cfgObject) {
     };
     that.config = cfgObject;
     that.data = null;
+    that.sortBy = null;
+    that.sortOrder = "asc";
+
+    that.init = function() {
+        attachFilterListeners();
+        attachSortListeners();
+        updateFilterStatus();
+    };
 
     that.getNotices = function() {
         $.ajax({
@@ -58,8 +66,7 @@ sakai.myb.noticewidgets.widget = function(cfgObject) {
         return sakai.api.i18n.Widgets.getValueForKey(that.config.widgetName, "default", key);
     };
 
-    that.init = function() {
-        // set up click listeners
+    var attachFilterListeners = function() {
         that.config.filterControl.live("click", function() {
             if (that.config.filterContainer.is(":visible")) {
                 hideFilters();
@@ -76,8 +83,23 @@ sakai.myb.noticewidgets.widget = function(cfgObject) {
                 hideFilters();
             }
         });
+    };
 
-        updateFilterStatus();
+    var attachSortListeners = function() {
+        $(".noticewidget_listing_sort", that.config.rootContainer).live("click", function(event) {
+            var oldSortBy = that.sortBy;
+            that.sortBy = event.target.id.replace(/\w+_sortby_/gi, "");
+            if ( oldSortBy != that.sortBy ) {
+                that.sortOrder = "asc";
+            } else {
+                that.sortOrder = that.sortOrder === "asc" ? "desc" : "asc";
+            }
+            // clear old sort arrows
+            $(".noticewidget_arrow_asc", that.config.rootContainer).removeClass("noticewidget_arrow_asc");
+            $(".noticewidget_arrow_desc", that.config.rootContainer).removeClass("noticewidget_arrow_desc");
+            // set the new sort arrow
+            $("#" + event.target.id).addClass("noticewidget_arrow_" + that.sortOrder);
+        });
     };
 
     return that;
@@ -132,6 +154,7 @@ sakai.mytasks = function(tuid) {
 
     var doInit = function() {
         var taskWidget = sakai.myb.noticewidgets.widget({
+            rootContainer : rootContainer,
             widgetName : widgetName,
             dataURL : dataURL,
             template : template,
@@ -183,6 +206,7 @@ sakai.myevents = function(tuid) {
 
     var doInit = function() {
         var eventWidget = sakai.myb.noticewidgets.widget({
+            rootContainer : rootContainer,
             widgetName : widgetName,
             dataURL : dataURL,
             template : template,

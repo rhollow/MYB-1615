@@ -64,3 +64,11 @@ table.noticewidget_listing tr.empty_list td {
 .noticewidget_filter_control {
     cursor: pointer;
 }
+
+.noticewidget_arrow_asc {
+    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -60px top transparent;
+}
+
+.noticewidget_arrow_desc {
+    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -40px top transparent;
+}
