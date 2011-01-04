@@ -22,10 +22,10 @@ sakai.myb = sakai.myb || {};
 
 sakai.myb.noticewidgets = {};
 
-sakai.myb.noticewidgets.widget = function(config) {
+sakai.myb.noticewidgets.widget = function(cfgObject) {
     var that = function() {
     };
-    that.config = config;
+    that.config = cfgObject;
     that.data = null;
 
     that.getNotices = function() {
