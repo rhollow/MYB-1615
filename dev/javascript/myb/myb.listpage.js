@@ -391,7 +391,7 @@ sakai.listpage = function(){
             
 			for (var i = 0, j = ugradMajorArray.length; i < j; i++) {
                 var major = ugradMajorArray[i].replace(/ /g, "_");
-                $("#ugrad_majors #" + major).attr("checked", true);
+                $("#ugrad_majors #" + major + "_M").attr("checked", true);
             }
 			
             var allChecked = true;
@@ -414,7 +414,7 @@ sakai.listpage = function(){
 			
             for (var i = 0, j = gradMajorArray.length; i < j; i++) {
                 var major = gradMajorArray[i].replace(/ /g, "_");
-                $("#grad_majors #" + major).attr("checked", true);
+                $("#grad_majors #" + major + "_P").attr("checked", true);
             }
 			
             var allChecked = true;
