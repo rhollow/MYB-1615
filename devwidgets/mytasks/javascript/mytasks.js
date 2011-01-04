@@ -50,10 +50,10 @@ sakai.myb.noticewidgets.formatDateAsString = function(date) {
 };
 
 
-sakai.myb.noticewidgets.attachFilterListeners = function(filterControl, filterContainer) {
+sakai.myb.noticewidgets.attachFilterListeners = function(filterControl, filterContainer, toEnglishFunction) {
     filterControl.live("click", function(evt) {
         if (filterContainer.is(":visible")) {
-            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer);
+            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer, toEnglishFunction);
         } else {
             filterContainer.show();
         }
@@ -64,14 +64,14 @@ sakai.myb.noticewidgets.attachFilterListeners = function(filterControl, filterCo
         if (filterContainer.is(":visible")
                 && !$(e.target).is(".mytasks_filter_control")
                 && !$(e.target).parents().is(".mytasks_filter")) {
-            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer);
+            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer, toEnglishFunction);
         }
     });
 };
 
-sakai.myb.noticewidgets.hideFilters = function(filterControl, filterContainer) {
+sakai.myb.noticewidgets.hideFilters = function(filterControl, filterContainer, toEnglishFunction) {
     filterContainer.hide();
-    filterControl.html("Filter: foo");
+    filterControl.html("Filter: " + toEnglishFunction());
 };
 
 /*
@@ -92,8 +92,13 @@ sakai.mytasks = function(tuid, showSettings) {
         $tasksList.html($.TemplateRenderer(template, data));
     };
 
+    var filterSelectionToEnglish = function() {
+        var itemStatus = $("input:radio:checked", filterContainer).val();
+        return itemStatus;
+    };
+
     var doInit = function() {
-        sakai.myb.noticewidgets.attachFilterListeners(filterControl, filterContainer);
+        sakai.myb.noticewidgets.attachFilterListeners(filterControl, filterContainer, filterSelectionToEnglish);
         sakai.myb.noticewidgets.getNotices(dataURL, formatTasks);
     };
 
