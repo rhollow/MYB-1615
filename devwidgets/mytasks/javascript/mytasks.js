@@ -22,7 +22,7 @@ sakai.myb = sakai.myb || {};
 
 sakai.myb.noticewidgets = {};
 
-sakai.myb.noticewidgets.widget = function(cfgObject) {
+sakai.myb.noticewidgets.Widget = function(cfgObject) {
     var that = function() {
     };
     that.config = cfgObject;
@@ -153,7 +153,7 @@ sakai.mytasks = function(tuid) {
     };
 
     var doInit = function() {
-        var taskWidget = sakai.myb.noticewidgets.widget({
+        var taskWidget = sakai.myb.noticewidgets.Widget({
             rootContainer : rootContainer,
             widgetName : widgetName,
             dataURL : dataURL,
@@ -205,7 +205,7 @@ sakai.myevents = function(tuid) {
     };
 
     var doInit = function() {
-        var eventWidget = sakai.myb.noticewidgets.widget({
+        var eventWidget = sakai.myb.noticewidgets.Widget({
             rootContainer : rootContainer,
             widgetName : widgetName,
             dataURL : dataURL,
