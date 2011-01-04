@@ -58,25 +58,27 @@ sakai.myb.noticewidgets.widget = function(config) {
         return sakai.api.i18n.Widgets.getValueForKey(that.config.widgetName, "default", key);
     };
 
-    // set up click listeners
-    that.config.filterControl.live("click", function() {
-        if (that.config.filterContainer.is(":visible")) {
-            hideFilters();
-        } else {
-            that.config.filterContainer.show();
-        }
-    });
+    that.init = function() {
+        // set up click listeners
+        that.config.filterControl.live("click", function() {
+            if (that.config.filterContainer.is(":visible")) {
+                hideFilters();
+            } else {
+                that.config.filterContainer.show();
+            }
+        });
 
-    $(window).bind("click", function(e) {
-        // if filter is visible and the target element clicked is not filter or its control then hide filter
-        if (that.config.filterContainer.is(":visible")
-                && !$(e.target).is("#" + that.config.widgetName + "_filter_control")
-                && !$(e.target).parents().is("#" + that.config.widgetName + "_filter")) {
-            hideFilters();
-        }
-    });
+        $(window).bind("click", function(e) {
+            // if filter is visible and the target element clicked is not filter or its control then hide filter
+            if (that.config.filterContainer.is(":visible")
+                    && !$(e.target).is("#" + that.config.widgetName + "_filter_control")
+                    && !$(e.target).parents().is("#" + that.config.widgetName + "_filter")) {
+                hideFilters();
+            }
+        });
 
-    updateFilterStatus();
+        updateFilterStatus();
+    };
 
     return that;
 };
@@ -138,6 +140,7 @@ sakai.mytasks = function(tuid) {
             filterContainer : filterContainer,
             convertFilterStateToMessage : filterSelectionToMessage
         });
+        taskWidget.init();
         taskWidget.getNotices();
     };
 
@@ -188,6 +191,7 @@ sakai.myevents = function(tuid) {
             filterContainer : filterContainer,
             convertFilterStateToMessage : filterSelectionToMessage
         });
+        eventWidget.init();
         eventWidget.getNotices();
     };
 
