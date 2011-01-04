@@ -61,7 +61,7 @@ table.noticewidget_listing tr.empty_list td {
     padding-left: 10px;
 }
 
-.noticewidget_filter_control {
+.noticewidget_filter_control, .noticewidget_listing_sort {
     cursor: pointer;
 }
 
