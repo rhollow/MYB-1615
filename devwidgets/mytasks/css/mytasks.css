@@ -55,3 +55,7 @@ table.noticewidget_listing td.subjectLine {
     float: left;
     padding-left: 10px;
 }
+
+.noticewidget_filter_control {
+    cursor: pointer;
+}
