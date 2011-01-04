@@ -22,21 +22,53 @@ sakai.myb = sakai.myb || {};
 
 sakai.myb.noticewidgets = {};
 
-sakai.myb.noticewidgets.getNotices = function(dataURL, formatter) {
+sakai.myb.noticewidgets.widget = function(config) {
+    var that = function() {};
+    that.config = config;
+    that.data = null;
 
-    $.ajax({
-        url: dataURL,
-        cache: false,
-        success: function(data) {
-            if (data.results) {
-                formatter(data);
-            }
-        },
-        error: function(xhr, textStatus, thrownError) {
-            alert("Getting notices failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
-                    " and thrownError=" + thrownError + "\n" + xhr.responseText);
+    // set up click listeners
+    config.filterControl.live("click", function() {
+        if (config.filterContainer.is(":visible")) {
+            hideFilters();
+        } else {
+            config.filterContainer.show();
         }
-    })
+    });
+
+    $(window).bind("click", function(e) {
+        // if filter is visible and the target element clicked is not filter or its control then hide filter
+        if (config.filterContainer.is(":visible")
+                && !$(e.target).is(".mytasks_filter_control")
+                && !$(e.target).parents().is(".mytasks_filter")) {
+            hideFilters();
+        }
+    });
+
+    that.getNotices = function() {
+
+        $.ajax({
+            url: config.dataURL,
+            cache: false,
+            success: function(data) {
+                if (data.results) {
+                    that.data = data;
+                    config.formatter(data);
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+                alert("Getting notices failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
+                        " and thrownError=" + thrownError + "\n" + xhr.responseText);
+            }
+        })
+    };
+
+    var hideFilters = function() {
+        config.filterContainer.hide();
+        config.filterControl.html("Filter: " + config.toEnglishFunction());
+    };
+
+    return that;
 };
 
 /**
@@ -49,37 +81,12 @@ sakai.myb.noticewidgets.formatDateAsString = function(date) {
     return date.getMonth() + 1 + "/" + date.getDate();
 };
 
-
-sakai.myb.noticewidgets.attachFilterListeners = function(filterControl, filterContainer, toEnglishFunction) {
-    filterControl.live("click", function(evt) {
-        if (filterContainer.is(":visible")) {
-            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer, toEnglishFunction);
-        } else {
-            filterContainer.show();
-        }
-    });
-
-    $(window).bind("click", function(e) {
-        // if filter is visible and the target element clicked is not filter or its control then hide filter
-        if (filterContainer.is(":visible")
-                && !$(e.target).is(".mytasks_filter_control")
-                && !$(e.target).parents().is(".mytasks_filter")) {
-            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer, toEnglishFunction);
-        }
-    });
-};
-
-sakai.myb.noticewidgets.hideFilters = function(filterControl, filterContainer, toEnglishFunction) {
-    filterContainer.hide();
-    filterControl.html("Filter: " + toEnglishFunction());
-};
-
 /*
  * Initialize the My Tasks widget
  * @param {String} tuid unique id of the widget
  * @param {Boolean} showSettings show the settings of the widget or not
  */
-sakai.mytasks = function(tuid, showSettings) {
+sakai.mytasks = function(tuid) {
 
     var $rootel = $("#" + tuid);
     var $tasksList = $(".tasks_list", $rootel);
@@ -98,15 +105,21 @@ sakai.mytasks = function(tuid, showSettings) {
     };
 
     var doInit = function() {
-        sakai.myb.noticewidgets.attachFilterListeners(filterControl, filterContainer, filterSelectionToEnglish);
-        sakai.myb.noticewidgets.getNotices(dataURL, formatTasks);
+        var taskWidget = sakai.myb.noticewidgets.widget({
+            dataURL : dataURL,
+            formatter : formatTasks,
+            filterControl : filterControl,
+            filterContainer : filterContainer,
+            toEnglishFunction : filterSelectionToEnglish
+        });
+        taskWidget.getNotices();
     };
 
 
     doInit();
 };
 
-sakai.myevents = function(tuid, showSettings) {
+sakai.myevents = function(tuid) {
 
     var doInit = function() {
 
