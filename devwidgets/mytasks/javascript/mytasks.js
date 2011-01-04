@@ -60,13 +60,37 @@ sakai.mytasks = function(tuid, showSettings) {
     var $tasksList = $(".tasks_list", $rootel);
     var template = "mytasks_template";
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
+    var filterContainer = $(".mytasks_filter", $rootel);
+    var filterControl = $(".mytasks_filter_control", $rootel);
+
     var formatTasks = function(data) {
         $tasksList.html($.TemplateRenderer(template, data));
     };
 
+    var attachFilterListeners = function() {
+        filterControl.live("click", function(evt) {
+            if (filterContainer.is(":visible")) {
+                filterContainer.hide();
+            } else {
+                filterContainer.show();
+            }
+        });
+
+        $(window).bind("click", function(e) {
+            // if filter is visible and the target element clicked is not filter or its control then hide filter
+            if (filterContainer.is(":visible")
+                    && !$(e.target).is(".mytasks_filter_control")
+                    && !$(e.target).parents().is(".mytasks_filter")) {
+                filterContainer.hide();
+            }
+        });
+    };
+
     var doInit = function() {
+        attachFilterListeners();
         sakai.myb.noticewidgets.getNotices(dataURL, formatTasks);
     };
+
 
     doInit();
 };
