@@ -52,7 +52,8 @@ sakai.myb.noticewidgets.widget = function(config) {
     };
 
     var updateFilterStatus = function() {
-        config.filterControl.html(sakai.myb.noticewidgets.i18n("FILTER") + " " + config.convertFilterToMessages());
+        config.filterControl.html(sakai.myb.noticewidgets.i18n(config.widgetname, "FILTER")
+                + " " + config.convertFilterToMessages());
     };
 
     // set up click listeners
@@ -88,8 +89,8 @@ sakai.myb.noticewidgets.formatDateAsString = function(date) {
     return date.getMonth() + 1 + "/" + date.getDate();
 };
 
-sakai.myb.noticewidgets.i18n = function(key) {
-    return sakai.api.i18n.Widgets.getValueForKey("mytasks", "default", key);
+sakai.myb.noticewidgets.i18n = function(widgetname, key) {
+    return sakai.api.i18n.Widgets.getValueForKey(widgetname, "default", key);
 };
 
 sakai.mytasks = function(tuid) {
@@ -99,10 +100,11 @@ sakai.mytasks = function(tuid) {
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
     var filterContainer = $(".noticewidget_filter", rootContainer);
     var filterControl = $(".noticewidget_filter_control", rootContainer);
+    var widgetname = "mytasks";
 
     var filterSelectionToMessage = function() {
-        var itemStatus = $("input[name=item_status]:radio:checked", filterContainer).val();
-        var dateRange = $("input[name=date_range]:radio:checked", filterContainer).val();
+        var itemStatus = $("input[name=mytasks_item_status]:radio:checked", filterContainer).val();
+        var dateRange = $("input[name=mytasks_date_range]:radio:checked", filterContainer).val();
         // translate every possible combo of the 2 radio buttons to a human readable message using
         // an associative array instead of a giant switch-case statement, since it's prettier this way.
         var msgs = {
@@ -125,11 +127,12 @@ sakai.mytasks = function(tuid) {
                 next30 : "UNREQUIRED_TASKS_DUE_THIS_MONTH"
             }
         };
-        return sakai.myb.noticewidgets.i18n(msgs[itemStatus][dateRange]);
+        return sakai.myb.noticewidgets.i18n(widgetname, msgs[itemStatus][dateRange]);
     };
 
     var doInit = function() {
         var taskWidget = sakai.myb.noticewidgets.widget({
+            widgetname : widgetname,
             dataURL : dataURL,
             template : template,
             container : tasksListContainer,
@@ -150,37 +153,36 @@ sakai.myevents = function(tuid) {
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
     var filterContainer = $(".noticewidget_filter", rootContainer);
     var filterControl = $(".noticewidget_filter_control", rootContainer);
+    var widgetname = "myevents";
 
     var filterSelectionToMessage = function() {
-        var itemStatus = $("input[name=item_status]:radio:checked", filterContainer).val();
-        var dateRange = $("input[name=date_range]:radio:checked", filterContainer).val();
+        var itemStatus = $("input[name=myevents_item_status]:radio:checked", filterContainer).val();
+        var dateRange = $("input[name=myevents_date_range]:radio:checked", filterContainer).val();
         // translate every possible combo of the 2 radio buttons to a human readable message using
         // an associative array instead of a giant switch-case statement, since it's prettier this way.
         var msgs = {
             all : {
-                all : "ALL_TASKS",
-                overdue : "OVERDUE_TASKS",
-                next7 : "TASKS_DUE_THIS_WEEK",
-                next30 : "TASKS_DUE_THIS_MONTH"
+                all : "ALL_EVENTS",
+                next7 : "EVENTS_THIS_WEEK",
+                next30 : "EVENTS_THIS_MONTH"
             },
             required : {
-                all : "REQUIRED_TASKS",
-                overdue : "REQUIRED_OVERDUE_TASKS",
-                next7 : "REQUIRED_TASKS_DUE_THIS_WEEK",
-                next30 : "REQUIRED_TASKS_DUE_THIS_MONTH"
+                all : "REQUIRED_EVENTS",
+                next7 : "REQUIRED_EVENTS_THIS_WEEK",
+                next30 : "REQUIRED_EVENTS_THIS_MONTH"
             },
             unrequired : {
-                all : "UNREQUIRED_TASKS",
-                overdue : "UNREQUIRED_OVERDUE_TASKS",
-                next7 : "UNREQUIRED_TASKS_DUE_THIS_WEEK",
-                next30 : "UNREQUIRED_TASKS_DUE_THIS_MONTH"
+                all : "UNREQUIRED_EVENTS",
+                next7 : "UNREQUIRED_EVENTS_THIS_WEEK",
+                next30 : "UNREQUIRED_EVENTS_THIS_MONTH"
             }
         };
-        return sakai.myb.noticewidgets.i18n(msgs[itemStatus][dateRange]);
+        return sakai.myb.noticewidgets.i18n(widgetname, msgs[itemStatus][dateRange]);
     };
 
     var doInit = function() {
         var eventWidget = sakai.myb.noticewidgets.widget({
+            widgetname : widgetname,
             dataURL : dataURL,
             template : template,
             container : tasksListContainer,
