@@ -23,7 +23,8 @@ sakai.myb = sakai.myb || {};
 sakai.myb.noticewidgets = {};
 
 sakai.myb.noticewidgets.widget = function(config) {
-    var that = function() {};
+    var that = function() {
+    };
     that.config = config;
     that.data = null;
 
@@ -54,7 +55,6 @@ sakai.myb.noticewidgets.widget = function(config) {
                 if (data.results) {
                     that.data = data;
                     config.container.html($.TemplateRenderer(config.template, that.data));
-                    alert("now configist");
                 }
             },
             error: function(xhr, textStatus, thrownError) {
@@ -66,7 +66,7 @@ sakai.myb.noticewidgets.widget = function(config) {
 
     var hideFilters = function() {
         config.filterContainer.hide();
-        config.filterControl.html("Filter: " + config.toEnglishFunction());
+        config.filterControl.html(sakai.myb.noticewidgets.i18n("FILTER") + " " + config.convertFilterToMessages());
     };
 
     return that;
@@ -80,6 +80,10 @@ sakai.myb.noticewidgets.formatDateAsString = function(date) {
     if (!date) return null;
     date = sakai.api.Util.parseSakaiDate(date);
     return date.getMonth() + 1 + "/" + date.getDate();
+};
+
+sakai.myb.noticewidgets.i18n = function(key) {
+    return sakai.api.i18n.Widgets.getValueForKey("mytasks", "default", key);
 };
 
 /*
@@ -96,9 +100,32 @@ sakai.mytasks = function(tuid) {
     var filterContainer = $(".mytasks_filter", $rootel);
     var filterControl = $(".mytasks_filter_control", $rootel);
 
-    var filterSelectionToEnglish = function() {
-        var itemStatus = $("input:radio:checked", filterContainer).val();
-        return itemStatus;
+    var filterSelectionToMessage = function() {
+        var itemStatus = $("input[name=item_status]:radio:checked", filterContainer).val();
+        var dateRange = $("input[name=date_range]:radio:checked", filterContainer).val();
+        // translate every possible combo of the 2 radio buttons to a human readable message using
+        // an associative array instead of a giant switch-case statement, since it's prettier this way.
+        var msgs = {
+            all : {
+                all : "ALL_TASKS",
+                overdue : "OVERDUE_TASKS",
+                next7 : "TASKS_DUE_THIS_WEEK",
+                next30 : "TASKS_DUE_THIS_MONTH"
+            },
+            required : {
+                all : "REQUIRED_TASKS",
+                overdue : "REQUIRED_OVERDUE_TASKS",
+                next7 : "REQUIRED_TASKS_DUE_THIS_WEEK",
+                next30 : "REQUIRED_TASKS_DUE_THIS_MONTH"
+            },
+            unrequired : {
+                all : "UNREQUIRED_TASKS",
+                overdue : "UNREQUIRED_OVERDUE_TASKS",
+                next7 : "UNREQUIRED_TASKS_DUE_THIS_WEEK",
+                next30 : "UNREQUIRED_TASKS_DUE_THIS_MONTH"
+            }
+        };
+        return sakai.myb.noticewidgets.i18n(msgs[itemStatus][dateRange]);
     };
 
     var doInit = function() {
@@ -108,7 +135,7 @@ sakai.mytasks = function(tuid) {
             container : $tasksList,
             filterControl : filterControl,
             filterContainer : filterContainer,
-            toEnglishFunction : filterSelectionToEnglish
+            convertFilterToMessages : filterSelectionToMessage
         });
         taskWidget.getNotices();
     };
