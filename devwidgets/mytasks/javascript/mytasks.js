@@ -99,12 +99,12 @@ sakai.myb.noticewidgets.i18n = function(key) {
  */
 sakai.mytasks = function(tuid) {
 
-    var $rootel = $("#" + tuid);
-    var $tasksList = $(".tasks_list", $rootel);
+    var rootContainer = $("#" + tuid);
+    var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
-    var filterContainer = $(".mytasks_filter", $rootel);
-    var filterControl = $(".mytasks_filter_control", $rootel);
+    var filterContainer = $(".mytasks_filter", rootContainer);
+    var filterControl = $(".mytasks_filter_control", rootContainer);
 
     var filterSelectionToMessage = function() {
         var itemStatus = $("input[name=item_status]:radio:checked", filterContainer).val();
@@ -138,7 +138,7 @@ sakai.mytasks = function(tuid) {
         var taskWidget = sakai.myb.noticewidgets.widget({
             dataURL : dataURL,
             template : template,
-            container : $tasksList,
+            container : tasksListContainer,
             filterControl : filterControl,
             filterContainer : filterContainer,
             convertFilterToMessages : filterSelectionToMessage
