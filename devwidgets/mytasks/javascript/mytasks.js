@@ -53,7 +53,8 @@ sakai.myb.noticewidgets.widget = function(config) {
             success: function(data) {
                 if (data.results) {
                     that.data = data;
-                    config.formatter(data);
+                    config.container.html($.TemplateRenderer(config.template, that.data));
+                    alert("now configist");
                 }
             },
             error: function(xhr, textStatus, thrownError) {
@@ -95,10 +96,6 @@ sakai.mytasks = function(tuid) {
     var filterContainer = $(".mytasks_filter", $rootel);
     var filterControl = $(".mytasks_filter_control", $rootel);
 
-    var formatTasks = function(data) {
-        $tasksList.html($.TemplateRenderer(template, data));
-    };
-
     var filterSelectionToEnglish = function() {
         var itemStatus = $("input:radio:checked", filterContainer).val();
         return itemStatus;
@@ -107,7 +104,8 @@ sakai.mytasks = function(tuid) {
     var doInit = function() {
         var taskWidget = sakai.myb.noticewidgets.widget({
             dataURL : dataURL,
-            formatter : formatTasks,
+            template : template,
+            container : $tasksList,
             filterControl : filterControl,
             filterContainer : filterContainer,
             toEnglishFunction : filterSelectionToEnglish
