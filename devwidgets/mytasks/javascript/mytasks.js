@@ -49,6 +49,31 @@ sakai.myb.noticewidgets.formatDateAsString = function(date) {
     return date.getMonth() + 1 + "/" + date.getDate();
 };
 
+
+sakai.myb.noticewidgets.attachFilterListeners = function(filterControl, filterContainer) {
+    filterControl.live("click", function(evt) {
+        if (filterContainer.is(":visible")) {
+            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer);
+        } else {
+            filterContainer.show();
+        }
+    });
+
+    $(window).bind("click", function(e) {
+        // if filter is visible and the target element clicked is not filter or its control then hide filter
+        if (filterContainer.is(":visible")
+                && !$(e.target).is(".mytasks_filter_control")
+                && !$(e.target).parents().is(".mytasks_filter")) {
+            sakai.myb.noticewidgets.hideFilters(filterControl, filterContainer);
+        }
+    });
+};
+
+sakai.myb.noticewidgets.hideFilters = function(filterControl, filterContainer) {
+    filterContainer.hide();
+    filterControl.html("Filter: foo");
+};
+
 /*
  * Initialize the My Tasks widget
  * @param {String} tuid unique id of the widget
@@ -67,27 +92,8 @@ sakai.mytasks = function(tuid, showSettings) {
         $tasksList.html($.TemplateRenderer(template, data));
     };
 
-    var attachFilterListeners = function() {
-        filterControl.live("click", function(evt) {
-            if (filterContainer.is(":visible")) {
-                filterContainer.hide();
-            } else {
-                filterContainer.show();
-            }
-        });
-
-        $(window).bind("click", function(e) {
-            // if filter is visible and the target element clicked is not filter or its control then hide filter
-            if (filterContainer.is(":visible")
-                    && !$(e.target).is(".mytasks_filter_control")
-                    && !$(e.target).parents().is(".mytasks_filter")) {
-                filterContainer.hide();
-            }
-        });
-    };
-
     var doInit = function() {
-        attachFilterListeners();
+        sakai.myb.noticewidgets.attachFilterListeners(filterControl, filterContainer);
         sakai.myb.noticewidgets.getNotices(dataURL, formatTasks);
     };
 
