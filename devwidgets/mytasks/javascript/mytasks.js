@@ -212,7 +212,7 @@ sakai.mytasks = function(tuid) {
     var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var detailTemplate = "mytasks_detail_template";
-    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
+    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=completed";
     var widgetName = "mytasks";
 
     var filterSelectionToMessage = function() {

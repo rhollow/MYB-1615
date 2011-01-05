@@ -80,7 +80,9 @@
                         <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
                         <td id="mytaskstdreq_${i_index}" class="detailTrigger">!</td>
                         <td><input type="checkbox" class="task-completed-checkbox"
-                            id="taskDone_${i_index}" title="Completed"/></td>
+                            id="taskDone_${i_index}" title="Completed"
+                            {if i["sakai:taskState"] === "completed"} checked="checked" {/if}
+                            /></td>
                 </tr>
              {/if}
         {/for}
@@ -99,7 +101,8 @@
 
         <fieldset>
             <input type="checkbox" class="task-completed-checkbox"
-                            id="taskDone_${index}" title="Completed"/>
+                            id="taskDone_${index}" title="Completed"
+                            {if detail["sakai:taskState"] === "completed"} checked="checked" {/if}/>
             <label for="taskDone_${index}">Completed</label>
         </fieldset>
 
