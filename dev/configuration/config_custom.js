@@ -87,23 +87,11 @@ sakai.config.Profile.configuration.defaultConfig.institutionalInfo = {
     "modifyacl": true,
     "elements": {
 		"role": {
-	        "label": "__MSG__PROFILE_BASIC_ROLE_LABEL__",
-	        "required": false,
-	        "display": true,
-			"readonly": true,
-	        "type": "select",
-	        "select_elements": {
-	            "academic_related_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_RELATED_STAFF_LABEL__",
-	            "academic_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_STAFF_LABEL__",
-	            "assistent_staff":"__MSG__PROFILE_BASIC_ROLE_ASSISTENT_STAFF_LABEL__",
-	            "graduate_student":"__MSG__PROFILE_BASIC_ROLE_GRADUATE_STUDENT_LABEL__",
-	            "undergraduate_student":"__MSG__PROFILE_BASIC_ROLE_UNDERGRADUATE_STUDENT_LABEL__",
-	            "non_academic_staff":"__MSG__PROFILE_BASIC_ROLE_NON_ACADEMIC_STAFF_LABEL__",
-	            "postgraduate_student":"__MSG__PROFILE_BASIC_ROLE_POSTGRADUATE_STUDENT_LABEL__",
-	            "research_staff":"__MSG__PROFILE_BASIC_ROLE_RESEARCH_STAFF_LABEL__",
-	            "other":"__MSG__PROFILE_BASIC_ROLE_OTHER_LABEL__"
-	        }
-	    },
+                "label": "__MSG__PROFILE_BASIC_ROLE_LABEL__",
+                "required": false,
+                "display": true,
+				"readonly": true
+		},		
 		"department": {
                 "label": "__MSG__PROFILE_BASIC_DEPARTMENT_LABEL__",
                 "required": false,
@@ -119,20 +107,8 @@ sakai.config.Profile.configuration.defaultConfig.institutionalInfo = {
 		"major": {
 	            "label": "__MSG__PROFILE_MAJORORPROGRAM_LABEL__",
 	            "required": false,
-	            "display": true,
-	            "type": "select",
-				"readonly": true,
-	            "select_elements": {
-	                "academic_related_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_RELATED_STAFF_LABEL__",
-	                "academic_staff":"__MSG__PROFILE_BASIC_ROLE_ACADEMIC_STAFF_LABEL__",
-	                "assistent_staff":"__MSG__PROFILE_BASIC_ROLE_ASSISTENT_STAFF_LABEL__",
-	                "graduate_student":"__MSG__PROFILE_BASIC_ROLE_GRADUATE_STUDENT_LABEL__",
-	                "undergraduate_student":"__MSG__PROFILE_BASIC_ROLE_UNDERGRADUATE_STUDENT_LABEL__",
-	                "non_academic_staff":"__MSG__PROFILE_BASIC_ROLE_NON_ACADEMIC_STAFF_LABEL__",
-	                "postgraduate_student":"__MSG__PROFILE_BASIC_ROLE_POSTGRADUATE_STUDENT_LABEL__",
-	                "research_staff":"__MSG__PROFILE_BASIC_ROLE_RESEARCH_STAFF_LABEL__",
-	                "other":"__MSG__PROFILE_BASIC_ROLE_OTHER_LABEL__"
-	            }
+	            "display": true,	            
+				"readonly": true	            
         }
 	}
 };
