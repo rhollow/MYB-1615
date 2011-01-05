@@ -33,6 +33,8 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     that.data = null;
     that.sortBy = null;
     that.sortOrder = "asc";
+    var filterControl = $(".noticewidget_filter_control", that.config.rootContainer);
+    var filterContainer = $(".noticewidget_filter", that.config.rootContainer);
 
     that.init = function() {
         attachFilterListeners();
@@ -52,19 +54,19 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("Getting notices failed for:\n" + url + "\ncategory=reminders and taskstate=" + taskState + " with status=" + textStatus +
+                alert("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
                         " and thrownError=" + thrownError + "\n" + xhr.responseText);
             }
         })
     };
 
     var hideFilters = function() {
-        that.config.filterContainer.hide();
+        filterContainer.hide();
         updateFilterStatus();
     };
 
     var updateFilterStatus = function() {
-        that.config.filterControl.html(translate("FILTER") + " " + translate(that.config.convertFilterStateToMessage()));
+        filterControl.html(translate("FILTER") + " " + translate(that.config.convertFilterStateToMessage()));
     };
 
     var translate = function(key) {
@@ -72,18 +74,18 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
 
     var attachFilterListeners = function() {
-        that.config.filterControl.live("click", function() {
-            if (that.config.filterContainer.is(":visible")) {
+        filterControl.live("click", function() {
+            if (filterContainer.is(":visible")) {
                 hideFilters();
             } else {
-                that.config.filterContainer.show();
+                filterContainer.show();
             }
         });
 
         $(window).bind("click", function(e) {
             // if filter is visible and the target element clicked is not filter or its control then hide filter
-            if (that.config.filterContainer.is(":visible")
-                    && !$(e.target).is("#" + that.config.widgetName + "_filter_control")
+            if (filterContainer.is(":visible")
+                    && !$(e.target).is(".noticewidget_filter_control")
                     && !$(e.target).parents().is("#" + that.config.widgetName + "_filter")) {
                 hideFilters();
             }
@@ -158,13 +160,11 @@ sakai.mytasks = function(tuid) {
     var template = "mytasks_template";
     var detailTemplate = "mytasks_detail_template";
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
-    var filterContainer = $("#mytasks_filter", rootContainer);
-    var filterControl = $("#mytasks_filter_control", rootContainer);
     var widgetName = "mytasks";
 
     var filterSelectionToMessage = function() {
-        var itemStatus = $("input[name=mytasks_item_status]:radio:checked", filterContainer).val();
-        var dateRange = $("input[name=mytasks_date_range]:radio:checked", filterContainer).val();
+        var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
+        var dateRange = $("input[name=mytasks_date_range]:radio:checked", rootContainer).val();
         // translate every possible combo of the 2 radio buttons to a human readable message using
         // an associative array instead of a giant switch-case statement, since it's prettier this way.
         var msgs = {
@@ -198,8 +198,6 @@ sakai.mytasks = function(tuid) {
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
-            filterControl : filterControl,
-            filterContainer : filterContainer,
             convertFilterStateToMessage : filterSelectionToMessage
         });
         taskWidget.init();
@@ -215,13 +213,11 @@ sakai.myevents = function(tuid) {
     var template = "myevents_template";
     var detailTemplate = "myevents_detail_template";
     var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
-    var filterContainer = $("#myevents_filter", rootContainer);
-    var filterControl = $("#myevents_filter_control", rootContainer);
     var widgetName = "myevents";
 
     var filterSelectionToMessage = function() {
-        var itemStatus = $("input[name=myevents_item_status]:radio:checked", filterContainer).val();
-        var dateRange = $("input[name=myevents_date_range]:radio:checked", filterContainer).val();
+        var itemStatus = $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
+        var dateRange = $("input[name=myevents_date_range]:radio:checked", rootContainer).val();
         // translate every possible combo of the 2 radio buttons to a human readable message using
         // an associative array instead of a giant switch-case statement, since it's prettier this way.
         var msgs = {
@@ -252,8 +248,6 @@ sakai.myevents = function(tuid) {
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
-            filterControl : filterControl,
-            filterContainer : filterContainer,
             convertFilterStateToMessage : filterSelectionToMessage
         });
         eventWidget.init();
