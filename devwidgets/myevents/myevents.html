@@ -72,9 +72,9 @@
                 {var isEmpty = false}
                 <tr id="tr_${i_index}" class="notice_row">
                         {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate']) || sakai.myb.noticewidgets.formatDateAsString(i['sakai:eventDate'])}
-                        <td class="dateLine">${dateString}</td>
-                        <td class="subjectLine" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
-                        <td>!</td>
+                        <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
+                        <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
+                        <td id="myeventstdreq_${i_index}" class="detailTrigger" >!</td>
                 </tr>
              {/if}
         {/for}

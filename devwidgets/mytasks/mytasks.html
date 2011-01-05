@@ -74,12 +74,13 @@
         {for i in results}
             {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
                 {var isEmpty = false}
-                <tr id="tr_${i_index}" class="notice_row">
+                <tr class="notice_row">
                         {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate']) || sakai.myb.noticewidgets.formatDateAsString(i['sakai:eventDate'])}
-                        <td class="dateLine">${dateString}</td>
-                        <td class="subjectLine" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
-                        <td>!</td>
-                        <td><input type="checkbox" class="s3s-reminder-checkbox" id="reminderDone_${i.id}" title="Completed" value="${i['jcr:path']}" /></td>
+                        <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
+                        <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
+                        <td id="mytaskstdreq_${i_index}" class="detailTrigger">!</td>
+                        <td><input type="checkbox" class="task-completed-checkbox"
+                            id="taskDone_${i_index}" title="Completed"/></td>
                 </tr>
              {/if}
         {/for}
@@ -97,8 +98,9 @@
         <h4>Due Date: ${dateString}</h4>
 
         <fieldset>
-            <input type="checkbox">
-            <label>Completed</label>
+            <input type="checkbox" class="task-completed-checkbox"
+                            id="taskDone_${index}" title="Completed"/>
+            <label for="taskDone_${index}">Completed</label>
         </fieldset>
 
         <p>${detail["sakai:body"]}</p>

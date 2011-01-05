@@ -41,6 +41,7 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
         attachFilterListeners();
         attachSortListeners();
         attachDetailListeners();
+        attachCompletedCheckboxListeners();
         updateFilterStatus();
     };
 
@@ -111,7 +112,7 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
 
     var attachDetailListeners = function() {
-        $(".noticewidget_listing tr.notice_row", that.config.rootContainer).live("click", function() {
+        $(".noticewidget_listing td.detailTrigger", that.config.rootContainer).live("click", function() {
             var rowIndex = this.id.replace(/\w+_/gi, "");
             currentNotice = rowIndex;
             console.log("clicked rowIndex = " + rowIndex);
@@ -137,9 +138,26 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
 
     };
 
+    var attachCompletedCheckboxListeners = function() {
+        $(".task-completed-checkbox", that.config.rootContainer).live("click", function() {
+            var rowIndex = this.id.replace(/\w+_/gi, "");
+            var rowData = that.data.results[rowIndex];
+            var newTaskState = rowData["sakai:taskState"] === "created" ? "completed" : "created";
+            that.data.results[rowIndex]["sakai:taskState"] = newTaskState;
+            postNotice(
+                    that.data.results[rowIndex]["jcr:path"],
+                    { "sakai:taskState": newTaskState },
+                    function() {}
+            );
+        });
+    };
+
     var showCurrentDetail = function() {
         $(".noticewidget_detail", that.config.rootContainer).html($.TemplateRenderer(that.config.detailTemplate,
-            { detail : that.data.results[currentNotice] }));
+            {
+                detail : that.data.results[currentNotice],
+                index : currentNotice
+            }));
     };
 
     var toggleDetailMode = function() {
@@ -152,6 +170,24 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
             listViewContainer.hide();
             detailViewContainer.show();
         }
+    };
+
+    var postNotice = function (url, props, callback) {
+        $.ajax({
+              type: 'POST',
+              url: url,
+              data: props,
+              success: function(){
+                  if ($.isFunction(callback)) {
+                      callback();
+                  }
+              },
+              error: function(xhr, textStatus, thrownError) {
+                alert("POST to " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
+                    " and thrownError = " + thrownError + "\n" + xhr.responseText);
+              },
+              dataType: 'json'
+        });
     };
 
     return that;
