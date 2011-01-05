@@ -41,6 +41,10 @@ table.noticewidget_listing tr.empty_list td {
     text-align: left;
 }
 
+table.noticewidget_listing tr.notice_row {
+    cursor: pointer;
+}
+
 .noticewidget_filter {
     background-color: #fff;
     border: 1px solid black;
@@ -71,4 +75,35 @@ table.noticewidget_listing tr.empty_list td {
 
 .noticewidget_sort_indicator_desc {
     background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -40px top transparent;
+}
+
+.noticewidget_detail_controls .return_to_list {
+    float: left;
+    cursor: pointer;
+}
+
+.noticewidget_detail_controls .prev, .noticewidget_detail_controls .next {
+    float: right;
+}
+
+.noticewidget_detail {
+    margin: 10px 10px 0 10px;
+}
+
+.noticewidget_detail h3, .noticewidget_detail p {
+    clear: both;
+}
+
+.noticewidget_detail fieldset {
+    float: right;
+}
+
+.noticewidget_detail h4 {
+    float: left;
+}
+
+.noticewidget_detail p {
+    border: 1px solid black;
+    overflow: auto;
+    height: 150px;
 }

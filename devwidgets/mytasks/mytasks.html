@@ -5,57 +5,68 @@
 
     <div class="fl-widget-content s3d-widget-content">
 
-        <div id="mytasks_filter_control" class="noticewidget_filter_control">Filter</div>
+        <div class="noticewidget_list_view">
+            <div id="mytasks_filter_control" class="noticewidget_filter_control">Filter</div>
 
-        <div id="mytasks_filter" class="noticewidget_filter" style="display:none;">
-            <div class="noticewidget_filter_status">
-                Display item status:
-                <div>
-                    <input type="radio" name="mytasks_item_status" id="mytasks_item_status_all" value="all" checked="checked">
-                    <label for="mytasks_item_status_all">All</label>
+            <div id="mytasks_filter" class="noticewidget_filter" style="display:none;">
+                <div class="noticewidget_filter_status">
+                    Display item status:
+                    <div>
+                        <input type="radio" name="mytasks_item_status" id="mytasks_item_status_all" value="all" checked="checked">
+                        <label for="mytasks_item_status_all">All</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_item_status" id="mytasks_item_status_required" value="required">
+                        <label for="mytasks_item_status_required">Only required</label>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="mytasks_item_status" id="mytasks_item_status_unrequired" value="unrequired">
+                        <label for="mytasks_item_status_unrequired">Only unrequired</label>
+                    </div>
                 </div>
-                <div>
-                    <input type="radio" name="mytasks_item_status" id="mytasks_item_status_required" value="required">
-                    <label for="mytasks_item_status_required">Only required</label>
+                <div class="noticewidget_filter_daterange">
+                    Display date range:
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_all" value="all">
+                        <label for="mytasks_date_range_all">All</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_overdue" value="overdue">
+                        <label for="mytasks_date_range_overdue">Overdue</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next7" value="next7">
+                        <label for="mytasks_date_range_next7">Next 7 days</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next30" value="next30" checked="checked">
+                        <label for="mytasks_date_range_next30">Next 30 days</label>
+                    </div>
                 </div>
 
-                <div>
-                    <input type="radio" name="mytasks_item_status" id="mytasks_item_status_unrequired" value="unrequired">
-                    <label for="mytasks_item_status_unrequired">Only unrequired</label>
-                </div>
             </div>
-            <div class="noticewidget_filter_daterange">
-                Display date range:
-                <div>
-                    <input type="radio" name="mytasks_date_range" id="mytasks_date_range_all" value="all">
-                    <label for="mytasks_date_range_all">All</label>
-                </div>
-                <div>
-                    <input type="radio" name="mytasks_date_range" id="mytasks_date_range_overdue" value="overdue">
-                    <label for="mytasks_date_range_overdue">Overdue</label>
-                </div>
-                <div>
-                    <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next7" value="next7">
-                    <label for="mytasks_date_range_next7">Next 7 days</label>
-                </div>
-                <div>
-                    <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next30" value="next30" checked="checked">
-                    <label for="mytasks_date_range_next30">Next 30 days</label>
-                </div>
-            </div>
 
+            <table class="noticewidget_listing mytasks_listing">
+                <thead>
+                    <th id="mytasks_sortby_date" class="noticewidget_listing_sort noticewidget_sort_indicator_asc" title="__MSG__DUE__">__MSG__DUE__</th>
+                    <th id="mytasks_sortby_subject" class="noticewidget_listing_sort" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
+                    <th id="mytasks_sortby_required" class="noticewidget_listing_sort" title="__MSG__REQUIRED__">__MSG__REQ__</th>
+                    <th id="mytasks_sortby_completed" class="noticewidget_listing_sort" title="__MSG__COMPLETED__">__MSG__COMPLETED__</th>
+                </thead>
+
+                <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
+            </table>
         </div>
 
-        <table class="noticewidget_listing mytasks_listing">
-            <thead>
-                <th id="mytasks_sortby_date" class="noticewidget_listing_sort noticewidget_sort_indicator_asc" title="__MSG__DUE__">__MSG__DUE__</th>
-                <th id="mytasks_sortby_subject" class="noticewidget_listing_sort" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
-                <th id="mytasks_sortby_required" class="noticewidget_listing_sort" title="__MSG__REQUIRED__">__MSG__REQ__</th>
-                <th id="mytasks_sortby_completed" class="noticewidget_listing_sort" title="__MSG__COMPLETED__">__MSG__COMPLETED__</th>
-            </thead>
-
-            <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
-        </table>
+        <div class="noticewidget_detail_view" style="display:none">
+            <div class="noticewidget_detail_controls">
+                <span class="return_to_list">Return to task list</span>
+                <span class="prev">Prev</span>
+                <span class="next">Next</span>
+            </div>
+            <div class="noticewidget_detail"><!-- filled by trimpath --></div>
+        </div>
     </div>
     
     <div id="mytasks_template" style="display:none"><!--
@@ -63,7 +74,7 @@
         {for i in results}
             {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
                 {var isEmpty = false}
-                <tr id="tr_${i.id}">
+                <tr id="tr_${i_index}" class="notice_row">
                         {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate']) || sakai.myb.noticewidgets.formatDateAsString(i['sakai:eventDate'])}
                         <td class="dateLine">${dateString}</td>
                         <td class="subjectLine" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
@@ -78,7 +89,22 @@
         {/if}
         -->
     </div>
-    
+
+    <div id="mytasks_detail_template" style="display:none"><!--
+        {var dateString = sakai.myb.noticewidgets.formatDateAsString(detail['sakai:dueDate'])}
+
+        <h3>${detail["sakai:subject"]}</h3>
+        <h4>Due Date: ${dateString}</h4>
+
+        <fieldset>
+            <input type="checkbox">
+            <label>Completed</label>
+        </fieldset>
+
+        <p>${detail["sakai:body"]}</p>
+        -->
+    </div>
+
     <div class="fl-widget-options fl-fix">
         <div class="widget-options-inner">
             <ul>
