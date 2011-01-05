@@ -84,6 +84,7 @@ table.noticewidget_listing tr.notice_row {
 
 .noticewidget_detail_controls .prev, .noticewidget_detail_controls .next {
     float: right;
+    cursor: pointer;
 }
 
 .noticewidget_detail {

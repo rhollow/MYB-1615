@@ -31,10 +31,11 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
     that.config = cfgObject;
     that.data = null;
-    that.sortBy = null;
-    that.sortOrder = "asc";
+    var sortBy = null;
+    var sortOrder = "asc";
     var filterControl = $(".noticewidget_filter_control", that.config.rootContainer);
     var filterContainer = $(".noticewidget_filter", that.config.rootContainer);
+    var currentNotice = 0;
 
     that.init = function() {
         attachFilterListeners();
@@ -94,35 +95,51 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
 
     var attachSortListeners = function() {
         $(".noticewidget_listing_sort", that.config.rootContainer).live("click", function(event) {
-            var oldSortBy = that.sortBy;
-            that.sortBy = event.target.id.replace(/\w+_sortby_/gi, "");
-            if ( oldSortBy != that.sortBy ) {
-                that.sortOrder = "asc";
+            var oldSortBy = sortBy;
+            sortBy = event.target.id.replace(/\w+_sortby_/gi, "");
+            if ( oldSortBy != sortBy ) {
+                sortOrder = "asc";
             } else {
-                that.sortOrder = that.sortOrder === "asc" ? "desc" : "asc";
+                sortOrder = sortOrder === "asc" ? "desc" : "asc";
             }
             // clear old sort arrows
             $(".noticewidget_sort_indicator_asc", that.config.rootContainer).removeClass("noticewidget_sort_indicator_asc");
             $(".noticewidget_sort_indicator_desc", that.config.rootContainer).removeClass("noticewidget_sort_indicator_desc");
             // set the new sort arrow
-            $("#" + event.target.id).addClass("noticewidget_sort_indicator_" + that.sortOrder);
+            $("#" + event.target.id).addClass("noticewidget_sort_indicator_" + sortOrder);
         });
     };
 
     var attachDetailListeners = function() {
         $(".noticewidget_listing tr.notice_row", that.config.rootContainer).live("click", function() {
             var rowIndex = this.id.replace(/\w+_/gi, "");
+            currentNotice = rowIndex;
             console.log("clicked rowIndex = " + rowIndex);
             console.dir(that.data.results[rowIndex]);
-            var detailData = {
-                detail : that.data.results[rowIndex]
-            };
-            $(".noticewidget_detail", that.config.rootContainer).html($.TemplateRenderer(that.config.detailTemplate, detailData));
+            showCurrentDetail();
             toggleDetailMode();
         });
         $(".return_to_list", that.config.rootContainer).live("click", function() {
             toggleDetailMode();
         });
+        $(".next", that.config.rootContainer).live("click", function() {
+            if ( currentNotice < that.data.results.length - 1 ) {
+                currentNotice++;
+                showCurrentDetail();
+            }
+        });
+        $(".prev", that.config.rootContainer).live("click", function() {
+            if ( currentNotice > 0) {
+                currentNotice--;
+                showCurrentDetail();
+            }
+        });
+
+    };
+
+    var showCurrentDetail = function() {
+        $(".noticewidget_detail", that.config.rootContainer).html($.TemplateRenderer(that.config.detailTemplate,
+            { detail : that.data.results[currentNotice] }));
     };
 
     var toggleDetailMode = function() {
