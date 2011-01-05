@@ -53,77 +53,51 @@ sakai.config.Profile.configuration.defaultConfig.basic.elements = {
 		"readonly": true,
         "limitDisplayLength": 50
     },
+    "picture": {
+        "label": "__MSG__PROFILE_BASIC_PICTURE_LABEL__",
+        "required": false,
+        "display": false
+    },
     "preferredName": {
         "label": "__MSG__PROFILE_BASIC_PREFERREDNAME_LABEL__",
         "required": false,
         "display": true
+    },
+    "email": {
+        "label": "__MSG__PROFILE_BASIC_EMAIL_LABEL__",
+        "required": false,
+        "display": true,
+		"readonly": true,
+        "type": "email"
+    },
+    "status": {
+        "label": "__MSG__PROFILE_BASIC_STATUS_LABEL__",
+        "required": false,
+        "display": false
+    },
+    "role": {
+        "label": "__MSG__PROFILE_BASIC_ROLE_LABEL__",
+        "required": false,
+        "display": true,
+		"readonly": true
+    },
+    "department": {
+        "label": "__MSG__PROFILE_BASIC_DEPARTMENT_LABEL__",
+        "required": false,
+        "display": true,
+		"readonly": true
+    },
+    "college": {
+        "label": "__MSG__PROFILE_BASIC_COLLEGE_LABEL__",
+        "required": false,
+        "display": true,
+		"readonly": true
+    },
+	"major": {
+        "label": "__MSG__PROFILE_MAJORORPROGRAM_LABEL__",
+        "required": false,
+        "display": true,	            
+		"readonly": true	            
     }
 };
-
-// Email address (new category)
-sakai.config.Profile.configuration.defaultConfig.email = {
-    "label": "__MSG__PROFILE_EMAIL_LABEL__",
-    "required": true,
-    "display": true,
-    "access": "everybody",
-    "modifyacl": true,
-    "elements": {
-		"email": {
-            "label": "__MSG__PROFILE_BASIC_EMAIL_LABEL__",
-            "required": false,
-            "display": true,
-			"readonly": true,
-            "type": "email"
-        }
-	}
-};
-
-// Institutional information (new category)
-sakai.config.Profile.configuration.defaultConfig.institutionalInfo = {
-    "label": "__MSG__PROFILE_INSTITUTIONALINFO_LABEL__",
-    "required": true,
-    "display": true,
-    "access": "contacts",
-    "modifyacl": true,
-    "elements": {
-		"role": {
-                "label": "__MSG__PROFILE_BASIC_ROLE_LABEL__",
-                "required": false,
-                "display": true,
-				"readonly": true
-		},		
-		"department": {
-                "label": "__MSG__PROFILE_BASIC_DEPARTMENT_LABEL__",
-                "required": false,
-                "display": true,
-				"readonly": true
-		},
-		"college": {
-                "label": "__MSG__PROFILE_BASIC_COLLEGE_LABEL__",
-                "required": false,
-                "display": true,
-				"readonly": true
-		},
-		"major": {
-	            "label": "__MSG__PROFILE_MAJORORPROGRAM_LABEL__",
-	            "required": false,
-	            "display": true,	            
-				"readonly": true	            
-        }
-	}
-};
-
-
-// Rearranging the sections
-sakai.config.Profile.configuration.defaultConfig = {
-	 "basic": sakai.config.Profile.configuration.defaultConfig.basic,
-	 "email": sakai.config.Profile.configuration.defaultConfig.email,
-	 "institutionalInfo": sakai.config.Profile.configuration.defaultConfig.institutionalInfo,
-	 "aboutme": sakai.config.Profile.configuration.defaultConfig.aboutme,
-	 "publications": sakai.config.Profile.configuration.defaultConfig.publications
-};
-
-
-
-
 // myberkeley custom end
