@@ -56,9 +56,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
-                    // TODO remove debug
-                    showCurrentDetail();
-                    toggleDetailMode();
                 }
             },
             error: function(xhr, textStatus, thrownError) {
@@ -173,6 +170,16 @@ sakai.myb.noticewidgets.Widget = function(config) {
             detail : model.results[currentNotice],
             index : currentNotice
         }));
+        if ( currentNotice < model.results.length - 1 ) {
+            $(".nextArrow", config.rootContainer).removeClass("disabled");
+        } else {
+            $(".nextArrow", config.rootContainer).addClass("disabled");
+        }
+        if (currentNotice > 0 ) {
+            $(".prevArrow", config.rootContainer).removeClass("disabled");
+        } else {
+            $(".prevArrow", config.rootContainer).addClass("disabled");
+        }
     };
 
     var toggleDetailMode = function() {
@@ -198,7 +205,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("POST to " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
+                alert("POST to " + url + " failed for " + props + " with status =" + textStatus +
                         " and thrownError = " + thrownError + "\n" + xhr.responseText);
             },
             dataType: 'json'
