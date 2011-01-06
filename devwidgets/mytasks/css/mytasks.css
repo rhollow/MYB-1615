@@ -9,10 +9,9 @@
 table.noticewidget_listing {
     border-collapse: collapse;
     border-spacing: 0;
-    border: 1px solid black;
-    margin: 10px;
     overflow: auto;
     max-height: 300px;
+    width: 100%;
 }
 
 table.noticewidget_listing thead {
@@ -24,14 +23,15 @@ table.noticewidget_listing th {
 }
 
 table.noticewidget_listing td, table.noticewidget_listing th {
-    border-right: 1px solid black;
-    border-left: 1px solid black;
+    border-right: 1px solid #E8E8E8;
+    border-left: 1px solid #E8E8E8;
+    border-bottom: 1px solid #E8E8E8;
     width: 56px;
     text-align: center;
     padding: 0 5px 0 5px;
 }
 
-table.noticewidget_listing td.subjectLine {
+table.noticewidget_listing .subjectLine {
     width: 300px;
     text-align: left;
 }
@@ -50,11 +50,11 @@ table.noticewidget_listing tr.notice_row td {
 }
 
 table.noticewidget_listing tr.alternate {
-    background-color: #cccccc
+    background-color: #F5F6F6
 }
 
 table.noticewidget_listing tr.notice_row:hover {
-    background-color: #ccccff
+    background-color: #ccc
 }
 
 .noticewidget_filter {
@@ -68,13 +68,16 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_filter .noticewidget_filter_status {
     float: left;
-    padding-right: 10px;
+    padding-left: 7px;
+    line-height: 19px;
+    width: 50%;
 }
 
 .noticewidget_filter .noticewidget_filter_daterange {
     border-left: 1px solid black;
     float: left;
-    padding-left: 10px;
+    padding-left: 33px;
+    line-height: 19px;
 }
 
 .noticewidget_filter_control, .noticewidget_listing_sort {
@@ -157,13 +160,13 @@ table.noticewidget_listing tr.notice_row:hover {
     display: inline-block;
     cursor: pointer;
     height: 23px;
-    width: 30px;
+    width: 37px;
     background: url("/devwidgets/mytasks/images/button-next-prev-item.png") no-repeat scroll top left transparent;
 }
 
 .noticewidget_detail_controls .prev {
     background-position: left -25px;
-    margin-right: -4px;
+    margin-right: -10px;
 }
 
 .noticewidget_detail_controls .next {
@@ -179,7 +182,7 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .nextArrow {
-    background-position: -53px top;
+    background-position: -53px 1px;
 }
 
 .noticewidget_detail_controls .next:hover {
@@ -187,7 +190,7 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .nextArrow.disabled {
-    background-position: -53px -90px;
+    background-position: -53px -89px;
 }
 
 .noticewidget_detail_controls .prev:hover {
@@ -217,7 +220,7 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail p {
-    border: 1px solid black;
+    border: 1px solid #ccc;
     overflow: auto;
     height: 150px;
 }
