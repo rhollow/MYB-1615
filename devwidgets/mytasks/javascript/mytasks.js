@@ -34,7 +34,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var sortOrder = "ascending";
     var filterControl = $(".noticewidget_filter_control", config.rootContainer);
     var filterContainer = $(".noticewidget_filter", config.rootContainer);
-    var filterControlIndicator = $(".noticewidget_filter_control_indicator_closed", config.rootContainer);
+    var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
     var currentNotice = 0;
               
     that.init = function() {
@@ -67,8 +67,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     var hideFilters = function() {
         filterContainer.hide();
-        filterControlIndicator.removeClass("noticewidget_filter_control_indicator_open");
-        filterControlIndicator.addClass("noticewidget_filter_control_indicator_closed");
+        filterControlIndicator.removeClass("open");
+        filterControlIndicator.addClass("closed");
         updateFilterStatus();
     };
 
@@ -86,8 +86,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 hideFilters();
             } else {
                 filterContainer.show();
-                filterControlIndicator.removeClass("noticewidget_filter_control_indicator_closed");
-                filterControlIndicator.addClass("noticewidget_filter_control_indicator_open");
+                filterControlIndicator.removeClass("closed");
+                filterControlIndicator.addClass("open");
             }
         });
 
@@ -115,10 +115,9 @@ sakai.myb.noticewidgets.Widget = function(config) {
             that.getNotices(function() {
                 // clear old sort arrows
                 var arrow = $(".noticewidget_listing thead span", config.rootContainer);
-                arrow.removeClass("noticewidget_sort_indicator_ascending");
-                arrow.removeClass("noticewidget_sort_indicator_descending");
+                arrow.removeClass("descending");
                 // set the new sort arrow state
-                arrow.addClass("noticewidget_sort_indicator_" + sortOrder);
+                arrow.addClass(sortOrder);
                 // move arrow span to new sort col
                 arrow.remove();
                 arrow.appendTo(newSortCol);

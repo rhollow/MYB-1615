@@ -82,7 +82,7 @@ table.noticewidget_listing tr.notice_row:hover {
     padding-top: 1px;
 }
 
-.noticewidget_filter_control_indicator_closed, .noticewidget_filter_control_indicator_open {
+.noticewidget_filter_control_indicator {
     width: 16px;
     margin: 0 2px 0 6px;
     background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;
@@ -90,22 +90,35 @@ table.noticewidget_listing tr.notice_row:hover {
     float: left;
 }
 
-.noticewidget_filter_control_indicator_open {
+.noticewidget_filter_control_indicator.open {
     background-position: -16px top;
 }
 
-.noticewidget_sort_indicator_ascending, .noticewidget_sort_indicator_descending {
+.noticewidget_filter_control_indicator.closed {
+    background-position: left top;
+}
+
+.noticewidget_sort_indicator {
     display: inline-block;
     width: 16px;
-    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll 0 top transparent;
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
 }
 
-.noticewidget_sort_indicator_descending {
+.noticewidget_sort_indicator.ascending {
     background-position: -16px top;
+}
+
+.noticewidget_sort_indicator.descending {
+    background-position: left top;
 }
 
 .noticewidget_listing_sort img {
     margin-top: 1px;
+}
+
+.noticewidget_detail_controls .return_to_list_container {
+    float: left;
+    cursor: pointer;
 }
 
 .noticewidget_detail_controls .return_to_list {
@@ -126,11 +139,6 @@ table.noticewidget_listing tr.notice_row:hover {
     margin: 0;
 }
 
-.noticewidget_detail_controls .return_to_list_container {
-    float: left;
-    cursor: pointer;
-}
-
 .noticewidget_detail_controls .return_to_list_container:hover .return_to_list {
     background-position: left -75px;
 }
@@ -139,7 +147,7 @@ table.noticewidget_listing tr.notice_row:hover {
     background-position: -202px -110px;
 }
 
-.noticewidget_arrows {
+.noticewidget_detail_controls .noticewidget_arrows {
     float: right;
     margin-right: 6px;
 }
@@ -192,6 +200,8 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_detail {
     margin: 10px 10px 0 10px;
+    border-top: 2px solid #ccc;
+    clear: both;
 }
 
 .noticewidget_detail h3, .noticewidget_detail p {
