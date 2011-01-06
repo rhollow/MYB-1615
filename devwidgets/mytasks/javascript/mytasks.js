@@ -26,17 +26,16 @@ sakai.myb.noticewidgets = {};
  * Generic constructor for noticewidgets (of which tasks is one type, and events is another).
  * @param cfgObject
  */
-sakai.myb.noticewidgets.Widget = function(cfgObject) {
+sakai.myb.noticewidgets.Widget = function(config) {
     var that = function() {
     };
-    that.config = cfgObject;
-    that.data = null;
-    var sortOn = that.config.defaultSortOn;
+    var model = null;
+    var sortOn = config.defaultSortOn;
     var sortOrder = "ascending";
-    var filterControl = $(".noticewidget_filter_control", that.config.rootContainer);
-    var filterContainer = $(".noticewidget_filter", that.config.rootContainer);
+    var filterControl = $(".noticewidget_filter_control", config.rootContainer);
+    var filterContainer = $(".noticewidget_filter", config.rootContainer);
     var currentNotice = 0;
-
+              
     that.init = function() {
         attachFilterListeners();
         attachSortListeners();
@@ -47,12 +46,12 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
 
     that.getNotices = function(callback) {
         $.ajax({
-            url: that.config.dataURL + "&sortOn=" + sortOn + "&sortOrder=" + sortOrder,
+            url: config.dataURL + "&sortOn=" + sortOn + "&sortOrder=" + sortOrder,
             cache: false,
             success: function(data) {
                 if (data.results) {
-                    that.data = data;
-                    that.config.container.html($.TemplateRenderer(that.config.template, that.data));
+                    model = data;
+                    config.container.html($.TemplateRenderer(config.template, model));
                     if ($.isFunction(callback)) {
                         callback();
                     }
@@ -71,11 +70,11 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
 
     var updateFilterStatus = function() {
-        filterControl.html(translate("FILTER") + " " + translate(that.config.convertFilterStateToMessage()));
+        filterControl.html(translate("FILTER") + " " + translate(config.convertFilterStateToMessage()));
     };
 
     var translate = function(key) {
-        return sakai.api.i18n.Widgets.getValueForKey(that.config.widgetName, "default", key);
+        return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
     };
 
     var attachFilterListeners = function() {
@@ -91,14 +90,14 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
             // if filter is visible and the target element clicked is not filter or its control then hide filter
             if (filterContainer.is(":visible")
                     && !$(e.target).is(".noticewidget_filter_control")
-                    && !$(e.target).parents().is("#" + that.config.widgetName + "_filter")) {
+                    && !$(e.target).parents().is("#" + config.widgetName + "_filter")) {
                 hideFilters();
             }
         });
     };
 
     var attachSortListeners = function() {
-        $(".noticewidget_listing_sort", that.config.rootContainer).live("click", function(event) {
+        $(".noticewidget_listing_sort", config.rootContainer).live("click", function(event) {
             var newSortCol = $(event.target);
             var oldSortOn = sortOn;
             sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
@@ -110,8 +109,8 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
 
             that.getNotices(function() {
                 // clear old sort arrows
-                $(".noticewidget_sort_indicator_ascending", that.config.rootContainer).removeClass("noticewidget_sort_indicator_ascending");
-                $(".noticewidget_sort_indicator_descending", that.config.rootContainer).removeClass("noticewidget_sort_indicator_descending");
+                $(".noticewidget_sort_indicator_ascending", config.rootContainer).removeClass("noticewidget_sort_indicator_ascending");
+                $(".noticewidget_sort_indicator_descending", config.rootContainer).removeClass("noticewidget_sort_indicator_descending");
                 // set the new sort arrow
                 newSortCol.addClass("noticewidget_sort_indicator_" + sortOrder);
             });
@@ -119,21 +118,21 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
 
     var attachDetailListeners = function() {
-        $(".noticewidget_listing td.detailTrigger", that.config.rootContainer).live("click", function() {
+        $(".noticewidget_listing td.detailTrigger", config.rootContainer).live("click", function() {
             currentNotice = this.id.replace(/\w+_/gi, "");
             showCurrentDetail();
             toggleDetailMode();
         });
-        $(".return_to_list", that.config.rootContainer).live("click", function() {
+        $(".return_to_list", config.rootContainer).live("click", function() {
             toggleDetailMode();
         });
-        $(".next", that.config.rootContainer).live("click", function() {
-            if (currentNotice < that.data.results.length - 1) {
+        $(".next", config.rootContainer).live("click", function() {
+            if (currentNotice < model.results.length - 1) {
                 currentNotice++;
                 showCurrentDetail();
             }
         });
-        $(".prev", that.config.rootContainer).live("click", function() {
+        $(".prev", config.rootContainer).live("click", function() {
             if (currentNotice > 0) {
                 currentNotice--;
                 showCurrentDetail();
@@ -142,13 +141,13 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
 
     var attachCompletedCheckboxListeners = function() {
-        $(".task-completed-checkbox", that.config.rootContainer).live("click", function() {
+        $(".task-completed-checkbox", config.rootContainer).live("click", function() {
             var rowIndex = this.id.replace(/\w+_/gi, "");
-            var rowData = that.data.results[rowIndex];
+            var rowData = model.results[rowIndex];
             var newTaskState = rowData["sakai:taskState"] === "created" ? "completed" : "created";
-            that.data.results[rowIndex]["sakai:taskState"] = newTaskState;
+            model.results[rowIndex]["sakai:taskState"] = newTaskState;
             postNotice(
-                    that.data.results[rowIndex]["jcr:path"],
+                    model.results[rowIndex]["jcr:path"],
             { "sakai:taskState": newTaskState },
                       function() {
                       }
@@ -157,16 +156,16 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
 
     var showCurrentDetail = function() {
-        $(".noticewidget_detail", that.config.rootContainer).html($.TemplateRenderer(that.config.detailTemplate,
+        $(".noticewidget_detail", config.rootContainer).html($.TemplateRenderer(config.detailTemplate,
         {
-            detail : that.data.results[currentNotice],
+            detail : model.results[currentNotice],
             index : currentNotice
         }));
     };
 
     var toggleDetailMode = function() {
-        var detailViewContainer = $(".noticewidget_detail_view", that.config.rootContainer);
-        var listViewContainer = $(".noticewidget_list_view", that.config.rootContainer);
+        var detailViewContainer = $(".noticewidget_detail_view", config.rootContainer);
+        var listViewContainer = $(".noticewidget_list_view", config.rootContainer);
         if (detailViewContainer.is(":visible")) {
             listViewContainer.show();
             detailViewContainer.hide();
