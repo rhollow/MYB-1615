@@ -109,13 +109,68 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .return_to_list {
+    display: inline-block;
+    width: 102px;
+    height: 30px;
+    padding-left: 22px;
+    line-height: 21px;
+    margin: 0;
+    float: left;
+    background: url("/devwidgets/mytasks/images/button-left-pointing.png") no-repeat scroll left -5px transparent;
+}
+
+.noticewidget_detail_controls .return_to_list_right_corner {
+    background: url("/devwidgets/mytasks/images/button-left-pointing.png") no-repeat scroll -202px -40px transparent;
+    display: block;
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+}
+
+.noticewidget_detail_controls .return_to_list_container {
     float: left;
     cursor: pointer;
 }
 
-.noticewidget_detail_controls .prev, .noticewidget_detail_controls .next {
+.noticewidget_detail_controls .return_to_list_container:hover .return_to_list {
+    background-position: left -75px;
+}
+
+.noticewidget_detail_controls .return_to_list_container:hover .return_to_list_right_corner {
+    background-position: -202px -110px;
+}
+
+.noticewidget_arrows {
     float: right;
+    margin-right: 6px;
+}
+
+.noticewidget_detail_controls .prev, .noticewidget_detail_controls .prevArrow,
+.noticewidget_detail_controls .next, .noticewidget_detail_controls .nextArrow {
+    display: inline-block;
     cursor: pointer;
+    height: 23px;
+    width: 30px;
+    background: url("/devwidgets/mytasks/images/button-next-prev-item.png") no-repeat scroll top left transparent;
+}
+
+.noticewidget_detail_controls .prev {
+    background-position: left -25px;
+    border-right: 1px solid black;
+    margin-right: -4px;
+}
+
+.noticewidget_detail_controls .prevArrow {
+    background-position: left top;
+}
+
+.noticewidget_detail_controls .next {
+    background-position: -51px -25px;
+}
+
+.noticewidget_detail_controls .nextArrow {
+    background-position: -51px top;
 }
 
 .noticewidget_detail {

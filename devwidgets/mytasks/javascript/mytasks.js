@@ -56,6 +56,9 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
+                    // TODO remove debug
+                    showCurrentDetail();
+                    toggleDetailMode();
                 }
             },
             error: function(xhr, textStatus, thrownError) {
@@ -102,7 +105,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
 
     var attachSortListeners = function() {
-        $(".noticewidget_listing_sort", config.rootContainer).live("click", function(event) {
+        $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
             var newSortCol = $(this);
             var oldSortOn = sortOn;
             sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
@@ -132,7 +135,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             showCurrentDetail();
             toggleDetailMode();
         });
-        $(".return_to_list", config.rootContainer).live("click", function() {
+        $(".return_to_list_container", config.rootContainer).live("click", function() {
             toggleDetailMode();
         });
         $(".next", config.rootContainer).live("click", function() {
