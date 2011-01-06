@@ -43,14 +43,14 @@ sakai.config.Profile.configuration.defaultConfig.basic.elements = {
         "label": "__MSG__PROFILE_BASIC_FIRSTNAME_LABEL__",
         "required": true,
         "display": true,
-		"readonly": true,
+		"editable": false,
         "limitDisplayLength": 50
     },
     "lastName": {
         "label": "__MSG__PROFILE_BASIC_LASTNAME_LABEL__",
         "required": true,
         "display": true,
-		"readonly": true,
+		"editable": false,
         "limitDisplayLength": 50
     },
     "picture": {
@@ -67,7 +67,7 @@ sakai.config.Profile.configuration.defaultConfig.basic.elements = {
         "label": "__MSG__PROFILE_BASIC_EMAIL_LABEL__",
         "required": false,
         "display": true,
-		"readonly": true,
+		"editable": false,
         "type": "email"
     },
     "status": {
@@ -79,25 +79,25 @@ sakai.config.Profile.configuration.defaultConfig.basic.elements = {
         "label": "__MSG__PROFILE_BASIC_ROLE_LABEL__",
         "required": false,
         "display": true,
-		"readonly": true
+		"editable": false
     },
     "department": {
         "label": "__MSG__PROFILE_BASIC_DEPARTMENT_LABEL__",
         "required": false,
         "display": true,
-		"readonly": true
+		"editable": false
     },
     "college": {
         "label": "__MSG__PROFILE_BASIC_COLLEGE_LABEL__",
         "required": false,
         "display": true,
-		"readonly": true
+		"editable": false
     },
 	"major": {
         "label": "__MSG__PROFILE_MAJORORPROGRAM_LABEL__",
         "required": false,
         "display": true,	            
-		"readonly": true	            
+		"editable": false	            
     }
 };
 // myberkeley custom end

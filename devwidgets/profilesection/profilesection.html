@@ -1,5 +1,7 @@
 <!-- CSS -->
 <link href="/devwidgets/profilesection/css/profilesection.css" type="text/css" />
+<!-- myBerkeley CSS -->
+<link href="/devwidgets/profilesection/css/myb.profilesection.css" type="text/css" />
 
 <!-- GENERAL INFO -->
 <div id="profilesection_generalinfo" class="fl-push"><!-- --></div>
@@ -82,7 +84,7 @@
                             </select>
                         {/if}
                     </div>
-				{elseif true}
+				{elseif currentsection === "basic"}
 					<div class="profilesection_generalinfo_acl fl-force-right">                    
                             <div class="worldview">__MSG__VIEWABLE_BY_THE_WORLD__</div>
                             <div><a href="https://calnet.berkeley.edu/directory/update/" class="calnetlink" target="_blank">__MSG__UPDATE_LISTED_INFORMATION__</a></div>
@@ -120,7 +122,7 @@
             <div class="profilesection_generalinfo_subcontainer">
                 <label class="profilesection_generalinfo_label" for="profilesection_generalinfo_${path.replace(/\./g,"_")}">${config.label}:</label>
                 {if config.editable === false}
-                    <span class="profilesection_generalinfo_content">${data.value}</span>
+                    <span class="profilesection_generalinfo_content">${data.value|default:"&nbsp;"}</span>
                 {else}
                     {if !config.type || $.inArray(config.type, stringtypes) >= 0}
                         <input type="text"
@@ -129,9 +131,6 @@
                     {elseif config.type === "select"}
                         <select
                     {/if}
-					{if config.readonly === true}
-						disabled="disabled"					
-					{/if}
                         class="profilesection_generalinfo_content
                         {if config.required} required{/if}
                         {if config.validation} ${config.validation}
