@@ -26,7 +26,7 @@ table.noticewidget_listing th {
 table.noticewidget_listing td, table.noticewidget_listing th {
     border-right: 1px solid black;
     border-left: 1px solid black;
-    width: 30px;
+    width: 56px;
     text-align: center;
     padding: 0 5px 0 5px;
 }
@@ -79,14 +79,33 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_filter_control, .noticewidget_listing_sort {
     cursor: pointer;
+    padding-top: 1px;
 }
 
-.noticewidget_sort_indicator_ascending {
-    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -60px top transparent;
+.noticewidget_filter_control_indicator_closed, .noticewidget_filter_control_indicator_open {
+    width: 16px;
+    margin: 0 2px 0 6px;
+    background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;
+    display: inline-block;
+    float: left;
+}
+
+.noticewidget_filter_control_indicator_open {
+    background-position: -16px top;
+}
+
+.noticewidget_sort_indicator_ascending, .noticewidget_sort_indicator_descending {
+    display: inline-block;
+    width: 16px;
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll 0 top transparent;
 }
 
 .noticewidget_sort_indicator_descending {
-    background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -40px top transparent;
+    background-position: -16px top;
+}
+
+.noticewidget_listing_sort img {
+    margin-top: 1px;
 }
 
 .noticewidget_detail_controls .return_to_list {

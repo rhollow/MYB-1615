@@ -34,6 +34,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var sortOrder = "ascending";
     var filterControl = $(".noticewidget_filter_control", config.rootContainer);
     var filterContainer = $(".noticewidget_filter", config.rootContainer);
+    var filterControlIndicator = $(".noticewidget_filter_control_indicator_closed", config.rootContainer);
     var currentNotice = 0;
               
     that.init = function() {
@@ -66,6 +67,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     var hideFilters = function() {
         filterContainer.hide();
+        filterControlIndicator.removeClass("noticewidget_filter_control_indicator_open");
+        filterControlIndicator.addClass("noticewidget_filter_control_indicator_closed");
         updateFilterStatus();
     };
 
@@ -83,6 +86,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 hideFilters();
             } else {
                 filterContainer.show();
+                filterControlIndicator.removeClass("noticewidget_filter_control_indicator_closed");
+                filterControlIndicator.addClass("noticewidget_filter_control_indicator_open");
             }
         });
 
@@ -98,7 +103,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     var attachSortListeners = function() {
         $(".noticewidget_listing_sort", config.rootContainer).live("click", function(event) {
-            var newSortCol = $(event.target);
+            var newSortCol = $(this);
             var oldSortOn = sortOn;
             sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
             if (oldSortOn != sortOn) {
@@ -109,10 +114,14 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
             that.getNotices(function() {
                 // clear old sort arrows
-                $(".noticewidget_sort_indicator_ascending", config.rootContainer).removeClass("noticewidget_sort_indicator_ascending");
-                $(".noticewidget_sort_indicator_descending", config.rootContainer).removeClass("noticewidget_sort_indicator_descending");
-                // set the new sort arrow
-                newSortCol.addClass("noticewidget_sort_indicator_" + sortOrder);
+                var arrow = $(".noticewidget_listing thead span", config.rootContainer);
+                arrow.removeClass("noticewidget_sort_indicator_ascending");
+                arrow.removeClass("noticewidget_sort_indicator_descending");
+                // set the new sort arrow state
+                arrow.addClass("noticewidget_sort_indicator_" + sortOrder);
+                // move arrow span to new sort col
+                arrow.remove();
+                arrow.appendTo(newSortCol);
             });
         });
     };
