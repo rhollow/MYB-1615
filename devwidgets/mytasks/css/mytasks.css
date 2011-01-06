@@ -45,6 +45,18 @@ table.noticewidget_listing tr.notice_row {
     cursor: pointer;
 }
 
+table.noticewidget_listing tr.notice_row td {
+    padding: 5px;
+}
+
+table.noticewidget_listing tr.alternate {
+    background-color: #cccccc
+}
+
+table.noticewidget_listing tr.notice_row:hover {
+    background-color: #ccccff
+}
+
 .noticewidget_filter {
     background-color: #fff;
     border: 1px solid black;

@@ -74,7 +74,7 @@
         {for i in results}
             {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
                 {var isEmpty = false}
-                <tr class="notice_row">
+                <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
                         {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate'])}
                         <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
                         <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
