@@ -102,7 +102,7 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
             var newSortCol = $(event.target);
             var oldSortOn = sortOn;
             sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
-            if ( oldSortOn != sortOn ) {
+            if (oldSortOn != sortOn) {
                 sortOrder = "ascending";
             } else {
                 sortOrder = sortOrder === "ascending" ? "descending" : "ascending";
@@ -120,8 +120,7 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
 
     var attachDetailListeners = function() {
         $(".noticewidget_listing td.detailTrigger", that.config.rootContainer).live("click", function() {
-            var rowIndex = this.id.replace(/\w+_/gi, "");
-            currentNotice = rowIndex;
+            currentNotice = this.id.replace(/\w+_/gi, "");
             showCurrentDetail();
             toggleDetailMode();
         });
@@ -129,18 +128,17 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
             toggleDetailMode();
         });
         $(".next", that.config.rootContainer).live("click", function() {
-            if ( currentNotice < that.data.results.length - 1 ) {
+            if (currentNotice < that.data.results.length - 1) {
                 currentNotice++;
                 showCurrentDetail();
             }
         });
         $(".prev", that.config.rootContainer).live("click", function() {
-            if ( currentNotice > 0) {
+            if (currentNotice > 0) {
                 currentNotice--;
                 showCurrentDetail();
             }
         });
-
     };
 
     var attachCompletedCheckboxListeners = function() {
@@ -151,24 +149,25 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
             that.data.results[rowIndex]["sakai:taskState"] = newTaskState;
             postNotice(
                     that.data.results[rowIndex]["jcr:path"],
-                    { "sakai:taskState": newTaskState },
-                    function() {}
-            );
+            { "sakai:taskState": newTaskState },
+                      function() {
+                      }
+                    );
         });
     };
 
     var showCurrentDetail = function() {
         $(".noticewidget_detail", that.config.rootContainer).html($.TemplateRenderer(that.config.detailTemplate,
-            {
-                detail : that.data.results[currentNotice],
-                index : currentNotice
-            }));
+        {
+            detail : that.data.results[currentNotice],
+            index : currentNotice
+        }));
     };
 
     var toggleDetailMode = function() {
         var detailViewContainer = $(".noticewidget_detail_view", that.config.rootContainer);
         var listViewContainer = $(".noticewidget_list_view", that.config.rootContainer);
-        if ( detailViewContainer.is(":visible")) {
+        if (detailViewContainer.is(":visible")) {
             listViewContainer.show();
             detailViewContainer.hide();
         } else {
@@ -179,19 +178,19 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
 
     var postNotice = function (url, props, callback) {
         $.ajax({
-              type: 'POST',
-              url: url,
-              data: props,
-              success: function(){
-                  if ($.isFunction(callback)) {
-                      callback();
-                  }
-              },
-              error: function(xhr, textStatus, thrownError) {
+            type: 'POST',
+            url: url,
+            data: props,
+            success: function() {
+                if ($.isFunction(callback)) {
+                    callback();
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
                 alert("POST to " + url + " failed for " + propname + " = " + propvalue + " with status =" + textStatus +
-                    " and thrownError = " + thrownError + "\n" + xhr.responseText);
-              },
-              dataType: 'json'
+                        " and thrownError = " + thrownError + "\n" + xhr.responseText);
+            },
+            dataType: 'json'
         });
     };
 
