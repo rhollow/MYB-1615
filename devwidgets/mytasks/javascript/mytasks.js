@@ -24,7 +24,7 @@ sakai.myb.noticewidgets = {};
 
 /**
  * Generic constructor for noticewidgets (of which tasks is one type, and events is another).
- * @param cfgObject
+ * @param config
  */
 sakai.myb.noticewidgets.Widget = function(config) {
     var that = function() {
