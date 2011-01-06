@@ -49,10 +49,10 @@
 
             <table class="noticewidget_listing mytasks_listing">
                 <thead>
-                    <th id="mytasks_sortby_date" class="noticewidget_listing_sort noticewidget_sort_indicator_asc" title="__MSG__DUE__">__MSG__DUE__</th>
-                    <th id="mytasks_sortby_subject" class="noticewidget_listing_sort" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
-                    <th id="mytasks_sortby_required" class="noticewidget_listing_sort" title="__MSG__REQUIRED__">__MSG__REQ__</th>
-                    <th id="mytasks_sortby_completed" class="noticewidget_listing_sort" title="__MSG__COMPLETED__">__MSG__COMPLETED__</th>
+                    <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort noticewidget_sort_indicator_ascending" title="__MSG__DUE__">__MSG__DUE__</th>
+                    <th id="mytasks_sortOn_sakai:subject" class="noticewidget_listing_sort" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
+                    <th id="mytasks_sortOn_sakai:required" class="noticewidget_listing_sort" title="__MSG__REQUIRED__">__MSG__REQ__</th>
+                    <th id="mytasks_sortOn_sakai:taskState" class="noticewidget_listing_sort" title="__MSG__COMPLETED__">__MSG__COMPLETED__</th>
                 </thead>
 
                 <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
@@ -75,7 +75,7 @@
             {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
                 {var isEmpty = false}
                 <tr class="notice_row">
-                        {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate']) || sakai.myb.noticewidgets.formatDateAsString(i['sakai:eventDate'])}
+                        {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate'])}
                         <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
                         <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
                         <td id="mytaskstdreq_${i_index}" class="detailTrigger">!</td>

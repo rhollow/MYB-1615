@@ -31,8 +31,8 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
     };
     that.config = cfgObject;
     that.data = null;
-    var sortBy = null;
-    var sortOrder = "asc";
+    var sortOn = that.config.defaultSortOn;
+    var sortOrder = "ascending";
     var filterControl = $(".noticewidget_filter_control", that.config.rootContainer);
     var filterContainer = $(".noticewidget_filter", that.config.rootContainer);
     var currentNotice = 0;
@@ -45,14 +45,17 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
         updateFilterStatus();
     };
 
-    that.getNotices = function() {
+    that.getNotices = function(callback) {
         $.ajax({
-            url: that.config.dataURL,
+            url: that.config.dataURL + "&sortOn=" + sortOn + "&sortOrder=" + sortOrder,
             cache: false,
             success: function(data) {
                 if (data.results) {
                     that.data = data;
                     that.config.container.html($.TemplateRenderer(that.config.template, that.data));
+                    if ($.isFunction(callback)) {
+                        callback();
+                    }
                 }
             },
             error: function(xhr, textStatus, thrownError) {
@@ -96,18 +99,22 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
 
     var attachSortListeners = function() {
         $(".noticewidget_listing_sort", that.config.rootContainer).live("click", function(event) {
-            var oldSortBy = sortBy;
-            sortBy = event.target.id.replace(/\w+_sortby_/gi, "");
-            if ( oldSortBy != sortBy ) {
-                sortOrder = "asc";
+            var newSortCol = $(event.target);
+            var oldSortOn = sortOn;
+            sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
+            if ( oldSortOn != sortOn ) {
+                sortOrder = "ascending";
             } else {
-                sortOrder = sortOrder === "asc" ? "desc" : "asc";
+                sortOrder = sortOrder === "ascending" ? "descending" : "ascending";
             }
-            // clear old sort arrows
-            $(".noticewidget_sort_indicator_asc", that.config.rootContainer).removeClass("noticewidget_sort_indicator_asc");
-            $(".noticewidget_sort_indicator_desc", that.config.rootContainer).removeClass("noticewidget_sort_indicator_desc");
-            // set the new sort arrow
-            $("#" + event.target.id).addClass("noticewidget_sort_indicator_" + sortOrder);
+
+            that.getNotices(function() {
+                // clear old sort arrows
+                $(".noticewidget_sort_indicator_ascending", that.config.rootContainer).removeClass("noticewidget_sort_indicator_ascending");
+                $(".noticewidget_sort_indicator_descending", that.config.rootContainer).removeClass("noticewidget_sort_indicator_descending");
+                // set the new sort arrow
+                newSortCol.addClass("noticewidget_sort_indicator_" + sortOrder);
+            });
         });
     };
 
@@ -115,8 +122,6 @@ sakai.myb.noticewidgets.Widget = function(cfgObject) {
         $(".noticewidget_listing td.detailTrigger", that.config.rootContainer).live("click", function() {
             var rowIndex = this.id.replace(/\w+_/gi, "");
             currentNotice = rowIndex;
-            console.log("clicked rowIndex = " + rowIndex);
-            console.dir(that.data.results[rowIndex]);
             showCurrentDetail();
             toggleDetailMode();
         });
@@ -212,7 +217,7 @@ sakai.mytasks = function(tuid) {
     var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var detailTemplate = "mytasks_detail_template";
-    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=completed";
+    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
     var widgetName = "mytasks";
 
     var filterSelectionToMessage = function() {
@@ -251,7 +256,8 @@ sakai.mytasks = function(tuid) {
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
-            convertFilterStateToMessage : filterSelectionToMessage
+            convertFilterStateToMessage : filterSelectionToMessage,
+            defaultSortOn : "sakai:dueDate"
         });
         taskWidget.init();
         taskWidget.getNotices();
@@ -301,7 +307,8 @@ sakai.myevents = function(tuid) {
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
-            convertFilterStateToMessage : filterSelectionToMessage
+            convertFilterStateToMessage : filterSelectionToMessage,
+            defaultSortOn : "sakai:eventDate"
         });
         eventWidget.init();
         eventWidget.getNotices();

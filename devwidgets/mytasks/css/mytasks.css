@@ -69,11 +69,11 @@ table.noticewidget_listing tr.notice_row {
     cursor: pointer;
 }
 
-.noticewidget_sort_indicator_asc {
+.noticewidget_sort_indicator_ascending {
     background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -60px top transparent;
 }
 
-.noticewidget_sort_indicator_desc {
+.noticewidget_sort_indicator_descending {
     background: url("/dev/images/page-options-button-sprite.png") no-repeat scroll -40px top transparent;
 }
 
