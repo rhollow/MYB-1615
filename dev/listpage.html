@@ -93,7 +93,7 @@
                         <div class="main_content_container">
                             <div class="inbox-heading inbox_inbox_header" id="inbox_existing">__MSG__EXISTING_LISTS__</div>
                             
-                            <table class="inbox-table" id="inbox_table" summary="Your existing lists.">
+                            <table class="inbox-table" id="inbox_table" summary="Your existing lists." cellspacing="0">
                                 <tr class="different">
                                     <th class="inbox-checkbox" id="inbox_tableHeader_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__"/></th>
                                     <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
@@ -147,53 +147,67 @@
                                     
                                     <form name="createListForm" id="createListForm" action="#" method="post"> 
                                         <div class="input_item"><label>List name:</label> 
-                                            <input type="text" id="list_name" size="25" /> 
+                                            <input type="text" id="list_name" size="25" maxlength="40" /> 
                                             <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
                                         </div>
                                         <div class="input_item"><label>Description:</label> 
                                             <input type="text" id="description" size="25" /> 
                                             <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
                                         </div>
-                                        <div class="input_item">
-                                            <label>Context:</label>
-                                            <select name="context" id="context" onchange="sakai.listpage.updateListSize()" disabled="disabled">
-                                                <option selected="selected" value="g-ced-students">CED</option>
-                                            </select>
-                                        </div>
-                                        <div class="input_item">
-                                            <label>Major: (select all that apply)</label>
-                                            <span id="invalid_major" class="invalid_span" style="display:none;">You must select at least one major</span><br />
-                                            <table>
-                                                <tr>
-                                                <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE" title="Architecture" />
-                                                    <label for="ARCHITECTURE">Architecture</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN" title="City Regional Plan" />
-                                                    <label for="CITY_REGIONAL_PLAN">City Regional Plan</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN" title="Design" />
-                                                    <label for="DESIGN">Design</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="LAND ARCH AND ENV PLAN" id="LAND_ARCH_AND_ENV_PLAN" title="Land Arch And Env Plan" />
-                                                    <label for="LAND_ARCH_AND_ENV_PLAN">Land Arch and Env Plan</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH" title="Landscape Arch" />
-                                                    <label for="LANDSCAPE_ARCH">Landscape Arch</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN" title="Urban Design" />
-                                                    <label for="URBAN_DESIGN">Urban Design</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES" title="Urban Studies" /> 
-                                                    <label for="URBAN_STUDIES">Urban Studies</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="LIMITED" id="LIMITED" title="Limited" />
-                                                    <label for="LIMITED">Limited</label><br />
-                                                <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL" title="Individual" />
-                                                    <label for="INDIVIDUAL">Individual</label><br />
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="input_item">
-                                            <label>Standing:</label>
-                                            <select name="standing" id="standing" onchange="sakai.listpage.updateListSize()">
-                                                <option value="undergrad">Undergraduate</option>
-                                                <option value="grad">Graduate</option>
-                                                <option value="all">All</option>
-                                            </select>
-                                        </div>
+                                        
+                                        <table id="listSpecsTable">
+                                            <tr><td>Choose students: <span id="invalid_major" class="invalid_span" style="display:none">Invalid</span></td></tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" value="undergrad" id="undergrad" title="Include undergraduates" />
+                                                        <label for="undergrad">Include undergraduates</label><br />
+                                                    <div id="choose_ugrad" class="standing">
+                                                        <input type="radio" name="choice1" id="byMajor" disabled="true" title="Choose undergraduates by major" />
+                                                            <label for="byMajor">Choose CED undergraduates by major</label><br />
+                                                        <div id="ugrad_majors" class="majors">
+                                                            <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE_M" disabled="true" title="Architecture" />
+                                                                <label for="ARCHITECTURE_M">Architecture</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="LANDSCAPE ARCH" id="LANDSCAPE_ARCH_M" disabled="true" title="Landscape Architecture" />
+                                                                <label for="LANDSCAPE_ARCH_M">Landscape Architecture</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="URBAN STUDIES" id="URBAN_STUDIES_M" disabled="true" title="Urban Studies" /> 
+                                                                <label for="URBAN_STUDIES_M">Urban Studies</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="LIMITED" id="LIMITED_M" disabled="true" title="Limited" />
+                                                                <label for="LIMITED_M">Limited</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL_M" disabled="true" title="Individual" />
+                                                                <label for="INDIVIDUAL_M">Individual</label><br />
+                                                        </div>
+                                                        <input type="radio" name="choice1" id="allUgrads" disabled="true" title="All CED undergraduates" />
+                                                            <label for="allUgrads">All CED undergraduates</label>
+                                                    </div>
+                                                </td>
+                                                <td style="border-left:1px solid black; padding-left: 50px;">
+                                                    <input type="checkbox" value="grad" id="grad" title="Include graduates" />
+                                                        <label for="grad">Include graduates</label><br />
+                                                    <div id="choose_grad" class="standing">
+                                                        <input type="radio" name="choice2" id="byProgram" disabled="true" title="Choose graduates by program" />
+                                                            <label for="byProgram">Choose CED graduates by program</label><br />
+                                                        <div id="grad_majors" class="majors">
+                                                            <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE_P" disabled="true" title="Architecture" />
+                                                                <label for="ARCHITECTURE_P">Architecture</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="CITY REGIONAL PLAN" id="CITY_REGIONAL_PLAN_P" disabled="true" title="City and Regional Planning" />
+                                                                <label for="CITY_REGIONAL_PLAN_P">City and Regional Planning</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="DESIGN" id="DESIGN_P" disabled="true" title="Design" />
+                                                                <label for="DESIGN_P">Design</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="LAND ARCH AND ENV PLAN" id="LAND_ARCH_AND_ENV_PLAN_P" disabled="true" title="Landscape Architecture And Environmental Planning" />
+                                                                <label for="LAND_ARCH_AND_ENV_PLAN_P">Landscape Architecture and Environmental Planning</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="URBAN DESIGN" id="URBAN_DESIGN_P" disabled="true" title="Urban Design" />
+                                                                <label for="URBAN_DESIGN_P">Urban Design</label><br />
+                                                            <input type="checkbox" class="major_checkbox" value="LIMITED" id="LIMITED_P" disabled="true" title="Limited" />
+                                                                <label for="LIMITED_P">Limited</label><br />
+                                                        </div>
+                                                        <input type="radio" name="choice2" id="allGrads" disabled="true" title="All CED graduates" />
+                                                            <label for="allGrads">All CED graduates</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+
                                         
                                         <!-- NOT SUPPORTED FOR POC -->
                                         <!--
