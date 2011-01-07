@@ -106,8 +106,8 @@
                                             {if i==j.id}
                                                 {for k in j.audience}
                                                     {if k.required}
-                                                        <input id="${j.id}_checkbox" type="checkbox" class="FeaturedCheckBoxClass" checked disabled="true"/>
-                                                        <label id="${j.id}" for="${j.id}_checkbox" class="LabelRequired"></label>
+                                                        <input id="${j.id}_checkbox" type="checkbox" class="FeaturedCheckBoxClass" checked="checked" disabled="disabled"/>
+                                                        <label id="${j.id}" for="${j.id}_checkbox" class="LabelRequired" title="You cannot remove this link."></label>
                                                     {else}
                                                         <input id="${j.id}_checkbox" type="checkbox" class="FeaturedCheckBoxClass"/>
                                                         <label id="${j.id}" for="${j.id}_checkbox" class="LabelUnselected" title="Add to myLinks."></label>
@@ -153,7 +153,7 @@
                                                 {for k in j.audience}
                                                     {if k.required}
                                                         <input id="${j.id}_box" type="checkbox" class="CheckBoxClass" checked="checked" disabled="disabled"/>
-                                                        <label id="${j.id}_label" for="${j.id}_box" class="LabelRequired"></label>
+                                                        <label id="${j.id}_label" for="${j.id}_box" class="LabelRequired" title="You cannot remove this link."></label>
                                                     {else}
                                                         <input id="${j.id}_box" type="checkbox" class="CheckBoxClass"/>
                                                         <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected" title="Add to myLinks."></label>

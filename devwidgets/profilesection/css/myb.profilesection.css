@@ -1,0 +1,30 @@
+#profilesection_generalinfo span.profilesection_generalinfo_content {
+	background-color: #d7d7d7;	
+	display: inline;
+    padding: 4px;
+	margin: 0;
+	min-width: 410px;
+}
+#profilesection_generalinfo a.calnetlink {		
+	color:blue;
+	text-decoration:underline;
+}
+#profilesection_generalinfo div.worldview {
+	background:url(../images/globe-icon.png) no-repeat bottom right;
+}
+#profilesection_generalinfo a.profilesection_add_section {
+    font-size:14px;
+    float:left;
+    margin:10px 5px 20px 240px;
+}
+#profilesection_generalinfo .profilesection_generalinfo_header {
+    border-top:1px solid #999;
+	border-bottom: none;
+    margin:15px 0;
+    padding:7px 0 15px;
+    width:100%;
+    float:left;
+    display:inline;
+    height:18px;
+    clear:both;
+}
