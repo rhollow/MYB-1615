@@ -36,18 +36,21 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var filterContainer = $(".noticewidget_filter", config.rootContainer);
     var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
     var currentNotice = 0;
-              
+    var archiveMode = false;
+
     that.init = function() {
         attachFilterListeners();
         attachSortListeners();
         attachDetailListeners();
         attachCompletedCheckboxListeners();
+        attachArchiveListeners();
         updateFilterStatus();
     };
 
     that.getNotices = function(callback) {
+        var dataURL = archiveMode ? config.archiveDataURL : config.dataURL;
         $.ajax({
-            url: config.dataURL + "&sortOn=" + sortOn + "&sortOrder=" + sortOrder,
+            url: dataURL + "&sortOn=" + sortOn + "&sortOrder=" + sortOrder,
             cache: false,
             success: function(data) {
                 if (data.results) {
@@ -163,6 +166,19 @@ sakai.myb.noticewidgets.Widget = function(config) {
         });
     };
 
+    var attachArchiveListeners = function() {
+        $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
+            if ( archiveMode ) {
+                archiveMode = false;
+                $(this).html(translate("VIEW_ARCHIVE"));
+            } else {
+                archiveMode = true;
+                $(this).html(translate("BACK_TO_LIST"));
+            }
+            that.getNotices();
+        });
+    };
+
     var showCurrentDetail = function() {
         $(".noticewidget_detail", config.rootContainer).html($.TemplateRenderer(config.detailTemplate,
         {
@@ -234,6 +250,7 @@ sakai.mytasks = function(tuid) {
     var template = "mytasks_template";
     var detailTemplate = "mytasks_detail_template";
     var dataURL = "/var/message/notice/tasks.json";
+    var archiveDataURL = "/var/message/notice/tasks_archive.json";
     var widgetName = "mytasks";
 
     var filterSelectionToMessage = function() {
@@ -269,6 +286,7 @@ sakai.mytasks = function(tuid) {
             rootContainer : rootContainer,
             widgetName : widgetName,
             dataURL : dataURL,
+            archiveDataURL : archiveDataURL,
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
