@@ -101,7 +101,4 @@ sakai.config.Profile.configuration.defaultConfig.basic.elements = {
     }
 };
 
-// additional URLs that myberkeley uses
-sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE = "/var/message/notice/reminder_taskstate.json";
-
 // myberkeley custom end

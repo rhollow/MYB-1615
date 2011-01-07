@@ -19,6 +19,9 @@
 
 var sakai = sakai || {};
 
+// additional URLs that myberkeley uses
+ sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE = "/var/message/notice/reminder_taskstate.json";
+
 /**
  * Initialize the My Reminders widget
  * @param {String} tuid unique id of the widget

@@ -233,7 +233,7 @@ sakai.mytasks = function(tuid) {
     var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var detailTemplate = "mytasks_detail_template";
-    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
+    var dataURL = "/var/message/notice/tasks.json";
     var widgetName = "mytasks";
 
     var filterSelectionToMessage = function() {
@@ -287,7 +287,7 @@ sakai.myevents = function(tuid) {
     var tasksListContainer = $(".events_list", rootContainer);
     var template = "myevents_template";
     var detailTemplate = "myevents_detail_template";
-    var dataURL = sakai.config.URL.MYREMINDERS_TASKSTATE_SERVICE + "?taskState=created";
+    var dataURL = "/var/message/notice/events.json";
     var widgetName = "myevents";
 
     var filterSelectionToMessage = function() {
