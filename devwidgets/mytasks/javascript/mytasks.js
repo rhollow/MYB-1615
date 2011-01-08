@@ -177,6 +177,27 @@ sakai.myb.noticewidgets.Widget = function(config) {
             }
             that.getNotices();
         });
+        $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
+            if (archiveMode) {
+                return;
+            }
+            // TODO make these requests in batch and call getnotices only as the batch req's callback
+            $.each(model.results, function(index, row) {
+                if (row["sakai:taskState"] === "completed") {
+                    console.log("Completed task:");
+                    console.dir(row);
+                    var newTaskState = "archived";
+                    row["sakai:taskState"] = newTaskState;
+                    postNotice(
+                            row["jcr:path"],
+                    { "sakai:taskState": newTaskState },
+                              function() {
+                              }
+                            );
+                }
+            });
+            that.getNotices();
+        });
     };
 
     var showCurrentDetail = function() {
