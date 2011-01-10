@@ -10,7 +10,8 @@
 	text-decoration:underline;
 }
 #profilesection_generalinfo div.worldview {
-	background:url(../images/globe-icon.png) no-repeat bottom right;
+	background:url(../images/world.png) no-repeat center right;
+	height: 16px;
 }
 #profilesection_generalinfo a.profilesection_add_section {
     font-size:14px;
