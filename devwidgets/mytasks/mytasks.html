@@ -88,12 +88,19 @@
                 {var isEmpty = false}
                 <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
                         {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate'])}
+                        {if i["sakai:taskState"] === "archived"}
+                            <td id="mytaskstdselect_${i_index}">
+                                <input type="checkbox" class="task-selected-checkbox"
+                                    id="taskSelected_${i_index}" title="Selected"/>
+                        {/if}
+                        </td>
                         <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
                         <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
                         <td id="mytaskstdreq_${i_index}" class="detailTrigger">!</td>
                         <td><input type="checkbox" class="task-completed-checkbox"
                             id="taskDone_${i_index}" title="Completed"
                             {if i["sakai:taskState"] === "completed"} checked="checked" {/if}
+                            {if i["sakai:taskState"] === "archived"} disabled {/if}
                             /></td>
                 </tr>
              {/if}

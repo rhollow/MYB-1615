@@ -168,14 +168,20 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     var attachArchiveListeners = function() {
         $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
-            if ( archiveMode ) {
-                archiveMode = false;
-                $(this).html(translate("VIEW_ARCHIVE"));
-            } else {
-                archiveMode = true;
-                $(this).html(translate("BACK_TO_LIST"));
-            }
-            that.getNotices();
+            archiveMode = !archiveMode;
+            that.getNotices(function() {
+                var firstTH = $(".noticewidget_listing thead th:first", config.rootContainer);
+                var archiveTasksButton = $(".noticewidget_archive_tasks_button");
+                if ( archiveMode ) {
+                    $(this).html(translate("BACK_TO_LIST"));
+                    archiveTasksButton.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
+                    firstTH.before("<th>&nbsp;</th>");
+                } else {
+                    $(this).html(translate("VIEW_ARCHIVE"));
+                    archiveTasksButton.html(translate("ARCHIVE_COMPLETED_TASKS"));
+                    firstTH.remove();
+                }
+            });
         });
         $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
             if (archiveMode) {
@@ -184,8 +190,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
             // TODO make these requests in batch and call getnotices only as the batch req's callback
             $.each(model.results, function(index, row) {
                 if (row["sakai:taskState"] === "completed") {
-                    console.log("Completed task:");
-                    console.dir(row);
                     var newTaskState = "archived";
                     row["sakai:taskState"] = newTaskState;
                     postNotice(
