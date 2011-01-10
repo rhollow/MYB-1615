@@ -189,11 +189,9 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 $.each(model.results, function(index, row) {
                     var selectionBox = $("#mytaskstdselect_" + index + " input");
                     if ( selectionBox.get()[0].checked ) {
-                        var newTaskState = "completed"; // TODO nonrequired tasks get newTaskState = "created" instead
-                        row["sakai:taskState"] = newTaskState;
                         postNotice(
                                 row["jcr:path"],
-                        { "sakai:taskState": newTaskState },
+                        { "sakai:archived@Delete": true },
                                   function() {
                                   }
                                 );
@@ -203,11 +201,9 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 // TODO make these requests in batch and call getnotices only as the batch req's callback
                 $.each(model.results, function(index, row) {
                     if (row["sakai:taskState"] === "completed") {
-                        var newTaskState = "archived";
-                        row["sakai:taskState"] = newTaskState;
                         postNotice(
                                 row["jcr:path"],
-                        { "sakai:taskState": newTaskState },
+                        { "sakai:archived": "archived" },
                                   function() {
                                   }
                                 );
