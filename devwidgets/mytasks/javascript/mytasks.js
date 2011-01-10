@@ -56,6 +56,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 if (data.results) {
                     model = data;
                     config.container.html($.TemplateRenderer(config.template, model));
+                    updateArchiveButtons();
                     if ($.isFunction(callback)) {
                         callback();
                     }
@@ -166,32 +167,49 @@ sakai.myb.noticewidgets.Widget = function(config) {
         });
     };
 
+    var updateArchiveButtons = function() {
+        var archiveTasksButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
+        if ( archiveMode ) {
+            archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
+        } else {
+            archiveTasksButtonText.html(translate("ARCHIVE_COMPLETED_TASKS"));
+        }
+        var enabled = model.results.length > 0;
+        var parent = archiveTasksButtonText.parent();
+        if ( enabled ) {
+            parent.removeClass("s3d-disabled");
+            parent.addClass("s3d-button-primary");
+        } else {
+            parent.addClass("s3d-disabled");
+            parent.removeClass("s3d-button-primary");
+        }
+
+        var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
+        var noTasksMessage = $(".empty_list td:first", config.rootContainer);
+        var firstTH = $(".noticewidget_listing thead th:first", config.rootContainer);
+        if ( archiveMode ) {
+            viewArchiveButton.html(translate("BACK_TO_LIST"));
+            noTasksMessage.html(translate("YOU_HAVE_NO_TASKS_IN_THE_ARCHIVE"));
+            firstTH.before("<th>&nbsp;</th>");
+        } else {
+            viewArchiveButton.html(translate("VIEW_ARCHIVE"));
+            noTasksMessage.html(translate("YOU_HAVE_NO_TASKS"));
+            if ( ! firstTH.is(".noticewidget_listing_sort")) {
+                firstTH.remove();
+            }
+        }
+    };
+
     var attachArchiveListeners = function() {
         $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
             archiveMode = !archiveMode;
-            var viewArchiveButton = this;
             that.getNotices(function() {
                 if ( isDetailMode() ) {
                     toggleDetailMode();
                 }
-                var firstTH = $(".noticewidget_listing thead th:first", config.rootContainer);
-                var archiveTasksButton = $(".noticewidget_archive_tasks_button", config.rootContainer);
-                var noTasksMessage = $(".empty_list td:first", config.rootContainer);
-                if ( archiveMode ) {
-                    $(viewArchiveButton).html(translate("BACK_TO_LIST"));
-                    archiveTasksButton.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
-                    noTasksMessage.html(translate("YOU_HAVE_NO_TASKS_IN_THE_ARCHIVE"));
-                    firstTH.before("<th>&nbsp;</th>");
-                } else {
-                    $(viewArchiveButton).html(translate("VIEW_ARCHIVE"));
-                    archiveTasksButton.html(translate("ARCHIVE_COMPLETED_TASKS"));
-                    noTasksMessage.html(translate("YOU_HAVE_NO_TASKS"));
-                    firstTH.remove();
-                }
             });
         });
         $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
-
             if (isDetailMode()) {
                 var row = model.results[currentNotice];
                 var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
@@ -255,18 +273,18 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var toggleDetailMode = function() {
         var detailViewContainer = $(".noticewidget_detail_view", config.rootContainer);
         var listViewContainer = $(".noticewidget_list_view", config.rootContainer);
-        var archiveButton = $(".noticewidget_archive_tasks_button", config.rootContainer);
+        var archiveButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
         if (detailViewContainer.is(":visible")) {
             listViewContainer.show();
             detailViewContainer.hide();
-            archiveButton.html(translate("ARCHIVE_COMPLETED_TASKS"));
+            archiveButtonText.html(translate("ARCHIVE_COMPLETED_TASKS"));
         } else {
             listViewContainer.hide();
             detailViewContainer.show();
             if ( archiveMode ) {
-                archiveButton.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
+                archiveButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
             } else {
-                archiveButton.html(translate("ARCHIVE_THIS_TASK"));
+                archiveButtonText.html(translate("ARCHIVE_THIS_TASK"));
             }
         }
     };
