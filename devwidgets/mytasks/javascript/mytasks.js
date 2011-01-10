@@ -81,6 +81,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
 
     var translate = function(key) {
+        console.log("Translate key " + key + " for widgetname " + config.widgetName);
         return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
     };
 
@@ -188,12 +189,12 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var noTasksMessage = $(".empty_list td:first", config.rootContainer);
         var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
         if ( archiveMode ) {
-            viewArchiveButton.html(translate("BACK_TO_LIST"));
-            noTasksMessage.html(translate("YOU_HAVE_NO_TASKS_IN_THE_ARCHIVE"));
+            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
+            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
             selectorCells.show();
         } else {
-            viewArchiveButton.html(translate("VIEW_ARCHIVE"));
-            noTasksMessage.html(translate("YOU_HAVE_NO_TASKS"));
+            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.listMode));
+            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.listMode));
             selectorCells.hide();
         }
     };
@@ -363,6 +364,17 @@ sakai.mytasks = function(tuid) {
         return msgs[itemStatus][dateRange];
     };
 
+    var buttonMessages = {
+        viewArchiveButton : {
+            listMode : "VIEW_ARCHIVE",
+            archiveMode : "BACK_TO_LIST"
+        },
+        noItemsMessage : {
+            listMode : "YOU_HAVE_NO_TASKS",
+            archiveMode : "YOU_HAVE_NO_TASKS_IN_THE_ARCHIVE"
+        }
+    };
+
     var doInit = function() {
         var taskWidget = sakai.myb.noticewidgets.Widget({
             rootContainer : rootContainer,
@@ -373,7 +385,8 @@ sakai.mytasks = function(tuid) {
             container : tasksListContainer,
             detailTemplate : detailTemplate,
             convertFilterStateToMessage : filterSelectionToMessage,
-            defaultSortOn : "sakai:dueDate"
+            defaultSortOn : "sakai:dueDate",
+            buttonMessages : buttonMessages
         });
         taskWidget.init();
         taskWidget.getNotices();
@@ -388,6 +401,7 @@ sakai.myevents = function(tuid) {
     var template = "myevents_template";
     var detailTemplate = "myevents_detail_template";
     var dataURL = "/var/message/notice/events.json";
+    var archiveDataURL = "/var/message/notice/events.json";
     var widgetName = "myevents";
 
     var filterSelectionToMessage = function() {
@@ -415,16 +429,29 @@ sakai.myevents = function(tuid) {
         return msgs[itemStatus][dateRange];
     };
 
+    var buttonMessages = {
+        viewArchiveButton : {
+            listMode : "PAST_EVENTS",
+            archiveMode : "RETURN_TO_UPCOMING_EVENTS"
+        },
+        noItemsMessage : {
+            listMode : "YOU_HAVE_NO_EVENTS",
+            archiveMode : "YOU_HAVE_NO_EVENTS_IN_THE_ARCHIVE"
+        }
+    };
+
     var doInit = function() {
         var eventWidget = sakai.myb.noticewidgets.Widget({
             rootContainer : rootContainer,
             widgetName : widgetName,
             dataURL : dataURL,
+            archiveDataURL : archiveDataURL,
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
             convertFilterStateToMessage : filterSelectionToMessage,
-            defaultSortOn : "sakai:eventDate"
+            defaultSortOn : "sakai:eventDate",
+            buttonMessages : buttonMessages
         });
         eventWidget.init();
         eventWidget.getNotices();
