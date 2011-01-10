@@ -188,6 +188,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
         });
         $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
+
             if (isDetailMode()) {
                 var row = model.results[currentNotice];
                 var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
@@ -199,32 +200,34 @@ sakai.myb.noticewidgets.Widget = function(config) {
                                 );
                 that.getNotices(toggleDetailMode());
                 return;
-            } else if (archiveMode) {
+            }
+
+            var requests = [];
+            if (archiveMode) {
                 $.each(model.results, function(index, row) {
                     var selectionBox = $("#mytaskstdselect_" + index + " input");
                     if ( selectionBox.get()[0].checked ) {
-                        postNotice(
-                                row["jcr:path"],
-                        { "sakai:archived@Delete": true },
-                                  function() {
-                                  }
-                                );
+                        requests[requests.length] = {
+                            url : row["jcr:path"],
+                            method : "POST",
+                            parameters : { "sakai:archived@Delete": true }
+                        };
                     }
                 });
             } else {
-                // TODO make these requests in batch and call getnotices only as the batch req's callback
                 $.each(model.results, function(index, row) {
                     if (row["sakai:taskState"] === "completed") {
-                        postNotice(
-                                row["jcr:path"],
-                        { "sakai:archived": "archived" },
-                                  function() {
-                                  }
-                                );
+                        requests[requests.length] = {
+                            url : row["jcr:path"],
+                            method : "POST",
+                            parameters : { "sakai:archived": "archived" }
+                        };
                     }
                 });
             }
-            that.getNotices();
+            postNotice(sakai.config.URL.BATCH, {
+                requests: $.toJSON(requests)
+            }, that.getNotices);
         });
     };
 
