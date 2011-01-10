@@ -50,6 +50,7 @@
 
             <table class="noticewidget_listing mytasks_listing">
                 <thead>
+                    <th class="noticewidget_task_selector"></th>
                     <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort" title="__MSG__DUE__">__MSG__DUE__<span class="noticewidget_sort_indicator ascending">&nbsp;</span></th>
                     <th id="mytasks_sortOn_sakai:subject" class="noticewidget_listing_sort subjectLine" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
                     <th id="mytasks_sortOn_sakai:required" class="noticewidget_listing_sort" title="__MSG__REQUIRED__">__MSG__REQ__</th>
@@ -88,10 +89,10 @@
                 {var isEmpty = false}
                 <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
                         {var dateString = sakai.myb.noticewidgets.formatDateAsString(i['sakai:dueDate'])}
+                        <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
                         {if i["sakai:archived"] === "archived"}
-                            <td id="mytaskstdselect_${i_index}">
-                                <input type="checkbox" class="task-selected-checkbox"
-                                    id="taskSelected_${i_index}" title="Selected"/>
+                            <input type="checkbox" class="task-selected-checkbox"
+                                id="taskSelected_${i_index}" title="Selected"/>
                         {/if}
                         </td>
                         <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
