@@ -169,11 +169,11 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var attachArchiveListeners = function() {
         $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
             archiveMode = !archiveMode;
-            if ( isDetailMode() ) {
-                toggleDetailMode();
-            }
             var viewArchiveButton = this;
             that.getNotices(function() {
+                if ( isDetailMode() ) {
+                    toggleDetailMode();
+                }
                 var firstTH = $(".noticewidget_listing thead th:first", config.rootContainer);
                 var archiveTasksButton = $(".noticewidget_archive_tasks_button", config.rootContainer);
                 var noTasksMessage = $(".empty_list td:first", config.rootContainer);
