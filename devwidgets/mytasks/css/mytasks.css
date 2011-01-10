@@ -224,3 +224,11 @@ table.noticewidget_listing tr.notice_row:hover {
     overflow: auto;
     height: 150px;
 }
+
+.mytasks_widget .fl-widget-options .widget-options-inner .left {
+    float: left;
+}
+
+.mytasks_widget .fl-widget-options .widget-options-inner .right {
+    float: right;
+}
