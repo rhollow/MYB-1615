@@ -50,7 +50,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     that.getNotices = function(callback) {
         var dataURL = archiveMode ? config.archiveDataURL : config.dataURL;
         $.ajax({
-            url: dataURL + "&sortOn=" + sortOn + "&sortOrder=" + sortOrder,
+            url: dataURL + "?sortOn=" + sortOn + "&sortOrder=" + sortOrder,
             cache: false,
             success: function(data) {
                 if (data.results) {
@@ -169,15 +169,16 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var attachArchiveListeners = function() {
         $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
             archiveMode = !archiveMode;
+            var viewArchiveButton = this;
             that.getNotices(function() {
                 var firstTH = $(".noticewidget_listing thead th:first", config.rootContainer);
                 var archiveTasksButton = $(".noticewidget_archive_tasks_button");
                 if ( archiveMode ) {
-                    $(this).html(translate("BACK_TO_LIST"));
+                    $(viewArchiveButton).html(translate("BACK_TO_LIST"));
                     archiveTasksButton.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
                     firstTH.before("<th>&nbsp;</th>");
                 } else {
-                    $(this).html(translate("VIEW_ARCHIVE"));
+                    $(viewArchiveButton).html(translate("VIEW_ARCHIVE"));
                     archiveTasksButton.html(translate("ARCHIVE_COMPLETED_TASKS"));
                     firstTH.remove();
                 }
@@ -185,21 +186,34 @@ sakai.myb.noticewidgets.Widget = function(config) {
         });
         $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
             if (archiveMode) {
-                return;
+                $.each(model.results, function(index, row) {
+                    var selectionBox = $("#mytaskstdselect_" + index + " input");
+                    if ( selectionBox.get()[0].checked ) {
+                        var newTaskState = "completed"; // TODO nonrequired tasks get newTaskState = "created" instead
+                        row["sakai:taskState"] = newTaskState;
+                        postNotice(
+                                row["jcr:path"],
+                        { "sakai:taskState": newTaskState },
+                                  function() {
+                                  }
+                                );
+                    }
+                });
+            } else {
+                // TODO make these requests in batch and call getnotices only as the batch req's callback
+                $.each(model.results, function(index, row) {
+                    if (row["sakai:taskState"] === "completed") {
+                        var newTaskState = "archived";
+                        row["sakai:taskState"] = newTaskState;
+                        postNotice(
+                                row["jcr:path"],
+                        { "sakai:taskState": newTaskState },
+                                  function() {
+                                  }
+                                );
+                    }
+                });
             }
-            // TODO make these requests in batch and call getnotices only as the batch req's callback
-            $.each(model.results, function(index, row) {
-                if (row["sakai:taskState"] === "completed") {
-                    var newTaskState = "archived";
-                    row["sakai:taskState"] = newTaskState;
-                    postNotice(
-                            row["jcr:path"],
-                    { "sakai:taskState": newTaskState },
-                              function() {
-                              }
-                            );
-                }
-            });
             that.getNotices();
         });
     };
