@@ -81,7 +81,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
 
     var translate = function(key) {
-        console.log("Translate key " + key + " for widgetname " + config.widgetName);
         return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
     };
 
