@@ -175,14 +175,17 @@ sakai.myb.noticewidgets.Widget = function(config) {
             var viewArchiveButton = this;
             that.getNotices(function() {
                 var firstTH = $(".noticewidget_listing thead th:first", config.rootContainer);
-                var archiveTasksButton = $(".noticewidget_archive_tasks_button");
+                var archiveTasksButton = $(".noticewidget_archive_tasks_button", config.rootContainer);
+                var noTasksMessage = $(".empty_list td:first", config.rootContainer);
                 if ( archiveMode ) {
                     $(viewArchiveButton).html(translate("BACK_TO_LIST"));
                     archiveTasksButton.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
+                    noTasksMessage.html(translate("YOU_HAVE_NO_TASKS_IN_THE_ARCHIVE"));
                     firstTH.before("<th>&nbsp;</th>");
                 } else {
                     $(viewArchiveButton).html(translate("VIEW_ARCHIVE"));
                     archiveTasksButton.html(translate("ARCHIVE_COMPLETED_TASKS"));
+                    noTasksMessage.html(translate("YOU_HAVE_NO_TASKS"));
                     firstTH.remove();
                 }
             });
