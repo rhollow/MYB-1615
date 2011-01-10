@@ -212,12 +212,12 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 var row = model.results[currentNotice];
                 var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
                 postNotice(
-                                row["jcr:path"],
-                                postData,
-                                  function() {
-                                  }
-                                );
-                that.getNotices(toggleDetailMode());
+                        row["jcr:path"],
+                        postData,
+                          function() {
+                              that.getNotices(toggleDetailMode());
+                          }
+                        );
                 return;
             }
 
