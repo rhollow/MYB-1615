@@ -328,16 +328,10 @@ sakai.myb.noticewidgets.Widget = function(config) {
  * Formats a date to "mm/dd" format
  * @param {Object} date UTF string
  */
-sakai.myb.noticewidgets.formatDateAsString = function(date) {
+sakai.myb.noticewidgets.formatDate = function(date, format) {
     if (!date) return null;
     date = sakai.api.Util.parseSakaiDate(date);
-    return Globalization.format(date, "M/d");
-};
-
-sakai.myb.noticewidgets.formatTimeAsString = function(date) {
-    if (!date) return null;
-    date = sakai.api.Util.parseSakaiDate(date);
-    return Globalization.format(date, "h:mmtt");
+    return Globalization.format(date, format);
 };
 
 /*
