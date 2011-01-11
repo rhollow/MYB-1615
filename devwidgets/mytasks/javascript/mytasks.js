@@ -180,6 +180,14 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     model.results[rowIndex]["jcr:path"],
             { "sakai:taskState": newTaskState },
                       function() {
+                          // update UI so it reflects the new model state
+                          $.each($(".task-completed-checkbox", config.rootContainer).get(), function(index, element) {
+                              var checkboxIndex = this.id.replace(/\w+_/gi, "");
+                              if (checkboxIndex === rowIndex) {
+                                  element.checked = rowData["sakai:taskState"] === "completed";
+                              }
+                          });
+                          updateArchiveButtons();
                       }
                     );
         });
