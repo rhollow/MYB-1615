@@ -98,12 +98,15 @@
 
     <div id="myevents_detail_template" style="display:none"><!--
         {var dateString = sakai.myb.noticewidgets.formatDateAsString(detail['sakai:eventDate'])}
+        {var timeString = sakai.myb.noticewidgets.formatTimeAsString(detail['sakai:eventDate'])}
 
         <h3>${detail["sakai:subject"]}</h3>
         {if detail["sakai:required"]}
             <h4>__MSG__THIS_EVENT_IS_REQUIRED__</h4>
         {/if}
         <h5>__MSG__EVENT_DATE__: ${dateString}</h5>
+        <h5 class="event-time">__MSG__TIME__: ${timeString}</h5>
+        <h5 class="event-location">__MSG__LOCATION__: ${detail["sakai:eventPlace"]}</h5>
 
         <p>${detail["sakai:authoringbody"]}</p>
         -->

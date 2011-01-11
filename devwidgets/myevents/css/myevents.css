@@ -1,3 +1,14 @@
 .myevents .widget_title {
     background: url("/devwidgets/myevents/images/myevents_widget_icon.png") no-repeat scroll 16px 16px transparent;
 }
+
+.myevents .noticewidget_detail h5.event-time {
+    float: right;
+}
+
+.myevents .noticewidget_detail h5.event-location {
+    clear: both;
+    float: none;
+    margin-bottom: 8px;
+}
+

@@ -331,7 +331,13 @@ sakai.myb.noticewidgets.Widget = function(config) {
 sakai.myb.noticewidgets.formatDateAsString = function(date) {
     if (!date) return null;
     date = sakai.api.Util.parseSakaiDate(date);
-    return date.getMonth() + 1 + "/" + date.getDate();
+    return Globalization.format(date, "M/d");
+};
+
+sakai.myb.noticewidgets.formatTimeAsString = function(date) {
+    if (!date) return null;
+    date = sakai.api.Util.parseSakaiDate(date);
+    return Globalization.format(date, "h:mmtt");
 };
 
 /*
