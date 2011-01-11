@@ -28,6 +28,16 @@ sakai.myb.noticewidgets.BEGINNING_OF_TIME = new Date(2000, 0, 1, 0, 0, 0, 0);
 sakai.myb.noticewidgets.END_OF_TIME = new Date(3000, 0, 1, 0, 0, 0, 0);
 
 /**
+ * Formats a date to "mm/dd" format
+ * @param {Object} date UTF string
+ */
+sakai.myb.noticewidgets.formatDate = function(date, format) {
+    if (!date) return null;
+    date = sakai.api.Util.parseSakaiDate(date);
+    return Globalization.format(date, format);
+};
+
+/**
  * Generic constructor for noticewidgets (of which tasks is one type, and events is another).
  * @param config
  */
@@ -322,16 +332,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
 
     return that;
-};
-
-/**
- * Formats a date to "mm/dd" format
- * @param {Object} date UTF string
- */
-sakai.myb.noticewidgets.formatDate = function(date, format) {
-    if (!date) return null;
-    date = sakai.api.Util.parseSakaiDate(date);
-    return Globalization.format(date, format);
 };
 
 /*
