@@ -209,13 +209,14 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_detail h3, .noticewidget_detail p {
     clear: both;
+    margin-bottom: 0;
 }
 
 .noticewidget_detail fieldset {
     float: right;
 }
 
-.noticewidget_detail h4 {
+.noticewidget_detail h5 {
     float: left;
 }
 

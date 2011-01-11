@@ -117,7 +117,10 @@
         {var dateString = sakai.myb.noticewidgets.formatDateAsString(detail['sakai:dueDate'])}
 
         <h3>${detail["sakai:subject"]}</h3>
-        <h4>Due Date: ${dateString}</h4>
+        {if detail["sakai:required"]}
+            <h4>__MSG__THIS_TASK_IS_REQUIRED__</h4>
+        {/if}
+        <h5>__MSG__DUE_DATE__: ${dateString}</h5>
 
         <fieldset>
             <input type="checkbox" class="task-completed-checkbox"

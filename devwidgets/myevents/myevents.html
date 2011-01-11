@@ -100,9 +100,12 @@
         {var dateString = sakai.myb.noticewidgets.formatDateAsString(detail['sakai:eventDate'])}
 
         <h3>${detail["sakai:subject"]}</h3>
-        <h4>Event Date: ${dateString}</h4>
+        {if detail["sakai:required"]}
+            <h4>__MSG__THIS_EVENT_IS_REQUIRED__</h4>
+        {/if}
+        <h5>__MSG__EVENT_DATE__: ${dateString}</h5>
 
-        <p>${detail["sakai:body"]}</p>
+        <p>${detail["sakai:authoringbody"]}</p>
         -->
     </div>
 
