@@ -97,7 +97,9 @@
                         </td>
                         <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
                         <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
-                        <td id="mytaskstdreq_${i_index}" class="detailTrigger">!</td>
+                        <td id="mytaskstdreq_${i_index}" class="detailTrigger">
+                        {if i["sakai:required"]}!{/if}
+                        </td>
                         <td><input type="checkbox" class="task-completed-checkbox"
                             id="taskDone_${i_index}" title="Completed"
                             {if i["sakai:taskState"] === "completed"} checked="checked" {/if}
