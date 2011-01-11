@@ -22,6 +22,9 @@ sakai.myb = sakai.myb || {};
 
 sakai.myb.noticewidgets = {};
 
+sakai.myb.noticewidgets.DATE_FORMAT_ISO8601 = "yyyy-MM-ddThh:mm:ss.000zzz";
+sakai.myb.noticewidgets.ONE_DAY = 24 * 60 * 60 * 1000;
+
 /**
  * Generic constructor for noticewidgets (of which tasks is one type, and events is another).
  * @param config
@@ -50,7 +53,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     that.getNotices = function(callback) {
         var dataURL = archiveMode ? config.archiveDataURL : config.dataURL;
         $.ajax({
-            url: dataURL + "?sortOn=" + sortOn + "&sortOrder=" + sortOrder,
+            url: dataURL + "?sortOn=" + sortOn + "&sortOrder=" + sortOrder + buildExtraQueryParams(),
             cache: false,
             success: function(data) {
                 if (data.results) {
@@ -70,10 +73,12 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
 
     var hideFilters = function() {
-        filterContainer.hide();
-        filterControlIndicator.removeClass("open");
-        filterControlIndicator.addClass("closed");
-        updateFilterStatus();
+        that.getNotices(function() {
+            filterContainer.hide();
+            filterControlIndicator.removeClass("open");
+            filterControlIndicator.addClass("closed");
+            updateFilterStatus();
+        });
     };
 
     var updateFilterStatus = function() {
@@ -314,6 +319,38 @@ sakai.myb.noticewidgets.Widget = function(config) {
         });
     };
 
+    var buildExtraQueryParams = function() {
+        var today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
+
+        var startDate = new Date();
+        var endDate = new Date();
+
+        if ( archiveMode ) {
+            startDate = new Date(2000, 0, 1, 0, 0, 0, 0); // quasi-beginning of time
+            endDate.setTime(today.getTime());
+        } else {
+            startDate.setTime(today.getTime() + sakai.myb.noticewidgets.ONE_DAY);
+            switch ( config.getDateRange() ) {
+                case "all" :
+                    endDate.setTime(new Date(3000, 0, 1, 0, 0, 0, 0));
+                break;
+                case "next7" :
+                    endDate.setTime(today.getTime() + 7 * sakai.myb.noticewidgets.ONE_DAY);
+                break;
+                case "next30" :
+                    endDate.setTime(today.getTime() + 30 * sakai.myb.noticewidgets.ONE_DAY);
+                break;
+            }
+        }
+
+        return "&startDate=" + Globalization.format(startDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
+                + "&endDate=" + Globalization.format(endDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601);
+    };
+
     return that;
 };
 
@@ -340,9 +377,13 @@ sakai.mytasks = function(tuid) {
     var archiveDataURL = "/var/message/notice/tasks_archive.json";
     var widgetName = "mytasks";
 
+    var getDateRange = function() {
+        return $("input[name=mytasks_date_range]:radio:checked", rootContainer).val();
+    };
+
     var filterSelectionToMessage = function() {
         var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
-        var dateRange = $("input[name=mytasks_date_range]:radio:checked", rootContainer).val();
+        var dateRange = getDateRange();
         // translate every possible combo of the 2 radio buttons to a human readable message using
         // an associative array instead of a giant switch-case statement, since it's prettier this way.
         var msgs = {
@@ -390,7 +431,8 @@ sakai.mytasks = function(tuid) {
             detailTemplate : detailTemplate,
             convertFilterStateToMessage : filterSelectionToMessage,
             defaultSortOn : "sakai:dueDate",
-            buttonMessages : buttonMessages
+            buttonMessages : buttonMessages,
+            getDateRange : getDateRange
         });
         taskWidget.init();
         taskWidget.getNotices();
@@ -408,9 +450,13 @@ sakai.myevents = function(tuid) {
     var archiveDataURL = "/var/message/notice/events.json";
     var widgetName = "myevents";
 
+    var getDateRange = function() {
+        return $("input[name=myevents_date_range]:radio:checked", rootContainer).val();
+    };
+
     var filterSelectionToMessage = function() {
         var itemStatus = $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
-        var dateRange = $("input[name=myevents_date_range]:radio:checked", rootContainer).val();
+        var dateRange = getDateRange();
         // translate every possible combo of the 2 radio buttons to a human readable message using
         // an associative array instead of a giant switch-case statement, since it's prettier this way.
         var msgs = {
@@ -455,7 +501,8 @@ sakai.myevents = function(tuid) {
             detailTemplate : detailTemplate,
             convertFilterStateToMessage : filterSelectionToMessage,
             defaultSortOn : "sakai:eventDate",
-            buttonMessages : buttonMessages
+            buttonMessages : buttonMessages,
+            getDateRange : getDateRange
         });
         eventWidget.init();
         eventWidget.getNotices();
