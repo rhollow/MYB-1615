@@ -151,7 +151,7 @@ sakai.notificationsinbox = function(){
     var goToPreviousPageAfterDeletion = false;
 
     /**
-     * Th is will show the preloader.
+     * This will show the preloader.
      */
     var showLoader = function(){
         $(inboxTable).append($.TemplateRenderer(inboxTablePreloader.substring(1), {}));
@@ -478,7 +478,8 @@ sakai.notificationsinbox = function(){
             response.results[j].subject = response.results[j]["sakai:subject"];
             response.results[j].body = response.results[j]["sakai:body"];
             response.results[j].messagebox = response.results[j]["sakai:messagebox"];
-            response.results[j] = formatMessage(response.results[j]);
+            response.results[j].validated = response.results[j]["sakai:validated"];                      
+            response.results[j] = formatMessage(response.results[j]);                                                                  
         }
 
         allMessages = response.results;
@@ -523,7 +524,7 @@ sakai.notificationsinbox = function(){
         // Remember which page were on.
         currentPage = pageNumber - 1;
         // Show set of messages.
-        // Using callback function to update the pager AFTER all messages have been loaded
+        // Using callback function to update the pager AFTER all messages have been loaded.
         getAllMessages(function() {
             pageMessages(currentPage + 1);
             currentPage = pageNumber - 1;
@@ -945,7 +946,8 @@ sakai.notificationsinbox = function(){
             newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
             newMessage["sakai:category"] = message["sakai:category"];
             newMessage["sakai:validated"] = message["sakai:validated"];
-
+            newMessage["sakai:validated@TypeHint"] = "Boolean"; 
+                        
             // Is it required (a reminder)?
             if(newMessage["sakai:category"]=="reminder"){
                 // Is it a task?
