@@ -70,6 +70,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             success: function(data) {
                 if (data.results) {
                     model = data;
+                    currentNotice = 0;
                     config.container.html($.TemplateRenderer(config.template, model));
                     updateArchiveButtons();
                     if ($.isFunction(callback)) {
@@ -189,6 +190,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
         var noTasksMessage = $(".empty_list td:first", config.rootContainer);
         var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
+
         if ( archiveMode ) {
             archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
             viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
@@ -201,6 +203,22 @@ sakai.myb.noticewidgets.Widget = function(config) {
             selectorCells.hide();
         }
         var enabled = model.results.length > 0;
+        if ( isDetailMode() ) {
+            if ( archiveMode ) {
+                archiveTasksButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
+            } else {
+                archiveTasksButtonText.html(translate("ARCHIVE_THIS_TASK"));
+            }
+
+            if ( model.results[currentNotice] ) {
+                var isCurrentTaskRequired = model.results[currentNotice]["sakai:required"];
+                if ( isCurrentTaskRequired ) {
+                    enabled = model.results[currentNotice]["sakai:taskState"] === "completed";
+                } else {
+                    enabled = true;
+                }
+            }
+        }
         var parent = archiveTasksButtonText.parent();
         if ( enabled ) {
             parent.removeClass("s3d-disabled");
@@ -230,6 +248,10 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
         });
         $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
+            if ( $(this).is(".s3d-disabled")) {
+                // don't attempt to archive a task whose archive button is disabled
+                return;
+            }
             if (isDetailMode()) {
                 var row = model.results[currentNotice];
                 var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
@@ -288,6 +310,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         } else {
             $(".prevArrow", config.rootContainer).addClass("disabled");
         }
+        updateArchiveButtons();
     };
 
     var toggleDetailMode = function() {
@@ -297,16 +320,11 @@ sakai.myb.noticewidgets.Widget = function(config) {
         if (detailViewContainer.is(":visible")) {
             listViewContainer.show();
             detailViewContainer.hide();
-            archiveButtonText.html(translate("ARCHIVE_COMPLETED_TASKS"));
         } else {
             listViewContainer.hide();
             detailViewContainer.show();
-            if ( archiveMode ) {
-                archiveButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
-            } else {
-                archiveButtonText.html(translate("ARCHIVE_THIS_TASK"));
-            }
         }
+        updateArchiveButtons();
     };
 
     var isDetailMode = function() {
