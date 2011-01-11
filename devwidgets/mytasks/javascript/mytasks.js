@@ -169,10 +169,19 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     var updateArchiveButtons = function() {
         var archiveTasksButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
+        var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
+        var noTasksMessage = $(".empty_list td:first", config.rootContainer);
+        var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
         if ( archiveMode ) {
             archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
+            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
+            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
+            selectorCells.show();
         } else {
             archiveTasksButtonText.html(translate("ARCHIVE_COMPLETED_TASKS"));
+            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.listMode));
+            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.listMode));
+            selectorCells.hide();
         }
         var enabled = model.results.length > 0;
         var parent = archiveTasksButtonText.parent();
@@ -182,19 +191,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
         } else {
             parent.addClass("s3d-disabled");
             parent.removeClass("s3d-button-primary");
-        }
-
-        var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
-        var noTasksMessage = $(".empty_list td:first", config.rootContainer);
-        var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
-        if ( archiveMode ) {
-            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
-            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
-            selectorCells.show();
-        } else {
-            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.listMode));
-            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.listMode));
-            selectorCells.hide();
         }
     };
 
