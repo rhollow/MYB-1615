@@ -180,7 +180,7 @@
                                                         <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected" title="Add to myLinks."></label>
                                                     {/if}
                                                 {/for}
-                                                <a href="${j.url}"  id="urlfor_${j.id}" title="${j.popup_description}" onClick="recordOutboundLink(this, 'Outbound Links', 'portal-dev.berkeley.edu');return false;">${j.name|default:"No Available Name"}</a>
+                                                <a href="${j.url}"  id="urlfor_${j.id}" title="${j.popup_description}" onClick="recordOutboundLink(this, 'Outbound Links', this.href);return false;">${j.name|default:"No Available Name"}</a>
                                             </li>
                                             {if counter<percol}
                                                 ${counter=counter+1|eat}
