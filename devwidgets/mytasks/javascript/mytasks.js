@@ -205,6 +205,15 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 if ( isDetailMode() ) {
                     toggleDetailMode();
                 }
+                var filterIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
+                var filterControls = $(".noticewidget_filter_control", config.rootContainer);
+                if ( archiveMode ) {
+                    filterIndicator.hide();
+                    filterControls.hide();
+                } else {
+                    filterIndicator.show();
+                    filterControls.show();
+                }
             });
         });
         $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
