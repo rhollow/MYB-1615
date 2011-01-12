@@ -60,6 +60,9 @@
 
         <!-- myberkeley JS -->
         <script type="text/javascript" src="/dev/lib/myb/myb.api.security.js"></script>
+		
+		<!-- For tracking outbound links (tracking code goes just before the closing head tag) -->		
+        <script type="text/javascript" src="/dev/lib/myb/google/myb.api.google.js"></script>
                   
     </head>
 
@@ -75,6 +78,12 @@
         <div class="fl-container-flex header s3d-header">
             <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
                 <div class="s3d-decor"><!-- --></div>
+
+                <!-- TOOLTIP -->
+                <div id="widget_tooltip" class="widget_inline"></div>
+
+                <!-- SYSTEMTOUR WIDGET -->
+                <div id="widget_systemtour" class="widget_inline"></div>
 
                 <!-- ENTITY WIDGET -->
                 <div id="widget_entity" class="widget_inline" style="float:left"></div>

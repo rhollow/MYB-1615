@@ -101,4 +101,11 @@ sakai.config.Profile.configuration.defaultConfig.basic.elements = {
     }
 };
 
+// Tracking and statistics
+sakai.config.Tracking = {
+	GoogleAnalytics: {
+		WebPropertyID : "UA-20616179-3"
+	}
+};
+
 // myberkeley custom end

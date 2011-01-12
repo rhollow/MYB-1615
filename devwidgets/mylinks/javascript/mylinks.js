@@ -104,6 +104,13 @@ sakai.mylinks = function (tuid, showSettings) {
 
     var createLinkList = function (data) {
         $draggableList.html($.TemplateRenderer(mylinksListTemplate, data));
+		
+		// Add Google Analytics outbound links tracking
+		$("div.mylinks_widget li.link a").click(function () {
+			sakai.myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
+			return false;			
+		});		
+		
         initDraggables();
     };
 

@@ -80,7 +80,7 @@ sakai.libraryreferencechat = function(tuid, showSettings){
 				var b = document.getElementById("qpchatwidget");
 				switch (a.size) {
 					case ("fill"):
-						b.style.width = "95%";
+						b.style.width = "100%";
 						b.style.height = "100%";
 						break;
 					case ("small"):
