@@ -51,14 +51,6 @@ sakai.upgradeReminders = function() {
         });
     };
 
-    var deleteSearch = function() {
-        doPost(SEARCH_URL, {
-            ":operation" : "delete"
-        }, function() {
-            console.log("Successfully deleted search.");
-        });
-    };
-
     var createSearch = function() {
         doPost(SEARCH_URL, requiredRemindersSearch,
               function() {
@@ -105,7 +97,11 @@ sakai.upgradeReminders = function() {
     };
 
     var cleanup = function() {
-        deleteSearch();
+        doPost(SEARCH_URL, {
+            ":operation" : "delete"
+        }, function() {
+            console.log("Deleted search.");
+        });
     };
 
     var doInit = function() {
