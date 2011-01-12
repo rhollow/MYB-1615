@@ -25,7 +25,7 @@ sakai.upgradeReminders = function() {
 
     var requiredRemindersSearch = {
         "sakai:query-language": "xpath",
-        "sakai:query-template": "//element(*)MetaData[@sling:resourceType='sakai/message' and @sakai:type='notice' and @sakai:category='reminder' ]",
+        "sakai:query-template": "//element(*)MetaData[@sling:resourceType='sakai/message' and @sakai:type='notice' and @sakai:category='reminder' and not(@sakai:required) ]",
         "sling:resourceType": "sakai/search",
         "sakai:propertyprovider" : "Message",
         "sakai:resultprocessor": "Message",
@@ -44,7 +44,7 @@ sakai.upgradeReminders = function() {
                     callback();
                 }
             },
-            error: function(xhr, textStatus, thrownError) {
+            error: function(xhr) {
                 console.log("POST failed. XHR response:" + xhr.responseText);
             },
             dataType: 'json'
@@ -72,16 +72,36 @@ sakai.upgradeReminders = function() {
             url: SEARCH_URL + "?items=" + MAX_ITEMS,
             cache: false,
             success: function(data) {
-                $.each(data.results, function(index, row) {
-                    console.log("Got result at " + row["jcr:path"]);
-
-                });
-                cleanup();
+                doBatchUpdate(data.results);
             },
-            error: function(xhr, textStatus, thrownError) {
+            error: function(xhr) {
                 console.log("GET failed. XHR response:" + xhr.responseText);
             }
         });
+    };
+
+    var doBatchUpdate = function(results) {
+        var requests = [];
+        $.each(results, function(index, row) {
+            requests[requests.length] = {
+                url : row["jcr:path"],
+                method : "POST",
+                parameters : { "sakai:required": true }
+            };
+        });
+        if (requests.length > 0) {
+            console.log("batch requests[] = ");
+            console.dir(requests);
+            doPost(sakai.config.URL.BATCH, {
+                requests: $.toJSON(requests)
+            }, function() {
+                console.log("Batch update succeeded!");
+                cleanup();
+            });
+        } else {
+            console.log("No more reminders to upgrade!");
+            cleanup();
+        }
     };
 
     var cleanup = function() {
