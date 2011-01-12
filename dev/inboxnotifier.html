@@ -139,19 +139,19 @@
 
                             <div class="bottom_decor">
                                 <div id="inbox_pager" class="jq_pager"></div>
-                            </div>
-
+                            </div>                                                                                  
+                            
                             <div id="inbox_inbox_sort_up" style="display:none;"><img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
                             <div id="inbox_inbox_sort_down" style="display:none;"><img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
 
-                            <div id="inbox_inbox_messages_template" title=""><!--
-                            {for m in messages}
+                            <div id="inbox_inbox_messages_template" title=""><!--                                                        
+                            {for m in messages}                                                             
                                 {var readClass="inbox-subject-unread"}								
                                 {if m.read}
                                     {var readClass="inbox-subject-read"}
                                 {/if}
-								{var validatedClass=""}
-								{if !m['sakai:validated'] && m.messagebox === "drafts"}
+								{var validatedClass=""}                                                             
+								{if !m.validated && m.messagebox === "drafts"}                                
                                     {var validatedClass="inbox-message-unvalidated"}
                                 {/if}
 								
@@ -214,19 +214,19 @@
                         <!-- BUTTON LISTS-->
 						<div class="button-list" id="buttons-drafts">
 						    <button id="inbox-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-							<button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+							<button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_TRASH__</span></button>
                             <button id="inbox-draftscopy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>                                                        					
 					   </div>                       
 					   <div class="button-list" id="buttons-queue" style="display:none;">
                             <button id="inbox-queuetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
 						    <button id="inbox-queuecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
-                            <button id="inbox-queuedelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>                                                                                    			
+                            <button id="inbox-queuedelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_TRASH__</span></button>                                                                                    			
 					   </div>
                        <div class="button-list" id="buttons-archive" style="display:none;">						    
                             <button id="inbox-archivetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>                            
 					   </div>
                        <div class="button-list" id="buttons-trash" style="display:none;">
-						    <button id="inbox-emptytrash-button" class="s3d-button"><span class="s3d-button-inner">__MSG__EMPTY_TRASH__</span></button>                            
+						    <button id="inbox-emptytrash-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>                            
                             <button id="inbox-trashtodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>                           				
 					   </div>                                              
                         
