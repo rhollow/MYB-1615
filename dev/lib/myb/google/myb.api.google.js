@@ -22,7 +22,9 @@ var sakai = sakai || {};
 sakai.myb = sakai.myb || {};
 sakai.myb.api = sakai.myb.api || {};
 sakai.myb.api.google = sakai.myb.api.google || {};
-sakai.myb.api.google._gaq = sakai.myb.api.google._gaq || [];
+
+// This variable has to be global, see http://code.google.com/apis/analytics/docs/gaJS/gaJSApi_gaq.html
+var _gaq = _gaq || [];
 
 /**
  * Records an outbound link before leaving the current page
@@ -35,7 +37,7 @@ sakai.myb.api.google._gaq = sakai.myb.api.google._gaq || [];
  */
 sakai.myb.api.google.recordOutboundLink = function(link, category, action) {
   try {
-    sakai.myb.api.google._gaq.push(['_trackEvent', category,  action]);
+    _gaq.push(['_trackEvent', category,  action]);
     
 	var tgt = $(link).attr("target");
 	if(tgt === "_blank") {
@@ -52,14 +54,14 @@ sakai.myb.api.google.recordOutboundLink = function(link, category, action) {
 /////////////////////////////
 sakai.myb.api.google.doInit = function() {
 	// Set your account ID here
-	sakai.myb.api.google._gaq.push(['_setAccount', 'UA-20616179-2']);
-	sakai.myb.api.google._gaq.push(['_trackPageview']);
+	_gaq.push(['_setAccount', sakai.config.Tracking.GoogleAnalytics.WebPropertyID]);
+	_gaq.push(['_trackPageview']);
 
 	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 };
 	
-
-sakai.myb.api.google.doInit();
-//sakai.api.Widgets.Container.registerForLoad("sakai.myb.api.google");
+$(document).ready(function() {
+	sakai.myb.api.google.doInit();
+});
