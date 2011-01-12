@@ -324,7 +324,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var toggleDetailMode = function() {
         var detailViewContainer = $(".noticewidget_detail_view", config.rootContainer);
         var listViewContainer = $(".noticewidget_list_view", config.rootContainer);
-        var archiveButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
         if (detailViewContainer.is(":visible")) {
             listViewContainer.show();
             detailViewContainer.hide();
@@ -448,8 +447,16 @@ sakai.mytasks = function(tuid) {
             }
         }
 
+        var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
+        var excludeRequiredState = "none";
+        if ( itemStatus === "required" ) {
+            excludeRequiredState = "false";
+        } else if ( itemStatus === "unrequired" ) {
+            excludeRequiredState = "true";
+        }
         return "&startDate=" + Globalization.format(startDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
-                + "&endDate=" + Globalization.format(endDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601);
+                + "&endDate=" + Globalization.format(endDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
+                + "&excludeRequiredState=" + excludeRequiredState;
     };
 
     var doInit = function() {
@@ -550,8 +557,16 @@ sakai.myevents = function(tuid) {
             }
         }
 
+        var itemStatus = $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
+        var excludeRequiredState = "none";
+        if ( itemStatus === "required" ) {
+            excludeRequiredState = "false";
+        } else if ( itemStatus === "unrequired" ) {
+            excludeRequiredState = "true";
+        }
         return "&startDate=" + Globalization.format(startDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
-                + "&endDate=" + Globalization.format(endDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601);
+                + "&endDate=" + Globalization.format(endDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
+                + "&excludeRequiredState=" + excludeRequiredState;
     };
 
     var doInit = function() {
