@@ -21,7 +21,7 @@ var sakai = sakai || {};
 sakai.upgradeReminders = function() {
 
     var SEARCH_URL = "/var/_upgradeMyBerkeleyRemindersSearch0.1-0.2";
-    var MAX_ITEMS = 2;
+    var MAX_ITEMS = 1000;
     var dryRun = true;
 
     var requiredRemindersSearch = {
