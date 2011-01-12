@@ -18,10 +18,79 @@
 /*global $, Config, opensocial */
 
 var sakai = sakai || {};
-sakai.upgradeReminders = function(){
+sakai.upgradeReminders = function() {
+
+    var SEARCH_URL = "/var/_upgradeMyBerkeleyRemindersSearch0.1-0.2";
+    var MAX_ITEMS = 2;
+
+    var requiredRemindersSearch = {
+        "sakai:query-language": "xpath",
+        "sakai:query-template": "//element(*)MetaData[@sling:resourceType='sakai/message' and @sakai:type='notice' and @sakai:category='reminder' ]",
+        "sling:resourceType": "sakai/search",
+        "sakai:propertyprovider" : "Message",
+        "sakai:resultprocessor": "Message",
+        "sakai:title" : "Search for required reminders used by one-time upgrade script"
+    };
+
+    var doPost = function(url, props, callback) {
+        console.log("POST to url " + url);
+        console.dir(props);
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: props,
+            success: function() {
+                if ($.isFunction(callback)) {
+                    callback();
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+                console.log("POST failed. XHR response:" + xhr.responseText);
+            },
+            dataType: 'json'
+        });
+    };
+
+    var deleteSearch = function() {
+        doPost(SEARCH_URL, {
+            ":operation" : "delete"
+        }, function() {
+            console.log("Successfully deleted search.");
+        });
+    };
+
+    var createSearch = function() {
+        doPost(SEARCH_URL, requiredRemindersSearch,
+              function() {
+                  console.log("Created search successfully.");
+                  runSearchAndUpgrade();
+              });
+    };
+
+    var runSearchAndUpgrade = function() {
+        $.ajax({
+            url: SEARCH_URL + "?items=" + MAX_ITEMS,
+            cache: false,
+            success: function(data) {
+                $.each(data.results, function(index, row) {
+                    console.log("Got result at " + row["jcr:path"]);
+
+                });
+                cleanup();
+            },
+            error: function(xhr, textStatus, thrownError) {
+                console.log("GET failed. XHR response:" + xhr.responseText);
+            }
+        });
+    };
+
+    var cleanup = function() {
+        deleteSearch();
+    };
 
     var doInit = function() {
-        alert("Upgrading...");
+        cleanup();
+        createSearch();
     };
 
     doInit();
