@@ -18,6 +18,10 @@
 /*global $, Config, opensocial */
 
 var sakai = sakai || {};
+
+/**
+ * Upgrades reminders from 0.1 to 0.2 by adding "sakai:required=true" to all required tasks and events.
+ */
 sakai.upgradeReminders = function() {
 
     var SEARCH_URL = "/var/_upgradeMyBerkeleyRemindersSearch0.1-0.2";
