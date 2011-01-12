@@ -22,6 +22,7 @@ sakai.upgradeReminders = function() {
 
     var SEARCH_URL = "/var/_upgradeMyBerkeleyRemindersSearch0.1-0.2";
     var MAX_ITEMS = 2;
+    var dryRun = true;
 
     var requiredRemindersSearch = {
         "sakai:query-language": "xpath",
@@ -84,12 +85,17 @@ sakai.upgradeReminders = function() {
         if (requests.length > 0) {
             console.log("batch requests[] = ");
             console.dir(requests);
-            doPost(sakai.config.URL.BATCH, {
-                requests: $.toJSON(requests)
-            }, function() {
-                console.log("Batch update succeeded!");
+
+            if ( !dryRun ) {
+                doPost(sakai.config.URL.BATCH, {
+                    requests: $.toJSON(requests)
+                }, function() {
+                    console.log("Batch update succeeded!");
+                    cleanup();
+                });
+            } else {
                 cleanup();
-            });
+            }
         } else {
             console.log("No more reminders to upgrade!");
             cleanup();
@@ -105,6 +111,11 @@ sakai.upgradeReminders = function() {
     };
 
     var doInit = function() {
+        var querystring = new Querystring();
+        if ( querystring.contains("dryRun") && querystring.get("dryRun") === "false") {
+            dryRun = false;
+        }
+        console.log("Running upgrade; dryRun=" + dryRun);
         cleanup();
         createSearch();
     };
