@@ -62,7 +62,7 @@ sakai.myb.api.google.doInit = function() {
     
 	// custom_config.js must be loaded before GA script, so we have to add GA as the last script
 	var arrLen = document.getElementsByTagName('script').length;
-	var s = document.getElementsByTagName('script')[arrLen]; s.parentNode.insertBefore(ga, s);
+	var s = document.getElementsByTagName('script')[arrLen-1]; s.parentNode.insertAfter(ga, s);
 };
 	
 $(document).ready(function() {
