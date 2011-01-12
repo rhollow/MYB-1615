@@ -49,27 +49,8 @@
         <!-- myberkeley JS -->
         <script type="text/javascript" src="/dev/lib/myb/myb.api.security.js"></script>
 
-		<!-- For tracking outbound links (TODO: remove this) -->		
-		<script type="text/javascript">
-		
-		  var _gaq = _gaq || [];
-		  _gaq.push(['_setAccount', 'UA-20616179-2']);
-		  _gaq.push(['_trackPageview']);
-		
-		  (function() {
-		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  })();
-		
-		function recordOutboundLink(link, category, action) {
-		  try {
-		    var myTracker=_gat._getTrackerByName();
-		    _gaq.push(['myTracker._trackEvent', category,  action]);
-		    setTimeout('document.location = "' + link.href + '"', 100);
-		  }catch(err){}
-		}
-		</script>
+		<!-- For tracking outbound links (tracking code goes just before the closing head tag) -->		
+        <script type="text/javascript" src="/dev/lib/myb/google/myb.api.google.js"></script>
 
     </head>
 
@@ -181,7 +162,7 @@
                                                         <label id="${j.id}_label" for="${j.id}_box" class="LabelUnselected" title="Add to myLinks."></label>
                                                     {/if}
                                                 {/for}
-                                                <a href="${j.url}"  id="urlfor_${j.id}" title="${j.popup_description}" onClick="recordOutboundLink(this, 'Outbound Links', 'portal-dev.berkeley.edu');return false;">${j.name|default:"No Available Name"}</a>
+                                                <a href="${j.url}" target="_blank" id="urlfor_${j.id}" title="${j.popup_description}">${j.name|default:"No Available Name"}</a>
                                             </li>
                                             {if counter<percol}
                                                 ${counter=counter+1|eat}

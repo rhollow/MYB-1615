@@ -189,6 +189,13 @@ sakai.links = function(){
     var createDirectory = function(directory, userLinks){
         $suggestedSites.html($.TemplateRenderer(suggested_sites_template, directory));
         $allSites.html($.TemplateRenderer(all_sites_template, directory));
+		
+		// Add Google Analytics outbound links tracking
+		$(".suggested_sites a, .all_sites a").click(function () {
+			sakai.myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
+			return false;			
+		});		
+		
         preCheckStars();
         checkStars();
     };
