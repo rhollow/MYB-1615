@@ -26,7 +26,7 @@ var sakai = sakai || {};
 sakai.upgradeDashboard = function() {
 
     var SEARCH_URL = "/var/_upgradeMyBerkeleyDashboardSettings0.1-0.2";
-    var MAX_USER_SEARCH_RESULTS = 5000;
+    var MAX_USER_SEARCH_RESULTS = 1000;
     var MYREMINDERS = "myreminders";
     var MYTASKS = "mytasks";
     var MYEVENTS = "myevents";
@@ -183,6 +183,8 @@ sakai.upgradeDashboard = function() {
                 sakai.api.Server.saveJSON(url, dashboard, function() {
                     console.log("Saved dashboard for " + url);
                 });
+            } else {
+                console.dir(dashboard);
             }
         } else {
             console.log("Unchanged dashboard at " + url);
