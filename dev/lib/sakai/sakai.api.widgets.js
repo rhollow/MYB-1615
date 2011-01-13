@@ -645,6 +645,9 @@ sakai.api.Widgets.saveWidgetData = function(id, content, callback) {
     // Get the URL from the widgetloader
     var url = sakai.api.Widgets.widgetLoader.widgets[id].placement;
 
+    console.log("saveWidgetData called with id = " + id + "; url = " + url);
+    console.dir(content);
+
     // Send a POST request to update/save the data for the widget
     sakai.api.Server.saveJSON(url, content, callback);
 

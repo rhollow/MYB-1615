@@ -27,6 +27,10 @@ sakai.upgradeDashboard = function() {
 
     var SEARCH_URL = "/var/_upgradeMyBerkeleyDashboardSettings0.1-0.2";
     var MAX_ITEMS = 1000;
+    var MYREMINDERS = "myreminders";
+    var MYTASKS = "mytasks";
+    var MYEVENTS = "myevents";
+
     var dryRun = true;
 
     var userSearch = {
@@ -96,16 +100,7 @@ sakai.upgradeDashboard = function() {
                     requests: $.toJSON(requests)
                 },
                 success: function(data) {
-                    console.log("Got user data back:");
-                    $.each(data.results, function(index, row) {
-                        if ( row.body.length > 0 ) {
-                            var rawObj = $.parseJSON(row.body);
-                            console.log("Processing dashboard at url " + row.url);
-                            var dashboard = sakai.api.Server.loadJSON.convertObjectToArray(rawObj, null, null);
-                            processUserDashboard(dashboard);
-                        }
-                    });
-                    cleanup();
+                    updateDashboards(data);
                 },
                 error: function(xhr) {
                     console.log("POST failed. XHR response:" + xhr.responseText);
@@ -119,34 +114,91 @@ sakai.upgradeDashboard = function() {
         }
     };
 
-    var processUserDashboard = function(dashboard) {
-        console.log("Dashboard before modifications:");
-        console.dir(dashboard);
+    var updateDashboards = function(data) {
+        console.log("Updating dashboards...");
+        var requests = [];
 
+        $.each(data.results, function(index, row) {
+            if ( row.body.length > 0 ) {
+                var rawObj = $.parseJSON(row.body);
+                console.log("Processing dashboard at url " + row.url);
+                var dashboard = sakai.api.Server.loadJSON.convertObjectToArray(rawObj, null, null);
+                var newDashboard = processDashboard(dashboard);
+
+                // saveWidgetData called with id = mysakaidashboard; url = /~admin/dashboard/mysakaidashboard/dashboard
+                var url = row.url.replace(".infinity.json", "");
+
+                requests[requests.length] = {
+                    url : url,
+                    method : "POST",
+                    parameters : newDashboard
+                };
+            }
+        });
+
+        console.log("Will batch update " + requests.length + " dashboards");
+        console.dir(requests);
+
+        cleanup();
+    };
+
+    var processDashboard = function(dashboard) {
+        sakai.api.Util.removeJCRObjects(dashboard);
         var hasMyTasks = false;
         var hasMyEvents = false;
+        var columnCount = 0;
 
         // remove the myreminders widget wherever it is found
-        $.each(dashboard.columns, function(index, outercol) {
-            if ( typeof outercol === "object" ) {
-                for ( var i = 0; i < outercol.length; i++ ) {
-                    if ( typeof outercol[i] === "object" ) {
-                        if ( outercol[i].name && outercol[i].name === "myreminders" ) {
-                            outercol.splice(i, 1);
-                        } else if ( outercol[i].name && outercol[i].name === "mytasks" ) {
-                            hasMyTasks = true;
-                        } else if ( outercol[i].name && outercol[i].name === "myevents" ) {
-                            hasMyEvents = true;
+        $.each(dashboard.columns, function(index, column) {
+            if ( typeof column === "object" ) {
+                for ( var i = 0; i < column.length; i++ ) {
+                    if ( typeof column[i] === "object" ) {
+                        columnCount++;
+                        if ( column[i].name ) {
+                            if ( column[i].name === MYREMINDERS ) {
+                                column.splice(i, 1);
+                            } else if ( column[i].name && column[i].name === MYTASKS ) {
+                                hasMyTasks = true;
+                            } else if ( column[i].name && column[i].name === MYEVENTS ) {
+                                hasMyEvents = true;
+                            }
                         }
                     }
                 }
             }
         });
 
-        // TODO add the mytasks and myevents widgets in column 1 (since we know that will always exist) unless user already has 'em
+        // add the mytasks and myevents widgets unless user already has 'em
+
+        // put event widget in second column if it exists, otherwise first col
+        if ( ! hasMyEvents ) {
+            var targetCol = "column1";
+            if ( dashboard.columns["column2"] ) {
+                targetCol = "column2";
+            }
+            dashboard.columns[targetCol].splice(0, 0, {
+                name : MYEVENTS,
+                uid : "id" + Math.round(Math.random() * 10000000000),
+                visible : "block"
+            });
+        } else {
+            console.log("User already has events widget");
+        }
+
+        // put tasks widget in first column
+        if ( ! hasMyTasks ) {
+            dashboard.columns["column1"].splice(0, 0, {
+                name : MYTASKS,
+                uid : "id" + Math.round(Math.random() * 10000000000),
+                visible : "block"
+            });
+        } else {
+            console.log("User already has tasks widget");
+        }
 
         console.log("Dashboard after modifications:");
         console.dir(dashboard);
+        return dashboard;
     };
 
     var cleanup = function() {
