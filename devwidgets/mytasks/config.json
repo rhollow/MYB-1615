@@ -9,7 +9,7 @@
         "en_US": "/devwidgets/mytasks/bundles/en_US.properties"
     },
     "multipleinstance": false,
-    "deletable":true,
+    "deletable":false,
     "type":"sakai",
     "enabled":true
 }
