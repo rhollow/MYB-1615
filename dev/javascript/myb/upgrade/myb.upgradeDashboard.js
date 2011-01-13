@@ -26,7 +26,7 @@ var sakai = sakai || {};
 sakai.upgradeDashboard = function() {
 
     var SEARCH_URL = "/var/_upgradeMyBerkeleyDashboardSettings0.1-0.2";
-    var MAX_USER_SEARCH_RESULTS = 1000;
+    var MAX_USER_SEARCH_RESULTS = 5000;
     var MYREMINDERS = "myreminders";
     var MYTASKS = "mytasks";
     var MYEVENTS = "myevents";
@@ -100,7 +100,16 @@ sakai.upgradeDashboard = function() {
                     requests: $.toJSON(requests)
                 },
                 success: function(data) {
-                    updateDashboards(data);
+                    console.log("Updating dashboards...");
+                    $.each(data.results, function(index, row) {
+                        if ( row.body.length > 0 ) {
+                            var rawObj = $.parseJSON(row.body);
+                            console.log("Processing dashboard at url " + row.url);
+                            var dashboard = sakai.api.Server.loadJSON.convertObjectToArray(rawObj, null, null);
+                            processDashboard(dashboard, row.url.replace(".infinity.json", ""));
+                        }
+                    });
+                    cleanup();
                 },
                 error: function(xhr) {
                     console.log("POST failed. XHR response:" + xhr.responseText);
@@ -114,29 +123,11 @@ sakai.upgradeDashboard = function() {
         }
     };
 
-    var updateDashboards = function(data) {
-        console.log("Updating dashboards...");
-
-        $.each(data.results, function(index, row) {
-            if ( row.body.length > 0 ) {
-                var rawObj = $.parseJSON(row.body);
-                console.log("Processing dashboard at url " + row.url);
-                var dashboard = sakai.api.Server.loadJSON.convertObjectToArray(rawObj, null, null);
-                var newDashboard = processDashboard(dashboard);
-                var url = row.url.replace(".infinity.json", "");
-                sakai.api.Server.saveJSON(url, newDashboard, function() {
-                    console.log("Saved dashboard for " + url);
-                });
-            }
-        });
-
-        cleanup();
-    };
-
-    var processDashboard = function(dashboard) {
+    var processDashboard = function(dashboard, url) {
         sakai.api.Util.removeJCRObjects(dashboard);
         var hasMyTasks = false;
         var hasMyEvents = false;
+        var hasChanged = false;
         var columnCount = 0;
 
         // remove the myreminders widget wherever it is found
@@ -148,6 +139,7 @@ sakai.upgradeDashboard = function() {
                         if ( column[i].name ) {
                             if ( column[i].name === MYREMINDERS ) {
                                 column.splice(i, 1);
+                                hasChanged = true;
                             } else if ( column[i].name && column[i].name === MYTASKS ) {
                                 hasMyTasks = true;
                             } else if ( column[i].name && column[i].name === MYEVENTS ) {
@@ -163,6 +155,7 @@ sakai.upgradeDashboard = function() {
 
         // put event widget in second column if it exists, otherwise first col
         if ( ! hasMyEvents ) {
+            hasChanged = true;
             var targetCol = "column1";
             if ( dashboard.columns["column2"] ) {
                 targetCol = "column2";
@@ -172,24 +165,28 @@ sakai.upgradeDashboard = function() {
                 uid : "id" + Math.round(Math.random() * 10000000000),
                 visible : "block"
             });
-        } else {
-            console.log("User already has events widget");
         }
 
         // put tasks widget in first column
         if ( ! hasMyTasks ) {
+            hasChanged = true;
             dashboard.columns["column1"].splice(0, 0, {
                 name : MYTASKS,
                 uid : "id" + Math.round(Math.random() * 10000000000),
                 visible : "block"
             });
-        } else {
-            console.log("User already has tasks widget");
         }
 
-        console.log("Dashboard after modifications:");
-        console.dir(dashboard);
-        return dashboard;
+        if ( hasChanged ) {
+            console.log("Dashboard modified at " + url);
+            if ( ! dryRun ) {
+                sakai.api.Server.saveJSON(url, dashboard, function() {
+                    console.log("Saved dashboard for " + url);
+                });
+            }
+        } else {
+            console.log("Unchanged dashboard at " + url);
+        }
     };
 
     var cleanup = function() {
@@ -205,7 +202,7 @@ sakai.upgradeDashboard = function() {
         if ( querystring.contains("dryRun") && querystring.get("dryRun") === "false") {
             dryRun = false;
         }
-        console.log("Running upgrade; dryRun=" + dryRun);
+        console.log("Running dashboard upgrade; dryRun=" + dryRun);
         cleanup();
         createSearch();
     };
