@@ -10,7 +10,7 @@
         "zh_CN": "/devwidgets/myreminders/bundles/zh_CN.properties"
     },
     "multipleinstance": false,    
-    "deletable":false,
+    "deletable":true,
     "type":"sakai",
     "enabled":true
 }

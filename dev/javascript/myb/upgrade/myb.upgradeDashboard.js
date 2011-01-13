@@ -99,9 +99,10 @@ sakai.upgradeDashboard = function() {
                     console.log("Got user data back:");
                     $.each(data.results, function(index, row) {
                         if ( row.body.length > 0 ) {
-                            var jsonObj = $.parseJSON(row.body);
+                            var rawObj = $.parseJSON(row.body);
                             console.log("Processing dashboard at url " + row.url);
-                            processUserDashboard(jsonObj);
+                            var dashboard = sakai.api.Server.loadJSON.convertObjectToArray(rawObj, null, null);
+                            processUserDashboard(dashboard);
                         }
                     });
                     cleanup();
@@ -119,11 +120,36 @@ sakai.upgradeDashboard = function() {
     };
 
     var processUserDashboard = function(dashboard) {
+        console.log("Dashboard before modifications:");
+        console.dir(dashboard);
+
+        var hasMyTasks = false;
+        var hasMyEvents = false;
+
+        // remove the myreminders widget wherever it is found
+        $.each(dashboard.columns, function(index, outercol) {
+            if ( typeof outercol === "object" ) {
+                for ( var i = 0; i < outercol.length; i++ ) {
+                    if ( typeof outercol[i] === "object" ) {
+                        if ( outercol[i].name && outercol[i].name === "myreminders" ) {
+                            outercol.splice(i, 1);
+                        } else if ( outercol[i].name && outercol[i].name === "mytasks" ) {
+                            hasMyTasks = true;
+                        } else if ( outercol[i].name && outercol[i].name === "myevents" ) {
+                            hasMyEvents = true;
+                        }
+                    }
+                }
+            }
+        });
+
+        // TODO add the mytasks and myevents widgets in column 1 (since we know that will always exist) unless user already has 'em
+
+        console.log("Dashboard after modifications:");
         console.dir(dashboard);
     };
 
     var cleanup = function() {
-        return;
         doPost(SEARCH_URL, {
             ":operation" : "delete"
         }, function() {
