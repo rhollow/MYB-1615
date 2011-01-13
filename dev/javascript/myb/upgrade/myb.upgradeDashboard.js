@@ -26,7 +26,7 @@ var sakai = sakai || {};
 sakai.upgradeDashboard = function() {
 
     var SEARCH_URL = "/var/_upgradeMyBerkeleyDashboardSettings0.1-0.2";
-    var MAX_ITEMS = 1000;
+    var MAX_USER_SEARCH_RESULTS = 1000;
     var MYREMINDERS = "myreminders";
     var MYTASKS = "mytasks";
     var MYEVENTS = "myevents";
@@ -71,7 +71,7 @@ sakai.upgradeDashboard = function() {
 
     var runSearchAndUpgrade = function() {
         $.ajax({
-            url: SEARCH_URL + "?items=" + MAX_ITEMS,
+            url: SEARCH_URL + "?items=" + MAX_USER_SEARCH_RESULTS,
             cache: false,
             success: function(data) {
                 checkDashboards(data.results);
@@ -116,7 +116,6 @@ sakai.upgradeDashboard = function() {
 
     var updateDashboards = function(data) {
         console.log("Updating dashboards...");
-        var requests = [];
 
         $.each(data.results, function(index, row) {
             if ( row.body.length > 0 ) {
@@ -124,20 +123,12 @@ sakai.upgradeDashboard = function() {
                 console.log("Processing dashboard at url " + row.url);
                 var dashboard = sakai.api.Server.loadJSON.convertObjectToArray(rawObj, null, null);
                 var newDashboard = processDashboard(dashboard);
-
-                // saveWidgetData called with id = mysakaidashboard; url = /~admin/dashboard/mysakaidashboard/dashboard
                 var url = row.url.replace(".infinity.json", "");
-
-                requests[requests.length] = {
-                    url : url,
-                    method : "POST",
-                    parameters : newDashboard
-                };
+                sakai.api.Server.saveJSON(url, newDashboard, function() {
+                    console.log("Saved dashboard for " + url);
+                });
             }
         });
-
-        console.log("Will batch update " + requests.length + " dashboards");
-        console.dir(requests);
 
         cleanup();
     };
