@@ -83,18 +83,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
         })
     };
 
-    var hideFilters = function() {
-        filterContainer.hide();
-        filterControlIndicator.removeClass("open");
-        filterControlIndicator.addClass("closed");
-    };
-
-    var showFilters = function() {
-        filterContainer.show();
-        filterControlIndicator.removeClass("closed");
-        filterControlIndicator.addClass("open");
-    };
-
     var refreshSearch = function() {
         that.getNotices(function() {
             updateFilterStatus();
@@ -115,9 +103,13 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var attachFilterListeners = function() {
             filterControl.live("click", function() {
                 if (filterContainer.is(":visible")) {
-                    hideFilters();
+                    filterContainer.hide();
+                    filterControlIndicator.removeClass("open");
+                    filterControlIndicator.addClass("closed");
                 } else {
-                    showFilters();
+                    filterContainer.show();
+                    filterControlIndicator.removeClass("closed");
+                    filterControlIndicator.addClass("open");
                 }
             });
 
