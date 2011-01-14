@@ -68,9 +68,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     model = data;
                     currentNotice = 0;
                     config.container.html($.TemplateRenderer(config.template, model));
-                    updateArchiveButtons();
-                    updateScroller();
-                    updateSubjectLines();
+                    that.updateUI();
                     if ($.isFunction(callback)) {
                         callback();
                     }
@@ -182,7 +180,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                                       element.checked = rowData["sakai:taskState"] === "completed";
                                   }
                               });
-                              updateArchiveButtons();
+                              that.updateUI();
                           }
                         );
             });
@@ -262,64 +260,70 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     };
 
+    that.updateUI = function() {
 
-    var updateArchiveButtons = function() {
-        var archiveTasksButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
-        var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
-        var noTasksMessage = $(".empty_list td:first", config.rootContainer);
-        var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
+        var updateArchiveButtons = function() {
+            var archiveTasksButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
+            var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
+            var noTasksMessage = $(".empty_list td:first", config.rootContainer);
+            var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
 
-        if ( archiveMode ) {
-            archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
-            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
-            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
-            selectorCells.show();
-        } else {
-            archiveTasksButtonText.html(translate("ARCHIVE_COMPLETED_TASKS"));
-            viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.listMode));
-            noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.listMode));
-            selectorCells.hide();
-        }
-        var enabled = model.results.length > 0;
-        if ( isDetailMode() ) {
             if ( archiveMode ) {
-                archiveTasksButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
+                archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
+                viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
+                noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
+                selectorCells.show();
             } else {
-                archiveTasksButtonText.html(translate("ARCHIVE_THIS_TASK"));
+                archiveTasksButtonText.html(translate("ARCHIVE_COMPLETED_TASKS"));
+                viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.listMode));
+                noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.listMode));
+                selectorCells.hide();
             }
-
-            if ( model.results[currentNotice] ) {
-                var isCurrentTaskRequired = model.results[currentNotice]["sakai:required"];
-                if ( isCurrentTaskRequired ) {
-                    enabled = model.results[currentNotice]["sakai:taskState"] === "completed";
+            var enabled = model.results.length > 0;
+            if ( isDetailMode() ) {
+                if ( archiveMode ) {
+                    archiveTasksButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
                 } else {
-                    enabled = true;
+                    archiveTasksButtonText.html(translate("ARCHIVE_THIS_TASK"));
+                }
+
+                if ( model.results[currentNotice] ) {
+                    var isCurrentTaskRequired = model.results[currentNotice]["sakai:required"];
+                    if ( isCurrentTaskRequired ) {
+                        enabled = model.results[currentNotice]["sakai:taskState"] === "completed";
+                    } else {
+                        enabled = true;
+                    }
                 }
             }
-        }
-        var parent = archiveTasksButtonText.parent();
-        if ( enabled ) {
-            parent.removeClass("s3d-disabled");
-            parent.addClass("s3d-button-primary");
-        } else {
-            parent.addClass("s3d-disabled");
-            parent.removeClass("s3d-button-primary");
-        }
-    };
+            var parent = archiveTasksButtonText.parent();
+            if ( enabled ) {
+                parent.removeClass("s3d-disabled");
+                parent.addClass("s3d-button-primary");
+            } else {
+                parent.addClass("s3d-disabled");
+                parent.removeClass("s3d-button-primary");
+            }
+        };
 
-    var updateScroller = function() {
-        var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-        if ( tbody[0].clientHeight > 150 ) {
-            tbody.addClass("scroller");
-        } else {
-            tbody.removeClass("scroller");
-        }
-    };
+        var updateScroller = function() {
+            var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
+            if ( tbody[0].clientHeight > 150 ) {
+                tbody.addClass("scroller");
+            } else {
+                tbody.removeClass("scroller");
+            }
+        };
 
-    var updateSubjectLines = function() {
-        $("td.subjectLine", config.rootContainer).ThreeDots({
-            max_rows : 1
-        });
+        var updateSubjectLines = function() {
+            $("td.subjectLine", config.rootContainer).ThreeDots({
+                max_rows : 1
+            });
+        };
+
+        updateArchiveButtons();
+        updateScroller();
+        updateSubjectLines();
     };
 
     var showCurrentDetail = function() {
@@ -338,7 +342,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         } else {
             $(".prevArrow", config.rootContainer).addClass("disabled");
         }
-        updateArchiveButtons();
+        that.updateUI();
     };
 
     var toggleDetailMode = function() {
@@ -351,7 +355,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             listViewContainer.hide();
             detailViewContainer.show();
         }
-        updateArchiveButtons();
+        that.updateUI();
     };
 
     var isDetailMode = function() {
