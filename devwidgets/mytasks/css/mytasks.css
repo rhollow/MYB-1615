@@ -165,7 +165,7 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .prev {
-    background-position: left -25px;
+    background-position: left -26px;
     margin-right: -10px;
 }
 
@@ -174,31 +174,31 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .prevArrow {
-    background-position: left top;
+    background-position: left 1px;
 }
 
 .noticewidget_detail_controls .next {
-    background-position: -55px -25px;
+    background-position: -55px -26px;
 }
 
 .noticewidget_detail_controls .nextArrow {
-    background-position: -53px 1px;
+    background-position: -54px 2px;
 }
 
 .noticewidget_detail_controls .next:hover {
-    background-position: -55px -60px;
+    background-position: -56px -62px;
 }
 
 .noticewidget_detail_controls .nextArrow.disabled {
-    background-position: -53px -89px;
+    background-position: -54px -90px;
 }
 
 .noticewidget_detail_controls .prev:hover {
-    background-position: left -60px;
+    background-position: left -62px;
 }
 
 .noticewidget_detail_controls .prevArrow.disabled {
-    background-position: left -90px;
+    background-position: left -92px;
 }
 
 .noticewidget_detail {
