@@ -182,14 +182,13 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 archiveMode = !archiveMode;
                 detailMode = false;
                 that.getNotices(function() {
-                    var filterIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
-                    var filterControls = $(".noticewidget_filter_control", config.rootContainer);
                     if ( archiveMode ) {
-                        filterIndicator.hide();
-                        filterControls.hide();
+                        filterControlIndicator.hide();
+                        filterControl.hide();
+                        filterContainer.hide();
                     } else {
-                        filterIndicator.show();
-                        filterControls.show();
+                        filterControlIndicator.show();
+                        filterControl.show();
                     }
                 });
             });
