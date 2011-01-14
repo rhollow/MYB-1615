@@ -55,7 +55,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     that.init = function() {
         listeners();
-        updateFilterStatus();
     };
 
     that.getNotices = function(callback) {
@@ -81,20 +80,9 @@ sakai.myb.noticewidgets.Widget = function(config) {
         })
     };
 
-    var refreshSearch = function() {
-        that.getNotices(function() {
-            updateFilterStatus();
-        });
-    };
-
-    var updateFilterStatus = function() {
-        filterControl.html(translate("FILTER") + " " + translate(config.convertFilterStateToMessage()));
-    };
-
     var translate = function(key) {
         return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
     };
-
 
     var listeners = function() {
 
@@ -112,7 +100,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
 
             $("input:radio", config.rootContainer).live("click", function() {
-                refreshSearch();
+                that.getNotices();
             });
         };
 
@@ -321,9 +309,14 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
         };
 
+        var updateFilterStatus = function() {
+            filterControl.html(translate("FILTER") + " " + translate(config.convertFilterStateToMessage()));
+        };
+
         updateArchiveButtons();
         updateScroller();
         updateSubjectLines();
+        updateFilterStatus();
     };
 
     var showCurrentDetail = function() {
