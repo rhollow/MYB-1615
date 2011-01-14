@@ -186,7 +186,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 model.archiveMode = !model.archiveMode;
                 model.detailMode = false;
                 that.getNotices(function() {
-                    if ( model.archiveMode ) {
+                    if (model.archiveMode) {
                         filterControlIndicator.hide();
                         filterControl.hide();
                         filterContainer.hide();
@@ -197,7 +197,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 });
             });
             $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
-                if ( $(this).is(".s3d-disabled")) {
+                if ($(this).is(".s3d-disabled")) {
                     // don't attempt to archive a task whose archive button is disabled
                     return;
                 }
@@ -219,7 +219,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 if (model.archiveMode) {
                     $.each(model.data.results, function(index, row) {
                         var selectionBox = $("#mytaskstdselect_" + index + " input");
-                        if ( selectionBox.get()[0].checked ) {
+                        if (selectionBox.get()[0].checked) {
                             requests[requests.length] = {
                                 url : row["jcr:path"],
                                 method : "POST",
@@ -260,7 +260,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             var noTasksMessage = $(".empty_list td:first", config.rootContainer);
             var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
 
-            if ( model.archiveMode ) {
+            if (model.archiveMode) {
                 archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
                 viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
                 noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
@@ -272,16 +272,16 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 selectorCells.hide();
             }
             var enabled = model.data.results.length > 0;
-            if ( model.detailMode ) {
-                if ( model.archiveMode ) {
+            if (model.detailMode) {
+                if (model.archiveMode) {
                     archiveTasksButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
                 } else {
                     archiveTasksButtonText.html(translate("ARCHIVE_THIS_TASK"));
                 }
 
-                if ( model.data.results[model.currentNotice] ) {
+                if (model.data.results[model.currentNotice]) {
                     var isCurrentTaskRequired = model.data.results[model.currentNotice]["sakai:required"];
-                    if ( isCurrentTaskRequired ) {
+                    if (isCurrentTaskRequired) {
                         enabled = model.data.results[model.currentNotice]["sakai:taskState"] === "completed";
                     } else {
                         enabled = true;
@@ -289,7 +289,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 }
             }
             var parent = archiveTasksButtonText.parent();
-            if ( enabled ) {
+            if (enabled) {
                 parent.removeClass("s3d-disabled");
                 parent.addClass("s3d-button-primary");
             } else {
@@ -300,7 +300,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
         var scroller = function() {
             var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-            if ( tbody[0].clientHeight > 150 ) {
+            if (tbody[0].clientHeight > 150) {
                 tbody.addClass("scroller");
             } else {
                 tbody.removeClass("scroller");
@@ -323,12 +323,12 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 detail : model.data.results[model.currentNotice],
                 index : model.currentNotice
             }));
-            if ( model.currentNotice < model.data.results.length - 1 ) {
+            if (model.currentNotice < model.data.results.length - 1) {
                 $(".nextArrow", config.rootContainer).removeClass("disabled");
             } else {
                 $(".nextArrow", config.rootContainer).addClass("disabled");
             }
-            if (model.currentNotice > 0 ) {
+            if (model.currentNotice > 0) {
                 $(".prevArrow", config.rootContainer).removeClass("disabled");
             } else {
                 $(".prevArrow", config.rootContainer).addClass("disabled");
@@ -442,33 +442,33 @@ sakai.mytasks = function(tuid) {
         var startDate = new Date();
         var endDate = new Date();
 
-        if ( isArchiveMode ) {
+        if (isArchiveMode) {
             startDate = sakai.myb.noticewidgets.BEGINNING_OF_TIME;
             endDate = sakai.myb.noticewidgets.END_OF_TIME;
         } else {
             startDate = today;
-            switch ( getDateRange() ) {
+            switch (getDateRange()) {
                 case "all" :
                     endDate = sakai.myb.noticewidgets.END_OF_TIME;
-                break;
+                    break;
                 case "next7" :
                     endDate.setTime(today.getTime() + 7 * sakai.myb.noticewidgets.ONE_DAY);
-                break;
+                    break;
                 case "next30" :
                     endDate.setTime(today.getTime() + 30 * sakai.myb.noticewidgets.ONE_DAY);
-                break;
+                    break;
                 case "overdue" :
                     startDate = sakai.myb.noticewidgets.BEGINNING_OF_TIME;
                     endDate = new Date();
-                break;
+                    break;
             }
         }
 
         var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
         var excludeRequiredState = "none";
-        if ( itemStatus === "required" ) {
+        if (itemStatus === "required") {
             excludeRequiredState = "false";
-        } else if ( itemStatus === "unrequired" ) {
+        } else if (itemStatus === "unrequired") {
             excludeRequiredState = "true";
         }
         return "&startDate=" + Globalization.format(startDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
@@ -556,29 +556,29 @@ sakai.myevents = function(tuid) {
         var startDate = new Date();
         var endDate = new Date();
 
-        if ( isArchiveMode ) {
+        if (isArchiveMode) {
             startDate = sakai.myb.noticewidgets.BEGINNING_OF_TIME;
             endDate.setTime(today.getTime() + sakai.myb.noticewidgets.ONE_DAY);
         } else {
             startDate = today;
-            switch ( getDateRange() ) {
+            switch (getDateRange()) {
                 case "all" :
                     endDate = sakai.myb.noticewidgets.END_OF_TIME;
-                break;
+                    break;
                 case "next7" :
                     endDate.setTime(today.getTime() + 7 * sakai.myb.noticewidgets.ONE_DAY);
-                break;
+                    break;
                 case "next30" :
                     endDate.setTime(today.getTime() + 30 * sakai.myb.noticewidgets.ONE_DAY);
-                break;
+                    break;
             }
         }
 
         var itemStatus = $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
         var excludeRequiredState = "none";
-        if ( itemStatus === "required" ) {
+        if (itemStatus === "required") {
             excludeRequiredState = "false";
-        } else if ( itemStatus === "unrequired" ) {
+        } else if (itemStatus === "unrequired") {
             excludeRequiredState = "true";
         }
         return "&startDate=" + Globalization.format(startDate, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
