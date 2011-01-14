@@ -204,9 +204,13 @@ sakai.upgradeDashboard = function() {
         if ( querystring.contains("dryRun") && querystring.get("dryRun") === "false") {
             dryRun = false;
         }
-        console.log("Running dashboard upgrade; dryRun=" + dryRun);
-        cleanup();
-        createSearch();
+
+        $("#upgrade_dashboards_button").live("click", function() {
+            console.log("Running dashboard upgrade; dryRun=" + dryRun);
+            cleanup();
+            createSearch();
+        });
+
     };
 
     doInit();

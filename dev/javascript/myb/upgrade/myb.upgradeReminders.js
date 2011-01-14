@@ -119,9 +119,11 @@ sakai.upgradeReminders = function() {
         if ( querystring.contains("dryRun") && querystring.get("dryRun") === "false") {
             dryRun = false;
         }
-        console.log("Running upgrade; dryRun=" + dryRun);
-        cleanup();
-        createSearch();
+        $("#upgrade_reminders_button").live("click", function() {
+            console.log("Running upgrade; dryRun=" + dryRun);
+            cleanup();
+            createSearch();
+        });
     };
 
     doInit();
