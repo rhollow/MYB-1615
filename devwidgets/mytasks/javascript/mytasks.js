@@ -88,10 +88,19 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
 
     var hideFilters = function() {
+        filterContainer.hide();
+        filterControlIndicator.removeClass("open");
+        filterControlIndicator.addClass("closed");
+    };
+
+    var showFilters = function() {
+        filterContainer.show();
+        filterControlIndicator.removeClass("closed");
+        filterControlIndicator.addClass("open");
+    };
+
+    var refreshSearch = function() {
         that.getNotices(function() {
-            filterContainer.hide();
-            filterControlIndicator.removeClass("open");
-            filterControlIndicator.addClass("closed");
             updateFilterStatus();
         });
     };
@@ -109,19 +118,12 @@ sakai.myb.noticewidgets.Widget = function(config) {
             if (filterContainer.is(":visible")) {
                 hideFilters();
             } else {
-                filterContainer.show();
-                filterControlIndicator.removeClass("closed");
-                filterControlIndicator.addClass("open");
+                showFilters();
             }
         });
 
-        $(window).bind("click", function(e) {
-            // if filter is visible and the target element clicked is not filter or its control then hide filter
-            if (filterContainer.is(":visible")
-                    && !$(e.target).is(".noticewidget_filter_control")
-                    && !$(e.target).parents().is("#" + config.widgetName + "_filter")) {
-                hideFilters();
-            }
+        $("input:radio", config.rootContainer).live("click", function() {
+            refreshSearch();
         });
     };
 
