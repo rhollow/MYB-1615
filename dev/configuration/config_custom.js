@@ -27,7 +27,7 @@ sakai.config.PageTitles.pages["/dev/listpage.html"] = "MY_DYNAMIC_LISTS";
 sakai.config.PageTitles.pages["/dev/links.html"] = "LINKS";
 
 // set our own default widget arrangement
-sakai.widgets.defaults.personalportal.columns = [["mylinks", "recentmessages"], ["myreminders","mygroups"]];
+sakai.widgets.defaults.personalportal.columns = [["mytasks", "mylinks", "recentmessages"], ["myevents","mygroups"]];
 
 // conditional link for notification authoring page
 sakai.config.Navigation[sakai.config.Navigation.length] = {
@@ -107,4 +107,5 @@ sakai.config.Tracking = {
 		WebPropertyID : "UA-20616179-3"
 	}
 };
+
 // myberkeley custom end

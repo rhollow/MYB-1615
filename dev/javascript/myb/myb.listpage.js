@@ -82,7 +82,7 @@ sakai.listpage = function(){
     var getDataFromInput = function() {
         var result = {};
 		
-		result.context = "CED";
+		result.context = "g-ced-students";
         result.listName = $.trim($("#list_name").val());
 		if(result.listName == null) {
 			$("#invalid_name").show();
