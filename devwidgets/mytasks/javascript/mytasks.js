@@ -44,30 +44,34 @@ sakai.myb.noticewidgets.formatDate = function(date, format) {
 sakai.myb.noticewidgets.Widget = function(config) {
     var that = function() {
     };
-    var model = null;
-    var sortOn = config.defaultSortOn;
-    var sortOrder = "ascending";
+    var model = {
+        data : null,
+        sortOn : config.defaultSortOn,
+        sortOrder : "ascending",
+        archiveMode : false,
+        detailMode : false,
+        currentNotice : 0
+    };
+
     var filterControl = $(".noticewidget_filter_control", config.rootContainer);
     var filterContainer = $(".noticewidget_filter", config.rootContainer);
     var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
-    var currentNotice = 0;
-    var archiveMode = false;
-    var detailMode = false;
 
     that.init = function() {
         listeners();
     };
 
     that.getNotices = function(callback) {
-        var dataURL = archiveMode ? config.archiveDataURL : config.dataURL;
+        var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
         $.ajax({
-            url: dataURL + "?sortOn=" + sortOn + "&sortOrder=" + sortOrder + config.buildExtraQueryParams(archiveMode),
+            url: dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
+                    + config.buildExtraQueryParams(model.archiveMode),
             cache: false,
             success: function(data) {
                 if (data.results) {
-                    model = data;
-                    currentNotice = 0;
-                    config.container.html($.TemplateRenderer(config.template, model));
+                    model.data = data;
+                    model.currentNotice = 0;
+                    config.container.html($.TemplateRenderer(config.template, model.data));
                     that.updateUI();
                     if ($.isFunction(callback)) {
                         callback();
@@ -108,12 +112,12 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var attachSortListeners = function() {
             $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                 var newSortCol = $(this);
-                var oldSortOn = sortOn;
-                sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
-                if (oldSortOn != sortOn) {
-                    sortOrder = "ascending";
+                var oldSortOn = model.sortOn;
+                model.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
+                if (oldSortOn != model.sortOn) {
+                    model.sortOrder = "ascending";
                 } else {
-                    sortOrder = sortOrder === "ascending" ? "descending" : "ascending";
+                    model.sortOrder = model.sortOrder === "ascending" ? "descending" : "ascending";
                 }
 
                 that.getNotices(function() {
@@ -121,7 +125,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     var arrow = $(".noticewidget_listing thead span", config.rootContainer);
                     arrow.removeClass("descending");
                     // set the new sort arrow state
-                    arrow.addClass(sortOrder);
+                    arrow.addClass(model.sortOrder);
                     // move arrow span to new sort col
                     arrow.remove();
                     arrow.appendTo(newSortCol);
@@ -131,23 +135,23 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
         var attachDetailListeners = function() {
             $(".noticewidget_listing td.detailTrigger", config.rootContainer).live("click", function() {
-                currentNotice = this.id.replace(/\w+_/gi, "");
-                detailMode = true;
+                model.currentNotice = this.id.replace(/\w+_/gi, "");
+                model.detailMode = true;
                 that.updateUI();
             });
             $(".return_to_list_container", config.rootContainer).live("click", function() {
-                detailMode = false;
+                model.detailMode = false;
                 that.updateUI();
             });
             $(".next", config.rootContainer).live("click", function() {
-                if (currentNotice < model.results.length - 1) {
-                    currentNotice++;
+                if (model.currentNotice < model.data.results.length - 1) {
+                    model.currentNotice++;
                     that.updateUI();
                 }
             });
             $(".prev", config.rootContainer).live("click", function() {
-                if (currentNotice > 0) {
-                    currentNotice--;
+                if (model.currentNotice > 0) {
+                    model.currentNotice--;
                     that.updateUI();
                 }
             });
@@ -156,11 +160,11 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var attachCompletedCheckboxListeners = function() {
             $(".task-completed-checkbox", config.rootContainer).live("click", function() {
                 var rowIndex = this.id.replace(/\w+_/gi, "");
-                var rowData = model.results[rowIndex];
+                var rowData = model.data.results[rowIndex];
                 var newTaskState = rowData["sakai:taskState"] === "created" ? "completed" : "created";
-                model.results[rowIndex]["sakai:taskState"] = newTaskState;
+                model.data.results[rowIndex]["sakai:taskState"] = newTaskState;
                 postNotice(
-                        model.results[rowIndex]["jcr:path"],
+                        model.data.results[rowIndex]["jcr:path"],
                 { "sakai:taskState": newTaskState },
                           function() {
                               // update UI so it reflects the new model state
@@ -179,10 +183,10 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
         var attachArchiveListeners = function() {
             $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
-                archiveMode = !archiveMode;
-                detailMode = false;
+                model.archiveMode = !model.archiveMode;
+                model.detailMode = false;
                 that.getNotices(function() {
-                    if ( archiveMode ) {
+                    if ( model.archiveMode ) {
                         filterControlIndicator.hide();
                         filterControl.hide();
                         filterContainer.hide();
@@ -197,10 +201,10 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     // don't attempt to archive a task whose archive button is disabled
                     return;
                 }
-                if (detailMode) {
-                    detailMode = false;
-                    var row = model.results[currentNotice];
-                    var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
+                if (model.detailMode) {
+                    model.detailMode = false;
+                    var row = model.data.results[model.currentNotice];
+                    var postData = model.archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
                     postNotice(
                             row["jcr:path"],
                             postData,
@@ -212,8 +216,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 }
 
                 var requests = [];
-                if (archiveMode) {
-                    $.each(model.results, function(index, row) {
+                if (model.archiveMode) {
+                    $.each(model.data.results, function(index, row) {
                         var selectionBox = $("#mytaskstdselect_" + index + " input");
                         if ( selectionBox.get()[0].checked ) {
                             requests[requests.length] = {
@@ -224,7 +228,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                         }
                     });
                 } else {
-                    $.each(model.results, function(index, row) {
+                    $.each(model.data.results, function(index, row) {
                         if (row["sakai:taskState"] === "completed") {
                             requests[requests.length] = {
                                 url : row["jcr:path"],
@@ -256,7 +260,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             var noTasksMessage = $(".empty_list td:first", config.rootContainer);
             var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
 
-            if ( archiveMode ) {
+            if ( model.archiveMode ) {
                 archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
                 viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
                 noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
@@ -267,18 +271,18 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.listMode));
                 selectorCells.hide();
             }
-            var enabled = model.results.length > 0;
-            if ( detailMode ) {
-                if ( archiveMode ) {
+            var enabled = model.data.results.length > 0;
+            if ( model.detailMode ) {
+                if ( model.archiveMode ) {
                     archiveTasksButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
                 } else {
                     archiveTasksButtonText.html(translate("ARCHIVE_THIS_TASK"));
                 }
 
-                if ( model.results[currentNotice] ) {
-                    var isCurrentTaskRequired = model.results[currentNotice]["sakai:required"];
+                if ( model.data.results[model.currentNotice] ) {
+                    var isCurrentTaskRequired = model.data.results[model.currentNotice]["sakai:required"];
                     if ( isCurrentTaskRequired ) {
-                        enabled = model.results[currentNotice]["sakai:taskState"] === "completed";
+                        enabled = model.data.results[model.currentNotice]["sakai:taskState"] === "completed";
                     } else {
                         enabled = true;
                     }
@@ -316,15 +320,15 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var showCurrentDetail = function() {
             $(".noticewidget_detail", config.rootContainer).html($.TemplateRenderer(config.detailTemplate,
             {
-                detail : model.results[currentNotice],
-                index : currentNotice
+                detail : model.data.results[model.currentNotice],
+                index : model.currentNotice
             }));
-            if ( currentNotice < model.results.length - 1 ) {
+            if ( model.currentNotice < model.data.results.length - 1 ) {
                 $(".nextArrow", config.rootContainer).removeClass("disabled");
             } else {
                 $(".nextArrow", config.rootContainer).addClass("disabled");
             }
-            if (currentNotice > 0 ) {
+            if (model.currentNotice > 0 ) {
                 $(".prevArrow", config.rootContainer).removeClass("disabled");
             } else {
                 $(".prevArrow", config.rootContainer).addClass("disabled");
@@ -334,7 +338,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var updateDetailMode = function() {
             var detailViewContainer = $(".noticewidget_detail_view", config.rootContainer);
             var listViewContainer = $(".noticewidget_list_view", config.rootContainer);
-            if (detailMode) {
+            if (model.detailMode) {
                 showCurrentDetail();
                 listViewContainer.hide();
                 detailViewContainer.show();
