@@ -54,11 +54,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var archiveMode = false;
 
     that.init = function() {
-        attachFilterListeners();
-        attachSortListeners();
-        attachDetailListeners();
-        attachCompletedCheckboxListeners();
-        attachArchiveListeners();
+        listeners();
         updateFilterStatus();
     };
 
@@ -113,89 +109,167 @@ sakai.myb.noticewidgets.Widget = function(config) {
         return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
     };
 
-    var attachFilterListeners = function() {
-        filterControl.live("click", function() {
-            if (filterContainer.is(":visible")) {
-                hideFilters();
-            } else {
-                showFilters();
-            }
-        });
 
-        $("input:radio", config.rootContainer).live("click", function() {
-            refreshSearch();
-        });
-    };
+    var listeners = function() {
 
-    var attachSortListeners = function() {
-        $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
-            var newSortCol = $(this);
-            var oldSortOn = sortOn;
-            sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
-            if (oldSortOn != sortOn) {
-                sortOrder = "ascending";
-            } else {
-                sortOrder = sortOrder === "ascending" ? "descending" : "ascending";
-            }
-
-            that.getNotices(function() {
-                // clear old sort arrows
-                var arrow = $(".noticewidget_listing thead span", config.rootContainer);
-                arrow.removeClass("descending");
-                // set the new sort arrow state
-                arrow.addClass(sortOrder);
-                // move arrow span to new sort col
-                arrow.remove();
-                arrow.appendTo(newSortCol);
+        var attachFilterListeners = function() {
+            filterControl.live("click", function() {
+                if (filterContainer.is(":visible")) {
+                    hideFilters();
+                } else {
+                    showFilters();
+                }
             });
-        });
-    };
 
-    var attachDetailListeners = function() {
-        $(".noticewidget_listing td.detailTrigger", config.rootContainer).live("click", function() {
-            currentNotice = this.id.replace(/\w+_/gi, "");
-            showCurrentDetail();
-            toggleDetailMode();
-        });
-        $(".return_to_list_container", config.rootContainer).live("click", function() {
-            toggleDetailMode();
-        });
-        $(".next", config.rootContainer).live("click", function() {
-            if (currentNotice < model.results.length - 1) {
-                currentNotice++;
-                showCurrentDetail();
-            }
-        });
-        $(".prev", config.rootContainer).live("click", function() {
-            if (currentNotice > 0) {
-                currentNotice--;
-                showCurrentDetail();
-            }
-        });
-    };
+            $("input:radio", config.rootContainer).live("click", function() {
+                refreshSearch();
+            });
+        };
 
-    var attachCompletedCheckboxListeners = function() {
-        $(".task-completed-checkbox", config.rootContainer).live("click", function() {
-            var rowIndex = this.id.replace(/\w+_/gi, "");
-            var rowData = model.results[rowIndex];
-            var newTaskState = rowData["sakai:taskState"] === "created" ? "completed" : "created";
-            model.results[rowIndex]["sakai:taskState"] = newTaskState;
-            postNotice(
-                    model.results[rowIndex]["jcr:path"],
-            { "sakai:taskState": newTaskState },
-                      function() {
-                          // update UI so it reflects the new model state
-                          $.each($(".task-completed-checkbox", config.rootContainer).get(), function(index, element) {
-                              var checkboxIndex = this.id.replace(/\w+_/gi, "");
-                              if (checkboxIndex === rowIndex) {
-                                  element.checked = rowData["sakai:taskState"] === "completed";
+        var attachSortListeners = function() {
+            $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
+                var newSortCol = $(this);
+                var oldSortOn = sortOn;
+                sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
+                if (oldSortOn != sortOn) {
+                    sortOrder = "ascending";
+                } else {
+                    sortOrder = sortOrder === "ascending" ? "descending" : "ascending";
+                }
+
+                that.getNotices(function() {
+                    // clear old sort arrows
+                    var arrow = $(".noticewidget_listing thead span", config.rootContainer);
+                    arrow.removeClass("descending");
+                    // set the new sort arrow state
+                    arrow.addClass(sortOrder);
+                    // move arrow span to new sort col
+                    arrow.remove();
+                    arrow.appendTo(newSortCol);
+                });
+            });
+        };
+
+        var attachDetailListeners = function() {
+            $(".noticewidget_listing td.detailTrigger", config.rootContainer).live("click", function() {
+                currentNotice = this.id.replace(/\w+_/gi, "");
+                showCurrentDetail();
+                toggleDetailMode();
+            });
+            $(".return_to_list_container", config.rootContainer).live("click", function() {
+                toggleDetailMode();
+            });
+            $(".next", config.rootContainer).live("click", function() {
+                if (currentNotice < model.results.length - 1) {
+                    currentNotice++;
+                    showCurrentDetail();
+                }
+            });
+            $(".prev", config.rootContainer).live("click", function() {
+                if (currentNotice > 0) {
+                    currentNotice--;
+                    showCurrentDetail();
+                }
+            });
+        };
+
+        var attachCompletedCheckboxListeners = function() {
+            $(".task-completed-checkbox", config.rootContainer).live("click", function() {
+                var rowIndex = this.id.replace(/\w+_/gi, "");
+                var rowData = model.results[rowIndex];
+                var newTaskState = rowData["sakai:taskState"] === "created" ? "completed" : "created";
+                model.results[rowIndex]["sakai:taskState"] = newTaskState;
+                postNotice(
+                        model.results[rowIndex]["jcr:path"],
+                { "sakai:taskState": newTaskState },
+                          function() {
+                              // update UI so it reflects the new model state
+                              $.each($(".task-completed-checkbox", config.rootContainer).get(), function(index, element) {
+                                  var checkboxIndex = this.id.replace(/\w+_/gi, "");
+                                  if (checkboxIndex === rowIndex) {
+                                      element.checked = rowData["sakai:taskState"] === "completed";
+                                  }
+                              });
+                              updateArchiveButtons();
+                          }
+                        );
+            });
+        };
+
+
+        var attachArchiveListeners = function() {
+            $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
+                archiveMode = !archiveMode;
+                that.getNotices(function() {
+                    if ( isDetailMode() ) {
+                        toggleDetailMode();
+                    }
+                    var filterIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
+                    var filterControls = $(".noticewidget_filter_control", config.rootContainer);
+                    if ( archiveMode ) {
+                        filterIndicator.hide();
+                        filterControls.hide();
+                    } else {
+                        filterIndicator.show();
+                        filterControls.show();
+                    }
+                });
+            });
+            $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
+                if ( $(this).is(".s3d-disabled")) {
+                    // don't attempt to archive a task whose archive button is disabled
+                    return;
+                }
+                if (isDetailMode()) {
+                    var row = model.results[currentNotice];
+                    var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
+                    postNotice(
+                            row["jcr:path"],
+                            postData,
+                              function() {
+                                  that.getNotices(toggleDetailMode());
                               }
-                          });
-                          updateArchiveButtons();
-                      }
-                    );
-        });
+                            );
+                    return;
+                }
+
+                var requests = [];
+                if (archiveMode) {
+                    $.each(model.results, function(index, row) {
+                        var selectionBox = $("#mytaskstdselect_" + index + " input");
+                        if ( selectionBox.get()[0].checked ) {
+                            requests[requests.length] = {
+                                url : row["jcr:path"],
+                                method : "POST",
+                                parameters : { "sakai:archived@Delete": true }
+                            };
+                        }
+                    });
+                } else {
+                    $.each(model.results, function(index, row) {
+                        if (row["sakai:taskState"] === "completed") {
+                            requests[requests.length] = {
+                                url : row["jcr:path"],
+                                method : "POST",
+                                parameters : { "sakai:archived": "archived" }
+                            };
+                        }
+                    });
+                }
+                postNotice(sakai.config.URL.BATCH, {
+                    requests: $.toJSON(requests)
+                }, that.getNotices);
+            });
+        };
+
+        attachFilterListeners();
+        attachSortListeners();
+        attachDetailListeners();
+        attachCompletedCheckboxListeners();
+        attachArchiveListeners();
+
     };
+
 
     var updateArchiveButtons = function() {
         var archiveTasksButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
@@ -253,71 +327,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var updateSubjectLines = function() {
         $("td.subjectLine", config.rootContainer).ThreeDots({
             max_rows : 1
-        });
-    };
-
-    var attachArchiveListeners = function() {
-        $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
-            archiveMode = !archiveMode;
-            that.getNotices(function() {
-                if ( isDetailMode() ) {
-                    toggleDetailMode();
-                }
-                var filterIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
-                var filterControls = $(".noticewidget_filter_control", config.rootContainer);
-                if ( archiveMode ) {
-                    filterIndicator.hide();
-                    filterControls.hide();
-                } else {
-                    filterIndicator.show();
-                    filterControls.show();
-                }
-            });
-        });
-        $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
-            if ( $(this).is(".s3d-disabled")) {
-                // don't attempt to archive a task whose archive button is disabled
-                return;
-            }
-            if (isDetailMode()) {
-                var row = model.results[currentNotice];
-                var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
-                postNotice(
-                        row["jcr:path"],
-                        postData,
-                          function() {
-                              that.getNotices(toggleDetailMode());
-                          }
-                        );
-                return;
-            }
-
-            var requests = [];
-            if (archiveMode) {
-                $.each(model.results, function(index, row) {
-                    var selectionBox = $("#mytaskstdselect_" + index + " input");
-                    if ( selectionBox.get()[0].checked ) {
-                        requests[requests.length] = {
-                            url : row["jcr:path"],
-                            method : "POST",
-                            parameters : { "sakai:archived@Delete": true }
-                        };
-                    }
-                });
-            } else {
-                $.each(model.results, function(index, row) {
-                    if (row["sakai:taskState"] === "completed") {
-                        requests[requests.length] = {
-                            url : row["jcr:path"],
-                            method : "POST",
-                            parameters : { "sakai:archived": "archived" }
-                        };
-                    }
-                });
-            }
-            postNotice(sakai.config.URL.BATCH, {
-                requests: $.toJSON(requests)
-            }, that.getNotices);
         });
     };
 
