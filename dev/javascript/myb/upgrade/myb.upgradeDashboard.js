@@ -35,16 +35,14 @@ sakai.upgradeDashboard = function() {
 
     var userSearch = {
         "sakai:query-language": "xpath",
-        "sakai:query-template": "//element(*)MetaData[@sling:resourceType='sakai/user-home']",
+        "sakai:query-template": "//mysakaidashboard",
         "sling:resourceType": "sakai/search",
         "sakai:propertyprovider" : "Node",
         "sakai:resultprocessor": "Node",
-        "sakai:title" : "Search for users who need their dashboards upgraded"
+        "sakai:title" : "Search for dashboards to upgrade"
     };
 
     var doPost = function(url, props, callback) {
-        console.log("POST to url " + url);
-        console.dir(props);
         $.ajax({
             type: "POST",
             url: url,
@@ -55,7 +53,7 @@ sakai.upgradeDashboard = function() {
                 }
             },
             error: function(xhr) {
-                console.log("POST failed. XHR response:" + xhr.responseText);
+                console.log("POST to url " + url + " failed. XHR response:" + xhr.responseText);
             },
             dataType: 'json'
         });
@@ -87,7 +85,7 @@ sakai.upgradeDashboard = function() {
         $.each(results, function(index, row) {
 
             requests[requests.length] = {
-                url : row["jcr:path"] + "/dashboard/mysakaidashboard/dashboard.infinity.json",
+                url : row["jcr:path"] + "/dashboard.infinity.json",
                 method : "GET",
                 dataType : "json"
             };
@@ -129,6 +127,10 @@ sakai.upgradeDashboard = function() {
         var hasMyEvents = false;
         var hasChanged = false;
         var columnCount = 0;
+
+        if ( typeof dashboard.columns === "undefined" ) {
+            return;
+        }
 
         // remove the myreminders widget wherever it is found
         $.each(dashboard.columns, function(index, column) {
