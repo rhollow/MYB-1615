@@ -218,6 +218,10 @@ table.noticewidget_listing tr.notice_row:hover {
     margin-bottom: 0;
 }
 
+.noticewidget_detail h4.unrequired {
+    font-weight: normal;
+}
+
 .noticewidget_detail fieldset {
     float: right;
 }

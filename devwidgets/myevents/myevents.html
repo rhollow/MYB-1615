@@ -86,7 +86,7 @@
                         <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
                         <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
                         <td id="myeventstdreq_${i_index}" class="detailTrigger" >
-                            {if i["sakai:required"]}!{/if}
+                            {if i["sakai:required"] === "true"}!{/if}
                         </td>
                 </tr>
              {/if}
@@ -103,8 +103,10 @@
         {var timeString = sakai.myb.noticewidgets.formatDate(detail['sakai:eventDate'], "h:mmtt")}
 
         <h3>${detail["sakai:subject"]}</h3>
-        {if detail["sakai:required"]}
+        {if detail["sakai:required"] === "true"}
             <h4>__MSG__THIS_EVENT_IS_REQUIRED__</h4>
+        {else}
+            <h4 class="unrequired">__MSG__THIS_EVENT_IS_NOT_REQUIRED__</h4>
         {/if}
         <h5>__MSG__EVENT_DATE__: ${dateString}</h5>
         <h5 class="event-time">__MSG__TIME__: ${timeString}</h5>
