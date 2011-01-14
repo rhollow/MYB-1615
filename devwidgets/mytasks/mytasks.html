@@ -96,7 +96,9 @@
                         {/if}
                         </td>
                         <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
-                        <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
+                        <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
+                            <span class="ellipsis_text">${i['sakai:subject']}</span>
+                        </td>
                         <td id="mytaskstdreq_${i_index}" class="detailTrigger">
                         {if i["sakai:required"] === "true"}!{/if}
                         </td>

@@ -74,6 +74,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     config.container.html($.TemplateRenderer(config.template, model));
                     updateArchiveButtons();
                     updateScroller();
+                    updateSubjectLines();
                     if ($.isFunction(callback)) {
                         callback();
                     }
@@ -245,6 +246,12 @@ sakai.myb.noticewidgets.Widget = function(config) {
         } else {
             tbody.removeClass("scroller");
         }
+    };
+
+    var updateSubjectLines = function() {
+        $("td.subjectLine", config.rootContainer).ThreeDots({
+            max_rows : 1
+        });
     };
 
     var attachArchiveListeners = function() {
