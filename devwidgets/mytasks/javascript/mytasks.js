@@ -52,6 +52,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
     var currentNotice = 0;
     var archiveMode = false;
+    var detailMode = false;
 
     that.init = function() {
         listeners();
@@ -131,22 +132,23 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var attachDetailListeners = function() {
             $(".noticewidget_listing td.detailTrigger", config.rootContainer).live("click", function() {
                 currentNotice = this.id.replace(/\w+_/gi, "");
-                showCurrentDetail();
-                toggleDetailMode();
+                detailMode = true;
+                that.updateUI();
             });
             $(".return_to_list_container", config.rootContainer).live("click", function() {
-                toggleDetailMode();
+                detailMode = false;
+                that.updateUI();
             });
             $(".next", config.rootContainer).live("click", function() {
                 if (currentNotice < model.results.length - 1) {
                     currentNotice++;
-                    showCurrentDetail();
+                    that.updateUI();
                 }
             });
             $(".prev", config.rootContainer).live("click", function() {
                 if (currentNotice > 0) {
                     currentNotice--;
-                    showCurrentDetail();
+                    that.updateUI();
                 }
             });
         };
@@ -178,10 +180,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var attachArchiveListeners = function() {
             $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
                 archiveMode = !archiveMode;
+                detailMode = false;
                 that.getNotices(function() {
-                    if ( isDetailMode() ) {
-                        toggleDetailMode();
-                    }
                     var filterIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
                     var filterControls = $(".noticewidget_filter_control", config.rootContainer);
                     if ( archiveMode ) {
@@ -198,14 +198,15 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     // don't attempt to archive a task whose archive button is disabled
                     return;
                 }
-                if (isDetailMode()) {
+                if (detailMode) {
+                    detailMode = false;
                     var row = model.results[currentNotice];
                     var postData = archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
                     postNotice(
                             row["jcr:path"],
                             postData,
                               function() {
-                                  that.getNotices(toggleDetailMode());
+                                  that.getNotices();
                               }
                             );
                     return;
@@ -268,7 +269,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 selectorCells.hide();
             }
             var enabled = model.results.length > 0;
-            if ( isDetailMode() ) {
+            if ( detailMode ) {
                 if ( archiveMode ) {
                     archiveTasksButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
                 } else {
@@ -313,46 +314,42 @@ sakai.myb.noticewidgets.Widget = function(config) {
             filterControl.html(translate("FILTER") + " " + translate(config.convertFilterStateToMessage()));
         };
 
+        var showCurrentDetail = function() {
+            $(".noticewidget_detail", config.rootContainer).html($.TemplateRenderer(config.detailTemplate,
+            {
+                detail : model.results[currentNotice],
+                index : currentNotice
+            }));
+            if ( currentNotice < model.results.length - 1 ) {
+                $(".nextArrow", config.rootContainer).removeClass("disabled");
+            } else {
+                $(".nextArrow", config.rootContainer).addClass("disabled");
+            }
+            if (currentNotice > 0 ) {
+                $(".prevArrow", config.rootContainer).removeClass("disabled");
+            } else {
+                $(".prevArrow", config.rootContainer).addClass("disabled");
+            }
+        };
+
+        var updateDetailMode = function() {
+            var detailViewContainer = $(".noticewidget_detail_view", config.rootContainer);
+            var listViewContainer = $(".noticewidget_list_view", config.rootContainer);
+            if (detailMode) {
+                showCurrentDetail();
+                listViewContainer.hide();
+                detailViewContainer.show();
+            } else {
+                listViewContainer.show();
+                detailViewContainer.hide();
+            }
+        };
+
+        updateDetailMode();
         updateArchiveButtons();
         updateScroller();
         updateSubjectLines();
         updateFilterStatus();
-    };
-
-    var showCurrentDetail = function() {
-        $(".noticewidget_detail", config.rootContainer).html($.TemplateRenderer(config.detailTemplate,
-        {
-            detail : model.results[currentNotice],
-            index : currentNotice
-        }));
-        if ( currentNotice < model.results.length - 1 ) {
-            $(".nextArrow", config.rootContainer).removeClass("disabled");
-        } else {
-            $(".nextArrow", config.rootContainer).addClass("disabled");
-        }
-        if (currentNotice > 0 ) {
-            $(".prevArrow", config.rootContainer).removeClass("disabled");
-        } else {
-            $(".prevArrow", config.rootContainer).addClass("disabled");
-        }
-        that.updateUI();
-    };
-
-    var toggleDetailMode = function() {
-        var detailViewContainer = $(".noticewidget_detail_view", config.rootContainer);
-        var listViewContainer = $(".noticewidget_list_view", config.rootContainer);
-        if (detailViewContainer.is(":visible")) {
-            listViewContainer.show();
-            detailViewContainer.hide();
-        } else {
-            listViewContainer.hide();
-            detailViewContainer.show();
-        }
-        that.updateUI();
-    };
-
-    var isDetailMode = function() {
-        return $(".noticewidget_detail_view", config.rootContainer).is(":visible");
     };
 
     var postNotice = function (url, props, callback) {
