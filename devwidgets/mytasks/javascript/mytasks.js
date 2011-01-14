@@ -58,7 +58,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
 
     that.init = function() {
-        listeners();
+        setupListeners();
     };
 
     that.getNotices = function(callback) {
@@ -89,9 +89,9 @@ sakai.myb.noticewidgets.Widget = function(config) {
         return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
     };
 
-    var listeners = function() {
+    var setupListeners = function() {
 
-        var attachFilterListeners = function() {
+        var filters = function() {
             filterControl.live("click", function() {
                 if (filterContainer.is(":visible")) {
                     filterContainer.hide();
@@ -109,7 +109,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
         };
 
-        var attachSortListeners = function() {
+        var sortControls = function() {
             $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                 var newSortCol = $(this);
                 var oldSortOn = model.sortOn;
@@ -133,7 +133,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
         };
 
-        var attachDetailListeners = function() {
+        var detailControls = function() {
             $(".noticewidget_listing td.detailTrigger", config.rootContainer).live("click", function() {
                 model.currentNotice = this.id.replace(/\w+_/gi, "");
                 model.detailMode = true;
@@ -157,7 +157,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
         };
 
-        var attachCompletedCheckboxListeners = function() {
+        var completedCheckboxes = function() {
             $(".task-completed-checkbox", config.rootContainer).live("click", function() {
                 var rowIndex = this.id.replace(/\w+_/gi, "");
                 var rowData = model.data.results[rowIndex];
@@ -181,7 +181,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         };
 
 
-        var attachArchiveListeners = function() {
+        var archiveControls = function() {
             $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
                 model.archiveMode = !model.archiveMode;
                 model.detailMode = false;
@@ -244,17 +244,17 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
         };
 
-        attachFilterListeners();
-        attachSortListeners();
-        attachDetailListeners();
-        attachCompletedCheckboxListeners();
-        attachArchiveListeners();
+        filters();
+        sortControls();
+        detailControls();
+        completedCheckboxes();
+        archiveControls();
 
     };
 
     that.updateUI = function() {
 
-        var updateArchiveButtons = function() {
+        var archiveControls = function() {
             var archiveTasksButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
             var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
             var noTasksMessage = $(".empty_list td:first", config.rootContainer);
@@ -298,7 +298,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             }
         };
 
-        var updateScroller = function() {
+        var scroller = function() {
             var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
             if ( tbody[0].clientHeight > 150 ) {
                 tbody.addClass("scroller");
@@ -307,13 +307,13 @@ sakai.myb.noticewidgets.Widget = function(config) {
             }
         };
 
-        var updateSubjectLines = function() {
+        var subjectLines = function() {
             $("td.subjectLine", config.rootContainer).ThreeDots({
                 max_rows : 1
             });
         };
 
-        var updateFilterStatus = function() {
+        var filterStatus = function() {
             filterControl.html(translate("FILTER") + " " + translate(config.convertFilterStateToMessage()));
         };
 
@@ -335,7 +335,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
             }
         };
 
-        var updateDetailMode = function() {
+        var detailMode = function() {
             var detailViewContainer = $(".noticewidget_detail_view", config.rootContainer);
             var listViewContainer = $(".noticewidget_list_view", config.rootContainer);
             if (model.detailMode) {
@@ -348,11 +348,11 @@ sakai.myb.noticewidgets.Widget = function(config) {
             }
         };
 
-        updateDetailMode();
-        updateArchiveButtons();
-        updateScroller();
-        updateSubjectLines();
-        updateFilterStatus();
+        detailMode();
+        archiveControls();
+        scroller();
+        subjectLines();
+        filterStatus();
     };
 
     var postNotice = function (url, props, callback) {
