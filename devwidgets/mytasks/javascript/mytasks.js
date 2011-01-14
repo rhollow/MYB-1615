@@ -407,7 +407,7 @@ sakai.mytasks = function(tuid) {
     var buttonMessages = {
         viewArchiveButton : {
             listMode : "VIEW_ARCHIVE",
-            archiveMode : "BACK_TO_LIST"
+            archiveMode : "VIEW_LIST"
         },
         noItemsMessage : {
             listMode : "YOU_HAVE_NO_TASKS",
@@ -521,7 +521,7 @@ sakai.myevents = function(tuid) {
     var buttonMessages = {
         viewArchiveButton : {
             listMode : "PAST_EVENTS",
-            archiveMode : "RETURN_TO_UPCOMING_EVENTS"
+            archiveMode : "UPCOMING_EVENTS"
         },
         noItemsMessage : {
             listMode : "YOU_HAVE_NO_EVENTS",
