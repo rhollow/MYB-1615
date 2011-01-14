@@ -60,9 +60,9 @@ table.noticewidget_listing tr.notice_row:hover {
 .noticewidget_filter {
     background-color: #fff;
     border: 1px solid black;
-    z-index: 15;
-    width: 25em;
-    position: absolute;
+    width: auto;
+    height: 7em;
+    margin: 2px;
     padding: 10px;
 }
 
