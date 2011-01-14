@@ -31,6 +31,12 @@ table.noticewidget_listing td, table.noticewidget_listing th {
     padding: 0 5px 0 5px;
 }
 
+table.noticewidget_listing tbody.scroller {
+    height: 150px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
 table.noticewidget_listing .subjectLine {
     width: 300px;
     text-align: left;

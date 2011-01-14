@@ -73,6 +73,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     currentNotice = 0;
                     config.container.html($.TemplateRenderer(config.template, model));
                     updateArchiveButtons();
+                    updateScroller();
                     if ($.isFunction(callback)) {
                         callback();
                     }
@@ -234,6 +235,15 @@ sakai.myb.noticewidgets.Widget = function(config) {
         } else {
             parent.addClass("s3d-disabled");
             parent.removeClass("s3d-button-primary");
+        }
+    };
+
+    var updateScroller = function() {
+        var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
+        if ( tbody[0].clientHeight > 150 ) {
+            tbody.addClass("scroller");
+        } else {
+            tbody.removeClass("scroller");
         }
     };
 
