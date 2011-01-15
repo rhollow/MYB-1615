@@ -1,0 +1,245 @@
+.mytasks .widget_title {
+    background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat scroll 16px 16px transparent;
+}
+
+/**
+    Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
+**/
+
+table.noticewidget_listing {
+    border-collapse: collapse;
+    border-spacing: 0;
+    overflow: auto;
+    max-height: 300px;
+    width: 100%;
+}
+
+table.noticewidget_listing thead {
+    background-color: #D4DADE;
+}
+
+table.noticewidget_listing th {
+    border-bottom: 1px solid black;
+}
+
+table.noticewidget_listing td, table.noticewidget_listing th {
+    border-right: 1px solid #E8E8E8;
+    border-left: 1px solid #E8E8E8;
+    border-bottom: 1px solid #E8E8E8;
+    width: 56px;
+    text-align: center;
+    padding: 0 5px 0 5px;
+}
+
+table.noticewidget_listing tbody.scroller {
+    height: 150px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+table.noticewidget_listing .subjectLine {
+    width: 300px;
+    text-align: left;
+}
+
+table.noticewidget_listing tr.empty_list td {
+    width: 300px;
+    text-align: left;
+}
+
+table.noticewidget_listing tr.notice_row {
+    cursor: pointer;
+}
+
+table.noticewidget_listing tr.notice_row td {
+    padding: 5px;
+}
+
+table.noticewidget_listing tr.alternate {
+    background-color: #F5F6F6
+}
+
+table.noticewidget_listing tr.notice_row:hover {
+    background-color: #ccc
+}
+
+.noticewidget_filter {
+    background-color: #fff;
+    border: 1px solid black;
+    width: auto;
+    height: 7em;
+    margin: 2px;
+    padding: 10px;
+}
+
+.noticewidget_filter .noticewidget_filter_status {
+    float: left;
+    padding-left: 7px;
+    line-height: 19px;
+    width: 50%;
+}
+
+.noticewidget_filter .noticewidget_filter_daterange {
+    border-left: 1px solid black;
+    float: left;
+    padding-left: 33px;
+    line-height: 19px;
+}
+
+.noticewidget_filter_control, .noticewidget_listing_sort {
+    cursor: pointer;
+    padding-top: 1px;
+}
+
+.noticewidget_filter_control_indicator {
+    width: 16px;
+    margin: 0 2px 0 6px;
+    background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;
+    display: inline-block;
+    float: left;
+}
+
+.noticewidget_filter_control_indicator.open {
+    background-position: -16px top;
+}
+
+.noticewidget_filter_control_indicator.closed {
+    background-position: left top;
+}
+
+.noticewidget_sort_indicator {
+    display: inline-block;
+    width: 16px;
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+}
+
+.noticewidget_sort_indicator.ascending {
+    background-position: -16px top;
+}
+
+.noticewidget_sort_indicator.descending {
+    background-position: left top;
+}
+
+.noticewidget_listing_sort img {
+    margin-top: 1px;
+}
+
+.noticewidget_detail_controls .return_to_list_container {
+    float: left;
+    cursor: pointer;
+}
+
+.noticewidget_detail_controls .return_to_list {
+    height: 30px;
+    padding-left: 22px;
+    line-height: 21px;
+    margin: 0;
+    float: left;
+    background: url("/devwidgets/mytasks/images/button-left-pointing.png") no-repeat scroll left -5px transparent;
+}
+
+.noticewidget_detail_controls .return_to_list_right_corner {
+    background: url("/devwidgets/mytasks/images/button-left-pointing.png") no-repeat scroll -202px -40px transparent;
+    display: block;
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+}
+
+.noticewidget_detail_controls .return_to_list_container:hover .return_to_list {
+    background-position: left -75px;
+}
+
+.noticewidget_detail_controls .return_to_list_container:hover .return_to_list_right_corner {
+    background-position: -202px -110px;
+}
+
+.noticewidget_detail_controls .noticewidget_arrows {
+    float: right;
+    margin-right: 6px;
+}
+
+.noticewidget_detail_controls .prev, .noticewidget_detail_controls .prevArrow,
+.noticewidget_detail_controls .next, .noticewidget_detail_controls .nextArrow {
+    display: inline-block;
+    cursor: pointer;
+    height: 23px;
+    width: 37px;
+    background: url("/devwidgets/mytasks/images/button-next-prev-item.png") no-repeat scroll top left transparent;
+}
+
+.noticewidget_detail_controls .prev {
+    background-position: left -26px;
+    margin-right: -10px;
+}
+
+.noticewidget_detail_controls .next {
+    border-left: 1px solid black;
+}
+
+.noticewidget_detail_controls .prevArrow {
+    background-position: left 1px;
+}
+
+.noticewidget_detail_controls .next {
+    background-position: -55px -26px;
+}
+
+.noticewidget_detail_controls .nextArrow {
+    background-position: -54px 2px;
+}
+
+.noticewidget_detail_controls .next:hover {
+    background-position: -56px -62px;
+}
+
+.noticewidget_detail_controls .nextArrow.disabled {
+    background-position: -54px -90px;
+}
+
+.noticewidget_detail_controls .prev:hover {
+    background-position: left -62px;
+}
+
+.noticewidget_detail_controls .prevArrow.disabled {
+    background-position: left -92px;
+}
+
+.noticewidget_detail {
+    margin: 10px 10px 0 10px;
+    border-top: 2px solid #ccc;
+    clear: both;
+}
+
+.noticewidget_detail h3, .noticewidget_detail p {
+    clear: both;
+    margin-bottom: 0;
+}
+
+.noticewidget_detail h4.unrequired {
+    font-weight: normal;
+}
+
+.noticewidget_detail fieldset {
+    float: right;
+}
+
+.noticewidget_detail h5 {
+    float: left;
+}
+
+.noticewidget_detail p {
+    border: 1px solid #ccc;
+    overflow: auto;
+    height: 150px;
+}
+
+.mytasks_widget .fl-widget-options .widget-options-inner .left {
+    float: left;
+}
+
+.mytasks_widget .fl-widget-options .widget-options-inner .right {
+    float: right;
+}

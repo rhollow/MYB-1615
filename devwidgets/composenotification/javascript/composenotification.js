@@ -985,7 +985,8 @@ if (!sakai.composenotification){
                 // Fields common to reminders.
                 toPost["sakai:category"] = "reminder"; 
                 toPost["sakai:taskState"] = "created";
-                
+                toPost["sakai:required"] = true;
+
                 // This reminder is a TASK.
                 if($(messageTaskCheck).attr("checked")){                                                                                                                                                                   
                     toPost["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate").toString();
@@ -1024,7 +1025,8 @@ if (!sakai.composenotification){
             else{                                                
                 // Common field for all notifications.                     
                 toPost["sakai:category"] = "message";   
-                
+                toPost["sakai:required"] = false;
+
                 // Clear task, event fields in case it was previously a task or event.
                 // (It may still be a non-required event, which will be handled later.)              
                 toPost["sakai:dueDate@Delete"]=true;               

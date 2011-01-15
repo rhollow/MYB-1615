@@ -1,0 +1,173 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/mytasks/css/mytasks.css" />
+
+<div class="mytasks_widget">
+
+    <div class="fl-widget-content s3d-widget-content">
+
+        <div class="noticewidget_list_view">
+            <div class="noticewidget_filter_control_indicator closed">&nbsp;</div>
+            <div class="noticewidget_filter_control">Filter</div>
+
+            <div id="mytasks_filter" class="noticewidget_filter" style="display:none;">
+                <div class="noticewidget_filter_status">
+                    Display item status:
+                    <div>
+                        <input type="radio" name="mytasks_item_status" id="mytasks_item_status_all" value="all" checked="checked">
+                        <label for="mytasks_item_status_all">All</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_item_status" id="mytasks_item_status_required" value="required">
+                        <label for="mytasks_item_status_required">Only required</label>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="mytasks_item_status" id="mytasks_item_status_unrequired" value="unrequired">
+                        <label for="mytasks_item_status_unrequired">Only unrequired</label>
+                    </div>
+                </div>
+                <div class="noticewidget_filter_daterange">
+                    Display date range:
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_all" value="all">
+                        <label for="mytasks_date_range_all">All</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_overdue" value="overdue">
+                        <label for="mytasks_date_range_overdue">Overdue</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next7" value="next7">
+                        <label for="mytasks_date_range_next7">Next 7 days</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next30" value="next30" checked="checked">
+                        <label for="mytasks_date_range_next30">Next 30 days</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <table class="noticewidget_listing mytasks_listing">
+                <thead>
+                    <th class="noticewidget_task_selector"></th>
+                    <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort" title="__MSG__DUE__">__MSG__DUE__<span class="noticewidget_sort_indicator ascending">&nbsp;</span></th>
+                    <th id="mytasks_sortOn_sakai:subject" class="noticewidget_listing_sort subjectLine" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
+                    <th id="mytasks_sortOn_sakai:required" class="noticewidget_listing_sort" title="__MSG__REQUIRED__">__MSG__REQ__</th>
+                    <th id="mytasks_sortOn_sakai:taskState" class="noticewidget_listing_sort" title="__MSG__COMPLETED__">
+                        <img src="/devwidgets/mytasks/images/checkmark.png" alt="__MSG__COMPLETED__"/>&nbsp;
+                    </th>
+                </thead>
+
+                <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
+            </table>
+        </div>
+
+        <div class="noticewidget_detail_view" style="display:none">
+            <div class="noticewidget_detail_controls">
+                <span class="return_to_list_container">
+                    <span class="return_to_list">__MSG__RETURN_TO_TASK_LIST__</span>
+                    <span class="return_to_list_right_corner">&nbsp;</span>
+                </span>
+                <span class="noticewidget_arrows">
+                    <span class="prev" title="__MSG__PREVIOUS__">
+                        <span class="prevArrow">&nbsp;</span>
+                    </span>
+                    <span class="next" title="__MSG__NEXT__">
+                        <span class="nextArrow">&nbsp;</span>
+                    </span>
+                </span>
+            </div>
+            <div class="noticewidget_detail"><!-- filled by trimpath --></div>
+        </div>
+    </div>
+    
+    <div id="mytasks_template" style="display:none"><!--
+        {var isEmpty = true}
+        {for i in results}
+            {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
+                {var isEmpty = false}
+                <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
+                        {var dateString = sakai.myb.noticewidgets.formatDate(i['sakai:dueDate'], "M/d")}
+                        <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
+                        {if i["sakai:archived"] === "archived"}
+                            <input type="checkbox" class="task-selected-checkbox"
+                                id="taskSelected_${i_index}" title="Selected"/>
+                        {/if}
+                        </td>
+                        <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
+                        <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
+                            <span class="ellipsis_text">${i['sakai:subject']}</span>
+                        </td>
+                        <td id="mytaskstdreq_${i_index}" class="detailTrigger">
+                        {if i["sakai:required"] === "true"}!{/if}
+                        </td>
+                        <td><input type="checkbox" class="task-completed-checkbox"
+                            id="taskDone_${i_index}"
+                                {if i["sakai:taskState"] === "completed"}
+                                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                                {else}
+                                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                                {/if}
+                                {if i["sakai:archived"] === "archived"} disabled {/if}
+                            />
+                        </td>
+                </tr>
+             {/if}
+        {/for}
+        
+        {if isEmpty == true}
+            <tr class="empty_list"><td colspan="4">__MSG__YOU_HAVE_NO_TASKS__</td></tr>
+        {/if}
+        -->
+    </div>
+
+    <div id="mytasks_detail_template" style="display:none"><!--
+        {var dateString = sakai.myb.noticewidgets.formatDate(detail['sakai:dueDate'], "M/d/yy")}
+
+        <h3>${detail["sakai:subject"]}</h3>
+        {if detail["sakai:required"] === "true"}
+            <h4>__MSG__THIS_TASK_IS_REQUIRED__</h4>
+        {else}
+            <h4 class="unrequired">__MSG__THIS_TASK_IS_NOT_REQUIRED__</h4>
+        {/if}
+        <h5>__MSG__DUE_DATE__: ${dateString}</h5>
+
+        <fieldset>
+            <input type="checkbox" class="task-completed-checkbox"
+                id="taskDone_${index}"
+                {if detail["sakai:taskState"] === "completed"}
+                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                {else}
+                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                {/if}
+            />
+            <label for="taskDone_${index}">__MSG__COMPLETED__</label>
+        </fieldset>
+
+        <p>${detail["sakai:body"]}</p>
+        -->
+    </div>
+
+    <div class="fl-widget-options fl-fix">
+        <div class="widget-options-inner">
+            <ul>
+                <li class="left">
+                    <a class="noticewidget_view_task_archive" href="javascript:">__MSG__VIEW_ARCHIVE__</a>
+                </li>
+                <li class="right">
+                    <button class="s3d-button s3d-button-primary noticewidget_archive_tasks_button">
+                        <span class="s3d-button-inner">__MSG__ARCHIVE_COMPLETED_TASKS__</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="s3d-widget-options-footer-left">
+            <div class="s3d-widget-options-footer-right">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/mytasks/javascript/mytasks.js"></script>
