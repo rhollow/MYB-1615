@@ -31,6 +31,12 @@ table.noticewidget_listing td, table.noticewidget_listing th {
     padding: 0 5px 0 5px;
 }
 
+table.noticewidget_listing tbody.scroller {
+    height: 150px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
 table.noticewidget_listing .subjectLine {
     width: 300px;
     text-align: left;
@@ -60,9 +66,9 @@ table.noticewidget_listing tr.notice_row:hover {
 .noticewidget_filter {
     background-color: #fff;
     border: 1px solid black;
-    z-index: 15;
-    width: 25em;
-    position: absolute;
+    width: auto;
+    height: 7em;
+    margin: 2px;
     padding: 10px;
 }
 
@@ -165,7 +171,7 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .prev {
-    background-position: left -25px;
+    background-position: left -26px;
     margin-right: -10px;
 }
 
@@ -174,31 +180,31 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .prevArrow {
-    background-position: left top;
+    background-position: left 1px;
 }
 
 .noticewidget_detail_controls .next {
-    background-position: -55px -25px;
+    background-position: -55px -26px;
 }
 
 .noticewidget_detail_controls .nextArrow {
-    background-position: -53px 1px;
+    background-position: -54px 2px;
 }
 
 .noticewidget_detail_controls .next:hover {
-    background-position: -55px -60px;
+    background-position: -56px -62px;
 }
 
 .noticewidget_detail_controls .nextArrow.disabled {
-    background-position: -53px -89px;
+    background-position: -54px -90px;
 }
 
 .noticewidget_detail_controls .prev:hover {
-    background-position: left -60px;
+    background-position: left -62px;
 }
 
 .noticewidget_detail_controls .prevArrow.disabled {
-    background-position: left -90px;
+    background-position: left -92px;
 }
 
 .noticewidget_detail {
@@ -210,6 +216,10 @@ table.noticewidget_listing tr.notice_row:hover {
 .noticewidget_detail h3, .noticewidget_detail p {
     clear: both;
     margin-bottom: 0;
+}
+
+.noticewidget_detail h4.unrequired {
+    font-weight: normal;
 }
 
 .noticewidget_detail fieldset {

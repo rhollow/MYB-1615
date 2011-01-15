@@ -96,15 +96,22 @@
                         {/if}
                         </td>
                         <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
-                        <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">${i['sakai:subject']}</td>
+                        <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
+                            <span class="ellipsis_text">${i['sakai:subject']}</span>
+                        </td>
                         <td id="mytaskstdreq_${i_index}" class="detailTrigger">
-                        {if i["sakai:required"]}!{/if}
+                        {if i["sakai:required"] === "true"}!{/if}
                         </td>
                         <td><input type="checkbox" class="task-completed-checkbox"
-                            id="taskDone_${i_index}" title="Completed"
-                            {if i["sakai:taskState"] === "completed"} checked="checked" {/if}
-                            {if i["sakai:archived"] === "archived"} disabled {/if}
-                            /></td>
+                            id="taskDone_${i_index}"
+                                {if i["sakai:taskState"] === "completed"}
+                                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                                {else}
+                                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                                {/if}
+                                {if i["sakai:archived"] === "archived"} disabled {/if}
+                            />
+                        </td>
                 </tr>
              {/if}
         {/for}
@@ -119,16 +126,23 @@
         {var dateString = sakai.myb.noticewidgets.formatDate(detail['sakai:dueDate'], "M/d/yy")}
 
         <h3>${detail["sakai:subject"]}</h3>
-        {if detail["sakai:required"]}
+        {if detail["sakai:required"] === "true"}
             <h4>__MSG__THIS_TASK_IS_REQUIRED__</h4>
+        {else}
+            <h4 class="unrequired">__MSG__THIS_TASK_IS_NOT_REQUIRED__</h4>
         {/if}
         <h5>__MSG__DUE_DATE__: ${dateString}</h5>
 
         <fieldset>
             <input type="checkbox" class="task-completed-checkbox"
-                            id="taskDone_${index}" title="Completed"
-                            {if detail["sakai:taskState"] === "completed"} checked="checked" {/if}/>
-            <label for="taskDone_${index}">Completed</label>
+                id="taskDone_${index}"
+                {if detail["sakai:taskState"] === "completed"}
+                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                {else}
+                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                {/if}
+            />
+            <label for="taskDone_${index}">__MSG__COMPLETED__</label>
         </fieldset>
 
         <p>${detail["sakai:body"]}</p>
