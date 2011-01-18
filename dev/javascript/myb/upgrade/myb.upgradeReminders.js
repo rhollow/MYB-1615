@@ -95,7 +95,8 @@ sakai.upgradeReminders = function() {
                     requests: $.toJSON(requests)
                 }, function() {
                     console.log("Batch update succeeded!");
-                    cleanup();
+                    console.log("Doing another search for reminders to upgrade...");
+                    runSearchAndUpgrade();
                 });
             } else {
                 cleanup();
