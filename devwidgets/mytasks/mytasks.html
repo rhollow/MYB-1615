@@ -103,10 +103,15 @@
                         {if i["sakai:required"] === "true"}!{/if}
                         </td>
                         <td><input type="checkbox" class="task-completed-checkbox"
-                            id="taskDone_${i_index}" title="Completed"
-                            {if i["sakai:taskState"] === "completed"} checked="checked" {/if}
-                            {if i["sakai:archived"] === "archived"} disabled {/if}
-                            /></td>
+                            id="taskDone_${i_index}"
+                                {if i["sakai:taskState"] === "completed"}
+                                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                                {else}
+                                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                                {/if}
+                                {if i["sakai:archived"] === "archived"} disabled {/if}
+                            />
+                        </td>
                 </tr>
              {/if}
         {/for}
@@ -130,9 +135,14 @@
 
         <fieldset>
             <input type="checkbox" class="task-completed-checkbox"
-                            id="taskDone_${index}" title="Completed"
-                            {if detail["sakai:taskState"] === "completed"} checked="checked" {/if}/>
-            <label for="taskDone_${index}">Completed</label>
+                id="taskDone_${index}"
+                {if detail["sakai:taskState"] === "completed"}
+                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                {else}
+                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                {/if}
+            />
+            <label for="taskDone_${index}">__MSG__COMPLETED__</label>
         </fieldset>
 
         <p>${detail["sakai:body"]}</p>
