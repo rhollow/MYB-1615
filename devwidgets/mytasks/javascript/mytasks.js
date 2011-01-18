@@ -63,9 +63,10 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     that.getNotices = function(callback) {
         var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
+        var url = dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
+                    + config.buildExtraQueryParams(model.archiveMode);
         $.ajax({
-            url: dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
-                    + config.buildExtraQueryParams(model.archiveMode),
+            url: url,
             cache: false,
             success: function(data) {
                 if (data.results) {

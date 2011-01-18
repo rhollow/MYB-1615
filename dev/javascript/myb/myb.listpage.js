@@ -33,7 +33,6 @@ sakai.listpage = function(){
     var sortOrder = "descending";
     var editExisting = false;
     var currList;
-    var hashMap = new Object(); // hash map to keep track of unique dynamic lists
 
 
     /**
@@ -94,48 +93,63 @@ sakai.listpage = function(){
         // result.size = $("#list_size").val();
         
 		// Gathering the data on standing
-		var standingArray = [{"undergrad": {"major": []}}, {"grad": {"major": []}}];
+		var standingArray = [];
 		if($("#undergrad:checked").val() == null && $("#grad:checked").val() == null) {
 			$("#invalid_major").show();
 				return -1;
 		}
 		
 		// Gathering the data on majors
-        var selectedMajors = [];
+        var selectedUndergradMajors = [];
 		if ($("#undergrad:checked").val() && $("#byMajor:checked").val()) {
         	$("#ugrad_majors .major_checkbox:checked").each(function() {
             	var major = $.trim($(this).val());
-            	selectedMajors.push(major);
+            	selectedUndergradMajors.push(major);
         	});
-			if(selectedMajors.length == 0) {
+			if(selectedUndergradMajors.length == 0) {
 				$("#invalid_major").show();
 				return -1;
 			}
 		} else if($("#undergrad:checked").val() && $("#allUgrads:checked").val()) {
 			$("#ugrad_majors .major_checkbox").each(function() {
             	var major = $.trim($(this).val());
-            	selectedMajors.push(major);
+            	selectedUndergradMajors.push(major);
         	});
 		}
-		standingArray[0].undergrad.major = selectedMajors;
-		selectedMajors = [];
+		// Append majors only if something was selected
+		if(selectedUndergradMajors.length > 0) {
+			standingArray.push({
+				"undergrad": {
+					"major": selectedUndergradMajors
+				}
+			});
+		}
+		
+		var selectedGradMajors = [];
 		if ($("#grad:checked").val() && $("#byProgram:checked").val()) {
 			$("#grad_majors .major_checkbox:checked").each(function(){
 				var major = $.trim($(this).val());
-				selectedMajors.push(major);
+				selectedGradMajors.push(major);
 			});
-			if(selectedMajors.length == 0) {
+			if(selectedGradMajors.length == 0) {
 				$("#invalid_major").show();
 				return -1;
 			}
 		} else if($("#grad:checked").val() && $("#allGrads:checked").val()) {
 			$("#grad_majors .major_checkbox").each(function() {
             	var major = $.trim($(this).val());
-            	selectedMajors.push(major);
+            	selectedGradMajors.push(major);
         	});
 		}
+		// Append majors only if something was selected
+		if(selectedGradMajors.length > 0) {
+			standingArray.push({
+				"grad": {
+					"major": selectedGradMajors
+				}
+			});
+		}
 		
-		standingArray[1].grad.major = selectedMajors;
         result.standing = standingArray;
         return result;
     }
@@ -383,8 +397,18 @@ sakai.listpage = function(){
         // NOT SUPPORTED FOR POC
         // document.createListForm.list_size.value = list["sakai:size"];
         
-		var ugradMajorArray = list.query.standing[0].undergrad.major;
-		var gradMajorArray = list.query.standing[1].grad.major;
+		var ugradMajorArray = [];
+		var gradMajorArray = [];
+		
+		var listStanding = list.query.standing;
+		for(var i = 0, j = listStanding.length; i < j; i++) {					
+			if(listStanding[i].hasOwnProperty("undergrad")) {
+				ugradMajorArray = listStanding[i].undergrad.major;
+			} else if(listStanding[i].hasOwnProperty("grad")) {
+				gradMajorArray = listStanding[i].grad.major;
+			}						
+		}
+		
         if(ugradMajorArray != null && ugradMajorArray.length > 0) {
 			$("#undergrad").click();
 			enableAll(document.getElementById("choose_ugrad"));
@@ -485,29 +509,89 @@ sakai.listpage = function(){
         sakai.api.Server.saveJSON(userUrl, submitData, loadData);
     };
     
-    var listAlreadyExists = function(id){
-        return hashMap[id] != null;
-    };
-    
-    var getHashId = function(data){
-		var id = "dl-" + data.context;
-		id += data.listName;
-		id += data.desc;
-        var standingArray = data.standing;
-        
-		id += "undergrad";
-        for(var i = 0, j = standingArray[0].undergrad.major.length; i < j; i++) {
-            id += standingArray[0].undergrad.major[i];
-        }
-         
-		id += "grad";
-        for(var i = 0, j = standingArray[1].grad.major.length; i < j; i++) {
-            id += standingArray[1].grad.major[i];
-        } 
-        
-        id = id.replace(/ /gi, "");
-        return id;
-    }
+	/**
+     * Returns a value indicating whether the specified list object already exists.
+     *
+     * @param {Object} listToCheck The list to seek 
+     * @return {Boolean} true if the value parameter occurs within the existing lists; otherwise, false
+     */
+	var listAlreadyExists = function(listToCheck) {
+		
+		for (var i = 0, j = allLists.length; i < j; i++) {
+			var exsistingList = allLists[i];
+			var exsistingListObj = {
+				"context" : exsistingList.query.context[0], 
+				"listName": exsistingList["sakai:name"],
+				"desc": exsistingList["sakai:description"],
+				"standing": exsistingList.query.standing				
+			} 
+			
+			if(listEquals(exsistingListObj, listToCheck)) return true;
+		}
+		
+		return false;				
+	};
+	
+	/**
+     * Compares two specified list objects.
+     *
+     * @param {Object} list1 The first list
+     * @param {Object} list2 The The second list
+     * @return {Boolean} true if the lists are equal; otherwise false
+     */
+	var listEquals = function(list1, list2) {
+				
+		if(list1.context !== list2.context) return false;
+		if(list1.listName !== list2.listName) return false;
+		if(list1.desc !== list2.desc) return false;
+
+		var list1Standing = list1.standing;
+		var list2Standing = list2.standing;
+				
+		var list1StandingLength = list1Standing.length;
+		var list2StandingLength = list2Standing.length;
+		
+		if(list1StandingLength !== list2StandingLength) return false;
+		
+		// Comparing lists of majors
+		
+		var list1UndergradMajors = [];
+		var list2UndergradMajors = [];
+		var list1GradMajors = [];
+		var list2GradMajors = [];
+		
+		// Assigning udergraduate and graduate majors to appropriate variables
+		// Assuming that list1StandingLength == list2StandingLength
+		for (var i = 0; i < list1StandingLength; i++) {
+			
+			if(list1Standing[i].hasOwnProperty("undergrad")) {
+				list1UndergradMajors = list1Standing[i].undergrad.major;
+			} else if(list1Standing[i].hasOwnProperty("grad")) {
+				list1GradMajors = list1Standing[i].grad.major;
+			}
+			
+			if(list2Standing[i].hasOwnProperty("undergrad")) {
+				list2UndergradMajors = list2Standing[i].undergrad.major;
+			} else if(list2Standing[i].hasOwnProperty("grad")) {
+				list2GradMajors = list2Standing[i].grad.major;
+			}
+		}
+		
+		if(list1UndergradMajors.length !== list2UndergradMajors.length) return false;
+		if(list1GradMajors.length !== list2GradMajors.length) return false;
+		
+		// Comparing undergraduate majors lists (assuming that both arrays have the same length)
+		for(var i = 0, j = list1UndergradMajors.length; i < j; i++) {
+			if(list2UndergradMajors.indexOf(list1UndergradMajors[i]) === -1) return false;
+		}
+		
+		// Comparing graduate majors lists (assuming that both arrays have the same length)
+		for(var i = 0, j = list1GradMajors.length; i < j; i++) {
+			if(list2GradMajors.indexOf(list1GradMajors[i]) === -1) return false;
+		}
+		
+		return true;
+	}
     
     var finishSaveAndLoad = function() {
         clearInputFields();
@@ -520,9 +604,8 @@ sakai.listpage = function(){
         return id;
     }
     
-    var saveList = function(data, index) {
-        var hashId = getHashId(data);        
-        if (listAlreadyExists(hashId)) {
+    var saveList = function(data, index) {        
+        if (listAlreadyExists(data)) {
             showGeneralMessage($("#inbox_generalmessages_already_exists").text());
             return;
         }
@@ -536,7 +619,6 @@ sakai.listpage = function(){
             allLists[index].query.context = [data.context];
             allLists[index].query.standing = data.standing;
         } else { // we are creating a new list
-            hashMap[hashId] = hashId;
             var id = generateId();
 
             var list = {
