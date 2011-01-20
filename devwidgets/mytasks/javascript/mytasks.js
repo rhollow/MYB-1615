@@ -477,6 +477,27 @@ sakai.mytasks = function(tuid) {
                 + "&excludeRequiredState=" + excludeRequiredState;
     };
 
+    var checkForOverdueTasks = function() {
+        // TODO when KERN-1471 is fixed, bundle this request into batch request with the main search
+        var overdueTaskSearchURL = "/var/message/notice/tasks.json?startDate=" +
+                Globalization.format(sakai.myb.noticewidgets.BEGINNING_OF_TIME, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
+                + "&endDate=" + Globalization.format(new Date(), sakai.myb.noticewidgets.DATE_FORMAT_ISO8601) +
+                "&excludeRequiredState=completed&items=1";
+        $.ajax({
+            url: overdueTaskSearchURL,
+            cache: false,
+            success: function(data) {
+                if ($.isArray(data.results) && data.results.length > 0) {
+                    $("#mytasks_overdue_tasks_exist", rootContainer).show();
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+                alert("Checking overdue tasks failed for:\n" + overdueTaskSearchURL + "\ncategory=reminders with status=" + textStatus +
+                        " and thrownError=" + thrownError + "\n" + xhr.responseText);
+            }
+        });
+    };
+
     var doInit = function() {
         var taskWidget = sakai.myb.noticewidgets.Widget({
             rootContainer : rootContainer,
@@ -493,6 +514,7 @@ sakai.mytasks = function(tuid) {
         });
         taskWidget.init();
         taskWidget.getNotices();
+        checkForOverdueTasks();
     };
 
     doInit();
