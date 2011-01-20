@@ -12,6 +12,10 @@
     Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
 **/
 
+.noticewidget_listing_loading {
+    margin: 10px 0 0 8px;
+}
+
 table.noticewidget_listing {
     border-collapse: collapse;
     border-spacing: 0;
