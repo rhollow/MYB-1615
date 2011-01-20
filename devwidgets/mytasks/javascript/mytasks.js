@@ -75,7 +75,6 @@ sakai.myb.noticewidgets.Widget = function(config) {
             success: function(data) {
                 loadingIndicator.hide();
                 listingTable.show();
-                console.dir(listingTable);
                 if (data.results) {
                     model.data = data;
                     model.currentNotice = 0;
