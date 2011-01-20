@@ -23,6 +23,7 @@ sakai.upgradeDynamicLists = function() {
 	
 	var dryRun = true;
 	var advisors = [];
+	
 	var logData = function(doit, data) {
 		console.log("g-ced-advisors are: ")
 		console.log(data);
@@ -58,7 +59,7 @@ sakai.upgradeDynamicLists = function() {
 			for ( var int = 0; int < lists.length; int++) {
 				list = lists[int];
 				// this is the old structure, the new one has a nested major
-				// node
+				// node so list.query.major will only be true for old lists
 				if (list.query.major) {
 					list = updateList(list);
 				}
