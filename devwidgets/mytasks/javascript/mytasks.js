@@ -56,6 +56,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var filterControl = $(".noticewidget_filter_control", config.rootContainer);
     var filterContainer = $(".noticewidget_filter", config.rootContainer);
     var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
+    var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
+    var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
     that.init = function() {
         setupListeners();
@@ -65,10 +67,15 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
         var url = dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
+        loadingIndicator.show();
+        listingTable.hide();
         $.ajax({
             url: url,
             cache: false,
             success: function(data) {
+                loadingIndicator.hide();
+                listingTable.show();
+                console.dir(listingTable);
                 if (data.results) {
                     model.data = data;
                     model.currentNotice = 0;
