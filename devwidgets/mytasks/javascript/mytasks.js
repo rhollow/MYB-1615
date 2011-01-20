@@ -392,8 +392,8 @@ sakai.mytasks = function(tuid) {
     var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var detailTemplate = "mytasks_detail_template";
-    var dataURL = "/var/message/notice/tasks.json";
-    var archiveDataURL = "/var/message/notice/tasks_archive.json";
+    var dataURL = "/var/notices/tasks.json";
+    var archiveDataURL = "/var/notices/tasks_archive.json";
     var widgetName = "mytasks";
 
     var getDateRange = function() {
@@ -485,7 +485,7 @@ sakai.mytasks = function(tuid) {
 
     var checkForOverdueTasks = function() {
         // TODO when KERN-1471 is fixed, bundle this request into batch request with the main search
-        var overdueTaskSearchURL = "/var/message/notice/tasks.json?startDate=" +
+        var overdueTaskSearchURL = "/var/notices/tasks.json?startDate=" +
                 Globalization.format(sakai.myb.noticewidgets.BEGINNING_OF_TIME, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
                 + "&endDate=" + Globalization.format(new Date(), sakai.myb.noticewidgets.DATE_FORMAT_ISO8601) +
                 "&excludeRequiredState=completed&items=1";
@@ -531,8 +531,8 @@ sakai.myevents = function(tuid) {
     var tasksListContainer = $(".events_list", rootContainer);
     var template = "myevents_template";
     var detailTemplate = "myevents_detail_template";
-    var dataURL = "/var/message/notice/events.json";
-    var archiveDataURL = "/var/message/notice/events.json";
+    var dataURL = "/var/notices/events.json";
+    var archiveDataURL = "/var/notices/events.json";
     var widgetName = "myevents";
 
     var getDateRange = function() {
