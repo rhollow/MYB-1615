@@ -456,6 +456,7 @@ sakai.mytasks = function(tuid) {
             startDate = today;
             switch (getDateRange()) {
                 case "all" :
+                    startDate = sakai.myb.noticewidgets.BEGINNING_OF_TIME;
                     endDate = sakai.myb.noticewidgets.END_OF_TIME;
                     break;
                 case "next7" :
