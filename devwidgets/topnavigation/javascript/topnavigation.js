@@ -477,6 +477,9 @@ sakai.topnavigation = function(tuid, showSettings){
             success: function(){
                 setTimeout(setPresence, 120000);
             },
+            error:function(){
+                $(window).trigger("user-logged-out")  
+            },
             data: data
         });
     };

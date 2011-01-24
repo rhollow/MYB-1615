@@ -2,9 +2,19 @@
     background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat scroll 16px 16px transparent;
 }
 
+#mytasks_overdue_tasks_exist {
+    color: red;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
 /**
     Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
 **/
+
+.noticewidget_listing_loading {
+    margin: 10px 0 0 8px;
+}
 
 table.noticewidget_listing {
     border-collapse: collapse;

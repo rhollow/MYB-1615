@@ -209,6 +209,9 @@ sakai.api.User.login = function(credentials, callback) {
  */
 sakai.api.User.logout = function(callback) {
 
+    // clear the systemtour widget cookie
+    $.cookie("sakai.systemtour.hide", null);
+
     /*
      * POST request to the logout service,
      * which will destroy the session.
@@ -456,7 +459,7 @@ sakai.api.User.parseDirectory = function(){
     for (var i in sakai.profile.main.data["sakai:tags"]){
         if (sakai.profile.main.data["sakai:tags"].hasOwnProperty(i)) {
             var tag = sakai.profile.main.data["sakai:tags"][i];
-            if (tag.substring(0, 10) === "directory/") {
+            if (typeof tag === "string" && tag.substring(0, 10) === "directory/") {
                 var finalTag = "";
                 var split = tag.split("/");
                 for (var ii = 1; ii < split.length; ii++) {

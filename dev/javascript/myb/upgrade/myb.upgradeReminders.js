@@ -122,7 +122,7 @@ sakai.upgradeReminders = function() {
         }
         $("#upgrade_reminders_button").live("click", function() {
             console.log("Running upgrade; dryRun=" + dryRun);
-            cleanup();
+//            cleanup();
             createSearch();
         });
     };
