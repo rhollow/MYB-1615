@@ -56,6 +56,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
     var filterControl = $(".noticewidget_filter_control", config.rootContainer);
     var filterContainer = $(".noticewidget_filter", config.rootContainer);
     var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
+    var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
+    var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
     that.init = function() {
         setupListeners();
@@ -65,10 +67,14 @@ sakai.myb.noticewidgets.Widget = function(config) {
         var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
         var url = dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
+        loadingIndicator.show();
+        listingTable.hide();
         $.ajax({
             url: url,
             cache: false,
             success: function(data) {
+                loadingIndicator.hide();
+                listingTable.show();
                 if (data.results) {
                     model.data = data;
                     model.currentNotice = 0;
@@ -386,8 +392,8 @@ sakai.mytasks = function(tuid) {
     var tasksListContainer = $(".tasks_list", rootContainer);
     var template = "mytasks_template";
     var detailTemplate = "mytasks_detail_template";
-    var dataURL = "/var/message/notice/tasks.json";
-    var archiveDataURL = "/var/message/notice/tasks_archive.json";
+    var dataURL = "/var/notices/tasks.json";
+    var archiveDataURL = "/var/notices/tasks_archive.json";
     var widgetName = "mytasks";
 
     var getDateRange = function() {
@@ -450,6 +456,7 @@ sakai.mytasks = function(tuid) {
             startDate = today;
             switch (getDateRange()) {
                 case "all" :
+                    startDate = sakai.myb.noticewidgets.BEGINNING_OF_TIME;
                     endDate = sakai.myb.noticewidgets.END_OF_TIME;
                     break;
                 case "next7" :
@@ -477,6 +484,27 @@ sakai.mytasks = function(tuid) {
                 + "&excludeRequiredState=" + excludeRequiredState;
     };
 
+    var checkForOverdueTasks = function() {
+        // TODO when KERN-1471 is fixed, bundle this request into batch request with the main search
+        var overdueTaskSearchURL = "/var/notices/tasks.json?startDate=" +
+                Globalization.format(sakai.myb.noticewidgets.BEGINNING_OF_TIME, sakai.myb.noticewidgets.DATE_FORMAT_ISO8601)
+                + "&endDate=" + Globalization.format(new Date(), sakai.myb.noticewidgets.DATE_FORMAT_ISO8601) +
+                "&excludeRequiredState=completed&items=1";
+        $.ajax({
+            url: overdueTaskSearchURL,
+            cache: false,
+            success: function(data) {
+                if ($.isArray(data.results) && data.results.length > 0) {
+                    $("#mytasks_overdue_tasks_exist", rootContainer).show();
+                }
+            },
+            error: function(xhr, textStatus, thrownError) {
+                alert("Checking overdue tasks failed for:\n" + overdueTaskSearchURL + "\ncategory=reminders with status=" + textStatus +
+                        " and thrownError=" + thrownError + "\n" + xhr.responseText);
+            }
+        });
+    };
+
     var doInit = function() {
         var taskWidget = sakai.myb.noticewidgets.Widget({
             rootContainer : rootContainer,
@@ -493,6 +521,7 @@ sakai.mytasks = function(tuid) {
         });
         taskWidget.init();
         taskWidget.getNotices();
+        checkForOverdueTasks();
     };
 
     doInit();
@@ -503,8 +532,8 @@ sakai.myevents = function(tuid) {
     var tasksListContainer = $(".events_list", rootContainer);
     var template = "myevents_template";
     var detailTemplate = "myevents_detail_template";
-    var dataURL = "/var/message/notice/events.json";
-    var archiveDataURL = "/var/message/notice/events.json";
+    var dataURL = "/var/notices/events.json";
+    var archiveDataURL = "/var/notices/events.json";
     var widgetName = "myevents";
 
     var getDateRange = function() {

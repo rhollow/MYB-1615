@@ -6,6 +6,7 @@
     <div class="fl-widget-content s3d-widget-content">
 
         <div class="noticewidget_list_view">
+            <div id="mytasks_overdue_tasks_exist" style="display:none;">__MSG__YOU_HAVE_OVERDUE_TASKS__</div>
             <div class="noticewidget_filter_control_indicator closed">&nbsp;</div>
             <div class="noticewidget_filter_control">Filter</div>
 
@@ -48,7 +49,9 @@
 
             </div>
 
-            <table class="noticewidget_listing mytasks_listing">
+            <div class="noticewidget_listing_loading">__MSG__SEARCHING__</div>
+
+            <table class="noticewidget_listing mytasks_listing" style="display:none">
                 <thead>
                     <th class="noticewidget_task_selector"></th>
                     <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort" title="__MSG__DUE__">__MSG__DUE__<span class="noticewidget_sort_indicator ascending">&nbsp;</span></th>
@@ -85,35 +88,33 @@
     <div id="mytasks_template" style="display:none"><!--
         {var isEmpty = true}
         {for i in results}
-            {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] == null}
-                {var isEmpty = false}
-                <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
-                        {var dateString = sakai.myb.noticewidgets.formatDate(i['sakai:dueDate'], "M/d")}
-                        <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
-                        {if i["sakai:archived"] === "archived"}
-                            <input type="checkbox" class="task-selected-checkbox"
-                                id="taskSelected_${i_index}" title="Selected"/>
-                        {/if}
-                        </td>
-                        <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
-                        <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
-                            <span class="ellipsis_text">${i['sakai:subject']}</span>
-                        </td>
-                        <td id="mytaskstdreq_${i_index}" class="detailTrigger">
-                        {if i["sakai:required"] === "true"}!{/if}
-                        </td>
-                        <td><input type="checkbox" class="task-completed-checkbox"
-                            id="taskDone_${i_index}"
-                                {if i["sakai:taskState"] === "completed"}
-                                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
-                                {else}
-                                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
-                                {/if}
-                                {if i["sakai:archived"] === "archived"} disabled {/if}
-                            />
-                        </td>
-                </tr>
-             {/if}
+            {var isEmpty = false}
+            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
+                    {var dateString = sakai.myb.noticewidgets.formatDate(i['sakai:dueDate'], "M/d")}
+                    <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
+                    {if i["sakai:archived"] === "archived"}
+                        <input type="checkbox" class="task-selected-checkbox"
+                            id="taskSelected_${i_index}" title="Selected"/>
+                    {/if}
+                    </td>
+                    <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
+                    <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
+                        <span class="ellipsis_text">${i['sakai:subject']}</span>
+                    </td>
+                    <td id="mytaskstdreq_${i_index}" class="detailTrigger">
+                    {if i["sakai:required"] === "true"}!{/if}
+                    </td>
+                    <td><input type="checkbox" class="task-completed-checkbox"
+                        id="taskDone_${i_index}"
+                            {if i["sakai:taskState"] === "completed"}
+                                checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                            {else}
+                                title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                            {/if}
+                            {if i["sakai:archived"] === "archived"} disabled {/if}
+                        />
+                    </td>
+            </tr>
         {/for}
         
         {if isEmpty == true}

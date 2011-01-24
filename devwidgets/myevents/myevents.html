@@ -45,6 +45,8 @@
 
             </div>
 
+            <div class="noticewidget_listing_loading">__MSG__SEARCHING__</div>
+
             <table class="noticewidget_listing myevents_listing">
                 <thead>
                     <th id="myevents_sortOn_sakai:eventDate" class="noticewidget_listing_sort" title="__MSG__DUE__">__MSG__DUE__<span class="noticewidget_sort_indicator ascending">&nbsp;</span></th>
@@ -79,19 +81,17 @@
     <div id="myevents_template" style="display:none"><!--
         {var isEmpty = true}
         {for i in results}
-            {if i["sakai:messagebox"] === "inbox" && i["sakai:eventPlace"] != null}
-                {var isEmpty = false}
-                <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
-                        {var dateString = sakai.myb.noticewidgets.formatDate(i['sakai:eventDate'], "M/d")}
-                        <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
-                        <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
-                            <span class="ellipsis_text">${i['sakai:subject']}</span>
-                        </td>
-                        <td id="myeventstdreq_${i_index}" class="detailTrigger" >
-                            {if i["sakai:required"] === "true"}!{/if}
-                        </td>
-                </tr>
-             {/if}
+            {var isEmpty = false}
+            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
+                    {var dateString = sakai.myb.noticewidgets.formatDate(i['sakai:eventDate'], "M/d")}
+                    <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
+                    <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
+                        <span class="ellipsis_text">${i['sakai:subject']}</span>
+                    </td>
+                    <td id="myeventstdreq_${i_index}" class="detailTrigger" >
+                        {if i["sakai:required"] === "true"}!{/if}
+                    </td>
+            </tr>
         {/for}
         
         {if isEmpty == true}
