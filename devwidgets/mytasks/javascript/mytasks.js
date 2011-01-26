@@ -64,6 +64,16 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
 
     that.getNotices = function(callback) {
+
+        console.log("Filter settings:");
+        var filterSettings = {
+            dateRange : config.getDateRange(),
+            itemStatus : config.getItemStatus(),
+            sortOn : model.sortOn,
+            sortOrder : model.sortOrder
+        };
+        console.dir(filterSettings);
+
         var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
         var url = dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
@@ -394,10 +404,15 @@ sakai.mytasks = function(tuid) {
     var detailTemplate = "mytasks_detail_template";
     var dataURL = "/var/notices/tasks.json";
     var archiveDataURL = "/var/notices/tasks_archive.json";
+    var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/mytasks_filter";
     var widgetName = "mytasks";
 
     var getDateRange = function() {
         return $("input[name=mytasks_date_range]:radio:checked", rootContainer).val();
+    };
+
+    var getItemStatus = function() {
+        return $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
     };
 
     var filterSelectionToMessage = function() {
@@ -472,7 +487,7 @@ sakai.mytasks = function(tuid) {
             }
         }
 
-        var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
+        var itemStatus = getItemStatus();
         var excludeRequiredState = "none";
         if (itemStatus === "required") {
             excludeRequiredState = "false";
@@ -511,13 +526,16 @@ sakai.mytasks = function(tuid) {
             widgetName : widgetName,
             dataURL : dataURL,
             archiveDataURL : archiveDataURL,
+            filterSettingsURL : filterSettingsURL,
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
             convertFilterStateToMessage : filterSelectionToMessage,
             defaultSortOn : "sakai:dueDate",
             buttonMessages : buttonMessages,
-            buildExtraQueryParams : buildExtraQueryParams
+            buildExtraQueryParams : buildExtraQueryParams,
+            getDateRange : getDateRange,
+            getItemStatus : getItemStatus
         });
         taskWidget.init();
         taskWidget.getNotices();
@@ -534,10 +552,15 @@ sakai.myevents = function(tuid) {
     var detailTemplate = "myevents_detail_template";
     var dataURL = "/var/notices/events.json";
     var archiveDataURL = "/var/notices/events.json";
+    var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/myevents_filter";
     var widgetName = "myevents";
 
     var getDateRange = function() {
         return $("input[name=myevents_date_range]:radio:checked", rootContainer).val();
+    };
+
+    var getItemStatus = function() {
+        return $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
     };
 
     var filterSelectionToMessage = function() {
@@ -604,7 +627,7 @@ sakai.myevents = function(tuid) {
             }
         }
 
-        var itemStatus = $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
+        var itemStatus = getItemStatus();
         var excludeRequiredState = "none";
         if (itemStatus === "required") {
             excludeRequiredState = "false";
@@ -628,7 +651,9 @@ sakai.myevents = function(tuid) {
             convertFilterStateToMessage : filterSelectionToMessage,
             defaultSortOn : "sakai:eventDate",
             buttonMessages : buttonMessages,
-            buildExtraQueryParams : buildExtraQueryParams
+            buildExtraQueryParams : buildExtraQueryParams,
+            getDateRange : getDateRange,
+            getItemStatus : getItemStatus
         });
         eventWidget.init();
         eventWidget.getNotices();
