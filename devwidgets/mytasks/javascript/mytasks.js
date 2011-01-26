@@ -639,7 +639,7 @@ sakai.myevents = function(tuid) {
 
         if (isArchiveMode) {
             startDate = sakai.myb.noticewidgets.BEGINNING_OF_TIME;
-            endDate.setTime(today.getTime() + sakai.myb.noticewidgets.ONE_DAY);
+            endDate.setTime(today.getTime());
         } else {
             startDate = today;
             switch (getDateRange()) {
