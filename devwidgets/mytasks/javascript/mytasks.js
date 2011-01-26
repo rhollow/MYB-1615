@@ -71,23 +71,22 @@ sakai.myb.noticewidgets.Widget = function(config) {
         sakai.api.Server.loadJSON(config.filterSettingsURL, function (success, data) {
             if (success) {
                 model.filterSettings = data;
+                that.getNotices(callback);
             } else {
-                // TODO user has no stored filter settings, so save the default ones
+                // user has no stored filter settings, so save the default ones
+                that.saveFilterSettingsAndGetNotices(function() {
+                    that.getNotices(callback);
+                });
             }
-
-            console.log("Filter settings:");
-            console.dir(model.filterSettings);
-
-            that.getNotices(callback);
         });
     };
 
     that.saveFilterSettingsAndGetNotices = function(callback) {
-        console.log("saving filter settings:");
-        console.dir(model.filterSettings);
-        // TODO save json data
-
-        that.getNotices(callback);
+        model.filterSettings.dateRange = config.getDateRange();
+        model.filterSettings.itemStatus = config.getItemStatus();
+        sakai.api.Server.saveJSON(config.filterSettingsURL, model.filterSettings, function() {
+            that.getNotices(callback);
+        });
     };
 
     that.getNotices = function(callback) {
