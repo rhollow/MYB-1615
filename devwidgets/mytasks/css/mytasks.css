@@ -73,13 +73,16 @@ table.noticewidget_listing tr.notice_row:hover {
     background-color: #ccc
 }
 
+.noticewidget_filter_container {
+    border: 1px solid black;
+    margin: 2px;
+}
+
 .noticewidget_filter {
     background-color: #fff;
-    border: 1px solid black;
     width: auto;
     height: 7em;
-    margin: 2px;
-    padding: 10px;
+    padding: 0 10px 10px 10px;
 }
 
 .noticewidget_filter .noticewidget_filter_status {
