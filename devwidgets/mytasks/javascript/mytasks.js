@@ -71,6 +71,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         sakai.api.Server.loadJSON(config.filterSettingsURL, function (success, data) {
             if (success) {
                 model.filterSettings = data;
+                updateFilterControls();
                 that.getNotices(callback);
             } else {
                 // user has no stored filter settings, so save the default ones
@@ -85,6 +86,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         model.filterSettings.dateRange = config.getDateRange();
         model.filterSettings.itemStatus = config.getItemStatus();
         sakai.api.Server.saveJSON(config.filterSettingsURL, model.filterSettings, function() {
+            updateFilterControls();
             that.getNotices(callback);
         });
     };
@@ -154,16 +156,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     model.filterSettings.sortOrder = model.filterSettings.sortOrder === "ascending" ? "descending" : "ascending";
                 }
 
-                that.saveFilterSettingsAndGetNotices(function() {
-                    // clear old sort arrows
-                    var arrow = $(".noticewidget_listing thead span", config.rootContainer);
-                    arrow.removeClass("descending");
-                    // set the new sort arrow state
-                    arrow.addClass(model.filterSettings.sortOrder);
-                    // move arrow span to new sort col
-                    arrow.remove();
-                    arrow.appendTo(newSortCol);
-                });
+                that.saveFilterSettingsAndGetNotices();
+
             });
         };
 
@@ -387,6 +381,22 @@ sakai.myb.noticewidgets.Widget = function(config) {
         scroller();
         subjectLines();
         filterStatus();
+    };
+
+    var updateFilterControls = function() {
+        // move the sort arrow to the current sort column
+        var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"));
+        var arrow = $(".noticewidget_listing thead span", config.rootContainer);
+        arrow.removeClass("descending");
+        arrow.addClass(model.filterSettings.sortOrder);
+        arrow.remove();
+        arrow.appendTo(currentSortCol);
+
+        // update the radio buttons
+        var dateRangeRadio = $("#" + config.widgetName + "_date_range_" + model.filterSettings.dateRange);
+        var itemStatusRadio = $("#" + config.widgetName + "_item_status_" + model.filterSettings.itemStatus);
+        dateRangeRadio[0].checked = true;
+        itemStatusRadio[0].checked = true;
     };
 
     var postNotice = function (url, props, callback) {
