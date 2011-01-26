@@ -74,7 +74,7 @@ sakai.libraryreferencechat = function(tuid, showSettings){
             }
             try {
 				var h = $("#qp.bootstrap"); // changed to use jquery selector instead of getElementById - Nicole
-				h.src = "http://www.questionpoint.org/crs/js/qwidget/qp.bootstrap.js?langcode=1&instid=12566&skin=black&size=fill"; // hard-coded to get it to work
+				h.src = makeSource(); // hard-coded to get it to work - Nicole
 				var g = d(h.src);
 				var a = f(g.query);
 				var b = document.getElementById("qpchatwidget");
@@ -99,8 +99,23 @@ sakai.libraryreferencechat = function(tuid, showSettings){
         }
     };
 	
+	// dynamically generate url string - Nicole
+	var makeSource = function() {
+		var src = "http://www.questionpoint.org/crs/js/qwidget/qp.bootstrap.js?langcode=1&instid=12566&skin=black&size=fill&customSkin=";
+		var protocol = location.protocol;
+		var port = "";
+		if(protocol === "http:") {
+			port = ":" + location.port;
+		} else {
+			alert("Error: Site protocol not recognized.");
+			return;
+		}
+		src += protocol + "//" + location.hostname + port + escape("/devwidgets/libraryreferencechat/css");
+		return src;
+	}
+	
     QPBootstrap.onload = window.onload;
-    // original code, but window.onload doesn't fire when this script is embedded in a widget.
+    // original code; window.onload doesn't fire when this script is embedded in a widget.
 	// added an init function instead to do the same thing. - Nicole
 	/*window.onload = function(){
         QPBootstrap.embed();
@@ -112,7 +127,7 @@ sakai.libraryreferencechat = function(tuid, showSettings){
 	var init = function() {
 		QPBootstrap.embed();
         if (QPBootstrap.onload != null) {
-            QPBootstrap.onload()
+            QPBootstrap.onload();
         }
 	}
 	init();
