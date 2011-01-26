@@ -15,6 +15,7 @@
 sakai.upgradeDynamicLists = function() {
 	var GET_LIST_URL = "/private/dynamic_lists.infinity.json";
 	var SAVE_LIST_URL = "/private/dynamic_lists";
+	var DELETE_LIST_URL = "/private/dynamic_lists/lists";
 	
 	var UNDERGRAD_MAJORS = [ "ARCHITECTURE", "INDIVIDUAL", "LIMITED",
 			"LANDSCAPE ARCH", "URBAN STUDIES" ];
@@ -40,12 +41,24 @@ sakai.upgradeDynamicLists = function() {
 		var submitData = {};
 		if (dryRun === false) {
 			console.log("saving new lists for advisor " + advisorId);
-			url = "/~" + advisorId + SAVE_LIST_URL;
+			var url = "/~" + advisorId + SAVE_LIST_URL;
 			submitData.lists = lists
 			sakai.api.Server.saveJSON(url, submitData);
 		}
 		else {
 			console.log("This is a dry run, not saving new lists");
+		}
+	}
+	
+	// delete all lists for advisor
+	var deleteLists = function(advisorId) {
+		if (dryRun === false) {
+			console.log("deleting all lists for advisor " + advisorId);
+			var url = "/~" + advisorId + DELETE_LIST_URL;
+			sakai.api.Server.removeJSON(url);
+		}
+		else {
+			console.log("This is a dry run, not removing any lists");
 		}
 	}
 
@@ -56,16 +69,31 @@ sakai.upgradeDynamicLists = function() {
 		if (data && data.lists) {
 			lists = data.lists;
 			console.log(data.lists);
-			for ( var int = 0; int < lists.length; int++) {
-				list = lists[int];
+			for ( var i = 0, len = lists.length; i < len; i++) {
+				list = lists[i];
 				// this is the old structure, the new one has a nested major
 				// node so list.query.major will only be true for old lists
 				if (list.query.major) {
 					list = updateList(list);
 				}
-				lists[int] = list;
+				lists[i] = list;
 			}
-			saveLists(lists, advisorId);
+			
+			// Skipping all non-upgradable lists
+			// No supported in IE			
+			var listsToSave = lists.filter(function(x) {
+			   return x !== null;
+			});
+			
+			// Do we have any upgraded lists at all?
+			if(listsToSave.length > 0) {
+				saveLists(listsToSave, advisorId);
+			} else {				
+				// Deleting all lists for this advisor
+				deleteLists(advisorId);				
+				console.warn("Advisor " + advisorId + " has lists, but none of then can be upgraded. All existing non-upgradable lists for this advisor were deleted");	
+			}
+			
 		} else {
 			console.log("advisor " + advisorId + " has no lists to upgrade");
 		}
@@ -83,14 +111,18 @@ sakai.upgradeDynamicLists = function() {
 		var newStandings = [];
 		var majors = list.query.major;
 		var standings = list.query.standing;
-		for ( var int = 0; int < standings.length; int++) {
-			standing = standings[int];
+		for ( var i = 0; i < standings.length; i++) {
+			standing = standings[i];
 			newStanding = {};
 			filteredMajors = filterMajors(standing, majors);
+			if(filteredMajors.length === 0) {
+				console.warn("List with id '" + list["sakai:id"] + "' will not contain any majors after conversion, skipping...");
+				return null;
+			}
 			newStanding[standing] = {
 				'major' : filteredMajors
 			};
-			newStandings[int] = newStanding;
+			newStandings[i] = newStanding;
 		}
 		// new list query
 		// context: ["g-ced-students"]
@@ -106,9 +138,9 @@ sakai.upgradeDynamicLists = function() {
 	// make sure the new major arrays have the specific majors for each standing
 	var filterMajors = function(standing, majors) {
 		var filteredMajors = [];
-		for ( var int = 0; int < majors.length; int++) {
-			if (containsMajor(standing, majors[int])) {
-				filteredMajors.push(majors[int]);
+		for ( var i = 0; i < majors.length; i++) {
+			if (containsMajor(standing, majors[i])) {
+				filteredMajors.push(majors[i]);
 			}
 		}
 		return filteredMajors;
@@ -126,8 +158,8 @@ sakai.upgradeDynamicLists = function() {
 			console.log("cannot filter majors for standing " + standing)
 		}
 		if (targetArr) {
-			for ( var int = 0; int < targetArr.length; int++) {
-				if (targetArr[int] === major) {
+			for ( var i = 0; i < targetArr.length; i++) {
+				if (targetArr[i] === major) {
 					containsMajor = true;
 				}
 			}
@@ -155,8 +187,8 @@ sakai.upgradeDynamicLists = function() {
 		loadAdvisors();
 		$("#upgrade_dynamiclists_button").live("click", function() {
 			console.log("Running upgrade; dryRun=" + dryRun);
-			for ( var int = 0; int < advisors.length; int++) {
-				var advisorId = advisors[int]["rep:userId"];
+			for ( var i = 0; i < advisors.length; i++) {
+				var advisorId = advisors[i]["rep:userId"];
 				loadListsForAdvisor(advisorId);
 			}
 		});
