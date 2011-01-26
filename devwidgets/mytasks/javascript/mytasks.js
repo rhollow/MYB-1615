@@ -46,11 +46,15 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
     var model = {
         data : null,
-        sortOn : config.defaultSortOn,
-        sortOrder : "ascending",
         archiveMode : false,
         detailMode : false,
-        currentNotice : 0
+        currentNotice : 0,
+        filterSettings : {
+            sortOn : config.defaultSortOn,
+            sortOrder : "ascending",
+            dateRange : config.getDateRange(),
+            itemStatus : config.getItemStatus()
+        }
     };
 
     var filterControl = $(".noticewidget_filter_control", config.rootContainer);
@@ -63,19 +67,33 @@ sakai.myb.noticewidgets.Widget = function(config) {
         setupListeners();
     };
 
+    that.getFilterSettingsAndNotices = function(callback) {
+        sakai.api.Server.loadJSON(config.filterSettingsURL, function (success, data) {
+            if (success) {
+                model.filterSettings = data;
+            } else {
+                // TODO user has no stored filter settings, so save the default ones
+            }
+
+            console.log("Filter settings:");
+            console.dir(model.filterSettings);
+
+            that.getNotices(callback);
+        });
+    };
+
+    that.saveFilterSettingsAndGetNotices = function(callback) {
+        console.log("saving filter settings:");
+        console.dir(model.filterSettings);
+        // TODO save json data
+
+        that.getNotices(callback);
+    };
+
     that.getNotices = function(callback) {
 
-        console.log("Filter settings:");
-        var filterSettings = {
-            dateRange : config.getDateRange(),
-            itemStatus : config.getItemStatus(),
-            sortOn : model.sortOn,
-            sortOrder : model.sortOrder
-        };
-        console.dir(filterSettings);
-
         var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
-        var url = dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
+        var url = dataURL + "?sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
         loadingIndicator.show();
         listingTable.hide();
@@ -122,27 +140,27 @@ sakai.myb.noticewidgets.Widget = function(config) {
             });
 
             $("input:radio", config.rootContainer).live("click", function() {
-                that.getNotices();
+                that.saveFilterSettingsAndGetNotices();
             });
         };
 
         var sortControls = function() {
             $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                 var newSortCol = $(this);
-                var oldSortOn = model.sortOn;
-                model.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
-                if (oldSortOn != model.sortOn) {
-                    model.sortOrder = "ascending";
+                var oldSortOn = model.filterSettings.sortOn;
+                model.filterSettings.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
+                if (oldSortOn != model.filterSettings.sortOn) {
+                    model.filterSettings.sortOrder = "ascending";
                 } else {
-                    model.sortOrder = model.sortOrder === "ascending" ? "descending" : "ascending";
+                    model.filterSettings.sortOrder = model.filterSettings.sortOrder === "ascending" ? "descending" : "ascending";
                 }
 
-                that.getNotices(function() {
+                that.saveFilterSettingsAndGetNotices(function() {
                     // clear old sort arrows
                     var arrow = $(".noticewidget_listing thead span", config.rootContainer);
                     arrow.removeClass("descending");
                     // set the new sort arrow state
-                    arrow.addClass(model.sortOrder);
+                    arrow.addClass(model.filterSettings.sortOrder);
                     // move arrow span to new sort col
                     arrow.remove();
                     arrow.appendTo(newSortCol);
@@ -538,7 +556,7 @@ sakai.mytasks = function(tuid) {
             getItemStatus : getItemStatus
         });
         taskWidget.init();
-        taskWidget.getNotices();
+        taskWidget.getFilterSettingsAndNotices();
         checkForOverdueTasks();
     };
 
@@ -645,6 +663,7 @@ sakai.myevents = function(tuid) {
             widgetName : widgetName,
             dataURL : dataURL,
             archiveDataURL : archiveDataURL,
+            filterSettingsURL : filterSettingsURL,
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
@@ -656,7 +675,7 @@ sakai.myevents = function(tuid) {
             getItemStatus : getItemStatus
         });
         eventWidget.init();
-        eventWidget.getNotices();
+        eventWidget.getFilterSettingsAndNotices();
     };
 
     doInit();
