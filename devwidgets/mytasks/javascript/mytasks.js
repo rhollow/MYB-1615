@@ -67,9 +67,10 @@ sakai.myb.noticewidgets.Widget = function(config) {
         setupListeners();
     };
 
-    that.getFilterSettingsAndNotices = function(callback) {
+    that.start = function(callback) {
         sakai.api.Server.loadJSON(config.filterSettingsURL, function (success, data) {
             if (success) {
+                // user has saved filter prefs, use 'em
                 model.filterSettings = data;
                 updateFilterControls();
                 that.getNotices(callback);
@@ -565,7 +566,7 @@ sakai.mytasks = function(tuid) {
             getItemStatus : getItemStatus
         });
         taskWidget.init();
-        taskWidget.getFilterSettingsAndNotices();
+        taskWidget.start();
         checkForOverdueTasks();
     };
 
@@ -684,7 +685,7 @@ sakai.myevents = function(tuid) {
             getItemStatus : getItemStatus
         });
         eventWidget.init();
-        eventWidget.getFilterSettingsAndNotices();
+        eventWidget.start();
     };
 
     doInit();
