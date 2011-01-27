@@ -114,13 +114,16 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
+                } else {
+                    console.log("There are no results in the returned data. Data dump:");
+                    console.dir(data);
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
+                console.log("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
                         " and thrownError=" + thrownError + "\n" + xhr.responseText);
             }
-        })
+        });
     };
 
     var translate = function(key) {
@@ -409,7 +412,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("POST to " + url + " failed for " + props + " with status =" + textStatus +
+                console.log("POST to " + url + " failed for " + props + " with status =" + textStatus +
                         " and thrownError = " + thrownError + "\n" + xhr.responseText);
             },
             dataType: 'json'
