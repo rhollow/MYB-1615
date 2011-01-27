@@ -115,12 +115,13 @@ sakai.myb.noticewidgets.Widget = function(config) {
                         callback();
                     }
                 } else {
-                    console.log("There are no results in the returned data. Data dump:");
-                    console.dir(data);
+                    announceError();
+                    debug.error("There are no results in the returned data. Data dump:", data);
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                console.log("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
+                announceError();
+                debug.error("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
                         " and thrownError=" + thrownError + "\n" + xhr.responseText);
             }
         });
@@ -128,6 +129,11 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
     var translate = function(key) {
         return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
+    };
+
+    var announceError = function() {
+        sakai.api.Util.notification.show("", translate("AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
+                sakai.api.Util.notification.type.ERROR, false);
     };
 
     var setupListeners = function() {
@@ -412,7 +418,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                console.log("POST to " + url + " failed for " + props + " with status =" + textStatus +
+                announceError();
+                debug.error("POST to " + url + " failed for " + props + " with status =" + textStatus +
                         " and thrownError = " + thrownError + "\n" + xhr.responseText);
             },
             dataType: 'json'
