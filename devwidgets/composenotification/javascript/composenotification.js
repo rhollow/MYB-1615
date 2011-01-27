@@ -504,7 +504,7 @@ if (!sakai.composenotification){
             $(messageEventTimeMinute).removeClass(invalidClass);
             $(messageEventTimeAMPM).removeClass(invalidClass);
             $(messageEventPlace).removeClass(invalidClass);
-			isDirty = true;
+			isDirty = true;                       
         });             
         // If event is checked, show the information and make sure the task
         // details are hidden. Restore to thier default state.     
@@ -622,35 +622,39 @@ if (!sakai.composenotification){
                 $(messageRequiredYes).attr("checked", true);
                 $(messageReminderCheckbox).attr("checked", true);
                 $(messageReminderCheck).show();
-                // Is it a task or an event?
-                if (message["sakai:dueDate"] != null) {                    
+                                            
+                // Is it a task or an event?                
+                if (message["sakai:dueDate"]!=null) {                    
                     // It's a task.
                     $(messageTaskCheck).attr("checked", true);
                     $(".cn-task").show();                         
                     taskDate = sakai.api.Util.parseSakaiDate(message["sakai:dueDate"]);                    
-                    $(messageTaskDueDate).datepicker("setDate", taskDate);                    
+                    $(messageTaskDueDate).datepicker("setDate", taskDate);                   
                 }
-                else {
+                else if (message["sakai:eventDate"]!=null || message["sakai:eventPlace"]!=null){                    
                     // It's an event.                                       
                     $(messageEventCheck).attr("checked", true);
                     $(".cn-event").show();                                       
-                    eventDate = sakai.api.Util.parseSakaiDate(message["sakai:eventDate"]);                                                      
-                    var hours = eventDate.getHours();
-                    var minutes = eventDate.getMinutes();
-                    var AMPM = "AM";                    
-                    $(messageEventDate).datepicker("setDate", eventDate);
-                    if (hours > 11) {
-                        if (hours != 12) {
-                            hours = hours - 12;
+                    if (message["sakai:eventDate"] != null) {
+                        eventDate = sakai.api.Util.parseSakaiDate(message["sakai:eventDate"]);
+                        var hours = eventDate.getHours();
+                        var minutes = eventDate.getMinutes();
+                        var AMPM = "AM";
+                        $(messageEventDate).datepicker("setDate", eventDate);
+                        if (hours > 11) {
+                            if (hours != 12) {
+                                hours = hours - 12;
+                            }
+                            AMPM = "PM";
                         }
-                        AMPM = "PM";
-                    }
-                    else if(hours==0){
-                        hours = hours + 12;
-                    }                    
-                    $(messageEventTimeHour).val(hours);                    
-                    $(messageEventTimeMinute).val(minutes);                    
-                    $(messageEventTimeAMPM).val(AMPM);                                                                                                  
+                        else 
+                            if (hours == 0) {
+                                hours = hours + 12;
+                            }
+                        $(messageEventTimeHour).val(hours);
+                        $(messageEventTimeMinute).val(minutes);
+                        $(messageEventTimeAMPM).val(AMPM);
+                    }                                                                                             
                     $(messageEventPlace).val(message["sakai:eventPlace"]);                                                          
                 }
             }
@@ -941,7 +945,28 @@ if (!sakai.composenotification){
                         		    
 		    // Return the status of the form.        
 		    return valid;
-		};            
+		};           
+        
+        var allEmptyEventFields = function(){            
+            if($(messageEventDate).val()!=null){
+                return false;
+            }
+            else if(valid = $(messageEventTimeAMPM).val()!=null){
+                return false;
+            }
+            else if(valid = $(messageEventTimeHour).val()!=null){
+                return false;
+            }
+            else if(valid = $(messageEventTimeMinute).val()!=null){
+                return false;
+            }
+            else if(valid = $(messageEventPlace).val()!=null){
+                return false;
+            }          
+            else{
+                return true;
+            }
+        };
         
         /**
          * Save the information currently on the notifiaction detail page
@@ -986,38 +1011,48 @@ if (!sakai.composenotification){
                 toPost["sakai:category"] = "reminder"; 
                 toPost["sakai:taskState"] = "created";
                 toPost["sakai:required"] = true;
+                // Clear out task and event details for now.                
+                toPost["sakai:eventDate@Delete"]=true;                    
+                toPost["sakai:eventPlace@Delete"]=true;
+                toPost["sakai:dueDate@Delete"]=true;
 
                 // This reminder is a TASK.
-                if($(messageTaskCheck).attr("checked")){                                                                                                                                                                   
-                    toPost["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate").toString();
-                    toPost["sakai:dueDate@TypeHint"] = "Date";                      
-                    // Clear event details, in case it was an event before.
-                    toPost["sakai:eventDate@Delete"]=true;                    
-                    toPost["sakai:eventPlace@Delete"]=true;                   
+                if($(messageTaskCheck).attr("checked")){                  
+                    if($(messageTaskDueDate).val()!=""){
+                        toPost["sakai:dueDate"] = $(messageTaskDueDate).datepicker("getDate").toString();
+                        toPost["sakai:dueDate@TypeHint"] = "Date";                           
+                    }
+                    // Indicate this is a task.
+                    toPost["sakai:dueDate@Delete"]=false;                                                                                                                                                                                                                                                                                       
                 }
                 
                 // This reminder is an EVENT.
-                else{                                                                                                                  
-                    toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");                                        
-                    toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());                    
-                    // Get the event time details and add to the eventDate obj.                    
-                    if($(messageEventTimeAMPM).val()=="PM" && parseInt($(messageEventTimeHour).val())!=12){                                               
-                        toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val())+12);                                            
-                    }
-                    else{
-                        toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());                        
-                    }
-                    toPost["sakai:eventDate"] = toPost["sakai:eventDate"].toString();                                                                                                  
-                    toPost["sakai:eventDate@TypeHint"] = "Date";
-                    toPost["sakai:eventPlace"] = $(messageEventPlace).val();  
-                    // To prepend event details to the body of the message.
-                    var eventDetails = "Date: "+formatDate($(messageEventDate).datepicker("getDate"))+"\n"+
-                                       "Time: "+$(messageEventTimeHour+" :selected").text()+":"+$(messageEventTimeMinute+" :selected").text()+" "+$(messageEventTimeAMPM+" :selected").text()+"\n"+
-                                       "Place: "+toPost["sakai:eventPlace"]+"\n\n"; 
-                                   
-                    toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                    
-                    // Clear task fields in case it was previously a task.
-                    toPost["sakai:dueDate@Delete"]=true;                                                                                                                                                                                                                                                                                                                                                                                      
+                else{   
+                    var check = allEmptyEventFields();                                      
+                    if(!check){
+                        if ($(messageEventDate).datepicker("getDate")!=null) {
+                            toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
+                            toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());
+                            // Get the event time details and add to the eventDate obj.                    
+                            if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
+                                toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val()) + 12);
+                            }
+                            else {
+                                toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());
+                            }
+                            toPost["sakai:eventDate"] = toPost["sakai:eventDate"].toString();
+                            toPost["sakai:eventDate@TypeHint"] = "Date";
+                        }
+                        toPost["sakai:eventPlace"] = $(messageEventPlace).val();  
+                        // To prepend event details to the body of the message.
+                        var eventDetails = "Date: "+formatDate($(messageEventDate).datepicker("getDate"))+"\n"+
+                                           "Time: "+$(messageEventTimeHour+" :selected").text()+":"+$(messageEventTimeMinute+" :selected").text()+" "+$(messageEventTimeAMPM+" :selected").text()+"\n"+
+                                           "Place: "+toPost["sakai:eventPlace"]+"\n\n";                                        
+                        toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                                                                                                                  
+                    }                    
+                    // Indicate this is an event.
+                    toPost["sakai:eventDate@Delete"]=false;                    
+                    toPost["sakai:eventPlace@Delete"]=false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                 }                    
             }
             
@@ -1031,8 +1066,8 @@ if (!sakai.composenotification){
                 // (It may still be a non-required event, which will be handled later.)              
                 toPost["sakai:dueDate@Delete"]=true;               
                 toPost["sakai:taskState@Delete"]=true;
-                toPost["sakai:eventDate@Delete"] = true;
-                toPost["sakai:eventPlace@Delete"] = true;                
+                toPost["sakai:eventDate@Delete"]=true;
+                toPost["sakai:eventPlace@Delete"]=true;                             
                
                // This is a NON-REQUIRED EVENT.
                 if ($(messageEventCheck).attr("checked")) {                                                  
@@ -1052,7 +1087,7 @@ if (!sakai.composenotification){
                     var eventDetails = "Date: " + formatDate($(messageEventDate).datepicker("getDate")) + "\n" +
                                        "Time: " + $(messageEventTimeHour + " :selected").text() + ":" + $(messageEventTimeMinute + " :selected").text() + " " + $(messageEventTimeAMPM + " :selected").text() + "\n" +
                                        "Place: " + toPost["sakai:eventPlace"] + "\n\n";                    
-                    toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];
+                    toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                                      
                 }                                                   
             }                                   
             return toPost;
