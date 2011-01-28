@@ -37,6 +37,11 @@ sakai.myb.noticewidgets.formatDate = function(date, format) {
     return Globalization.format(date, format);
 };
 
+sakai.myb.noticewidgets.announceError = function() {
+    sakai.api.Util.notification.show("", translate("AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
+            sakai.api.Util.notification.type.ERROR, false);
+};
+
 /**
  * Generic constructor for noticewidgets (of which tasks is one type, and events is another).
  * @param config
@@ -114,13 +119,17 @@ sakai.myb.noticewidgets.Widget = function(config) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
+                } else {
+                    sakai.myb.noticewidgets.announceError();
+                    window.debug.error("There are no results in the returned data. Data dump:", data);
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
+                sakai.myb.noticewidgets.announceError();
+                window.debug.error("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
                         " and thrownError=" + thrownError + "\n" + xhr.responseText);
             }
-        })
+        });
     };
 
     var translate = function(key) {
@@ -409,7 +418,8 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("POST to " + url + " failed for " + props + " with status =" + textStatus +
+                sakai.myb.noticewidgets.announceError();
+                window.debug.error("POST to " + url + " failed for " + props + " with status =" + textStatus +
                         " and thrownError = " + thrownError + "\n" + xhr.responseText);
             },
             dataType: 'json'
@@ -540,7 +550,8 @@ sakai.mytasks = function(tuid) {
                 }
             },
             error: function(xhr, textStatus, thrownError) {
-                alert("Checking overdue tasks failed for:\n" + overdueTaskSearchURL + "\ncategory=reminders with status=" + textStatus +
+                sakai.myb.noticewidgets.announceError();
+                window.debug.error("Checking overdue tasks failed for:\n" + overdueTaskSearchURL + "\ncategory=reminders with status=" + textStatus +
                         " and thrownError=" + thrownError + "\n" + xhr.responseText);
             }
         });
