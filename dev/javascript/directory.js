@@ -56,7 +56,8 @@ sakai.directory = function(){
             $(".directory_info").html($.TemplateRenderer("#directory_template", resultJson));
         });
     };
-
+	/* myBerkeley: Directory is disabled in 0.2 */
+	sakai.api.Security.send404();
     doInit();
 
 };

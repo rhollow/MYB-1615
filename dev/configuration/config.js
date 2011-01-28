@@ -360,7 +360,7 @@ sakai.config = {
                             "display": true
                         }
                     }
-                },
+                },/* myBerkeley: widget is disabled in 0.2 -----------------------
                 "locations": {
                     "label": "__MSG__PROFILE_LOCATIONS_LABEL__",
                     "required": false,
@@ -378,7 +378,7 @@ sakai.config = {
                             "type": "location"
                         }
                     }
-                },
+                },*/
                 "publications": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_LABEL__",
                     "required": false,
@@ -723,12 +723,12 @@ sakai.config = {
             "anonUrl" : "/dev/search_people.html#q=*",
             "id" : "navigation_people_link",
             "label" : "PEOPLE"
-        },
+        }/* Directory is disabled in 0.2 *//*,
         {
             "url" : "/dev/directory.html",
             "id" : "navigation_directory_link",
             "label" : "DIRECTORY"
-        }
+        }*/
     ],
 
     /*

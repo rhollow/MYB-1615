@@ -292,9 +292,10 @@ sakai.contentmetadata = function(tuid,showSettings){
                     case "tags":
                         renderTags(mode);
                         break;
-                    case "locations":
+                    /* myBerkeley: widget is disabled in 0.2 */
+					/*case "locations":
                         renderLocations(mode);
-                        break;
+                        break;*/
                     case "copyright":
                         renderCopyright(mode);
                         break;
@@ -390,7 +391,8 @@ sakai.contentmetadata = function(tuid,showSettings){
         renderDescription(false);
         renderTags(false);
         renderCopyright(false);
-        renderLocations(false);
+        /* myBerkeley: widget is disabled in 0.2 */
+		//renderLocations(false);
         renderDetails(false);
 
         // Add binding
