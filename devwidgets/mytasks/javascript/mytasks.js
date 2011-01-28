@@ -46,15 +46,20 @@ sakai.myb.noticewidgets.Widget = function(config) {
     };
     var model = {
         data : null,
-        sortOn : config.defaultSortOn,
-        sortOrder : "ascending",
         archiveMode : false,
         detailMode : false,
-        currentNotice : 0
+        currentNotice : 0,
+        filterSettings : {
+            sortOn : config.defaultSortOn,
+            sortOrder : "ascending",
+            dateRange : config.getDateRange(),
+            itemStatus : config.getItemStatus()
+        }
     };
 
+    var filterContainer = $(".noticewidget_filter_container", config.rootContainer);
     var filterControl = $(".noticewidget_filter_control", config.rootContainer);
-    var filterContainer = $(".noticewidget_filter", config.rootContainer);
+    var filterControlContainer = $(".noticewidget_filter", config.rootContainer);
     var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
     var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
     var listingTable = $("table.noticewidget_listing", config.rootContainer);
@@ -63,9 +68,35 @@ sakai.myb.noticewidgets.Widget = function(config) {
         setupListeners();
     };
 
+    that.start = function(callback) {
+        sakai.api.Server.loadJSON(config.filterSettingsURL, function (success, data) {
+            if (success) {
+                // user has saved filter prefs, use 'em
+                model.filterSettings = data;
+                updateFilterControls();
+                that.getNotices(callback);
+            } else {
+                // user has no stored filter settings, so save the default ones
+                that.saveFilterSettingsAndGetNotices(function() {
+                    that.getNotices(callback);
+                });
+            }
+        });
+    };
+
+    that.saveFilterSettingsAndGetNotices = function(callback) {
+        model.filterSettings.dateRange = config.getDateRange();
+        model.filterSettings.itemStatus = config.getItemStatus();
+        sakai.api.Server.saveJSON(config.filterSettingsURL, model.filterSettings, function() {
+            updateFilterControls();
+            that.getNotices(callback);
+        });
+    };
+
     that.getNotices = function(callback) {
+
         var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
-        var url = dataURL + "?sortOn=" + model.sortOn + "&sortOrder=" + model.sortOrder
+        var url = dataURL + "?sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
         loadingIndicator.show();
         listingTable.hide();
@@ -100,43 +131,35 @@ sakai.myb.noticewidgets.Widget = function(config) {
 
         var filters = function() {
             filterControl.live("click", function() {
-                if (filterContainer.is(":visible")) {
-                    filterContainer.hide();
+                if (filterControlContainer.is(":visible")) {
+                    filterControlContainer.hide();
                     filterControlIndicator.removeClass("open");
                     filterControlIndicator.addClass("closed");
                 } else {
-                    filterContainer.show();
+                    filterControlContainer.show();
                     filterControlIndicator.removeClass("closed");
                     filterControlIndicator.addClass("open");
                 }
             });
 
             $("input:radio", config.rootContainer).live("click", function() {
-                that.getNotices();
+                that.saveFilterSettingsAndGetNotices();
             });
         };
 
         var sortControls = function() {
             $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                 var newSortCol = $(this);
-                var oldSortOn = model.sortOn;
-                model.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
-                if (oldSortOn != model.sortOn) {
-                    model.sortOrder = "ascending";
+                var oldSortOn = model.filterSettings.sortOn;
+                model.filterSettings.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
+                if (oldSortOn != model.filterSettings.sortOn) {
+                    model.filterSettings.sortOrder = "ascending";
                 } else {
-                    model.sortOrder = model.sortOrder === "ascending" ? "descending" : "ascending";
+                    model.filterSettings.sortOrder = model.filterSettings.sortOrder === "ascending" ? "descending" : "ascending";
                 }
 
-                that.getNotices(function() {
-                    // clear old sort arrows
-                    var arrow = $(".noticewidget_listing thead span", config.rootContainer);
-                    arrow.removeClass("descending");
-                    // set the new sort arrow state
-                    arrow.addClass(model.sortOrder);
-                    // move arrow span to new sort col
-                    arrow.remove();
-                    arrow.appendTo(newSortCol);
-                });
+                that.saveFilterSettingsAndGetNotices();
+
             });
         };
 
@@ -194,12 +217,9 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 model.detailMode = false;
                 that.getNotices(function() {
                     if (model.archiveMode) {
-                        filterControlIndicator.hide();
-                        filterControl.hide();
                         filterContainer.hide();
                     } else {
-                        filterControlIndicator.show();
-                        filterControl.show();
+                        filterContainer.show();
                     }
                 });
             });
@@ -362,6 +382,22 @@ sakai.myb.noticewidgets.Widget = function(config) {
         filterStatus();
     };
 
+    var updateFilterControls = function() {
+        // move the sort arrow to the current sort column
+        var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"));
+        var arrow = $(".noticewidget_listing thead span", config.rootContainer);
+        arrow.removeClass("descending");
+        arrow.addClass(model.filterSettings.sortOrder);
+        arrow.remove();
+        arrow.appendTo(currentSortCol);
+
+        // update the radio buttons
+        var dateRangeRadio = $("#" + config.widgetName + "_date_range_" + model.filterSettings.dateRange);
+        var itemStatusRadio = $("#" + config.widgetName + "_item_status_" + model.filterSettings.itemStatus);
+        dateRangeRadio[0].checked = true;
+        itemStatusRadio[0].checked = true;
+    };
+
     var postNotice = function (url, props, callback) {
         $.ajax({
             type: 'POST',
@@ -394,10 +430,15 @@ sakai.mytasks = function(tuid) {
     var detailTemplate = "mytasks_detail_template";
     var dataURL = "/var/notices/tasks.json";
     var archiveDataURL = "/var/notices/tasks_archive.json";
+    var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/mytasks_filter";
     var widgetName = "mytasks";
 
     var getDateRange = function() {
         return $("input[name=mytasks_date_range]:radio:checked", rootContainer).val();
+    };
+
+    var getItemStatus = function() {
+        return $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
     };
 
     var filterSelectionToMessage = function() {
@@ -472,7 +513,7 @@ sakai.mytasks = function(tuid) {
             }
         }
 
-        var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
+        var itemStatus = getItemStatus();
         var excludeRequiredState = "none";
         if (itemStatus === "required") {
             excludeRequiredState = "false";
@@ -511,16 +552,19 @@ sakai.mytasks = function(tuid) {
             widgetName : widgetName,
             dataURL : dataURL,
             archiveDataURL : archiveDataURL,
+            filterSettingsURL : filterSettingsURL,
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
             convertFilterStateToMessage : filterSelectionToMessage,
             defaultSortOn : "sakai:dueDate",
             buttonMessages : buttonMessages,
-            buildExtraQueryParams : buildExtraQueryParams
+            buildExtraQueryParams : buildExtraQueryParams,
+            getDateRange : getDateRange,
+            getItemStatus : getItemStatus
         });
         taskWidget.init();
-        taskWidget.getNotices();
+        taskWidget.start();
         checkForOverdueTasks();
     };
 
@@ -534,10 +578,15 @@ sakai.myevents = function(tuid) {
     var detailTemplate = "myevents_detail_template";
     var dataURL = "/var/notices/events.json";
     var archiveDataURL = "/var/notices/events.json";
+    var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/myevents_filter";
     var widgetName = "myevents";
 
     var getDateRange = function() {
         return $("input[name=myevents_date_range]:radio:checked", rootContainer).val();
+    };
+
+    var getItemStatus = function() {
+        return $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
     };
 
     var filterSelectionToMessage = function() {
@@ -588,7 +637,7 @@ sakai.myevents = function(tuid) {
 
         if (isArchiveMode) {
             startDate = sakai.myb.noticewidgets.BEGINNING_OF_TIME;
-            endDate.setTime(today.getTime() + sakai.myb.noticewidgets.ONE_DAY);
+            endDate.setTime(today.getTime());
         } else {
             startDate = today;
             switch (getDateRange()) {
@@ -604,7 +653,7 @@ sakai.myevents = function(tuid) {
             }
         }
 
-        var itemStatus = $("input[name=myevents_item_status]:radio:checked", rootContainer).val();
+        var itemStatus = getItemStatus();
         var excludeRequiredState = "none";
         if (itemStatus === "required") {
             excludeRequiredState = "false";
@@ -622,16 +671,19 @@ sakai.myevents = function(tuid) {
             widgetName : widgetName,
             dataURL : dataURL,
             archiveDataURL : archiveDataURL,
+            filterSettingsURL : filterSettingsURL,
             template : template,
             container : tasksListContainer,
             detailTemplate : detailTemplate,
             convertFilterStateToMessage : filterSelectionToMessage,
             defaultSortOn : "sakai:eventDate",
             buttonMessages : buttonMessages,
-            buildExtraQueryParams : buildExtraQueryParams
+            buildExtraQueryParams : buildExtraQueryParams,
+            getDateRange : getDateRange,
+            getItemStatus : getItemStatus
         });
         eventWidget.init();
-        eventWidget.getNotices();
+        eventWidget.start();
     };
 
     doInit();
