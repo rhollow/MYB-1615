@@ -22,7 +22,7 @@
  */
 /*global Config, $, jQuery, get_cookie, delete_cookie, set_cookie, window, alert */
 
-require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
+require(["jquery", "sakai/sakai.api.core", "myb/myb.api.security"], function($, sakai, mybsecurity) {
 
 
     /**
@@ -527,7 +527,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 	// myberkeley custom begin: tab might be flagged as advisors only, so check, and skip if
                 	// tab is restricted and user's not an advisor.
                 	if ( sakai.config.Navigation[i].requiresAdvisorMembership ) {
-                    	if (!sakai.myb.api.security.isUserAnAdvisor()) {
+                    	if (!mybsecurity.isUserAnAdvisor()) {
                         continue;
                     	}
                 	}
