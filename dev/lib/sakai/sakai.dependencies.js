@@ -99,10 +99,7 @@ require(
         "order!/dev/lib/jquery/plugins/jquery.form.js",
         "order!/dev/lib/jquery/plugins/jquery.MultiFile.js",
         "order!/dev/lib/jquery/plugins/jsTree/jquery.jstree.sakai-edit.js",
-        "order!/dev/lib/jquery/plugins/gritter/jquery.gritter.js",
-        /* myberkeley custom: */
-        "order!/dev/lib/myb/myb.api.security.js"
-        /* end myberkeley custom */
+        "order!/dev/lib/jquery/plugins/gritter/jquery.gritter.js"
     ],
     function($, a, b, c, d, e, f, g, h, i, j, sakai) {
         require.ready(function() {
