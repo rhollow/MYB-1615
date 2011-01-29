@@ -53,7 +53,7 @@ sakai.listpage = function(){
      * This will show the preloader.
      */
     var showLoader = function(){
-        $(inboxTable).append($.TemplateRenderer(inboxTablePreloader.substring(1), {}));
+        $(inboxTable).append(sakai.api.Util.TemplateRenderer(inboxTablePreloader.substring(1), {}));
     };
     
     /**
@@ -348,7 +348,7 @@ sakai.listpage = function(){
         removeAllListsOutDOM();
         
         // Add them to the DOM
-        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", data));
+        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", data));
         
         // do checkboxes
         tickMessages();
@@ -858,7 +858,7 @@ sakai.listpage = function(){
             "links": []
         }
         
-        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
+        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
     }
     
     /**

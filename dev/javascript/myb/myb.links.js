@@ -187,8 +187,8 @@ sakai.links = function(){
      * @param {Object} userLinks User's current data.
      */
     var createDirectory = function(directory, userLinks){
-        $suggestedSites.html($.TemplateRenderer(suggested_sites_template, directory));
-        $allSites.html($.TemplateRenderer(all_sites_template, directory));
+        $suggestedSites.html(sakai.api.Util.TemplateRenderer(suggested_sites_template, directory));
+        $allSites.html(sakai.api.Util.TemplateRenderer(all_sites_template, directory));
 		
 		// Add Google Analytics outbound links tracking
 		$(".suggested_sites a, .all_sites a").click(function () {

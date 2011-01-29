@@ -114,7 +114,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
                 if (data.results) {
                     model.data = data;
                     model.currentNotice = 0;
-                    config.container.html($.TemplateRenderer(config.template, model.data));
+                    config.container.html(sakai.api.Util.TemplateRenderer(config.template, model.data));
                     that.updateUI();
                     if ($.isFunction(callback)) {
                         callback();
@@ -354,7 +354,7 @@ sakai.myb.noticewidgets.Widget = function(config) {
         };
 
         var showCurrentDetail = function() {
-            $(".noticewidget_detail", config.rootContainer).html($.TemplateRenderer(config.detailTemplate,
+            $(".noticewidget_detail", config.rootContainer).html(sakai.api.Util.TemplateRenderer(config.detailTemplate,
             {
                 detail : model.data.results[model.currentNotice],
                 index : model.currentNotice

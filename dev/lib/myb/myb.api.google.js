@@ -38,7 +38,6 @@ define(["jquery","sakai/sakai.api.core","/dev/configuration/config_custom.js"],
     google.recordOutboundLink = function(link, category, action) {
       try {
         _gaq.push(['_trackEvent', category,  action]);
-
         var tgt = $(link).attr("target");
         if(tgt === "_blank") {
             window.open(link.href);

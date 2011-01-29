@@ -5,7 +5,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     // myberkeley custom begin
 
     // This is our custom CAS log in information.
-    config.Authentication.internal = sakai.isDev;
+    config.Authentication.internal = sakai.isDev; // TODO rewrite env.js so we can set this without using a global
     config.Authentication.external = [
         {
           label: "Login using your CalNet ID",
@@ -25,6 +25,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     config.PageTitles.pages["/dev/links.html"] = "LINKS";
 
     // set our own default widget arrangement
+    // TODO bring back our defaults in the requireJS idiom
     //sakai.widgets.defaults.personalportal.columns = [["mytasks", "mylinks", "recentmessages"], ["myevents","mygroups"]];
 
     // conditional link for notification authoring page

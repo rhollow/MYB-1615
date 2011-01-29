@@ -154,7 +154,7 @@ sakai.notificationsinbox = function(){
      * This will show the preloader.
      */
     var showLoader = function(){
-        $(inboxTable).append($.TemplateRenderer(inboxTablePreloader.substring(1), {}));
+        $(inboxTable).append(sakai.api.Util.TemplateRenderer(inboxTablePreloader.substring(1), {}));
     };
 
     /**
@@ -497,7 +497,7 @@ sakai.notificationsinbox = function(){
         removeAllMessagesOutDOM();
 
         // add them to the DOM
-        $(inboxTable).children("tbody").append($.TemplateRenderer(inboxTableMessagesTemplate, tplData));
+        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer(inboxTableMessagesTemplate, tplData));
 
         // do checkboxes
         tickMessages();
