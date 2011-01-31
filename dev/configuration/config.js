@@ -758,7 +758,7 @@ define(function() {
                 "url" : "/dev/directory.html",
                 "id" : "navigation_directory_link",
                 "label" : "DIRECTORY"
-            }
+            }*/
         ],
 
         /*
