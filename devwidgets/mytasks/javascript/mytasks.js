@@ -22,12 +22,14 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
     var ONE_DAY = 24 * 60 * 60 * 1000;
     var BEGINNING_OF_TIME = new Date(2000, 0, 1, 0, 0, 0, 0);
     var END_OF_TIME = new Date(3000, 0, 1, 0, 0, 0, 0);
-    
+
+    var noticeWidgetUtils = {};
+
     /**
      * Formats a date to "mm/dd" format
      * @param {Object} date UTF string
      */
-    var formatDate = function(date, format) {
+    noticeWidgetUtils.formatDate = function(date, format) {
         if (!date) return null;
         date = sakai.api.Util.parseSakaiDate(date);
         return Globalization.format(date, format);
@@ -110,7 +112,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
                     if (data.results) {
                         model.data = data;
                         model.currentNotice = 0;
-                        config.container.html(sakai.api.Util.TemplateRenderer(config.template, model.data));
+                        config.container.html(sakai.api.Util.TemplateRenderer(config.template, {
+                            results : model.data.results,
+                            noticeWidgetUtils : noticeWidgetUtils
+                        }));
                         that.updateUI();
                         if ($.isFunction(callback)) {
                             callback();
@@ -353,7 +358,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
                 $(".noticewidget_detail", config.rootContainer).html(sakai.api.Util.TemplateRenderer(config.detailTemplate,
                 {
                     detail : model.data.results[model.currentNotice],
-                    index : model.currentNotice
+                    index : model.currentNotice,
+                    noticeWidgetUtils : noticeWidgetUtils
                 }));
                 if (model.currentNotice < model.data.results.length - 1) {
                     $(".nextArrow", config.rootContainer).removeClass("disabled");

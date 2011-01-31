@@ -92,14 +92,13 @@
         {for i in results}
             {var isEmpty = false}
             <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
-                    {var dateString = sakai.myb.noticewidgets.formatDate(i['sakai:dueDate'], "M/d")}
                     <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
                     {if i["sakai:archived"] === "archived"}
                         <input type="checkbox" class="task-selected-checkbox"
                             id="taskSelected_${i_index}" title="Selected"/>
                     {/if}
                     </td>
-                    <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
+                    <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${noticeWidgetUtils.formatDate(i['sakai:dueDate'], "M/d")}</td>
                     <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
                         <span class="ellipsis_text">${i['sakai:subject']}</span>
                     </td>
@@ -126,7 +125,7 @@
     </div>
 
     <div id="mytasks_detail_template" style="display:none"><!--
-        {var dateString = sakai.myb.noticewidgets.formatDate(detail['sakai:dueDate'], "M/d/yy")}
+        {var dateString = noticeWidgetUtils.formatDate(detail['sakai:dueDate'], "M/d/yy")}
 
         <h3>${detail["sakai:subject"]}</h3>
         {if detail["sakai:required"] === "true"}
