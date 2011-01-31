@@ -22,7 +22,7 @@
  */
 /*global Config, $, jQuery, get_cookie, delete_cookie, set_cookie, window, alert */
 
-require(["jquery", "sakai/sakai.api.core", "myb/myb.api.security"], function($, sakai, mybsecurity) {
+require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
 
     /**
@@ -416,7 +416,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.security"], function($, 
             $(".personal .sign_out").hide();
             $(".help").hide();
             $("#user_link_container").hide();
-
+            
     		// myberkeley custom: removing vertical bar after Login link
 			$("#login_button_container a").css("border-right","none");
 
@@ -524,7 +524,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.security"], function($, 
                 // We need to add the hasOwnProperty to pass to JSLint and it is also a security issue
                 if (sakai.config.Navigation.hasOwnProperty(i)) {
 
-                	// myberkeley custom begin: tab might be flagged as advisors only, so check, and skip if
+                    // myberkeley custom begin: tab might be flagged as advisors only, so check, and skip if
                 	// tab is restricted and user's not an advisor.
                 	if ( sakai.config.Navigation[i].requiresAdvisorMembership ) {
                     	if (!mybsecurity.isUserAnAdvisor()) {

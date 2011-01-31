@@ -53,3 +53,4 @@ require(["jquery", "/dev/javascript/search_main.js"], function() {
 
       $(window).trigger('hashchange');
     });
+});

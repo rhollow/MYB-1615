@@ -17,50 +17,11 @@
  */
 
 /* General */
-
 .footer_main{color:#fff;margin:0 auto;padding:0 0 10px;width:960px;}
 .footer_main.footer_index{width:955px;}
 #footer_logo{background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -49px -712px transparent;width:61px;height:28px;float:left;margin-right:15px;}
 .footer_main #footer_debug_info{margin:5px 0 0 76px;}
 .footer_main .footer_clickable{cursor:pointer;}
-
-/* myberkeley custom */
-.footer_main {
-    background: url('../images/myberkeley/full_footer.png') no-repeat bottom center;
-    color: #fff;
-    margin: 0 auto 45px;
-    padding: 0;
-    width: 960px;
-}
-
-/* Feedback box */
-.footer_main .feedback {
-    background-color: transparent;
-    width: 204px;
-    text-align: center;
-    padding: 5px 0px 18px 3px;
-    float: left;
-}
-
-.footer_main .feedback p {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.footer_main .feedback {
-    font-size: 9pt;
-    color: #FFFFFF;
-    font-family: Comic Sans MS;    
-}
-
-.footer_main .feedback a {
-    background: url("/dev/_images/mail_icon.png") no-repeat 0 8px;
-    padding: 0 0 0 22px;
-    color: white;
-    font-size: 11pt;
-    text-decoration: none;
-}
-
 
 /* Fixed Container */
 .footer_main .fixed-container{background:#454A4F;padding:10px 25px;width:910px;}
@@ -79,3 +40,4 @@
 
 /* Footer on the login page */
 .footer_index{bottom:0;background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -10px -819px transparent;clear:both;padding-bottom:0;position:fixed;margin-bottom:0;z-index:99;}
+.footer_push{height:45px;}

@@ -23,3 +23,4 @@ strong{color:#000;}
 #mysakai_edit_page .add_more_menu ul li.more_option.option_last{border-bottom:0;}
 #mysakai_edit_page .add_more_menu ul li:hover{background-color:#dbeefc;cursor:pointer;}
 #mysakai_edit_page .add_more_menu ul li a{font-weight:normal;font-size:12px;}
+#mysakai_edit_page .add_more_menu ul li a:hover{text-decoration:none;}
