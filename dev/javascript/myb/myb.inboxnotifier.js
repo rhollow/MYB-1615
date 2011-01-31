@@ -626,7 +626,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, s
 
                 // Initialise the widget, which will prepopulate the fields and
                 // set the correct buttonlist based on where it was called from.
-                sakai.composenotification.initialise(messageBox, selectedMessage);
+                sakai_global.composenotification.initialise(messageBox, selectedMessage);
 
                 // Unhighlight all tabs.
                 $("[id|=tab]").removeClass("current_tab");
@@ -1011,7 +1011,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, s
             // unhighlight the tabs
             $("[id|=tab]").removeClass("current_tab");
             // initialise the composenotification widget
-            sakai.composenotification.initialise(null, null);
+            sakai_global.composenotification.initialise(null, null);
             // display the proper buttonlist
             $("#createnew-buttons").show();
         });
@@ -1036,37 +1036,37 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, s
             $(inboxInboxCheckAll).attr("checked", false);
         };
 
-        var showDrafts = function () {
+        sakai_global.notificationsinbox.showDrafts = function () {
             showFilteredList("drafts", inboxFilterDrafts);
         };
 
-        var showQueue = function () {
+        sakai_global.notificationsinbox.showQueue = function () {
             showFilteredList("queue", inboxFilterQueue);
         };
 
-        var showArchive = function () {
+        sakai_global.notificationsinbox.showArchive = function () {
             showFilteredList("archive", inboxFilterArchive);
         };
 
-        var showTrash = function () {
+        sakai_global.notificationsinbox.showTrash = function () {
             showFilteredList("trash", inboxFilterTrash);
         };
 
         // Various filter functions.
         $(inboxFilterDrafts).click(function(){
-            showDrafts();
+            sakai_global.notificationsinbox.showDrafts();
         });
 
         $(inboxFilterQueue).click(function(){
-            showQueue();
+            sakai_global.notificationsinbox.showQueue();
         });
 
         $(inboxFilterArchive).click(function(){
-            showArchive();
+            sakai_global.notificationsinbox.showArchive();
         });
 
         $(inboxFilterTrash).click(function(){
-            showTrash();
+            sakai_global.notificationsinbox.showTrash();
         });
 
         /**
@@ -1180,6 +1180,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, s
          *
          */
         var doInit = function(){
+            debug.info("notificationsinbox init()");
             // if the user is not a member of the advisors group then bail
             if (!mybsecurity.isUserAnAdvisor()) {
                 sakai.api.Security.send403();
