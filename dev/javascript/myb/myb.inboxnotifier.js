@@ -491,7 +491,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, s
 
             // show messages
             var tplData = {
-                "messages": response.results
+                "messages": response.results,
+                sakai : sakai
             };
 
             // remove previous messages
