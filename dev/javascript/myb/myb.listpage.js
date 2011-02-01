@@ -84,7 +84,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 
             result.context = "g-ced-students";
             result.listName = $.trim($("#list_name").val());
-            if(result.listName == null) {
+            if(result.listName == null || result.listName == "") {
                 $("#invalid_name").show();
                 return -1;
             }
