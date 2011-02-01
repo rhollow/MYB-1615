@@ -104,9 +104,9 @@ sakai.libraryreferencechat = function(tuid, showSettings){
 		var src = "http://www.questionpoint.org/crs/js/qwidget/qp.bootstrap.js?langcode=1&instid=12566&skin=black&size=fill&customSkin=";
 		var protocol = location.protocol;
 		var port = "";
-		if(protocol === "http:") {
+		if (protocol === "http:") {
 			port = ":" + location.port;
-		} else {
+		} else if (protocol != "https:") {
 			alert("Error: Site protocol not recognized.");
 			return;
 		}
