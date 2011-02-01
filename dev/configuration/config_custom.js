@@ -25,8 +25,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     config.PageTitles.pages["/dev/links.html"] = "LINKS";
 
     // set our own default widget arrangement
-    // TODO bring back our defaults in the requireJS idiom
-    //sakai.widgets.defaults.personalportal.columns = [["mytasks", "mylinks", "recentmessages"], ["myevents","mygroups"]];
+    config.widgets.defaults.personalportal.columns = [["mytasks", "mylinks", "recentmessages"], ["myevents","mygroups"]];
 
     // conditional link for notification authoring page
     config.Navigation[config.Navigation.length] = {
