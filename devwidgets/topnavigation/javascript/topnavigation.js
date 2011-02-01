@@ -22,7 +22,7 @@
  */
 /*global Config, $, jQuery, get_cookie, delete_cookie, set_cookie, window, alert */
 
-require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
+require(["jquery", "sakai/sakai.api.core", "myb/myb.api.security"], function($, sakai, mybsecurity) {
 
 
     /**
