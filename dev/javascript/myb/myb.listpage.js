@@ -33,6 +33,7 @@ sakai.listpage = function(){
     var sortOrder = "descending";
     var editExisting = false;
     var currList;
+	var savedState = {}; // Saved state for selected majors/programs
 
 
     /**
@@ -48,14 +49,6 @@ sakai.listpage = function(){
     var inboxTablePreloader = inboxTable + "_preloader";
     var inboxGeneralMessage = inboxID + "_general_message";
     var inboxMessageError = inbox + "_error_message";
-
-	/** Saved state for included students */
-	var savedState = {
-		allUndergraduatesSelected: true,
-		allGraduatesSelected: true,
-		lastSelectedMajors: [],
-		lastSelectedPrograms: []
-	};
 
     /**
      * This will show the preloader.
@@ -398,14 +391,7 @@ sakai.listpage = function(){
 		clearInputFields();
 		
 		// Reset the saved state
-		savedState = {
-			allUndergraduatesSelected: true,
-			allGraduatesSelected: true,
-			lastSelectedMajors: [],
-			lastSelectedPrograms: []
-		};
-		
-		
+		resetSavedState();		
         
         // Fill in input fields with list data
         var list = getListWithId(id);
@@ -430,8 +416,7 @@ sakai.listpage = function(){
         if(ugradMajorArray != null && ugradMajorArray.length > 0) {
 			$("#undergrad").click();
 			enableAll(document.getElementById("choose_ugrad"));
-			enableAll(document.getElementById("ugrad_majors"));
-            
+			$("#choose_ugrad").removeClass("disabledState");            
 			for (var i = 0, j = ugradMajorArray.length; i < j; i++) {
                 var major = ugradMajorArray[i].replace(/ /g, "_");
                 $("#ugrad_majors #" + major + "_M").attr("checked", true);
@@ -450,11 +435,15 @@ sakai.listpage = function(){
                 document.getElementById("byMajor").checked = true;
                 enableAll(document.getElementById("ugrad_majors"));
             }
+		} else {
+			$("#choose_ugrad").addClass("disabledState");
+			disableAll(document.getElementById("choose_ugrad"));
 		}
+		
         if(gradMajorArray != null && gradMajorArray.length > 0) {
 			$("#grad").click();
 			enableAll(document.getElementById("choose_grad"));
-			
+			$("#choose_grad").removeClass("disabledState"); 
             for (var i = 0, j = gradMajorArray.length; i < j; i++) {
                 var major = gradMajorArray[i].replace(/ /g, "_");
                 $("#grad_majors #" + major + "_P").attr("checked", true);
@@ -473,7 +462,14 @@ sakai.listpage = function(){
                 document.getElementById("byProgram").checked = true;
                 enableAll(document.getElementById("grad_majors"));
             } 
+		} else {
+			$("#choose_grad").addClass("disabledState");
+			disableAll(document.getElementById("choose_grad"));
 		}
+		
+		//Saving the state after loading
+		stashUndergradSelection();
+		stashGradSelection();
     }
 
     // Check all messages
@@ -661,77 +657,92 @@ sakai.listpage = function(){
 	// List creation events
     $("#undergrad").live("click", function() {
 		if(this.checked) {
-			enableAll(document.getElementById("choose_ugrad"));
-			//enableAll(document.getElementById("ugrad_majors"));
-			
+			enableAll(document.getElementById("choose_ugrad"));	
+			$("#choose_ugrad").removeClass("disabledState");		
 			if (savedState.allUndergraduatesSelected) {
 				$("#allUgrads").attr('checked', true);
 			} else {
 				$("#byMajor").attr('checked', true);
 				restoreUndergradSelection();
-			}
-			
-		} else {
-			
-			savedState.allUndergraduatesSelected = ($("#allUgrads").attr('checked') === true);			
+			}			
+		} else {			
+			savedState.allUndergraduatesSelected = areAllUndergradsSelected();			
+			$("#choose_ugrad").addClass("disabledState");
 			disableAll(document.getElementById("choose_ugrad"));
 		}
     });
     
     $("#grad").live("click", function() {
-		if (this.checked) {
-			enableAll(document.getElementById("choose_grad"));
-		} else {
+		if(this.checked) {
+			enableAll(document.getElementById("choose_grad"));	
+			$("#choose_grad").removeClass("disabledState");			
+			if (savedState.allGraduatesSelected) {
+				$("#allGrads").attr('checked', true);
+			} else {
+				$("#byProgram").attr('checked', true);
+				restoreGradSelection();
+			}			
+		} else {			
+			savedState.allGraduatesSelected = areAllGradsSelected();
+			$("#choose_grad").addClass("disabledState");			
 			disableAll(document.getElementById("choose_grad"));
 		}
     });
     
     $("#byMajor").live("click", function() {
-		if(this.checked) {
-			//enableAll(document.getElementById("ugrad_majors"));			
+		if(this.checked) {		
 			// Prevent double stashing
 			if (savedState.allUndergraduatesSelected) {
 				restoreUndergradSelection();
 			}
-		} else {
-			//disableAll(document.getElementById("ugrad_majors"));
 		}
+		// Updating state
 		savedState.allUndergraduatesSelected = !this.checked;
     });
     
-    $("#allUgrads").live("click", function() {
-		
+    $("#allUgrads").live("click", function() {		
 		if(this.checked) {
-		 	
-			// Prevent double stashing
-			/*if(!savedState.allUndergraduatesSelected) {
-				stashUndergradSelection();
-			}*/
-			resetUndergradSelection();
-			//disableAll(document.getElementById("ugrad_majors"));			
+			resetUndergradSelection();	
 		 }
+		// Updating state
 		 savedState.allUndergraduatesSelected = this.checked;
     });
     
     $("#byProgram").live("click", function() {
-         if(this.checked) {
-			//enableAll(document.getElementById("grad_majors"));
-		} else {
-			//disableAll(document.getElementById("grad_majors"));
+		if(this.checked) {		
+			// Prevent double stashing
+			if (savedState.allGraduatesSelected) {
+				restoreGradSelection();
+			}
 		}
+		// Updating state
+		savedState.allGraduatesSelected = !this.checked;
     });
     
     $("#allGrads").live("click", function() {
-        if(this.checked) {
-		 	disableAll(document.getElementById("grad_majors"));
+		if(this.checked) {
+			resetGradSelection();	
 		 }
+		// Updating state
+		 savedState.allGraduatesSelected = this.checked;
     });
 	
 	$("#ugrad_majors .major_checkbox").live("click", function() {
-		if($("#allUgrads").attr('checked') === true){
+		// If all undergrads were selected and user picks a major from the list we need to select 'by major' option
+		if( areAllUndergradsSelected()){
 			$("#byMajor").attr('checked', true);			
 		}
+		// Every time user clicks on a major from the list we need to update the state
 		stashUndergradSelection();
+	});
+	
+	$("#grad_majors .major_checkbox").live("click", function() {
+		// If all grads were selected and user picks a program from the list we need to select 'by program' option
+		if( areAllGradsSelected()){
+			$("#byProgram").attr('checked', true);			
+		}
+		// Every time user clicks on a program from the list we need to update the state
+		stashGradSelection();
 	});
     
 	var enableAll = function(el) {
@@ -741,8 +752,7 @@ sakai.listpage = function(){
 		
 		if (el && el.childNodes && el.childNodes.length > 0) {
             for (var x = 0; x < el.childNodes.length; x++) {
-                enableAll(el.childNodes[x]);
-				//el.childNodes[x].disabled = false;
+                enableAll(el.childNodes[x]);				
             }
         }
 	}
@@ -760,6 +770,25 @@ sakai.listpage = function(){
         }
 	}
 	
+
+	
+	// -------- Start of majors/programs state related block --------
+	
+	/**
+	 * Resets the saved state object
+	 */ 
+	var resetSavedState = function() {
+		savedState = {
+			allUndergraduatesSelected: true,
+			allGraduatesSelected: true,
+			lastSelectedMajors: [],
+			lastSelectedPrograms: []
+		};
+	};
+	
+	/**
+	 * Saves current selection state of undergraduate majors
+	 */
 	var stashUndergradSelection = function() {		
 		savedState.lastSelectedMajors = [];
 		var selectedMajors = savedState.lastSelectedMajors;
@@ -767,26 +796,88 @@ sakai.listpage = function(){
             	var majorId = $(this).attr('id');            		
 				selectedMajors.push(majorId);
         });
-	}
+	};
 	
-	var restoreUndergradSelection = function() {		
+	/**
+	 * Saves current selection state of graduate programs
+	 */
+	var stashGradSelection = function() {		
+		savedState.lastSelectedPrograms = [];
+		var selectedPrograms = savedState.lastSelectedPrograms;
+		$("#grad_majors .major_checkbox:checked").each(function() {
+            	var programId = $(this).attr('id');            		
+				selectedPrograms.push(programId);
+        });
+	};
 	
+	/**
+	 * Restores previously selected undergraduate majors
+	 */
+	var restoreUndergradSelection = function() {			
 		var selectedMajors = savedState.lastSelectedMajors;
 		$("#ugrad_majors .major_checkbox").each(function() {            	
 				var majorId = $(this).attr('id');            		
+				// indexOf will not work in IE6
 				if(selectedMajors.indexOf(majorId) !== -1) {
 					$(this).attr("checked", true);						
 				} else {
 					$(this).removeAttr("checked");
 				}				
         });
-	}
+	};
 	
+	/**
+	 * Restores previously selected graduate programs
+	 */
+	var restoreGradSelection = function() {			
+		var selectedPrograms = savedState.lastSelectedPrograms;
+		$("#grad_majors .major_checkbox").each(function() {            	
+				var programId = $(this).attr('id');            		
+				// indexOf will not work in IE6
+				if(selectedPrograms.indexOf(programId) !== -1) {
+					$(this).attr("checked", true);						
+				} else {
+					$(this).removeAttr("checked");
+				}				
+        });
+	};
+	
+	/**
+	 * Removes all undergraduate majors from the saved state object 
+	 */
 	var resetUndergradSelection = function() {			
 		$("#ugrad_majors .major_checkbox").each(function() {            		
 			$(this).removeAttr("checked");					
         });
-	}
+	};
+	
+	/**
+	 * Removes all graduate programs from the saved state object 
+	 */
+	var resetGradSelection = function() {			
+		$("#grad_majors .major_checkbox").each(function() {            		
+			$(this).removeAttr("checked");					
+        });
+	};
+	
+	/**
+	 * Returns true if "all undergraduate majors" option is selected; otherwise return false 
+	 */
+	var areAllUndergradsSelected = function() {			
+		return $("#allUgrads").attr('checked') === true;
+	};
+	
+	/**
+	 * Returns true if "all graduate programs" option is selected; otherwise return false 
+	 */
+	var areAllGradsSelected = function() {			
+		return $("#allGrads").attr('checked') === true;
+	};
+		
+	// -------- End of majors/programs state related block --------
+	
+	
+	
 	  
     // Button click events
     $("#inbox_inbox_delete_button").live("click", function(){
@@ -839,6 +930,10 @@ sakai.listpage = function(){
     $("#inbox_inbox_cancel_button").live("click", function(){
         editExisting = false;
         clearInputFields();
+		resetSavedState();
+		disableAll(document.getElementById("choose_ugrad"));
+		disableAll(document.getElementById("choose_grad"));
+		$("#choose_ugrad, #choose_grad").addClass("disabledState");
         $.bbq.pushState({"tab": "existing"},2);
     });
     
@@ -976,7 +1071,8 @@ sakai.listpage = function(){
         }
         
         userUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
-        loadData();
+        resetSavedState();
+		loadData();
     };
 
     doInit();
