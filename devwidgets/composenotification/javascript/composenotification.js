@@ -601,7 +601,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * Fill in the notification detail page with the message's information.
          * @param {Object} message The message whose info we will extract.
          */
-        var fillInMessage = function(message, callback){                                   
+        var fillInMessage = function(message, callback){     
+            var check = checkEventFields(message);                                        
             var eventDate;
             var taskDate;
             var sendDate;   
@@ -629,11 +630,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     $(".cn-task").show();                         
                     taskDate = sakai.api.Util.parseSakaiDate(message["sakai:dueDate"]);                    
                     $(messageTaskDueDate).datepicker("setDate", taskDate);                   
-                }
-                else if (message["sakai:eventDate"]!=null || message["sakai:eventPlace"]!=null){                    
+                }                
+                else if (!check){                                  
                     // It's an event.                                       
                     $(messageEventCheck).attr("checked", true);
-                    $(".cn-event").show();                                       
+                    $(".cn-event").show();                
+                    // If the event date was filled out properly, we can extract all the proper date and time information from it.                       
                     if (message["sakai:eventDate"] != null) {
                         eventDate = sakai.api.Util.parseSakaiDate(message["sakai:eventDate"]);
                         var hours = eventDate.getHours();
@@ -650,10 +652,22 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                             if (hours == 0) {
                                 hours = hours + 12;
                             }
-                        $(messageEventTimeHour).val(hours);
-                        $(messageEventTimeMinute).val(minutes);
-                        $(messageEventTimeAMPM).val(AMPM);
-                    }                                                                                             
+                        eventTimeInit(hours, minutes, AMPM);
+                    }
+                    // If it was not filled out properly but the time fields were still filled out by the user, we
+                    // still need to handle this case and put in the information properly.
+                    else if(!check){                        
+                        $(messageReminderCheckbox).attr("checked", "checked");
+                        $(messageReminderCheck).show();
+                        $(messageEventCheck).attr("checked", "checked");
+                        $(".cn-event").show();   
+                                          
+                        var hours = message["sakai:eventHour"];
+                        var minutes = message["sakai:eventMin"];
+                        var AMPM = message["sakai:eventAMPM"];
+                                                                                                     
+                        eventTimeInit(hours, minutes, AMPM);
+                    }                                                                                            
                     $(messageEventPlace).val(message["sakai:eventPlace"]);                                                          
                 }
             }
@@ -682,9 +696,23 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     else if(hours==0){
                         hours = hours + 12;
                     }                             
-                    eventTimeInit(hours, minutes, AMPM);                                                                                                                                    
-                    $(messageEventPlace).val(message["sakai:eventPlace"]);
+                    eventTimeInit(hours, minutes, AMPM);                                                                                                                                                        
                 }
+                // If it was not filled out properly but the time fields were still filled out by the user, we
+                // still need to handle this case and put in the information properly.
+                else if(!check){                    
+                    $(messageReminderCheckbox).attr("checked", "checked");
+                    $(messageReminderCheck).show();
+                    $(messageEventCheck).attr("checked", "checked");
+                    $(".cn-event").show();   
+                                      
+                    var hours = message["sakai:eventHour"];
+                    var minutes = message["sakai:eventMin"];
+                    var AMPM = message["sakai:eventAMPM"];
+                                                                                                 
+                    eventTimeInit(hours, minutes, AMPM);
+                }   
+                $(messageEventPlace).val(message["sakai:eventPlace"]);
             }   
             if($.isFunction(callback)){
                 callback(true);
@@ -735,7 +763,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 		    var eventTimeHour = eventTimeHourEl.val();
 		    var eventTimeMinute = eventTimeMinuteEl.val();            
 		    var eventTimeAMPM = eventTimeAMPMEl.val();
-		    var eventPlace = eventPlaceEl.val();    
+		    var eventPlace = eventPlaceEl.val();                           
 		    
 		    var sendDateObj = $(sendDateEl).datepicker("getDate");
 		    var taskDueDateObj = $(taskDueDateEl).datepicker("getDate");
@@ -805,11 +833,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 		        }
 		        else if (eventCheck) {
 		            // The reminder is an EVENT.                                     
-		            if (!eventDate) {
-		                if (!displayErrors) return false;
+		            if (!eventDate) {                        
+		                if (!displayErrors) return false;                        
 						valid = false;
 	                	eventDateEl.addClass(invalidClass);
-		            }
+		            }                    
 		            else if(modtoday>eventDateObj){                                                    
 		                if (!displayErrors) return false;
 						valid = false;
@@ -873,7 +901,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             // Even if it isn't a reminder, it could still be a non-required event.
             if (eventCheck) {	                                              
 	            if (!eventDate) {
-	                if (!displayErrors) return false;
+	                if (!displayErrors) return false;                    
 					valid = false;
                 	eventDateEl.addClass(invalidClass);
 	            }
@@ -946,25 +974,20 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 		    return valid;
 		};           
         
-        var allEmptyEventFields = function(){            
-            if($(messageEventDate).val()!=null){
-                return false;
+        var checkEventFields = function(message){                                  
+            if(message["sakai:eventPlace"]!=null){                  
+                return false;           
+            }           
+            else if (message["sakai:eventMin"]!=null) {               
+                return false;               
             }
-            else if(valid = $(messageEventTimeAMPM).val()!=null){
+            else if (message["sakai:eventHour"]!=null) {                
                 return false;
-            }
-            else if(valid = $(messageEventTimeHour).val()!=null){
-                return false;
-            }
-            else if(valid = $(messageEventTimeMinute).val()!=null){
-                return false;
-            }
-            else if(valid = $(messageEventPlace).val()!=null){
-                return false;
-            }          
-            else{
-                return true;
-            }
+            }                   
+            else if (message["sakai:AMPM"]!=null) {               
+                return false; 
+            }                                         
+            return true;
         };
         
         /**
@@ -1026,29 +1049,33 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 }
                 
                 // This reminder is an EVENT.
-                else{   
-                    var check = allEmptyEventFields();                                      
-                    if(!check){
-                        if ($(messageEventDate).datepicker("getDate")!=null) {
-                            toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                            toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());
-                            // Get the event time details and add to the eventDate obj.                    
-                            if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
-                                toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val()) + 12);
-                            }
-                            else {
-                                toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());
-                            }
-                            toPost["sakai:eventDate"] = toPost["sakai:eventDate"].toString();
-                            toPost["sakai:eventDate@TypeHint"] = "Date";
+                else{                       
+                    // If the event date is filled out, we handle this normally and save the time information there. 
+                    if ($(messageEventDate).datepicker("getDate")!=null) {
+                        toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
+                        toPost["sakai:eventDate"].setMinutes();
+                        // Get the event time details and add to the eventDate obj.                    
+                        if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
+                            toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val()) + 12);
                         }
-                        toPost["sakai:eventPlace"] = $(messageEventPlace).val();  
-                        // To prepend event details to the body of the message.
-                        var eventDetails = "Date: "+formatDate($(messageEventDate).datepicker("getDate"))+"\n"+
-                                           "Time: "+$(messageEventTimeHour+" :selected").text()+":"+$(messageEventTimeMinute+" :selected").text()+" "+$(messageEventTimeAMPM+" :selected").text()+"\n"+
-                                           "Place: "+toPost["sakai:eventPlace"]+"\n\n";                                        
-                        toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                                                                                                                  
-                    }                    
+                        else {
+                            toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());
+                        }
+                        toPost["sakai:eventDate"] = toPost["sakai:eventDate"].toString();
+                        toPost["sakai:eventDate@TypeHint"] = "Date";
+                    }              
+                    // Otherwise, we need to check for and save the time information in case the user filled this out. 
+                    else{                        
+                        toPost["sakai:eventMin"] = $(messageEventTimeMinute).val();
+                        toPost["sakai:eventAMPM"] = $(messageEventTimeAMPM).val();                                              
+                        toPost["sakai:eventHour"] = $(messageEventTimeHour).val();                                                    
+                    }                        
+                    toPost["sakai:eventPlace"] = $(messageEventPlace).val();  
+                    // To prepend event details to the body of the message.
+                    var eventDetails = "Date: "+formatDate($(messageEventDate).datepicker("getDate"))+"\n"+
+                                       "Time: "+$(messageEventTimeHour+" :selected").text()+":"+$(messageEventTimeMinute+" :selected").text()+" "+$(messageEventTimeAMPM+" :selected").text()+"\n"+
+                                       "Place: "+toPost["sakai:eventPlace"]+"\n\n";                                        
+                    toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                                                                                                                                                         
                     // Indicate this is an event.
                     toPost["sakai:eventDate@Delete"]=false;                    
                     toPost["sakai:eventPlace@Delete"]=false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
@@ -1069,24 +1096,36 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 toPost["sakai:eventPlace@Delete"]=true;                             
                
                // This is a NON-REQUIRED EVENT.
-                if ($(messageEventCheck).attr("checked")) {                                                  
-                    toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                    toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());
-                    // Get the event time details and add to the eventDate obj.                    
-                    if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
-                        toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val()) + 12);
-                    }
-                    else {
-                        toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());
-                    }
-                    toPost["sakai:eventDate"] = toPost["sakai:eventDate"].toString();
-                    toPost["sakai:eventDate@TypeHint"] = "Date";
+                if ($(messageEventCheck).attr("checked")) {  
+                    // If the event date is filled out, we handle this normally and save the time information there.                                                                  
+                    if($(messageEventDate).datepicker("getDate")!=null){
+                        toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
+                        toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());
+                        // Get the event time details and add to the eventDate obj.                    
+                        if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
+                            toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val()) + 12);
+                        }
+                        else {
+                            toPost["sakai:eventDate"].setHours($(messageEventTimeHour).val());
+                        }
+                        toPost["sakai:eventDate"] = toPost["sakai:eventDate"].toString();
+                        toPost["sakai:eventDate@TypeHint"] = "Date";
+                    }    
+                    // Otherwise, we need to check for and save the time information in case the user filled this out. 
+                    else{                        
+                        toPost["sakai:eventMin"] = $(messageEventTimeMinute).val();
+                        toPost["sakai:eventAMPM"] = $(messageEventTimeAMPM).val();                                              
+                        toPost["sakai:eventHour"] = $(messageEventTimeHour).val();                                                    
+                    }                               
                     toPost["sakai:eventPlace"] = $(messageEventPlace).val();
                     // To prepend event details to the body of the message.
                     var eventDetails = "Date: " + formatDate($(messageEventDate).datepicker("getDate")) + "\n" +
                                        "Time: " + $(messageEventTimeHour + " :selected").text() + ":" + $(messageEventTimeMinute + " :selected").text() + " " + $(messageEventTimeAMPM + " :selected").text() + "\n" +
                                        "Place: " + toPost["sakai:eventPlace"] + "\n\n";                    
                     toPost["sakai:body"] = eventDetails + toPost["sakai:authoringbody"];                                      
+                    // Indicate this is an event.
+                    toPost["sakai:eventDate@Delete"]=false;                    
+                    toPost["sakai:eventPlace@Delete"]=false; 
                 }                                                   
             }                                   
             return toPost;
