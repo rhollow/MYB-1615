@@ -34,12 +34,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
         date = sakai.api.Util.parseSakaiDate(date);
         return Globalization.format(date, format);
     };
-    
-    var announceError = function() {
-        sakai.api.Util.notification.show("", translate("AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
-                sakai.api.Util.notification.type.ERROR, false);
-    };
-    
+
     /**
      * Generic constructor for noticewidgets (of which tasks is one type, and events is another).
      * @param config
@@ -132,11 +127,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
                 }
             });
         };
-    
-        var translate = function(key) {
-            return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
-        };
-    
+
         var setupListeners = function() {
     
             var filters = function() {
@@ -427,7 +418,16 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
                 dataType: 'json'
             });
         };
-    
+
+        var translate = function(key) {
+            return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
+        };
+
+        var announceError = function() {
+            sakai.api.Util.notification.show("", translate("AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
+                    sakai.api.Util.notification.type.ERROR, false);
+        };
+
         return that;
     };
     
@@ -552,7 +552,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
                     }
                 },
                 error: function(xhr, textStatus, thrownError) {
-                    announceError();
+                    sakai.api.Util.notification.show("",
+                            sakai.api.i18n.Widgets.getValueForKey(widgetName, "default", "AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
+                            sakai.api.Util.notification.type.ERROR, false);
                     window.debug.error("Checking overdue tasks failed for:\n" + overdueTaskSearchURL + "\ncategory=reminders with status=" + textStatus +
                             " and thrownError=" + thrownError + "\n" + xhr.responseText);
                 }
