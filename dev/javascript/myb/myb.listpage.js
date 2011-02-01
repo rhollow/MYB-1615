@@ -54,7 +54,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	     * This will show the preloader.
 	     */
 	    var showLoader = function(){
-	        $(inboxTable).append($.TemplateRenderer(inboxTablePreloader.substring(1), {}));
+	        $(inboxTable).append(sakai.api.Util.TemplateRenderer(inboxTablePreloader.substring(1), {}));
 	    };
 	    
 	    /**
@@ -159,7 +159,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	    /**
 	     * Updates the input field that displays the current size of the list being created
 	     */
-	    sakai.listpage.updateListSize = function(){
+	    sakai_global.listpage.updateListSize = function(){
 	        var data = getDataFromInput();
 			if(data < 0) {
 				alert("Error");
@@ -324,7 +324,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	        return returnStr;
 	    };
 	    
-	    sakai.listpage.getDate = function(dateString){
+	    sakai_global.listpage.getDate = function(dateString){
 	        var d = sakai.api.Util.parseSakaiDate(dateString);
 	        d = formatDate(d, "M j, Y g:i A");
 	        return d;
@@ -349,7 +349,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	        removeAllListsOutDOM();
 	        
 	        // Add them to the DOM
-	        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", data));
+	        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", data));
 	        
 	        // do checkboxes
 	        tickMessages();
@@ -966,7 +966,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	    // On selecting checkbox events
 	    /*
 	    $(".major_checkbox").click(function() {
-	        sakai.listpage.updateListSize();
+	        sakai_global.listpage.updateListSize();
 	    });
 	    */
 	    
@@ -992,7 +992,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	        $.bbq.pushState({"tab": "new"},2);
 	        
 	        // NOT SUPPORTED FOR POC
-	        // sakai.listpage.updateListSize();
+	        // sakai_global.listpage.updateListSize();
 	        
 	        // Set headers and tab styling
 	        $("#inbox_existing").hide();
@@ -1032,7 +1032,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	            "links": []
 	        }
 	        
-	        $(inboxTable).children("tbody").append($.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
+	        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
 	    }
 	    
 	    /**
@@ -1065,7 +1065,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 			var security = sakai.api.Security;		       
 	        
 	        // if the user is not a member of the advisors group then bail
-	        if (!sakai.myb.api.security.isUserAnAdvisor()) {
+	        if (!myb.api.security.isUserAnAdvisor()) {
 	            security.send403();
 	            return;
 	        }
