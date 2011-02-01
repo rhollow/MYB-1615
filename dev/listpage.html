@@ -159,11 +159,13 @@
                                             <tr><td>Choose students: <span id="invalid_major" class="invalid_span" style="display:none">Invalid</span></td></tr>
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" value="undergrad" id="undergrad" title="Include undergraduates" />
-                                                        <label for="undergrad">Include undergraduates</label><br />
+                                                    <div><input type="checkbox" value="undergrad" id="undergrad" title="Include undergraduates" />
+                                                        <label for="undergrad">Include undergraduates</label></div>
                                                     <div id="choose_ugrad" class="standing">
-                                                        <input type="radio" name="choice1" id="byMajor" disabled="true" title="Choose undergraduates by major" />
-                                                            <label for="byMajor">Choose CED undergraduates by major</label><br />
+                                                        <div><input type="radio" name="choice1" id="allUgrads" disabled="true" title="All CED undergraduates" />
+                                                            <label for="allUgrads">All CED undergraduates</label></div>
+                                                        <div id="chooseUndergradsOption"><input type="radio" name="choice1" id="byMajor" disabled="true" title="Choose undergraduates by major" />
+                                                            <label for="byMajor">Choose CED undergraduates by major</label></div>
                                                         <div id="ugrad_majors" class="majors">
                                                             <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE_M" disabled="true" title="Architecture" />
                                                                 <label for="ARCHITECTURE_M">Architecture</label><br />
@@ -176,16 +178,16 @@
                                                             <input type="checkbox" class="major_checkbox" value="INDIVIDUAL" id="INDIVIDUAL_M" disabled="true" title="Individual" />
                                                                 <label for="INDIVIDUAL_M">Individual</label><br />
                                                         </div>
-                                                        <input type="radio" name="choice1" id="allUgrads" disabled="true" title="All CED undergraduates" />
-                                                            <label for="allUgrads">All CED undergraduates</label>
                                                     </div>
                                                 </td>
                                                 <td style="border-left:1px solid black; padding-left: 50px;">
-                                                    <input type="checkbox" value="grad" id="grad" title="Include graduates" />
-                                                        <label for="grad">Include graduates</label><br />
+                                                    <div><input type="checkbox" value="grad" id="grad" title="Include graduates" />
+                                                        <label for="grad">Include graduates</label></div>
                                                     <div id="choose_grad" class="standing">
-                                                        <input type="radio" name="choice2" id="byProgram" disabled="true" title="Choose graduates by program" />
-                                                            <label for="byProgram">Choose CED graduates by program</label><br />
+                                                        <div><input type="radio" name="choice2" id="allGrads" disabled="true" title="All CED graduates" />
+                                                            <label for="allGrads">All CED graduates</label></div>                                                        
+														<div id="chooseGradsOption"><input type="radio" name="choice2" id="byProgram" disabled="true" title="Choose graduates by program" />
+                                                            <label for="byProgram">Choose CED graduates by program</label></div>
                                                         <div id="grad_majors" class="majors">
                                                             <input type="checkbox" class="major_checkbox" value="ARCHITECTURE" id="ARCHITECTURE_P" disabled="true" title="Architecture" />
                                                                 <label for="ARCHITECTURE_P">Architecture</label><br />
@@ -200,8 +202,6 @@
                                                             <input type="checkbox" class="major_checkbox" value="LIMITED" id="LIMITED_P" disabled="true" title="Limited" />
                                                                 <label for="LIMITED_P">Limited</label><br />
                                                         </div>
-                                                        <input type="radio" name="choice2" id="allGrads" disabled="true" title="All CED graduates" />
-                                                            <label for="allGrads">All CED graduates</label>
                                                     </div>
                                                 </td>
                                             </tr>

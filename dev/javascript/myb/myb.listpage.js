@@ -49,6 +49,14 @@ sakai.listpage = function(){
     var inboxGeneralMessage = inboxID + "_general_message";
     var inboxMessageError = inbox + "_error_message";
 
+	/** Saved state for included students */
+	var savedState = {
+		allUndergraduatesSelected: true,
+		allGraduatesSelected: true,
+		lastSelectedMajors: [],
+		lastSelectedPrograms: []
+	};
+
     /**
      * This will show the preloader.
      */
@@ -388,6 +396,16 @@ sakai.listpage = function(){
         // Display edit list tab
         $.bbq.pushState({"tab": "new"},2);
 		clearInputFields();
+		
+		// Reset the saved state
+		savedState = {
+			allUndergraduatesSelected: true,
+			allGraduatesSelected: true,
+			lastSelectedMajors: [],
+			lastSelectedPrograms: []
+		};
+		
+		
         
         // Fill in input fields with list data
         var list = getListWithId(id);
@@ -412,6 +430,7 @@ sakai.listpage = function(){
         if(ugradMajorArray != null && ugradMajorArray.length > 0) {
 			$("#undergrad").click();
 			enableAll(document.getElementById("choose_ugrad"));
+			enableAll(document.getElementById("ugrad_majors"));
             
 			for (var i = 0, j = ugradMajorArray.length; i < j; i++) {
                 var major = ugradMajorArray[i].replace(/ /g, "_");
@@ -643,7 +662,18 @@ sakai.listpage = function(){
     $("#undergrad").live("click", function() {
 		if(this.checked) {
 			enableAll(document.getElementById("choose_ugrad"));
+			//enableAll(document.getElementById("ugrad_majors"));
+			
+			if (savedState.allUndergraduatesSelected) {
+				$("#allUgrads").attr('checked', true);
+			} else {
+				$("#byMajor").attr('checked', true);
+				restoreUndergradSelection();
+			}
+			
 		} else {
+			
+			savedState.allUndergraduatesSelected = ($("#allUgrads").attr('checked') === true);			
 			disableAll(document.getElementById("choose_ugrad"));
 		}
     });
@@ -658,23 +688,36 @@ sakai.listpage = function(){
     
     $("#byMajor").live("click", function() {
 		if(this.checked) {
-			enableAll(document.getElementById("ugrad_majors"));
+			//enableAll(document.getElementById("ugrad_majors"));			
+			// Prevent double stashing
+			if (savedState.allUndergraduatesSelected) {
+				restoreUndergradSelection();
+			}
 		} else {
-			disableAll(document.getElementById("ugrad_majors"));
+			//disableAll(document.getElementById("ugrad_majors"));
 		}
+		savedState.allUndergraduatesSelected = !this.checked;
     });
     
     $("#allUgrads").live("click", function() {
+		
 		if(this.checked) {
-		 	disableAll(document.getElementById("ugrad_majors"));
+		 	
+			// Prevent double stashing
+			/*if(!savedState.allUndergraduatesSelected) {
+				stashUndergradSelection();
+			}*/
+			resetUndergradSelection();
+			//disableAll(document.getElementById("ugrad_majors"));			
 		 }
+		 savedState.allUndergraduatesSelected = this.checked;
     });
     
     $("#byProgram").live("click", function() {
          if(this.checked) {
-			enableAll(document.getElementById("grad_majors"));
+			//enableAll(document.getElementById("grad_majors"));
 		} else {
-			disableAll(document.getElementById("grad_majors"));
+			//disableAll(document.getElementById("grad_majors"));
 		}
     });
     
@@ -683,6 +726,13 @@ sakai.listpage = function(){
 		 	disableAll(document.getElementById("grad_majors"));
 		 }
     });
+	
+	$("#ugrad_majors .major_checkbox").live("click", function() {
+		if($("#allUgrads").attr('checked') === true){
+			$("#byMajor").attr('checked', true);			
+		}
+		stashUndergradSelection();
+	});
     
 	var enableAll = function(el) {
 		try {
@@ -691,7 +741,8 @@ sakai.listpage = function(){
 		
 		if (el && el.childNodes && el.childNodes.length > 0) {
             for (var x = 0; x < el.childNodes.length; x++) {
-                el.childNodes[x].disabled = false;
+                enableAll(el.childNodes[x]);
+				//el.childNodes[x].disabled = false;
             }
         }
 	}
@@ -707,6 +758,34 @@ sakai.listpage = function(){
                 disableAll(el.childNodes[x]);
             }
         }
+	}
+	
+	var stashUndergradSelection = function() {		
+		savedState.lastSelectedMajors = [];
+		var selectedMajors = savedState.lastSelectedMajors;
+		$("#ugrad_majors .major_checkbox:checked").each(function() {
+            	var majorId = $(this).attr('id');            		
+				selectedMajors.push(majorId);
+        });
+	}
+	
+	var restoreUndergradSelection = function() {		
+	
+		var selectedMajors = savedState.lastSelectedMajors;
+		$("#ugrad_majors .major_checkbox").each(function() {            	
+				var majorId = $(this).attr('id');            		
+				if(selectedMajors.indexOf(majorId) !== -1) {
+					$(this).attr("checked", true);						
+				} else {
+					$(this).removeAttr("checked");
+				}				
+        });
+	}
+	
+	var resetUndergradSelection = function() {			
+		$("#ugrad_majors .major_checkbox").each(function() {            		
+			$(this).removeAttr("checked");					
+        });
 	}
 	  
     // Button click events

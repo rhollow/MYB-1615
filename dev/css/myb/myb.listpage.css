@@ -146,3 +146,7 @@
 }
 
 #tab_list {position: relative; bottom: 1px;}
+
+#choose_ugrad, #choose_grad, #chooseUndergradsOption, #chooseGradsOption {
+	margin-top: 5px;
+}
