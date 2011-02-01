@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 /* global $, Config, jQuery, sakai, sdata */
-require(["jquery", "sakai/sakai.api.core"], function($, sakai, google) {
+require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     
     var DATE_FORMAT_ISO8601 = "yyyy-MM-ddTHH:mm:ss.000zzz";
     var ONE_DAY = 24 * 60 * 60 * 1000;
