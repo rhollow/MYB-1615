@@ -20,48 +20,51 @@
 
 /* Include this file in any html page to secure the whole page against non-MyBerkeley Participants. */
 
-var sakai = sakai || {};
-sakai.myberkeleysecurity = function(){
-        
-    /**
-     * Checks if the user is logged in
-     * @return true if the user is logged in, false otherwise
-     */
-    var isLoggedIn = function(){
-        var person = sakai.data.me;
-        var uuid = person.user.userid;
-        return !(!uuid || person.user.anon);
+require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai, myb) {
+
+    sakai_global.mybsecurepage = function() {
+
+        /**
+         * Checks if the user is logged in
+         * @return true if the user is logged in, false otherwise
+         */
+        var isLoggedIn = function(){
+            var person = sakai.data.me;
+            var uuid = person.user.userid;
+            return !(!uuid || person.user.anon);
+        };
+
+        /**
+        * Function that can be called by pages that don't have the permission to show the content
+        * they should be showing because the user in not a myBerkeley participant
+        */
+        var sendToNotAMyBerkeleyParticipantPage = function() {
+            document.location = sakai.config.URL.MY_DASHBOARD_URL;
+            return false;
+        };
+
+        var doInit = function() {
+           if (!isLoggedIn()) {
+               sakai.api.Security.sendToLogin();
+               return;
+           }
+
+            //HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
+            var useRedirect = true;
+            if(typeof(myb.api.security.allowRedirectToParticipantPage) !== 'undefined'){
+                useRedirect = myb.api.security.allowRedirectToParticipantPage;
+            }
+            // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+            // redirect him to the participation explanation page
+            if (!myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
+               sendToNotAMyBerkeleyParticipantPage();
+            }
+
+        };
+
+        doInit();
     };
 
-    /**
-	* Function that can be called by pages that don't have the permission to show the content
-	* they should be showing because the user in not a myBerkeley participant
-	*/
-	var sendToNotAMyBerkeleyParticipantPage = function() {		
-		document.location = sakai.config.URL.MY_DASHBOARD_URL;
-		return false;
-	};
+    sakai.api.Widgets.Container.registerForLoad("mybsecurepage");
 
-    var doInit = function() {
-       if (!isLoggedIn()) {
-           sakai.api.Security.sendToLogin();
-           return;
-       }
-		
-		//HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
-		var useRedirect = true;
-		if(typeof(sakai.myb.api.security.allowRedirectToParticipantPage) !== 'undefined'){
-			useRedirect = sakai.myb.api.security.allowRedirectToParticipantPage;
-		}
-       // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
-       // redirect him to the participation explanation page
-       if (!sakai.myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
-           sendToNotAMyBerkeleyParticipantPage();
-       }
-    };
-
-    doInit();
-
-};
-
-sakai.api.Widgets.Container.registerForLoad("sakai.myberkeleysecurity");
+});

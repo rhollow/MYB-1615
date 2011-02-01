@@ -17,40 +17,42 @@
  */
 
 /* global $, Config, opensocial */
+define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
-var sakai = sakai || {};
-sakai.myb = sakai.myb || {};
-sakai.myb.api = sakai.myb.api || {};
-sakai.myb.api.security = sakai.myb.api.security || {};
+    var security = {};
 
-sakai.myb.api.security.groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
+    security.groupCEDAdvisors = "g-ced-advisors"; // CED Advisors group ID
 
-sakai.myb.api.security.isUserAnAdvisor = function() {
-    return sakai.myb.api.security.isCurrentUserAMember(sakai.myb.api.security.groupCEDAdvisors);
-};
+    security.isUserAnAdvisor = function() {
+        return security.isCurrentUserAMember(security.groupCEDAdvisors);
+    };
 
-/**
- * Check if the user is a myBerkeley participant.
- * There could be CED members who can log in, but are not myBerkeley participants.
- * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
- * @return true if the user is a myBerkeley participant, false otherwise
- */
-sakai.myb.api.security.isMyBerkeleyParticipant = function() {
-    try {
-        if (sakai.data.me.profile.myberkeley.elements.participant &&
-                sakai.data.me.profile.myberkeley.elements.participant.value === "true") {
-            return true;
+    /**
+     * Check if the user is a myBerkeley participant.
+     * There could be CED members who can log in, but are not myBerkeley participants.
+     * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
+     * @return true if the user is a myBerkeley participant, false otherwise
+     */
+    security.isMyBerkeleyParticipant = function() {
+        try {
+            if (sakai.data.me.profile.myberkeley.elements.participant &&
+                    sakai.data.me.profile.myberkeley.elements.participant.value === "true") {
+                return true;
+            }
+        } catch(ex) {
+            // Ignoring the exception
         }
-    } catch(ex) {
-        // Ignoring the exception
-    }
 
-    return false;
-};
-
-sakai.myb.api.security.isCurrentUserAMember = function(groupid) {
-    if(!groupid || typeof(groupid) !== "string") {
         return false;
-    }
-    return ($.inArray(groupid, sakai.data.me.user.subjects) !== -1);
-};
+    };
+
+    security.isCurrentUserAMember = function(groupid) {
+        if(!groupid || typeof(groupid) !== "string") {
+            return false;
+        }
+        return ($.inArray(groupid, sakai.data.me.user.subjects) !== -1);
+    };
+
+    return security;
+
+});
