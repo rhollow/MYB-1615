@@ -18,7 +18,7 @@
 
 /* global $, Config, opensocial */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.security", "/dev/lib/myb/jquery/jquery-ui-tabs-min.js"], function($, sakai, mybsecurity) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jquery/jquery-ui-tabs-min.js"], function($, sakai, myb) {
 
     sakai_global.listpage = function(){
         /**
@@ -890,7 +890,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security", "/dev/lib/myb/
 
         var doInit = function() {
             // if the user is not a member of the advisors group then bail
-            if (!mybsecurity.isUserAnAdvisor()) {
+            if (!myb.api.security.isUserAnAdvisor()) {
                 sakai.api.Security.send403();
                 return;
             }

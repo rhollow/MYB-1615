@@ -21,7 +21,7 @@
 */
 
 
-require(["jquery", "sakai/sakai.api.core", "myb/myb.api.google"], function($, sakai, google) {
+require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
 
     sakai_global.mylinks = function (tuid, showSettings) {
 
@@ -101,7 +101,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.google"], function($, sa
 
             // Add Google Analytics outbound links tracking
             $("div.mylinks_widget li.link a").click(function () {
-                google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
+                myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
                 return false;
             });
 

@@ -12,7 +12,7 @@
  *              {'grad':{'major':["ARCHITECTURE", "LANDSCAPE ARCH"]}}]
  */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, sakai, mybsecurity) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
 
     sakai_global.upgradeDynamicLists = function() {
         var GET_LIST_URL = "/private/dynamic_lists.infinity.json";

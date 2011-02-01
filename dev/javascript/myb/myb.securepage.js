@@ -20,7 +20,7 @@
 
 /* Include this file in any html page to secure the whole page against non-MyBerkeley Participants. */
 
-require(["jquery","sakai/sakai.api.core","myb/myb.api.security"], function($, sakai, mybsecurity) {
+require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai, myb) {
 
     sakai_global.mybsecurepage = function() {
 
@@ -51,12 +51,12 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.security"], function($, sa
 
             //HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
             var useRedirect = true;
-            if(typeof(mybsecurity.allowRedirectToParticipantPage) !== 'undefined'){
-                useRedirect = mybsecurity.allowRedirectToParticipantPage;
+            if(typeof(myb.api.security.allowRedirectToParticipantPage) !== 'undefined'){
+                useRedirect = myb.api.security.allowRedirectToParticipantPage;
             }
             // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
             // redirect him to the participation explanation page
-            if (!mybsecurity.isMyBerkeleyParticipant() && useRedirect) {
+            if (!myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
                sendToNotAMyBerkeleyParticipantPage();
             }
 
