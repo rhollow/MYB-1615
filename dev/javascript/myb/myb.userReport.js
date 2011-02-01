@@ -28,12 +28,14 @@ sakai.userReport = function() {
     var SEARCH_URL = "/var/_myb_user_report";
     var MAX_USER_SEARCH_RESULTS = 1000;
 
+	// curl -u 271592:testuser -Fvalue=2011-01-23T00:00:00-08:00 -Fvalue@TypeHint=date 
+	// http://localhost:8080/~271592/public/authprofile/myberkeley/elements/joinDate
     var userSearch = {
         "sakai:query-language": "xpath",
-        "sakai:query-template": "//*[@sling:resourceType='sakai/user-home'] order by @{sortOn|jcr:joinDate} {sortOrder|descending}",
+        "sakai:query-template": "/jcr:root//*/public/authprofile/myberkeley/elements/joinDate",
         "sling:resourceType": "sakai/search",
-        "sakai:propertyprovider" : "Profile",
-        "sakai:resultprocessor": "Profile",
+        "sakai:propertyprovider" : "Node",
+        "sakai:resultprocessor": "Node",
         "sakai:title" : "Search for users"
     };
 
