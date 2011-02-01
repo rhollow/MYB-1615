@@ -19,11 +19,11 @@
 
 /*global Querystring, Config, $,  set_cookie */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, sakai, mybsecurity) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
 
     /* HACK : Preventing redirection to 'not-a-participant' page from this page because this page IS the 'not-a-participant' page
      See myb.securepage.js for details. */
-    mybsecurity.allowRedirectToParticipantPage = false;
+    myb.api.security.allowRedirectToParticipantPage = false;
 
     sakai_global.myberkeleymysakai = function(){
 
@@ -158,7 +158,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, s
         var doInit = function() {
             // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
             // redirect him to the participation explanation page
-            if (!mybsecurity.isMyBerkeleyParticipant()) {
+            if (!myb.api.security.isMyBerkeleyParticipant()) {
                 // We will show a nice Join myBerkeley dialog on this page
                 $("#join_myberkeley_dialog").jqm({
                          modal: true,

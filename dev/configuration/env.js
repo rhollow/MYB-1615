@@ -1,3 +1,3 @@
-var sakai = sakai || {};
-
-sakai.isDev = false;
+define(["/dev/configuration/config.js"], function(config) {
+    config.isDev = false;
+});

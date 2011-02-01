@@ -5,7 +5,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     // myberkeley custom begin
 
     // This is our custom CAS log in information.
-    config.Authentication.internal = sakai.isDev; // TODO rewrite env.js so we can set this without using a global
+    config.Authentication.internal = config.isDev;
     config.Authentication.external = [
         {
           label: "Login using your CalNet ID",

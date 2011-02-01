@@ -17,7 +17,7 @@
  */
 /*global $, Config, opensocial */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, sakai, mybsecurity) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
 
     sakai_global.notificationsinbox = function(){
 
@@ -1183,7 +1183,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, s
         var doInit = function(){
             debug.info("notificationsinbox init()");
             // if the user is not a member of the advisors group then bail
-            if (!mybsecurity.isUserAnAdvisor()) {
+            if (!myb.api.security.isUserAnAdvisor()) {
                 sakai.api.Security.send403();
                 return;
             }
