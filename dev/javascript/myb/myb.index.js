@@ -19,22 +19,19 @@
 
 /*global Querystring, Config, $,  set_cookie */
 
+require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
-var sakai = sakai || {};
+    sakai_global.myberkeleyindex = function(){
 
-sakai.myberkeleyindex = function(){
-	
-	/////////////////////////////
-    // Initialization function //
-    /////////////////////////////
+        var doInit = function() {
+            $("#login-external-button").click(function (evt) {
+                window.location = "/system/sling/cas/login?resource=/dev/index.html";
+            });
+        };
 
-    var doInit = function() {
-        $("#login-external-button").click(function (evt) {
-            window.location = "/system/sling/cas/login?resource=/dev/index.html";
-        });
+        doInit();
     };
 
-    doInit();
-};
+    sakai.api.Widgets.Container.registerForLoad("sakai.myberkeleyindex");
 
-sakai.api.Widgets.Container.registerForLoad("sakai.myberkeleyindex");
+});

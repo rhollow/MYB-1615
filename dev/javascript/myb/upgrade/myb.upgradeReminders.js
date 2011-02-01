@@ -17,117 +17,118 @@
  */
 /*global $, Config, opensocial */
 
-var sakai = sakai || {};
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.security"], function($, sakai, mybsecurity) {
 
-/**
- * Upgrades reminders from 0.1 to 0.2 by adding "sakai:required=true" to all required tasks and events.
- */
-sakai.upgradeReminders = function() {
+    /**
+     * Upgrades reminders from 0.1 to 0.2 by adding "sakai:required=true" to all required tasks and events.
+     */
+    sakai_global.upgradeReminders = function() {
 
-    var SEARCH_URL = "/var/_upgradeMyBerkeleyRemindersSearch0.1-0.2";
-    var MAX_ITEMS = 1000;
-    var dryRun = true;
+        var SEARCH_URL = "/var/_upgradeMyBerkeleyRemindersSearch0.1-0.2";
+        var MAX_ITEMS = 1000;
+        var dryRun = true;
 
-    var requiredRemindersSearch = {
-        "sakai:query-language": "xpath",
-        "sakai:query-template": "//element(*)MetaData[@sling:resourceType='sakai/message' and @sakai:type='notice' and @sakai:category='reminder' and not(@sakai:required) ]",
-        "sling:resourceType": "sakai/search",
-        "sakai:propertyprovider" : "Message",
-        "sakai:resultprocessor": "Message",
-        "sakai:title" : "Search for required reminders used by one-time upgrade script"
-    };
+        var requiredRemindersSearch = {
+            "sakai:query-language": "xpath",
+            "sakai:query-template": "//element(*)MetaData[@sling:resourceType='sakai/message' and @sakai:type='notice' and @sakai:category='reminder' and not(@sakai:required) ]",
+            "sling:resourceType": "sakai/search",
+            "sakai:propertyprovider" : "Message",
+            "sakai:resultprocessor": "Message",
+            "sakai:title" : "Search for required reminders used by one-time upgrade script"
+        };
 
-    var doPost = function(url, props, callback) {
-        console.log("POST to url " + url);
-        console.dir(props);
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: props,
-            success: function() {
-                if ($.isFunction(callback)) {
-                    callback();
+        var doPost = function(url, props, callback) {
+            console.log("POST to url " + url);
+            console.dir(props);
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: props,
+                success: function() {
+                    if ($.isFunction(callback)) {
+                        callback();
+                    }
+                },
+                error: function(xhr) {
+                    console.log("POST failed. XHR response:" + xhr.responseText);
+                },
+                dataType: 'json'
+            });
+        };
+
+        var createSearch = function() {
+            doPost(SEARCH_URL, requiredRemindersSearch,
+                  function() {
+                      console.log("Created search successfully.");
+                      runSearchAndUpgrade();
+                  });
+        };
+
+        var runSearchAndUpgrade = function() {
+            $.ajax({
+                url: SEARCH_URL + "?items=" + MAX_ITEMS,
+                cache: false,
+                success: function(data) {
+                    doBatchUpdate(data.results);
+                },
+                error: function(xhr) {
+                    console.log("GET failed. XHR response:" + xhr.responseText);
                 }
-            },
-            error: function(xhr) {
-                console.log("POST failed. XHR response:" + xhr.responseText);
-            },
-            dataType: 'json'
-        });
-    };
+            });
+        };
 
-    var createSearch = function() {
-        doPost(SEARCH_URL, requiredRemindersSearch,
-              function() {
-                  console.log("Created search successfully.");
-                  runSearchAndUpgrade();
-              });
-    };
+        var doBatchUpdate = function(results) {
+            var requests = [];
+            $.each(results, function(index, row) {
+                requests[requests.length] = {
+                    url : row["jcr:path"],
+                    method : "POST",
+                    parameters : { "sakai:required": true }
+                };
+            });
+            if (requests.length > 0) {
+                console.log("batch requests[] = ");
+                console.dir(requests);
 
-    var runSearchAndUpgrade = function() {
-        $.ajax({
-            url: SEARCH_URL + "?items=" + MAX_ITEMS,
-            cache: false,
-            success: function(data) {
-                doBatchUpdate(data.results);
-            },
-            error: function(xhr) {
-                console.log("GET failed. XHR response:" + xhr.responseText);
-            }
-        });
-    };
-
-    var doBatchUpdate = function(results) {
-        var requests = [];
-        $.each(results, function(index, row) {
-            requests[requests.length] = {
-                url : row["jcr:path"],
-                method : "POST",
-                parameters : { "sakai:required": true }
-            };
-        });
-        if (requests.length > 0) {
-            console.log("batch requests[] = ");
-            console.dir(requests);
-
-            if ( !dryRun ) {
-                doPost(sakai.config.URL.BATCH, {
-                    requests: $.toJSON(requests)
-                }, function() {
-                    console.log("Batch update succeeded!");
-                    console.log("Doing another search for reminders to upgrade...");
-                    runSearchAndUpgrade();
-                });
+                if ( !dryRun ) {
+                    doPost(sakai.config.URL.BATCH, {
+                        requests: $.toJSON(requests)
+                    }, function() {
+                        console.log("Batch update succeeded!");
+                        console.log("Doing another search for reminders to upgrade...");
+                        runSearchAndUpgrade();
+                    });
+                } else {
+                    cleanup();
+                }
             } else {
+                console.log("No more reminders to upgrade!");
                 cleanup();
             }
-        } else {
-            console.log("No more reminders to upgrade!");
-            cleanup();
-        }
+        };
+
+        var cleanup = function() {
+            doPost(SEARCH_URL, {
+                ":operation" : "delete"
+            }, function() {
+                console.log("Deleted search.");
+            });
+        };
+
+        var doInit = function() {
+            var querystring = new Querystring();
+            if ( querystring.contains("dryRun") && querystring.get("dryRun") === "false") {
+                dryRun = false;
+            }
+            $("#upgrade_reminders_button").live("click", function() {
+                console.log("Running upgrade; dryRun=" + dryRun);
+    //            cleanup();
+                createSearch();
+            });
+        };
+
+        doInit();
     };
 
-    var cleanup = function() {
-        doPost(SEARCH_URL, {
-            ":operation" : "delete"
-        }, function() {
-            console.log("Deleted search.");
-        });
-    };
-
-    var doInit = function() {
-        var querystring = new Querystring();
-        if ( querystring.contains("dryRun") && querystring.get("dryRun") === "false") {
-            dryRun = false;
-        }
-        $("#upgrade_reminders_button").live("click", function() {
-            console.log("Running upgrade; dryRun=" + dryRun);
-//            cleanup();
-            createSearch();
-        });
-    };
-
-    doInit();
-};
-
-sakai.api.Widgets.Container.registerForLoad("sakai.upgradeReminders");
+    sakai.api.Widgets.Container.registerForLoad("upgradeReminders");
+});

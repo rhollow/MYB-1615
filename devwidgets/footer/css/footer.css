@@ -17,106 +17,27 @@
  */
 
 /* General */
-
-/* myberkeley custom */
-.footer_main {
-    background: url('../images/myberkeley/full_footer.png') no-repeat bottom center;
-    color: #fff;
-    margin: 0 auto 45px;
-    padding: 0;
-    width: 960px;
-}
-
-.footer_main #footer_debug_info {
-    margin: 5px 0 0 76px;
-}
-
-.footer_main .footer_clickable {
-    cursor: pointer;
-}
-
-/* Feedback box */
-.footer_main .feedback {
-    background-color: transparent;
-    width: 204px;
-    text-align: center;
-    padding: 5px 0px 18px 3px;
-    float: left;
-}
-
-.footer_main .feedback p {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.footer_main .feedback {
-    font-size: 9pt;
-    color: #FFFFFF;
-    font-family: Comic Sans MS;    
-}
-
-.footer_main .feedback a {
-    background: url("/dev/_images/mail_icon.png") no-repeat 0 8px;
-    padding: 0 0 0 22px;
-    color: white;
-    font-size: 11pt;
-    text-decoration: none;
-}
-
+.footer_main{color:#fff;margin:0 auto;padding:0 0 10px;width:960px;}
+.footer_main.footer_index{width:955px;}
+#footer_logo{background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -49px -712px transparent;width:61px;height:28px;float:left;margin-right:15px;}
+.footer_main #footer_debug_info{margin:5px 0 0 76px;}
+.footer_main .footer_clickable{cursor:pointer;}
 
 /* Fixed Container */
-.footer_main .fixed-container {
-    background: transparent; /* MYB-352: Changed from #454A4F */
-    padding: 10px 22px 16px; /* MYB-352: Changed from 0 25px 10px */
-    width: 703px; /* MYB-352: Changed from 910px */
-}
-
-.footer_main .fixed-container img {
-    float: left;
-    margin-right: 22px; /* MYB-352: Changed from 15px */
-}
-
-.footer_main .fixed-container p {
-    font-size: 11px;
-    margin-bottom: 0;
-    padding-bottom: 0;
-    line-height: 1.3em;
-    color: #fff;
-}
-
-.footer_main .fixed-container a {
-    color: #c4e4fb;
-}
-
-.footer_main .fixed-container a.back-top {
-    background: url('../images/white_bottom_arrow.png') center right no-repeat;
-    color: #fff;
-    display: block;
-    float: right;
-    font-size: 13px;
-    font-weight: bold;
-    padding-right: 20px;
-}
-
-#footer_logo {
-    background: url('../images/myberkeley/myberkeley_logo_footer.png') no-repeat; /* MYB-352: Changed to myBerkeley logo */
-    float: left; 
-    height: 42px; 
-    width: 166px;
-    margin-right: 22px; /* MYB-352: Added */
-}
+.footer_main .fixed-container{background:#454A4F;padding:10px 25px;width:910px;}
+.footer_index .fixed-container{background:url(/dev/images/dashboard_sprite.png) no-repeat scroll right -641px transparent;}
+.footer_main .fixed-container p{font-size:11px;margin-bottom:0;padding-bottom:0;line-height:1.3em;color:#fff;}
+.footer_main .fixed-container a{color:#c4e4fb;}
+.footer_main .fixed-container a.back-top{color:#fff;display:block;float:right;font-size:13px;font-weight:bold;padding-right:7px;}
+.footer_main .fixed-container div.back-top{background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -102px -639px transparent;height:13px;width:10px;float:right;cursor:pointer;}
+#footer_logo{background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -50px -712px transparent;width:61px;height:28px;float:left;margin-right:15px;}
+#footer_main_br{width:100%;height:9px;background:url(/dev/images/dashboard_sprite.png) no-repeat scroll right -763px transparent;float:left;}
+#footer_main_bl{width:16px;height:9px;background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -11px -763px transparent;float:left;}
+#footer_main_footer{background:url(/dev/images/body_bg_sprite.png) repeat-x scroll left -42px transparent;height:9px;margin:0 16px;}
+.footer_index #footer_main_br{width:100%;height:0;background:none;float:left;}
+.footer_index #footer_main_bl{width:16px;height:9px;background:none;float:left;}
+.footer_index #footer_main_footer{background:none;height:9px;margin:0 16px;}
 
 /* Footer on the login page */
-.footer_index {
-    bottom: 0;
-    background: url('../images/myberkeley/full_footer_index.png') center top no-repeat;
-    clear: both;
-    padding-bottom: 0;
-    position: fixed;
-    margin-bottom: 0;
-    z-index: 99;
-}
-
-.footer_push {
-    height: 45px;
-}
+.footer_index{bottom:0;background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -10px -819px transparent;clear:both;padding-bottom:0;position:fixed;margin-bottom:0;z-index:99;}
+.footer_push{height:45px;}

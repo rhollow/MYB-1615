@@ -18,10 +18,9 @@
 
 /*global $, sdata, opensocial, Config */
 
-var sakai = sakai || {};
-if (!sakai.composenotification){
+require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sakai.api.core"], function($, $datepick, sakai) {
 
-    sakai.composenotification = function(tuid, showSettings) {
+    sakai_global.composenotification = function(tuid, showSettings) {
 
         var rootel = $("#"+tuid);        
 
@@ -548,22 +547,22 @@ if (!sakai.composenotification){
          */
         // Return to drafts panel.
         var backToDrafts = function () {            
-            sakai.notificationsinbox.showDrafts();
+            sakai_global.notificationsinbox.showDrafts();
         };
         
         // Return to queue panel.
         var backToQueue = function () {            
-            sakai.notificationsinbox.showQueue();
+            sakai_global.notificationsinbox.showQueue();
         };  
         
         // Return to archive panel.
         var backToArchive = function () {            
-            sakai.notificationsinbox.showArchive();
+            sakai_global.notificationsinbox.showArchive();
         }; 
 
         // Return to trash panel.
         var backToTrash = function(){
-            sakai.notificationsinbox.showTrash();
+            sakai_global.notificationsinbox.showTrash();
         };                                                    
                     
         /**
@@ -1149,7 +1148,7 @@ if (!sakai.composenotification){
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)         
          */
-        sakai.composenotification.initialise = function(calledFrom, message) {         
+        sakai_global.composenotification.initialise = function(calledFrom, message) {
             // Reset page back to its original condition.            
             resetView();
             clearInvalids(); 
@@ -1276,7 +1275,7 @@ if (!sakai.composenotification){
                 
                 // Enable editing of message (move it to drafts and re-initialise widget).
                 $("#cn-editrashed-button").live('click', function() {                                       
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), sakai.composenotification.initialise("drafts", message), message, false, null);                                        
+                    postNotification(saveData("drafts", checkFieldsForErrors(false)), sakai_global.composenotification.initialise("drafts", message), message, false, null);
                 });                
                 
                 // Hard delete this message (delete it from the trash).
@@ -1330,6 +1329,8 @@ if (!sakai.composenotification){
             }                                                                                   
         };                                                                                                            
     };              
-}
 
-sakai.api.Widgets.widgetLoader.informOnLoad("composenotification");
+    debug.info("Asking for load of composenotification widget");
+    sakai.api.Widgets.widgetLoader.informOnLoad("composenotification");
+
+});

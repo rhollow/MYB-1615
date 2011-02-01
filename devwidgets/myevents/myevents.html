@@ -87,7 +87,7 @@
         {for i in results}
             {var isEmpty = false}
             <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
-                    {var dateString = sakai.myb.noticewidgets.formatDate(i['sakai:eventDate'], "M/d")}
+                    {var dateString = noticeWidgetUtils.formatDate(i['sakai:eventDate'], "M/d")}
                     <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
                     <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
                         <span class="ellipsis_text">${i['sakai:subject']}</span>
@@ -105,8 +105,8 @@
     </div>
 
     <div id="myevents_detail_template" style="display:none"><!--
-        {var dateString = sakai.myb.noticewidgets.formatDate(detail['sakai:eventDate'], "M/d/yy")}
-        {var timeString = sakai.myb.noticewidgets.formatDate(detail['sakai:eventDate'], "h:mmtt")}
+        {var dateString = noticeWidgetUtils.formatDate(detail['sakai:eventDate'], "M/d/yy")}
+        {var timeString = noticeWidgetUtils.formatDate(detail['sakai:eventDate'], "h:mmtt")}
 
         <h3>${detail["sakai:subject"]}</h3>
         {if detail["sakai:required"] === "true"}
