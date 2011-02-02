@@ -1,5 +1,5 @@
-.myevents .widget_title {
-    background: url("/devwidgets/myevents/images/myevents_widget_icon.png") no-repeat scroll 16px 16px transparent;
+.myevents .widget_title_icon {
+    background: url("/devwidgets/myevents/images/myevents_widget_icon.png") no-repeat transparent;
 }
 
 .myevents .noticewidget_detail h5.event-time {

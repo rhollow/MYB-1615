@@ -17,8 +17,8 @@
  */
 
 /* Main */
-.mylinks .widget_title {
-    background: url("/devwidgets/mylinks/images/mylinks_widget_icon.png") no-repeat scroll 16px 16px transparent;
+.mylinks .widget_title_icon {
+    background: url("/devwidgets/mylinks/images/mylinks_widget_icon.png") no-repeat transparent;
 }
 
 .myreminders .s3d-widget-titlebar {
