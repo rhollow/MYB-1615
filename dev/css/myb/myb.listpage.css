@@ -146,3 +146,17 @@
 }
 
 #tab_list {position: relative; bottom: 1px;}
+
+#choose_ugrad, #choose_grad, #chooseUndergradsOption, #chooseGradsOption {
+	margin-top: 5px;
+}
+#listSpecsTable tbody {
+	vertical-align: top;
+}
+#listSpecsTable tbody tr:first-child td {
+	padding-bottom: 5px;
+}
+
+#choose_ugrad.disabledState, #choose_grad.disabledState {
+	opacity:0.4;
+}
