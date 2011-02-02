@@ -903,4 +903,5 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
     };
 
     sakai.api.Widgets.Container.registerForLoad("listpage");
+    sakai.api.Widgets.Container.registerForLoad("listpage");
 });
