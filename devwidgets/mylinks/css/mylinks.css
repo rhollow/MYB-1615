@@ -75,4 +75,10 @@
     line-height: 2em;
     text-indent: 40px;
 }
-
+/* 
+ * Fix for Sakai CSS bug, their widget titlebar DIV is 49px tall, but 'line-height' of H2 element inside it is 50px.
+ * This causes problems in out layout.
+ */
+.mylinks_widget {
+	clear: both;
+}
