@@ -5,13 +5,11 @@
     text-align: center;
     background-color: white;
     height: auto;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
 }
 
 .header-title {
     float: none;
+    margin-top: -24px;
 }
 
 .header-title .sakai_logo_index {
@@ -23,21 +21,33 @@
 }
 
 .header-byline {
-    font-size: 1.7em;
+    font-size: 1.36em;
+    padding-bottom: 16px;
 }
 
 .header-smallline {
-    padding: 10px 0 40px;
+    padding: 0 0 20px;
     color: #555;
-    font-size: 1.85em;
+    font-size: 1.36em;
 }
 
 .header-smallline strong {
-    font-size: 1.19em;
+    font-size: 1.13em;
 }
 
 .header-smallline .beta-tag {
     display: inline;
     padding: 13px 41px;
     background: url(/dev/images/myb/beta-tag.png) no-repeat 00 scroll;
+}
+
+.myb-frontdoor-image {
+    2px solid black;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    width: 540px;
+    height: 234px;
+    background: url(/dev/images/myb/ucb-45-pano.jpg) no-repeat 00 scroll;
 }

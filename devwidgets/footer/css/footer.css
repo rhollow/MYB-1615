@@ -70,7 +70,7 @@
     background-color: transparent;
     width: 204px;
     text-align: center;
-    padding: 5px 0px 18px 3px;
+    padding: 5px 0 0 3px;
     float: left;
 }
 
@@ -98,7 +98,7 @@
 .footer_main .fixed-container {
     background-color: transparent;
     width: 709px;
-    padding: 10px 22px 16px;
+    padding: 10px 22px 8px;
 }
 
 .footer_main .fixed-container img {
