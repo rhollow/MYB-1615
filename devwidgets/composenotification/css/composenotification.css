@@ -55,3 +55,5 @@
 .ac_loading {background-color:#eee;}
 .ac_odd {background-color:#eee;}
 .ac_over {background-color:#058ec4;}
+
+#ui-datepicker-div {display: none;}
