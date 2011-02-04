@@ -43,13 +43,14 @@
 .footer_push{height:45px;}
 
 /* MyBerkeley custom begin */
+
 #footer_main_br {
     display: none;
 }
 
 #footer_logo {
-    background: none;
-    width: 162px;
+    background: url('../images/myberkeley/myberkeley_logo_footer.png') no-repeat bottom center;
+    width: 166px;
     height: 42px;
     margin-right: 22px;
 }
@@ -106,7 +107,8 @@
 }
 
 /* Footer on the login page */
-.footer_index {
+.index .footer_main {
+    width:960px;
     bottom: 0;
     background: url('../images/myberkeley/full_footer_index.png') center top no-repeat;
     clear: both;
