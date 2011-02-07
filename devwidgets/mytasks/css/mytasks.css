@@ -1,5 +1,5 @@
-.mytasks .widget_title {
-    background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat scroll 16px 16px transparent;
+.mytasks .widget_title_icon {
+    background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat transparent;
 }
 
 #mytasks_overdue_tasks_exist {

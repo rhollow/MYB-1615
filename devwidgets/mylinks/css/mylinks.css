@@ -17,8 +17,8 @@
  */
 
 /* Main */
-.mylinks .widget_title {
-    background: url("/devwidgets/mylinks/images/mylinks_widget_icon.png") no-repeat scroll 16px 16px transparent;
+.mylinks .widget_title_icon {
+    background: url("/devwidgets/mylinks/images/mylinks_widget_icon.png") no-repeat transparent;
 }
 
 .myreminders .s3d-widget-titlebar {
@@ -75,4 +75,10 @@
     line-height: 2em;
     text-indent: 40px;
 }
-
+/* 
+ * Fix for Sakai CSS bug, their widget titlebar DIV is 49px tall, but 'line-height' of H2 element inside it is 50px.
+ * This causes problems in out layout.
+ */
+.mylinks_widget {
+	clear: both;
+}
