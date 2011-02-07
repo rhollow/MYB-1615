@@ -29,8 +29,9 @@ label{color:#888;font-weight:bold;font-size:1em;}
 .login-container-textfield{border:1px solid #888;height:18px;padding:3px 0 0 3px;width:125px!important;}
 
 /* myberkeley custom */
-.login-container {float: none; margin-top: -25px;}
-/
+.login-container {float: left; margin-top: -20px;}
+.login-container-textfield{border:1px solid #888;height:18px;padding:2px;width:125px!important;}
+
 
 /* External Log-in */
 .login-external-content{display:table-cell;vertical-align:middle;margin-top:-25px;float:right;}
