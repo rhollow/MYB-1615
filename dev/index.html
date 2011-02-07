@@ -13,8 +13,6 @@
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" />
         <link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.index.css" />
 
-        <!-- 3rd party CSS -->
-
     </head>
 
     <body class="fl-centered index i18nable">
@@ -52,7 +50,10 @@
                         </div>
 
                         <!-- PREVIEW IMAGE -->
-                        <img src="/dev/images/panel_thumb.png" alt="__MSG__INSTANCE_NAME__" />
+                        <!-- myberkeley custom start -->
+                        <div class="myb-frontdoor-image"></div>
+                        <!--<img src="/dev/images/panel_thumb.png" alt="__MSG__INSTANCE_NAME__" />-->
+                        <!-- myberkeley custom start -->
                     </div>
 
                     <!-- WIDGET COLUMN -->
@@ -60,11 +61,13 @@
                         <div id="widget_tags" class="widget_inline"></div>
                         <div id="widget_activegroups" class="widget_inline"></div>
                         <div id="widget_popularcontent" class="widget_inline"></div>
+                        <!-- myberkeley custom start -->
+                        <div class="request-feedback">
+                        __MSG__REQUEST_FOR_FEEDBACK__
+                        </div>
+                        <!-- myberkeley custom start -->
                     </div>
 
-                    <div class="request-feedback">
-                        __MSG__REQUEST_FOR_FEEDBACK__
-                    </div>
 
                 </div>
                 <div class="login-box-bottom">
