@@ -86,10 +86,10 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/misc/querystring.js"], func
                     }
                     // Set the cursor in the username field
                     $("#" + usernameField).focus();
-                } else {
+                }/* myBerkeley: We don't use this template *//* else {
                     $("#login-external-container").html(sakai.api.Util.TemplateRenderer("login-external-template", sakai.config.Authentication));
                     $(loginExternal).show();
-                }
+                }*/
             }
         };
     

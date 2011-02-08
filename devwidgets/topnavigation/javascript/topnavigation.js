@@ -429,12 +429,13 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
                 if (showLogin) {
                     // if config.js is set to external, register link is hidden
-                    if (!sakai.config.Authentication.internal) {
+                    // myBerkeley: We don't show register button
+					/*if (!sakai.config.Authentication.internal) {
                         $("#register_button_container").hide();
                     }
                     else {
                         $("#register_button_container").show();
-                    }
+                    }*/
                     $("#login_button_container").show();
                 }
                 // Set up public nav links
@@ -444,17 +445,18 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                 $("#nav_courses_sites_link a").attr("href", sakai.config.URL.PUBLIC_COURSES_SITES_URL);
                 $("#nav_search_link a").attr("href", sakai.config.URL.PUBLIC_SEARCH_URL_PAGE);
 
-                var indexPaths = ["/", "/index", "/dev", "/dev/index.html", "/dev/", "/dev/404.html", 
-                    "/dev/403.html", "/dev/500.html", "/index", "/404", "/403", "/500"];
+                var indexPaths = ["/dev/404.html", "/dev/403.html", "/dev/500.html", "/404", "/403", "/500"];
 
-                if (-1 !== $.inArray(window.location.pathname.replace(/\/$/,""), indexPaths)) {
+				// myBerkeley: Commented out
+                //if (-1 !== $.inArray(window.location.pathname.replace(/\/$/,""), indexPaths)) {
                     $(".explore-bg").show();
-                }
+                //}
                 
                 indexPaths.push("/register", "/dev/create_new_account.html");
                 
                 if (-1 !== $.inArray(window.location.pathname.replace(/\/$/,""), indexPaths)){
-                    $("#register_button_container").hide();
+                    // myBerkeley: We don't use register button, it is always hidden
+					//$("#register_button_container").hide();
                     $("#login_button_container").hide();
                 }
 
@@ -463,8 +465,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             else {
                 $general_search_container.hide();
             }
+
+            // myberkley custom : comment out next line since users can't see any pages without logging in, and
+            // the redirection breaks our CalNet login
             // Make the login page redirect to the current page after login
-            $(".log_in").attr("href", $(".log_in").attr("href") + "?url=" + escape(window.location.pathname + window.location.search + window.location.hash));
+            // $(".log_in").attr("href", $(".log_in").attr("href") + "?url=" + escape(window.location.pathname + window.location.search + window.location.hash));
+
         };
 
         /**
@@ -616,7 +622,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 			// MyB: Setting login url
 			$("#login_button_container a").attr("href", sakai.config.Authentication.external[0].url);
 			// MyB: when only login link is displayed its parent container has incorrect margin, fixing
-			$("#login_button_container").css("margin-bottom", "1em");
+			$("#login_button_container").css("margin-bottom", "0px");
         
             // If a user is not logged in -> switch to anonymous mode
             switchToAnonymousMode();

@@ -54,7 +54,7 @@
 #user_link_container{position:relative;text-align:left;min-width:50px;max-width:195px;}
 
 /* Anonymous Login */
-#login_container{background:none repeat scroll 0 0 #878A8C;left:785px;padding:10px;position:absolute;top:32px;width:246px;z-index:1000;text-align:right;color:#eee;}
+#login_container{background:none repeat scroll 0 0 #878A8C;left:785px;padding:10px;width:246px;z-index:1000;text-align:right;color:#eee;}
 #login_container input{border:1px solid #666;height:20px;line-height:20px;margin:3px 0 10px;text-align:right;width:240px;font-size:11pt;font-weight:bold;color:#333;padding:0 10px 0 0;}
 #error_message{font-size:9pt;color:#ff0;}
 #login_busy{background:url(/dev/images/ajax_load.gif) 0 0 no-repeat;width:80px;height:10px;}
