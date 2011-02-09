@@ -1076,5 +1076,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jque
 	    };
 	
 	    doInit();
+    };
+
     sakai.api.Widgets.Container.registerForLoad("listpage");
 });
