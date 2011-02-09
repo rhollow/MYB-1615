@@ -465,8 +465,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             else {
                 $general_search_container.hide();
             }
+
+            // myberkley custom : comment out next line since users can't see any pages without logging in, and
+            // the redirection breaks our CalNet login
             // Make the login page redirect to the current page after login
-            $(".log_in").attr("href", $(".log_in").attr("href") + "?url=" + escape(window.location.pathname + window.location.search + window.location.hash));
+            // $(".log_in").attr("href", $(".log_in").attr("href") + "?url=" + escape(window.location.pathname + window.location.search + window.location.hash));
+
         };
 
         /**
