@@ -24,33 +24,17 @@
 /** SIDE NAV **/
 
 /** Side Folders **/
-.inbox_main .inbox-folders
-{ width: 230px; margin:0; padding-top: 2px; overflow: hidden; margin-top: 6px; }
-.inbox_main .inbox-folders .if_titlebar
-{ background:transparent url(/dev/images/block_tr.png) no-repeat scroll right top; padding: 0 10px 0 0; height:50px; }
-.inbox_main .inbox-folders .if_titlebar_inner
-{ background:transparent url(/dev/images/block_tl.png) no-repeat scroll left top; padding: 18px 0 0 17px; height:50px; }
-.inbox_main .inbox-folders .if_title
-{ background:transparent url(/dev/images/recent_activity_icon.png) no-repeat scroll left top; color:#878A8C; font-size:1em; padding-left: 25px; position: relative; top:-15px; }
-.inbox_main .inbox-folders .if_content
-{ border-left: 3px solid #D4DADE; border-right: 3px solid #D4DADE; padding: 1px 0px 1px 0px; margin: 0; }
-.inbox_main .inbox-folders .if_content ul
-{ padding-left: 20px; margin: 0; }
-.inbox_main .inbox-folders .if_content ul li
-{ list-style-type: none; padding: 3px 0 3px 0; }
-.inbox_main .inbox-folders .if_content ul li a
-{ font-weight: normal; color: #058EC4; }
-.inbox_main .inbox-folders .if_content ul li span
-{ font-weight: normal; color: #999999; }
-.inbox_main .inbox-folders .if_content .tab
-{ padding: 5px 10px 5px 10px; }
-.inbox_main .inbox-folders .if_content .tab a
-{ font-weight: bold; color: #058EC4; font-size: 1.2em; padding: 0 0 10px 0; }
-
-.inbox_main .inbox-folders #inbox_filter_inbox
-{ background: transparent url(/dev/images/inbox_folders_messages.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
-.inbox_main .inbox-folders #inbox_filter_trash
-{ background: transparent url(/dev/images/inbox_folders_trash.gif) no-repeat scroll left center; height: 20px; padding: 0 0 0 28px; }
+.inbox_main .fl-widget .fl-widget-titlebar .widget_title_icon{background:url(/dev/images/icons_sprite.png) no-repeat scroll -420px -17px transparent;}
+.inbox_main .inbox-folders{width:230px;margin:0;padding:0;overflow:hidden;}
+.inbox_main .inbox-folders .if_titlebar_inner{padding:18px 0 0 17px;}
+.inbox_main .inbox-folders .if_title{color:#878A8C;font-size:1em;padding-left:25px;margin:0;}
+.inbox_main .inbox-folders .if_content ul{padding:0 0 0 20px;margin:0;}
+.inbox_main .inbox-folders .if_content ul li{list-style-type:none;padding:3px 0;}
+.inbox_main .inbox-folders .if_content ul li a{font-weight:normal;}
+.inbox_main .inbox-folders .if_content ul li span{font-weight:normal;color:#999;}
+.inbox_main .inbox-folders .if_content .tab{margin:10px 0;}
+.inbox_main .inbox-folders .if_content .tab a{font-size:1.2em;padding:0 0 10px;}
+.if_content .inbox_filter .inbox_icon{float: left;height: 17px;margin-right: 10px;width: 16px;}
 
 .inbox_main .inbox-folders .if_bottom
 { background:transparent url(/dev/images/content_bl.png) no-repeat scroll left bottom; height: 5px; padding: 0 0 0 10px; }
@@ -71,7 +55,7 @@
 { width: 670px; margin: 0; table-layout: fixed; }
 
 .inbox_main .top_decor
-{ background: transparent url(/dev/images/inbox_table_top.png) no-repeat top left; height: 32px; width: 673px; border: none; padding: 9px 0 0 7px;}
+{background:url(/dev/images/dashboard_sprite.png) no-repeat scroll left -1823px transparent;height:32px;width:673px;border:none;padding:9px 0 0 7px;}
 
 /** Buttons **/
 #inbox-new-button
@@ -121,7 +105,7 @@
 }
 
 .inbox_main .bottom_decor
-{ background: transparent url(/dev/images/inbox_table_bottom.png) no-repeat top left; height: 41px; width: 676px; border: none; }
+{ background:url(/dev/images/dashboard_sprite.png) no-repeat scroll left -1873px transparent;height:41px;width:676px;border:none; }
 
 
 /** NOTIFICATION DETAIL **/
@@ -229,6 +213,25 @@
 .inbox_main .user-personal .first{border-left: none;}
 
 .inbox_main .user-name{color: #058ec4; background: url(/dev/images/user_online.gif) no-repeat 7px 2px;}
+.inbox_main .user-name strong{padding-left: 14px;}
+
+.inbox_main .user-arrow-down{position: relative; top: -1px; padding-left: 3px;}
+
+.inbox_main .user-mail{background: url(/dev/images/user_mail_icon.gif) no-repeat 6px 3px;}
+.inbox_main .user-mail a{color: #666; padding-left: 16px;}
+
+.inbox_main .inbox-checkbox{width: 16px;}
+
+.inbox_main .inbox-delete{padding: 10px 0 12px 0;}
+.inbox_main #inbox_delete {margin:10px 0px 10px 0px;display:inline-block;;}
+
+.inbox_main .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}
+
+.inbox_main .inbox_inbox_table_header_sort { cursor:pointer;}
+.inbox_main .inbox_inbox_table_header_sort span { float:left; }
+
+.inbox_main #inbox_compose_new img { border:none;}
+/images/user_online.gif) no-repeat 7px 2px;}
 .inbox_main .user-name strong{padding-left: 14px;}
 
 .inbox_main .user-arrow-down{position: relative; top: -1px; padding-left: 3px;}
