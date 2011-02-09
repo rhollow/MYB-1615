@@ -14,12 +14,11 @@
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.error.css" />
 
         <!-- Sakai Page CSS -->
-        <!--link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" /-->
-		<link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.error.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" />
 
     </head>
 
-    <body class="fl-centered index i18nable">
+    <body class="fl-centered i18nable">
 
         <!-- TOP BANNER -->
         <div id="top_banner"><!-- --></div>
@@ -27,33 +26,29 @@
         <div id="widget_topnavigation" class="widget_inline"></div>
 
         <div class="index-container fl-centered permissions_error"><span style="display:none;"><br /></span>
-			<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
-        		 see http://tinyurl.com/2bd4v for details -->
-			&nbsp;  
             <div id="permission_error_logged_out_template" style="display:none;"><!--
 
                 <div class="index-container fl-centered">
 
                 <div id="widget_login" class="widget_inline"></div>
 
-
                 <div class="login-box fl-container">
                     <div class="login-box-top">
                     </div>
                     <div class="login-box-content">
-                        <div class="preview-box fl-left">
+                        <div class="fl-left">
 
                             <div class="header-title">
                                 <p class="sakai_logo_index"></p>
                             </div>
 
-                            <div class="header-byline">
+                            <div class="header-byline" style="padding: 30px 0 25px;">
                                 __MSG__HEADER_BYLINE__
                             </div>
 
 
                             <div id="page_not_found_error">
-                                <div class="preview-box">
+                                <div class="clear:both;">
                                     <span id="error_title">__MSG__YOU_DONT_HAVE_PERMISSION_TO_VIEW_REQUESTED_PAGE__</span>
                                     <p>
                                         __MSG__YOU_TRIED_TO_ACCESS_PAGE_WITHOUT_PERMISSIONS__
@@ -68,9 +63,6 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="login-container">
-                                    <div id="widget_login" class="widget_inline"></div>
-                                </div>
                             </div>
 
                         </div>
@@ -82,7 +74,6 @@
 
                 --></div>
                 <div id="permission_error_logged_in_template" style="display:none;"><!--
-                </div>
                 <div class="fl-container-flex header s3d-header">
                     <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
                         <div class="s3d-decor">

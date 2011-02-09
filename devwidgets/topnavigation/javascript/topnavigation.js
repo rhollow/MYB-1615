@@ -454,11 +454,11 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                 
                 indexPaths.push("/register", "/dev/create_new_account.html");
                 
-                if (-1 !== $.inArray(window.location.pathname.replace(/\/$/,""), indexPaths)){
-                    // myBerkeley: We don't use register button, it is always hidden
-					//$("#register_button_container").hide();
+				// myBerkeley: We don't use register button, and login_button_container should always be visible
+                /*if (-1 !== $.inArray(window.location.pathname.replace(/\/$/,""), indexPaths)){                    
+					$("#register_button_container").hide();
                     $("#login_button_container").hide();
-                }
+                }*/
 
                 renderMenu();
             }
