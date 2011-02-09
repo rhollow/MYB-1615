@@ -72,10 +72,11 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/misc/querystring.js"], func
             } else {
                 $(loadingMessage).hide();
 
+				// myBerkeley: We don't use register button
                 // check if internal is true or internal account creation is true show login
-                if (sakai.config.Authentication.allowInternalAccountCreation){
-                    $(registerLink).show();
-                }
+                //if (sakai.config.Authentication.allowInternalAccountCreation){
+                //  $(registerLink).show();
+                //}
 
                 if (sakai.config.Authentication.internal || sakai.config.Authentication.allowInternalAccountCreation) {
                     $(loginButton).show();
