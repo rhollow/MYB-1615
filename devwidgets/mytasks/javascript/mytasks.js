@@ -652,7 +652,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     
             if (isArchiveMode) {
                 startDate = BEGINNING_OF_TIME;
-                endDate.setTime(today.getTime());
+                endDate.setTime(today.getTime() - 1);
             } else {
                 startDate = today;
                 switch (getDateRange()) {
