@@ -513,9 +513,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         endDate = END_OF_TIME;
                         break;
                     case "next7" :
+                        startDate = new Date();
                         endDate.setTime(today.getTime() + 7 * ONE_DAY);
                         break;
                     case "next30" :
+                        startDate = new Date();
                         endDate.setTime(today.getTime() + 30 * ONE_DAY);
                         break;
                     case "overdue" :
