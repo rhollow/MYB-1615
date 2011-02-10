@@ -235,13 +235,7 @@ define(["jquery",
                 },
                 complete: function(xhr, textStatus) {
                     // hit the logout service to destroy the session
-                    $.ajax({
-                        url: sakai_conf.URL.LOGOUT_SERVICE,
-                        type: "GET",
-                        complete: function(xhrInner, textStatusInner) {
-                            callback(textStatusInner === "success");
-                        }
-                    });
+                    window.location = sakai_conf.URL.LOGOUT_SERVICE;
                 }
             });
 
@@ -303,10 +297,10 @@ define(["jquery",
 
                     // Check for firstName and lastName property - if not present use "rep:userId" for both (admin for example)
                     if (sakaiUserAPI.getProfileBasicElementValue(sakaiUserAPI.data.me.profile, "firstName") === "") {
-                        sakaiUserAPI.setProfileBasicElementValue(sakaiUserAPI.data.me.profile, "firstName", data.me.profile["rep:userId"]);
+                        sakaiUserAPI.setProfileBasicElementValue(sakaiUserAPI.data.me.profile, "firstName", sakaiUserAPI.data.me.profile["rep:userId"]);
                     }
                     if (sakaiUserAPI.getProfileBasicElementValue(sakaiUserAPI.data.me.profile, "lastName") === "") {
-                        sakaiUserAPI.setProfileBasicElementValue(sakaiUserAPI.data.me.profile, "lastName", data.me.profile["rep:userId"]);
+                        sakaiUserAPI.setProfileBasicElementValue(sakaiUserAPI.data.me.profile, "lastName", sakaiUserAPI.data.me.profile["rep:userId"]);
                     }
 
                     // Parse the directory locations

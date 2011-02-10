@@ -14,14 +14,11 @@
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.error.css" />
 
         <!-- Sakai Page CSS -->
-        <!--link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" /-->
-		<link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.error.css" />
-
-        <!-- 3rd party CSS -->
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" />
 
     </head>
 
-    <body class="fl-centered index i18nable">
+    <body class="fl-centered i18nable">
 
         <!-- TOP BANNER -->
         <div id="top_banner"><!-- --></div>
@@ -29,33 +26,29 @@
         <div id="widget_topnavigation" class="widget_inline"></div>
 
         <div class="index-container fl-centered page_not_found_error"><span style="display:none;"><br /></span>
-			<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
-        		 see http://tinyurl.com/2bd4v for details -->
-			&nbsp;
             <div id="page_not_found_error_logged_out_template" style="display:none;"><!--
 
                 <div class="index-container fl-centered">
-
-                <div id="widget_login" class="widget_inline"></div>
-
-
+ 	
+    	        <div id="widget_login" class="widget_inline"></div>
+				
                 <div class="login-box fl-container">
                     <div class="login-box-top">
                     </div>
                     <div class="login-box-content">
-                        <div class="preview-box fl-left">
+                        <div class="fl-left">
 
                             <div class="header-title">
                                 <p class="sakai_logo_index"></p>
                             </div>
 
-                            <div class="header-byline">
+                            <div class="header-byline" style="padding: 30px 0 25px;">
                                 __MSG__HEADER_BYLINE__
                             </div>
 
 
                             <div id="page_not_found_error">
-                                <div class="preview-box">
+                                <div style="clear:both;">
                                     <span id="error_title">__MSG__THE_PAGE_YOU_REQUESTED_WAS_NOT_FOUND__</span>
                                     <p>
                                         __MSG__YOU_MAY_HAVE_CLICKED_A_BROKEN_LINK_OR_MISTYPED_THE_URL__
@@ -75,9 +68,6 @@
                                     <p>
                                         __MSG__IF_YOU_CONTINUE_TO_RECEIVE_ERROR_PAGE_MAY_HAVE_BEEN_MOVED_OR_NO_LONDER_EXISTS__
                                     </p>
-                                </div>
-                                <div class="login-container">
-                                    <div id="widget_login" class="widget_inline"></div>
                                 </div>
                             </div>
 
@@ -127,7 +117,7 @@
         </div>
 
         <!-- Dependency JS -->
-        <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/requireplugins-jquery.js"></script>
+        <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
 
         <!-- 404 JS -->
         <script>require(["/dev/javascript/sakai.404.js"]);</script>
