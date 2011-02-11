@@ -18,7 +18,8 @@
 
 /* global $, Config, opensocial */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/jquery/jquery-ui-tabs-min.js"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
+    "/dev/lib/myb/jquery/jquery-ui-tabs-min.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 	sakai_global.listpage = function(){
 	    /**
 	     *

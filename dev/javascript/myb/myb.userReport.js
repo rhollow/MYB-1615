@@ -17,7 +17,7 @@
  */
 /*global $, Config, opensocial */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 	/**
 	 * Upgrades user dashboards from 0.1 to 0.2 by removing the old "myreminders" widget and putting
 	 * "myevents" and "mytasks" in its place.

@@ -19,7 +19,7 @@
 
 /*global Querystring, Config, $,  set_cookie */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 
     /* HACK : Preventing redirection to 'not-a-participant' page from this page because this page IS the 'not-a-participant' page
      See myb.securepage.js for details. */
