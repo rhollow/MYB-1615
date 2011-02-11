@@ -14,32 +14,37 @@
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.error.css" />
 
         <!-- Sakai Page CSS -->
-        <!--link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" /-->
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" />
 		<link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.error.css" />
 
-        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.index.css" />
 
     </head>
 
-    <body class="fl-centered index i18nable" style="display: block;">
+    <body class="fl-centered i18nable" style="display: block;">
         <div class="index-container fl-centered permissions_error">
 			<!-- HEADER -->
         	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
         		 see http://tinyurl.com/2bd4v for details -->
 			&nbsp;
-            <div class="header-title">
-                <p class="sakai_logo_index"></p>
-            </div>
-
-            <div class="header-byline">
-                __MSG__HEADER_BYLINE__
-            </div>
+            
 
             <div class="login-box">
                 <div class="login-box-top">
                 </div>
+				
                 <div class="login-box-content">
-                    <div id="internal_user_error">
+			    
+					<div>
+						<div class="header-title">
+		                	<p class="sakai_logo_index"></p>
+		            	</div>
+		
+		            	<div class="header-byline">
+		                	__MSG__HEADER_BYLINE__
+		            	</div>
+					</div>
+											
+				    <div id="internal_user_error" style="clear:both">
                         <div class="preview-box">
                             <span id="error_title">__MSG__THE_USER_ACCOUNT_YOU_ARE_TRYING_TO_ACCESS_DOES_NOT_EXIST__</span>
                             <p>
@@ -58,7 +63,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="login-container">
+                        <div class="login-container" style="padding-top:20px;">
                             <a href="/logout">
                                 <button class="s3d-button s3d-button-primary" type="submit">
                                     <span class="s3d-button-inner">__MSG__TRY_WITH_A_DIFFERENT_USER__</span>
@@ -73,6 +78,7 @@
                 <div class="login-box-bottom">
                 </div>
             </div>
+			<div id="widget_footer" class="widget_inline footercontainer"></div>
         </div>
 
         <!-- Dependency JS -->
