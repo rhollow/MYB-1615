@@ -513,9 +513,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         endDate = END_OF_TIME;
                         break;
                     case "next7" :
+                        startDate = new Date();
                         endDate.setTime(today.getTime() + 7 * ONE_DAY);
                         break;
                     case "next30" :
+                        startDate = new Date();
                         endDate.setTime(today.getTime() + 30 * ONE_DAY);
                         break;
                     case "overdue" :
@@ -652,7 +654,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     
             if (isArchiveMode) {
                 startDate = BEGINNING_OF_TIME;
-                endDate.setTime(today.getTime());
+                endDate.setTime(today.getTime() - 1);
             } else {
                 startDate = today;
                 switch (getDateRange()) {
