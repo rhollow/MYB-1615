@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+
+		<!-- Sakai Core CSS -->
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css" />
+
+    </head>
+
+    <body class="fl-centered inbox_main inbox_detail i18nable">
+
+        <!-- HEADER -->
+        <div class="fl-container-flex header">
+            <div class="fl-fix fl-centered fixed-container">
+                <div class="decor"></div>
+
+                <!-- TITLE BAR  -->
+                <div class="s3d-site-heading">
+                    <h1 id="sitetitle">MyBerkeley User Report</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="fl-fix fl-centered fixed-container">
+
+            <!-- MAIN PAGE -->
+            <div class="fl-fix fl-col-mixed main_container">
+
+                <ul>
+                    <li>
+                        <a href="javascript:" id="upgrade_reminders_button">User Report</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- Dependency JS -->
+        <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
+
+        <!-- Page JS -->
+        <script>require(["/dev/javascript/myb/myb.userReport.js"]);</script>
+        <script>require(["/dev/javascript/myb/myb.securepage.js"]);</script>
+
+    </body>
+
+</html>
