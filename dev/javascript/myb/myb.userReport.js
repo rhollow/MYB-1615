@@ -17,80 +17,80 @@
  */
 /*global $, Config, opensocial */
 
-var sakai = sakai || {};
-
-/**
- * Upgrades user dashboards from 0.1 to 0.2 by removing the old "myreminders" widget and putting
- * "myevents" and "mytasks" in its place.
- */
-sakai.userReport = function() {
-
-    var SEARCH_URL = "/var/_myb_user_report";
-    var MAX_USER_SEARCH_RESULTS = 1000;
-
-	// curl -u 271592:testuser -Fvalue=2011-01-23T00:00:00-08:00 -Fvalue@TypeHint=date 
-	// http://localhost:8080/~271592/public/authprofile/myberkeley/elements/joinDate
-    var userSearch = {
-        "sakai:query-language": "xpath",
-        "sakai:query-template": "/jcr:root//*/public/authprofile/myberkeley/elements/joinDate",
-        "sling:resourceType": "sakai/search",
-        "sakai:propertyprovider" : "Node",
-        "sakai:resultprocessor": "Node",
-        "sakai:title" : "Search for users"
-    };
-
-    var doPost = function(url, props, callback) {
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: props,
-            success: function() {
-                if ($.isFunction(callback)) {
-                    callback();
-                }
-            },
-            error: function(xhr) {
-                console.log("POST to url " + url + " failed. XHR response:" + xhr.responseText);
-            },
-            dataType: 'json'
-        });
-    };
-
-    var createSearch = function() {
-        doPost(SEARCH_URL, userSearch,
-              function() {
-                  console.log("Created search successfully.");
-                  runSearch();
-              });
-    };
-
-    var runSearch = function() {
-        $.ajax({
-            url: SEARCH_URL + "?items=" + MAX_USER_SEARCH_RESULTS,
-            cache: false,
-            success: function(data) {
-                console.dir(data.results);
-                cleanup();
-            },
-            error: function(xhr) {
-                console.log("GET failed. XHR response:" + xhr.responseText);
-            }
-        });
-    };
-
-    var cleanup = function() {
-        doPost(SEARCH_URL, {
-            ":operation" : "delete"
-        }, function() {
-            console.log("Deleted search.");
-        });
-    };
-
-    var doInit = function() {
-        createSearch();
-    };
-
-    doInit();
-};
-
-sakai.api.Widgets.Container.registerForLoad("sakai.userReport");
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
+	/**
+	 * Upgrades user dashboards from 0.1 to 0.2 by removing the old "myreminders" widget and putting
+	 * "myevents" and "mytasks" in its place.
+	 */
+	sakai_global.userReport = function() {
+	
+	    var SEARCH_URL = "/var/_myb_user_report";
+	    var MAX_USER_SEARCH_RESULTS = 1000;
+	
+		// curl -u 271592:testuser -Fvalue=2011-01-23T00:00:00-08:00 -Fvalue@TypeHint=date 
+		// http://localhost:8080/~271592/public/authprofile/myberkeley/elements/joinDate
+	    var userSearch = {
+	        "sakai:query-language": "xpath",
+	        "sakai:query-template": "/jcr:root//*/public/authprofile/myberkeley/elements/joinDate",
+	        "sling:resourceType": "sakai/search",
+	        "sakai:propertyprovider" : "Node",
+	        "sakai:resultprocessor": "Node",
+	        "sakai:title" : "Search for users"
+	    };
+	
+	    var doPost = function(url, props, callback) {
+	        $.ajax({
+	            type: "POST",
+	            url: url,
+	            data: props,
+	            success: function() {
+	                if ($.isFunction(callback)) {
+	                    callback();
+	                }
+	            },
+	            error: function(xhr) {
+	                console.log("POST to url " + url + " failed. XHR response:" + xhr.responseText);
+	            },
+	            dataType: 'json'
+	        });
+	    };
+	
+	    var createSearch = function() {
+	        doPost(SEARCH_URL, userSearch,
+	              function() {
+	                  console.log("Created search successfully.");
+	                  runSearch();
+	              });
+	    };
+	
+	    var runSearch = function() {
+	        $.ajax({
+	            url: SEARCH_URL + "?items=" + MAX_USER_SEARCH_RESULTS,
+	            cache: false,
+	            success: function(data) {
+	                console.dir(data.results);
+	                cleanup();
+	            },
+	            error: function(xhr) {
+	                console.log("GET failed. XHR response:" + xhr.responseText);
+	            }
+	        });
+	    };
+	
+	    var cleanup = function() {
+	        doPost(SEARCH_URL, {
+	            ":operation" : "delete"
+	        }, function() {
+	            console.log("Deleted search.");
+	        });
+	    };
+	
+	    var doInit = function() {
+	        createSearch();
+	    };
+	
+	    doInit();
+	};
+	
+	sakai.api.Widgets.Container.registerForLoad("userReport");
+});
