@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 /* global $, Config, jQuery, sakai, sdata */
-require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"], function($, sakai, noticewidgets) {
+require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"], function($, sakai, noticeWidgets) {
 
     sakai_global.myevents = function(tuid) {
         var rootContainer = $("#" + tuid);
@@ -83,19 +83,19 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             var endDate = new Date();
 
             if (isArchiveMode) {
-                startDate = noticewidgets.BEGINNING_OF_TIME;
+                startDate = noticeWidgets.BEGINNING_OF_TIME;
                 endDate.setTime(today.getTime() - 1);
             } else {
                 startDate = today;
                 switch (getDateRange()) {
                     case "all" :
-                        endDate = noticewidgets.END_OF_TIME;
+                        endDate = noticeWidgets.END_OF_TIME;
                         break;
                     case "next7" :
-                        endDate.setTime(today.getTime() + 7 * noticewidgets.ONE_DAY);
+                        endDate.setTime(today.getTime() + 7 * noticeWidgets.ONE_DAY);
                         break;
                     case "next30" :
-                        endDate.setTime(today.getTime() + 30 * noticewidgets.ONE_DAY);
+                        endDate.setTime(today.getTime() + 30 * noticeWidgets.ONE_DAY);
                         break;
                 }
             }
@@ -107,13 +107,13 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             } else if (itemStatus === "unrequired") {
                 excludeRequiredState = "true";
             }
-            return "&startDate=" + Globalization.format(startDate, noticewidgets.DATE_FORMAT_ISO8601)
-                    + "&endDate=" + Globalization.format(endDate, noticewidgets.DATE_FORMAT_ISO8601)
+            return "&startDate=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+                    + "&endDate=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
                     + "&excludeRequiredState=" + excludeRequiredState;
         };
 
         var doInit = function() {
-            var eventWidget = noticewidgets.Widget({
+            var eventWidget = noticeWidgets.Widget({
                 rootContainer : rootContainer,
                 widgetName : widgetName,
                 dataURL : dataURL,

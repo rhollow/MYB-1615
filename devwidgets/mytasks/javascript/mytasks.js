@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 /* global $, Config, jQuery, sakai, sdata */
-require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"], function($, sakai, noticewidgets) {
+require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"], function($, sakai, noticeWidgets) {
 
     sakai_global.mytasks = function(tuid) {
         var rootContainer = $("#" + tuid);
@@ -86,25 +86,25 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             var endDate = new Date();
     
             if (isArchiveMode) {
-                startDate = noticewidgets.BEGINNING_OF_TIME;
-                endDate = noticewidgets.END_OF_TIME;
+                startDate = noticeWidgets.BEGINNING_OF_TIME;
+                endDate = noticeWidgets.END_OF_TIME;
             } else {
                 startDate = today;
                 switch (getDateRange()) {
                     case "all" :
-                        startDate = noticewidgets.BEGINNING_OF_TIME;
-                        endDate = noticewidgets.END_OF_TIME;
+                        startDate = noticeWidgets.BEGINNING_OF_TIME;
+                        endDate = noticeWidgets.END_OF_TIME;
                         break;
                     case "next7" :
                         startDate = new Date();
-                        endDate.setTime(today.getTime() + 7 * noticewidgets.ONE_DAY);
+                        endDate.setTime(today.getTime() + 7 * noticeWidgets.ONE_DAY);
                         break;
                     case "next30" :
                         startDate = new Date();
-                        endDate.setTime(today.getTime() + 30 * noticewidgets.ONE_DAY);
+                        endDate.setTime(today.getTime() + 30 * noticeWidgets.ONE_DAY);
                         break;
                     case "overdue" :
-                        startDate = noticewidgets.BEGINNING_OF_TIME;
+                        startDate = noticeWidgets.BEGINNING_OF_TIME;
                         endDate = new Date();
                         break;
                 }
@@ -117,16 +117,16 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             } else if (itemStatus === "unrequired") {
                 excludeRequiredState = "true";
             }
-            return "&startDate=" + Globalization.format(startDate, noticewidgets.DATE_FORMAT_ISO8601)
-                    + "&endDate=" + Globalization.format(endDate, noticewidgets.DATE_FORMAT_ISO8601)
+            return "&startDate=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+                    + "&endDate=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
                     + "&excludeRequiredState=" + excludeRequiredState;
         };
     
         var checkForOverdueTasks = function() {
             // TODO when KERN-1471 is fixed, bundle this request into batch request with the main search
             var overdueTaskSearchURL = "/var/notices/tasks.json?startDate=" +
-                    Globalization.format(noticewidgets.BEGINNING_OF_TIME, noticewidgets.DATE_FORMAT_ISO8601)
-                    + "&endDate=" + Globalization.format(new Date(), noticewidgets.DATE_FORMAT_ISO8601) +
+                    Globalization.format(noticeWidgets.BEGINNING_OF_TIME, noticeWidgets.DATE_FORMAT_ISO8601)
+                    + "&endDate=" + Globalization.format(new Date(), noticeWidgets.DATE_FORMAT_ISO8601) +
                     "&excludeRequiredState=completed&items=1";
             $.ajax({
                 url: overdueTaskSearchURL,
@@ -147,7 +147,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         };
     
         var doInit = function() {
-            var taskWidget = noticewidgets.Widget({
+            var taskWidget = noticeWidgets.Widget({
                 rootContainer : rootContainer,
                 widgetName : widgetName,
                 dataURL : dataURL,
