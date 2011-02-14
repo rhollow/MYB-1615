@@ -19,7 +19,7 @@
 
 /*global Querystring, Config, $,  set_cookie */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 
     /* HACK : Preventing redirection to 'not-a-participant' page from this page because this page IS the 'not-a-participant' page
      See myb.securepage.js for details. */
@@ -82,40 +82,67 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
             document.location = "/dev/logout.html";
         }
 
-        /**
-         * Makes current user a participant. The function will try several times to save the data before giving up,
-         * if this happens the user will be logged out.
-         */
-        function makeParticipant() {
+	/**
+	 * Makes current user a participant. The function will try several times to save the data before giving up,
+	 * if this happens the user will be logged out.
+	 */
+	function makeParticipant() {
+		
+		$.ajax({
+			url: "/~" + sakai.data.me.profile["rep:userId"] + "/public/authprofile/myberkeley/elements/joinDate",
+			traditional: true,
+			type: "POST",
+			data: {
+				value: "@TypeHint=date"
+			},
+			success: function(data) {},
+			error: function(xhr, textStatus, thrownError) {
 
-            $.ajax({
-                url: "/~" + sakai.data.me.profile["rep:userId"] + "/public/authprofile/myberkeley/elements/participant",
-                traditional: true,
-                type: "POST",
-                data: {
-                    value: $.toJSON(true)
-                },
-                success: function(data) {
-                    $("#join_myberkeley_dialog").jqmHide();
-                    showGeneralMessage("Welcome to myBerkeley portal!", false);
-                },
-                error: function(xhr, textStatus, thrownError) {
+				// Not the last try?
+				if (ajaxPostTryNumber === 0) {
+					showGeneralMessage("Saving failed. Will retry...", true);
+				} else if (ajaxPostTryNumber === ajaxPostMaxTries - 1) {
+					// Saving failed for good
+					showGeneralMessage("Unable to save the data. Logging out...", true);
+					setTimeout(logOut, ajaxPostTimeBeforeLogOutMs);
+					return;
+				}
 
-                    // Not the last try?
-                    if (ajaxPostTryNumber === 0) {
-                        showGeneralMessage("Saving failed. Will retry...", true);
-                    } else if (ajaxPostTryNumber === ajaxPostMaxTries - 1) {
-                        // Saving failed for good
-                        showGeneralMessage("Unable to save the data. Logging out...", true);
-                        setTimeout(logOut, ajaxPostTimeBeforeLogOutMs);
-                        return;
-                    }
+				// Retrying ...
+				ajaxPostTryNumber++;
+				setTimeout(makeParticipant, ajaxPostRetryIntervalMs);
+			}
+		});
+		
+		ajaxPostTryNumber = 0;
+		$.ajax({
+			url: "/~" + sakai.data.me.profile["rep:userId"] + "/public/authprofile/myberkeley/elements/participant",
+			traditional: true,
+			type: "POST",
+			data: {
+				value: $.toJSON(true)
+			},
+			success: function(data) {
+				$("#join_myberkeley_dialog").jqmHide();
+				showGeneralMessage("Welcome to myBerkeley portal!", false);
+			},
+			error: function(xhr, textStatus, thrownError) {
 
-                    // Retrying ...
-                    ajaxPostTryNumber++;
-                    setTimeout(makeParticipant, ajaxPostRetryIntervalMs);
-                }
-            });
+				// Not the last try?
+				if (ajaxPostTryNumber === 0) {
+					showGeneralMessage("Saving failed. Will retry...", true);
+				} else if (ajaxPostTryNumber === ajaxPostMaxTries - 1) {
+					// Saving failed for good
+					showGeneralMessage("Unable to save the data. Logging out...", true);
+					setTimeout(logOut, ajaxPostTimeBeforeLogOutMs);
+					return;
+				}
+
+				// Retrying ...
+				ajaxPostTryNumber++;
+				setTimeout(makeParticipant, ajaxPostRetryIntervalMs);
+			}
+		});
         }
 
         ////////////////////

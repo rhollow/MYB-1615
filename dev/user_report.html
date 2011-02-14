@@ -6,7 +6,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title></title>
 
-        <!-- Sakai Core CSS -->
+		<!-- Sakai Core CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css" />
 
     </head>
@@ -20,7 +20,7 @@
 
                 <!-- TITLE BAR  -->
                 <div class="s3d-site-heading">
-                    <h1 id="sitetitle">MyBerkeley Upgrade 0.1->0.2</h1>
+                    <h1 id="sitetitle">MyBerkeley User Report</h1>
                 </div>
             </div>
         </div>
@@ -33,17 +33,9 @@
 
                 <ul>
                     <li>
-                        <a href="javascript:" id="upgrade_reminders_button">Upgrade Reminders</a>
-                    </li>
-                    <li>
-                        <a href="javascript:" id="upgrade_dashboards_button">Upgrade Dashboards</a>
-                    </li>
-                    <li>
-                        <a href="javascript:" id="upgrade_dynamiclists_button">Upgrade Dynamic Lists</a>
+                        <a href="javascript:" id="upgrade_reminders_button">User Report</a>
                     </li>
                 </ul>
-
-                <p>Click one of the above links, then look in Firebug log to see if the script ran successfully.</p>
 
             </div>
         </div>
@@ -52,9 +44,7 @@
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
 
         <!-- Page JS -->
-        <script>require(["/dev/javascript/myb/upgrade/myb.upgradeReminders.js"]);</script>
-        <script>require(["/dev/javascript/myb/upgrade/myb.upgradeDashboard.js"]);</script>
-        <script>require(["/dev/javascript/myb/upgrade/myb.upgradeDynamicLists.js"]);</script>
+        <script>require(["/dev/javascript/myb/myb.userReport.js"]);</script>
 
     </body>
 

@@ -18,13 +18,13 @@
 
 /* global $, Config, opensocial */
 
+// This variable has to be global, see http://code.google.com/apis/analytics/docs/gaJS/gaJSApi_gaq.html
+var _gaq = _gaq || [];
+
 define(["jquery","sakai/sakai.api.core","/dev/configuration/config_custom.js"],
       function($, sakai, config) {
 
     var google = {};
-
-    // This variable has to be global, see http://code.google.com/apis/analytics/docs/gaJS/gaJSApi_gaq.html
-    var _gaq = _gaq || [];
 
     /**
      * Records an outbound link before leaving the current page

@@ -6,6 +6,17 @@
 	float:left;
 }
 
+.header-title .sakai_logo_index {
+    background: url("/dev/images/myb/myb-small-gray-logotype.png") no-repeat scroll 0px 0px transparent;
+    height: 54px;
+    padding: 0;
+    width: 203px;
+}
+
+.header-byline {
+	padding: 26px 0 25px;
+}
+
 /* Using default html styles for anchor tag */
 /* myBerkeley change */
 #permission_error a.default, #page_not_found_error a.default {text-decoration:underline; color: #0000ff;}
