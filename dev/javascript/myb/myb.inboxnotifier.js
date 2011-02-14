@@ -17,7 +17,7 @@
  */
 /*global $, Config, opensocial */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 
     sakai_global.notificationsinbox = function(){
 

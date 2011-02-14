@@ -1,4 +1,4 @@
-require(["jquery", "/dev/javascript/search_main.js"], function() {
+require(["jquery", "/dev/javascript/search_main.js", "/dev/javascript/myb/myb.securepage.js"], function() {
 
     History = {
         prev_url : -1,

@@ -17,7 +17,7 @@
  */
 
 
-require(["jquery","sakai/sakai.api.core"], function($, sakai) {
+require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai) {
 
     sakai_global.profile = function(){
 
