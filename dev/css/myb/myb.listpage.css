@@ -119,7 +119,6 @@
 
 .inbox_main a.editLink:link { text-decoration: underline; }
 .inbox_main .content_inbox .fixed-container { background: #fff url('/dev/images/header_l.png') top left no-repeat; }
-.inbox_main .content_inbox { padding: 12px 0 0 0; }
 .inbox_main .decor { background: url('/dev/images/header_r.png') top right no-repeat; height: 5px; margin-right: -20px; }
 .inbox_main .invalid_span { padding-left: 10px; color: #CC0000; font-weight: bold; }
 .inbox_main .input_item {padding: 0px 0px 10px 17px; }
