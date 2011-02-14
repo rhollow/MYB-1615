@@ -49,7 +49,7 @@
 
 /** Table **/
 .inbox_main .main_content_container
-{ width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 400px; }
+{ width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 300px; }
 
 .inbox_main .inbox-table
 { width:670px; margin:0; border-spacing:0; border-collapse:collapse; }
@@ -80,6 +80,8 @@
 
 #inbox_inbox_checkAll
 { margin: 5px; }
+.inbox_inbox_check_message 
+{ margin-left: 5px; }
 
 /** List **/
 .inbox_main .inbox-table th

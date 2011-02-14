@@ -222,12 +222,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * so we whether this feature exists and then apply the style or the ThreeDots jQuery plugin
          */
         var ellipsisSubjects = function(){
-            if (browserSupportsCSS3textOverflow()) {
-                $(".subject-td").each(function(){
+            if (browserSupportsCSS3textOverflow()) {                
+                $(".subject-td").each(function(){                  
                     $(this).css({
-                        "white-space": "nowrap",
-                        "text-overflow": "ellipsis",
-                        "overflow": "hidden"
+                        "white-space": "nowrap",                        
+                        "overflow": "hidden",                       
+                        "text-overflow": "ellipsis"                        
                     });
                 });
             } else {
