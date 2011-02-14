@@ -32,8 +32,8 @@
 .inbox_main .inbox-folders .if_content ul li{list-style-type:none;padding:3px 0;}
 .inbox_main .inbox-folders .if_content ul li a{font-weight:normal;}
 .inbox_main .inbox-folders .if_content ul li span{font-weight:normal;color:#999;}
-.inbox_main .inbox-folders .if_content .tab{margin:10px 0;}
-.inbox_main .inbox-folders .if_content .tab a{font-size:1.2em;padding:0 0 10px;}
+.inbox_main .inbox-folders .if_content .tab{height: 25px; margin: 5px 0px;}
+.inbox_main .inbox-folders .if_content .tab a{font-size:1.2em; position: relative; top: 5px;}
 .if_content .inbox_filter .inbox_icon{float: left;height: 17px;margin-right: 10px;width: 16px;}
 
 .inbox_main .inbox-folders .if_bottom
@@ -49,10 +49,10 @@
 
 /** Table **/
 .inbox_main .main_content_container
-{ width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 400px; }
+{ width: 670px; border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 300px; }
 
 .inbox_main .inbox-table
-{ width: 670px; margin: 0; table-layout: fixed; }
+{ width:670px; margin:0; border-spacing:0; border-collapse:collapse; }
 
 .inbox_main .top_decor
 {background:url(/dev/images/dashboard_sprite.png) no-repeat scroll left -1823px transparent;height:32px;width:673px;border:none;padding:9px 0 0 7px;}
@@ -70,26 +70,28 @@
 { border-bottom: 3px solid #d5dbdf; }
 
 .inbox_main .inbox-table #inbox_table_header_chk
-{ width:5%; }
+{ width:3%; }
 .inbox_main .inbox-table #inbox_table_header_from
 { width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 .inbox_main .inbox-table #inbox_table_header_subject
-{ width:47%; border-left: 1px solid #D4DADE; color: #666666; }
+{ width:49%; border-left: 1px solid #D4DADE; color: #666666; }
 .inbox_main .inbox-table #inbox_table_header_date
 { width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 
 #inbox_inbox_checkAll
 { margin: 5px; }
+.inbox_inbox_check_message 
+{ margin-left: 5px; }
 
 /** List **/
 .inbox_main .inbox-table th
-{ color: #333;  text-align: left; height: 26px; border: none; }
+{color:#333;text-align:left;height:26px;border:none;padding:3px 5px;}
 .inbox_main .inbox-table tr
 { color: #666; }
 .inbox_main .inbox-table tr.inbox_message:hover 
 { background-color:#d9eaf5; cursor:pointer; }
 .inbox_main .inbox-table td
-{ border: none;  color: #666; text-align: left; font-size: 1em; border-bottom: 1px solid #d5dbdf; }
+{ border:none;color:#666;text-align:left;font-size:1em;border-bottom:1px solid #d5dbdf;padding:4px 4px 4px 4px; }
 .inbox_main .inbox-table tr.inbox-subject-read *
 { font-weight:normal;}
 .inbox_main .inbox-table tr.inbox-subject-unread *
