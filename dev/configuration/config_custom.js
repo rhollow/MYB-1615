@@ -99,13 +99,6 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
         }
     };
 
-    // Tracking and statistics
-    config.Tracking = {
-        GoogleAnalytics: {
-            WebPropertyID : "UA-20616179-3"
-        }
-    };
-
     return config;
 
 });
