@@ -148,7 +148,7 @@
                     <label class="profilesection_generalinfo_label" for="profilesection_generalinfo_${path.replace(/\./g,"_")}">${config.label}:</label>
                 {/if}
                 {if config.editable === false}
-                    <span class="profilesection_generalinfo_content">{if typeof data.value !== "undefined" }${data.value|default:"&nbsp;"}{else}&nbsp;{/if}</span>
+                    <span class="profilesection_generalinfo_content">{if typeof data.value !== "undefined" && data.value !== null && data.value.trim() !== "" }${data.value}{else}&nbsp;{/if}</span>
                 {else}
                     {if !config.type || $.inArray(config.type, stringtypes) >= 0}
                         <input type="text"
