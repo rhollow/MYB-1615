@@ -123,7 +123,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                     sakai.api.Security.send404();
                 }
 
-            });
+            }, null, false);
         };
 
         /**
