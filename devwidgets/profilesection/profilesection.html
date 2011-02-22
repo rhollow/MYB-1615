@@ -148,7 +148,18 @@
                     <label class="profilesection_generalinfo_label" for="profilesection_generalinfo_${path.replace(/\./g,"_")}">${config.label}:</label>
                 {/if}
                 {if config.editable === false}
-                    <span class="profilesection_generalinfo_content">{if typeof data.value !== "undefined" }${data.value|default:"&nbsp;"}{else}&nbsp;{/if}</span>
+                    <span class="profilesection_generalinfo_content">
+					{if typeof data.value !== "undefined" && data.value !== null && data.value.trim() !== "" }
+						{if false}myBerkeley: the code below checks if the student has a double major, if so it puts each major on a separate line{/if}
+						{if data["jcr:name"] === 'major' && data.value.indexOf(',') !== -1}
+							${data.value.replace(/,/g, "<br />")}
+						{else}
+							${data.value}
+						{/if}
+					{else}
+						&nbsp;
+					{/if}
+					</span>
                 {else}
                     {if !config.type || $.inArray(config.type, stringtypes) >= 0}
                         <input type="text"
@@ -212,7 +223,12 @@
                         {if config.type === "date" || config.type === "oldDate"}
                         ${sakai.api.l10n.transformDate(new Date(data.value))}
                         {else}
-                        ${data.value}
+							{if false}myBerkeley: the code below checks if the student has a double major, if so it puts each major on a separate line{/if}
+							{if typeof data.value !== "undefined" && data.value !== null && config.label !== null && config.label.indexOf('PROFILE_MAJORORPROGRAM_LABEL') !== -1 && data.value.indexOf(',') !== -1}
+								${data.value.replace(/,/g, "<br />")}
+							{else}
+								${data.value}
+							{/if}
                         {/if}
                     {/if}
                 {else}
