@@ -45,20 +45,20 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 all : {
                     all : "ALL_TASKS",
                     overdue : "OVERDUE_TASKS",
-                    next7 : "TASKS_DUE_THIS_WEEK",
-                    next30 : "TASKS_DUE_THIS_MONTH"
+                    next7 : "TASKS_DUE_NEXT_7_DAYS",
+                    next30 : "TASKS_DUE_NEXT_30_DAYS"
                 },
                 required : {
                     all : "REQUIRED_TASKS",
                     overdue : "REQUIRED_OVERDUE_TASKS",
-                    next7 : "REQUIRED_TASKS_DUE_THIS_WEEK",
-                    next30 : "REQUIRED_TASKS_DUE_THIS_MONTH"
+                    next7 : "REQUIRED_TASKS_DUE_NEXT_7_DAYS",
+                    next30 : "REQUIRED_TASKS_DUE_NEXT_30_DAYS"
                 },
                 unrequired : {
                     all : "UNREQUIRED_TASKS",
                     overdue : "UNREQUIRED_OVERDUE_TASKS",
-                    next7 : "UNREQUIRED_TASKS_DUE_THIS_WEEK",
-                    next30 : "UNREQUIRED_TASKS_DUE_THIS_MONTH"
+                    next7 : "UNREQUIRED_TASKS_DUE_NEXT_7_DAYS",
+                    next30 : "UNREQUIRED_TASKS_DUE_NEXT_30_DAYS"
                 }
             };
             return msgs[itemStatus][dateRange];
