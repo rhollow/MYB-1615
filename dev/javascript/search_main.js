@@ -109,7 +109,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
          */
         var fetchMyFriends = function() {
             $.ajax({
-                url: sakai.config.URL.CONTACTS_FIND + "?state=*&page=0&n=100",
+                url: sakai.config.URL.CONTACTS_FIND_ALL + "?&page=0&n=100",
                 cache: false,
                 async: false,
                 success: function(data) {

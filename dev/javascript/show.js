@@ -74,7 +74,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                     entityID = sakai.data.me.user.userid;
                 }
             }
-            sakai.api.Server.loadJSON("/~" + entityID + "/public/authprofile", function(success, data) {
+            sakai.api.Server.loadJSON("/~" + entityID + "/public/authprofile.profile.json", function(success, data) {
                 if (success){
 
                     if (data["sling:resourceType"] && data["sling:resourceType"] === "sakai/group-profile"){
