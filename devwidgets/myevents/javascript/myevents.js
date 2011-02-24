@@ -44,18 +44,18 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             var msgs = {
                 all : {
                     all : "ALL_EVENTS",
-                    next7 : "EVENTS_THIS_WEEK",
-                    next30 : "EVENTS_THIS_MONTH"
+                    next7 : "EVENTS_NEXT_7_DAYS",
+                    next30 : "EVENTS_NEXT_30_DAYS"
                 },
                 required : {
                     all : "REQUIRED_EVENTS",
-                    next7 : "REQUIRED_EVENTS_THIS_WEEK",
-                    next30 : "REQUIRED_EVENTS_THIS_MONTH"
+                    next7 : "REQUIRED_EVENTS_NEXT_7_DAYS",
+                    next30 : "REQUIRED_EVENTS_NEXT_30_DAYS"
                 },
                 unrequired : {
                     all : "UNREQUIRED_EVENTS",
-                    next7 : "UNREQUIRED_EVENTS_THIS_WEEK",
-                    next30 : "UNREQUIRED_EVENTS_THIS_MONTH"
+                    next7 : "UNREQUIRED_EVENTS_NEXT_7_DAYS",
+                    next30 : "UNREQUIRED_EVENTS_NEXT_30_DAYS"
                 }
             };
             return msgs[itemStatus][dateRange];

@@ -25,20 +25,22 @@ table.noticewidget_listing {
 }
 
 table.noticewidget_listing thead {
-    background-color: #D4DADE;
+    background-color: #D4DADE;  
+    border-bottom: 1px solid black;      
+}
+
+table.noticewidget_listing tbody {
+    
 }
 
 table.noticewidget_listing th {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #666;
 }
 
-table.noticewidget_listing td, table.noticewidget_listing th {
-    border-right: 1px solid #E8E8E8;
-    border-left: 1px solid #E8E8E8;
-    border-bottom: 1px solid #E8E8E8;
+table.noticewidget_listing td, table.noticewidget_listing th {    
     width: 56px;
     text-align: center;
-    padding: 0 5px 0 5px;
+    padding: 5px;        
 }
 
 table.noticewidget_listing tbody.scroller {
@@ -49,7 +51,14 @@ table.noticewidget_listing tbody.scroller {
 
 table.noticewidget_listing .subjectLine {
     width: 300px;
-    text-align: left;
+    text-align: left;    
+    padding-left: 9px;    
+}
+
+table.noticewidget_listing .dueDateLine {
+    width: 60px;
+    text-align: left;   
+    padding-left: 20px; 
 }
 
 table.noticewidget_listing tr.empty_list td {
@@ -73,43 +82,77 @@ table.noticewidget_listing tr.notice_row:hover {
     background-color: #ccc
 }
 
+.noticewidget_listing_sort {
+    cursor: pointer;
+    padding-top: 1px;    
+    height: 30px; 
+    padding-left: 9px;       
+    border-bottom: solid 1px #333;    
+    width: auto;
+}
+
+.rightbound {
+    border-right: solid 1px #333;
+}
+
 .noticewidget_filter_container {
-    border: 1px solid black;
-    margin: 2px;
+    border: 1px solid #666;
+    margin-top: -11px;   
+    width: inherit;    
+    height: auto;     
+    color: #333;
+    padding: 5px 0px; 
 }
 
 .noticewidget_filter {
     background-color: #fff;
-    width: auto;
-    height: 7em;
-    padding: 0 10px 10px 10px;
+    width: auto;           
 }
 
-.noticewidget_filter .noticewidget_filter_status {
-    float: left;
-    padding-left: 7px;
+.noticewidget_filter_status {
+    margin-left: 32px;           
+    line-height: 19px;      
+    width: inherit;
+    padding-top: 5px;
+}
+
+.noticewidget_filter_status input {
+    margin-left: 9px;    
+}
+
+.noticewidget_filter_status label {
+    color: #333;    
+}
+
+.noticewidget_filter_daterange {          
+    width: inherit;
     line-height: 19px;
-    width: 50%;
+    margin-left: 32px;
+    padding-top: 5px;
 }
 
-.noticewidget_filter .noticewidget_filter_daterange {
-    border-left: 1px solid black;
-    float: left;
-    padding-left: 33px;
-    line-height: 19px;
+.noticewidget_filter_daterange input {
+    margin-left: 9px;    
 }
 
-.noticewidget_filter_control, .noticewidget_listing_sort {
-    cursor: pointer;
-    padding-top: 1px;
+.noticewidget_filter_daterange label {     
+    color: #333; 
+}
+
+.noticewidget_filter_control {
+    cursor: pointer;   
+    color: #333;
+    font-style: normal;           
 }
 
 .noticewidget_filter_control_indicator {
-    width: 16px;
-    margin: 0 2px 0 6px;
+    width: 10px;
+    margin-left: 14px;    
+    margin-right: 8px;   
     background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;
     display: inline-block;
     float: left;
+    cursor: pointer;
 }
 
 .noticewidget_filter_control_indicator.open {
@@ -124,6 +167,7 @@ table.noticewidget_listing tr.notice_row:hover {
     display: inline-block;
     width: 16px;
     background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+    float: right;
 }
 
 .noticewidget_sort_indicator.ascending {
