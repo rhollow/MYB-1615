@@ -166,8 +166,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             taskWidget.init();
             taskWidget.start();
             checkForOverdueTasks();
-        };
-    
+        };    
         doInit();
     };
 
