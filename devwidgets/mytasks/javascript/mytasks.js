@@ -39,7 +39,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         var filterSelectionToMessage = function() {
             var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
             var dateRange = getDateRange();
-            // translate every possible combo of the 2 radio buttons to a human readable message using
+            // Translate every possible combo of the 2 radio buttons to a human readable message using
             // an associative array instead of a giant switch-case statement, since it's prettier this way.
             var msgs = {
                 all : {
