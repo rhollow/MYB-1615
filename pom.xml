@@ -94,8 +94,8 @@
   <properties>
     <ant.target>development</ant.target>
     <dev.content>
-        SLING-INF/content/tests;path:=/tests,
-        SLING-INF/content/jsdoc;path:=/jsdoc,
+        SLING-INF/content/tests;path:=/tests;uninstall:=false;overwrite:=true,
+        SLING-INF/content/jsdoc;path:=/jsdoc;uninstall:=false;overwrite:=true,
     </dev.content>
   </properties>
   <profiles>
