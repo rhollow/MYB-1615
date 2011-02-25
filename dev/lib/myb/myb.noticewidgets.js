@@ -157,7 +157,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                     var newSortCol = $(this);
                     // Clear off old highlighted column header.
-                    $(".sortOn").each(function(){
+                    $(".sortOn", config.rootContainer).each(function(){
                         $(this).removeClass("sortOn");
                     });
                     // Add highlight to new column header.                 
@@ -220,7 +220,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 });
             };
 
-
             var archiveControls = function() {
                 $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
                     model.archiveMode = !model.archiveMode;
@@ -228,10 +227,20 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     that.getNotices(function() {
                         if (model.archiveMode) {
                             filterContainer.hide();
-                            $(".noticewidget_listing").addClass("archiveView");
+                            if(config.widgetName=="mytasks"){                               
+                                $(".mytasks_listing").addClass("archiveView");
+                            }
+                            else{
+                                $(".myevents_listing").addClass("archiveView");
+                            }
                         } else {
                             filterContainer.show();
-                            $(".noticewidget_listing").removeClass("archiveView");
+                            if(config.widgetName=="mytasks"){
+                                $(".mytasks_listing").removeClass("archiveView");
+                            }
+                            else{
+                                $(".myevents_listing").removeClass("archiveView");
+                            }
                         }
                     });
                 });
@@ -352,9 +361,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 });
             };
 
-            var filterStatus = function() {                                
-                $("#filter").html(translate("FILTER"));
-                $("#filter_message").html(" "+translate(config.convertFilterStateToMessage()));
+            var filterStatus = function() {                                         
+                $(".noticewidget_filter_header", config.rootContainer).html(translate("FILTER"));
+                $(".noticewidget_filter_message", config.rootContainer).html(" "+translate(config.convertFilterStateToMessage()));
             };
 
             var showCurrentDetail = function() {
