@@ -291,7 +291,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
             }
         });
 
-        $(window).bind("sakai_global.sitespages.ready", function(e){
+        $(window).bind("ready.sitespages.sakai", function(e){
             pagesWidgetReady = true;
             if (entityDataReady && !renderedPagesWidget) {
                 loadPagesWidget();
@@ -303,7 +303,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
             if (canEdit) {
                 $launch_help.show();
                 $launch_help.bind("click", function() {
-                    $(window).trigger("sakai-help-init", {
+                    $(window).trigger("init.help.sakai", {
                         profileFlag: profileFlag,
                         whichHelp: whichHelp,
                         force: true
@@ -314,7 +314,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                 sakai_global.currentgroup.data &&
                 sakai_global.currentgroup.data.authprofile &&
                 !sakai_global.currentgroup.data.authprofile.beenVisited) {
-                    $(window).trigger("sakai-help-init", {
+                    $(window).trigger("init.help.sakai", {
                         profileFlag: profileFlag,
                         whichHelp: whichHelp
                     });
@@ -326,7 +326,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
 
         var loadHelp = function(profileFlag, whichHelp) {
             if (!sakai.help || !sakai.help.isReady) {
-                $(window).bind("sakai-help-ready", function() {
+                $(window).bind("ready.help.sakai", function() {
                     triggerHelp(profileFlag, whichHelp);
                 });
             } else {

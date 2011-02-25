@@ -546,7 +546,7 @@ define(["jquery",
                     // Check whether save was successful
                     if (success && refresh) {
                         // Refresh the widget
-                        $(window).trigger("sakai-systemtour-update");
+                        $(window).trigger("update.systemtour.sakai");
                     }
                 });
             }

@@ -1440,7 +1440,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.j
                     $(window).trigger("hashchange");
                 }
             }, isDirectMessage);
-            $(window).bind("sakai-sendmessage-ready", function(){
+            $(window).bind("ready.sendmessage.sakai", function(){
                 sendMsgReady = true;
                 if (getMsgsReady && sendMsgReady) {
                     $(window).trigger("hashchange");
