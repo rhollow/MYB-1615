@@ -60,9 +60,10 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         var filterContainer = $(".noticewidget_filter_container", config.rootContainer);
-        var filterControl = $(".noticewidget_filter_control", config.rootContainer);
+        var filterControl = $(".noticewidget_filter_control", config.rootContainer);        
         var filterControlContainer = $(".noticewidget_filter", config.rootContainer);
         var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
+        var filterControlHeader = $(".noticewidget_filter_control_header");
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
@@ -135,7 +136,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var setupListeners = function() {
 
             var filters = function() {
-                filterControl.live("click", function() {
+                filterControlHeader.live("click", function() {
                     if (filterControlContainer.is(":visible")) {
                         filterControlContainer.hide();
                         filterControlIndicator.removeClass("open");
@@ -145,26 +146,30 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         filterControlIndicator.removeClass("closed");
                         filterControlIndicator.addClass("open");
                     }
-                });
+                });                                                                                                       
 
                 $("input:radio", config.rootContainer).live("click", function() {
                     that.saveFilterSettingsAndGetNotices();
                 });
             };
 
-            var sortControls = function() {
+            var sortControls = function() {                
                 $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                     var newSortCol = $(this);
-                    var oldSortOn = model.filterSettings.sortOn;
+                    // Clear off old highlighted column header.
+                    $(".sortOn").each(function(){
+                        $(this).removeClass("sortOn");
+                    });
+                    // Add highlight to new column header.                 
+                    newSortCol.addClass("sortOn");                    
+                    var oldSortOn = model.filterSettings.sortOn;                                       
                     model.filterSettings.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
                     if (oldSortOn != model.filterSettings.sortOn) {
                         model.filterSettings.sortOrder = "ascending";
                     } else {
                         model.filterSettings.sortOrder = model.filterSettings.sortOrder === "ascending" ? "descending" : "ascending";
                     }
-
                     that.saveFilterSettingsAndGetNotices();
-
                 });
             };
 
@@ -223,8 +228,10 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     that.getNotices(function() {
                         if (model.archiveMode) {
                             filterContainer.hide();
+                            $(".noticewidget_listing").addClass("archiveView");
                         } else {
                             filterContainer.show();
+                            $(".noticewidget_listing").removeClass("archiveView");
                         }
                     });
                 });
@@ -345,8 +352,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 });
             };
 
-            var filterStatus = function() {
-                filterControl.html(translate("FILTER") + " " + translate(config.convertFilterStateToMessage()));
+            var filterStatus = function() {                                
+                $("#filter").html(translate("FILTER"));
+                $("#filter_message").html(" "+translate(config.convertFilterStateToMessage()));
             };
 
             var showCurrentDetail = function() {
@@ -391,6 +399,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var updateFilterControls = function() {
             // move the sort arrow to the current sort column
             var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"));
+            currentSortCol.addClass("sortOn");
             var arrow = $(".noticewidget_listing thead span", config.rootContainer);
             arrow.removeClass("descending");
             arrow.addClass(model.filterSettings.sortOrder);
