@@ -170,11 +170,11 @@ table.noticewidget_listing tr.notice_row:hover {
     color: #333;              
 }
 
-#filter {
+.noticewidget_filter_header {
     font-style: normal;
 }
 
-#filter_message {
+.noticewidget_filter_message {
     font-style: italic;
 }
 
