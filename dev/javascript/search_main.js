@@ -21,7 +21,7 @@
  * ex: fetching my sites
  */
 
-require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai) {
+require(["jquery","sakai/sakai.api.core"], function($, sakai) {
     sakai_global.data = sakai_global.data || {};
     sakai_global.data.search = sakai_global.data.search || {};
     sakai_global._search = function(config, callback) {
