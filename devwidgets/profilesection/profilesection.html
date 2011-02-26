@@ -148,7 +148,7 @@
                     <label class="profilesection_generalinfo_label" for="profilesection_generalinfo_${path.replace(/\./g,"_")}">${config.label}:</label>
                 {/if}
                 {if config.editable === false}
-                    <span class="profilesection_generalinfo_content">
+                    <span class="profilesection_generalinfo_content_myb">
 					{if typeof data.value !== "undefined" && data.value !== null && data.value.trim() !== "" }
 						{if false}myBerkeley: the code below checks if the student has a double major, if so it puts each major on a separate line{/if}
 						{if data["jcr:name"] === 'major' && data.value.indexOf(',') !== -1}

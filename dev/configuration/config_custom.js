@@ -82,8 +82,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
         "department": {
             "label": "__MSG__PROFILE_BASIC_DEPARTMENT_LABEL__",
             "required": false,
-            "display": true,
-            "editable": false
+            "display": true
         },
         "college": {
             "label": "__MSG__PROFILE_BASIC_COLLEGE_LABEL__",
