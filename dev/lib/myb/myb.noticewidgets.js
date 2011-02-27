@@ -63,7 +63,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var filterControl = $(".noticewidget_filter_control", config.rootContainer);        
         var filterControlContainer = $(".noticewidget_filter", config.rootContainer);
         var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
-        var filterControlHeader = $(".noticewidget_filter_control_header");
+        var filterControlHeader = $(".noticewidget_filter_control_header", config.rootContainer);     
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
@@ -135,8 +135,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         var setupListeners = function() {
 
-            var filters = function() {
-                filterControlHeader.live("click", function() {
+            var filters = function() {                            
+                filterControlHeader.live("click", function() {                    
                     if (filterControlContainer.is(":visible")) {
                         filterControlContainer.hide();
                         filterControlIndicator.removeClass("open");
