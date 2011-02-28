@@ -319,9 +319,10 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/content_profile.js"]
                         case "tags":
                             renderTags("edit");
                             break;
-                        case "locations":
+                        /* myBerkeley: widget is disabled in 0.2 */
+						/*case "locations":
                             renderLocations("edit");
-                            break;
+                            break;*/
                         case "copyright":
                             renderCopyright("edit");
                             break;
@@ -413,7 +414,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/content_profile.js"]
             renderDescription(false);
             renderTags(false);
             renderCopyright(false);
-            renderLocations(false);
+            /* myBerkeley: widget is disabled in 0.2 */
+			//renderLocations(false);
             renderDetails(false);
 
             // Add binding

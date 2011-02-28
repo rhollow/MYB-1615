@@ -117,7 +117,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             var json = processTagsAndDirectory(mode);
             json.sakai = sakai;
             $groupbasicinfo_generalinfo.html(sakai.api.Util.TemplateRenderer("#groupbasicinfo_default_template", json));
-            $(groupBasicInfoSavedInfo).html(sakai.api.Util.TemplateRenderer("#groupbasicinfo_generalinfo_directory_list_template", json));
+            /* myBerkeley: widget is disabled in 0.2 */
+			//$(groupBasicInfoSavedInfo).html(sakai.api.Util.TemplateRenderer("#groupbasicinfo_generalinfo_directory_list_template", json));
 
             if (mode === "edit") {
                 addBinding();
@@ -187,10 +188,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
             // Create tags for the directory structure
             // For every groupbasicinfo_added_directory we create tags
-            $("#groupbasicinfo_directory li").each(function(ev, value){
+            /* myBerkeley: widget is disabled in 0.2 */
+			/*$("#groupbasicinfo_directory li").each(function(ev, value){
                 var directory = $(value).attr("class");
                 sakai_global.currentgroup.data.authprofile["sakai:tags"].push(directory);
-            });
+            });*/
             
             // group description (can be blank)
             var groupDesc = $.trim($(groupBasicInfoGroupDesc, $rootel).val());
@@ -269,7 +271,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 "data" : sakai_global.currentgroup.data.authprofile,
                 "mode" : mode,
                 "tags" : tags,
-                "directory" : directory,
+                /* myBerkeley: widget is disabled in 0.2 */
+				//"directory" : directory,
                 //"saveddirectory" : directoryJSON,
                 /* the following perSectionPermissions switch is used to turn off
                    the "Who can view or search this?" permissions dropdown for now.
@@ -337,14 +340,15 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         };
 
         // Indicate that the widget has finished loading
-        $(window).trigger("ready.groupbasicinfo.sakai", {});
+        $(window).trigger("sakai.api.UI.groupbasicinfo.ready", {});
 
         // Bind to the global update location
-        $(window).bind("renderlocations.contentmetadata.sakai", function(ev, data){
+        /* myBerkeley: widget is disabled in 0.2 */
+		/*$(window).bind("sakai-contentmetadata-renderlocations", function(ev, data){
             ev.stopImmediatePropagation();
             // render location in profile Section
             renderLocations(data);
-        });
+        });*/
 
         renderTemplateBasicInfo();
     };
