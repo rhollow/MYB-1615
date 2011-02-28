@@ -149,7 +149,7 @@
                 {/if}
                 {if config.editable === false}
                     <span class="profilesection_generalinfo_content_myb">
-					{if typeof data.value !== "undefined" && data.value !== null && data.value.trim() !== "" }
+					{if typeof data.value !== "undefined" && data.value !== null && $.trim(data.value) !== "" }
 						{if false}myBerkeley: the code below checks if the student has a double major, if so it puts each major on a separate line{/if}
 						{if data["jcr:name"] === 'major' && data.value.indexOf(',') !== -1}
 							${data.value.replace(/,/g, "<br />")}
