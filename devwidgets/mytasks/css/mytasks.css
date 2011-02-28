@@ -13,32 +13,37 @@
 **/
 
 .noticewidget_listing_loading {
-    margin: 10px 0 0 8px;
+    margin: 5px 0px 0px 20px;
+    font-style: italic;
+    color: #333;
 }
 
 table.noticewidget_listing {
     border-collapse: collapse;
     border-spacing: 0;
     overflow: auto;
-    max-height: 300px;
-    width: 100%;
+    max-height: 300px;  
+    position: relative;    
+}
+
+.archiveView {
+    margin-top: -12px;
+    border-top: solid 1px #666;  
 }
 
 table.noticewidget_listing thead {
-    background-color: #D4DADE;
+    background-color: #EBEDEE;  
+    border-bottom: 1px solid #666;                 
 }
 
 table.noticewidget_listing th {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #666;
 }
 
-table.noticewidget_listing td, table.noticewidget_listing th {
-    border-right: 1px solid #E8E8E8;
-    border-left: 1px solid #E8E8E8;
-    border-bottom: 1px solid #E8E8E8;
+table.noticewidget_listing td, table.noticewidget_listing th {    
     width: 56px;
     text-align: center;
-    padding: 0 5px 0 5px;
+    padding: 5px 20px;       
 }
 
 table.noticewidget_listing tbody.scroller {
@@ -47,14 +52,48 @@ table.noticewidget_listing tbody.scroller {
     overflow-x: hidden;
 }
 
+.rightbound {
+    border-right: solid 1px #333;
+}
+
+.sortOn {
+    background-color: #D5DBDF;
+}
+
 table.noticewidget_listing .subjectLine {
-    width: 300px;
-    text-align: left;
+    width: 53%;    
+    text-align: left;    
+    padding-left: 9px;    
+}
+
+table.noticewidget_listing .dueLine {
+    width: 15%;
+    text-align: left;   
+    padding-left: 20px; 
+}
+
+table.noticewidget_listing .dueDateLine {
+    width: 20%;
+    text-align: left;   
+    padding-left: 20px; 
+}
+
+table.noticewidget_listing .requiredLine {
+    width: 15%;
+    text-align: left;   
+    padding-left: 9px; 
+}
+
+table.noticewidget_listing .taskStateLine {
+    width: 17%;
+    text-align: left;   
+    padding-left: 9px; 
 }
 
 table.noticewidget_listing tr.empty_list td {
     width: 300px;
     text-align: left;
+    font-style: italic;
 }
 
 table.noticewidget_listing tr.notice_row {
@@ -66,50 +105,90 @@ table.noticewidget_listing tr.notice_row td {
 }
 
 table.noticewidget_listing tr.alternate {
-    background-color: #F5F6F6
+    background-color: #F5F6F6;
 }
 
 table.noticewidget_listing tr.notice_row:hover {
-    background-color: #ccc
+    background-color: #ccc;
+}
+
+.noticewidget_listing_sort {
+    cursor: pointer;
+    padding-top: 1px;    
+    height: 30px;          
+    border-bottom: solid 1px #333;    
+    width: auto;
+    font-weight: bold;
+    color: #333;
 }
 
 .noticewidget_filter_container {
-    border: 1px solid black;
-    margin: 2px;
+    border: 1px solid #666;
+    margin-top: -12px;   
+    width: inherit;    
+    height: auto;     
+    color: #333;
+    padding: 5px 0px; 
 }
 
 .noticewidget_filter {
     background-color: #fff;
-    width: auto;
-    height: 7em;
-    padding: 0 10px 10px 10px;
+    width: auto;           
 }
 
-.noticewidget_filter .noticewidget_filter_status {
-    float: left;
-    padding-left: 7px;
+.noticewidget_filter_status {
+    margin-left: 32px;           
+    line-height: 19px;      
+    width: inherit;
+    padding-top: 5px;
+}
+
+.noticewidget_filter_status input {
+    margin-left: 9px;    
+}
+
+.noticewidget_filter_status label {
+    color: #333;    
+}
+
+.noticewidget_filter_daterange {          
+    width: inherit;
     line-height: 19px;
-    width: 50%;
+    margin-left: 32px;
+    padding-top: 5px;
 }
 
-.noticewidget_filter .noticewidget_filter_daterange {
-    border-left: 1px solid black;
-    float: left;
-    padding-left: 33px;
-    line-height: 19px;
+.noticewidget_filter_daterange input {
+    margin-left: 9px;    
 }
 
-.noticewidget_filter_control, .noticewidget_listing_sort {
-    cursor: pointer;
-    padding-top: 1px;
+.noticewidget_filter_daterange label {     
+    color: #333; 
+}
+
+.noticewidget_filter_control {     
+    color: #333;              
+}
+
+.noticewidget_filter_header {
+    font-style: normal;
+}
+
+.noticewidget_filter_message {
+    font-style: italic;
+}
+
+.noticewidget_filter_control_header {
+    cursor: pointer;    
 }
 
 .noticewidget_filter_control_indicator {
-    width: 16px;
-    margin: 0 2px 0 6px;
-    background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;
+    width: 10px;    
+    margin-left: 14px;    
+    margin-right: 8px;   
+    background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;   
     display: inline-block;
-    float: left;
+    float: left;    
 }
 
 .noticewidget_filter_control_indicator.open {
@@ -124,6 +203,9 @@ table.noticewidget_listing tr.notice_row:hover {
     display: inline-block;
     width: 16px;
     background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+    float: right;
+    margin-right: -15px;
+    margin-top: 2px;
 }
 
 .noticewidget_sort_indicator.ascending {
@@ -251,8 +333,10 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .mytasks_widget .fl-widget-options .widget-options-inner .left {
     float: left;
+    margin-left: 10px;
 }
 
 .mytasks_widget .fl-widget-options .widget-options-inner .right {
     float: right;
+    margin-right: -10px;
 }

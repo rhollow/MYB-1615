@@ -1,4 +1,4 @@
-require(["jquery", "/devwidgets/navigation/javascript/navigation.js", "/dev/javascript/myb/myb.securepage.js"], function() {
+require(["jquery", "/devwidgets/navigation/javascript/navigation.js"], function() {
     History = {
         prev_url : -1,
 

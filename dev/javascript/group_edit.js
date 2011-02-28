@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai) {
+require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
     // Global object that will store information about the current group context
     sakai_global.currentgroup = sakai_global.currentgroup || {};
