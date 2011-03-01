@@ -1053,7 +1053,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     // If the event date is filled out, we handle this normally and save the time information there. 
                     if ($(messageEventDate).datepicker("getDate")!=null) {
                         toPost["sakai:eventDate"] = $(messageEventDate).datepicker("getDate");
-                        toPost["sakai:eventDate"].setMinutes();
+                        toPost["sakai:eventDate"].setMinutes($(messageEventTimeMinute).val());
                         // Get the event time details and add to the eventDate obj.                    
                         if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
                             toPost["sakai:eventDate"].setHours(parseInt($(messageEventTimeHour).val()) + 12);
