@@ -226,8 +226,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 $(".subject-td").each(function(){                  
                     $(this).css({
                         "white-space": "nowrap",                        
-                        "overflow": "hidden",                       
-                        "text-overflow": "ellipsis"                        
+                        "overflow": "hidden"                       
+                        //"text-overflow": "ellipsis"                        
                     });
                 });
             } else {

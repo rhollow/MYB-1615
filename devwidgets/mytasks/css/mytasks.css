@@ -5,7 +5,8 @@
 #mytasks_overdue_tasks_exist {
     color: red;
     font-weight: bold;
-    margin-left: 8px;
+    margin-top: 6px;
+    text-align: center;
 }
 
 /**
@@ -23,7 +24,8 @@ table.noticewidget_listing {
     border-spacing: 0;
     overflow: auto;
     max-height: 300px;  
-    position: relative;    
+    position: relative;
+    margin-bottom: 0;
 }
 
 .archiveView {
@@ -50,6 +52,7 @@ table.noticewidget_listing tbody.scroller {
     height: 150px;
     overflow: auto;
     overflow-x: hidden;
+    border-bottom: 1px solid #555;
 }
 
 .rightbound {
