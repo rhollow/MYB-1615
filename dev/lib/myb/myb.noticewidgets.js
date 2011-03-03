@@ -156,12 +156,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             var sortControls = function() {                
                 $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                     var newSortCol = $(this);
-                    // Clear off old highlighted column header.
-                    $(".sortOn", config.rootContainer).each(function(){
-                        $(this).removeClass("sortOn");
-                    });
-                    // Add highlight to new column header.                 
-                    newSortCol.addClass("sortOn");                    
                     var oldSortOn = model.filterSettings.sortOn;                                       
                     model.filterSettings.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
                     if (oldSortOn != model.filterSettings.sortOn) {
@@ -407,13 +401,15 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         var updateFilterControls = function() {
             // move the sort arrow to the current sort column
-            var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"));
-            currentSortCol.addClass("sortOn");
-            var arrow = $(".noticewidget_listing thead span", config.rootContainer);
-            arrow.removeClass("descending");
-            arrow.addClass(model.filterSettings.sortOrder);
-            arrow.remove();
-            arrow.appendTo(currentSortCol);
+            var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"), config.rootContainer);
+
+            // remove sort arrows from all table header columns
+			$(".noticewidget_listing." + config.widgetName + "_listing thead th", config.rootContainer).each(function(){
+            	$(this).removeClass("ascending").removeClass("descending");
+            });
+
+			// add sort arrow to the current column
+			currentSortCol.addClass(model.filterSettings.sortOrder);
 
             // update the radio buttons
             var dateRangeRadio = $("#" + config.widgetName + "_date_range_" + model.filterSettings.dateRange);
