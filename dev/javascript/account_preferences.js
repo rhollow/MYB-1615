@@ -354,6 +354,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
         /** Binds the save regional button **/
         $(saveRegional).click(function(){
             saveRegionalToMe();
+            return false;
         });
 
 
