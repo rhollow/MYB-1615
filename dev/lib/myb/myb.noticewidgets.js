@@ -114,7 +114,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         model.currentNotice = 0;
                         config.container.html(sakai.api.Util.TemplateRenderer(config.template, {
                             results : model.data.results,
-                            noticeWidgetUtils : noticeWidgets.utils
+                            noticeWidgetUtils : noticeWidgets.utils,
+							sakaiUtil : sakai.api.Util
                         }));
                         that.updateUI();
                         if ($.isFunction(callback)) {

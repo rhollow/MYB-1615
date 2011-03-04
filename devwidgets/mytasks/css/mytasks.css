@@ -339,3 +339,7 @@ table.noticewidget_listing tr.notice_row:hover {
     float: right;
     margin-right: -10px;
 }
+
+table.noticewidget_listing tr.overDueTask {
+    color: #ff0000;
+}
