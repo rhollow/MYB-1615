@@ -133,7 +133,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 cache: false,
                 success: function(data) {
                     if ($.isArray(data.results) && data.results.length > 0) {
-                        $("#mytasks_overdue_tasks_exist", rootContainer).show();
+                        $(".mytasks_overdue_tasks_msg", rootContainer).show();
+                        $(rootContainer).addClass("mytasks_overdue_tasks_exist");
                     }
                 },
                 error: function(xhr, textStatus, thrownError) {
