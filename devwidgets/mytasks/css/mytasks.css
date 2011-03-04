@@ -9,6 +9,9 @@
     text-align: center;
 }
 
+.s3d-widget .s3d-widget-content {
+    padding-bottom: 0;
+}
 /**
     Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
 **/
@@ -342,4 +345,9 @@ table.noticewidget_listing tr.notice_row:hover {
 .mytasks_widget .fl-widget-options .widget-options-inner .right {
     float: right;
     margin-right: -10px;
+}
+
+.noticewidget_archive_tasks_button .s3d-button {
+    margin-bottom: 0;
+}
 }
