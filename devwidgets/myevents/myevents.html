@@ -97,7 +97,7 @@
                         <span class="ellipsis_text">${i['sakai:subject']}</span>
                     </td>
                     <td id="myeventstdreq_${i_index}" class="detailTrigger" >
-                        {if i["sakai:required"] === "true"}!{/if}
+                        {if i["sakai:required"] === "true"}&bull;{/if}
                     </td>
             </tr>
         {/for}
@@ -122,7 +122,7 @@
         <h5 class="event-time">__MSG__TIME__: ${timeString}</h5>
         <h5 class="event-location">__MSG__LOCATION__: ${detail["sakai:eventPlace"]}</h5>
 
-        <p>${detail["sakai:authoringbody"]}</p>
+        <textarea readonly="readonly">${detail["sakai:authoringbody"]}</textarea>
         -->
     </div>
 
