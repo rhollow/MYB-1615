@@ -351,9 +351,17 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             };
 
             var subjectLines = function() {
-                $("td.subjectLine", config.rootContainer).ThreeDots({
+   				// HACK: Fix for Webkit bug in jQuery.threedot plugin
+				// See MYB-494. Threedot plugin truncates text in the first span element incorrectly.
+				// Add a dummy row to workaround this issue. 
+				$(".noticewidget_listing." + config.widgetName + "_listing tbody").prepend('<tr class="notice_row webkit_bug_row"><td class="subjectLine"><span class="ellipsis_text">&nbsp;</span></td></tr>');				
+				
+				$("td.subjectLine", config.rootContainer).ThreeDots({
                     max_rows : 1
                 });
+				// HACK: Fix for Webkit bug in jQuery.threedot plugin
+				// Remove the dummy row
+				$(".noticewidget_listing." + config.widgetName + "_listing tbody tr.webkit_bug_row", config.rootContainer).remove();
             };
 
             var filterStatus = function() {                                         
