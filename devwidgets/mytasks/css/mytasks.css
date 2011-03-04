@@ -29,6 +29,7 @@ table.noticewidget_listing {
     max-height: 300px;  
     position: relative;
     margin-bottom: 0;
+	width: 100%; /* needed for IE7 */
 }
 
 .archiveView {
@@ -45,10 +46,23 @@ table.noticewidget_listing th {
     border-bottom: 1px solid #666;
 }
 
+table.noticewidget_listing th.ascending {
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-position: 100% -26px;
+	background-color: #D5DBDF;
+	
+}
+
+table.noticewidget_listing th.descending {
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-position: 100% 0px;
+	background-color: #D5DBDF;
+}
+
 table.noticewidget_listing td, table.noticewidget_listing th {    
     width: 56px;
     text-align: center;
-    padding: 5px 20px;       
+    padding: 2px 20px 0px 20px;       
 }
 
 table.noticewidget_listing tbody.scroller {
@@ -60,10 +74,6 @@ table.noticewidget_listing tbody.scroller {
 
 .rightbound {
     border-right: solid 1px #333;
-}
-
-.sortOn {
-    background-color: #D5DBDF;
 }
 
 table.noticewidget_listing .subjectLine {
@@ -100,6 +110,7 @@ table.noticewidget_listing tr.empty_list td {
     width: 300px;
     text-align: left;
     font-style: italic;
+	padding-top: 16px;
 }
 
 table.noticewidget_listing tr.notice_row {
@@ -120,8 +131,7 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_listing_sort {
     cursor: pointer;
-    padding-top: 1px;    
-    height: 30px;          
+    height: 26px;
     border-bottom: solid 1px #333;    
     width: auto;
     font-weight: bold;
@@ -205,25 +215,11 @@ table.noticewidget_listing tr.notice_row:hover {
     background-position: left top;
 }
 
-.noticewidget_sort_indicator {
-    display: inline-block;
+.noticewidget_checkmark {
+	display: inline-block;
     width: 16px;
-    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
-    float: right;
-    margin-right: -15px;
-    margin-top: 2px;
-}
-
-.noticewidget_sort_indicator.ascending {
-    background-position: -16px top;
-}
-
-.noticewidget_sort_indicator.descending {
-    background-position: left top;
-}
-
-.noticewidget_listing_sort img {
-    margin-top: 1px;
+    background: url("/devwidgets/mytasks/images/checkmark.png") no-repeat scroll transparent;
+	background-position: 0px -2px;
 }
 
 .noticewidget_detail_controls .return_to_list_container {
@@ -350,4 +346,7 @@ table.noticewidget_listing tr.notice_row:hover {
 .noticewidget_archive_tasks_button .s3d-button {
     margin-bottom: 0;
 }
+
+table.noticewidget_listing tr.overDueTask {
+    color: #ff0000;
 }
