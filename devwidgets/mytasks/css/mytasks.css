@@ -2,10 +2,12 @@
     background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat transparent;
 }
 
-#mytasks_overdue_tasks_exist {
-    color: red;
+.mytasks_overdue_tasks_msg {
+    background-color: #C4DAE8;
+    color: #BF0000;
     font-weight: bold;
-    margin-top: 6px;
+    margin-top: -12px;
+    padding: 6px 0;
     text-align: center;
 }
 
@@ -145,6 +147,10 @@ table.noticewidget_listing tr.notice_row:hover {
     height: auto;     
     color: #333;
     padding: 5px 0px; 
+}
+
+.mytasks_overdue_tasks_exist .noticewidget_filter_container {
+    margin-top: 0;
 }
 
 .noticewidget_filter {
@@ -348,5 +354,5 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 table.noticewidget_listing tr.overDueTask {
-    color: #ff0000;
+    color: #BF0000;
 }
