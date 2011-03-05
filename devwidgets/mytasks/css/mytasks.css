@@ -39,6 +39,10 @@ table.noticewidget_listing {
     border-top: solid 1px #666;  
 }
 
+.mytasks_overdue_tasks_exist .archiveView {
+    margin-top: 0;
+}
+
 table.noticewidget_listing thead {
     background-color: #EBEDEE;  
     border-bottom: 1px solid #666;                 
