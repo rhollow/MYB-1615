@@ -343,10 +343,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             var scroller = function() {
                 var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-                if (tbody[0].clientHeight > 150) {
+                tbody.removeClass("scroller");
+                if (tbody.height() > 150) {
                     tbody.addClass("scroller");
-                } else {
-                    tbody.removeClass("scroller");
                 }
             };
 
