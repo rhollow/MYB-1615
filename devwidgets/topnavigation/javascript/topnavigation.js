@@ -92,6 +92,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
         // Containers
         var exploreNavigationContainer = "#explore_nav_container";
+        var topnavigationMyProfileContainer = "#topnavigation_my_profile_container";
+
+        // Templates
+        var topnavigationMyProfileTemplate = "topnavigation_my_profile_template";
 
         // CSS Classes
         var searchInputFocusClass = "search_input_focus";
@@ -247,8 +251,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                 var $clicked = $(e.target);
 
                 // Check if one of the parents is the userLink
-                if (!$clicked.parents().is(userLink)) {
-                    showHideUserLinkMenu(true);
+                if ($clicked.is(userLink)) {
+                    showHideUserLinkMenu(false);
                 }
             });
 
@@ -259,7 +263,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
             $(window).bind("click", function(e){
                 // if menu is visible and the target element clicked is not menu hide dropdown
-                if ($(userLinkMenu).is(":visible") && !$(e.target).parents().is(userLink)){
+                if ($(userLinkMenu).is(":visible") && !$(e.target).is(userLink)){
                     showHideUserLinkMenu(true);
                 }
             });
@@ -582,7 +586,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
          */
         var doInit = function(){
 
-            $(navMyProfile).attr("href", "/~" + sakai.data.me.user.userid);
+            $(topnavigationMyProfileContainer).html(sakai.api.Util.TemplateRenderer(topnavigationMyProfileTemplate,{"href":"/~" + sakai.data.me.user.userid}));
 
             renderMenu();
 

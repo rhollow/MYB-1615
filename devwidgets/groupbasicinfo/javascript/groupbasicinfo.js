@@ -340,7 +340,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         };
 
         // Indicate that the widget has finished loading
-        $(window).trigger("ready.groupbasicinfo.sakai", {});
+        $(window).trigger("sakai.api.UI.groupbasicinfo.ready", {});
 
         // Bind to the global update location
         /* myBerkeley: widget is disabled in 0.2 */

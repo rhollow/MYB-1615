@@ -492,6 +492,10 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                         "tooltipTop":5,
                         "tooltipLeft":15
                     };
+                    // update entity widget
+                    sakai.data.me.profile = $.extend(true, {}, sakai_global.profile.main.data);
+                    $(window).trigger("render.entity.sakai", ["myprofile", sakai_global.profile.main.data]);
+
                     $(window).trigger("update.tooltip.sakai", tooltipData);
                     if (editProfileTour && $("#navigation_my_sakai_link").attr("href") && $("#navigation_my_sakai_link").attr("href").indexOf("editprofiletour") === -1) {
                         $("#navigation_my_sakai_link").attr("href", $("#navigation_my_sakai_link").attr("href") + "?editprofiletour=true");
@@ -575,6 +579,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                     $("#profile_footer_button_update").attr("disabled", "disabled");
                     // Trigger the profile save method, this is event is bound in every sakai section
                     $(window).trigger("save.profile.sakai");
+                    return false;
                 },
                 onclick:false,
                 onkeyup:false,
@@ -648,7 +653,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
             $profile_sectionwidgets_container.append(toAppend);
 
             // Bind a global event that can be triggered by the profilesection widgets
-            $(window).bind("sakai-" + sectionobject.sectionname, function(eventtype, callback){
+            $(window).bind(sectionobject.sectionname + ".sakai", function(eventtype, callback){
 
                 if ($.isFunction(callback)) {
                     callback(sectionname);

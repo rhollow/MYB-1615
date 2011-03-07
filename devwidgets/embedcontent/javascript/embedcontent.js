@@ -622,16 +622,16 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
         var toggleAddTitleAndDescription = function(show) {
             if (show) {
-                $embedcontent_add_title_description_button.find("span.down").removeClass("down").addClass("up");
+                $embedcontent_add_title_description_button.find("span.s3d-button-arrow-down").removeClass("s3d-button-arrow-down").addClass("s3d-button-arrow-up");
                 $embedcontent_add_title_description_fields.show();
             } else {
-                $embedcontent_add_title_description_button.find("span.up").removeClass("up").addClass("down");
+                $embedcontent_add_title_description_button.find("span.s3d-button-arrow-up").removeClass("s3d-button-arrow-up").addClass("s3d-button-arrow-down");
                 $embedcontent_add_title_description_fields.hide();
             }
         };
 
         $embedcontent_add_title_description_button.bind("click", function(e) {
-            toggleAddTitleAndDescription($(this).find("span.down").length > 0);
+            toggleAddTitleAndDescription($(this).find("span.s3d-button-arrow-down").length > 0);
             return false;
         });
 
@@ -663,13 +663,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var doInit = function() {
             getWidgetData(function() {
                 if (showSettings) {
-                    if (sakai.sitespages &&
-                        sakai.sitespages.site_info &&
-                        sakai.sitespages.site_info._pages &&
-                        sakai.sitespages.site_info._pages[sakai.sitespages.selectedpage] &&
-                        sakai.sitespages.site_info._pages[sakai.sitespages.selectedpage]["pageTitle"]) {
+                    if (sakai_global.sitespages &&
+                        sakai_global.sitespages.site_info &&
+                        sakai_global.sitespages.site_info._pages &&
+                        sakai_global.sitespages.site_info._pages[sakai_global.sitespages.selectedpage] &&
+                        sakai_global.sitespages.site_info._pages[sakai_global.sitespages.selectedpage]["pageTitle"]) {
 
-                        embedConfig.name = sakai.sitespages.site_info._pages[sakai.sitespages.selectedpage]["pageTitle"];
+                        embedConfig.name = sakai_global.sitespages.site_info._pages[sakai_global.sitespages.selectedpage]["pageTitle"];
                     } else {
                         embedConfig.name = "";
                     }
