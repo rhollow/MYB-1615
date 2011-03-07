@@ -586,7 +586,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
          */
         var doInit = function(){
 
-            $(topnavigationMyProfileContainer).html(sakai.api.Util.TemplateRenderer(topnavigationMyProfileTemplate,{"href":"/~" + sakai.data.me.user.userid}))
+            $(topnavigationMyProfileContainer).html(sakai.api.Util.TemplateRenderer(topnavigationMyProfileTemplate,{"href":"/~" + sakai.data.me.user.userid}));
 
             renderMenu();
 
