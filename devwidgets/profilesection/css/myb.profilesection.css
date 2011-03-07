@@ -1,8 +1,11 @@
-#profilesection_generalinfo span.profilesection_generalinfo_content {
+#profilesection_generalinfo span.profilesection_generalinfo_content_myb {
 	background-color: #d7d7d7;
     padding: 4px;
 	margin: 0;
 	min-width: 410px;
+	font-weight:bold;
+	float:left;
+	display:inline;	
 }
 #profilesection_generalinfo a.calnetlink {		
 	color:blue;
