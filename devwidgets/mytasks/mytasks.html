@@ -7,6 +7,7 @@
 
         <div class="noticewidget_list_view">
 
+            <div class="mytasks_overdue_tasks_msg" style="display:none;">__MSG__YOU_HAVE_OVERDUE_TASKS__</div>
             <div class="noticewidget_filter_container">
                 <div class="noticewidget_filter_control_header">
                     <div class="noticewidget_filter_control_indicator closed">&nbsp;</div>               
@@ -60,17 +61,16 @@
             <table class="noticewidget_listing mytasks_listing" style="display:none">
                 <thead>
                     <th class="noticewidget_task_selector rightbound"></th>
-                    <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort dueDateLine rightbound" title="__MSG__DUE__">__MSG__DUE__<span class="noticewidget_sort_indicator ascending">&nbsp;</span></th>
+                    <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort dueDateLine rightbound" title="__MSG__DUE__">__MSG__DUE__</th>
                     <th id="mytasks_sortOn_sakai:subject" class="noticewidget_listing_sort subjectLine rightbound" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
                     <th id="mytasks_sortOn_sakai:required" class="noticewidget_listing_sort requiredLine rightbound" title="__MSG__REQUIRED__">__MSG__REQ__</th>
                     <th id="mytasks_sortOn_sakai:taskState" class="noticewidget_listing_sort taskStateLine" title="__MSG__COMPLETED__">
-                        <img src="/devwidgets/mytasks/images/checkmark.png" alt="__MSG__COMPLETED__"/>&nbsp;
+                        <span class="noticewidget_checkmark" alt="__MSG__COMPLETED__">&nbsp;</span>
                     </th>
                 </thead>
 
                 <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
             </table>
-            <div id="mytasks_overdue_tasks_exist" style="display:none;">__MSG__YOU_HAVE_OVERDUE_TASKS__</div>
         </div>
 
         <div class="noticewidget_detail_view" style="display:none">
@@ -94,9 +94,11 @@
     
     <div id="mytasks_template" style="display:none"><!--
         {var isEmpty = true}
+		{var nowDate = new Date()}
         {for i in results}
             {var isEmpty = false}
-            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
+			{var dueDate = sakaiUtil.parseSakaiDate(i['sakai:dueDate'])}
+            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if dueDate < nowDate} overDueTask{/if}">
                     <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
                     {if i["sakai:archived"] === "archived"}
                         <input type="checkbox" class="task-selected-checkbox"
@@ -108,7 +110,7 @@
                         <span class="ellipsis_text">${i['sakai:subject']}</span>
                     </td>
                     <td id="mytaskstdreq_${i_index}" class="detailTrigger">
-                    {if i["sakai:required"] === "true"}!{/if}
+                    {if i["sakai:required"] === "true"}&bull;{/if}
                     </td>
                     <td><input type="checkbox" class="task-completed-checkbox"
                         id="taskDone_${i_index}"
@@ -152,7 +154,7 @@
             <label for="taskDone_${index}">__MSG__COMPLETED__</label>
         </fieldset>
 
-        <p>${detail["sakai:body"]}</p>
+        <textarea readonly="readonly">${detail["sakai:body"]}</textarea>
         -->
     </div>
 

@@ -114,7 +114,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         model.currentNotice = 0;
                         config.container.html(sakai.api.Util.TemplateRenderer(config.template, {
                             results : model.data.results,
-                            noticeWidgetUtils : noticeWidgets.utils
+                            noticeWidgetUtils : noticeWidgets.utils,
+							sakaiUtil : sakai.api.Util
                         }));
                         that.updateUI();
                         if ($.isFunction(callback)) {
@@ -156,12 +157,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             var sortControls = function() {                
                 $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                     var newSortCol = $(this);
-                    // Clear off old highlighted column header.
-                    $(".sortOn", config.rootContainer).each(function(){
-                        $(this).removeClass("sortOn");
-                    });
-                    // Add highlight to new column header.                 
-                    newSortCol.addClass("sortOn");                    
                     var oldSortOn = model.filterSettings.sortOn;                                       
                     model.filterSettings.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
                     if (oldSortOn != model.filterSettings.sortOn) {
@@ -348,17 +343,24 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             var scroller = function() {
                 var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-                if (tbody[0].clientHeight > 150) {
+                tbody.removeClass("scroller");
+                if (tbody.height() > 150) {
                     tbody.addClass("scroller");
-                } else {
-                    tbody.removeClass("scroller");
                 }
             };
 
             var subjectLines = function() {
-                $("td.subjectLine", config.rootContainer).ThreeDots({
+   				// HACK: Fix for Webkit bug in jQuery.threedot plugin
+				// See MYB-494. Threedot plugin truncates text in the first span element incorrectly.
+				// Add a dummy row to workaround this issue. 
+				$(".noticewidget_listing." + config.widgetName + "_listing tbody").prepend('<tr class="notice_row webkit_bug_row"><td class="subjectLine"><span class="ellipsis_text">&nbsp;</span></td></tr>');				
+				
+				$("td.subjectLine", config.rootContainer).ThreeDots({
                     max_rows : 1
                 });
+				// HACK: Fix for Webkit bug in jQuery.threedot plugin
+				// Remove the dummy row
+				$(".noticewidget_listing." + config.widgetName + "_listing tbody tr.webkit_bug_row", config.rootContainer).remove();
             };
 
             var filterStatus = function() {                                         
@@ -407,13 +409,15 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         var updateFilterControls = function() {
             // move the sort arrow to the current sort column
-            var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"));
-            currentSortCol.addClass("sortOn");
-            var arrow = $(".noticewidget_listing thead span", config.rootContainer);
-            arrow.removeClass("descending");
-            arrow.addClass(model.filterSettings.sortOrder);
-            arrow.remove();
-            arrow.appendTo(currentSortCol);
+            var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"), config.rootContainer);
+
+            // remove sort arrows from all table header columns
+			$(".noticewidget_listing." + config.widgetName + "_listing thead th", config.rootContainer).each(function(){
+            	$(this).removeClass("ascending").removeClass("descending");
+            });
+
+			// add sort arrow to the current column
+			currentSortCol.addClass(model.filterSettings.sortOrder);
 
             // update the radio buttons
             var dateRangeRadio = $("#" + config.widgetName + "_date_range_" + model.filterSettings.dateRange);
