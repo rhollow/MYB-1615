@@ -20,7 +20,7 @@
 
     </head>
 
-    <body class="fl-centered error403 i18nable">
+    <body class="fl-centered i18nable">
 
         <!-- TOP BANNER -->
         <div id="top_banner"><!-- --></div>
@@ -105,7 +105,6 @@
                 <div id="widget_chat" class="widget_inline"></div>
                 --></div>
         </div>
-
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
 

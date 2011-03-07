@@ -93,7 +93,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 			traditional: true,
 			type: "POST",
 			data: {
-				value: "@TypeHint=date"
+				"value@TypeHint": "date",
+				date: new Date()
 			},
 			success: function(data) {},
 			error: function(xhr, textStatus, thrownError) {

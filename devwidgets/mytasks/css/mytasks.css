@@ -2,12 +2,18 @@
     background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat transparent;
 }
 
-#mytasks_overdue_tasks_exist {
-    color: red;
+.mytasks_overdue_tasks_msg {
+    background-color: #C4DAE8;
+    color: #BF0000;
     font-weight: bold;
-    margin-left: 8px;
+    margin-top: -12px;
+    padding: 6px 0;
+    text-align: center;
 }
 
+.s3d-widget .s3d-widget-content {
+    padding-bottom: 0;
+}
 /**
     Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
 **/
@@ -23,12 +29,18 @@ table.noticewidget_listing {
     border-spacing: 0;
     overflow: auto;
     max-height: 300px;  
-    position: relative;    
+    position: relative;
+    margin-bottom: 0;
+	width: 100%; /* needed for IE7 */
 }
 
 .archiveView {
     margin-top: -12px;
     border-top: solid 1px #666;  
+}
+
+.mytasks_overdue_tasks_exist .archiveView {
+    margin-top: 0;
 }
 
 table.noticewidget_listing thead {
@@ -40,24 +52,34 @@ table.noticewidget_listing th {
     border-bottom: 1px solid #666;
 }
 
+table.noticewidget_listing th.ascending {
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-position: 100% -26px;
+	background-color: #D5DBDF;
+	
+}
+
+table.noticewidget_listing th.descending {
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-position: 100% 0px;
+	background-color: #D5DBDF;
+}
+
 table.noticewidget_listing td, table.noticewidget_listing th {    
     width: 56px;
     text-align: center;
-    padding: 5px 20px;       
+    padding: 2px 20px 0px 20px;       
 }
 
 table.noticewidget_listing tbody.scroller {
     height: 150px;
     overflow: auto;
     overflow-x: hidden;
+    border-bottom: 1px solid #555;
 }
 
 .rightbound {
     border-right: solid 1px #333;
-}
-
-.sortOn {
-    background-color: #D5DBDF;
 }
 
 table.noticewidget_listing .subjectLine {
@@ -91,9 +113,10 @@ table.noticewidget_listing .taskStateLine {
 }
 
 table.noticewidget_listing tr.empty_list td {
-    width: 300px;
-    text-align: left;
+    width: 100%;
+    text-align: center;
     font-style: italic;
+	padding: 10px;
 }
 
 table.noticewidget_listing tr.notice_row {
@@ -114,8 +137,7 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_listing_sort {
     cursor: pointer;
-    padding-top: 1px;    
-    height: 30px;          
+    height: 26px;
     border-bottom: solid 1px #333;    
     width: auto;
     font-weight: bold;
@@ -129,6 +151,10 @@ table.noticewidget_listing tr.notice_row:hover {
     height: auto;     
     color: #333;
     padding: 5px 0px; 
+}
+
+.mytasks_overdue_tasks_exist .noticewidget_filter_container {
+    margin-top: 0;
 }
 
 .noticewidget_filter {
@@ -199,25 +225,11 @@ table.noticewidget_listing tr.notice_row:hover {
     background-position: left top;
 }
 
-.noticewidget_sort_indicator {
-    display: inline-block;
+.noticewidget_checkmark {
+	display: inline-block;
     width: 16px;
-    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
-    float: right;
-    margin-right: -15px;
-    margin-top: 2px;
-}
-
-.noticewidget_sort_indicator.ascending {
-    background-position: -16px top;
-}
-
-.noticewidget_sort_indicator.descending {
-    background-position: left top;
-}
-
-.noticewidget_listing_sort img {
-    margin-top: 1px;
+    background: url("/devwidgets/mytasks/images/checkmark.png") no-repeat scroll transparent;
+	background-position: 0px -2px;
 }
 
 .noticewidget_detail_controls .return_to_list_container {
@@ -325,9 +337,26 @@ table.noticewidget_listing tr.notice_row:hover {
     float: left;
 }
 
+.noticewidget_detail textarea {
+    border: 1px solid #ccc;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 2px;
+    height: 150px;
+    width: 100%
+}
+
+.noticewidget_detail textarea:hover {
+    background-color: transparent;
+}
+
 .noticewidget_detail p {
     border: 1px solid #ccc;
     overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 2px;
     height: 150px;
 }
 
@@ -339,4 +368,12 @@ table.noticewidget_listing tr.notice_row:hover {
 .mytasks_widget .fl-widget-options .widget-options-inner .right {
     float: right;
     margin-right: -10px;
+}
+
+.noticewidget_archive_tasks_button .s3d-button {
+    margin-bottom: 0;
+}
+
+table.noticewidget_listing tr.overDueTask {
+    color: #BF0000;
 }
