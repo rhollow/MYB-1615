@@ -68,17 +68,12 @@
 
         <div class="noticewidget_detail_view" style="display:none">
             <div class="noticewidget_detail_controls">
-                <span class="return_to_list_container">
-                    <span class="return_to_list">__MSG__RETURN_TO_EVENT_LIST__</span>
-                    <span class="return_to_list_right_corner">&nbsp;</span>
-                </span>
-                <span class="noticewidget_arrows">
-                    <span class="prev" title="__MSG__PREVIOUS__">
-                        <span class="prevArrow">&nbsp;</span>
-                    </span>
-                    <span class="next" title="__MSG__NEXT__">
-                        <span class="nextArrow">&nbsp;</span>
-                    </span>
+                <a href="javascript:;" class="return_to_list_container s3d-action">
+                    <span class="myB-return-arrow"></span>__MSG__RETURN_TO_EVENT_LIST__   
+                </a>
+                <span class="noticewidget-arrows-e">
+                    <button class="notice-nav notice-prev"><span class="fl-offScreen-hidden">__MSG__PREVIOUS__</span></button>
+                    <button class="notice-nav notice-next"><span class="fl-offScreen-hidden">__MSG__NEXT__</span></button>
                 </span>
             </div>
             <div class="noticewidget_detail"><!-- filled by trimpath --></div>
@@ -97,7 +92,9 @@
                         <span class="ellipsis_text">${i['sakai:subject']}</span>
                     </td>
                     <td id="myeventstdreq_${i_index}" class="detailTrigger" >
-                        {if i["sakai:required"] === "true"}&bull;{/if}
+                        {if i["sakai:required"] === "true"}
+                            <img src="/devwidgets/mytasks/images/bullet_black.png" height="16" width="16" alt="__MSG__THIS_TASK_IS_REQUIRED__" />
+                        {/if}
                     </td>
             </tr>
         {/for}
@@ -111,17 +108,14 @@
     <div id="myevents_detail_template" style="display:none"><!--
         {var dateString = noticeWidgetUtils.formatDate(detail['sakai:eventDate'], "M/d/yy")}
         {var timeString = noticeWidgetUtils.formatDate(detail['sakai:eventDate'], "h:mmtt")}
-
-        <h3>${detail["sakai:subject"]}</h3>
-        {if detail["sakai:required"] === "true"}
-            <h4>__MSG__THIS_EVENT_IS_REQUIRED__</h4>
-        {else}
-            <h4 class="unrequired">__MSG__THIS_EVENT_IS_NOT_REQUIRED__</h4>
-        {/if}
-        <h5>__MSG__EVENT_DATE__: ${dateString}</h5>
-        <h5 class="event-time">__MSG__TIME__: ${timeString}</h5>
-        <h5 class="event-location">__MSG__LOCATION__: ${detail["sakai:eventPlace"]}</h5>
-
+        
+        <div class="noticewidget_detail_head">
+            <h3>${detail["sakai:subject"]}</h3>
+            <h4 class="event-location">${detail["sakai:eventPlace"]}</h4>
+            <h4 class="event-date">${dateString} at  ${timeString} {if detail["sakai:required"] === "true"}
+                __MSG__THIS_TASK_IS_REQUIRED__
+            {/if}</h4>
+        </div>
         <textarea readonly="readonly">${detail["sakai:authoringbody"]}</textarea>
         -->
     </div>

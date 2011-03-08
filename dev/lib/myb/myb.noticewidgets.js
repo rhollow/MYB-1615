@@ -97,7 +97,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         that.getNotices = function(callback) {
-
+            
             var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
             var url = dataURL + "?sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
@@ -117,6 +117,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                             noticeWidgetUtils : noticeWidgets.utils,
 							sakaiUtil : sakai.api.Util
                         }));
+                        that.subjectLines();
                         that.updateUI();
                         if ($.isFunction(callback)) {
                             callback();
@@ -178,13 +179,13 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     model.detailMode = false;
                     that.updateUI();
                 });
-                $(".next", config.rootContainer).live("click", function() {
+                $(".notice-next", config.rootContainer).live("click", function() {
                     if (model.currentNotice < model.data.results.length - 1) {
                         model.currentNotice++;
                         that.updateUI();
                     }
                 });
-                $(".prev", config.rootContainer).live("click", function() {
+                $(".notice-prev", config.rootContainer).live("click", function() {
                     if (model.currentNotice > 0) {
                         model.currentNotice--;
                         that.updateUI();
@@ -313,6 +314,19 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             archiveControls();
 
         };
+        
+        /** 
+        * uses OEA applyThreeDots function to force the width of the object used for truncation
+        */
+        that.subjectLines = function() {
+            var subjectCells = $("td.subjectLine", config.rootContainer);
+            var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
+            var currCell = {};
+            $(subjectCells).each(function (){
+                currCell = $(this);
+                currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 1,whole_word: false}));
+            }); 
+        };
 
         that.updateUI = function() {
 
@@ -359,30 +373,15 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     parent.removeClass("s3d-button-primary");
                 }
             };
-
+            
             var scroller = function() {
                 var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-                if (tbody[0].clientHeight > 150) {
+                tbody.removeClass("scroller");
+                if (tbody.height() > 150) {
                     tbody.addClass("scroller");
-                } else {
-                    tbody.removeClass("scroller");
                 }
             };
-
-            var subjectLines = function() {
-   				// HACK: Fix for Webkit bug in jQuery.threedot plugin
-				// See MYB-494. Threedot plugin truncates text in the first span element incorrectly.
-				// Add a dummy row to workaround this issue. 
-				$(".noticewidget_listing." + config.widgetName + "_listing tbody").prepend('<tr class="notice_row webkit_bug_row"><td class="subjectLine"><span class="ellipsis_text">&nbsp;</span></td></tr>');				
-				
-				$("td.subjectLine", config.rootContainer).ThreeDots({
-                    max_rows : 1
-                });
-				// HACK: Fix for Webkit bug in jQuery.threedot plugin
-				// Remove the dummy row
-				$(".noticewidget_listing." + config.widgetName + "_listing tbody tr.webkit_bug_row", config.rootContainer).remove();
-            };
-
+            
             var filterStatus = function() {                                         
                 $(".noticewidget_filter_header", config.rootContainer).html(translate("FILTER"));
                 $(".noticewidget_filter_message", config.rootContainer).html(" "+translate(config.convertFilterStateToMessage()));
@@ -396,14 +395,14 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     noticeWidgetUtils : noticeWidgets.utils
                 }));
                 if (model.currentNotice < model.data.results.length - 1) {
-                    $(".nextArrow", config.rootContainer).removeClass("disabled");
+                    $(".notice-next", config.rootContainer).removeClass("disabled");
                 } else {
-                    $(".nextArrow", config.rootContainer).addClass("disabled");
+                    $(".notice-next", config.rootContainer).addClass("disabled");
                 }
                 if (model.currentNotice > 0) {
-                    $(".prevArrow", config.rootContainer).removeClass("disabled");
+                    $(".notice-prev", config.rootContainer).removeClass("disabled");
                 } else {
-                    $(".prevArrow", config.rootContainer).addClass("disabled");
+                    $(".notice-prev", config.rootContainer).addClass("disabled");
                 }
             };
 
@@ -423,7 +422,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             detailMode();
             archiveControls();
             scroller();
-            subjectLines();
             filterStatus();
         };
 
