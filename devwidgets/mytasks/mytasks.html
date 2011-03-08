@@ -98,7 +98,7 @@
         {for i in results}
             {var isEmpty = false}
 			{var dueDate = sakaiUtil.parseSakaiDate(i['sakai:dueDate'])}
-            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if dueDate < nowDate} overDueTask{/if}">
+            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if dueDate < nowDate && i["sakai:taskState"] !== "completed" && i["sakai:archived"] !== "archived"} overDueTask{/if}">
                     <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
                     {if i["sakai:archived"] === "archived"}
                         <input type="checkbox" class="task-selected-checkbox"
