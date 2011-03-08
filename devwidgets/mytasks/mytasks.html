@@ -75,30 +75,25 @@
 
         <div class="noticewidget_detail_view" style="display:none">
             <div class="noticewidget_detail_controls">
-                <span class="return_to_list_container">
-                    <span class="return_to_list">__MSG__RETURN_TO_TASK_LIST__</span>
-                    <span class="return_to_list_right_corner">&nbsp;</span>
-                </span>
-                <span class="noticewidget_arrows">
-                    <span class="prev" title="__MSG__PREVIOUS__">
-                        <span class="prevArrow">&nbsp;</span>
-                    </span>
-                    <span class="next" title="__MSG__NEXT__">
-                        <span class="nextArrow">&nbsp;</span>
-                    </span>
+                <a href="javascript:;" class="return_to_list_container s3d-action">
+                    <span class="myB-return-arrow"></span>__MSG__RETURN_TO_TASK_LIST__   
+                </a>
+                <span class="noticewidget-arrows-e">
+                    <button class="notice-nav notice-prev"><span class="fl-offScreen-hidden">__MSG__PREVIOUS__</span></button>
+                    <button class="notice-nav notice-next"><span class="fl-offScreen-hidden">__MSG__NEXT__</span></button>
                 </span>
             </div>
             <div class="noticewidget_detail"><!-- filled by trimpath --></div>
         </div>
     </div>
-    
+      
     <div id="mytasks_template" style="display:none"><!--
         {var isEmpty = true}
 		{var nowDate = new Date()}
         {for i in results}
             {var isEmpty = false}
 			{var dueDate = sakaiUtil.parseSakaiDate(i['sakai:dueDate'])}
-            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if dueDate < nowDate} overDueTask{/if}">
+            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if i["sakai:archived"] !== "archived"}{if dueDate < nowDate} overDueTask{/if}{/if}">
                     <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
                     {if i["sakai:archived"] === "archived"}
                         <input type="checkbox" class="task-selected-checkbox"
@@ -133,27 +128,25 @@
 
     <div id="mytasks_detail_template" style="display:none"><!--
         {var dateString = noticeWidgetUtils.formatDate(detail['sakai:dueDate'], "M/d/yy")}
-
-        <h3>${detail["sakai:subject"]}</h3>
-        {if detail["sakai:required"] === "true"}
-            <h4>__MSG__THIS_TASK_IS_REQUIRED__</h4>
-        {else}
-            <h4 class="unrequired">__MSG__THIS_TASK_IS_NOT_REQUIRED__</h4>
-        {/if}
-        <h5>__MSG__DUE_DATE__: ${dateString}</h5>
-
-        <fieldset>
-            <input type="checkbox" class="task-completed-checkbox"
-                id="taskDone_${index}"
-                {if detail["sakai:taskState"] === "completed"}
-                    checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
-                {else}
-                    title="__MSG__CHECK_TO_MARK_COMPLETED__"
-                {/if}
-            />
-            <label for="taskDone_${index}">__MSG__COMPLETED__</label>
-        </fieldset>
-
+        <div class="noticewidget_detail_head">
+            <fieldset>
+                <input type="checkbox" class="task-completed-checkbox"
+                    id="taskDone_${index}"
+                    {if detail["sakai:taskState"] === "completed"}
+                        checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                    {else}
+                        title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                    {/if}
+                />
+                <label for="taskDone_${index}">__MSG__COMPLETED__</label>
+            </fieldset>
+            <h3>${detail["sakai:subject"]}</h3>
+            <h4>__MSG__DUE_DATE__ ${dateString} 
+            {if detail["sakai:required"] === "true"}
+                __MSG__THIS_TASK_IS_REQUIRED__
+            {/if}
+            </h4>
+        </div>
         <textarea readonly="readonly">${detail["sakai:body"]}</textarea>
         -->
     </div>

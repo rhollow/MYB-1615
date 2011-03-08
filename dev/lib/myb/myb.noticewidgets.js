@@ -178,13 +178,13 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     model.detailMode = false;
                     that.updateUI();
                 });
-                $(".next", config.rootContainer).live("click", function() {
+                $(".notice-next", config.rootContainer).live("click", function() {
                     if (model.currentNotice < model.data.results.length - 1) {
                         model.currentNotice++;
                         that.updateUI();
                     }
                 });
-                $(".prev", config.rootContainer).live("click", function() {
+                $(".notice-prev", config.rootContainer).live("click", function() {
                     if (model.currentNotice > 0) {
                         model.currentNotice--;
                         that.updateUI();
@@ -376,14 +376,14 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     noticeWidgetUtils : noticeWidgets.utils
                 }));
                 if (model.currentNotice < model.data.results.length - 1) {
-                    $(".nextArrow", config.rootContainer).removeClass("disabled");
+                    $(".notice-next", config.rootContainer).removeClass("disabled");
                 } else {
-                    $(".nextArrow", config.rootContainer).addClass("disabled");
+                    $(".notice-next", config.rootContainer).addClass("disabled");
                 }
                 if (model.currentNotice > 0) {
-                    $(".prevArrow", config.rootContainer).removeClass("disabled");
+                    $(".notice-prev", config.rootContainer).removeClass("disabled");
                 } else {
-                    $(".prevArrow", config.rootContainer).addClass("disabled");
+                    $(".notice-prev", config.rootContainer).addClass("disabled");
                 }
             };
 
