@@ -92,7 +92,9 @@
                         <span class="ellipsis_text">${i['sakai:subject']}</span>
                     </td>
                     <td id="myeventstdreq_${i_index}" class="detailTrigger" >
-                        {if i["sakai:required"] === "true"}&bull;{/if}
+                        {if i["sakai:required"] === "true"}
+                            <img src="/devwidgets/mytasks/images/bullet_black.png" height="16" width="16" alt="__MSG__THIS_TASK_IS_REQUIRED__" />
+                        {/if}
                     </td>
             </tr>
         {/for}
