@@ -97,6 +97,20 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         that.getNotices = function(callback) {
+
+            /** 
+            * uses OEA applyThreeDots function to force the width of the object used for truncation
+            */
+            var subjectLines = function() {
+                var subjectCells = $("td.subjectLine", config.rootContainer);
+                var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
+                console.log(theWidth);
+                var currCell = {};
+                $(subjectCells).each(function (){
+                    currCell = $(this);
+                    currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 1,whole_word: false}));
+                }); 
+            };
             
             var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
             var url = dataURL + "?sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
@@ -117,8 +131,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                             noticeWidgetUtils : noticeWidgets.utils,
 							sakaiUtil : sakai.api.Util
                         }));
-                        that.subjectLines();
                         that.updateUI();
+                        subjectLines();
                         if ($.isFunction(callback)) {
                             callback();
                         }
@@ -296,19 +310,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         };
         
-        /** 
-        * uses OEA applyThreeDots function to force the width of the object used for truncation
-        */
-        that.subjectLines = function() {
-            var subjectCells = $("td.subjectLine", config.rootContainer);
-            var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
-            var currCell = {};
-            $(subjectCells).each(function (){
-                currCell = $(this);
-                currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 1,whole_word: false}));
-            }); 
-        };
-
         that.updateUI = function() {
 
             var archiveControls = function() {
