@@ -232,28 +232,19 @@ table.noticewidget_listing tr.notice_row:hover {
 	background-position: 0px -2px;
 }
 
-.noticewidget_detail_controls .return_to_list_container {
-    float: left;
-    cursor: pointer;
+.noticewidget_detail_controls {
+    padding-left: 6px;
 }
 
-.noticewidget_detail_controls .return_to_list {
-    height: 30px;
-    padding-left: 22px;
-    line-height: 21px;
-    margin: 0;
-    float: left;
-    background: url("/devwidgets/mytasks/images/button-left-pointing.png") no-repeat scroll left -5px transparent;
+.myB-return-arrow {
+  background: url("/dev/images/dashboard_sprite.png") no-repeat scroll -443px -395px transparent;
+  display: block;
+  float: left;
+  padding-right: 22px;
+  height: 16px;
+  width: 8px;
 }
 
-.noticewidget_detail_controls .return_to_list_right_corner {
-    background: url("/devwidgets/mytasks/images/button-left-pointing.png") no-repeat scroll -202px -40px transparent;
-    display: block;
-    float: left;
-    width: 30px;
-    height: 30px;
-    margin: 0;
-}
 
 .noticewidget_detail_controls .return_to_list_container:hover .return_to_list {
     background-position: left -75px;
@@ -263,86 +254,88 @@ table.noticewidget_listing tr.notice_row:hover {
     background-position: -202px -110px;
 }
 
-.noticewidget_detail_controls .noticewidget_arrows {
+.noticewidget_detail_controls .noticewidget-arrows-e {
     float: right;
-    margin-right: 6px;
+    margin-right: 14px;
+    margin-top: -6px;
 }
 
-.noticewidget_detail_controls .prev, .noticewidget_detail_controls .prevArrow,
-.noticewidget_detail_controls .next, .noticewidget_detail_controls .nextArrow {
+.noticewidget_detail_controls .notice-nav {
+    height: 22px;
+    width: 24px;
+    background-color: #454A4E;
+    background-image: url("/devwidgets/mytasks/images/notice-arrow-nav.png");
+    background-attachment: scroll;
+    background-repeat: no-repeat;
     display: inline-block;
-    cursor: pointer;
-    height: 23px;
-    width: 37px;
-    background: url("/devwidgets/mytasks/images/button-next-prev-item.png") no-repeat scroll top left transparent;
+    margin: 0 0 5px;
+    overflow: visible;
+    padding: 0;
+    position: relative;
+    border: none;
+    color: white;
+    outline: none;
 }
 
-.noticewidget_detail_controls .prev {
-    background-position: left -26px;
-    margin-right: -10px;
+.noticewidget_detail_controls .notice-nav:hover {
+    background-color: #006E96;
 }
 
-.noticewidget_detail_controls .next {
-    border-left: 1px solid black;
+.noticewidget_detail_controls .notice-nav.disabled {
+    background-color: #999;
 }
 
-.noticewidget_detail_controls .prevArrow {
-    background-position: left 1px;
+.noticewidget_detail_controls .notice-next {
+    background-position: 5px 7px;
+    margin-left: -3px;
+    -moz-border-radius: 0 10px 10px 0; 
+    border-radius: 0 10px 10px 0; 
 }
 
-.noticewidget_detail_controls .next {
-    background-position: -55px -26px;
-}
-
-.noticewidget_detail_controls .nextArrow {
-    background-position: -54px 2px;
-}
-
-.noticewidget_detail_controls .next:hover {
-    background-position: -56px -62px;
-}
-
-.noticewidget_detail_controls .nextArrow.disabled {
-    background-position: -54px -90px;
-}
-
-.noticewidget_detail_controls .prev:hover {
-    background-position: left -62px;
-}
-
-.noticewidget_detail_controls .prevArrow.disabled {
-    background-position: left -92px;
+.noticewidget_detail_controls .notice-prev {
+    background-position: 8px -18px;
+    -moz-border-radius: 10px 0 0 10px;
+    border-radius: 10px 0 0 10px;
 }
 
 .noticewidget_detail {
-    margin: 10px 10px 0 10px;
+    margin: 10px 1px 0 1px;
+    padding: 0 12px 0 6px;
     border-top: 2px solid #ccc;
     clear: both;
 }
 
-.noticewidget_detail h3, .noticewidget_detail p {
-    clear: both;
-    margin-bottom: 0;
+.noticewidget_detail_head {
+    padding-left: 4px;
 }
 
-.noticewidget_detail h4.unrequired {
+.noticewidget_detail h3 {
+    font-size: 120%;
+    line-height: 110%;
+    margin: 0.7em 0 0.3em;
+}
+
+.noticewidget_detail h4.myB-unrequired {
     font-weight: normal;
 }
 
 .noticewidget_detail fieldset {
     float: right;
+    margin: 0.9em 0.1em 0.3em 0.3em;
 }
 
 .noticewidget_detail h5 {
-    float: left;
+    float: right;
 }
 
 .noticewidget_detail textarea {
-    border: 1px solid #ccc;
+    border: none;
+    border-top: 1px dotted #CCC;
     overflow: auto;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 2px;
+    margin-top: 6px;
     height: 150px;
     width: 100%
 }
@@ -376,4 +369,9 @@ table.noticewidget_listing tr.notice_row:hover {
 
 table.noticewidget_listing tr.overDueTask {
     color: #BF0000;
+}
+
+table.noticewidget_listing td.noticewidget_task_completed {
+	text-align: left;
+	padding-left: 9px !important;
 }

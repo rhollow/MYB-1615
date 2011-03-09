@@ -2,12 +2,12 @@
     background: url("/devwidgets/myevents/images/myevents_widget_icon.png") no-repeat transparent;
 }
 
-.myevents .noticewidget_detail h5.event-time {
-    float: right;
+.myevents_widget .noticewidget_detail h3 {
+    margin-bottom: 0;
 }
 
-.myevents .noticewidget_detail h5.event-location {
-    clear: both;
-    float: none;
-    margin-bottom: 8px;
+.myevents_widget .noticewidget_detail h4.event-location {
+    color: #444;
+    margin: 0 0 0.3em;
+    font-weight: normal;
 }
