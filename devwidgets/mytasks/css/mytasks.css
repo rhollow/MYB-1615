@@ -370,3 +370,8 @@ table.noticewidget_listing tr.notice_row:hover {
 table.noticewidget_listing tr.overDueTask {
     color: #BF0000;
 }
+
+table.noticewidget_listing td.noticewidget_task_completed {
+	text-align: left;
+	padding-left: 9px !important;
+}
