@@ -259,7 +259,7 @@ table.noticewidget_listing tr.notice_row:hover {
     background-position: -202px -110px;
 }
 
-.noticewidget_detail_controls .noticewidget-arrows-e {
+.noticewidget_detail_controls .noticewidget-arrows {
     float: right;
     margin-right: 14px;
     margin-top: -6px;
@@ -292,7 +292,7 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_detail_controls .notice-next {
     background-position: 5px 7px;
-    margin-left: -3px;
+    margin-left: 1px;
     -moz-border-radius: 0 10px 10px 0; 
     border-radius: 0 10px 10px 0; 
 }
