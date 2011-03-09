@@ -65,7 +65,7 @@
                     <th id="mytasks_sortOn_sakai:subject" class="noticewidget_listing_sort subjectLine rightbound" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
                     <th id="mytasks_sortOn_sakai:required" class="noticewidget_listing_sort requiredLine rightbound" title="__MSG__REQUIRED__">__MSG__REQ__</th>
                     <th id="mytasks_sortOn_sakai:taskState" class="noticewidget_listing_sort taskStateLine" title="__MSG__COMPLETED__">
-                        <span class="noticewidget_checkmark" alt="__MSG__COMPLETED__">&nbsp;</span>
+                        <span class="noticewidget_checkmark" alt="__MSG__COMPLETED__">&nbsp;<span class="fl-offScreen-hidden">__MSG__COMPLETED__</span></span>
                     </th>
                 </thead>
 
@@ -109,7 +109,7 @@
                     </td>
                     <td id="mytaskstdreq_${i_index}" class="detailTrigger">
                     {if i["sakai:required"] === "true"}
-						<span class="required_task_bullet" alt="__MSG__THIS_TASK_IS_REQUIRED__"></span>                        
+						<span class="required_task_bullet" alt="__MSG__THIS_TASK_IS_REQUIRED__"><span class="fl-offScreen-hidden">__MSG__THIS_TASK_IS_REQUIRED__</span></span>                        
                     {else}
                         &nbsp;
                     {/if}
