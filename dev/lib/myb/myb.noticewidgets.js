@@ -104,7 +104,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             var subjectLines = function() {
                 var subjectCells = $("td.subjectLine", config.rootContainer);
                 var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
-                console.log(theWidth);
                 var currCell = {};
                 $(subjectCells).each(function (){
                     currCell = $(this);
