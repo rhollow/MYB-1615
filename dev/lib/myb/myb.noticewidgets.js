@@ -221,6 +221,25 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     var checkboxIndex = this.id.replace(/\w+_/gi, "");
                                     if (checkboxIndex === rowIndex) {
                                         element.checked = rowData["sakai:taskState"] === "completed";
+
+										// We need to remove overdue class from completed tasks and add it again if user unchecks an overdue task 																									
+										if(rowData["sakai:taskState"] === "completed"){
+											
+											// remove 'overDueTask' CSS class
+											// function parents() travels several levels up to find the row
+											$(this).parents("tr.notice_row").removeClass("overDueTask");											
+											
+										} else {
+											
+											var nowDate = new Date();
+											var dueDate = sakai.api.Util.parseSakaiDate(rowData['sakai:dueDate']);
+											
+											if (dueDate < nowDate && rowData["sakai:archived"] !== "archived"){
+												// add 'overDueTask' CSS class if the task is overdue
+												$(this).parents("tr.notice_row").addClass("overDueTask");	
+											}											
+										}
+										
                                     }
                                 });
                                 that.updateUI();
