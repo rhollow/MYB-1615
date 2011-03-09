@@ -78,6 +78,11 @@ table.noticewidget_listing tbody.scroller {
     border-bottom: 1px solid #555;
 }
 
+/* Fix inheritance problem with scroller in IE7 */
+table.noticewidget_listing tbody.scroller tr {
+    height: auto;    
+}
+
 .rightbound {
     border-right: solid 1px #333;
 }
