@@ -415,12 +415,20 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 					
 					var returnLinkMsg;
 					if(model.archiveMode){
-						returnLinkMsg = translate("RETURN_TO_ARCHIVED_TASK_LIST");	
+						if(config.widgetName=="mytasks"){                               
+                            returnLinkMsg = translate("RETURN_TO_ARCHIVED_TASK_LIST");
+                        } else {
+                            returnLinkMsg = translate("RETURN_TO_PAST_EVENT_LIST");
+                        }
 					} else {
-						returnLinkMsg = translate("RETURN_TO_TASK_LIST");
+						if(config.widgetName=="mytasks"){                               
+                            returnLinkMsg = translate("RETURN_TO_TASK_LIST");
+                        } else{
+                            returnLinkMsg = translate("RETURN_TO_EVENT_LIST");
+                        }						
 					}
 					 
-					 $("span.noticewidget_detail_return_link_msg", config.rootContainer).html(" "+returnLinkMsg);
+					$("span.noticewidget_detail_return_link_msg", config.rootContainer).html(" "+returnLinkMsg);
 					
                     detailViewContainer.show();
                 } else {
