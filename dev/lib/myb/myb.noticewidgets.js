@@ -208,7 +208,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     var checkboxIndex = this.id.replace(/\w+_/gi, "");
                                     if (checkboxIndex === rowIndex) {
                                         element.checked = rowData["sakai:taskState"] === "completed";
-
 										// We need to remove overdue class from completed tasks and add it again if user unchecks an overdue task 																									
 										if(rowData["sakai:taskState"] === "completed"){
 											
@@ -392,7 +391,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 {
                     detail : model.data.results[model.currentNotice],
                     index : model.currentNotice,
-                    noticeWidgetUtils : noticeWidgets.utils
+                    noticeWidgetUtils : noticeWidgets.utils,
+					archiveMode: model.archiveMode
                 }));
                 if (model.currentNotice < model.data.results.length - 1) {
                     $(".notice-next", config.rootContainer).removeClass("disabled");
@@ -412,6 +412,16 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 if (model.detailMode) {
                     showCurrentDetail();
                     listViewContainer.hide();
+					
+					var returnLinkMsg;
+					if(model.archiveMode){
+						returnLinkMsg = translate("RETURN_TO_ARCHIVED_TASK_LIST");	
+					} else {
+						returnLinkMsg = translate("RETURN_TO_TASK_LIST");
+					}
+					 
+					 $("span.noticewidget_detail_return_link_msg", config.rootContainer).html(" "+returnLinkMsg);
+					
                     detailViewContainer.show();
                 } else {
                     listViewContainer.show();
