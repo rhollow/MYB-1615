@@ -375,3 +375,18 @@ table.noticewidget_listing td.noticewidget_task_completed {
 	text-align: left;
 	padding-left: 9px !important;
 }
+
+/* Required task bullets */
+table.noticewidget_listing td span.required_task_bullet {
+	width: 16px;
+	height: 16px;
+	display: inline-block;	
+}
+
+table.noticewidget_listing tr td span.required_task_bullet {
+    background: url("/devwidgets/mytasks/images/bullet_black.png") no-repeat scroll transparent;	
+}
+
+table.noticewidget_listing tr.overDueTask td span.required_task_bullet {
+    background: url("/devwidgets/mytasks/images/bullet_red.png") no-repeat scroll transparent;
+}

@@ -109,7 +109,7 @@
                     </td>
                     <td id="mytaskstdreq_${i_index}" class="detailTrigger">
                     {if i["sakai:required"] === "true"}
-                        <img src="/devwidgets/mytasks/images/{if i["sakai:archived"] === "archived" || !overDue}bullet_black.png{else}bullet_red.png{/if}" height="16" width="16" alt="__MSG__THIS_TASK_IS_REQUIRED__" />
+						<span class="required_task_bullet" alt="__MSG__THIS_TASK_IS_REQUIRED__"></span>                        
                     {else}
                         &nbsp;
                     {/if}
