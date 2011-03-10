@@ -60,13 +60,15 @@
 
             <table class="noticewidget_listing mytasks_listing" style="display:none">
                 <thead>
-                    <th class="noticewidget_task_selector rightbound"></th>
-                    <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort dueDateLine rightbound" title="__MSG__DUE__">__MSG__DUE__</th>
-                    <th id="mytasks_sortOn_sakai:subject" class="noticewidget_listing_sort subjectLine rightbound" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
-                    <th id="mytasks_sortOn_sakai:required" class="noticewidget_listing_sort requiredLine rightbound" title="__MSG__REQUIRED__">__MSG__REQ__</th>
-                    <th id="mytasks_sortOn_sakai:taskState" class="noticewidget_listing_sort taskStateLine" title="__MSG__COMPLETED__">
-                        <span class="noticewidget_checkmark" alt="__MSG__COMPLETED__">&nbsp;</span>
-                    </th>
+                    <tr>
+                        <th class="noticewidget_task_selector rightbound"></th>
+                        <th id="mytasks_sortOn_sakai:dueDate" class="noticewidget_listing_sort dueDateLine rightbound" title="__MSG__DUE__">__MSG__DUE__</th>
+                        <th id="mytasks_sortOn_sakai:subject" class="noticewidget_listing_sort subjectLine rightbound" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
+                        <th id="mytasks_sortOn_sakai:required" class="noticewidget_listing_sort requiredLine rightbound" title="__MSG__REQUIRED__">__MSG__REQ__</th>
+                        <th id="mytasks_sortOn_sakai:taskState" class="noticewidget_listing_sort taskStateLine" title="__MSG__COMPLETED__">
+                            <span class="noticewidget_checkmark" alt="__MSG__COMPLETED__">&nbsp;<span class="fl-offScreen-hidden">__MSG__COMPLETED__</span></span>
+                        </th>
+                    </tr>
                 </thead>
 
                 <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
@@ -78,9 +80,8 @@
                 <a href="javascript:;" class="return_to_list_container s3d-action">
                     <span class="myB-return-arrow"></span><span class="noticewidget_detail_return_link_msg"></span>   
                 </a>
-                <span class="noticewidget-arrows-e">
-                    <button class="notice-nav notice-prev"><span class="fl-offScreen-hidden">__MSG__PREVIOUS__</span></button>
-                    <button class="notice-nav notice-next"><span class="fl-offScreen-hidden">__MSG__NEXT__</span></button>
+                <span class="noticewidget-arrows">
+                    <button class="notice-nav notice-prev"><span class="fl-offScreen-hidden">__MSG__PREVIOUS__</span></button><button class="notice-nav notice-next"><span class="fl-offScreen-hidden">__MSG__NEXT__</span></button>
                 </span>
             </div>
             <div class="noticewidget_detail"><!-- filled by trimpath --></div>
@@ -109,7 +110,7 @@
                     </td>
                     <td id="mytaskstdreq_${i_index}" class="detailTrigger">
                     {if i["sakai:required"] === "true"}
-                        <img src="/devwidgets/mytasks/images/{if i["sakai:archived"] === "archived" || !overDue}bullet_black.png{else}bullet_red.png{/if}" height="16" width="16" alt="__MSG__THIS_TASK_IS_REQUIRED__" />
+						<span class="required_task_bullet" title="__MSG__THIS_TASK_IS_REQUIRED__"><span class="fl-offScreen-hidden">__MSG__THIS_TASK_IS_REQUIRED__</span></span>                        
                     {else}
                         &nbsp;
                     {/if}
