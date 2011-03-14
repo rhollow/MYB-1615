@@ -123,6 +123,11 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         };
     
         var checkForOverdueTasks = function() {
+
+            // TODO remove return when done debugging myb-417
+            return;
+
+
             // TODO when KERN-1471 is fixed, bundle this request into batch request with the main search
             var overdueTaskSearchURL = "/var/notices/tasks.json?startDate=" +
                     Globalization.format(noticeWidgets.BEGINNING_OF_TIME, noticeWidgets.DATE_FORMAT_ISO8601)

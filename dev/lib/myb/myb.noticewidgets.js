@@ -97,7 +97,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         that.getNotices = function(callback) {
-
             /** 
             * uses OEA applyThreeDots function to force the width of the object used for truncation
             */
@@ -116,6 +115,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     + config.buildExtraQueryParams(model.archiveMode);
             loadingIndicator.show();
             listingTable.hide();
+
+            /* sling-repo storage of notices:
             $.ajax({
                 url: url,
                 cache: false,
@@ -146,6 +147,46 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                             " and thrownError=" + thrownError + "\n" + xhr.responseText);
                 }
             });
+            */
+
+            /* bedework storage of notices: */
+            url = "http://test.media.berkeley.edu:8080/ucaldav/user/vbede/calendar/";
+            var xml = '<?xml version="1.0" encoding="UTF-8"?>' +
+                        '<C:calendar-query xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:D="DAV:">'+
+                        '  <D:prop>'+
+                        '    <D:getetag/>'+
+                        '    <C:calendar-data/>'+
+                        '  </D:prop>'+
+                        '  <C:filter>'+
+                        '    <C:comp-filter name="VCALENDAR">'+
+                        '      <C:comp-filter name="VEVENT">'+
+                        '        <C:time-range start="20110301T000000Z" end="20110331T235959Z"/>'+
+                        '      </C:comp-filter>'+
+                        '    </C:comp-filter>'+
+                        '  </C:filter>'+
+                        '</C:calendar-query>';
+
+            window.debug.error("XML for DAV = " + xml);
+
+            $.ajax({
+                type : "REPORT",
+                username : "vbede",
+                password : "bedework",
+                processData : false,
+                data : xml,
+                dataType : "jsonp",
+                url : url,
+                crossDomain : true,
+                cache : false,
+                success : function(data) {
+                    window.debug.error(data);
+                },
+                error : function(xhr, textStatus, thrownError) {
+                    window.debug.error("Getting events from CalDAV failed for:\n" + url + " with status=" + textStatus +
+                            " and thrownError=" + thrownError + "\n" + xhr.responseText);
+                }
+            });
+
         };
 
         var setupListeners = function() {
