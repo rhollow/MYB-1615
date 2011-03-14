@@ -254,7 +254,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
             $(document).bind("click", function(e){
                 // if menu is visible and the target element clicked is not menu hide dropdown
-                debug.log($(e.target), $(e.target).parents(userLink).length);
                 if ($(userLinkMenu).is(":visible") && !$(e.target).is(userLink) && !$(e.target).parents(userLink).length && !$(e.target).parents(userLinkMenu).length){
                     showHideUserLinkMenu(true);
                 }
