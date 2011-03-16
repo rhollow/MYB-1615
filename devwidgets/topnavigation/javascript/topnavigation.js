@@ -444,9 +444,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                     "/dev/403.html", "/dev/500.html", "/index.html", "/404", "/403", "/500"];
 
                 // myBerkeley: Commented out
-                //if ($.inArray(window.location.pathname, indexPaths) !== -1 || $(".page_not_found_error").length) {
-                //    $(".explore-bg").show();
-                //}
+                /*
+                if ($.inArray(window.location.pathname, indexPaths) !== -1 || $(".page_not_found_error").length) {
+                    $(".explore-bg").show();
+                }
 
                 indexPaths.push("/register", "/dev/create_new_account.html");
 
