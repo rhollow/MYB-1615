@@ -251,15 +251,26 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
                     model.archiveMode = !model.archiveMode;
                     model.detailMode = false;
+					
+					// Hide Archive mode message
+					$(".showing_archive_msg", config.rootContainer).hide();
+					
                     that.getNotices(function() {
                         if (model.archiveMode) {
                             filterContainer.hide();
                             if(config.widgetName=="mytasks"){                               
                                 $(".mytasks_listing").addClass("archiveView");
+								$(config.rootContainer).removeClass("mytasks_overdue_tasks_exist");
+								$(".mytasks_overdue_tasks_msg", config.rootContainer).hide();								
                             }
                             else{
                                 $(".myevents_listing").addClass("archiveView");
                             }
+							
+							// Change table caption and display Archive mode message
+							$("." + config.widgetName + "_listing caption").text(translate("ARCHIVE_CAPTION"));
+							$(".showing_archive_msg", config.rootContainer).show();
+							
                         } else {
                             filterContainer.show();
                             if(config.widgetName=="mytasks"){
@@ -268,6 +279,10 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                             else{
                                 $(".myevents_listing").removeClass("archiveView");
                             }
+														
+							// Change table caption
+							$("." + config.widgetName + "_listing caption").text(translate("LIST_CAPTION"));
+							
                         }
                     });
                 });

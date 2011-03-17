@@ -11,6 +11,16 @@
     text-align: center;
 }
 
+.showing_archive_msg {
+    background-color: #C4DAE8;
+    color: #000000;
+    font-weight: bold;
+    margin-top: -12px;
+    padding: 6px 0;
+    text-align: center;
+}
+
+
 .s3d-widget .s3d-widget-content {
     padding-bottom: 0;
 }
@@ -35,7 +45,6 @@ table.noticewidget_listing {
 }
 
 .archiveView {
-    margin-top: -12px;
     border-top: solid 1px #666;  
 }
 
