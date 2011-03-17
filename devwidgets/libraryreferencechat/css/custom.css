@@ -1,3 +1,7 @@
+#qp_widget_main {
+	border: none !important;
+}
+
 #qp_widget_offline_email_input {
     background: #fff;
 }
@@ -45,11 +49,11 @@
  /*Messages*/
 
 #qp_widget_out_container {
-	height: 180px !important;
+	height: 170px !important;
 }
 
 #qp_widget_out {
-	height: 180px !important;
+	height: 160px !important;
 }
 
 #qp_widget_out .qp_widget_message_echo {
@@ -87,11 +91,13 @@
 #qp_widget_in_container {
 	height: 70px !important;
 	width: 350px !important;
+	position: relative;
+	top: -10px;
 }
 
 #qp_widget_in {
 	height: 70px !important;
-	width: 350px ;
+	width: 440px;
 }
 
 #qp_widget_in textarea {
@@ -101,15 +107,22 @@
 	height: 70px !important;
 }
 
-#qp_widget_button_bar {
-	height: 0px;
+#qp_widget_ask {	
+	position: relative;
+	left: 352px;
+	display: block;
+	background: url(/devwidgets/libraryreferencechat/images/Gray_button.png) no-repeat scroll transparent;
+	margin: 0;
+	border: none;
+	height: 24px;
+	width: 90px;
+	white-space: nowrap !important;
+	padding: 0 8px 4px 15px;
+	color: #fff;
+	font-size: 1.3em !important;
+	font-weight: bold !important;
 }
 
-#qp_widget_ask {
-	position: relative;
-	top: -73px;
-	left: 355px;
-	width: 85px;
-	height: 71px;
-	font-size: 10pt;
+#qp_widget_ask:hover {
+	background: url("/devwidgets/libraryreferencechat/images/Teal_button.png") no-repeat scroll 0 -1px transparent;
 }
