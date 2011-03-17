@@ -29,9 +29,16 @@
 **/
 
 .noticewidget_listing_loading {
-    margin: 5px 0px 0px 20px;
     font-style: italic;
     color: #333;
+	margin-top: -12px;
+	margin-left:20px;
+    padding-top: 6px;
+}
+
+/* Changes div.noticewidget_listing_loading's margin when there is another div visible on top (like filters) */
+.noTopMargin {
+		margin-top: 0 !important;
 }
 
 table.noticewidget_listing {

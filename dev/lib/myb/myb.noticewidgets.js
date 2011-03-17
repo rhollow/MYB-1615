@@ -121,6 +121,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 cache: false,
                 success: function(data) {
                     loadingIndicator.hide();
+					loadingIndicator.removeClass("noTopMargin");
                     listingTable.show();
                     if (data.results) {
                         model.data = data;
@@ -164,7 +165,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 });                                                                                                       
 
                 $("input:radio", config.rootContainer).live("click", function() {
-                    that.saveFilterSettingsAndGetNotices();
+                    loadingIndicator.addClass("noTopMargin");
+					that.saveFilterSettingsAndGetNotices();
                 });
             };
 
@@ -251,38 +253,34 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
                     model.archiveMode = !model.archiveMode;
                     model.detailMode = false;
-					
-					// Hide Archive mode message
-					$(".showing_archive_msg", config.rootContainer).hide();
+					// The code below is called before Ajax request
+					if(model.archiveMode){
+						filterContainer.hide();
+						
+						$(config.rootContainer).removeClass("mytasks_overdue_tasks_exist");
+						$(".mytasks_overdue_tasks_msg", config.rootContainer).hide();
+						
+						// Change table caption
+						$("." + config.widgetName + "_listing caption").text(translate("ARCHIVE_CAPTION"));						
+						$("." + config.widgetName + "_listing").addClass("archiveView");
+					} else {
+						
+						// Hide Archive mode message
+						$(".showing_archive_msg", config.rootContainer).hide();
+						
+						// Change table caption
+						$("." + config.widgetName + "_listing caption").text(translate("LIST_CAPTION"));
+						$("." + config.widgetName + "_listing").removeClass("archiveView");
+					}
 					
                     that.getNotices(function() {
-                        if (model.archiveMode) {
-                            filterContainer.hide();
-                            if(config.widgetName=="mytasks"){                               
-                                $(".mytasks_listing").addClass("archiveView");
-								$(config.rootContainer).removeClass("mytasks_overdue_tasks_exist");
-								$(".mytasks_overdue_tasks_msg", config.rootContainer).hide();								
-                            }
-                            else{
-                                $(".myevents_listing").addClass("archiveView");
-                            }
-							
-							// Change table caption and display Archive mode message
-							$("." + config.widgetName + "_listing caption").text(translate("ARCHIVE_CAPTION"));
+						// The code below is called after data has been received
+                        if (model.archiveMode) {							
+							// Display Archive mode message							
 							$(".showing_archive_msg", config.rootContainer).show();
 							
                         } else {
-                            filterContainer.show();
-                            if(config.widgetName=="mytasks"){
-                                $(".mytasks_listing").removeClass("archiveView");
-                            }
-                            else{
-                                $(".myevents_listing").removeClass("archiveView");
-                            }
-														
-							// Change table caption
-							$("." + config.widgetName + "_listing caption").text(translate("LIST_CAPTION"));
-							
+                            filterContainer.show();                            
                         }
                     });
                 });
@@ -304,7 +302,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 );
                         return;
                     }
-
+					
+					loadingIndicator.addClass("noTopMargin");
+					
                     var requests = [];
                     if (model.archiveMode) {
                         $.each(model.data.results, function(index, row) {
