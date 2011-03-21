@@ -23,8 +23,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         var tasksListContainer = $(".tasks_list", rootContainer);
         var template = "mytasks_template";
         var detailTemplate = "mytasks_detail_template";
-        var dataURL = "/var/notices/tasks.json";
-        var archiveDataURL = "/var/notices/tasks_archive.json";
+        var dataURL = "/system/myberkeley/caldav?type=VTODO";
         var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/mytasks_filter";
         var widgetName = "mytasks";
     
@@ -109,17 +108,9 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                         break;
                 }
             }
-    
-            var itemStatus = getItemStatus();
-            var excludeRequiredState = "none";
-            if (itemStatus === "required") {
-                excludeRequiredState = "false";
-            } else if (itemStatus === "unrequired") {
-                excludeRequiredState = "true";
-            }
-            return "&startDate=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&endDate=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&excludeRequiredState=" + excludeRequiredState;
+
+            return "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+                    + "&end_date=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
         };
     
         var checkForOverdueTasks = function() {
@@ -157,7 +148,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 rootContainer : rootContainer,
                 widgetName : widgetName,
                 dataURL : dataURL,
-                archiveDataURL : archiveDataURL,
                 filterSettingsURL : filterSettingsURL,
                 template : template,
                 container : tasksListContainer,

@@ -89,13 +89,13 @@
         {for i in results}
             {var isEmpty = false}
             <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
-                    {var dateString = noticeWidgetUtils.formatDate(i['sakai:eventDate'], "M/d")}
+                    {var dateString = noticeWidgetUtils.formatDate(i['DTSTART'], "M/d")}
                     <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
-                    <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['sakai:subject']}">
-                        <span class="ellipsis_text">${i['sakai:subject']}</span>
+                    <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['SUMMARY']}">
+                        <span class="ellipsis_text">${i['SUMMARY']}</span>
                     </td>
                     <td id="myeventstdreq_${i_index}" class="detailTrigger noticewidget_event_required" >
-                        {if i["sakai:required"] === "true"}
+                        {if i["REQUIRED"] === "true"}
 							<span class="required_task_bullet" title="__MSG__THIS_EVENT_IS_REQUIRED__"><span class="fl-offScreen-hidden">__MSG__THIS_EVENT_IS_REQUIRED__</span></span>
 						{else}
                         	&nbsp;                            
@@ -110,14 +110,16 @@
         -->
     </div>
 
+    <!-- TODO what ical props to use for sakai:eventPlace and sakai:authoringbody? -->
+
     <div id="myevents_detail_template" style="display:none"><!--
-        {var dateString = noticeWidgetUtils.formatDate(detail['sakai:eventDate'], "M/d/yy")}
-        {var timeString = noticeWidgetUtils.formatDate(detail['sakai:eventDate'], "h:mmtt")}
+        {var dateString = noticeWidgetUtils.formatDate(detail['DTSTART'], "M/d/yy")}
+        {var timeString = noticeWidgetUtils.formatDate(detail['DTSTART'], "h:mmtt")}
         
         <div class="noticewidget_detail_head">
-            <h3>${detail["sakai:subject"]}</h3>
+            <h3>${detail["SUMMARY"]}</h3>
             <h4 class="event-location">${detail["sakai:eventPlace"]}</h4>
-            <h4 class="event-date">${dateString} at  ${timeString} {if detail["sakai:required"] === "true"}
+            <h4 class="event-date">${dateString} at  ${timeString} {if detail["REQUIRED"] === "true"}
                 __MSG__THIS_EVENT_IS_REQUIRED__
             {/if}</h4>
         </div>

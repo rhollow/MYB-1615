@@ -22,7 +22,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
     var noticeWidgets = {};
 
-    noticeWidgets.DATE_FORMAT_ISO8601 = "yyyy-MM-ddTHH:mm:ss.000zzz";
+    noticeWidgets.DATE_FORMAT_ISO8601 = "yyyyMMddTHHmmssZ";
     noticeWidgets.ONE_DAY = 24 * 60 * 60 * 1000;
     noticeWidgets.BEGINNING_OF_TIME = new Date(2000, 0, 1, 0, 0, 0, 0);
     noticeWidgets.END_OF_TIME = new Date(3000, 0, 1, 0, 0, 0, 0);
@@ -110,13 +110,24 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 }); 
             };
             
-            var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
-            var url = dataURL + "?sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
+            var dataURL = config.dataURL;
+
+            var itemStatus = config.getItemStatus();
+            var mode = "ALL_UNARCHIVED";
+            if (itemStatus === "required") {
+                mode = "REQUIRED";
+            } else if (itemStatus === "unrequired") {
+                mode = "UNREQUIRED";
+            }
+            if ( model.archiveMode ) {
+                mode = "ALL_ARCHIVED";
+            }
+
+            var url = dataURL + "&mode=" + mode + "&sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
             loadingIndicator.show();
             listingTable.hide();
 
-            /* sling-repo storage of notices:
             $.ajax({
                 url: url,
                 cache: false,
@@ -145,45 +156,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
                     window.debug.error("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
-                            " and thrownError=" + thrownError + "\n" + xhr.responseText);
-                }
-            });
-            */
-
-            /* bedework storage of notices: */
-            url = "http://test.media.berkeley.edu:8080/ucaldav/user/vbede/calendar/";
-            var xml = '<?xml version="1.0" encoding="UTF-8"?>' +
-                        '<C:calendar-query xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:D="DAV:">'+
-                        '  <D:prop>'+
-                        '    <D:getetag/>'+
-                        '    <C:calendar-data/>'+
-                        '  </D:prop>'+
-                        '  <C:filter>'+
-                        '    <C:comp-filter name="VCALENDAR">'+
-                        '      <C:comp-filter name="VEVENT">'+
-                        '        <C:time-range start="20110301T000000Z" end="20110331T235959Z"/>'+
-                        '      </C:comp-filter>'+
-                        '    </C:comp-filter>'+
-                        '  </C:filter>'+
-                        '</C:calendar-query>';
-
-            window.debug.error("XML for DAV = " + xml);
-
-            $.ajax({
-                type : "REPORT",
-                username : "vbede",
-                password : "bedework",
-                processData : false,
-                data : xml,
-                dataType : "jsonp",
-                url : url,
-                crossDomain : true,
-                cache : false,
-                success : function(data) {
-                    window.debug.error(data);
-                },
-                error : function(xhr, textStatus, thrownError) {
-                    window.debug.error("Getting events from CalDAV failed for:\n" + url + " with status=" + textStatus +
                             " and thrownError=" + thrownError + "\n" + xhr.responseText);
                 }
             });
