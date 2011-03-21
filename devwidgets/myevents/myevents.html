@@ -7,7 +7,8 @@
     <div class="fl-widget-content s3d-widget-content">
 
         <div class="noticewidget_list_view">
-
+			
+			<div class="showing_archive_msg" style="display:none;">__MSG__ARCHIVE_CAPTION__</div>
             <div class="noticewidget_filter_container">
                 <div class="noticewidget_filter_control_header">
                     <div class="noticewidget_filter_control_indicator closed">&nbsp;</div>
@@ -53,9 +54,10 @@
                 </div>
             </div>
 
-            <div class="noticewidget_listing_loading">__MSG__SEARCHING__</div>
+            <div class="noticewidget_listing_loading noTopMargin">__MSG__SEARCHING__</div>
 
             <table class="noticewidget_listing myevents_listing">
+            	<caption class="fl-offScreen-hidden">__MSG__LIST_CAPTION__</caption>
                 <thead>
                 	<tr>
 	                    <th id="myevents_sortOn_sakai:eventDate" class="noticewidget_listing_sort  dueLine rightbound" title="__MSG__DUE__">__MSG__DUE__</th>
