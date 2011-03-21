@@ -110,20 +110,18 @@
         -->
     </div>
 
-    <!-- TODO what ical props to use for sakai:eventPlace and sakai:authoringbody? -->
-
     <div id="myevents_detail_template" style="display:none"><!--
         {var dateString = noticeWidgetUtils.formatDate(detail['DTSTART'], "M/d/yy")}
         {var timeString = noticeWidgetUtils.formatDate(detail['DTSTART'], "h:mmtt")}
         
         <div class="noticewidget_detail_head">
             <h3>${detail["SUMMARY"]}</h3>
-            <h4 class="event-location">${detail["sakai:eventPlace"]}</h4>
+            <h4 class="event-location">${detail["LOCATION"]}</h4>
             <h4 class="event-date">${dateString} at  ${timeString} {if detail["REQUIRED"] === "true"}
                 __MSG__THIS_EVENT_IS_REQUIRED__
             {/if}</h4>
         </div>
-        <textarea readonly="readonly">${detail["sakai:authoringbody"]}</textarea>
+        <textarea readonly="readonly">${detail["DESCRIPTION"]}</textarea>
         -->
     </div>
 

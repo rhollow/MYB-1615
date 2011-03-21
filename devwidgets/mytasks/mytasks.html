@@ -144,8 +144,6 @@
         -->
     </div>
 
-    <!-- TODO what ical props to use for required, completed, and sakai:body? -->
-
     <div id="mytasks_detail_template" style="display:none"><!--
         {var dateString = noticeWidgetUtils.formatDate(detail['DUE'], "M/d/yy")}
         <div class="noticewidget_detail_head">
@@ -170,7 +168,7 @@
             {/if}
             </h4>
         </div>
-        <textarea readonly="readonly">${detail["sakai:body"]}</textarea>
+        <textarea readonly="readonly">${detail["DESCRIPTION"]}</textarea>
         -->
     </div>
 
