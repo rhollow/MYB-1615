@@ -155,18 +155,11 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             });
         };
     
-		var onArchiveModeChanged = function (archiveMode) {
-			if(!archiveMode){
+		var onModelChange = function (model) {
+			if(!model.archiveMode){
 				checkForOverdueTasks();
 			}
 		};
-		
-		var onDataModifiedByUserCallback = function (archiveMode) {			
-			if(!archiveMode){
-				checkForOverdueTasks();
-			}			
-		};
-		
 		
 	
         var doInit = function() {
@@ -184,13 +177,11 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 buttonMessages : buttonMessages,
                 buildExtraQueryParams : buildExtraQueryParams,
                 getDateRange : getDateRange,
-                getItemStatus : getItemStatus
+                getItemStatus : getItemStatus,
+				onModelChange: onModelChange
             });
-			taskWidget.setArchiveModeChangedCallback(onArchiveModeChanged);
-			taskWidget.setDataModifiedByUserCallback(onDataModifiedByUserCallback);
             taskWidget.init();
             taskWidget.start();
-            checkForOverdueTasks();
         };    
         doInit();
     };

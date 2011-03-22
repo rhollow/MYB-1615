@@ -67,35 +67,14 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
-
-		// EVENTS ---
-
-		// This function is used to notify mytasks.js and myevents.js about archive mode changes
-		var archiveModeChangedCallback = function(archiveMode) {};
-		/**
-		 * Set function to call when archive mode changes
-		 * @param {Object} callback function
-		 */
-		that.setArchiveModeChangedCallback = function(callback){
-			if($.isFunction(callback)){
-				archiveModeChangedCallback = callback;
+		
+		// This function is used to notify mytasks.js and myevents.js about model changes
+		var onModelChange = function(model) {
+			if($.isFunction(config.onModelChange)) {
+				config.onModelChange(model);
 			}
 		};
 		
-		// This function is used to notify mytasks.js and myevents.js when data is modified as a result of user action
-		var dataModifiedByUserCallback = function(archiveMode) {};
-		/**
-		 * Set function to call when data is modified as a result of user action
-		 * @param {Object} callback function
-		 */
-		that.setDataModifiedByUserCallback = function(callback){
-			if($.isFunction(callback)){
-				dataModifiedByUserCallback = callback;
-			}
-		};
-
-		// END OF EVENTS ---
-
         that.init = function() {
             setupListeners();
         };
@@ -165,6 +144,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         if ($.isFunction(callback)) {
                             callback();
                         }
+						// Notify the subscriber about model change
+						onModelChange(model);
                     } else {
                         announceError();
                         window.debug.error("There are no results in the returned data. Data dump:", data);
@@ -273,8 +254,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     }
                                 });
                                 that.updateUI();
-								// Notify the subscriber that data is modified as a result of user action
-								dataModifiedByUserCallback(model.archiveMode);
                             }
                             );
                 });
@@ -313,8 +292,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         } else {
                             filterContainer.show();                            
                         }
-						// Notify the subscriber about mode change
-						archiveModeChangedCallback(model.archiveMode);
                     });
                 });
                 $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
@@ -365,8 +342,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         requests: $.toJSON(requests)
                     }, that.getNotices);
 					
-					// Notify the subscriber that data is modified as a result of user action
-					dataModifiedByUserCallback(model.archiveMode);
                 });
             };
 
@@ -519,6 +494,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
+					// Notify the subscriber about model change
+					onModelChange(model);
                 },
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
