@@ -154,8 +154,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 },
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
-                    window.debug.error("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
-                            " and thrownError=" + thrownError + "\n" + xhr.responseText);
                 }
             });
 
@@ -224,19 +222,23 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".task-completed-checkbox", config.rootContainer).live("click", function() {
                     var rowIndex = this.id.replace(/\w+_/gi, "");
                     var rowData = model.data.results[rowIndex];
-                    var newTaskState = rowData["sakai:taskState"] === "created" ? "completed" : "created";
-                    model.data.results[rowIndex]["sakai:taskState"] = newTaskState;
+                    rowData.isCompleted = !rowData.isCompleted;
+
                     postNotice(
-                            model.data.results[rowIndex]["jcr:path"],
-                    { "sakai:taskState": newTaskState },
+                            config.dataURL,
+                            {
+                                uri : rowData.uri,
+                                isCompleted : rowData.isCompleted,
+                                isArchived : rowData.isArchived
+                            },
                             function() {
                                 // update UI so it reflects the new model state
                                 $.each($(".task-completed-checkbox", config.rootContainer).get(), function(index, element) {
                                     var checkboxIndex = this.id.replace(/\w+_/gi, "");
                                     if (checkboxIndex === rowIndex) {
-                                        element.checked = rowData["sakai:taskState"] === "completed";
+                                        element.checked = rowData["isCompleted"] === true;
 										// We need to remove overdue class from completed tasks and add it again if user unchecks an overdue task 																									
-										if(rowData["sakai:taskState"] === "completed"){
+										if(rowData["isCompleted"] === true){
 											
 											// remove 'overDueTask' CSS class
 											// function parents() travels several levels up to find the row
@@ -247,7 +249,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 											var nowDate = new Date();
 											var dueDate = sakai.api.Util.parseSakaiDate(rowData['sakai:dueDate']);
 											
-											if (dueDate < nowDate && rowData["sakai:archived"] !== "archived"){
+											if (dueDate < nowDate && rowData["isArchived"] !== true){
 												// add 'overDueTask' CSS class if the task is overdue
 												$(this).parents("tr.notice_row").addClass("overDueTask");	
 											}											
@@ -501,8 +503,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 },
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
-                    window.debug.error("POST to " + url + " failed for " + props + " with status =" + textStatus +
-                            " and thrownError = " + thrownError + "\n" + xhr.responseText);
                 },
                 dataType: 'json'
             });
