@@ -11,6 +11,16 @@
     text-align: center;
 }
 
+.showing_archive_msg {
+    background-color: #C4DAE8;
+    color: #000000;
+    font-weight: bold;
+    margin-top: -12px;
+    padding: 6px 0;
+    text-align: center;
+}
+
+
 .s3d-widget .s3d-widget-content {
     padding-bottom: 0;
 }
@@ -19,9 +29,16 @@
 **/
 
 .noticewidget_listing_loading {
-    margin: 5px 0px 0px 20px;
     font-style: italic;
     color: #333;
+	margin-top: -12px;
+	margin-left:20px;
+    padding-top: 6px;
+}
+
+/* Changes div.noticewidget_listing_loading's margin when there is another div visible on top (like filters) */
+.noTopMargin {
+		margin-top: 0 !important;
 }
 
 table.noticewidget_listing {
@@ -35,7 +52,6 @@ table.noticewidget_listing {
 }
 
 .archiveView {
-    margin-top: -12px;
     border-top: solid 1px #666;  
 }
 
