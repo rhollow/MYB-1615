@@ -120,18 +120,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             
             var dataURL = config.dataURL;
 
-            var itemStatus = config.getItemStatus();
-            var mode = "ALL_UNARCHIVED";
-            if (itemStatus === "required") {
-                mode = "REQUIRED";
-            } else if (itemStatus === "unrequired") {
-                mode = "UNREQUIRED";
-            }
-            if ( model.archiveMode ) {
-                mode = "ALL_ARCHIVED";
-            }
-
-            var url = dataURL + "&mode=" + mode + "&sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
+            var url = dataURL + "&sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
             loadingIndicator.show();
             listingTable.hide();

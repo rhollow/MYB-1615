@@ -99,7 +99,16 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 }
             }
 
-            return "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+            var itemStatus = getItemStatus();
+            var mode = "ALL_UNARCHIVED";
+            if (itemStatus === "required") {
+                mode = "REQUIRED";
+            } else if (itemStatus === "unrequired") {
+                mode = "UNREQUIRED";
+            }
+
+            return "&mode=" + mode
+                    + "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
                     + "&end_date=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601);
         };
 

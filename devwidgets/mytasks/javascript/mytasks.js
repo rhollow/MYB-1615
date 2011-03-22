@@ -26,15 +26,15 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         var dataURL = "/system/myberkeley/caldav?type=VTODO";
         var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/mytasks_filter";
         var widgetName = "mytasks";
-    
+
         var getDateRange = function() {
             return $("input[name=mytasks_date_range]:radio:checked", rootContainer).val();
         };
-    
+
         var getItemStatus = function() {
             return $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
         };
-    
+
         var filterSelectionToMessage = function() {
             var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
             var dateRange = getDateRange();
@@ -62,7 +62,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             };
             return msgs[itemStatus][dateRange];
         };
-    
+
         var buttonMessages = {
             viewArchiveButton : {
                 listMode : "VIEW_ARCHIVE",
@@ -73,17 +73,17 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 archiveMode : "YOU_HAVE_NO_TASKS_IN_THE_ARCHIVE"
             }
         };
-    
+
         var buildExtraQueryParams = function(isArchiveMode) {
             var today = new Date();
             today.setHours(0);
             today.setMinutes(0);
             today.setSeconds(0);
             today.setMilliseconds(0);
-    
+
             var startDate = new Date();
             var endDate = new Date();
-    
+
             if (isArchiveMode) {
                 startDate = noticeWidgets.BEGINNING_OF_TIME;
                 endDate = noticeWidgets.END_OF_TIME;
@@ -109,7 +109,19 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 }
             }
 
-            return "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+            var itemStatus = getItemStatus();
+            var mode = "ALL_UNARCHIVED";
+            if (itemStatus === "required") {
+                mode = "REQUIRED";
+            } else if (itemStatus === "unrequired") {
+                mode = "UNREQUIRED";
+            }
+            if (isArchiveMode) {
+                mode = "ALL_ARCHIVED";
+            }
+
+            return "&mode=" + mode
+                    + "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
                     + "&end_date=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
         };
 
@@ -128,7 +140,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 }
             }
         };
-	
+
         var doInit = function() {
             var taskWidget = noticeWidgets.Widget({
                 rootContainer : rootContainer,
@@ -144,11 +156,11 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 buildExtraQueryParams : buildExtraQueryParams,
                 getDateRange : getDateRange,
                 getItemStatus : getItemStatus,
-				onModelChange: onModelChange
+                onModelChange: onModelChange
             });
             taskWidget.init();
             taskWidget.start();
-        };    
+        };
         doInit();
     };
 
