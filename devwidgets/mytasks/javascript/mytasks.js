@@ -131,7 +131,15 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                     if ($.isArray(data.results) && data.results.length > 0) {
                         $(".mytasks_overdue_tasks_msg", rootContainer).show();
                         $(rootContainer).addClass("mytasks_overdue_tasks_exist");
-                    }
+                    } else {
+						
+						if($(".mytasks_overdue_tasks_msg", rootContainer).is(":visible")){
+							$(".mytasks_overdue_tasks_msg", rootContainer).hide();	
+						}
+						if($(rootContainer).is(".mytasks_overdue_tasks_exist")){
+							$(rootContainer).removeClass("mytasks_overdue_tasks_exist");	
+						}						
+					}
                 },
                 error: function(xhr, textStatus, thrownError) {
                     sakai.api.Util.notification.show("",
@@ -143,6 +151,13 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             });
         };
     
+		var onModelChange = function (model) {
+			if(!model.archiveMode){
+				checkForOverdueTasks();
+			}
+		};
+		
+	
         var doInit = function() {
             var taskWidget = noticeWidgets.Widget({
                 rootContainer : rootContainer,
@@ -157,11 +172,11 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 buttonMessages : buttonMessages,
                 buildExtraQueryParams : buildExtraQueryParams,
                 getDateRange : getDateRange,
-                getItemStatus : getItemStatus
+                getItemStatus : getItemStatus,
+				onModelChange: onModelChange
             });
             taskWidget.init();
             taskWidget.start();
-            checkForOverdueTasks();
         };    
         doInit();
     };
