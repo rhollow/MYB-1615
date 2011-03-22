@@ -305,11 +305,16 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     }
                     if (model.detailMode) {
                         model.detailMode = false;
-                        var row = model.data.results[model.currentNotice];
-                        var postData = model.archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
+                        var rowData = model.data.results[model.currentNotice];
+                        rowData.isArchived = !rowData.isArchived;
+
                         postNotice(
-                                row["jcr:path"],
-                                postData,
+                                config.dataURL,
+                                {
+                                    uri : rowData.uri,
+                                    isCompleted : rowData.isCompleted,
+                                    isArchived : rowData.isArchived
+                                },
                                 function() {
                                     that.getNotices();
                                 }
