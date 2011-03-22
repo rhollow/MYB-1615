@@ -95,31 +95,29 @@
 		{var nowDate = new Date()}
         {for i in results}
             {var isEmpty = false}
-			{var dueDate = sakaiUtil.parseSakaiDate(i['DUE'])}
-			{var isArchived = i["ARCHIVED"] === "archived"}
-			{var isCompleted = i["COMPLETED"] === "completed"}
+			{var dueDate = sakaiUtil.parseSakaiDate(i.icalData.DUE)}
             {var overDue = dueDate < nowDate}
-            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if !isArchived && !isCompleted && overDue} overDueTask{/if}">
+            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if !i.isArchived && !i.isCompleted && overDue} overDueTask{/if}">
                     <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
-                    {if i["ARCHIVED"] === "archived"}
+                    {if i.isArchived}
                         <input type="checkbox" class="task-selected-checkbox"
                             id="taskSelected_${i_index}" title="Selected"/>
                     {/if}
                     </td>
-                    <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${noticeWidgetUtils.formatDate(i['DUE'], "M/d")}</td>
-                    <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['SUMMARY']}">
-                        <span class="ellipsis_text">${i['SUMMARY']}</span>
+                    <td id="mytaskstddate_${i_index}" class="dateLine detailTrigger">${noticeWidgetUtils.formatDate(i.icalData.DUE, "M/d")}</td>
+                    <td id="mytaskstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i.icalData.SUMMARY}">
+                        <span class="ellipsis_text">${i.icalData.SUMMARY}</span>
                     </td>
                     <td id="mytaskstdreq_${i_index}" class="detailTrigger">
-                    {if i["REQUIRED"] === "true"}
-						<span class="required_task_bullet" title="__MSG__THIS_TASK_IS_REQUIRED__"><span class="fl-offScreen-hidden">__MSG__THIS_TASK_IS_REQUIRED__</span></span>                        
+                    {if i.isRequired}
+						<span class="required_task_bullet" title="__MSG__THIS_TASK_IS_REQUIRED__"><span class="fl-offScreen-hidden">__MSG__THIS_TASK_IS_REQUIRED__</span></span>
                     {else}
                         &nbsp;
                     {/if}
                     </td>
                     <td class="noticewidget_task_completed">
-                        {if i["ARCHIVED"] === "archived"}
-                            {if i["COMPLETED"] === "completed"}
+                        {if i.isArchived}
+                            {if i.isCompleted}
                                 <img src="/devwidgets/mytasks/images/16-em-check.png" height="16" width="16" alt="__MSG__CHECK_TO_MARK_COMPLETED__" />
                             {else}
                                 &nbsp;
@@ -127,7 +125,7 @@
                         {else}
                             <input type="checkbox" class="task-completed-checkbox"
                                 id="taskDone_${i_index}"
-                                {if i["COMPLETED"] === "completed"}
+                                {if i.isCompleted}
                                     checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
                                 {else}
                                     title="__MSG__CHECK_TO_MARK_COMPLETED__"
@@ -145,12 +143,12 @@
     </div>
 
     <div id="mytasks_detail_template" style="display:none"><!--
-        {var dateString = noticeWidgetUtils.formatDate(detail['DUE'], "M/d/yy")}
+        {var dateString = noticeWidgetUtils.formatDate(detail.icalData.DUE, "M/d/yy")}
         <div class="noticewidget_detail_head">
             <fieldset>
                 <input type="checkbox" class="task-completed-checkbox"
                     id="taskDone_${index}"
-                    {if detail["COMPLETED"] === "completed"}
+                    {if detail.isCompleted}
                         checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
                     {else}
                         title="__MSG__CHECK_TO_MARK_COMPLETED__"
@@ -161,14 +159,14 @@
 				/>
                 <label for="taskDone_${index}">__MSG__COMPLETED__</label>
             </fieldset>
-            <h3>${detail["SUMMARY"]}</h3>
+            <h3>${detail.icalData.SUMMARY}</h3>
             <h4>__MSG__DUE_DATE__ ${dateString} 
-            {if detail["REQUIRED"] === "true"}
+            {if detail.isRequired}
                 __MSG__THIS_TASK_IS_REQUIRED__
             {/if}
             </h4>
         </div>
-        <textarea readonly="readonly">${detail["DESCRIPTION"]}</textarea>
+        <textarea readonly="readonly">${detail.icalData.DESCRIPTION}</textarea>
         -->
     </div>
 

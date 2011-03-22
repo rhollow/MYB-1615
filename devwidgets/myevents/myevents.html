@@ -89,13 +89,13 @@
         {for i in results}
             {var isEmpty = false}
             <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
-                    {var dateString = noticeWidgetUtils.formatDate(i['DTSTART'], "M/d")}
+                    {var dateString = noticeWidgetUtils.formatDate(i.icalData.DTSTART, "M/d")}
                     <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
-                    <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i['SUMMARY']}">
-                        <span class="ellipsis_text">${i['SUMMARY']}</span>
+                    <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i.icalData.SUMMARY}">
+                        <span class="ellipsis_text">${i.icalData.SUMMARY}</span>
                     </td>
                     <td id="myeventstdreq_${i_index}" class="detailTrigger noticewidget_event_required" >
-                        {if i["REQUIRED"] === "true"}
+                        {if i.isRequired}
 							<span class="required_task_bullet" title="__MSG__THIS_EVENT_IS_REQUIRED__"><span class="fl-offScreen-hidden">__MSG__THIS_EVENT_IS_REQUIRED__</span></span>
 						{else}
                         	&nbsp;                            
@@ -111,17 +111,17 @@
     </div>
 
     <div id="myevents_detail_template" style="display:none"><!--
-        {var dateString = noticeWidgetUtils.formatDate(detail['DTSTART'], "M/d/yy")}
-        {var timeString = noticeWidgetUtils.formatDate(detail['DTSTART'], "h:mmtt")}
+        {var dateString = noticeWidgetUtils.formatDate(detail.icalData.DTSTART, "M/d/yy")}
+        {var timeString = noticeWidgetUtils.formatDate(detail.icalData.DTSTART, "h:mmtt")}
         
         <div class="noticewidget_detail_head">
-            <h3>${detail["SUMMARY"]}</h3>
-            <h4 class="event-location">${detail["LOCATION"]}</h4>
-            <h4 class="event-date">${dateString} at  ${timeString} {if detail["REQUIRED"] === "true"}
+            <h3>${detail.icalData.SUMMARY}</h3>
+            <h4 class="event-location">${detail.icalData.LOCATION}</h4>
+            <h4 class="event-date">${dateString} at  ${timeString} {if detail.isRequired}
                 __MSG__THIS_EVENT_IS_REQUIRED__
             {/if}</h4>
         </div>
-        <textarea readonly="readonly">${detail["DESCRIPTION"]}</textarea>
+        <textarea readonly="readonly">${detail.icalData.DESCRIPTION}</textarea>
         -->
     </div>
 
