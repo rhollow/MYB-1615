@@ -23,8 +23,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         var eventsListContainer = $(".events_list", rootContainer);
         var template = "myevents_template";
         var detailTemplate = "myevents_detail_template";
-        var dataURL = "/var/notices/events.json";
-        var archiveDataURL = "/var/notices/events.json";
+        var dataURL = "/system/myberkeley/caldav?type=VEVENT";
         var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/myevents_filter";
         var widgetName = "myevents";
 
@@ -101,15 +100,16 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             }
 
             var itemStatus = getItemStatus();
-            var excludeRequiredState = "none";
+            var mode = "ALL_UNARCHIVED";
             if (itemStatus === "required") {
-                excludeRequiredState = "false";
+                mode = "REQUIRED";
             } else if (itemStatus === "unrequired") {
-                excludeRequiredState = "true";
+                mode = "UNREQUIRED";
             }
-            return "&startDate=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&endDate=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&excludeRequiredState=" + excludeRequiredState;
+
+            return "&mode=" + mode
+                    + "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+                    + "&end_date=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601);
         };
 
         var doInit = function() {
@@ -117,7 +117,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 rootContainer : rootContainer,
                 widgetName : widgetName,
                 dataURL : dataURL,
-                archiveDataURL : archiveDataURL,
                 filterSettingsURL : filterSettingsURL,
                 template : template,
                 container : eventsListContainer,

@@ -22,7 +22,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
     var noticeWidgets = {};
 
-    noticeWidgets.DATE_FORMAT_ISO8601 = "yyyy-MM-ddTHH:mm:ss.000zzz";
+    noticeWidgets.DATE_FORMAT_ISO8601 = "yyyyMMddTHHmmssZ";
     noticeWidgets.ONE_DAY = 24 * 60 * 60 * 1000;
     noticeWidgets.BEGINNING_OF_TIME = new Date(2000, 0, 1, 0, 0, 0, 0);
     noticeWidgets.END_OF_TIME = new Date(3000, 0, 1, 0, 0, 0, 0);
@@ -67,6 +67,14 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
+		
+		// This function is used to notify mytasks.js and myevents.js about model changes
+		var onModelChange = function(model) {
+			if($.isFunction(config.onModelChange)) {
+				config.onModelChange(model);
+			}
+		};
+		
         that.init = function() {
             setupListeners();
         };
@@ -97,7 +105,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         that.getNotices = function(callback) {
-
             /** 
             * uses OEA applyThreeDots function to force the width of the object used for truncation
             */
@@ -111,16 +118,19 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 }); 
             };
             
-            var dataURL = model.archiveMode ? config.archiveDataURL : config.dataURL;
-            var url = dataURL + "?sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
+            var dataURL = config.dataURL;
+
+            var url = dataURL + "&sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
             loadingIndicator.show();
             listingTable.hide();
+
             $.ajax({
                 url: url,
                 cache: false,
                 success: function(data) {
                     loadingIndicator.hide();
+					loadingIndicator.removeClass("noTopMargin");
                     listingTable.show();
                     if (data.results) {
                         model.data = data;
@@ -135,6 +145,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         if ($.isFunction(callback)) {
                             callback();
                         }
+						// Notify the subscriber about model change
+						onModelChange(model);
                     } else {
                         announceError();
                         window.debug.error("There are no results in the returned data. Data dump:", data);
@@ -142,10 +154,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 },
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
-                    window.debug.error("Getting notices failed for:\n" + url + "\ncategory=reminders with status=" + textStatus +
-                            " and thrownError=" + thrownError + "\n" + xhr.responseText);
                 }
             });
+
         };
 
         var setupListeners = function() {
@@ -164,7 +175,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 });                                                                                                       
 
                 $("input:radio", config.rootContainer).live("click", function() {
-                    that.saveFilterSettingsAndGetNotices();
+                    loadingIndicator.addClass("noTopMargin");
+					that.saveFilterSettingsAndGetNotices();
                 });
             };
 
@@ -210,19 +222,23 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".task-completed-checkbox", config.rootContainer).live("click", function() {
                     var rowIndex = this.id.replace(/\w+_/gi, "");
                     var rowData = model.data.results[rowIndex];
-                    var newTaskState = rowData["sakai:taskState"] === "created" ? "completed" : "created";
-                    model.data.results[rowIndex]["sakai:taskState"] = newTaskState;
+                    rowData.isCompleted = !rowData.isCompleted;
+
                     postNotice(
-                            model.data.results[rowIndex]["jcr:path"],
-                    { "sakai:taskState": newTaskState },
+                            config.dataURL,
+                            {
+                                uri : rowData.uri,
+                                isCompleted : rowData.isCompleted,
+                                isArchived : rowData.isArchived
+                            },
                             function() {
                                 // update UI so it reflects the new model state
                                 $.each($(".task-completed-checkbox", config.rootContainer).get(), function(index, element) {
                                     var checkboxIndex = this.id.replace(/\w+_/gi, "");
                                     if (checkboxIndex === rowIndex) {
-                                        element.checked = rowData["sakai:taskState"] === "completed";
+                                        element.checked = rowData["isCompleted"] === true;
 										// We need to remove overdue class from completed tasks and add it again if user unchecks an overdue task 																									
-										if(rowData["sakai:taskState"] === "completed"){
+										if(rowData["isCompleted"] === true){
 											
 											// remove 'overDueTask' CSS class
 											// function parents() travels several levels up to find the row
@@ -233,7 +249,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 											var nowDate = new Date();
 											var dueDate = sakai.api.Util.parseSakaiDate(rowData['sakai:dueDate']);
 											
-											if (dueDate < nowDate && rowData["sakai:archived"] !== "archived"){
+											if (dueDate < nowDate && rowData["isArchived"] !== true){
 												// add 'overDueTask' CSS class if the task is overdue
 												$(this).parents("tr.notice_row").addClass("overDueTask");	
 											}											
@@ -251,23 +267,34 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
                     model.archiveMode = !model.archiveMode;
                     model.detailMode = false;
+					// The code below is called before Ajax request
+					if(model.archiveMode){
+						filterContainer.hide();
+						
+						$(config.rootContainer).removeClass("mytasks_overdue_tasks_exist");
+						$(".mytasks_overdue_tasks_msg", config.rootContainer).hide();
+						
+						// Change table caption
+						$("." + config.widgetName + "_listing caption").text(translate("ARCHIVE_CAPTION"));						
+						$("." + config.widgetName + "_listing").addClass("archiveView");
+					} else {
+						
+						// Hide Archive mode message
+						$(".showing_archive_msg", config.rootContainer).hide();
+						
+						// Change table caption
+						$("." + config.widgetName + "_listing caption").text(translate("LIST_CAPTION"));
+						$("." + config.widgetName + "_listing").removeClass("archiveView");
+					}
+					
                     that.getNotices(function() {
-                        if (model.archiveMode) {
-                            filterContainer.hide();
-                            if(config.widgetName=="mytasks"){                               
-                                $(".mytasks_listing").addClass("archiveView");
-                            }
-                            else{
-                                $(".myevents_listing").addClass("archiveView");
-                            }
+						// The code below is called after data has been received
+                        if (model.archiveMode) {							
+							// Display Archive mode message							
+							$(".showing_archive_msg", config.rootContainer).show();
+							
                         } else {
-                            filterContainer.show();
-                            if(config.widgetName=="mytasks"){
-                                $(".mytasks_listing").removeClass("archiveView");
-                            }
-                            else{
-                                $(".myevents_listing").removeClass("archiveView");
-                            }
+                            filterContainer.show();                            
                         }
                     });
                 });
@@ -278,18 +305,25 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     }
                     if (model.detailMode) {
                         model.detailMode = false;
-                        var row = model.data.results[model.currentNotice];
-                        var postData = model.archiveMode ? { "sakai:archived@Delete": true } : { "sakai:archived": "archived" };
+                        var rowData = model.data.results[model.currentNotice];
+                        rowData.isArchived = !rowData.isArchived;
+
                         postNotice(
-                                row["jcr:path"],
-                                postData,
+                                config.dataURL,
+                                {
+                                    uri : rowData.uri,
+                                    isCompleted : rowData.isCompleted,
+                                    isArchived : rowData.isArchived
+                                },
                                 function() {
                                     that.getNotices();
                                 }
                                 );
                         return;
                     }
-
+					
+					loadingIndicator.addClass("noTopMargin");
+					
                     var requests = [];
                     if (model.archiveMode) {
                         $.each(model.data.results, function(index, row) {
@@ -316,6 +350,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     postNotice(sakai.config.URL.BATCH, {
                         requests: $.toJSON(requests)
                     }, that.getNotices);
+					
                 });
             };
 
@@ -468,11 +503,11 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
+					// Notify the subscriber about model change
+					onModelChange(model);
                 },
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
-                    window.debug.error("POST to " + url + " failed for " + props + " with status =" + textStatus +
-                            " and thrownError = " + thrownError + "\n" + xhr.responseText);
                 },
                 dataType: 'json'
             });

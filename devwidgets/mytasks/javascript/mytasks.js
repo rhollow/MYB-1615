@@ -23,19 +23,18 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         var tasksListContainer = $(".tasks_list", rootContainer);
         var template = "mytasks_template";
         var detailTemplate = "mytasks_detail_template";
-        var dataURL = "/var/notices/tasks.json";
-        var archiveDataURL = "/var/notices/tasks_archive.json";
+        var dataURL = "/system/myberkeley/caldav?type=VTODO";
         var filterSettingsURL = "/~" + sakai.data.me.user.userid + "/private/mytasks_filter";
         var widgetName = "mytasks";
-    
+
         var getDateRange = function() {
             return $("input[name=mytasks_date_range]:radio:checked", rootContainer).val();
         };
-    
+
         var getItemStatus = function() {
             return $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
         };
-    
+
         var filterSelectionToMessage = function() {
             var itemStatus = $("input[name=mytasks_item_status]:radio:checked", rootContainer).val();
             var dateRange = getDateRange();
@@ -63,7 +62,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             };
             return msgs[itemStatus][dateRange];
         };
-    
+
         var buttonMessages = {
             viewArchiveButton : {
                 listMode : "VIEW_ARCHIVE",
@@ -74,17 +73,17 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 archiveMode : "YOU_HAVE_NO_TASKS_IN_THE_ARCHIVE"
             }
         };
-    
+
         var buildExtraQueryParams = function(isArchiveMode) {
             var today = new Date();
             today.setHours(0);
             today.setMinutes(0);
             today.setSeconds(0);
             today.setMilliseconds(0);
-    
+
             var startDate = new Date();
             var endDate = new Date();
-    
+
             if (isArchiveMode) {
                 startDate = noticeWidgets.BEGINNING_OF_TIME;
                 endDate = noticeWidgets.END_OF_TIME;
@@ -109,50 +108,44 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                         break;
                 }
             }
-    
+
             var itemStatus = getItemStatus();
-            var excludeRequiredState = "none";
+            var mode = "ALL_UNARCHIVED";
             if (itemStatus === "required") {
-                excludeRequiredState = "false";
+                mode = "REQUIRED";
             } else if (itemStatus === "unrequired") {
-                excludeRequiredState = "true";
+                mode = "UNREQUIRED";
             }
-            return "&startDate=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&endDate=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&excludeRequiredState=" + excludeRequiredState;
+            if (isArchiveMode) {
+                mode = "ALL_ARCHIVED";
+            }
+
+            return "&mode=" + mode
+                    + "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+                    + "&end_date=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601)
         };
-    
-        var checkForOverdueTasks = function() {
-            // TODO when KERN-1471 is fixed, bundle this request into batch request with the main search
-            var overdueTaskSearchURL = "/var/notices/tasks.json?startDate=" +
-                    Globalization.format(noticeWidgets.BEGINNING_OF_TIME, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&endDate=" + Globalization.format(new Date(), noticeWidgets.DATE_FORMAT_ISO8601) +
-                    "&excludeRequiredState=completed&items=1";
-            $.ajax({
-                url: overdueTaskSearchURL,
-                cache: false,
-                success: function(data) {
-                    if ($.isArray(data.results) && data.results.length > 0) {
-                        $(".mytasks_overdue_tasks_msg", rootContainer).show();
-                        $(rootContainer).addClass("mytasks_overdue_tasks_exist");
+
+        var onModelChange = function (model) {
+            if (!model.archiveMode) {
+                if (model.data.hasOverdueTasks) {
+                    $(".mytasks_overdue_tasks_msg", rootContainer).show();
+                    $(rootContainer).addClass("mytasks_overdue_tasks_exist");
+                } else {
+                    if ($(".mytasks_overdue_tasks_msg", rootContainer).is(":visible")) {
+                        $(".mytasks_overdue_tasks_msg", rootContainer).hide();
                     }
-                },
-                error: function(xhr, textStatus, thrownError) {
-                    sakai.api.Util.notification.show("",
-                            sakai.api.i18n.Widgets.getValueForKey(widgetName, "default", "AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
-                            sakai.api.Util.notification.type.ERROR, false);
-                    window.debug.error("Checking overdue tasks failed for:\n" + overdueTaskSearchURL + "\ncategory=reminders with status=" + textStatus +
-                            " and thrownError=" + thrownError + "\n" + xhr.responseText);
+                    if ($(rootContainer).is(".mytasks_overdue_tasks_exist")) {
+                        $(rootContainer).removeClass("mytasks_overdue_tasks_exist");
+                    }
                 }
-            });
+            }
         };
-    
+
         var doInit = function() {
             var taskWidget = noticeWidgets.Widget({
                 rootContainer : rootContainer,
                 widgetName : widgetName,
                 dataURL : dataURL,
-                archiveDataURL : archiveDataURL,
                 filterSettingsURL : filterSettingsURL,
                 template : template,
                 container : tasksListContainer,
@@ -162,12 +155,12 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 buttonMessages : buttonMessages,
                 buildExtraQueryParams : buildExtraQueryParams,
                 getDateRange : getDateRange,
-                getItemStatus : getItemStatus
+                getItemStatus : getItemStatus,
+                onModelChange: onModelChange
             });
             taskWidget.init();
             taskWidget.start();
-            checkForOverdueTasks();
-        };    
+        };
         doInit();
     };
 
