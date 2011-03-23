@@ -67,6 +67,14 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
+		
+		// This function is used to notify mytasks.js and myevents.js about model changes
+		var onModelChange = function(model) {
+			if($.isFunction(config.onModelChange)) {
+				config.onModelChange(model);
+			}
+		};
+		
         that.init = function() {
             setupListeners();
         };
@@ -136,6 +144,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         if ($.isFunction(callback)) {
                             callback();
                         }
+						// Notify the subscriber about model change
+						onModelChange(model);
                     } else {
                         announceError();
                         window.debug.error("There are no results in the returned data. Data dump:", data);
@@ -331,6 +341,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     postNotice(sakai.config.URL.BATCH, {
                         requests: $.toJSON(requests)
                     }, that.getNotices);
+					
                 });
             };
 
@@ -483,6 +494,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
+					// Notify the subscriber about model change
+					onModelChange(model);
                 },
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
