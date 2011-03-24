@@ -60,21 +60,21 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         var filterContainer = $(".noticewidget_filter_container", config.rootContainer);
-        var filterControl = $(".noticewidget_filter_control", config.rootContainer);        
+        var filterControl = $(".noticewidget_filter_control", config.rootContainer);
         var filterControlContainer = $(".noticewidget_filter", config.rootContainer);
         var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
-        var filterControlHeader = $(".noticewidget_filter_control_header", config.rootContainer);     
+        var filterControlHeader = $(".noticewidget_filter_control_header", config.rootContainer);
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
 
-		
-		// This function is used to notify mytasks.js and myevents.js about model changes
-		var onModelChange = function(model) {
-			if($.isFunction(config.onModelChange)) {
-				config.onModelChange(model);
-			}
-		};
-		
+
+        // This function is used to notify mytasks.js and myevents.js about model changes
+        var onModelChange = function(model) {
+            if ($.isFunction(config.onModelChange)) {
+                config.onModelChange(model);
+            }
+        };
+
         that.init = function() {
             setupListeners();
         };
@@ -105,19 +105,19 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         that.getNotices = function(callback) {
-            /** 
-            * uses OEA applyThreeDots function to force the width of the object used for truncation
-            */
+            /**
+             * uses OEA applyThreeDots function to force the width of the object used for truncation
+             */
             var subjectLines = function() {
                 var subjectCells = $("td.subjectLine", config.rootContainer);
                 var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
                 var currCell = {};
-                $(subjectCells).each(function (){
+                $(subjectCells).each(function () {
                     currCell = $(this);
                     currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 1,whole_word: false}));
-                }); 
+                });
             };
-            
+
             var dataURL = config.dataURL;
 
             var url = dataURL + "&sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
@@ -130,7 +130,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 cache: false,
                 success: function(data) {
                     loadingIndicator.hide();
-					loadingIndicator.removeClass("noTopMargin");
+                    loadingIndicator.removeClass("noTopMargin");
                     listingTable.show();
                     if (data.results) {
                         model.data = data;
@@ -138,15 +138,15 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         config.container.html(sakai.api.Util.TemplateRenderer(config.template, {
                             results : model.data.results,
                             noticeWidgetUtils : noticeWidgets.utils,
-							sakaiUtil : sakai.api.Util
+                            sakaiUtil : sakai.api.Util
                         }));
                         that.updateUI();
                         subjectLines();
                         if ($.isFunction(callback)) {
                             callback();
                         }
-						// Notify the subscriber about model change
-						onModelChange(model);
+                        // Notify the subscriber about model change
+                        onModelChange(model);
                     } else {
                         announceError();
                         window.debug.error("There are no results in the returned data. Data dump:", data);
@@ -161,8 +161,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         var setupListeners = function() {
 
-            var filters = function() {                            
-                filterControlHeader.live("click", function() {                    
+            var filters = function() {
+                filterControlHeader.live("click", function() {
                     if (filterControlContainer.is(":visible")) {
                         filterControlContainer.hide();
                         filterControlIndicator.removeClass("open");
@@ -172,18 +172,18 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         filterControlIndicator.removeClass("closed");
                         filterControlIndicator.addClass("open");
                     }
-                });                                                                                                       
+                });
 
                 $("input:radio", config.rootContainer).live("click", function() {
                     loadingIndicator.addClass("noTopMargin");
-					that.saveFilterSettingsAndGetNotices();
+                    that.saveFilterSettingsAndGetNotices();
                 });
             };
 
-            var sortControls = function() {                
+            var sortControls = function() {
                 $(".noticewidget_listing_sort", config.rootContainer).live("click", function() {
                     var newSortCol = $(this);
-                    var oldSortOn = model.filterSettings.sortOn;                                       
+                    var oldSortOn = model.filterSettings.sortOn;
                     model.filterSettings.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
                     if (oldSortOn != model.filterSettings.sortOn) {
                         model.filterSettings.sortOrder = "ascending";
@@ -226,35 +226,36 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
                     postNotice(
                             config.dataURL,
-                            {
-                                uri : rowData.uri,
-                                isCompleted : rowData.isCompleted,
-                                isArchived : rowData.isArchived
-                            },
+                            { calendars : $.toJSON([
+                                {
+                                    uri : rowData.uri,
+                                    isCompleted : rowData.isCompleted,
+                                    isArchived : rowData.isArchived}
+                            ])},
                             function() {
                                 // update UI so it reflects the new model state
                                 $.each($(".task-completed-checkbox", config.rootContainer).get(), function(index, element) {
                                     var checkboxIndex = this.id.replace(/\w+_/gi, "");
                                     if (checkboxIndex === rowIndex) {
                                         element.checked = rowData["isCompleted"] === true;
-										// We need to remove overdue class from completed tasks and add it again if user unchecks an overdue task 																									
-										if(rowData["isCompleted"] === true){
-											
-											// remove 'overDueTask' CSS class
-											// function parents() travels several levels up to find the row
-											$(this).parents("tr.notice_row").removeClass("overDueTask");											
-											
-										} else {
-											
-											var nowDate = new Date();
-											var dueDate = sakai.api.Util.parseSakaiDate(rowData['sakai:dueDate']);
-											
-											if (dueDate < nowDate && rowData["isArchived"] !== true){
-												// add 'overDueTask' CSS class if the task is overdue
-												$(this).parents("tr.notice_row").addClass("overDueTask");	
-											}											
-										}
-										
+                                        // We need to remove overdue class from completed tasks and add it again if user unchecks an overdue task
+                                        if (rowData["isCompleted"] === true) {
+
+                                            // remove 'overDueTask' CSS class
+                                            // function parents() travels several levels up to find the row
+                                            $(this).parents("tr.notice_row").removeClass("overDueTask");
+
+                                        } else {
+
+                                            var nowDate = new Date();
+                                            var dueDate = sakai.api.Util.parseSakaiDate(rowData['sakai:dueDate']);
+
+                                            if (dueDate < nowDate && rowData["isArchived"] !== true) {
+                                                // add 'overDueTask' CSS class if the task is overdue
+                                                $(this).parents("tr.notice_row").addClass("overDueTask");
+                                            }
+                                        }
+
                                     }
                                 });
                                 that.updateUI();
@@ -267,34 +268,34 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".noticewidget_view_task_archive", config.rootContainer).live("click", function() {
                     model.archiveMode = !model.archiveMode;
                     model.detailMode = false;
-					// The code below is called before Ajax request
-					if(model.archiveMode){
-						filterContainer.hide();
-						
-						$(config.rootContainer).removeClass("mytasks_overdue_tasks_exist");
-						$(".mytasks_overdue_tasks_msg", config.rootContainer).hide();
-						
-						// Change table caption
-						$("." + config.widgetName + "_listing caption").text(translate("ARCHIVE_CAPTION"));						
-						$("." + config.widgetName + "_listing").addClass("archiveView");
-					} else {
-						
-						// Hide Archive mode message
-						$(".showing_archive_msg", config.rootContainer).hide();
-						
-						// Change table caption
-						$("." + config.widgetName + "_listing caption").text(translate("LIST_CAPTION"));
-						$("." + config.widgetName + "_listing").removeClass("archiveView");
-					}
-					
+                    // The code below is called before Ajax request
+                    if (model.archiveMode) {
+                        filterContainer.hide();
+
+                        $(config.rootContainer).removeClass("mytasks_overdue_tasks_exist");
+                        $(".mytasks_overdue_tasks_msg", config.rootContainer).hide();
+
+                        // Change table caption
+                        $("." + config.widgetName + "_listing caption").text(translate("ARCHIVE_CAPTION"));
+                        $("." + config.widgetName + "_listing").addClass("archiveView");
+                    } else {
+
+                        // Hide Archive mode message
+                        $(".showing_archive_msg", config.rootContainer).hide();
+
+                        // Change table caption
+                        $("." + config.widgetName + "_listing caption").text(translate("LIST_CAPTION"));
+                        $("." + config.widgetName + "_listing").removeClass("archiveView");
+                    }
+
                     that.getNotices(function() {
-						// The code below is called after data has been received
-                        if (model.archiveMode) {							
-							// Display Archive mode message							
-							$(".showing_archive_msg", config.rootContainer).show();
-							
+                        // The code below is called after data has been received
+                        if (model.archiveMode) {
+                            // Display Archive mode message
+                            $(".showing_archive_msg", config.rootContainer).show();
+
                         } else {
-                            filterContainer.show();                            
+                            filterContainer.show();
                         }
                     });
                 });
@@ -308,49 +309,53 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         var rowData = model.data.results[model.currentNotice];
                         rowData.isArchived = !rowData.isArchived;
 
-                        postNotice(
-                                config.dataURL,
-                                {
-                                    uri : rowData.uri,
-                                    isCompleted : rowData.isCompleted,
-                                    isArchived : rowData.isArchived
-                                },
+                        postNotice(config.dataURL,
+                                { calendars : $.toJSON([
+                                    {
+                                        uri : rowData.uri,
+                                        isCompleted : rowData.isCompleted,
+                                        isArchived : rowData.isArchived
+                                    }
+                                ]) },
                                 function() {
                                     that.getNotices();
                                 }
                                 );
                         return;
                     }
-					
-					loadingIndicator.addClass("noTopMargin");
-					
-                    var requests = [];
+
+                    loadingIndicator.addClass("noTopMargin");
+
+                    var calendars = [];
                     if (model.archiveMode) {
-                        $.each(model.data.results, function(index, row) {
+                        $.each(model.data.results, function(index, rowData) {
                             var selectionBox = $("#mytaskstdselect_" + index + " input");
                             if (selectionBox.get()[0].checked) {
-                                requests[requests.length] = {
-                                    url : row["jcr:path"],
-                                    method : "POST",
-                                    parameters : { "sakai:archived@Delete": true }
+                                rowData.isArchived = false;
+                                calendars[calendars.length] = {
+                                    uri : rowData.uri,
+                                    isCompleted : rowData.isCompleted,
+                                    isArchived : rowData.isArchived
                                 };
                             }
                         });
                     } else {
-                        $.each(model.data.results, function(index, row) {
-                            if (row["sakai:taskState"] === "completed") {
-                                requests[requests.length] = {
-                                    url : row["jcr:path"],
-                                    method : "POST",
-                                    parameters : { "sakai:archived": "archived" }
+                        $.each(model.data.results, function(index, rowData) {
+                            if (rowData.isCompleted) {
+                                rowData.isArchived = true;
+                                calendars[calendars.length] = {
+                                    uri : rowData.uri,
+                                    isCompleted : rowData.isCompleted,
+                                    isArchived : rowData.isArchived
                                 };
                             }
                         });
                     }
-                    postNotice(sakai.config.URL.BATCH, {
-                        requests: $.toJSON(requests)
+
+                    postNotice(config.dataURL, {
+                        calendars: $.toJSON(calendars)
                     }, that.getNotices);
-					
+
                 });
             };
 
@@ -361,7 +366,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             archiveControls();
 
         };
-        
+
         that.updateUI = function() {
 
             var archiveControls = function() {
@@ -407,15 +412,15 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     parent.removeClass("s3d-button-primary");
                 }
             };
-            
+
             var scroller = function() {
                 var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
                 tbody.toggleClass("scroller", (tbody.height() > 150));
             };
-            
-            var filterStatus = function() {                                         
+
+            var filterStatus = function() {
                 $(".noticewidget_filter_header", config.rootContainer).html(translate("FILTER"));
-                $(".noticewidget_filter_message", config.rootContainer).html(" "+translate(config.convertFilterStateToMessage()));
+                $(".noticewidget_filter_message", config.rootContainer).html(" " + translate(config.convertFilterStateToMessage()));
             };
 
             var showCurrentDetail = function() {
@@ -424,7 +429,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     detail : model.data.results[model.currentNotice],
                     index : model.currentNotice,
                     noticeWidgetUtils : noticeWidgets.utils,
-					archiveMode: model.archiveMode
+                    archiveMode: model.archiveMode
                 }));
                 if (model.currentNotice < model.data.results.length - 1) {
                     $(".notice-next", config.rootContainer).removeClass("disabled");
@@ -444,24 +449,24 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 if (model.detailMode) {
                     showCurrentDetail();
                     listViewContainer.hide();
-					
-					var returnLinkMsg;
-					if(model.archiveMode){
-						if(config.widgetName=="mytasks"){                               
+
+                    var returnLinkMsg;
+                    if (model.archiveMode) {
+                        if (config.widgetName == "mytasks") {
                             returnLinkMsg = translate("RETURN_TO_ARCHIVED_TASK_LIST");
                         } else {
                             returnLinkMsg = translate("RETURN_TO_PAST_EVENT_LIST");
                         }
-					} else {
-						if(config.widgetName=="mytasks"){                               
+                    } else {
+                        if (config.widgetName == "mytasks") {
                             returnLinkMsg = translate("RETURN_TO_TASK_LIST");
-                        } else{
+                        } else {
                             returnLinkMsg = translate("RETURN_TO_EVENT_LIST");
-                        }						
-					}
-					 
-					$("span.noticewidget_detail_return_link_msg", config.rootContainer).html(" "+returnLinkMsg);
-					
+                        }
+                    }
+
+                    $("span.noticewidget_detail_return_link_msg", config.rootContainer).html(" " + returnLinkMsg);
+
                     detailViewContainer.show();
                 } else {
                     listViewContainer.show();
@@ -480,12 +485,12 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"), config.rootContainer);
 
             // remove sort arrows from all table header columns
-			$(".noticewidget_listing." + config.widgetName + "_listing thead th", config.rootContainer).each(function(){
-            	$(this).removeClass("ascending").removeClass("descending");
+            $(".noticewidget_listing." + config.widgetName + "_listing thead th", config.rootContainer).each(function() {
+                $(this).removeClass("ascending").removeClass("descending");
             });
 
-			// add sort arrow to the current column
-			currentSortCol.addClass(model.filterSettings.sortOrder);
+            // add sort arrow to the current column
+            currentSortCol.addClass(model.filterSettings.sortOrder);
 
             // update the radio buttons
             var dateRangeRadio = $("#" + config.widgetName + "_date_range_" + model.filterSettings.dateRange);
@@ -503,8 +508,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     if ($.isFunction(callback)) {
                         callback();
                     }
-					// Notify the subscriber about model change
-					onModelChange(model);
+                    // Notify the subscriber about model change
+                    onModelChange(model);
                 },
                 error: function(xhr, textStatus, thrownError) {
                     announceError();
