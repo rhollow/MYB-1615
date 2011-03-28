@@ -491,7 +491,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             // remove sort arrows from all table header columns
             $(".noticewidget_listing." + config.widgetName + "_listing thead th", config.rootContainer).each(function() {
-                $(this).removeClass("ascending").removeClass("descending");
+                $(this).removeClass("ASC").removeClass("DESC");
             });
 
             // add sort arrow to the current column
