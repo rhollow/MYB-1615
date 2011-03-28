@@ -53,7 +53,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             currentNotice : 0,
             filterSettings : {
                 sortOn : config.defaultSortOn,
-                sortOrder : "ascending",
+                sortOrder : "ASC",
                 dateRange : config.getDateRange(),
                 itemStatus : config.getItemStatus()
             }
@@ -84,6 +84,11 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 if (success) {
                     // user has saved filter prefs, use 'em
                     model.filterSettings = data;
+                    if ( model.filterSettings.sortOn.indexOf("sakai:") > -1 ) {
+                        // obsolete filter critiera; revert to default
+                        model.filterSettings.sortOn = config.defaultSortOn;
+                        model.filterSettings.sortOrder = "ASC";
+                    }
                     updateFilterControls();
                     that.getNotices(callback);
                 } else {
@@ -120,7 +125,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             var dataURL = config.dataURL;
 
-            var url = dataURL + "&sortOn=" + model.filterSettings.sortOn + "&sortOrder=" + model.filterSettings.sortOrder
+            var url = dataURL + "&sort=" + model.filterSettings.sortOn + "_" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
             loadingIndicator.show();
             listingTable.hide();
@@ -186,9 +191,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     var oldSortOn = model.filterSettings.sortOn;
                     model.filterSettings.sortOn = newSortCol.get()[0].id.replace(/\w+_sortOn_/gi, "");
                     if (oldSortOn != model.filterSettings.sortOn) {
-                        model.filterSettings.sortOrder = "ascending";
+                        model.filterSettings.sortOrder = "ASC";
                     } else {
-                        model.filterSettings.sortOrder = model.filterSettings.sortOrder === "ascending" ? "descending" : "ascending";
+                        model.filterSettings.sortOrder = model.filterSettings.sortOrder === "ASC" ? "DESC" : "ASC";
                     }
                     that.saveFilterSettingsAndGetNotices();
                 });
@@ -248,7 +253,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                         } else {
 
                                             var nowDate = new Date();
-                                            var dueDate = sakai.api.Util.parseSakaiDate(rowData['sakai:dueDate']);
+                                            var dueDate = sakai.api.Util.parseSakaiDate(rowData['DUE']);
 
                                             if (dueDate < nowDate && rowData["isArchived"] !== true) {
                                                 // add 'overDueTask' CSS class if the task is overdue
