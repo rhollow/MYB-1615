@@ -935,9 +935,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 var newMessage={};
 
                 // Common fields.
-                newMessage["sakai:type"] = message["sakai:type"];
                 newMessage["sakai:to"] = message["sakai:to"];
-                newMessage["sakai:from"] = message["sakai:from"];
                 newMessage["sakai:subject"] = "Copy of "+message["sakai:subject"];
                 newMessage["sakai:body"] = message["sakai:body"];
                 newMessage["sakai:authoringbody"] = message["sakai:authoringbody"];
@@ -946,17 +944,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 newMessage["sakai:messagebox"] = toWhere;
                 newMessage["sakai:sendDate"] = message["sakai:sendDate"];
                 newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
-                newMessage["sakai:category"] = message["sakai:category"];
+                newMessage["category"] = message["category"];
                 newMessage["sakai:validated"] = message["sakai:validated"];
                 newMessage["sakai:validated@TypeHint"] = "Boolean";
 
                 // Is it required (a reminder)?
-                if(newMessage["sakai:category"]=="reminder"){
+                if(newMessage["category"]=="reminder"){
                     // Is it a task?
                     if(message["sakai:dueDate"]!=null){
                         newMessage["sakai:dueDate"] = message["sakai:dueDate"];
                         newMessage["sakai:dueDate@TypeHint"] = message["sakai:dueDate@TypeHint"];
-                        newMessage["sakai:taskState"] = message["sakai:taskState"];
                     }
                     // Or is it an event?
                     else{
