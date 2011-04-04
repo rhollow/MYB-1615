@@ -666,9 +666,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         $(messageEventCheck).attr("checked", "checked");
                         $(".cn-event").show();   
                                           
-                        var hours = message["sakai:eventHour"];
-                        var minutes = message["sakai:eventMin"];
-                        var AMPM = message["sakai:eventAMPM"];
+                        var hours = message.eventTimeUXState["eventHour"];
+                        var minutes = message.eventTimeUXState["eventMin"];
+                        var AMPM = message.eventTimeUXState["eventAMPM"];
                                                                                                      
                         eventTimeInit(hours, minutes, AMPM);
                     }                                                                                            
@@ -710,10 +710,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     $(messageEventCheck).attr("checked", "checked");
                     $(".cn-event").show();   
 
-                    // TODO chris find a way to support this functionality
-                    var hours = message["sakai:eventHour"];
-                    var minutes = message["sakai:eventMin"];
-                    var AMPM = message["sakai:eventAMPM"];
+                    var hours = message.eventTimeUXState["eventHour"];
+                    var minutes = message.eventTimeUXState["eventMin"];
+                    var AMPM = message.eventTimeUXState["eventAMPM"];
                                                                                                  
                     eventTimeInit(hours, minutes, AMPM);
                 }   
@@ -983,13 +982,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             if(message.calendarWrapper.icalData.LOCATION!=null){
                 return false;           
             }           
-            else if (message["sakai:eventMin"]!=null) {               
+            else if (message.eventTimeUXState["eventMin"]!=null) {
                 return false;               
             }
-            else if (message["sakai:eventHour"]!=null) {                
+            else if (message.eventTimeUXState["eventHour"]!=null) {
                 return false;
             }                   
-            else if (message["sakai:AMPM"]!=null) {               
+            else if (message.eventTimeUXState["eventAMPM"]!=null) {
                 return false; 
             }                                         
             return true;
@@ -1009,10 +1008,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             var toPost = {
                 "dynamicListID": msgTo,
                 "sendState": "pending",
-                "messageBox": box,
+                "sakai:messagebox": box,
                 // TODO chris figure out whether to store validated or not
 				"sakai:validated": isValidated,
 				"sakai:validated@TypeHint": "Boolean",
+                "eventTimeUXState" : {},
                 calendarWrapper : {
                     uri : null,
                     etag : formatISO8601(new Date()),
@@ -1064,13 +1064,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         else {
                             startDate.setHours($(messageEventTimeHour).val());
                         }
-                        toPost.calendarWrapper.icalData.DTSTART = startDate.toString();
+                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
                     }
                     // Otherwise, we need to check for and save the time information in case the user filled this out.
                     else{
-                        toPost["sakai:eventMin"] = $(messageEventTimeMinute).val();
-                        toPost["sakai:eventAMPM"] = $(messageEventTimeAMPM).val();
-                        toPost["sakai:eventHour"] = $(messageEventTimeHour).val();
+                        toPost.eventTimeUXState["eventMin"] = $(messageEventTimeMinute).val();
+                        toPost.eventTimeUXState["eventAMPM"] = $(messageEventTimeAMPM).val();
+                        toPost.eventTimeUXState["eventHour"] = $(messageEventTimeHour).val();
                     }
                     toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
                 }                    
@@ -1096,13 +1096,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         else {
                             startDate.setHours($(messageEventTimeHour).val());
                         }
-                        toPost.calendarWrapper.icalData.DTSTART = startDate.toString();
+                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
                     }
                     // Otherwise, we need to check for and save the time information in case the user filled this out.
                     else{
-                        toPost["sakai:eventMin"] = $(messageEventTimeMinute).val();
-                        toPost["sakai:eventAMPM"] = $(messageEventTimeAMPM).val();
-                        toPost["sakai:eventHour"] = $(messageEventTimeHour).val();
+                        toPost.eventTimeUXState["eventMin"] = $(messageEventTimeMinute).val();
+                        toPost.eventTimeUXState["eventAMPM"] = $(messageEventTimeAMPM).val();
+                        toPost.eventTimeUXState["eventHour"] = $(messageEventTimeHour).val();
                     }
                     toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
                 }                                                   
@@ -1133,8 +1133,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             if (copyCheck) {
                 toPost.calendarWrapper.icalData.SUMMARY = "Copy of " + toPost.calendarWrapper.icalData.SUMMARY;
             }
-
-            debug.log("Posting ajax data: ", toPost);
 
             // Post all the data in an Ajax call.
             $.ajax({
