@@ -1,0 +1,60 @@
+{
+    "college": "COE",
+    "undergraduates": {
+        "majors": {
+            "title": "Majors",
+            "select_all_option_name": "All CED undergraduates",
+            "select_one_or_more_option_name": "CED Undergraduates by Major",
+            "items_array": [{
+                "id": "ARCH1",
+                "name": "Architecture1"
+            },
+			{
+                "id": "LARCH1",
+                "name": "Landscape Architecture"
+            },
+			{
+                "id": "USTUD",
+                "name": "Urban Studies"
+            },
+			{
+                "id": "INDIV",
+                "name": "Individual"
+            }
+            
+			]
+        }
+    },
+    "graduates": {
+        "programs": {
+            "title": "Programs",
+            "select_all_option_name": "All CED Graduate Students",
+            "select_one_or_more_option_name": "CED Graduate Students by Program",
+            "items_array": [{
+                "id": "ARCH2",
+                "name": "Architecture"
+            },
+			{
+                "id": "CITYREGPLAN",
+                "name": "City and Regional Planning"
+            },
+			{
+                "id": "DESIGN",
+                "name": "Design"
+            },
+			{
+                "id": "LANDARCHENVPLAN",
+                "name": "Landscape Architecture and Environmental Planning"
+            },
+			{
+                "id": "URBDES",
+                "name": "Urban Design"
+            },
+			{
+                "id": "LTD",
+                "name": "Limited"
+            }
+            ]
+        }
+    }
+}
