@@ -792,7 +792,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
                 var txt = "";
                 if (pathToMessages.length === 1) {
-                    txt = $(inboxGeneralMessagesMoved_1).text()+toWhere+".";
+                    txt = $(inboxGeneralMessagesMoved_1).text()+" "+toWhere+".";
                 }
                 else {
                     txt = pathToMessages.length+" "+$(inboxGeneralMessagesMoved_x).text()+" "+toWhere+".";
