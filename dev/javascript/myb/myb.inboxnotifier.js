@@ -479,7 +479,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 response.results[j].subject = response.results[j].calendarWrapper.icalData.SUMMARY;
                 response.results[j].body = response.results[j].calendarWrapper.icalData.DESCRIPTION;
                 response.results[j].messagebox = response.results[j]["sakai:messagebox"];
-                response.results[j].validated = response.results[j]["sakai:validated"];
+                response.results[j].validated = response.results[j].uxState.validated;
                 response.results[j] = formatMessage(response.results[j]);
             }
 

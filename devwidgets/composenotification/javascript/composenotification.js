@@ -677,9 +677,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         $(messageEventCheck).attr("checked", "checked");
                         $(".cn-event").show();
 
-                        var hours = message.eventTimeUXState["eventHour"];
-                        var minutes = message.eventTimeUXState["eventMin"];
-                        var AMPM = message.eventTimeUXState["eventAMPM"];
+                        var hours = message.uxState["eventHour"];
+                        var minutes = message.uxState["eventMin"];
+                        var AMPM = message.uxState["eventAMPM"];
 
                         eventTimeInit(hours, minutes, AMPM);
                     }
@@ -721,9 +721,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     $(messageEventCheck).attr("checked", "checked");
                     $(".cn-event").show();
 
-                    var hours = message.eventTimeUXState["eventHour"];
-                    var minutes = message.eventTimeUXState["eventMin"];
-                    var AMPM = message.eventTimeUXState["eventAMPM"];
+                    var hours = message.uxState["eventHour"];
+                    var minutes = message.uxState["eventMin"];
+                    var AMPM = message.uxState["eventAMPM"];
 
                     eventTimeInit(hours, minutes, AMPM);
                 }
@@ -993,13 +993,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             if (message.calendarWrapper.icalData.LOCATION != null) {
                 return false;
             }
-            else if (message.eventTimeUXState["eventMin"] != null) {
+            else if (message.uxState["eventMin"] != null) {
                 return false;
             }
-            else if (message.eventTimeUXState["eventHour"] != null) {
+            else if (message.uxState["eventHour"] != null) {
                 return false;
             }
-            else if (message.eventTimeUXState["eventAMPM"] != null) {
+            else if (message.uxState["eventAMPM"] != null) {
                 return false;
             }
             return true;
@@ -1020,10 +1020,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 "dynamicListID": msgTo,
                 "sendState": "pending",
                 "sakai:messagebox": box,
-                // TODO chris figure out whether to store validated or not
-                "sakai:validated": isValidated,
-                "sakai:validated@TypeHint": "Boolean",
-                "eventTimeUXState" : {},
+                "uxState" : {
+                    "validated" : isValidated
+                },
                 calendarWrapper : {
                     uri : null,
                     etag : formatISO8601(new Date()),
@@ -1079,9 +1078,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     }
                     // Otherwise, we need to check for and save the time information in case the user filled this out.
                     else {
-                        toPost.eventTimeUXState["eventMin"] = $(messageEventTimeMinute).val();
-                        toPost.eventTimeUXState["eventAMPM"] = $(messageEventTimeAMPM).val();
-                        toPost.eventTimeUXState["eventHour"] = $(messageEventTimeHour).val();
+                        toPost.uxState["eventMin"] = $(messageEventTimeMinute).val();
+                        toPost.uxState["eventAMPM"] = $(messageEventTimeAMPM).val();
+                        toPost.uxState["eventHour"] = $(messageEventTimeHour).val();
                     }
                     toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
                 }
@@ -1111,9 +1110,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     }
                     // Otherwise, we need to check for and save the time information in case the user filled this out.
                     else {
-                        toPost.eventTimeUXState["eventMin"] = $(messageEventTimeMinute).val();
-                        toPost.eventTimeUXState["eventAMPM"] = $(messageEventTimeAMPM).val();
-                        toPost.eventTimeUXState["eventHour"] = $(messageEventTimeHour).val();
+                        toPost.uxState["eventMin"] = $(messageEventTimeMinute).val();
+                        toPost.uxState["eventAMPM"] = $(messageEventTimeAMPM).val();
+                        toPost.uxState["eventHour"] = $(messageEventTimeHour).val();
                     }
                     toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
                 }
