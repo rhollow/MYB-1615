@@ -555,7 +555,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Gets all the messages from the JCR.
          */
         getAllMessages = function(callback){
-            var url = "/var/notifications/search?userid=" + me.user.userid + "&box=" + selectedType;
+            var url = "/var/notifications/search?box=" + selectedType;
 
             $.ajax({
                 url: url,
