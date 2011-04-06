@@ -922,41 +922,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 var url = pathToMessages[d];
                 var pieces = url.split("/");
                 var message = getMessageWithId(pieces[pieces.length-1]);
-                var newMessage={};
 
-                // Common fields.
-                newMessage["sakai:to"] = message["sakai:to"];
-                newMessage["sakai:subject"] = "Copy of "+message["sakai:subject"];
-                newMessage["sakai:body"] = message["sakai:body"];
-                newMessage["sakai:authoringbody"] = message["sakai:authoringbody"];
-                newMessage["sakai:sendstate"] = message["sakai:sendstate"];
-                newMessage["sakai:read"] = message["sakai:read"];
+                // clone the old message
+                var newMessage = $.extend(true, {}, message);
+
+                // and replace some of its fields
+                newMessage.calendarWrapper.icalData.SUMMARY = "Copy of " + message.calendarWrapper.icalData.SUMMARY;
                 newMessage["sakai:messagebox"] = toWhere;
-                newMessage["sakai:sendDate"] = message["sakai:sendDate"];
-                newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
-                newMessage["category"] = message["category"];
-                newMessage["sakai:validated"] = message["sakai:validated"];
-                newMessage["sakai:validated@TypeHint"] = "Boolean";
-
-                // Is it required (a reminder)?
-                if(newMessage["category"]=="reminder"){
-                    // Is it a task?
-                    if(message["sakai:dueDate"]!=null){
-                        newMessage["sakai:dueDate"] = message["sakai:dueDate"];
-                        newMessage["sakai:dueDate@TypeHint"] = message["sakai:dueDate@TypeHint"];
-                    }
-                    // Or is it an event?
-                    else{
-                        newMessage["sakai:eventDate"] = message["sakai:eventDate"];
-                        newMessage["sakai:eventDate@TypeHint"] = message["sakai:eventDate@TypeHint"];
-                        newMessage["sakai:eventPlace"] = message["sakai:eventPlace"];
-                    }
-                }
+                delete newMessage["id"];
+                delete newMessage["jcr:path"];
+                delete newMessage["jcr:name"];
 
                 $.ajax({
-                    url: "/user/" + me.user.userid + "/message.create.html",
+                    url: "/user/" + me.user.userid + "/.myb-notificationstore.html",
                     type: "POST",
-                    data: newMessage,
+                    data: { notification : $.toJSON(newMessage) },
                     success: function(data){
                         copied++;
                         if (copied === toCopy) {
