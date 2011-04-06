@@ -632,7 +632,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     // It's a task.
                     $(messageTaskCheck).attr("checked", true);
                     $(".cn-task").show();                         
-                    taskDate = sakai.api.Util.parseSakaiDate(messagecalendarWrapper.icalData.DUE);
+                    taskDate = sakai.api.Util.parseSakaiDate(message.calendarWrapper.icalData.DUE);
                     $(messageTaskDueDate).datepicker("setDate", taskDate);                   
                 }                
                 else if (!check){                                  
@@ -681,7 +681,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                  $("#must-be-req").show();
                 // Though not required, it could still be an event, so we should check 
                 // and fill out the fields if necessary and show the correct page elements.
-                if(messagecalendarWrapper.icalData.DTSTART!=null){
+                if(message.calendarWrapper.icalData.DTSTART!=null){
                     $(messageReminderCheckbox).attr("checked", "checked");
                     $(messageReminderCheck).show();
                     $(messageEventCheck).attr("checked", "checked");
@@ -1124,11 +1124,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var postNotification = function (toPost, successCallback, original, copyCheck, msgTxt) {           
             var url = "/user/" + me.user.userid + "/.myb-notificationstore.html";
-            
-            // Are moving an existing notification?            
-            if (original !== null) {                
-                url = original["jcr:path"];                
-            }   
+
             // Are we creating a copy of an existing notification?
             if (copyCheck) {
                 toPost.calendarWrapper.icalData.SUMMARY = "Copy of " + toPost.calendarWrapper.icalData.SUMMARY;
