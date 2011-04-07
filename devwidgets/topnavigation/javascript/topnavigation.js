@@ -89,6 +89,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         var $search_group = $("#search_group");
         var $search_group_text = $("#search_group_text");
         var searchFocus = false;
+        var presenceInterval = false;
 
         // Containers
         var exploreNavigationContainer = "#explore_nav_container";
@@ -483,13 +484,11 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             $.ajax({
                 url: sakai.config.URL.PRESENCE_SERVICE,
                 type: "POST",
-                success: function(){
-                    setTimeout(setPresence, 120000);
-                },
-                error: function() {
+                data: data,
+                error: function(xhr) {
+                    clearInterval(presenceInterval);
                     $(window).trigger("user-logged-out");
-                },
-                data: data
+                }
             });
         };
 
@@ -606,10 +605,18 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             // Set presence and bind things
             addBinding();
             getCountUnreadMessages();
-            setPresence();
 
-            // Get chat status
-            getChatStatus();
+
+            // If chat is disabled hide chat status
+            if (!sakai.config.enableChat){
+                $("#topnavigation_chat_status").hide();
+                $("#topnavigation_chat_status_menu").hide();
+            } else {
+                presenceInterval = setInterval(setPresence, 12000);
+
+                // Get chat status
+                getChatStatus();
+            }
         };
 
         if (sakai.data.me.user.anon) {
