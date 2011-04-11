@@ -327,9 +327,9 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
         getAllMessages : function(box, category, messagesPerPage, currentPage, sortBy, sortOrder, callback) {
             var url = "";
             if (category) {
-                url = sakai_conf.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + category + "&items=" + messagesPerPage + "&page=" + currentPage + "&sortBy=" + sortBy + "&sortOrder=" + sortOrder;
+                url = sakai_conf.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + category + "&items=" + messagesPerPage + "&page=" + currentPage + "&sortOn=" + sortBy + "&sortOrder=" + sortOrder;
             } else {
-                url = sakai_conf.URL.MESSAGE_BOX_SERVICE + "?box=" + box + "&items=" + messagesPerPage + "&page=" + currentPage + "&sortBy=" + sortBy + "&sortOrder=" + sortOrder;
+                url = sakai_conf.URL.MESSAGE_BOX_SERVICE + "?box=" + box + "&items=" + messagesPerPage + "&page=" + currentPage + "&sortOn=" + sortBy + "&sortOrder=" + sortOrder;
             }
             $.ajax({
                 url: url,
@@ -356,7 +356,7 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
                 dataType: "json",
                 success: function(data){
                     if ($.isFunction(callback)) {
-                        sakai_user.getUser(data["sakai:from"], function(profiledata){
+                        sakai_user.getUser(data["sakai:from"], function(success,profiledata){
                             data.userFrom = [];
                             data.userFrom[0] = profiledata;
                             callback(data);

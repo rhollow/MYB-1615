@@ -162,7 +162,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          */
         var getMimeType = function(file) {
             var mimetype = "";
-            mimetype = file["mimeType"] || "";
+            mimetype = file["_mimeType"] || "";
             return mimetype;
         };
 
@@ -182,7 +182,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 "mimetype": mimetype,
                 "description": result["sakai:description"] || "",
                 "path": "/p/" + (name || result['jcr:name']),
-                "fileSize": sakai.api.Util.convertToHumanReadableFileSize(result["length"]),
+                "fileSize": sakai.api.Util.convertToHumanReadableFileSize(result["_length"]),
                 "link": "/p/" + (name || result['jcr:name']) + "/" + result['sakai:pooled-content-file-name'],
                 "extension": result['sakai:fileextension']
             };
@@ -380,28 +380,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     data[data.length] = item;
                 }
             }
-
-            $.ajax({
-                url: sakai.config.URL.BATCH,
-                traditional: true,
-                type: "POST",
-                cache: false,
-                data: {
-                    requests: $.toJSON(data)
-                }
-            });
+            sakai.api.Server.batch(data, null, false, null, false);
         };
 
         var registerVideo = function(videoBatchData){
-            $.ajax({
-                url: sakai.config.URL.BATCH,
-                traditional: true,
-                type: "POST",
-                cache: false,
-                data: {
-                    requests: $.toJSON(videoBatchData)
-                }
-            });
+            sakai.api.Server.batch(videoBatchData, null, false, null, false);
         };
 
         /**

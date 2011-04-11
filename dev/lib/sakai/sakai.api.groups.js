@@ -363,7 +363,7 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
                 }
 
                 // issue the BATCH POST
-                sakai_serv.batch($.toJSON(batchRequests), function(success, data) {
+                sakai_serv.batch(batchRequests, function(success, data) {
                     if (success) {
                         // update group context and call callback
                         if(sakai_global.currentgroup && sakai_global.currentgroup.data && sakai_global.currentgroup.data.authprofile) {
@@ -437,8 +437,11 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
             if (userID && typeof(userID) === "string" &&
                 groupID && typeof(groupID) === "string") {
                 $.ajax({
-                    url: "/~" + groupID + "/joinrequests.create.html?userid=" + userID,
+                    url: "/~" + groupID + "/joinrequests.create.html",
                     type: "POST",
+                    data: {
+                        userid: userID
+                    },
                     success: function (data) {
                         if ($.isFunction(callback)) {
                             callback(true);
@@ -546,7 +549,7 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
          */
         getMembers : function(groupID, callback) {
             $.ajax({
-                url: "/system/userManager/group/" + groupID + ".members.detailed.json",
+                url: "/system/userManager/group/" + groupID + ".members.json",
                 success: function(data) {
                     if ($.isFunction(callback)) {
                         callback(true, data);
@@ -570,7 +573,7 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
          */
         getManagers : function(groupID, callback) {
             $.ajax({
-                url: "/system/userManager/group/" + groupID + "-managers.members.detailed.json",
+                url: "/system/userManager/group/" + groupID + "-managers.members.json",
                 success: function(data) {
                     if ($.isFunction(callback)) {
                         callback(true, data);
@@ -615,7 +618,7 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
 
             if (reqData.length > 0) {
                 // batch request to add users to group
-                sakai_serv.batch($.toJSON(reqData), function(success, data) {
+                sakai_serv.batch(reqData, function(success, data) {
                     if (!success) {
                         debug.error("Could not add users to group");
                     }
@@ -648,7 +651,7 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
 
             if (reqData.length > 0) {
                 // batch request to add content to group
-                sakai_serv.batch($.toJSON(reqData), function(success, data) {
+                sakai_serv.batch(reqData, function(success, data) {
                     if (!success) {
                         debug.error("Error adding content to the group");
                     }
@@ -687,7 +690,7 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
 
             if (reqData.length > 0) {
                 // batch request to remove users from group
-                sakai_serv.batch($.toJSON(reqData), function(success, data) {
+                sakai_serv.batch(reqData, function(success, data) {
                     if (!success) {
                         debug.error("Error removing users from the group");
                     }
@@ -722,7 +725,7 @@ define(["jquery", "/dev/configuration/config.js", "sakai/sakai.api.server"], fun
 
             if (reqData.length > 0) {
                 // batch request to remove content from group
-                sakai_serv.batch($.toJSON(reqData), function(success, data) {
+                sakai_serv.batch(reqData, function(success, data) {
                     if (!success) {
                         debug.error("Error removing content from the group");
                     }

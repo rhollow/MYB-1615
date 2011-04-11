@@ -172,8 +172,26 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             /** When we click the search button the search should get executed. */
             $(searchConfig.global.button).unbind("click");
             $(searchConfig.global.button).bind("click", function(ev) {
-                callback.doHSearch();
+                if (!hasHadFocus) {
+                    callback.doHSearch(1, "*");
+                } else {
+                    callback.doHSearch();
+                }
             });
+        };
+
+
+        /**
+         * Checks for a query arg in the URL. If none, does a search for all (*).
+         */
+        var checkQuery = function () {
+            if ((!$.bbq.getState("q") ||
+                $.trim($.bbq.getState("q")) === "") &&
+                (!$.bbq.getState("tag") ||
+                $.trim($.bbq.getState("tag")) === "")) {
+
+                callback.doHSearch(1, "*");
+            }
         };
 
 
@@ -331,7 +349,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                             user.extra = basic.unidepartment;
                         }
                     }
-                    user.connected = false;
+                    user.connected = true;
                     user.invited = item.invited !== undefined ? item.invited : false;
                     // Check if this user is a friend of us already.
 
@@ -339,11 +357,14 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         for (var ii = 0, jj = getMyFriends().results.length; ii<jj; ii++) {
                             var friend = getMyFriends().results[ii];
                             if (friend.target === user.userid) {
-                                user.connected = true;
-                                // if invited state set invited to true
-                                if(friend.details["sakai:state"] === "INVITED"){
+                                // if user is invited, show accept invitation 
+                                if (friend.details["sakai:state"] === "INVITED") {
                                     user.invited = true;
                                 }
+                                // if user is not a connection show the add to contact  
+                                else if (friend.details["sakai:state"] === "NONE") {
+                                    user.connected = false;
+                                } 
                             }
                         }
                     }
@@ -488,8 +509,8 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             'prepSearchTermForURL': prepSearchTermForURL,
             'preparePeopleForRender': preparePeopleForRender,
             'prepareCMforRendering': prepareCMforRendering,
-            'addFacetedPanel': addFacetedPanel
-
+            'addFacetedPanel': addFacetedPanel,
+            'checkQuery': checkQuery
         };
     };
 });

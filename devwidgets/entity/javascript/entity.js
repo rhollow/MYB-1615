@@ -239,16 +239,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
                 "url": "/system/userManager/group/" + groupid + "-managers.members.json",
                 "method": "GET"
             };
-
-            $.ajax({
-                url: sakai.config.URL.BATCH,
-                traditional: true,
-                type: "POST",
-                data: {
-                    requests: $.toJSON(requests)
-                },
-                async: false,
-                success: function (data) {
+            sakai.api.Server.batch(requests, function(success, data) {
+                if (success) {
                     var groupMembers = $.parseJSON(data.results[0].body);
                     var groupManagers = $.parseJSON(data.results[1].body);
 
@@ -273,7 +265,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
                         }
                     }
                 }
-            });
+            }, null, null, false);
         };
 
 
@@ -501,7 +493,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
                 success: function(data){
                     var presence = $.parseJSON(data.results[3].body);
                     for (var l in presence.contacts){
-                        if (presence.contacts[l].user === userid){
+                        if (presence.contacts[l].user === userid && presence.contacts[l].profile && sakai.config.enableChat){
                             if (presence.contacts[l].profile.chatstatus && presence.contacts[l]["sakai:status"] === "online") {
                                 entityconfig.data.profile.chatstatus = presence.contacts[l].profile.chatstatus;
                             } else {
@@ -997,20 +989,20 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
             if (jcr_content) {
 
                 // Set the person that last modified the resource
-                if (jcr_content["lastModifiedBy"]) {
-                    entityconfig.data.profile.lastmodifiedby = jcr_content["lastModifiedBy"];
+                if (jcr_content["_lastModifiedBy"]) {
+                    entityconfig.data.profile.lastmodifiedby = jcr_content["_lastModifiedBy"];
                 }
                 // Set the last modified date
-                if (jcr_content["lastModified"]) {
-                    entityconfig.data.profile.lastmodified = $.timeago(sakai.api.Util.parseSakaiDate(jcr_content["lastModified"]));
+                if (jcr_content["_lastModified"]) {
+                    entityconfig.data.profile.lastmodified = $.timeago(sakai.api.Util.parseSakaiDate(jcr_content["_lastModified"]));
                 }
                 // Set the size of the file
                 if (jcr_content["jcr:data"]) {
                     entityconfig.data.profile.filesize = sakai.api.Util.convertToHumanReadableFileSize(jcr_content["jcr:data"]);
                 }
                 // Set the mimetype of the file
-                if (jcr_content["mimeType"]) {
-                    entityconfig.data.profile.mimetype = jcr_content["mimeType"];
+                if (jcr_content["_mimeType"]) {
+                    entityconfig.data.profile.mimetype = jcr_content["_mimeType"];
                 }
             }
 
@@ -1031,12 +1023,12 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
             }
 
             // Set the created by and created (date) variables
-            if (filedata["createdBy"]) {
-                entityconfig.data.profile.createdby = filedata["createdBy"];
+            if (filedata["_createdBy"]) {
+                entityconfig.data.profile.createdby = filedata["_createdBy"];
             }
 
-            if (filedata["created"]) {
-                entityconfig.data.profile.created = $.timeago(sakai.api.Util.parseSakaiDate(filedata["created"]));
+            if (filedata["_created"]) {
+                entityconfig.data.profile.created = $.timeago(sakai.api.Util.parseSakaiDate(filedata["_created"]));
             }
 
             if (filedata["sakai:pooled-content-file-name"]) {
@@ -1108,7 +1100,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
          * Callback function to sort activity based on created date
          */
         var sortActivity = function(a, b){
-            return a["created"] < b["created"] ? 1 : -1;
+            return a["_created"] < b["_created"] ? 1 : -1;
         };
 
         /**
@@ -1183,7 +1175,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
                         }
 
                         // get the time since the activity happened
-                        entityconfig.data.profile.activity.results[j].timeAgo = $.timeago(sakai.api.Util.parseSakaiDate(entityconfig.data.profile.activity.results[j]["created"]));
+                        entityconfig.data.profile.activity.results[j].timeAgo = $.timeago(sakai.api.Util.parseSakaiDate(entityconfig.data.profile.activity.results[j]["_created"]));
                     }
                 }
             }
@@ -1284,7 +1276,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
                     "tooltipDescription":"TOOLTIP_SHARE_CONTENT_P4",
                     "tooltipArrow":"bottom",
                     "tooltipTop":3,
-                    "tooltipLeft":120
+                    "tooltipLeft":220
                 };
                 $(window).trigger("update.tooltip.sakai", tooltipData);
 
@@ -1446,7 +1438,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
 
             // Add binding
             addBinding(mode);
-
         };
 
         /**
@@ -1484,9 +1475,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/jquery/plugins/jquery.timea
 
             //Get the content data
             getEntityData(mode, data);
-
-            $(window).trigger("rendered.entity.sakai");
-            sakai_global.entity.isRendered = true;
         });
 
         $(window).trigger("ready.entity.sakai", {});
