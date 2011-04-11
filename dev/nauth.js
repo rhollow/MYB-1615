@@ -17,6 +17,20 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		
 		var $sectionC = $("#section_c");
 		var $designateTermYear = $("#designate_term_year");
+		
+		var $undergradsGroup;
+		var $gradsGroup;
+			
+		var $saveList = $("#save_list");
+		
+		var $outputJson = $("#output_json");
+		
+		
+		var $includeUndergrads;
+		var $includeGrads;
+
+		var boolTemplateHasUndergradsData = false;
+		var boolTemplateHasGradsData = false;
 
         
 		
@@ -36,6 +50,150 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			$designateTermYear.append(yearsArr.join(''));
 		}
 		
+		/* Debug */
+		var RealTypeOf = function(v) {
+		  if (typeof(v) == "object") {
+		    if (v === null) return "null";
+		    if (v.constructor == (new Array).constructor) return "array";
+		    if (v.constructor == (new Date).constructor) return "date";
+		    if (v.constructor == (new RegExp).constructor) return "regex";
+		    return "object";
+		  }
+		  return typeof(v);
+		};
+		
+		var formatJSON = function(oData, sIndent) {
+		    if (arguments.length < 2) {
+		        var sIndent = "";
+		    }
+		    var sIndentStyle = "    ";
+		    var sDataType = RealTypeOf(oData);
+		
+		    // open object
+		    if (sDataType == "array") {
+		        if (oData.length == 0) {
+		            return "[]";
+		        }
+		        var sHTML = "[";
+		    } else {
+		        var iCount = 0;
+		        $.each(oData, function() {
+		            iCount++;
+		            return;
+		        });
+		        if (iCount == 0) { // object is empty
+		            return "{}";
+		        }
+		        var sHTML = "{";
+		    }
+		
+		    // loop through items
+		    var iCount = 0;
+		    $.each(oData, function(sKey, vValue) {
+		        if (iCount > 0) {
+		            sHTML += ",";
+		        }
+		        if (sDataType == "array") {
+		            sHTML += ("\n" + sIndent + sIndentStyle);
+		        } else {
+		            sHTML += ("\n" + sIndent + sIndentStyle + "\"" + sKey + "\"" + ": ");
+		        }
+		
+		        // display relevant data type
+		        switch (RealTypeOf(vValue)) {
+		            case "array":
+		            case "object":
+		                sHTML += formatJSON(vValue, (sIndent + sIndentStyle));
+		                break;
+		            case "boolean":
+		            case "number":
+		                sHTML += vValue.toString();
+		                break;
+		            case "null":
+		                sHTML += "null";
+		                break;
+		            case "string":
+		                sHTML += ("\"" + vValue + "\"");
+		                break;
+		            default:
+		                sHTML += ("TYPEOF: " + typeof(vValue));
+		        }
+		
+		        // loop
+		        iCount++;
+		    });
+		
+		    // close object
+		    if (sDataType == "array") {
+		        sHTML += ("\n" + sIndent + "]");
+		    } else {
+		        sHTML += ("\n" + sIndent + "}");
+		    }
+		
+		    // return
+		    return sHTML;
+		};
+		/* Debug */
+		
+		
+		
+		
+		
+		var buildMajorsOrProgramsArray = function($allItemsOption, $rootGroup) {
+
+			var selectedOptionsOR = [];
+						
+			if ($allItemsOption.is(':checked')) {
+				
+				selectedOptionsOR.push($allUndergradMajorsOption.val());
+				
+			} else {
+			
+				var $selectedOptions = $("input:checkbox:checked", $rootGroup);
+
+				$selectedOptions.each(function(i, curOption) {
+						selectedOptionsOR.push(curOption.value);
+				});
+			}
+			
+			return selectedOptionsOR;
+		};
+		
+		var saveList = function() {
+			
+			
+			//var jsonRequest = {};
+			
+			//TODO: check the case when checkboxes are not rendered
+			
+			var boolIncludeUndergrads = $includeUndergrads.length > 0 && $includeUndergrads.is(":checked");
+			var boolIncludeGrads = $includeGrads.length > 0 && $includeGrads.is(":checked");  
+			
+			console.log("Include undergrads: " + boolIncludeUndergrads + " Include grads: " + boolIncludeGrads);
+						
+			var selectedUndergradMajorsOR = buildMajorsOrProgramsArray($("#undergrad_majors_all"), $undergradsGroup);
+			var selectedGradProgramsOR = buildMajorsOrProgramsArray($("#grad_programs_all"), $gradsGroup);
+			
+			/*
+			 if (!jsonRequest.hasOwnProperty("OR")) {
+						jsonRequest.OR = [];
+					}
+			 */
+			
+			//var selectedGradPrograms = $("input:checkbox:checked", $gradsGroup);
+			
+			//console.log($selectedUndergradMajors);
+			//console.log(selectedGradPrograms);
+			//console.log(jsonRequest);
+			//console.log(jsonRequest.OR.length);
+			//$outputJson.val($.toJSON(jsonRequest));
+			$outputJson.val(formatJSON({
+				OR: [  {OR: selectedUndergradMajorsOR}, 
+						{OR: selectedGradProgramsOR}
+					]
+			}));
+		}
+		
 		
         /////////////////////////////
         // Initialization function //
@@ -48,192 +206,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          */
         var doInit = function () {
             
-			var json={ 
-			b: [
-				{
-					type: "or_group",
-					text: "OR group",
-					items: [
-						{
-							field_name: "chk1",
-							text: "Checkbox 1"
-						},
-						{					
-							field_name: "chk2",
-							text: "Checkbox 2",
-							selected: true
-						}
-					]
-				},
-				{
-					type: "xor_group",
-					text: "XOR group",
-					/*layout: "vertical",*/
-					items: [
-						{
-							field_name: "rad",
-							field_value: "rad1Value",
-							text: "Radio 1",
-							selected: true							
-						},
-						{
-							field_name: "rad",
-							field_value: "rad2Value",
-							text: "Radio 2"
-						},
-						{
-							field_name: "rad",
-							field_value: "rad3Value",
-							text: "Radio 3",
-							items:[
-									{
-										type: "or_group",
-										/*text: "OR group",*/
-										items: [
-											{
-												field_name: "chk1",
-												text: "Checkbox 1"
-											},
-											{
-												field_name: "chk2",
-												text: "Checkbox 2",
-												selected: true
-											}
-										]
-									}
-							]
-						}
-					]
-				}
-			]			
-			
-			};
-			
-			//
-
-
-
-
-
-
-
-			var major4_simple = {
-				id: "SUM1", // mandatory
-				name: "Sumo"  // mandatory
-			};
-			
-			var major5_simple = {
-				id: "KEN1", // mandatory
-				name: "Kendo"  // mandatory
-			};
-	
-			
-			var majors3 = {
-				title: "Sub majors2", // optional												
-				items_array : [major4_simple, major5_simple] // mandatory				
-			};
-	
-
-
-
-
-			var major2_simple = {
-				id: "NIN1", // mandatory
-				name: "Ninjutsu",  // mandatory
-				sub_group: majors3
-			};
-			
-			var major3_simple = {
-				id: "KAR", // mandatory
-				name: "Karate"  // mandatory
-			};
-	
-			
-			var majors2 = {
-				/*title: "Sub majors",*/ // optional												
-				items_array : [major2_simple, major3_simple] // mandatory				
-			};
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			var major1_simple = {
-				id: "ARCH1", // mandatory
-				name: "Architecture1"  // mandatory
-			};
-			
-		
-			var major2_compound = {
-				id: "ARCH2",  // mandatory
-				name: "Architecture2",  // mandatory
-				sub_group : majors2  // sub majors, same structure as majors object below, optional
-				
-			};
-			
-			var majors = {
-				title: "Undergraduate Majors and tracks", // optional
-				
-				select_all_option_name: "All engineering undergraduates", // optional (top level majors/programs group only)
-				select_one_or_more_option_name: "Engineering undergraduates by major", // optional (top level majors/programs group only)
-				
-				items_array : [major1_simple, major2_compound] // mandatory				
-			};
-			
-
-			
-			var certificates = [
-				{
-					id: "CERT1", // mandatory
-					name: "MOT" // mandatory
-				},
-
-				{
-					id: "CERT2", // mandatory
-					name: "Logistics" // mandatory
-				},	
-	
-			];
-			
-			var emphases = [
-				{
-					id: "EMPH1",
-					name: "Nanotechnology"
-				},
-
-				{
-					id: "EMPH2",
-					name: "Computational Engineering Science"
-				},	
-	
-			];
-
-			
-			// If both undergrads and grads exist, they will be displayed using checkboxes
-			var json_list = {
-				
-				college: "COE",
-								
-				undergraduates: {
-					majors: majors,
-					declared: true // whether to display "declared" block, true or false, optional
-				},
-				
-				graduates: {
-					programs: majors, //programs, // if there is only one program,  its name is displayed as title
-					certificates: certificates, // optional
-					emphases: emphases // optional
-				}	
-			};
-			
-			
-			
 			// Loading template
             var template;
 			$.ajax({
@@ -252,25 +224,63 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     }
             });
 			
+			boolTemplateHasUndergradsData = typeof(template.undergraduates) !== 'undefined' && template.undergraduates != null;
+			boolTemplateHasGradsData = typeof(template.graduates) !== 'undefined' && template.graduates != null; 
 			
 			$view.html(sakai.api.Util.TemplateRenderer($template, template));
 			
+			$includeUndergrads = $("#include_undergrads");
+			$includeGrads = $("#include_grads");
+									
+						
+			// Define undergrad and grad groups AFTER template has been rendered
+			$undergradsGroup = $(".undergrads_group");
+			$gradsGroup = $(".grads_group");
 			
 			//Disabling all graduate and undergraduate controls
-			
-			var $undergradsGroup = $(".undergrads_group");
-			var $gradsGroup = $(".grads_group");
-			$undergradsGroup.addClass("disabled");
-			$gradsGroup.addClass("disabled");
-			
-			
-			$(".grads_group input", $gradsGroup).each(function(i, val) {							
-				$(val).attr("disabled", "disabled");
-			});
-			$(".undergrads_group input", $undergradsGroup ).each(function(i, val) {							
-				$(val).attr("disabled", "disabled");
-			});
+			if (boolUndergradAndGradCheckboxesVisible) {
 				
+				$undergradsGroup.addClass("disabled");
+				$gradsGroup.addClass("disabled");
+								
+				$(".grads_group input", $gradsGroup).each(function(i, val){
+					$(val).attr("disabled", "disabled");
+				});
+				$(".undergrads_group input", $undergradsGroup).each(function(i, val){
+					$(val).attr("disabled", "disabled");
+				});
+					
+						
+				$includeGrads.click(function(){
+						if($includeGrads.is(':checked')){
+							$(".grads_group input", $gradsGroup).each(function(i, val) {							
+								if(val.id !== "include_grads")$(val).removeAttr("disabled");
+							});	
+							$gradsGroup.removeClass("disabled");
+						} else {
+							$(".grads_group input", $gradsGroup).each(function(i, val) {							
+								if(val.id !== "include_grads")$(val).attr("disabled", "disabled");
+							});						
+							$gradsGroup.addClass("disabled");
+						}
+											
+				});
+								
+				$includeUndergrads.click(function(){
+						if($includeUndergrads.is(':checked')){
+							$(".undergrads_group input", $undergradsGroup ).each(function(i, val) {							
+								$(val).removeAttr("disabled");
+							});	
+							$undergradsGroup.removeClass("disabled");						
+						} else {
+							$(".undergrads_group input", $undergradsGroup ).each(function(i, val) {							
+								$(val).attr("disabled", "disabled");
+							});
+							$undergradsGroup.addClass("disabled");						
+						}
+											
+				}); 
+			}
 			
 			// Click handlers
 			$('input[id^="undergrad_major_"]').click(function(){
@@ -297,38 +307,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 					$("#undergrad_level_selected_levels").click();
 				});
 			
-			var $includeGrads = $('#include_grads');
-			$includeGrads.click(function(){
-					if($includeGrads.is(':checked')){
-						$(".grads_group input", $gradsGroup).each(function(i, val) {							
-							if(val.id !== "include_grads")$(val).removeAttr("disabled");
-						});	
-						$gradsGroup.removeClass("disabled");
-					} else {
-						$(".grads_group input", $gradsGroup).each(function(i, val) {							
-							if(val.id !== "include_grads")$(val).attr("disabled", "disabled");
-						});						
-						$gradsGroup.addClass("disabled");
-					}
-										
-			});
-				
-			var $includeUndergrads = $('#include_undergrads');
-			$includeUndergrads.click(function(){
-					if($includeUndergrads.is(':checked')){
-						$(".undergrads_group input", $undergradsGroup ).each(function(i, val) {							
-							$(val).removeAttr("disabled");
-						});	
-						$undergradsGroup.removeClass("disabled");						
-					} else {
-						$(".undergrads_group input", $undergradsGroup ).each(function(i, val) {							
-							$(val).attr("disabled", "disabled");
-						});
-						$undergradsGroup.addClass("disabled");						
-					}
-										
-			});
-			
 			populateDesignateTermYear();	
 			
 			
@@ -343,6 +321,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				}
 				$sectionC.toggle();				
 			});
+			
+			$saveList.click(saveList);
+			
 						
 		};
 

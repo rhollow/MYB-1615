@@ -239,7 +239,7 @@
 		</script>
 		
 		<div id="template" style="display:none"><!--        						
-				
+			
 			{macro renderSubGroup(subGroup, prefix, parent)}    			
 				<div class="sub_group">
 					{if subGroup.title}<div class="group_header">${subGroup.title}</div>{/if}
@@ -260,8 +260,8 @@
     			<div class="majors">
 					{if propExists(majors.title)}<div class="group_header">${majors.title}</div>{/if}
 					
-					<div class="checkbox"><input type="radio" name="undergrad_majors" value="0" id="undergrad_majors_all"><label for="undergrad_majors_all">{if propExists(majors.select_all_option_name)}${majors.select_all_option_name}{else}All Undergraduates{/if}</label></div>
-					<div class="checkbox"><input type="radio" name="undergrad_majors" value="1" id="undergrad_majors_selected_majors"><label for="undergrad_majors_selected_majors">{if propExists(majors.select_one_or_more_option_name)}${majors.select_one_or_more_option_name}{else}Undergraduates by Major{/if}</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_majors" value="{if propExists(majors.select_all_option_id)}${majors.select_all_option_id}{/if}" id="undergrad_majors_all"><label for="undergrad_majors_all">{if propExists(majors.select_all_option_name)}${majors.select_all_option_name}{else}All Undergraduates{/if}</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_majors" value="" id="undergrad_majors_selected_majors"><label for="undergrad_majors_selected_majors">{if propExists(majors.select_one_or_more_option_name)}${majors.select_one_or_more_option_name}{else}Undergraduates by Major{/if}</label></div>
 
 					<div class="sub_group">				
 						
@@ -391,7 +391,7 @@
 			
 			<div>College <div class="readonly_textbox">${college}</div></div>
 			<div class="wrapper">
-			{if propExists(undergraduates) && propExists(graduates) }			
+			{if (typeof(undergraduates) !== 'undefined' && undergraduates != null ) && (typeof(graduates) !== 'undefined' && graduates != null) }			
         		<div class="left">
             		<div class="checkbox"><input type="checkbox" id="include_undergrads"><label for="include_undergrads">Include Undergraduates</label></div>
 					<div class="undergrads_group">
@@ -406,11 +406,11 @@
         		</div>     		
 			{else}
 				<div class="onecolumn">
-            		{if propExists(undergraduates) }
+            		{if typeof(undergraduates) !== 'undefined' && undergraduates != null }
 						<div class="undergrads_group">
 							${renderUndergraduates()}
 						</div>
-					{elseif propExists(graduates)} 					
+					{elseif typeof(graduates) !== 'undefined' && graduates != null } 					
 						<div class="grads_group">
 							${renderGraduates()}
 						</div>
@@ -633,7 +633,10 @@
 		</div>
 		
 		
-				
+		
+		<a href="#" id="save_list">Save list</a>
+		
+		<br />JSON:<br /><textarea id="output_json" rows="30" cols="80"></textarea>		
 		<!--
 
 		-->
