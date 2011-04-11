@@ -90,14 +90,8 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     }
                 });
 
-                $.ajax({
-                    url: sakai.config.URL.BATCH,
-                    type: "POST",
-                    data: {
-                        requests: $.toJSON(batchRequests)
-                    },
-                    success: function(data){
-
+                sakai.api.Server.batch(batchRequests, function(success, data) {
+                    if (success) {
                         if (data.results.hasOwnProperty(0)) {
                             if (data.results[0].status === 404){
                                 sakai.api.Security.send404();
@@ -114,11 +108,21 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                             contentMembers = $.parseJSON(data.results[1].body);
                             contentMembers.viewers = contentMembers.viewers || {};
                             $.each(contentMembers.viewers, function(index, resultObject) {
-                                contentMembers.viewers[index].picture = $.parseJSON(contentMembers.viewers[index].picture);
+                                if (contentMembers.viewers[index].hasOwnProperty("basic") &&
+                                    contentMembers.viewers[index].basic.hasOwnProperty("elements") &&
+                                    contentMembers.viewers[index].basic.elements.hasOwnProperty("picture") &&
+                                    contentMembers.viewers[index].basic.elements.picture.hasOwnProperty("value")) {
+                                    contentMembers.viewers[index].picture = $.parseJSON(contentMembers.viewers[index].basic.elements.picture.value);
+                                }
                             });
                             contentMembers.managers = contentMembers.managers || {};
                             $.each(contentMembers.managers, function(index, resultObject) {
-                                contentMembers.managers[index].picture = $.parseJSON(contentMembers.managers[index].picture);
+                                if (contentMembers.managers[index].hasOwnProperty("basic") &&
+                                    contentMembers.managers[index].basic.hasOwnProperty("elements") &&
+                                    contentMembers.managers[index].basic.elements.hasOwnProperty("picture") &&
+                                    contentMembers.managers[index].basic.elements.picture.hasOwnProperty("value")) {
+                                    contentMembers.managers[index].picture = $.parseJSON(contentMembers.managers[index].basic.elements.picture.value);
+                                }
                             });
                         }
 
@@ -326,14 +330,8 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             if (reqData.length > 0) {
                 // batch request to update user access for the content
-                $.ajax({
-                    url: sakai.config.URL.BATCH,
-                    traditional: true,
-                    type: "POST",
-                    data: {
-                        requests: $.toJSON(reqData)
-                    },
-                    success: function(data){
+                sakai.api.Server.batch(reqData, function(success, data) {
+                    if (success) {
                         if (task === 'add') {
                             sakai.api.Util.notification.show(sakai.api.Security.saneHTML($("#content_profile_text").text()), sakai.api.Security.saneHTML($("#content_profile_users_added_text").text()) + " " + users.toAddNames.toString().replace(/,/g, ", "));
                             loadContentProfile(function(){
