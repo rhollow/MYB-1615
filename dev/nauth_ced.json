@@ -1,7 +1,9 @@
 {
     "college": "CED",
     "undergraduates": {
-        "majors": {
+        "id" : "/colleges/CED/standings/undergrad",
+		
+		"majors": {
             "title": "Majors",
             "select_all_option_name": "All CED undergraduates",
 			"select_all_option_id": "/colleges/CED/standings/undergrad",
@@ -49,7 +51,9 @@
 		"declared": true
     },
     "graduates": {
-        "programs": {
+        "id" : "/colleges/CED/standings/grad",
+		
+		"programs": {
             "title": "Programs",
             "select_all_option_name": "All CED Graduate Students",
 			"select_all_option_id": "/colleges/CED/standings/grad",

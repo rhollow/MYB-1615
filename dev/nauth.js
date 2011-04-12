@@ -139,7 +139,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		
 		
 		
-		var buildMajorsOrProgramsArray = function($allItemsOption, $rootGroup) {
+		var buildSelectedOptionsArray = function($allItemsOption, $rootGroup) {
 
 			var selectedOptionsOR = [];
 						
@@ -187,9 +187,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		
 		var saveList = function() {
 			
-			
-			//var jsonRequest = {};
-			
 						
 			var boolIncludeUndergrads = false;
 			var boolIncludeGrads = false;  
@@ -215,35 +212,20 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			var undergradsAND = [];			
 			
 			if (boolIncludeUndergrads) {
-				var selectedUndergradMajorsOR = buildMajorsOrProgramsArray($("#undergrad_majors_all"), $(".majors"));
-				var selectedLevelsOR = buildMajorsOrProgramsArray($("#undergrad_level_all"), $(".levels"));
+				var selectedUndergradMajorsOR = buildSelectedOptionsArray($("#undergrad_majors_all"), $(".majors"));
+				var selectedLevelsOR = buildSelectedOptionsArray($("#undergrad_level_all"), $(".levels"));
 				var selectedAdmittedAs = $('input[name=undergrad_admitted_as]:checked').val(); // can be 'undefined'
 				var selectedDeclared = $('input[name=undergrad_declared]:checked').val(); // can be 'undefined'
 
 
-				undergradsAND = addToArrayAsOR(undergradsAND, selectedUndergradMajorsOR);
-				
-				/*if (selectedUndergradMajorsOR.length == 1) {					
-					undergradsAND = undergradsAND.concat(selectedUndergradMajorsOR); // no need for wrapping object in this case
-					
-				} else if (selectedUndergradMajorsOR.length > 0) {
-					undergradsAND.push({
-						OR: selectedUndergradMajorsOR
-					});
-				}*/
+				undergradsAND = addToArrayAsOR(undergradsAND, selectedUndergradMajorsOR);								
 				
 				undergradsAND = addToArrayAsOR(undergradsAND, selectedLevelsOR);
-				/*if (selectedLevelsOR.length == 1) {
-					undergradsAND = undergradsAND.concat(selectedLevelsOR); // no need for wrapping object in this case
-				} else if (selectedLevelsOR.length > 0) {
-					undergradsAND.push({
-						OR: selectedLevelsOR
-					});
-				}*/
-				
+								
 				if (typeof(selectedAdmittedAs) !== 'undefined' && selectedAdmittedAs != "") {
 					undergradsAND.push(selectedAdmittedAs);
 				}
+				
 				if (typeof(selectedDeclared) !== 'undefined' && selectedDeclared != "") {
 					undergradsAND.push(selectedDeclared);
 				}
@@ -254,41 +236,24 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			var gradsAND = [];
 			
 			if (boolIncludeGrads) {
-				var selectedGradProgramsOR = buildMajorsOrProgramsArray($("#grad_programs_all"), $(".programs"));
-				var selectedCertificates = buildMajorsOrProgramsArray(null, $(".certificates"));
-				var selectedEmphases = buildMajorsOrProgramsArray(null, $(".emphases"));
+				var selectedGradProgramsOR = buildSelectedOptionsArray($("#grad_programs_all"), $(".programs"));
+				var selectedCertificates = buildSelectedOptionsArray(null, $(".certificates"));
+				var selectedEmphases = buildSelectedOptionsArray(null, $(".emphases"));
 				var selectedDegrees = $('input[name=grad_degrees]:checked').val(); // can be 'undefined'
-				var selectedgsiGsr = buildMajorsOrProgramsArray(null, $(".gsiGsr"));
+				var selectedgsiGsr = buildSelectedOptionsArray(null, $(".gsiGsr"));
 				
 				
 				gradsAND = addToArrayAsOR(gradsAND, selectedGradProgramsOR);
-				/*if (selectedGradProgramsOR.length > 0) {
-					gradsAND.push({
-						OR: selectedGradProgramsOR
-					});
-				}*/
+
 				gradsAND = addToArrayAsOR(gradsAND, selectedCertificates);
-				/*if (selectedCertificates.length > 0) {
-					gradsAND.push({
-						OR: selectedCertificates
-					});
-				}*/
+
 				gradsAND = addToArrayAsOR(gradsAND, selectedEmphases);
-				/*if (selectedEmphases.length > 0) {
-					gradsAND.push({
-						OR: selectedEmphases
-					});
-				}*/
+
 				if (typeof(selectedDegrees) !== 'undefined' && selectedDegrees != "") {
 					gradsAND.push(selectedDegrees);
 				}
 				
 				gradsAND = addToArrayAsOR(gradsAND, selectedgsiGsr);
-				/*if (selectedgsiGsr.length > 0) {
-					gradsAND.push({
-						OR: selectedgsiGsr
-					});
-				}*/
 			}
 			
 			var result = {};
@@ -304,22 +269,38 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 					result.OR = addToArrayAsAND(result.OR, gradsAND);
 										
 				} else if(undergradsAND.length > 0) {
-					result.AND = undergradsAND;	
+					
+					result.OR = [$includeGrads.val()];
+					result.OR = addToArrayAsAND(result.OR, undergradsAND);					
+					//result.AND = undergradsAND;
+						
 				} else if(gradsAND.length > 0) {
-					result.AND = gradsAND;	
+					result.OR = [$includeUndergrads.val()];
+					result.OR = addToArrayAsAND(result.OR, gradsAND);
+					//result.AND = gradsAND;	
 				}
 				
+				// Special case: if nothing besides two include graduates/undergraduates checkboxes is selected
+				if (!result.hasOwnProperty("OR") && !result.hasOwnProperty("AND")) {					
+					result.OR = [$includeUndergrads.val(), $includeGrads.val()];
+				}
 								
 			} else if (boolIncludeUndergrads) {
 				
 				if(undergradsAND.length > 0) {
 					result.AND = undergradsAND;	
+				} else {
+					// Special case: if nothing is selected
+					result.OR = [$includeUndergrads.val()];
 				}				
 				
 			} else if (boolIncludeGrads) {
 				
 				if(gradsAND.length > 0) {
 					result.AND = gradsAND;	
+				} else {
+					// Special case: if nothing is selected
+					result.OR = [$includeGrads.val()];
 				}
 								
 			}
