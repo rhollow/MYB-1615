@@ -281,8 +281,8 @@
     			<div class="programs">
 					{if propExists(programs.title)}<div class="group_header">${programs.title}</div>{/if}
 					
-					<div class="checkbox"><input type="radio" name="grad_programs" value="0" id="grad_programs_all"><label for="undergrad_majors_all">{if propExists(programs.select_all_option_name)}${programs.select_all_option_name}{else}All Graduate Students{/if}</label></div>
-					<div class="checkbox"><input type="radio" name="grad_programs" value="1" id="grad_programs_selected_programs"><label for="grad_programs_selected_programs">{if propExists(programs.select_one_or_more_option_name)}${programs.select_one_or_more_option_name}{else}Graduate Students by Program{/if}</label></div>
+					<div class="checkbox"><input type="radio" name="grad_programs" value="{if propExists(programs.select_all_option_id)}${programs.select_all_option_id}{/if}" id="grad_programs_all"><label for="grad_programs_all">{if propExists(programs.select_all_option_name)}${programs.select_all_option_name}{else}All Graduate Students{/if}</label></div>
+					<div class="checkbox"><input type="radio" name="grad_programs" value="" id="grad_programs_selected_programs"><label for="grad_programs_selected_programs">{if propExists(programs.select_one_or_more_option_name)}${programs.select_one_or_more_option_name}{else}Graduate Students by Program{/if}</label></div>
 
 					<div class="sub_group">				
 						
@@ -301,13 +301,13 @@
 			{macro renderLevels()}
     			<div class="levels">				
 					<div class="group_header">Level</div>
-					<div class="checkbox"><input type="radio" name="undergrad_levels" value="0" id="undergrad_level_all"><label for="undergrad_level_all">All Levels</label></div>
-					<div class="checkbox"><input type="radio" name="undergrad_levels" value="1" id="undergrad_level_selected_levels"><label for="undergrad_level_selected_levels">Selected Levels</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_levels" value="undergrad_level_all" id="undergrad_level_all"><label for="undergrad_level_all">All Levels</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_levels" value="" id="undergrad_level_selected_levels"><label for="undergrad_level_selected_levels">Selected Levels</label></div>
 					<div class="sub_group">
-						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_freshman"><label for="undergrad_level_selected_levels_freshman">Freshman</label></div>
-						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_sophomore"><label for="undergrad_level_selected_levels_sophomore">Sophomore</label></div>
-						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_junior"><label for="undergrad_level_selected_levels_junior">Junior</label></div>
-						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_senior"><label for="undergrad_level_selected_levels_senior">Senior</label></div>
+						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_freshman" value="undergrad_level_selected_levels_freshman"><label for="undergrad_level_selected_levels_freshman">Freshman</label></div>
+						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_sophomore" value="undergrad_level_selected_levels_sophomore"><label for="undergrad_level_selected_levels_sophomore">Sophomore</label></div>
+						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_junior" value="undergrad_level_selected_levels_junior"><label for="undergrad_level_selected_levels_junior">Junior</label></div>
+						<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_senior" value="undergrad_level_selected_levels_senior"><label for="undergrad_level_selected_levels_senior">Senior</label></div>
 					</div>
 				</div>
   			{/macro}
@@ -315,18 +315,18 @@
 			{macro renderAdmittedAs()}
     			<div class="admittedAs">				
 					<div class="group_header">Admitted As</div>
-					<div class="checkbox"><input type="radio" name="undergrad_admitted_as" value="0" id="undergrad_admitted_as_all"><label for="undergrad_admitted_as_all">All</label></div>
-					<div class="checkbox"><input type="radio" name="undergrad_admitted_as" value="1" id="undergrad_admitted_as_freshman"><label for="undergrad_admitted_as_freshman">Freshman</label></div>
-					<div class="checkbox"><input type="radio" name="undergrad_admitted_as" value="2" id="undergrad_admitted_as_transfer"><label for="undergrad_admitted_as_transfer">Transfer</label></div>					
+					<div class="checkbox"><input type="radio" name="undergrad_admitted_as" value="" id="undergrad_admitted_as_all"><label for="undergrad_admitted_as_all">All</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_admitted_as" value="undergrad_admitted_as_freshman" id="undergrad_admitted_as_freshman"><label for="undergrad_admitted_as_freshman">Freshman</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_admitted_as" value="undergrad_admitted_as_transfer" id="undergrad_admitted_as_transfer"><label for="undergrad_admitted_as_transfer">Transfer</label></div>					
 				</div>
   			{/macro}
 			
 			{macro renderDeclared()}
     			<div class="declared">		
 					<div class="group_header">Declared</div>
-					<div class="checkbox"><input type="radio" name="undergrad_declared" value="0" id="undergrad_declared_both"><label for="undergrad_declared_both">Both</label></div>
-					<div class="checkbox"><input type="radio" name="undergrad_declared" value="1" id="undergrad_declared_declared_only"><label for="undergrad_declared_declared_only">Declared only</label></div>
-					<div class="checkbox"><input type="radio" name="undergrad_declared" value="2" id="undergrad_declared_undeclared_only"><label for="undergrad_declared_undeclared_only">Undeclared only</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_declared" value="" id="undergrad_declared_both"><label for="undergrad_declared_both">Both</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_declared" value="undergrad_declared_declared_only" id="undergrad_declared_declared_only"><label for="undergrad_declared_declared_only">Declared only</label></div>
+					<div class="checkbox"><input type="radio" name="undergrad_declared" value="undergrad_declared_undeclared_only" id="undergrad_declared_undeclared_only"><label for="undergrad_declared_undeclared_only">Undeclared only</label></div>
 				</div>
   			{/macro}
 			
@@ -355,18 +355,18 @@
 			{macro renderDegrees()}
     			<div class="degrees">
 					<div class="group_header">Degrees</div>
-					<div class="checkbox"><input type="radio" name="grad_degrees" value="0" id="grad_degree_all"><label for="grad_degree_all">All Graduate Degrees</label></div>
-					<div class="checkbox"><input type="radio" name="grad_degrees" value="1" id="grad_degree_ms_only"><label for="grad_degree_ms_only">Masters only</label></div>
-					<div class="checkbox"><input type="radio" name="grad_degrees" value="2" id="grad_degree_ms_phd"><label for="grad_degree_ms_phd">MS/PhD</label></div>
-					<div class="checkbox"><input type="radio" name="grad_degrees" value="3" id="grad_degree_phd_only"><label for="grad_degree_phd_only">PhD only</label></div>
-					<div class="checkbox"><input type="radio" name="grad_degrees" value="4" id="grad_degree_all_but_degree"><label for="grad_degree_all_but_degree">All But Degree</label></div>
+					<div class="checkbox"><input type="radio" name="grad_degrees" value="" id="grad_degree_all"><label for="grad_degree_all">All Graduate Degrees</label></div>
+					<div class="checkbox"><input type="radio" name="grad_degrees" value="grad_degree_ms_only" id="grad_degree_ms_only"><label for="grad_degree_ms_only">Masters only</label></div>
+					<div class="checkbox"><input type="radio" name="grad_degrees" value="grad_degree_ms_phd" id="grad_degree_ms_phd"><label for="grad_degree_ms_phd">MS/PhD</label></div>
+					<div class="checkbox"><input type="radio" name="grad_degrees" value="grad_degree_phd_only" id="grad_degree_phd_only"><label for="grad_degree_phd_only">PhD only</label></div>
+					<div class="checkbox"><input type="radio" name="grad_degrees" value="grad_degree_all_but_degree" id="grad_degree_all_but_degree"><label for="grad_degree_all_but_degree">All But Degree</label></div>
 				</div>
   			{/macro}
 			
 			{macro renderGSI_And_GSR()}
     			<div class="gsiGsr">
-					<div class="checkbox"><input type="checkbox" id="grad_gsi"><label for="grad_gsi">GSI</label></div>
-					<div class="checkbox"><input type="checkbox" id="grad_gsr"><label for="grad_gsr">GSR</label></div>
+					<div class="checkbox"><input type="checkbox" id="grad_gsi" value="grad_gsi"><label for="grad_gsi">GSI</label></div>
+					<div class="checkbox"><input type="checkbox" id="grad_gsr" value="grad_gsr"><label for="grad_gsr">GSR</label></div>
 				</div>
   			{/macro}
 			

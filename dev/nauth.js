@@ -143,9 +143,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
 			var selectedOptionsOR = [];
 						
-			if ($allItemsOption.is(':checked')) {
+			if ($allItemsOption != null && $allItemsOption.is(':checked')) {
 				
-				selectedOptionsOR.push($allUndergradMajorsOption.val());
+				selectedOptionsOR.push($allItemsOption.val());
 				
 			} else {
 			
@@ -159,20 +159,171 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			return selectedOptionsOR;
 		};
 		
+		
+		var addToArrayAsOR = function(targetArray, arrayToAdd) {			
+			var result = targetArray;
+			if (arrayToAdd.length == 1) {					
+				result = targetArray.concat(arrayToAdd); // no need for wrapping object in this case				
+			} else if (arrayToAdd.length > 0) {
+				targetArray.push({
+					OR: arrayToAdd
+				});
+				
+			}
+			return result;
+		};
+		
+		var addToArrayAsAND = function(targetArray, arrayToAdd) {			
+			var result = targetArray;
+			if (arrayToAdd.length == 1) {					
+				result = targetArray.concat(arrayToAdd); // no need for wrapping object in this case				
+			} else if (arrayToAdd.length > 0) {
+				targetArray.push({
+					AND: arrayToAdd
+				});				
+			}			
+			return result;
+		};
+		
 		var saveList = function() {
 			
 			
 			//var jsonRequest = {};
 			
-			//TODO: check the case when checkboxes are not rendered
+						
+			var boolIncludeUndergrads = false;
+			var boolIncludeGrads = false;  
 			
-			var boolIncludeUndergrads = $includeUndergrads.length > 0 && $includeUndergrads.is(":checked");
-			var boolIncludeGrads = $includeGrads.length > 0 && $includeGrads.is(":checked");  
+			if(boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
+				// Both checkboxes are available, need to check the statuses of the both checkboxes
+				boolIncludeUndergrads = $includeUndergrads.length > 0 && $includeUndergrads.is(":checked");
+				boolIncludeGrads = $includeGrads.length > 0 && $includeGrads.is(":checked");
+								
+			} else {
+				if(boolTemplateHasUndergradsData) {
+					// Only undergrads are available, no checkbox
+					boolIncludeUndergrads = true;
+				} else if(boolTemplateHasGradsData) {
+					// Only grads are available, no checkbox
+					boolIncludeGrads = true;
+				}
+			}
 			
 			console.log("Include undergrads: " + boolIncludeUndergrads + " Include grads: " + boolIncludeGrads);
-						
-			var selectedUndergradMajorsOR = buildMajorsOrProgramsArray($("#undergrad_majors_all"), $undergradsGroup);
-			var selectedGradProgramsOR = buildMajorsOrProgramsArray($("#grad_programs_all"), $gradsGroup);
+			
+			// For undergrads
+			var undergradsAND = [];			
+			
+			if (boolIncludeUndergrads) {
+				var selectedUndergradMajorsOR = buildMajorsOrProgramsArray($("#undergrad_majors_all"), $(".majors"));
+				var selectedLevelsOR = buildMajorsOrProgramsArray($("#undergrad_level_all"), $(".levels"));
+				var selectedAdmittedAs = $('input[name=undergrad_admitted_as]:checked').val(); // can be 'undefined'
+				var selectedDeclared = $('input[name=undergrad_declared]:checked').val(); // can be 'undefined'
+
+
+				undergradsAND = addToArrayAsOR(undergradsAND, selectedUndergradMajorsOR);
+				
+				/*if (selectedUndergradMajorsOR.length == 1) {					
+					undergradsAND = undergradsAND.concat(selectedUndergradMajorsOR); // no need for wrapping object in this case
+					
+				} else if (selectedUndergradMajorsOR.length > 0) {
+					undergradsAND.push({
+						OR: selectedUndergradMajorsOR
+					});
+				}*/
+				
+				undergradsAND = addToArrayAsOR(undergradsAND, selectedLevelsOR);
+				/*if (selectedLevelsOR.length == 1) {
+					undergradsAND = undergradsAND.concat(selectedLevelsOR); // no need for wrapping object in this case
+				} else if (selectedLevelsOR.length > 0) {
+					undergradsAND.push({
+						OR: selectedLevelsOR
+					});
+				}*/
+				
+				if (typeof(selectedAdmittedAs) !== 'undefined' && selectedAdmittedAs != "") {
+					undergradsAND.push(selectedAdmittedAs);
+				}
+				if (typeof(selectedDeclared) !== 'undefined' && selectedDeclared != "") {
+					undergradsAND.push(selectedDeclared);
+				}
+			}
+			
+			
+			// For grads
+			var gradsAND = [];
+			
+			if (boolIncludeGrads) {
+				var selectedGradProgramsOR = buildMajorsOrProgramsArray($("#grad_programs_all"), $(".programs"));
+				var selectedCertificates = buildMajorsOrProgramsArray(null, $(".certificates"));
+				var selectedEmphases = buildMajorsOrProgramsArray(null, $(".emphases"));
+				var selectedDegrees = $('input[name=grad_degrees]:checked').val(); // can be 'undefined'
+				var selectedgsiGsr = buildMajorsOrProgramsArray(null, $(".gsiGsr"));
+				
+				
+				gradsAND = addToArrayAsOR(gradsAND, selectedGradProgramsOR);
+				/*if (selectedGradProgramsOR.length > 0) {
+					gradsAND.push({
+						OR: selectedGradProgramsOR
+					});
+				}*/
+				gradsAND = addToArrayAsOR(gradsAND, selectedCertificates);
+				/*if (selectedCertificates.length > 0) {
+					gradsAND.push({
+						OR: selectedCertificates
+					});
+				}*/
+				gradsAND = addToArrayAsOR(gradsAND, selectedEmphases);
+				/*if (selectedEmphases.length > 0) {
+					gradsAND.push({
+						OR: selectedEmphases
+					});
+				}*/
+				if (typeof(selectedDegrees) !== 'undefined' && selectedDegrees != "") {
+					gradsAND.push(selectedDegrees);
+				}
+				
+				gradsAND = addToArrayAsOR(gradsAND, selectedgsiGsr);
+				/*if (selectedgsiGsr.length > 0) {
+					gradsAND.push({
+						OR: selectedgsiGsr
+					});
+				}*/
+			}
+			
+			var result = {};
+			
+			if (boolIncludeUndergrads && boolIncludeGrads) {
+				
+								
+				if (undergradsAND.length > 0 && gradsAND.length > 0) {
+					
+					result.OR = [];
+										
+					result.OR = addToArrayAsAND(result.OR, undergradsAND);										
+					result.OR = addToArrayAsAND(result.OR, gradsAND);
+										
+				} else if(undergradsAND.length > 0) {
+					result.AND = undergradsAND;	
+				} else if(gradsAND.length > 0) {
+					result.AND = gradsAND;	
+				}
+				
+								
+			} else if (boolIncludeUndergrads) {
+				
+				if(undergradsAND.length > 0) {
+					result.AND = undergradsAND;	
+				}				
+				
+			} else if (boolIncludeGrads) {
+				
+				if(gradsAND.length > 0) {
+					result.AND = gradsAND;	
+				}
+								
+			}
+			
 			
 			/*
 			 if (!jsonRequest.hasOwnProperty("OR")) {
@@ -187,11 +338,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			//console.log(jsonRequest);
 			//console.log(jsonRequest.OR.length);
 			//$outputJson.val($.toJSON(jsonRequest));
-			$outputJson.val(formatJSON({
-				OR: [  {OR: selectedUndergradMajorsOR}, 
-						{OR: selectedGradProgramsOR}
-					]
-			}));
+			$outputJson.val(formatJSON(result));
 		}
 		
 		
@@ -238,7 +385,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			$gradsGroup = $(".grads_group");
 			
 			//Disabling all graduate and undergraduate controls
-			if (boolUndergradAndGradCheckboxesVisible) {
+			if (boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
 				
 				$undergradsGroup.addClass("disabled");
 				$gradsGroup.addClass("disabled");

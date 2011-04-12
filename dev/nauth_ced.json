@@ -45,12 +45,14 @@
             }
             
 			]
-        }
+        },
+		"declared": true
     },
-    "graduates1": {
+    "graduates": {
         "programs": {
             "title": "Programs",
             "select_all_option_name": "All CED Graduate Students",
+			"select_all_option_id": "/colleges/CED/standings/grad",
             "select_one_or_more_option_name": "CED Graduate Students by Program",
             "items_array": [{
                 "id": "/colleges/CED/standings/grad/programs/ARCHITECTURE",
@@ -77,6 +79,22 @@
                 "name": "Limited"
             }
             ]
-        }
+        },
+        "certificates": [{
+            "id": "CERT1",
+            "name": "MOT"
+        },
+        {
+            "id": "CERT2",
+            "name": "Logistics"
+        }],
+        "emphases": [{
+            "id": "EMPH1",
+            "name": "Nanotechnology"
+        },
+        {
+            "id": "EMPH2",
+            "name": "Computational Engineering Science"
+        }]
     }
 }
