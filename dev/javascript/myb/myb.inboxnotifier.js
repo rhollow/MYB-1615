@@ -26,7 +26,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * CONFIGURATION
          *
          */
-        sakai.config.URL.ALL_MESSAGE_BOX_SERVICE = "/var/message/box.json";
 
         var messagesPerPage = 12; // The number of messages per page
         var allMessages = []; // Array that will hold all the messages
@@ -555,7 +554,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Gets all the messages from the JCR.
          */
         getAllMessages = function(callback){
-            var url = "/var/notifications/search?box=" + selectedType;
+            var url = "/var/notifications/search.json?box=" + selectedType;
 
             $.ajax({
                 url: url,
