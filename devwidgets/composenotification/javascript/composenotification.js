@@ -1018,6 +1018,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             var toPost = {
                 "dynamicListID": msgTo,
+                "senderID" : me.user.userid,
                 "sendState": "pending",
                 "sakai:messagebox": box,
                 "uxState" : {
