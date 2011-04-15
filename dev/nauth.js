@@ -16,7 +16,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		
 		
 		var $sectionC = $("#section_c");
-		var $designateTermYear = $("#designate_term_year");
+		var $designateTermYear = $("#designate_term_year", $sectionC);
+		var $cohortStatus = $(".cohort_status", $sectionC);
 		
 		var $undergradsGroup;
 		var $gradsGroup;
@@ -137,6 +138,29 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		
 		
 		
+	/*	var buildSelectedRadioOptionsArray = function($allItemsOption, $rootGroup) {
+
+			var selectedOptionsOR = [];
+						
+			if ($allItemsOption != null && $allItemsOption.is(':checked')) {
+				
+				var allItemsOptionValue = $allItemsOption.val();
+				if (allItemsOptionValue !== "") {
+					selectedOptionsOR.push(allItemsOptionValue);
+				}
+				
+			} else {
+			
+				var $selectedOptions = $("input:checkbox:checked", $rootGroup);
+
+				$selectedOptions.each(function(i, curOption) {
+						selectedOptionsOR.push(curOption.value);
+				});
+			}
+			
+			return selectedOptionsOR;
+		};
+*/		
 		
 		
 		var buildSelectedOptionsArray = function($allItemsOption, $rootGroup) {
@@ -145,7 +169,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 						
 			if ($allItemsOption != null && $allItemsOption.is(':checked')) {
 				
-				selectedOptionsOR.push($allItemsOption.val());
+				var allItemsOptionValue = $allItemsOption.val();
+				if (allItemsOptionValue !== "") {
+					selectedOptionsOR.push(allItemsOptionValue);
+				}
 				
 			} else {
 			
@@ -185,6 +212,77 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			return result;
 		};
 		
+		var buildCohortStatusObject = function() {
+									
+			var selectedValue = $("input[name=cohort_statuses]:checked", $cohortStatus).val();									
+        	if (selectedValue === 'cohort_status_specified_students') {
+        		var semester = $("#designate_term_semester", $cohortStatus).val();
+        		var year = $("#designate_term_year", $cohortStatus).val();
+        		var cohort = $("input[name=cohort_status_terms]:checked", $cohortStatus).val();
+        		
+        		var result = {
+					AND: [semester, "designate_term_year_" + year, cohort]
+				};
+				
+				return result;
+        		
+        	} else {
+        		return null;
+        	}        	
+		};
+		
+		
+		var buildUndergradsANDArray = function() {
+
+			var undergradsAND = [];
+			
+			var selectedUndergradMajorsOR = buildSelectedOptionsArray($("#undergrad_majors_all"), $(".majors"));
+			var selectedLevelsOR = buildSelectedOptionsArray($("#undergrad_level_all"), $(".levels"));
+			var selectedAdmittedAs = $('input[name=undergrad_admitted_as]:checked').val(); // can be 'undefined'
+			var selectedDeclared = $('input[name=undergrad_declared]:checked').val(); // can be 'undefined'
+
+
+			undergradsAND = addToArrayAsOR(undergradsAND, selectedUndergradMajorsOR);								
+			
+			undergradsAND = addToArrayAsOR(undergradsAND, selectedLevelsOR);
+							
+			if (typeof(selectedAdmittedAs) !== 'undefined' && selectedAdmittedAs != "") {
+				undergradsAND.push(selectedAdmittedAs);
+			}
+			
+			if (typeof(selectedDeclared) !== 'undefined' && selectedDeclared != "") {
+				undergradsAND.push(selectedDeclared);
+			}
+			
+			return undergradsAND;	
+		};
+		
+		var buildGradsANDArray = function() {
+
+			var gradsAND = [];
+			
+			var selectedGradProgramsOR = buildSelectedOptionsArray($("#grad_programs_all"), $(".programs"));
+			var selectedCertificates = buildSelectedOptionsArray(null, $(".certificates"));
+			var selectedEmphases = buildSelectedOptionsArray(null, $(".emphases"));
+			var selectedDegrees = $('input[name=grad_degrees]:checked').val(); // can be 'undefined'
+			var selectedgsiGsr = buildSelectedOptionsArray(null, $(".gsiGsr"));
+			
+			
+			gradsAND = addToArrayAsOR(gradsAND, selectedGradProgramsOR);
+
+			gradsAND = addToArrayAsOR(gradsAND, selectedCertificates);
+
+			gradsAND = addToArrayAsOR(gradsAND, selectedEmphases);
+
+			if (typeof(selectedDegrees) !== 'undefined' && selectedDegrees != "") {
+				gradsAND.push(selectedDegrees);
+			}
+			
+			gradsAND = addToArrayAsOR(gradsAND, selectedgsiGsr);
+						
+			return gradsAND;	
+		};
+		
 		var saveList = function() {
 			
 						
@@ -212,23 +310,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			var undergradsAND = [];			
 			
 			if (boolIncludeUndergrads) {
-				var selectedUndergradMajorsOR = buildSelectedOptionsArray($("#undergrad_majors_all"), $(".majors"));
-				var selectedLevelsOR = buildSelectedOptionsArray($("#undergrad_level_all"), $(".levels"));
-				var selectedAdmittedAs = $('input[name=undergrad_admitted_as]:checked').val(); // can be 'undefined'
-				var selectedDeclared = $('input[name=undergrad_declared]:checked').val(); // can be 'undefined'
-
-
-				undergradsAND = addToArrayAsOR(undergradsAND, selectedUndergradMajorsOR);								
-				
-				undergradsAND = addToArrayAsOR(undergradsAND, selectedLevelsOR);
-								
-				if (typeof(selectedAdmittedAs) !== 'undefined' && selectedAdmittedAs != "") {
-					undergradsAND.push(selectedAdmittedAs);
-				}
-				
-				if (typeof(selectedDeclared) !== 'undefined' && selectedDeclared != "") {
-					undergradsAND.push(selectedDeclared);
-				}
+				undergradsAND = buildUndergradsANDArray();
 			}
 			
 			
@@ -236,24 +318,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			var gradsAND = [];
 			
 			if (boolIncludeGrads) {
-				var selectedGradProgramsOR = buildSelectedOptionsArray($("#grad_programs_all"), $(".programs"));
-				var selectedCertificates = buildSelectedOptionsArray(null, $(".certificates"));
-				var selectedEmphases = buildSelectedOptionsArray(null, $(".emphases"));
-				var selectedDegrees = $('input[name=grad_degrees]:checked').val(); // can be 'undefined'
-				var selectedgsiGsr = buildSelectedOptionsArray(null, $(".gsiGsr"));
-				
-				
-				gradsAND = addToArrayAsOR(gradsAND, selectedGradProgramsOR);
-
-				gradsAND = addToArrayAsOR(gradsAND, selectedCertificates);
-
-				gradsAND = addToArrayAsOR(gradsAND, selectedEmphases);
-
-				if (typeof(selectedDegrees) !== 'undefined' && selectedDegrees != "") {
-					gradsAND.push(selectedDegrees);
-				}
-				
-				gradsAND = addToArrayAsOR(gradsAND, selectedgsiGsr);
+				gradsAND = buildGradsANDArray();
 			}
 			
 			var result = {};
@@ -306,22 +371,29 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			}
 			
 			
-			/*
-			 if (!jsonRequest.hasOwnProperty("OR")) {
-						jsonRequest.OR = [];
-					}
-			 */
+			// Section C
+			//var cohortStatus = buildCohortStatusObject();
+			//if(cohortStatus != null)$outputJson.val(formatJSON(cohortStatus));else $outputJson.val(""); 
 			
-			//var selectedGradPrograms = $("input:checkbox:checked", $gradsGroup);
 			
-			//console.log($selectedUndergradMajors);
-			//console.log(selectedGradPrograms);
-			//console.log(jsonRequest);
-			//console.log(jsonRequest.OR.length);
-			//$outputJson.val($.toJSON(jsonRequest));
 			$outputJson.val(formatJSON(result));
 		}
 		
+		
+		var disableCohortStatusForSpecifiedStudents = function() {
+						
+			$(".cohort_status_col_left .sub_group", $cohortStatus).addClass("disabled");
+			$(".cohort_status_col_right", $cohortStatus).addClass("disabled");
+			$(".cohort_status_col_left .sub_group select, .cohort_status_col_right input", $cohortStatus).attr("disabled", "disabled");						
+		};
+		
+		var enableCohortStatusForSpecifiedStudents = function() {
+						
+			$(".cohort_status_col_left .sub_group", $cohortStatus).removeClass("disabled");
+			$(".cohort_status_col_right", $cohortStatus).removeClass("disabled");
+			$(".cohort_status_col_left .sub_group select, .cohort_status_col_right input", $cohortStatus).removeAttr("disabled");			
+			
+		};
 		
         /////////////////////////////
         // Initialization function //
@@ -371,24 +443,16 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				$undergradsGroup.addClass("disabled");
 				$gradsGroup.addClass("disabled");
 								
-				$(".grads_group input", $gradsGroup).each(function(i, val){
-					$(val).attr("disabled", "disabled");
-				});
-				$(".undergrads_group input", $undergradsGroup).each(function(i, val){
-					$(val).attr("disabled", "disabled");
-				});
+				$("input", $gradsGroup).attr("disabled", "disabled");
+				$("input", $undergradsGroup).attr("disabled", "disabled");
 					
 						
 				$includeGrads.click(function(){
 						if($includeGrads.is(':checked')){
-							$(".grads_group input", $gradsGroup).each(function(i, val) {							
-								if(val.id !== "include_grads")$(val).removeAttr("disabled");
-							});	
+							$("input", $gradsGroup).removeAttr("disabled");						
 							$gradsGroup.removeClass("disabled");
 						} else {
-							$(".grads_group input", $gradsGroup).each(function(i, val) {							
-								if(val.id !== "include_grads")$(val).attr("disabled", "disabled");
-							});						
+							$("input", $gradsGroup).attr("disabled", "disabled");
 							$gradsGroup.addClass("disabled");
 						}
 											
@@ -396,14 +460,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 								
 				$includeUndergrads.click(function(){
 						if($includeUndergrads.is(':checked')){
-							$(".undergrads_group input", $undergradsGroup ).each(function(i, val) {							
-								$(val).removeAttr("disabled");
-							});	
+							$("input", $undergradsGroup ).removeAttr("disabled");							
 							$undergradsGroup.removeClass("disabled");						
 						} else {
-							$(".undergrads_group input", $undergradsGroup ).each(function(i, val) {							
-								$(val).attr("disabled", "disabled");
-							});
+							$("input", $undergradsGroup ).attr("disabled", "disabled");							
 							$undergradsGroup.addClass("disabled");						
 						}
 											
@@ -448,6 +508,19 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 					$showMoreOrLess.text("Show Less");					
 				}
 				$sectionC.toggle();				
+			});
+			
+			// section C : cohort status
+			disableCohortStatusForSpecifiedStudents();
+			
+			$("input[name=cohort_statuses]", $cohortStatus).change(function(){
+   				var selectedValue = $("input[name=cohort_statuses]:checked", $cohortStatus).val();
+   				if (selectedValue === 'cohort_status_all_students') {
+        			disableCohortStatusForSpecifiedStudents();
+        		} else if (selectedValue === 'cohort_status_specified_students') {
+        			enableCohortStatusForSpecifiedStudents();
+        		}
+        		
 			});
 			
 			$saveList.click(saveList);

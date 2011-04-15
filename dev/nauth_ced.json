@@ -6,7 +6,6 @@
 		"majors": {
             "title": "Majors",
             "select_all_option_name": "All CED undergraduates",
-			"select_all_option_id": "/colleges/CED/standings/undergrad",
             "select_one_or_more_option_name": "CED Undergraduates by Major",
             "items_array": [{
                 "id": "/colleges/CED/standings/undergrad/majors/ARCHITECTURE",
@@ -55,8 +54,7 @@
 		
 		"programs": {
             "title": "Programs",
-            "select_all_option_name": "All CED Graduate Students",
-			"select_all_option_id": "/colleges/CED/standings/grad",
+            "select_all_option_name": "All CED Graduate Students",			
             "select_one_or_more_option_name": "CED Graduate Students by Program",
             "items_array": [{
                 "id": "/colleges/CED/standings/grad/programs/ARCHITECTURE",
