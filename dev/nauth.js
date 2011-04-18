@@ -135,33 +135,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		    return sHTML;
 		};
 		/* Debug */
-		
-		
-		
-	/*	var buildSelectedRadioOptionsArray = function($allItemsOption, $rootGroup) {
-
-			var selectedOptionsOR = [];
-						
-			if ($allItemsOption != null && $allItemsOption.is(':checked')) {
-				
-				var allItemsOptionValue = $allItemsOption.val();
-				if (allItemsOptionValue !== "") {
-					selectedOptionsOR.push(allItemsOptionValue);
-				}
-				
-			} else {
 			
-				var $selectedOptions = $("input:checkbox:checked", $rootGroup);
-
-				$selectedOptions.each(function(i, curOption) {
-						selectedOptionsOR.push(curOption.value);
-				});
-			}
-			
-			return selectedOptionsOR;
-		};
-*/		
-		
 		
 		var buildSelectedOptionsArray = function($allItemsOption, $rootGroup) {
 
@@ -283,6 +257,93 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			return gradsAND;	
 		};
 		
+		/* Boolean stuff start */
+		var canConvertORtoAND = function(obj) {
+			if(!obj.hasOwnProperty("OR")) return false;
+			return obj.OR.length === 1;
+		}
+		
+		var canConvertANDtoOR = function(obj) {
+			if(!obj.hasOwnProperty("AND")) return false;
+			return obj.AND.length === 1;
+		}
+		
+		var convertORtoAND = function(obj) {
+			obj.AND = obj.OR;
+			delete obj.OR;
+		}
+		
+		var convertANDtoOR = function(obj) {
+			obj.OR = obj.AND;
+			delete obj.AND;
+		}
+		
+		var joinTwoConditionsByAND = function(a, b) {
+			
+			if(canConvertORtoAND(a))convertORtoAND(a);
+			if(canConvertORtoAND(b))convertORtoAND(b);
+			
+			if(a.hasOwnProperty("AND") && b.hasOwnProperty("AND")) {
+				// simple array merge will do
+				a.AND = a.AND.concat(b.AND);
+				return a;
+			}
+			
+			if(a.hasOwnProperty("AND") && b.hasOwnProperty("OR")) {
+				// add b as array element to a.AND array
+				a.AND.push(b);
+				return a;
+			}
+			
+			if(a.hasOwnProperty("OR") && b.hasOwnProperty("AND")) {
+				// add a as array element to b.AND array
+				b.AND.unshift(a);
+				return b;
+			}
+			
+			if(a.hasOwnProperty("OR") && b.hasOwnProperty("OR")) {
+				// Need to wrap everything into a new object here				
+				var result = {AND: [a, b]};
+				return result;
+			}
+			
+			return a; //default
+		};
+		
+		var joinTwoConditionsByOR = function(a, b) {
+			
+			if(canConvertANDtoOR(a))convertANDtoOR(a);
+			if(canConvertANDtoOR(b))convertANDtoOR(b);
+			
+			if(a.hasOwnProperty("OR") && b.hasOwnProperty("OR")) {
+				// simple array merge will do
+				a.OR = a.OR.concat(b.OR);
+				return a;
+			}
+			
+			if(a.hasOwnProperty("OR") && b.hasOwnProperty("AND")) {
+				// add b as array element to a.OR array
+				a.OR.push(b);
+				return a;
+			}
+			
+			if(a.hasOwnProperty("AND") && b.hasOwnProperty("OR")) {
+				// add a as array element to b.OR array
+				b.OR.unshift(a);
+				return b;
+			}
+			
+			if(a.hasOwnProperty("AND") && b.hasOwnProperty("AND")) {
+				// Need to wrap everything into a new object here				
+				var result = {OR: [a, b]};
+				return result;
+			}
+			
+			return a; //default
+			
+		};
+		/* Boolean stuff end */
+		
 		var saveList = function() {
 			
 						
@@ -304,7 +365,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				}
 			}
 			
-			console.log("Include undergrads: " + boolIncludeUndergrads + " Include grads: " + boolIncludeGrads);
+			//console.log("Include undergrads: " + boolIncludeUndergrads + " Include grads: " + boolIncludeGrads);
 			
 			// For undergrads
 			var undergradsAND = [];			
@@ -372,8 +433,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			
 			
 			// Section C
-			//var cohortStatus = buildCohortStatusObject();
-			//if(cohortStatus != null)$outputJson.val(formatJSON(cohortStatus));else $outputJson.val(""); 
+			var cohortStatus = buildCohortStatusObject();			
+			if(cohortStatus != null) {
+				result = joinTwoConditionsByAND(result, cohortStatus);
+			} 
 			
 			
 			$outputJson.val(formatJSON(result));
