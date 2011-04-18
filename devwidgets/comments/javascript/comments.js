@@ -134,19 +134,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var parseDate = function(dateInput){
             /** Get the date with the use of regular expressions */
             if (dateInput !== null) {
-                /** Get the date with the use of regular expressions */
-                var match = /([0-9]{4})\-([0-9]{2})\-([0-9]{2}).([0-9]{2}):([0-9]{2}):([0-9]{2})/.exec(dateInput); // 2009-08-14T12:18:50
-                var d = new Date();
-                d.setYear(match[1]);
-                d.setMonth(match[2] - 1);
-                d.setDate(match[3]);
-                d.setHours(match[4]);
-                d.setMinutes(match[5]);
-                d.setSeconds(match[6]);
-                return d;
+                return sakai.api.l10n.fromEpoch(dateInput, sakai.data.me);
+            } else {
+                return null;
             }
-            return null;
-
         };
 
         /**
@@ -197,7 +188,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
                 comment.timeAgo = "about " + getTimeAgo(comment.date) + " "+sakai.api.i18n.General.getValueForKey("AGO");
                 // Use the sakai API function to parse the date and convert to the users local time
-                comment.date = sakai.api.l10n.parseDateString(tempDate, sakai.data.me);
+                comment.date = parseDate(tempDate, sakai.data.me);
                 comment.formatDate = sakai.api.l10n.transformDateTimeShort(comment.date);
                 comment.messageTxt = comment["sakai:body"];
                 comment.message = tidyInput(comment["sakai:body"]);
@@ -775,7 +766,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             if (sakai_global.currentgroup && !$.isEmptyObject(sakai_global.currentgroup.id)) {
                 currentSite = sakai_global.currentgroup.id;
             } else {
-                currentSite = sakai.profile.main.data["rep:userId"];
+                currentSite = sakai_global.profile.main.data["userid"];
             }
             if (!showSettings) {
                 // Show the main view.
