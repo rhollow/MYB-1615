@@ -27,10 +27,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
         // page elements
         var $elm_container = $("#" + tuid);
-        var $draggableList = $(".movable_list", $elm_container);
-
-        // selectors
-        var draggableElmSelector = "li";
 
         // templates
         var mylinksListTemplate = "mylinks_list_template";
@@ -50,62 +46,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             sakai.api.Server.saveJSON(linksDataNode, updatedList);
         };
 
-        /**
-         * saves the new list (or list order) to the server
-         * @param {Object} a jQuery object containing the moved item
-         * @param {Number} an index of the new position
-         * @param {Object} a jQuery object containing the current list in the new order
-        */
-        var saveNewOrder = function (item, requestedPosition, movables) {
-            // retrieve objects
-            var updatedList = currentListObj(movables);
-            // push data to server
-            saveLinkList(updatedList);
-        };
-
-        /**
-         * return the proper js Obj to store on the server
-         * @param {Object} a jQuery object containing the current list
-        */
-        var currentListObj = function (movables) {
-            var listObj = {};
-            var list = [];
-
-            // loop through movables, retrieve data and return it as an array
-            movables.each(function(idx, movable){
-                var $link = $("a", movable);
-                var record = {
-                    id :   $link.attr("id"),
-                    name : $link.text(),
-                    url :  $link.attr("href")
-                };
-                list.push(record);
-            });
-            listObj.links = list;
-            return listObj;
-        };
-
-        var initDraggables = function () {
-            fluid.reorderList($draggableList, {
-                selectors: {
-                    movables: draggableElmSelector
-                },
-                listeners: {
-                    afterMove: saveNewOrder
-                }
-            });
-        };
-
         var createLinkList = function (data) {
-            $draggableList.html(sakai.api.Util.TemplateRenderer(mylinksListTemplate, data));
-
             // Add Google Analytics outbound links tracking
             $("div.mylinks_widget li.link a").click(function () {
                 myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
                 return false;
             });
-
-            initDraggables();
         };
 
         /**
@@ -127,9 +73,47 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                         //alert("An error has occured");
                 }
             });
-        };
+        };               
+        
+        var gotoMainMode = function() {            
+            $(".link_list").show();
+            $(".addedit_link_panel").hide();
+            setupEventHandlers();
+        }
+        
+        var gotoAddLinkMode = function() {            
+            $(".link_list").hide();
+            $(".addedit_link_panel").show();
+            $("#editlink-button").hide();
+            setupEventHandlers();            
+        }
+        
+        var resetEventHandlers = function() {
+            $("#add-link-mode").die();
+            $("#cancel-button").die();
+        }
 
+        var setupEventHandlers = function() {   
+            resetEventHandlers();         
+            $("#add-link-mode").click(gotoAddLinkMode);
+            $("#cancel-button").click(gotoMainMode);
+        }
 
+		var setupAccordion = function() {
+			$("#accordion > li > div").click(function(){
+    			if(false == $(this).next().is(':visible')) {
+					$("#accordion div").removeClass("selected");
+					$("#accordion div").addClass("notSelected");
+        			$("#accordion table").slideUp(300);
+    			}
+    			$(this).next().slideToggle(300);
+				$(this).removeClass("notSelected");
+				$(this).addClass("selected");
+			});
+ 
+			$("#accordion table:eq(0)").show();
+		}
+		
         /**
          * Set up the widget
          * grab the users link data, then fire callback loadLinksList
@@ -146,14 +130,15 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                     // else retrieve default data, use that and save it back
                     loadDefaultList();
                 }
-
             });
+            setupEventHandlers();
+            setupAccordion();
         };
 
         doInit();
 
     };
-
+    
     sakai.api.Widgets.widgetLoader.informOnLoad("mylinks");
 
 });

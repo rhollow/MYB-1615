@@ -39,7 +39,6 @@
 .mylinks_widget .link_list a {
     display: block;
     padding: 6px 10px 5px 40px;
-    border-bottom: 1px solid #E8E8E8;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -47,31 +46,85 @@
 }
 .mylinks_widget .link_list a:hover 
 {
-    background-image: url("/devwidgets/mylinks/images/grab_handle.png");
     background-repeat: no-repeat;
     background-position: 10px 3px;
-    background-color: #C6DEFF;
     text-decoration: none;
 }
 
-/* Movable links */
-.mylinks_widget .fl-reorderer-movable-selected {outline: none;}
-
-.mylinks_widget .fl-reorderer-movable-dragging {background-color: #C6DEFF; outline: none;}
-
-.mylinks_widget .fl-reorderer-dropMarker {background-color: #469AC8; height: 2px;}
-
-.fl-reorderer-movable-hover {
-    cursor: -moz-grabbing; 
-    cursor: grabbing; 
-    background-color: #C6DEFF;
+/* Accordion */
+#accordion {
+    list-style: none;
+    padding: 0 0 0 0;
 }
 
-.fl-reorderer-avatar {
-    opacity: 0.55;
-    filter: alpha(opacity=55);
-    width: 300px;
-    border: 1px solid gray;
-    line-height: 2em;
-    text-indent: 40px;
+#accordion div {
+    display: block;
+    font-weight: bold;
+    border-top: 1px solid #000000;
+    cursor: pointer;
+    padding: 5px 5px 5px 7px;
+    list-style: circle;
+}
+
+#accordion .notSelected {
+	background: url("/devwidgets/mylinks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-color: #D5DBDF;
+	background-position: 100% -26px;
+	border-bottom: 0px;
+}
+
+#accordion .selected {
+	background: url("/devwidgets/mylinks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-color: #D5DBDF;
+	background-position: 100% 0px;
+	border-bottom: 1px solid #000000;
+}
+
+#accordion .accordion_pane {
+	display: none;
+	overflow: auto;
+}
+
+/*
+#accordion ul {
+    list-style: none;
+    padding: 0 0 0 0;
+}
+
+#accordion ul{
+    display: none;
+}
+
+#accordion ul li {
+    font-weight: normal;
+    cursor: auto;
+    padding: 0 0 0 7px;
+}*/
+
+#accordion a {
+    text-decoration: none;
+}
+
+#accordion a:hover {
+    text-decoration: underline;
+}
+
+/* Add/Edit Link Panel */
+.mylinks_widget .addedit_link_panel {
+    overflow: auto; 
+    max-height: 200px;
+    padding: 10px 20px;
+    display: none;
+}
+
+.mylinks_widget .addedit_link_panel .link-form input {   
+    width: 330px; 
+}
+
+.mylinks_widget .addedit_link_panel .link-form select {
+    width: 150px;
+}
+
+.mylinks_widget .addedit_link_panel .button-list {
+    float: right;
 }

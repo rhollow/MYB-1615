@@ -3,15 +3,99 @@
 
 <div class="mylinks_widget">
     <div class="fl-widget-content s3d-widget-content">
-        <div class="link_list">            
-            <ul class="movable_list">
-            	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
-        			 see http://tinyurl.com/2bd4v for details -->
-				&nbsp;
-            </ul>
+        <!-- MAIN PANEL: List of links and categories. -->          
+        <div class="link_list">
+	        <ul id="accordion">
+	            <li>
+	                <div class="selected">Administrative</div>
+					<table class="accordion_pane">
+		            	<tr>
+		                	<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+						<tr>
+		                    <td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+		            </table>
+	            </li>
+	            <li>
+	                <div class="notSelected">Academic</div>
+	                <table class="accordion_pane">
+		            	<tr>
+		                	<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+						<tr>
+		                    <td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+		            </table>
+	            </li>
+	            <li>
+	                <div class="notSelected">Student Life</div>
+	                <table class="accordion_pane">
+		            	<tr>
+		                	<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+						<tr>
+		                    <td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+		            </table>
+	            </li>
+				<li>
+	                <div class="notSelected">Miscellaneous</div>
+	                <table class="accordion_pane">
+		            	<tr>
+		                	<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+						<tr>
+		                    <td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+							<td><a href="#">Golf</a></td>
+		                </tr>
+		            </table>
+	            </li>
+	        </ul>
+        </div>
+        
+        <!-- ADD/EDIT LINK PANEL: Allows user to add a new link or edit an existing link. -->
+        <div class="addedit_link_panel">                
+            <form class="link-form" action="" method="post"> 
+                <span class="link-form-element">
+                    <label for="link-title">Link Title:</label>       
+                    <input type="text" id="link-title" />   
+                </span> 
+                <br><br>
+                <span class="link-form-element">
+                    <label for="link-url">Link URL:</label>       
+                    <input type="text" id="link-url" />   
+                </span> 
+                <br><br>                        
+                <span class="link-form-element">
+                     <label for="link-category">Category:</label>
+                    <select id="link-category"></select>  
+                </span>                            
+            </form>
+            <br><br>
+            <span class="button-list"> 
+                <button id="addlink-button" class="s3d-button"><span class="s3d-button-inner">Add Link</span></button>
+                <button id="editlink-button" class="s3d-button"><span class="s3d-button-inner">Save</span></button>
+                <button id="cancel-button" class="s3d-button"><span class="s3d-button-inner">Cancel</span></button>
+            </span>
         </div>
     </div>
-
+    
     <ul id="mylinks_list_template" style="display:none"><!--
         {for i in links}
             <li class="link">
@@ -31,6 +115,8 @@
         <div class="widget-options-inner">
             <ul>
                 <li><a href="/dev/links.html">__MSG__MODIFY_LINKS__</a></li>
+                <li><span class="pipe_divider">|</span></li>
+                <li><a href="javascript: void(0);" id="add-link-mode">Add a Link</a></li>
             </ul>
         </div>
         <div class="s3d-widget-options-footer-left">
@@ -43,5 +129,4 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/mylinks/javascript/mylinks.js"></script>
-
 
