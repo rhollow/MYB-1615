@@ -8,8 +8,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         /////////////////////////////
         // Configuration variables //
         /////////////////////////////
-
-        // trimpath Templates
+        
+        /**
+         * Trimpath template
+         */
         var $template = $("#template");
 		
 		/**
@@ -17,23 +19,59 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 */
 		var $view = $("#view");
 		
-		
+		/**
+		 * Section C wrapper DIV
+		 */		
 		var $sectionC = $("#section_c");
-		var $designateTermYear = $("#designate_term_year", $sectionC);
+		
+		/**
+		 * Section C cohort staus wrapper DIV
+		 */
 		var $cohortStatus = $(".cohort_status", $sectionC);
 		
+		/**
+		 * Designate term year from section C cohort status
+		 */
+		var $designateTermYear = $("#designate_term_year", $cohortStatus);
+		
+		/**
+		 * Undergraduate students wrapper DIV (template must be loaded before using this variable)
+		 */
 		var $undergradsGroup;
+		
+		/**
+		 * Graduate students wrapper DIV (template must be loaded before using this variable)
+		 */
 		var $gradsGroup;
-			
+		
+		/**
+		 * Save dynamic list button
+		 */	
 		var $saveList = $("#save_list");
 		
+		/**
+		 * Text area for JSON output (debug only)
+		 */
 		var $outputJson = $("#output_json");
 		
-		
-		var $includeUndergrads;
-		var $includeGrads;
+		/**
+		 * 'Include undergraduate students' checkbox (or hidden input when checkbox is not displayed)
+		 */
+		var $includeUndergradsCheckbox;
 
+		/**
+		 * 'Include graduate students' checkbox (or hidden input when checkbox is not displayed)
+		 */
+		var $includeGradsCheckbox;
+
+		/**
+		 * Whether the loaded trimpath template includes undergraduate students data
+		 */
 		var boolTemplateHasUndergradsData = false;
+		
+		/**
+		 * Whether the loaded trimpath template includes graduate students data
+		 */
 		var boolTemplateHasGradsData = false;
 
         
@@ -316,7 +354,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 * Gathers infomation about the cohort status and returns it as an object.
 		 * Returned information includes: semester, year and cohort.
 		 * 
-		 * @return {Object} A condition object containing the information about the cohort status in the AND field.  
+		 * @return {Object} A condition object containing the information about the cohort status in the AND field. Return value can be null if nothing is selected. 
 		 */
 		var buildCohortStatusObject = function() {
 									
@@ -335,6 +373,17 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         	} else {
         		return null;
         	}        	
+		};
+		
+		/**
+		 * Gathers infomation about the special programs and returns it as an object.
+		 *  
+		 * @return {Object} A condition object containing the information about the special programs in the OR field.  
+		 */
+		var buildSpecialProgramsObject = function() {
+									
+			var selectedSpecialProgramsOR = buildSelectedOptionsObjectAsOR($("#special_program_none"), $(".special_programs"));
+			return (selectedSpecialProgramsOR.OR.length === 0)? null: selectedSpecialProgramsOR;			
 		};
 		
 		/**
@@ -410,8 +459,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			
 			if(boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
 				// If the both checkboxes are available, need to check their statuses
-				boolIncludeUndergrads = $includeUndergrads.length > 0 && $includeUndergrads.is(":checked");
-				boolIncludeGrads = $includeGrads.length > 0 && $includeGrads.is(":checked");
+				boolIncludeUndergrads = $includeUndergradsCheckbox.length > 0 && $includeUndergradsCheckbox.is(":checked");
+				boolIncludeGrads = $includeGradsCheckbox.length > 0 && $includeGradsCheckbox.is(":checked");
 								
 			} else {
 				if(boolTemplateHasUndergradsData) {
@@ -430,7 +479,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			if (boolIncludeUndergrads) {
 				undergrads = buildUndergradsObjectAsAND();
 				if(undergrads.AND.length === 0) {
-					undergrads.AND.push($includeUndergrads.val());
+					undergrads.AND.push($includeUndergradsCheckbox.val());
 				}
 			}
 			
@@ -441,7 +490,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			if (boolIncludeGrads) {
 				grads = buildGradsObjectAsAND();
 				if(grads.AND.length === 0) {
-					grads.AND.push($includeGrads.val());
+					grads.AND.push($includeGradsCheckbox.val());
 				}
 			}
 			
@@ -481,6 +530,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			var cohortStatus = buildCohortStatusObject();			
 			if(cohortStatus != null) {
 				result = joinTwoConditionsByAND(result, cohortStatus);
+			}
+			
+			var specialPrograms = buildSpecialProgramsObject();			
+			if(specialPrograms != null) {
+				result = joinTwoConditionsByAND(result, specialPrograms);
 			} 
 			
 			
@@ -491,9 +545,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		
 		
 		
-		/////////////////////////////
+		//////////////////////////
         // UI related functions //
-        /////////////////////////////
+        //////////////////////////
 		
 		/**
 		 * Populates designate term Year listbox in the section C with the last 5 year numbers.
@@ -567,8 +621,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			
 			$view.html(sakai.api.Util.TemplateRenderer($template, template));
 			
-			$includeUndergrads = $("#include_undergrads");
-			$includeGrads = $("#include_grads");
+			$includeUndergradsCheckbox = $("#include_undergrads");
+			$includeGradsCheckbox = $("#include_grads");
 									
 						
 			// Define undergrad and grad groups AFTER template has been rendered
@@ -585,8 +639,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				$("input", $undergradsGroup).attr("disabled", "disabled");
 					
 						
-				$includeGrads.click(function(){
-						if($includeGrads.is(':checked')){
+				$includeGradsCheckbox.click(function(){
+						if($includeGradsCheckbox.is(':checked')){
 							$("input", $gradsGroup).removeAttr("disabled");						
 							$gradsGroup.removeClass("disabled");
 						} else {
@@ -596,8 +650,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 											
 				});
 								
-				$includeUndergrads.click(function(){
-						if($includeUndergrads.is(':checked')){
+				$includeUndergradsCheckbox.click(function(){
+						if($includeUndergradsCheckbox.is(':checked')){
 							$("input", $undergradsGroup ).removeAttr("disabled");							
 							$undergradsGroup.removeClass("disabled");						
 						} else {
