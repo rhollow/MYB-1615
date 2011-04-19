@@ -1,0 +1,92 @@
+{
+    "college": "COE",
+    "undergraduates": {
+        "majors": {
+            "title": "Undergraduate Majors and tracks",
+            "select_all_option_name": "All engineering undergraduates",
+            "select_one_or_more_option_name": "Engineering undergraduates by major",
+            "items_array": [{
+                "id": "ARCH1",
+                "name": "Architecture1"
+            },
+            {
+                "id": "ARCH2",
+                "name": "Architecture2",
+                "sub_group": {
+                    "items_array": [{
+                        "id": "NIN1",
+                        "name": "Ninjutsu",
+                        "sub_group": {
+                            "title": "Sub majors2",
+                            "items_array": [{
+                                "id": "SUM1",
+                                "name": "Sumo"
+                            },
+                            {
+                                "id": "KEN1",
+                                "name": "Kendo"
+                            }]
+                        }
+                    },
+                    {
+                        "id": "KAR",
+                        "name": "Karate"
+                    }]
+                }
+            }]
+        },
+        "declared": true
+    },
+    "graduates": {
+        "programs": {
+            "title": "Undergraduate Majors and tracks",
+            "select_all_option_name": "All engineering undergraduates",
+            "select_one_or_more_option_name": "Engineering undergraduates by major",
+            "items_array": [{
+                "id": "ARCH1",
+                "name": "Architecture1"
+            },
+            {
+                "id": "ARCH2",
+                "name": "Architecture2",
+                "sub_group": {
+                    "items_array": [{
+                        "id": "NIN1",
+                        "name": "Ninjutsu",
+                        "sub_group": {
+                            "title": "Sub majors2",
+                            "items_array": [{
+                                "id": "SUM1",
+                                "name": "Sumo"
+                            },
+                            {
+                                "id": "KEN1",
+                                "name": "Kendo"
+                            }]
+                        }
+                    },
+                    {
+                        "id": "KAR",
+                        "name": "Karate"
+                    }]
+                }
+            }]
+        },
+        "certificates": [{
+            "id": "CERT1",
+            "name": "MOT"
+        },
+        {
+            "id": "CERT2",
+            "name": "Logistics"
+        }],
+        "emphases": [{
+            "id": "EMPH1",
+            "name": "Nanotechnology"
+        },
+        {
+            "id": "EMPH2",
+            "name": "Computational Engineering Science"
+        }]
+    }
+}
