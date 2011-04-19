@@ -218,6 +218,17 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		}
 		
 		/**
+		 * Checks if the condition object is empty, i.e. doesn't have AND or OR properties, or one of these properties contains an empty array
+		 * 
+		 * @return {boolean}true if the condition object is empty; otherwise returns {boolean}false. 
+		 */
+		var isConditionObjectEmpty = function(obj) {
+			var objHasOwnPropertyAND = obj.hasOwnProperty("AND");
+			var objHasOwnPropertyOR = obj.hasOwnProperty("OR");
+			return (objHasOwnPropertyAND && obj.AND.length === 0) || (objHasOwnPropertyOR && obj.OR.length === 0) || (!objHasOwnPropertyAND && !objHasOwnPropertyOR);
+		};
+		
+		/**
 		 * Joins two condition objects by AND condition.
 		 * This function tries to optimeze the output object to avoid excessive object wrapping.
 		 * To avoid object clonning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
@@ -228,6 +239,17 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 * @return {Object} an object containing the first condition object joined by AND with the second condition object. 
 		 */
 		var joinTwoConditionsByAND = function(a, b) {
+									
+			if(isConditionObjectEmpty(a)) {
+				// trying to join empty object 'a' with 'b', just return 'b' in this case
+				return b;
+			}
+			
+			if(isConditionObjectEmpty(b)) {
+				// trying to join empty object 'b' with 'a', just return 'a' in this case
+				return a;
+			}
+						
 			
 			if(canConvertORtoAND(a)) {
 				convertORtoAND(a);
@@ -237,31 +259,37 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				convertORtoAND(b);
 			} 
 			
-			if(a.hasOwnProperty("AND") && b.hasOwnProperty("AND")) {
+			var aHasOwnPropertyAND = a.hasOwnProperty("AND");
+			var aHasOwnPropertyOR = a.hasOwnProperty("OR");
+			
+			var bHasOwnPropertyAND = b.hasOwnProperty("AND");
+			var bHasOwnPropertyOR = b.hasOwnProperty("OR");
+			
+			if(aHasOwnPropertyAND && bHasOwnPropertyAND) {
 				// simple array merge will do
 				a.AND = a.AND.concat(b.AND);
 				return a;
 			}
 			
-			if(a.hasOwnProperty("AND") && b.hasOwnProperty("OR")) {
+			if(aHasOwnPropertyAND && bHasOwnPropertyOR) {
 				// add b as array element to a.AND array
 				a.AND.push(b);
 				return a;
 			}
 			
-			if(a.hasOwnProperty("OR") && b.hasOwnProperty("AND")) {
+			if(aHasOwnPropertyOR && bHasOwnPropertyAND) {
 				// add a as array element to b.AND array
 				b.AND.unshift(a);
 				return b;
 			}
 			
-			if(a.hasOwnProperty("OR") && b.hasOwnProperty("OR")) {
+			if(aHasOwnPropertyOR && bHasOwnPropertyOR) {
 				// Need to wrap everything into a new object here				
 				var result = {AND: [a, b]};
 				return result;
 			}
 			
-			return a; //default
+			return a; //default, we shouldn't be here
 		};
 		
 		/**
@@ -276,6 +304,16 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 */
 		var joinTwoConditionsByOR = function(a, b) {
 			
+			if(isConditionObjectEmpty(a)) {
+				// trying to join empty object 'a' with 'b', just return 'b' in this case
+				return b;
+			}
+			
+			if(isConditionObjectEmpty(b)) {
+				// trying to join empty object 'b' with 'a', just return 'a' in this case
+				return a;
+			}
+			
 			if(canConvertANDtoOR(a)) {
 				convertANDtoOR(a);
 			}
@@ -284,31 +322,37 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				convertANDtoOR(b);
 			}
 			
-			if(a.hasOwnProperty("OR") && b.hasOwnProperty("OR")) {
+			var aHasOwnPropertyAND = a.hasOwnProperty("AND");
+			var aHasOwnPropertyOR = a.hasOwnProperty("OR");
+			
+			var bHasOwnPropertyAND = b.hasOwnProperty("AND");
+			var bHasOwnPropertyOR = b.hasOwnProperty("OR");
+			
+			if(aHasOwnPropertyOR && bHasOwnPropertyOR) {
 				// simple array merge will do
 				a.OR = a.OR.concat(b.OR);
 				return a;
 			}
 			
-			if(a.hasOwnProperty("OR") && b.hasOwnProperty("AND")) {
+			if(aHasOwnPropertyOR && bHasOwnPropertyAND) {
 				// add b as array element to a.OR array
 				a.OR.push(b);
 				return a;
 			}
 			
-			if(a.hasOwnProperty("AND") && b.hasOwnProperty("OR")) {
+			if(aHasOwnPropertyAND && bHasOwnPropertyOR) {
 				// add a as array element to b.OR array
 				b.OR.unshift(a);
 				return b;
 			}
 			
-			if(a.hasOwnProperty("AND") && b.hasOwnProperty("AND")) {
+			if(aHasOwnPropertyAND && bHasOwnPropertyAND) {
 				// Need to wrap everything into a new object here				
 				var result = {OR: [a, b]};
 				return result;
 			}
 			
-			return a; //default
+			return a; //default, we shouldn't be here
 			
 		};
 		
@@ -394,24 +438,17 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 */
 		var buildUndergradsObjectAsAND = function() {
 
-			var undergrads = {AND: []};
+			var undergrads = {};
 			
-			var selectedUndergradMajorsOR = buildSelectedOptionsObjectAsOR($("#undergrad_majors_all"), $(".majors"));
-			var selectedLevelsOR = buildSelectedOptionsObjectAsOR($("#undergrad_level_all"), $(".levels"));
-			var selectedAdmittedAs = $('input[name=undergrad_admitted_as]:checked').val(); // can be 'undefined'
-			var selectedDeclared = $('input[name=undergrad_declared]:checked').val(); // can be 'undefined'
-
+			var selectedUndergradMajorsOR = buildSelectedOptionsObjectAsOR(null, $(".majors"));
+			var selectedLevelsOR = buildSelectedOptionsObjectAsOR(null, $(".levels"));
+			var selectedAdmittedAsOR = buildSelectedOptionsObjectAsOR(null, $(".admittedAs"));
+			var selectedDeclaredOR = buildSelectedOptionsObjectAsOR(null, $(".declared"));
 
 			undergrads = joinTwoConditionsByAND(undergrads, selectedUndergradMajorsOR);											
-			undergrads = joinTwoConditionsByAND(undergrads, selectedLevelsOR);			
-							
-			if (typeof(selectedAdmittedAs) !== 'undefined' && selectedAdmittedAs != "") {
-				undergrads.AND.push(selectedAdmittedAs);
-			}
-			
-			if (typeof(selectedDeclared) !== 'undefined' && selectedDeclared != "") {
-				undergrads.AND.push(selectedDeclared);
-			}
+			undergrads = joinTwoConditionsByAND(undergrads, selectedLevelsOR);
+			undergrads = joinTwoConditionsByAND(undergrads, selectedAdmittedAsOR);
+			undergrads = joinTwoConditionsByAND(undergrads, selectedDeclaredOR);						
 			
 			return undergrads;	
 		};
@@ -424,22 +461,18 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 */
 		var buildGradsObjectAsAND = function() {
 
-			var grads = {AND: []};
+			var grads = {};
 			
-			var selectedGradProgramsOR = buildSelectedOptionsObjectAsOR($("#grad_programs_all"), $(".programs"));
+			var selectedGradProgramsOR = buildSelectedOptionsObjectAsOR(null, $(".programs"));
 			var selectedCertificatesOR = buildSelectedOptionsObjectAsOR(null, $(".certificates"));
 			var selectedEmphasesOR = buildSelectedOptionsObjectAsOR(null, $(".emphases"));
-			var selectedDegrees = $('input[name=grad_degrees]:checked').val(); // can be 'undefined'
+			var selectedDegreesOR = buildSelectedOptionsObjectAsOR(null, $(".degrees"));
 			var selectedgsiGsrOR = buildSelectedOptionsObjectAsOR(null, $(".gsiGsr"));
 						
 			grads = joinTwoConditionsByAND(grads, selectedGradProgramsOR);
 			grads = joinTwoConditionsByAND(grads, selectedCertificatesOR);			
-			grads = joinTwoConditionsByAND(grads, selectedEmphasesOR);			
-
-			if (typeof(selectedDegrees) !== 'undefined' && selectedDegrees != "") {
-				grads.AND.push(selectedDegrees);
-			}
-			
+			grads = joinTwoConditionsByAND(grads, selectedEmphasesOR);
+			grads = joinTwoConditionsByAND(grads, selectedDegreesOR);
 			grads = joinTwoConditionsByAND(grads, selectedgsiGsrOR);			
 						
 			return grads;	
@@ -474,24 +507,25 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			
 			
 			// For undergrads
-			var undergrads = {AND: []};			
+			var undergrads = {};			
 			
 			if (boolIncludeUndergrads) {
 				undergrads = buildUndergradsObjectAsAND();
-				if(undergrads.AND.length === 0) {
-					undergrads.AND.push($includeUndergradsCheckbox.val());
-				}
+				if(isConditionObjectEmpty(undergrads)) {
+					undergrads ={OR: [$includeUndergradsCheckbox.val()]};
+				}				
 			}
 			
 			
 			// For grads
-			var grads = {AND: []};
+			var grads = {};
 			
 			if (boolIncludeGrads) {
 				grads = buildGradsObjectAsAND();
-				if(grads.AND.length === 0) {
-					grads.AND.push($includeGradsCheckbox.val());
+				if(isConditionObjectEmpty(grads)) {
+					grads ={OR: [$includeGradsCheckbox.val()]};
 				}
+								
 			}
 			
 			var result = {};
