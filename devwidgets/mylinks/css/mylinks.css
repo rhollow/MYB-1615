@@ -85,22 +85,6 @@
 	overflow: auto;
 }
 
-/*
-#accordion ul {
-    list-style: none;
-    padding: 0 0 0 0;
-}
-
-#accordion ul{
-    display: none;
-}
-
-#accordion ul li {
-    font-weight: normal;
-    cursor: auto;
-    padding: 0 0 0 7px;
-}*/
-
 #accordion a {
     text-decoration: none;
 }
