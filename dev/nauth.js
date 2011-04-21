@@ -455,7 +455,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		
 		/**
 		 * Gathers all graduate students related information and returns it as an object.
-		 * Returned information includes: graduate programs, certificates, emphases, degrees, GSR and GSI statuses. 
+		 * Returned information includes: graduate programs, certificates, emphases, degrees. 
 		 * 
 		 * @return {Object} A condition object containing all graduate students related information in the AND field.
 		 */
@@ -467,13 +467,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			var selectedCertificatesOR = buildSelectedOptionsObjectAsOR(null, $(".certificates"));
 			var selectedEmphasesOR = buildSelectedOptionsObjectAsOR(null, $(".emphases"));
 			var selectedDegreesOR = buildSelectedOptionsObjectAsOR(null, $(".degrees"));
-			var selectedgsiGsrOR = buildSelectedOptionsObjectAsOR(null, $(".gsiGsr"));
 						
 			grads = joinTwoConditionsByAND(grads, selectedGradProgramsOR);
 			grads = joinTwoConditionsByAND(grads, selectedCertificatesOR);			
 			grads = joinTwoConditionsByAND(grads, selectedEmphasesOR);
 			grads = joinTwoConditionsByAND(grads, selectedDegreesOR);
-			grads = joinTwoConditionsByAND(grads, selectedgsiGsrOR);			
 						
 			return grads;	
 		};
@@ -705,8 +703,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 					$("#grad_programs_selected_programs").click();
 				});
             
-			$('input[id^="reg_status_withdrawn_"]').click(function(){
-					$("#reg_status_withdrawn").click();
+            var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group');
+			$regStatusSelectAllInGroup.click(function(){
+					if($regStatusSelectAllInGroup.is(':checked')) {
+						$(".reg_status .sub_group input", $sectionC).attr("checked", "checked");
+					} else {
+						$(".reg_status .sub_group input", $sectionC).removeAttr("checked");
+					}
 				});
 			$('input[id^="currency_status_current_"]').click(function(){
 					$("#currency_status_current").click();

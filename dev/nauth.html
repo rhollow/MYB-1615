@@ -207,7 +207,7 @@
 				
 				
 								
-				.majors,.levels,.admittedAs,.declared,.programs,.certificates,.emphases,.degrees,.gsiGsr,.cohort_status,.special_programs,.student_status {
+				.majors,.levels,.admittedAs,.declared,.programs,.certificates,.emphases,.degrees,.cohort_status,.special_programs,.student_status {
 					border-top: 1px solid #000;
 					margin-top: 5px;
 					padding-top: 5px;
@@ -362,13 +362,6 @@
 				</div>
   			{/macro}
 			
-			{macro renderGSI_And_GSR()}
-    			<div class="gsiGsr">
-					<div class="checkbox"><input type="checkbox" id="grad_gsi" value="grad_gsi" /><label for="grad_gsi">GSI</label></div>
-					<div class="checkbox"><input type="checkbox" id="grad_gsr" value="grad_gsr" /><label for="grad_gsr">GSR</label></div>
-				</div>
-  			{/macro}
-			
 			{macro renderUndergraduates()}
     			{if propExists(undergraduates.majors)}${renderMajors(undergraduates.majors)}{/if}
 				${renderLevels()}
@@ -381,7 +374,6 @@
 				{if propExists(graduates.certificates)}${renderCertificates(graduates.certificates)}{/if}
 				{if propExists(graduates.emphases)}${renderEmphases(graduates.emphases)}{/if}
 				${renderDegrees()}
-				${renderGSI_And_GSR()}
   			{/macro}
 			
 			
@@ -430,7 +422,7 @@
 				[TEMPLATE_PLACEHOLDER]    
 			</div>
 			<!-- section C start -->
-			<div id="section_c" class="section_c" style="display:none;">
+			<div id="section_c" class="section_c" style="display:none1;">
 				<!-- section C container start -->
 			
 				<div class="main_title">Filter Selected Students</div>
@@ -440,10 +432,10 @@
 				<div class="registration_status">		
 					<!-- outer div -->
 					
-					<div class="group_header">Registration Status</div>
+					
 			
-					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_registered" id="reg_status_registered" /><label for="reg_status_registered">Include all current registered students as selected</label></div>
-					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_other" id="reg_status_other" /><label for="reg_status_other">Only include students in designated registration statuses</label></div>			
+					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_include_all" id="reg_status_include_all" /><label for="reg_status_include_all">Include all current registered students as selected</label></div>
+					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_only_designated_statuses" id="reg_status_only_designated_statuses" /><label for="reg_status_only_designated_statuses">Only include students in designated registration statuses</label></div>			
 			
 					<!-- Begin 3 column layout -->
 			
@@ -451,16 +443,20 @@
 	        			<div class="reg_status_col_left1">
 	            			
 							
-							<div class="reg_status">			
-								<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_registered" id="reg_status_registered" /><label for="reg_status_registered">Registered</label></div>
-								<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_other" id="reg_status_other" /><label for="reg_status_other">Other</label></div>
-								<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_withdrawn" id="reg_status_withdrawn" /><label for="reg_status_withdrawn">Withdrawn</label></div>
+							<div class="reg_status">
+								<div class="group_header">Registered</div>								
+								<div class="checkbox"><input type="checkbox" value="" id="reg_status_select_all_in_group" /><label for="reg_status_select_all_in_group">Select All in Group</label></div>								
 								<div class="sub_group">
-									<div class="checkbox"><input type="radio" name="reg_status_withdrawn_details" value="reg_status_withdrawn_withdrew" id="reg_status_withdrawn_withdrew" /><label for="reg_status_withdrawn_withdrew">Withdrew</label></div>
-									<div class="checkbox"><input type="radio" name="reg_status_withdrawn_details" value="reg_status_withdrawn_cancelled" id="reg_status_withdrawn_cancelled" /><label for="reg_status_withdrawn_cancelled">Cancelled</label></div>
-									<div class="checkbox"><input type="radio" name="reg_status_withdrawn_details" value="reg_status_withdrawn_withdrawn" id="reg_status_withdrawn_withdrawn" /><label for="reg_status_withdrawn_withdrawn">Withdrawn</label></div>
-									<div class="checkbox"><input type="radio" name="reg_status_withdrawn_details" value="reg_status_withdrawn_dismissed" id="reg_status_withdrawn_dismissed" /><label for="reg_status_withdrawn_dismissed">Dismissed</label></div>
-									<div class="checkbox"><input type="radio" name="reg_status_withdrawn_details" value="reg_status_withdrawn_deceased" id="reg_status_withdrawn_deceased" /><label for="reg_status_withdrawn_deceased">Deceased</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_registered" value="reg_status_registered" /><label for="reg_status_registered">Registered</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_eligible" value="reg_status_eligible" /><label for="reg_status_eligible">Eligible</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_returning" value="reg_status_returning" /><label for="reg_status_returning">Returning</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_enrolled_not_registered" value="reg_status_enrolled_not_registered" /><label for="reg_status_enrolled_not_registered">Enrolled - not registered</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_registered_continuing" value="reg_status_registered_continuing" /><label for="reg_status_registered_continuing">Registered - continuing</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_registered_new" value="reg_status_registered_new" /><label for="reg_status_registered_new">Registered - new</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_registered_readmitted" value="reg_status_registered_readmitted" /><label for="reg_status_registered_readmitted">Registered - readmitted</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_registered_visitor" value="reg_status_registered_visitor" /><label for="reg_status_registered_visitor">Registered - visitor</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_not_registered" value="reg_status_not_registered" /><label for="reg_status_not_registered">Not Registered</label></div>
+									<div class="checkbox"><input type="checkbox" id="reg_status_in_absentia" value="reg_status_in_absentia" /><label for="reg_status_in_absentia">In Absentia</label></div>
 								</div>
 							</div>
 							
@@ -615,7 +611,7 @@
 									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_degree_list" value="2" /><label for="student_status_one_or_more_degree_list">Degree List</label></div>
 									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_domestic_students" value="3" /><label for="student_status_one_or_more_domestic_students">Domestic Students</label></div>
 									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_eap_recip" value="4" /><label for="student_status_one_or_more_eap_recip">EAP Reciprocity</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_fellowships_and_awards" value="5" /><label for="student_status_one_or_more_fellowships_and_awards">Fellowships & Awards</label></div>
+									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_fellowships_and_awards" value="5" /><label for="student_status_one_or_more_fellowships_and_awards">Fellowships &amp; Awards</label></div>
 									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_filing_fee" value="6" /><label for="student_status_one_or_more_filing_fee">Filing Fee</label></div>								
 								</div>
 								<div class="student_status_col_right">
@@ -650,7 +646,7 @@
 		<!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
 
-        <!-- 403 JS -->
+        <!-- JS -->
         <script>require(["/dev/nauth.js"]);</script>
 
 </body>
