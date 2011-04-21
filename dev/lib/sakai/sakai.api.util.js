@@ -435,7 +435,7 @@ define(["jquery",
                 }
                 if (profile.picture) {
                     if (profile.picture.name) {
-                        picture_name = profile.picture.name
+                        picture_name = profile.picture.name;
                     } else {
                         //change string to json object and get name from picture object
                         picture_name = $.parseJSON(profile.picture).name;
@@ -443,7 +443,7 @@ define(["jquery",
                     return "/~" + id + "/public/profile/" + picture_name;
                 } else if (profile.basic && profile.basic.elements && profile.basic.elements.picture && profile.basic.elements.picture.value) {
                     if (profile.basic.elements.picture.value.name) {
-                        picture_name = profile.basic.elements.picture.value.name
+                        picture_name = profile.basic.elements.picture.value.name;
                     } else {
                         //change string to json object and get name from picture object
                         picture_name = $.parseJSON(profile.basic.elements.picture.value).name;
@@ -1101,10 +1101,9 @@ define(["jquery",
             getTimeAgo : function(date){
                 if (date !== null) {
 
-                    var currentDate = new Date();
+                    var currentDate = Date.now();
                     // convert current date to GMT time
-                    currentDate = this.toGMT(currentDate);
-
+                    currentDate = sakai_l10n.fromEpoch(currentDate, require("sakai/sakai.api.user").data.me);
                     var iTimeAgo = (currentDate - date) / (1000);
                     if (iTimeAgo < 60) {
                         if (Math.floor(iTimeAgo) === 1) {
@@ -1491,8 +1490,7 @@ define(["jquery",
                 replacement = "-";
             }
             url = $.trim(url);
-            url = url.replace(/['"]/gi,"");
-            url = url.replace(/[:;<>#^%{}|~`@%&!$,.=\+\/\?\(\)\*\s\\\\\\[\\]]*/gi, replacement);
+            url = url.replace(/[:;<>#%{}|~`@%&!$,.="'\^\+\/\?\(\)\*\s\\\\\[\]]/gi, replacement);
             url = url.replace(new RegExp("[" + replacement + "]+", "gi"), replacement);
             return url;
         }
