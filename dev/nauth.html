@@ -117,15 +117,16 @@
 				   float: left;
 				   left: 0;
 				   width: 40%;
-				   border-right: 1px solid #000;
-				   margin-bottom:10px;				   
+				   margin-bottom:10px;
+				   padding-top: 5px;				   
 				}
 				.cohort_status_col_right{
 				   position: relative;
 				   float: right;
 				   right: 0;
 				   width: 59%;
-				   margin-bottom:10px;				   
+				   margin-bottom:10px;
+				   padding-top: 5px;				   
 				}
 				/* Cohort status layout */
 				
@@ -170,14 +171,16 @@
 				
 				
 				
-				/* Student status layout */
-				.student_status_col_left{
+				/* Student and residency status layout */
+				.student_and_residency_status_col_left{
 				   position: relative;
 				   float: left;
 				   left: 0;
-				   width: 48%;			   				   
+				   width: 48%;
+				   padding-right: 10px;
+			       border-right: 1px solid #000;			   				   
 				}
-				.student_status_col_right{
+				.student_and_residency_status_col_right{
 				   position: relative;
 				   float: right;
 				   right: 0;
@@ -207,16 +210,12 @@
 				
 				
 								
-				.majors,.levels,.admittedAs,.declared,.programs,.certificates,.emphases,.degrees,.cohort_status,.special_programs,.student_status {
+				.majors,.levels,.admittedAs,.declared,.programs,.certificates,.emphases,.degrees,.cohort_status,.special_programs,.student_and_residency_status {
 					border-top: 1px solid #000;
 					margin-top: 5px;
 					padding-top: 5px;
 					margin-left: 20px;
 					margin-right: 20px;
-				}
-								
-				.designate_term {
-					padding-top: 5px;
 				}
 				
 				.main_title {
@@ -238,7 +237,7 @@
 				
 				.students_targeted_by_list_container {
 					display:inline-block;
-					margin-left: 40px;	
+					margin-left: 140px;	
 				}
 				
 				.title_information_container{
@@ -252,7 +251,7 @@
     </head>
 
     <body class="fl-centered error403 i18nable">
-		
+
 		<script type="text/javascript">
 			var propExists = function(prop) {
      			return typeof(prop) !== 'undefined' && prop != null;					
@@ -381,36 +380,38 @@
 			<div class="details_link_container"><a id="show_more_or_less" href="#">Show More</a></div>
 			
 			<div class="title_information_container">College <div class="readonly_textbox">${college}</div> <div class="students_targeted_by_list_container" >Students now targeted by this list: <div class="readonly_textbox">*TODO*</div></div></div>
-			<div class="wrapper">
-			{if (typeof(undergraduates) !== 'undefined' && undergraduates != null ) && (typeof(graduates) !== 'undefined' && graduates != null) }			
-        		<div class="left">
-            		<div class="checkbox"><input type="checkbox" id="include_undergrads" value="{if propExists(undergraduates.id)}${undergraduates.id}{/if}" /><label for="include_undergrads">Include Undergraduates</label></div>
-					<div class="undergrads_group">
-						${renderUndergraduates()}
-					</div>	
-        		</div>
-        		<div class="right">
-            		<div class="checkbox"><input type="checkbox" id="include_grads" value="{if propExists(graduates.id)}${graduates.id}{/if}" /><label for="include_grads">Include Graduate Students</label></div>
-					<div class="grads_group">
-						${renderGraduates()}
-					</div>
-        		</div>     		
-			{else}
-				<div class="onecolumn">
-            		{if typeof(undergraduates) !== 'undefined' && undergraduates != null }
-						<input type="hidden" id="include_undergrads" value="{if propExists(undergraduates.id)}${undergraduates.id}{/if}" />
+			<form name="frm_main_dynamic">
+				<div class="wrapper">
+				{if (typeof(undergraduates) !== 'undefined' && undergraduates != null ) && (typeof(graduates) !== 'undefined' && graduates != null) }			
+	        		<div class="left">
+	            		<div class="checkbox"><input type="checkbox" id="include_undergrads" value="{if propExists(undergraduates.id)}${undergraduates.id}{/if}" /><label for="include_undergrads">Include Undergraduates</label></div>
 						<div class="undergrads_group">
 							${renderUndergraduates()}
-						</div>
-					{elseif typeof(graduates) !== 'undefined' && graduates != null } 					
-						<input type="hidden" id="include_grads" value="{if propExists(graduates.id)}${graduates.id}{/if}" />
-						<div class="grads_group">							
+						</div>	
+	        		</div>
+	        		<div class="right">
+	            		<div class="checkbox"><input type="checkbox" id="include_grads" value="{if propExists(graduates.id)}${graduates.id}{/if}" /><label for="include_grads">Include Graduate Students</label></div>
+						<div class="grads_group">
 							${renderGraduates()}
 						</div>
-					{/if}
-        		</div>
-			{/if}
-			</div>
+	        		</div>     		
+				{else}
+					<div class="onecolumn">
+	            		{if typeof(undergraduates) !== 'undefined' && undergraduates != null }
+							<input type="hidden" id="include_undergrads" value="{if propExists(undergraduates.id)}${undergraduates.id}{/if}" />
+							<div class="undergrads_group">
+								${renderUndergraduates()}
+							</div>
+						{elseif typeof(graduates) !== 'undefined' && graduates != null } 					
+							<input type="hidden" id="include_grads" value="{if propExists(graduates.id)}${graduates.id}{/if}" />
+							<div class="grads_group">							
+								${renderGraduates()}
+							</div>
+						{/if}
+	        		</div>
+				{/if}
+				</div>
+			</form>
 				
 			
     	--></div>
@@ -422,7 +423,7 @@
 				[TEMPLATE_PLACEHOLDER]    
 			</div>
 			<!-- section C start -->
-			<div id="section_c" class="section_c" style="display:none1;">
+			<div id="section_c" class="section_c" style="display:none;">
 				<!-- section C container start -->
 			
 				<div class="main_title">Filter Selected Students</div>
@@ -431,33 +432,32 @@
 			
 				<div class="registration_status">		
 					<!-- outer div -->
+					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_include_all" id="reg_status_include_all" checked="checked" /><label for="reg_status_include_all">Include all current registered students as selected</label></div>
+					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_only_designated_statuses" id="reg_status_only_designated_statuses" /><label for="reg_status_only_designated_statuses">Only include students in designated registration statuses</label></div>					
 					
-					
-			
-					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_include_all" id="reg_status_include_all" /><label for="reg_status_include_all">Include all current registered students as selected</label></div>
-					<div class="checkbox"><input type="radio" name="reg_statuses" value="reg_status_only_designated_statuses" id="reg_status_only_designated_statuses" /><label for="reg_status_only_designated_statuses">Only include students in designated registration statuses</label></div>			
-			
 					<!-- Begin 3 column layout -->
 			
 					<div class="wrapper">
 	        			<div class="reg_status_col_left1">
 	            			
 							
-							<div class="reg_status">
+							<div class="reg_status">								
 								<div class="group_header">Registered</div>								
-								<div class="checkbox"><input type="checkbox" value="" id="reg_status_select_all_in_group" /><label for="reg_status_select_all_in_group">Select All in Group</label></div>								
-								<div class="sub_group">
-									<div class="checkbox"><input type="checkbox" id="reg_status_registered" value="reg_status_registered" /><label for="reg_status_registered">Registered</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_eligible" value="reg_status_eligible" /><label for="reg_status_eligible">Eligible</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_returning" value="reg_status_returning" /><label for="reg_status_returning">Returning</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_enrolled_not_registered" value="reg_status_enrolled_not_registered" /><label for="reg_status_enrolled_not_registered">Enrolled - not registered</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_registered_continuing" value="reg_status_registered_continuing" /><label for="reg_status_registered_continuing">Registered - continuing</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_registered_new" value="reg_status_registered_new" /><label for="reg_status_registered_new">Registered - new</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_registered_readmitted" value="reg_status_registered_readmitted" /><label for="reg_status_registered_readmitted">Registered - readmitted</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_registered_visitor" value="reg_status_registered_visitor" /><label for="reg_status_registered_visitor">Registered - visitor</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_not_registered" value="reg_status_not_registered" /><label for="reg_status_not_registered">Not Registered</label></div>
-									<div class="checkbox"><input type="checkbox" id="reg_status_in_absentia" value="reg_status_in_absentia" /><label for="reg_status_in_absentia">In Absentia</label></div>
-								</div>
+								<form name="frm_reg_status">
+									<div class="checkbox"><input type="checkbox" value="" id="reg_status_select_all_in_group" /><label for="reg_status_select_all_in_group">Select All in Group</label></div>								
+									<div class="sub_group">
+										<div class="checkbox"><input type="checkbox" id="reg_status_registered" value="reg_status_registered" /><label for="reg_status_registered">Registered</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_eligible" value="reg_status_eligible" /><label for="reg_status_eligible">Eligible</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_returning" value="reg_status_returning" /><label for="reg_status_returning">Returning</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_enrolled_not_registered" value="reg_status_enrolled_not_registered" /><label for="reg_status_enrolled_not_registered">Enrolled - not registered</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_registered_continuing" value="reg_status_registered_continuing" /><label for="reg_status_registered_continuing">Registered - continuing</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_registered_new" value="reg_status_registered_new" /><label for="reg_status_registered_new">Registered - new</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_registered_readmitted" value="reg_status_registered_readmitted" /><label for="reg_status_registered_readmitted">Registered - readmitted</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_registered_visitor" value="reg_status_registered_visitor" /><label for="reg_status_registered_visitor">Registered - visitor</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_not_registered" value="reg_status_not_registered" /><label for="reg_status_not_registered">Not Registered</label></div>
+										<div class="checkbox"><input type="checkbox" id="reg_status_in_absentia" value="reg_status_in_absentia" /><label for="reg_status_in_absentia">In Absentia</label></div>
+									</div>
+								</form>
 							</div>
 							
 							
@@ -466,15 +466,18 @@
 	            			
 							
 							<div class="current_or_not">
-								<div class="group_header">Current or Not</div>
-								<div class="checkbox"><input type="radio" name="currency_statuses" value="0" id="currency_status_not_current" /><label for="currency_status_not_current">Not Current</label></div>
-								<div class="checkbox"><input type="radio" name="currency_statuses" value="1" id="currency_status_current" /><label for="currency_status_current">Current</label></div>						
-								<div class="sub_group">
-									<div class="group_header">Blocking</div>
-									<div class="checkbox"><input type="radio" name="currency_status_current_blocking" value="0" id="currency_status_current_blocking_not_blocked" /><label for="currency_status_current_blocking_not_blocked">Not Blocked</label></div>
-									<div class="checkbox"><input type="radio" name="currency_status_current_blocking" value="1" id="currency_status_current_blocking_blocked" /><label for="currency_status_current_blocking_blocked">Blocked</label></div>
-									<div class="checkbox"><input type="radio" name="currency_status_current_blocking" value="2" id="currency_status_current_blocking_on_probation" /><label for="currency_status_current_blocking_on_probation">On Probation</label></div>				
-								</div>
+								<div class="group_header">Current</div>
+								<form name="frm_current_or_not">
+									<div class="checkbox"><input type="checkbox" value="" id="currency_status_select_all_in_group" /><label for="currency_status_select_all_in_group">Select All in Group</label></div>
+									<div class="sub_group">
+										<div class="checkbox"><input type="checkbox" value="currency_status_current" id="currency_status_current" /><label for="currency_status_current">Current</label></div>									
+										<div class="sub_group">										
+											<div class="checkbox"><input type="checkbox" value="currency_status_current_blocked" id="currency_status_current_blocked" /><label for="currency_status_current_blocked">Blocked</label></div>
+											<div class="checkbox"><input type="checkbox" value="currency_status_current_on_probation" id="currency_status_current_on_probation" /><label for="currency_status_current_on_probation">On Probation</label></div>
+										</div>
+										<div class="checkbox"><input type="checkbox" value="currency_status_not_current" id="currency_status_not_current" /><label for="currency_status_not_current">Not Current</label></div>				
+									</div>
+								</form>
 							</div>
 	
 							
@@ -483,15 +486,16 @@
 	            			
 							
 							<div class="student_reg_status">
-								<div class="group_header">Status</div>
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="0" id="student_reg_status_returning" /><label for="student_reg_status_returning">Returning</label></div>
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="1" id="student_reg_status_eligible" /><label for="student_reg_status_eligible">Eligible</label></div>
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="2" id="student_reg_status_enrolled_not_registered" /><label for="student_reg_status_enrolled_not_registered">Enrolled - not registered</label></div>
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="3" id="student_reg_status_registered_continuing" /><label for="student_reg_status_registered_continuing">Registered - continuing</label></div>
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="4" id="student_reg_status_registered_new" /><label for="student_reg_status_registered_new">Registered - new</label></div>
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="5" id="student_reg_status_registered_readmitted" /><label for="student_reg_status_registered_readmitted">Registered - readmitted</label></div>			
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="6" id="student_reg_status_registered_visitor" /><label for="student_reg_status_registered_visitor">Registered - visitor</label></div>
-								<div class="checkbox"><input type="radio" name="student_reg_statuses" value="7" id="student_reg_status_not_registered" /><label for="student_reg_status_not_registered">Not Registered</label></div>			
+								<div class="group_header">Withdrawn, etc.</div>
+								<form name="frm_student_reg_status">
+									<div class="checkbox"><input type="checkbox" value="" id="student_reg_status_select_all_in_group" /><label for="student_reg_status_select_all_in_group">Select All in Group</label></div>
+									<div class="sub_group">
+										<div class="checkbox"><input type="checkbox" value="student_reg_status_withdrew" id="student_reg_status_withdrew" /><label for="student_reg_status_withdrew">Withdrew</label></div>
+										<div class="checkbox"><input type="checkbox" value="student_reg_status_withdrawn" id="student_reg_status_withdrawn" /><label for="student_reg_status_withdrawn">Withdrawn</label></div>
+										<div class="checkbox"><input type="checkbox" value="student_reg_status_cancelled" id="student_reg_status_cancelled" /><label for="student_reg_status_cancelled">Cancelled</label></div>
+										<div class="checkbox"><input type="checkbox" value="student_reg_status_dismissed" id="student_reg_status_dismissed" /><label for="student_reg_status_dismissed">Dismissed</label></div>
+									</div>
+								</form>
 							</div>
 							
 							
@@ -509,43 +513,40 @@
 			
 				<div class="cohort_status" style="clear:both;">
 					
-					<div class="group_header">Cohort Status</div>
+					<div class="sub_title">Cohort Status</div>
 					<!-- Begin 2 col layout -->
 					<div class="wrapper">
+				        
+				        <div class="checkbox"><input type="radio" name="cohort_statuses" value="cohort_status_all_students" id="cohort_status_all_students" checked="checked" /><label for="cohort_status_all_students">Include all selected students</label></div>						
+						<div class="checkbox"><input type="radio" name="cohort_statuses" value="cohort_status_specified_students" id="cohort_status_specified_students" /><label for="cohort_status_specified_students">Only include students in designated cohort(s)</label></div>
 				        <div class="cohort_status_col_left">
 				            
-							<div>				
-								<div class="checkbox"><input type="radio" name="cohort_statuses" value="cohort_status_all_students" id="cohort_status_all_students" checked="checked" /><label for="cohort_status_all_students">All students</label></div>						
-								<div class="checkbox"><input type="radio" name="cohort_statuses" value="cohort_status_specified_students" id="cohort_status_specified_students" /><label for="cohort_status_specified_students">Specified students</label></div>
-								<div class="sub_group">
-									<div class="group_header designate_term">Designate Term:</div>
-									<div class="wrapper">
-										<div class="designate_term_col_left">
-											<div class="group_header">Semester</div>
-											<select name="semester" id="designate_term_semester">
-											  <option value="designate_term_semester_spring">Spring</option>
-											  <option value="designate_term_semester_fall">Fall</option>
-											</select>
-										</div>
-										<div class="designate_term_col_right">
-											<div class="group_header">Year</div>
-											<select name="year" id="designate_term_year">
-											  <!-- populated by JavaScript -->
-											</select>
-										</div>
+							<div class="sub_group">
+								<div class="group_header">Designate Term:</div>
+								<div class="wrapper">
+									<div class="designate_term_col_left">
+										<div class="group_header">Semester</div>
+										<select name="semester" id="designate_term_semester">
+										  <option value="designate_term_semester_spring">Spring</option>
+										  <option value="designate_term_semester_fall">Fall</option>
+										</select>
+									</div>
+									<div class="designate_term_col_right">
+										<div class="group_header">Year</div>
+										<select name="year" id="designate_term_year">
+										  <!-- populated by JavaScript -->
+										</select>
 									</div>
 								</div>
 							</div>
-							
-							
-							
+														
 				        </div>
 				        <div class="cohort_status_col_right">
 						
 							<div class="choose_cohort">
 								<div class="group_header">Choose Cohort:</div>
-								<div class="checkbox"><input type="radio" name="cohort_status_terms" value="cohort_status_term_before" id="cohort_status_term_before" checked="checked" /><label for="cohort_status_term_before">Before: Students who started before the designated term</label></div>
-								<div class="checkbox"><input type="radio" name="cohort_status_terms" value="cohort_status_term_during" id="cohort_status_term_during" /><label for="cohort_status_term_during">During: Students who started in the designated term</label></div>							
+								<div class="checkbox"><input type="radio" name="cohort_status_terms" value="cohort_status_term_before" id="cohort_status_term_before" checked="checked" /><label for="cohort_status_term_before">Students who started <b>before</b> the designated term</label></div>
+								<div class="checkbox"><input type="radio" name="cohort_status_terms" value="cohort_status_term_during" id="cohort_status_term_during" /><label for="cohort_status_term_during">Students who started <b>in or after</b> the designated term</label></div>							
 							</div>
 				            
 				        </div> 
@@ -555,76 +556,82 @@
 				
 				<div class="special_programs" style="clear:both;">
 						<div class="group_header">Special Programs</div>
-						<div class="checkbox"><input type="radio" name="special_programs" value="" id="special_program_none" /><label for="special_program_none">None</label></div>
-						<div class="checkbox"><input type="radio" name="special_programs" value="" id="special_program_one_or_more" /><label for="special_program_one_or_more">One or more</label></div>
+						<div class="checkbox"><input type="radio" name="special_programs" value="" id="special_program_all_students" checked="checked" /><label for="special_program_all_students">Include all selected students</label></div>
+						<div class="checkbox"><input type="radio" name="special_programs" value="" id="special_program_specified_students" /><label for="special_program_specified_students">Only include students in designated special programs</label></div>
 						<div class="sub_group">
 							<!-- Begin 2 col layout -->
 							<div class="wrapper">
-								<div class="special_prog_col_left">
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_athlete" value="special_program_one_or_more_athlete" /><label for="special_program_one_or_more_athlete">Athlete</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_dsp" value="special_program_one_or_more_dsp" /><label for="special_program_one_or_more_dsp">DSP (Disabled Students Program)</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_estp" value="special_program_one_or_more_estp" /><label for="special_program_one_or_more_estp">Environmental Science Teaching Program</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_eop" value="special_program_one_or_more_eop" /><label for="special_program_one_or_more_eop">EOP (Eduacational Opportunity Program)</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_exp_ber" value="special_program_one_or_more_exp_ber" /><label for="special_program_one_or_more_exp_ber">Experiencing Berkeley</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_iap" value="special_program_one_or_more_iap" /><label for="special_program_one_or_more_iap">IAP (Incentive Awards Program)</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_low_income" value="special_program_one_or_more_low_income" /><label for="special_program_one_or_more_low_income">Low Income</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_mslr" value="special_program_one_or_more_mslr" /><label for="special_program_one_or_more_mslr">Mandated Study List Review</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_mesa" value="special_program_one_or_more_mesa" /><label for="special_program_one_or_more_mesa">MESA</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_miller_scholars" value="special_program_one_or_more_miller_scholars" /><label for="special_program_one_or_more_miller_scholars">Miller Scholars</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_pdp" value="special_program_one_or_more_pdp" /><label for="special_program_one_or_more_pdp">PDP (Professional Development Program)</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_pca" value="special_program_one_or_more_pca" /><label for="special_program_one_or_more_pca">Pre-collegiate academy</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_puente" value="special_program_one_or_more_puente" /><label for="special_program_one_or_more_puente">Puente</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_rsl" value="special_program_one_or_more_rsl" /><label for="special_program_one_or_more_rsl">Reduced Study Load</label></div>								
-								</div>
-								<div class="special_prog_col_right">
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_reentry" value="special_program_one_or_more_reentry" /><label for="special_program_one_or_more_reentry">Reentry</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_r_and_c" value="special_program_one_or_more_r_and_c" /><label for="special_program_one_or_more_r_and_c">Regents &amp; Chancellors</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_sage" value="special_program_one_or_more_sage" /><label for="special_program_one_or_more_sage">SAGE</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_starting_point" value="special_program_one_or_more_starting_point" /><label for="special_program_one_or_more_starting_point">Starting Point</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_student_parent" value="special_program_one_or_more_student_parent" /><label for="special_program_one_or_more_student_parent">Student parent</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_summer_bridge" value="special_program_one_or_more_summer_bridge" /><label for="special_program_one_or_more_summer_bridge">Summer Bridge</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_tap" value="special_program_one_or_more_tap" /><label for="special_program_one_or_more_tap">TAP (Transfer Alliance Program)</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_eaop_uc" value="special_program_one_or_more_eaop_uc" /><label for="special_program_one_or_more_eaop_uc">EAOP (UC)</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_eaop_ucb" value="special_program_one_or_more_eaop_ucb" /><label for="special_program_one_or_more_eaop_ucb">EAOP (UCB)</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_uci_ats" value="special_program_one_or_more_uci_ats" /><label for="special_program_one_or_more_uci_ats">UCI Academic Talent Search</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_upward_bound" value="special_program_one_or_more_upward_bound" /><label for="special_program_one_or_more_upward_bound">Upward Bound</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_veteran" value="special_program_one_or_more_veteran" /><label for="special_program_one_or_more_veteran">Veteran</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_ye_at_haas" value="special_program_one_or_more_ye_at_haas" /><label for="special_program_one_or_more_ye_at_haas">Young Entrepreneurs at Haas</label></div>
-									<div class="checkbox"><input type="checkbox" id="special_program_one_or_more_ymp" value="special_program_one_or_more_ymp" /><label for="special_program_one_or_more_ymp">Young Musicians Program</label></div>								
-								</div>
-								
+								<form name="frm_special_programs">
+									<div class="special_prog_col_left">
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_athlete" value="special_program_specified_students_athlete" /><label for="special_program_specified_students_athlete">Athlete</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_biology_scholars_program" value="special_program_specified_students_biology_scholars_program" /><label for="special_program_specified_students_biology_scholars_program">Biology Scholar's Program</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_dsp" value="special_program_specified_students_dsp" /><label for="special_program_specified_students_dsp">DSP (Disabled Students Program)</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_estp" value="special_program_specified_students_estp" /><label for="special_program_specified_students_estp">Env Sci Teaching Program</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_eaop_uc" value="special_program_specified_students_eaop_uc" /><label for="special_program_specified_students_eaop_uc">EAOP (UC)</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_eaop_ucb" value="special_program_specified_students_eaop_ucb" /><label for="special_program_specified_students_eaop_ucb">EAOP (UCB)</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_eap_recip" value="special_program_specified_students_eap_recip" /><label for="special_program_specified_students_eap_recip">EAP Reciprocity</label></div>									
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_eop" value="special_program_specified_students_eop" /><label for="special_program_specified_students_eop">EOP (Eduacational Opportunity Program)</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_exp_ber" value="special_program_specified_students_exp_ber" /><label for="special_program_specified_students_exp_ber">Experiencing Berkeley</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_high_sch_enr" value="special_program_specified_students_high_sch_enr" /><label for="special_program_specified_students_high_sch_enr">High School Enrichment</label></div>									
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_iap" value="special_program_specified_students_iap" /><label for="special_program_specified_students_iap">IAP</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_low_income" value="special_program_specified_students_low_income" /><label for="special_program_specified_students_low_income">Low Income</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_mslr" value="special_program_specified_students_mslr" /><label for="special_program_specified_students_mslr">Mandated Study List Review</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_mesa" value="special_program_specified_students_mesa" /><label for="special_program_specified_students_mesa">MESA</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_miller_scholars" value="special_program_specified_students_miller_scholars" /><label for="special_program_specified_students_miller_scholars">Miller Scholars</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_pdp" value="special_program_specified_students_pdp" /><label for="special_program_specified_students_pdp">PDP</label></div>
+									</div>
+									<div class="special_prog_col_right">
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_pca" value="special_program_specified_students_pca" /><label for="special_program_specified_students_pca">Pre-collegiate academy</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_puente" value="special_program_specified_students_puente" /><label for="special_program_specified_students_puente">Puente</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_rsl" value="special_program_specified_students_rsl" /><label for="special_program_specified_students_rsl">Reduced Study Load</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_reentry" value="special_program_specified_students_reentry" /><label for="special_program_specified_students_reentry">Reentry</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_r_and_c" value="special_program_specified_students_r_and_c" /><label for="special_program_specified_students_r_and_c">Regents &amp; Chancellors</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_sage" value="special_program_specified_students_sage" /><label for="special_program_specified_students_sage">SAGE</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_starting_point" value="special_program_specified_students_starting_point" /><label for="special_program_specified_students_starting_point">Starting Point</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_student_parent" value="special_program_specified_students_student_parent" /><label for="special_program_specified_students_student_parent">Student parent</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_summer_bridge" value="special_program_specified_students_summer_bridge" /><label for="special_program_specified_students_summer_bridge">Summer Bridge</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_tap" value="special_program_specified_students_tap" /><label for="special_program_specified_students_tap">TAP</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_uci_ats" value="special_program_specified_students_uci_ats" /><label for="special_program_specified_students_uci_ats">UCI Academic Talent Search</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_upward_bound" value="special_program_specified_students_upward_bound" /><label for="special_program_specified_students_upward_bound">Upward Bound</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_veteran" value="special_program_specified_students_veteran" /><label for="special_program_specified_students_veteran">Veteran</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_ye_at_haas" value="special_program_specified_students_ye_at_haas" /><label for="special_program_specified_students_ye_at_haas">Young Entrepreneurs at Haas</label></div>
+										<div class="checkbox"><input type="checkbox" id="special_program_specified_students_ymp" value="special_program_specified_students_ymp" /><label for="special_program_specified_students_ymp">Young Musicians Program</label></div>								
+									</div>
+								</form>
 							</div>
 							<!-- End 2 col layout -->
 					</div>					
 				</div>
 				
-				<div class="student_status" style="clear:both;">
-						<div class="group_header">Student Status</div>
-						<div class="checkbox"><input type="radio" name="student_statuses" value="0" id="student_status_none" /><label for="student_status_none">None</label></div>
-						<div class="checkbox"><input type="radio" name="student_statuses" value="1" id="student_status_one_or_more" /><label for="student_status_one_or_more">One or more</label></div>
-						<div class="sub_group">
+				<div class="student_and_residency_status" style="clear:both;">
 							<!-- Beging 2 col layout -->
 							<div class="wrapper">
-								<div class="student_status_col_left">
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_biology_scholars_program" value="0" /><label for="student_status_one_or_more_biology_scholars_program">Biology Scholar's Program</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_ca_resident" value="1" /><label for="student_status_one_or_more_ca_resident">California Resident</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_degree_list" value="2" /><label for="student_status_one_or_more_degree_list">Degree List</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_domestic_students" value="3" /><label for="student_status_one_or_more_domestic_students">Domestic Students</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_eap_recip" value="4" /><label for="student_status_one_or_more_eap_recip">EAP Reciprocity</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_fellowships_and_awards" value="5" /><label for="student_status_one_or_more_fellowships_and_awards">Fellowships &amp; Awards</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_filing_fee" value="6" /><label for="student_status_one_or_more_filing_fee">Filing Fee</label></div>								
+								<div class="student_and_residency_status_col_left">									
+									<div class="sub_title">Student Status</div>
+									<div class="checkbox"><input type="radio" name="student_statuses" value="" id="student_status_all_students" checked="checked" /><label for="student_status_all_students">Include all selected students</label></div>
+									<div class="checkbox"><input type="radio" name="student_statuses" value="" id="student_status_specified_students" /><label for="student_status_specified_students">Only include students in designated statuses</label></div>
+									<div class="sub_group">			
+										<div class="checkbox"><input type="checkbox" id="student_status_specified_students_degree_list" value="student_status_specified_students_degree_list" /><label for="student_status_specified_students_degree_list">Degree List</label></div>
+										<div class="checkbox"><input type="checkbox" id="student_status_specified_students_fellowships_and_awards" value="student_status_specified_students_fellowships_and_awards" /><label for="student_status_specified_students_fellowships_and_awards">Fellowships &amp; Awards</label></div>
+										<div class="checkbox"><input type="checkbox" id="student_status_specified_students_filing_fee" value="student_status_specified_students_filing_fee" /><label for="student_status_specified_students_filing_fee">Filing Fee</label></div>
+										<div class="checkbox"><input type="checkbox" id="student_status_specified_students_in_prof_sch_or_program" value="student_status_specified_students_in_prof_sch_or_program" /><label for="student_status_specified_students_in_prof_sch_or_program">In a professional school or program</label></div>
+										<div class="checkbox"><input type="checkbox" id="student_status_specified_students_visiting_scholar" value="student_status_specified_students_visiting_scholar" /><label for="student_status_specified_students_visiting_scholar">Visiting Scholar</label></div>
+									</div>												
 								</div>
-								<div class="student_status_col_right">
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_high_sch_enr" value="7" /><label for="student_status_one_or_more_high_sch_enr">High School Enrichment</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_in_absentia" value="8" /><label for="student_status_one_or_more_in_absentia">In Absentia</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_int_students" value="9" /><label for="student_status_one_or_more_int_students">International Students</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_on_probation" value="10" /><label for="student_status_one_or_more_on_probation">On Probation</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_professional" value="11" /><label for="student_status_one_or_more_professional">Professional</label></div>
-									<div class="checkbox"><input type="checkbox" id="student_status_one_or_more_visiting_scholar" value="12" /><label for="student_status_one_or_more_visiting_scholar">Visiting Scholar</label></div>								
+								<div class="student_and_residency_status_col_right">
+									<div class="sub_title">Residency Status</div>
+									<div class="checkbox"><input type="radio" name="residency_statuses" value="" id="residency_status_all_students" checked="checked" /><label for="residency_status_all_students">Include all selected students</label></div>
+									<div class="checkbox"><input type="radio" name="residency_statuses" value="" id="residency_status_specified_students" /><label for="residency_status_specified_students">Only include students in designated residencies</label></div>
+									<div class="sub_group">
+										<div class="checkbox"><input type="checkbox" id="residency_status_ca_resident" value="residency_status_ca_resident" /><label for="residency_status_ca_resident">California Resident</label></div>
+										<div class="checkbox"><input type="checkbox" id="residency_status_domestic_students" value="residency_status_domestic_students" /><label for="residency_status_domestic_students">Domestic Students</label></div>
+										<div class="checkbox"><input type="checkbox" id="residency_status_int_students" value="residency_status_int_students" /><label for="residency_status_int_students">International Students</label></div>
+									</div>
+																	
 								</div>	
 							</div>
 							<!-- End 2 col layout -->
-					</div>					
+					
 				</div>
 			
 					
@@ -644,10 +651,10 @@
 		-->
 
 		<!-- Dependency JS -->
-        <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
+        <script type="text/javascript" data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
 
         <!-- JS -->
-        <script>require(["/dev/nauth.js"]);</script>
+        <script type="text/javascript">require(["/dev/nauth.js"]);</script>
 
 </body>
-<html>
+</html>
