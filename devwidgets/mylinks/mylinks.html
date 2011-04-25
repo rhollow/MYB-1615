@@ -3,51 +3,52 @@
 
 <div class="mylinks_widget">
     <div class="fl-widget-content s3d-widget-content">
-        <!-- MAIN PANEL: List of links and categories. -->          
+        <!-- MAIN PANEL: List of links and categories. -->                 
         <div class="link_list">
 	        <ul id="accordion">
 	            <li>
-	                <div class="selected">Administrative</div>
-					<table class="accordion_pane">
+	                <div class="notSelected">Administrative</div>                    
+                     <table class="accordion_pane">
 		            	<tr>
-		                	<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
+		                	<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
 		                </tr>
 						<tr>
-		                    <td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
+		                    <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
 		                </tr>
 		            </table>
+                                                                                            		
 	            </li>
 	            <li>
-	                <div class="notSelected">Academic</div>
-	                <table class="accordion_pane">
-		            	<tr>
-		                	<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-		                </tr>
-						<tr>
-		                    <td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-		                </tr>
-		            </table>
+	                <div class="selected">Academic</div>
+	                <table class="accordion_pane" id="academic_links">                           		          
+                        
+    		        </table>
+                    <table class="accordion_pane" id="academic_links_template" style="display:none"><!--
+                    {for i in academic}
+                        <li class="link">
+                            <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
+                        </li>
+                    {forelse}
+                        <span>Sorry, there was a failure loading your list of links.</span>
+                    {/for}
+                    --></table>
 	            </li>
 	            <li>
 	                <div class="notSelected">Student Life</div>
 	                <table class="accordion_pane">
 		            	<tr>
-		                	<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
+		                	<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
 		                </tr>
 						<tr>
-		                    <td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
+		                    <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
 		                </tr>
 		            </table>
 	            </li>
@@ -55,14 +56,14 @@
 	                <div class="notSelected">Miscellaneous</div>
 	                <table class="accordion_pane">
 		            	<tr>
-		                	<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
+		                	<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
 		                </tr>
 						<tr>
-		                    <td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
-							<td><a href="#">Golf</a></td>
+		                    <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
+							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
 		                </tr>
 		            </table>
 	            </li>
@@ -94,27 +95,17 @@
                 <button id="cancel-button" class="s3d-button"><span class="s3d-button-inner">Cancel</span></button>
             </span>
         </div>
-    </div>
-    
-    <ul id="mylinks_list_template" style="display:none"><!--
-        {for i in links}
-            <li class="link">
-                <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
-            </li>
-        {forelse}
-            <span>Sorry, there was a failure loading your list of links.</span>
-        {/for}
-    --></ul>
+    </div>       
     
     <!-- widget footer --> 
-
     <div class="fl-widget-options fl-fix" style="overflow:hidden;">
         <div class="fl-widget-options-footer-top">
             <div class="fl-widget-options-top-right"></div>
         </div>
         <div class="widget-options-inner">
             <ul>
-                <li><a href="/dev/links.html">__MSG__MODIFY_LINKS__</a></li>
+                <li id="modify-links-mode"><a href="javascript: void(0);">__MSG__MODIFY_LINKS__</a></li>
+				<li id="normal-mode" style="display: none"><a href="javascript: void(0);">Done Modifying Links</a></li>
                 <li><span class="pipe_divider">|</span></li>
                 <li><a href="javascript: void(0);" id="add-link-mode">Add a Link</a></li>
             </ul>

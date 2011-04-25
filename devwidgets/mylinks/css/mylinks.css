@@ -51,13 +51,18 @@
     text-decoration: none;
 }
 
+/* Edit mode */
+.mylinks_widget .link_list .edit {
+	display: hidden;
+}
+
 /* Accordion */
-#accordion {
+.mylinks_widget .link_list #accordion {
     list-style: none;
     padding: 0 0 0 0;
 }
 
-#accordion div {
+.mylinks_widget .link_list #accordion div {
     display: block;
     font-weight: bold;
     border-top: 1px solid #000000;
@@ -66,30 +71,30 @@
     list-style: circle;
 }
 
-#accordion .notSelected {
+.mylinks_widget .link_list #accordion .notSelected {
 	background: url("/devwidgets/mylinks/images/arrow-sort.png") no-repeat scroll transparent;
 	background-color: #D5DBDF;
 	background-position: 100% -26px;
 	border-bottom: 0px;
 }
 
-#accordion .selected {
+.mylinks_widget .link_list #accordion .selected {
 	background: url("/devwidgets/mylinks/images/arrow-sort.png") no-repeat scroll transparent;
 	background-color: #D5DBDF;
 	background-position: 100% 0px;
 	border-bottom: 1px solid #000000;
 }
 
-#accordion .accordion_pane {
+.mylinks_widget .link_list #accordion .accordion_pane {
 	display: none;
 	overflow: auto;
 }
 
-#accordion a {
+.mylinks_widget .link_list #accordion a {
     text-decoration: none;
 }
 
-#accordion a:hover {
+.mylinks_widget .link_list #accordion a:hover {
     text-decoration: underline;
 }
 
