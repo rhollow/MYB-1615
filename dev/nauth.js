@@ -603,12 +603,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			
 			var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));			
 			result = joinTwoConditionsByAND(result, residencyStatus);
-			 
-			
-
-			
-			$outputJson.val(formatJSON(result));
-		}
+			 			
+			return result;
+		};
 		
 		
 		

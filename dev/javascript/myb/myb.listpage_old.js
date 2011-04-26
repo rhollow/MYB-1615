@@ -21,523 +21,6 @@
 require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
     "/dev/lib/myb/jquery/jquery-ui-tabs-min.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 	sakai_global.listpage = function(){
-	    
-	    
-	    /*-------------------------------- Roman ------------------------------------------*/
-	    /////////////////////////////
-        // Configuration variables //
-        /////////////////////////////
-        
-        /**
-         * Trimpath template
-         */
-        var $template = $("#template");
-		
-		/**
-		 * View to render the template
-		 */
-		var $view = $("#view");
-		
-		/**
-		 * Section C wrapper DIV
-		 */		
-		var $sectionC = $("#section_c");
-		
-		/**
-		 * Section C cohort staus wrapper DIV
-		 */
-		var $cohortStatus = $(".cohort_status", $sectionC);
-		
-		/**
-		 * Designate term year from section C cohort status
-		 */
-		var $designateTermYear = $("#designate_term_year", $cohortStatus);
-		
-		/**
-		 * Undergraduate students wrapper DIV (template must be loaded before using this variable)
-		 */
-		var $undergradsGroup;
-		
-		/**
-		 * Graduate students wrapper DIV (template must be loaded before using this variable)
-		 */
-		var $gradsGroup;
-		
-		/**
-		 * Save dynamic list button
-		 */	
-		var $saveList = $("#save_list");
-		
-		/**
-		 * Text area for JSON output (debug only)
-		 */
-		var $outputJson = $("#output_json");
-		
-		/**
-		 * 'Include undergraduate students' checkbox (or hidden input when checkbox is not displayed)
-		 */
-		var $includeUndergradsCheckbox;
-
-		/**
-		 * 'Include graduate students' checkbox (or hidden input when checkbox is not displayed)
-		 */
-		var $includeGradsCheckbox;
-
-		/**
-		 * Whether the loaded trimpath template includes undergraduate students data
-		 */
-		var boolTemplateHasUndergradsData = false;
-		
-		/**
-		 * Whether the loaded trimpath template includes graduate students data
-		 */
-		var boolTemplateHasGradsData = false;
-	    
-	    //////////////////////////////////////////////////////////
-        // Functions for manipulating boolean condition objects //
-        //////////////////////////////////////////////////////////		
-		
-		/**
-		 * Checks if the condition object can be converted from OR form to AND form.
-		 * 
-		 * @return {boolean}true if the condition object can be safely converted from OR form to AND form; otherwise returns {boolean}false. 
-		 */
-		var canConvertORtoAND = function(obj) {
-			if(!obj.hasOwnProperty("OR")) return false;
-			var len = obj.OR.length;
-			return len === 1 || len === 0;
-		}
-		
-		/**
-		 * Checks if the condition object can be converted from AND form to OR form.
-		 * 
-		 * @return {boolean}true if the condition object can be safely converted from AND form to OR form; otherwise returns {boolean}false. 
-		 */
-		var canConvertANDtoOR = function(obj) {
-			if(!obj.hasOwnProperty("AND")) return false;
-			var len = obj.AND.length
-			return len === 1 || len === 0;
-		}
-		
-		/**
-		 * Converts the condition object from OR form to AND form.
-		 * The function doesn't do any checks before conversion.
-		 * 
-		 * @param {Object}	obj	object to convert
-		 */
-		var convertORtoAND = function(obj) {
-			obj.AND = obj.OR;
-			delete obj.OR;
-		}
-		
-		/**
-		 * Converts the condition object from AND form to OR form.
-		 * The function doesn't do any checks before conversion.
-		 * 
-		 * @param {Object}	obj	object to convert
-		 */
-		var convertANDtoOR = function(obj) {
-			obj.OR = obj.AND;
-			delete obj.AND;
-		}
-		
-		/**
-		 * Checks if the condition object is empty, i.e. doesn't have AND or OR properties, or one of these properties contains an empty array
-		 * 
-		 * @return {boolean}true if the condition object is empty; otherwise returns {boolean}false. 
-		 */
-		var isConditionObjectEmpty = function(obj) {
-			var objHasOwnPropertyAND = obj.hasOwnProperty("AND");
-			var objHasOwnPropertyOR = obj.hasOwnProperty("OR");
-			return (objHasOwnPropertyAND && obj.AND.length === 0) || (objHasOwnPropertyOR && obj.OR.length === 0) || (!objHasOwnPropertyAND && !objHasOwnPropertyOR);
-		};
-		
-		/**
-		 * Joins two condition objects by AND condition.
-		 * This function tries to optimeze the output object to avoid excessive object wrapping.
-		 * To avoid object clonning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
-		 * 
-		 * @param {Object}	a	first condition object to join (must contain either AND or OR field)
-		 * @param {Object}	b	second condition object to join (must contain either AND or OR field)
-		 * 
-		 * @return {Object} an object containing the first condition object joined by AND with the second condition object. 
-		 */
-		var joinTwoConditionsByAND = function(a, b) {
-			
-			var isAEmpty = isConditionObjectEmpty(a);
-			var isBEmpty = isConditionObjectEmpty(b); 									
-			
-			if(isAEmpty && isBEmpty) {
-				var emptyObj = {};
-				return emptyObj;
-			}
-			
-			if(isAEmpty) {
-				// trying to join empty object 'a' with 'b', just return 'b' in this case
-				return b;
-			}
-			
-			if(isBEmpty) {
-				// trying to join empty object 'b' with 'a', just return 'a' in this case
-				return a;
-			}
-						
-			
-			if(canConvertORtoAND(a)) {
-				convertORtoAND(a);
-			} 
-			
-			if(canConvertORtoAND(b)){
-				convertORtoAND(b);
-			} 
-			
-			var aHasOwnPropertyAND = a.hasOwnProperty("AND");
-			var aHasOwnPropertyOR = a.hasOwnProperty("OR");
-			
-			var bHasOwnPropertyAND = b.hasOwnProperty("AND");
-			var bHasOwnPropertyOR = b.hasOwnProperty("OR");
-			
-			if(aHasOwnPropertyAND && bHasOwnPropertyAND) {
-				// simple array merge will do
-				a.AND = a.AND.concat(b.AND);
-				return a;
-			}
-			
-			if(aHasOwnPropertyAND && bHasOwnPropertyOR) {
-				// add b as array element to a.AND array
-				a.AND.push(b);
-				return a;
-			}
-			
-			if(aHasOwnPropertyOR && bHasOwnPropertyAND) {
-				// add a as array element to b.AND array
-				b.AND.unshift(a);
-				return b;
-			}
-			
-			if(aHasOwnPropertyOR && bHasOwnPropertyOR) {
-				// Need to wrap everything into a new object here				
-				var result = {AND: [a, b]};
-				return result;
-			}
-			
-			return a; //default, we shouldn't be here
-		};
-		
-		/**
-		 * Joins two condition objects by OR condition.
-		 * This function tries to optimeze the output object to avoid excessive object wrapping.
-		 * To avoid object clonning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
-		 * 
-		 * @param {Object}	a	first condition object to join (must contain either AND or OR field)
-		 * @param {Object}	b	second condition object to join (must contain either AND or OR field)
-		 * 
-		 * @return {Object} an object containing the first condition object joined by OR with the second condition object. 
-		 */
-		var joinTwoConditionsByOR = function(a, b) {
-			
-			var isAEmpty = isConditionObjectEmpty(a);
-			var isBEmpty = isConditionObjectEmpty(b); 						
-						
-			if(isAEmpty && isBEmpty) {
-				var emptyObj = {};
-				return emptyObj;
-			}
-			
-			if(isAEmpty) {
-				// trying to join empty object 'a' with 'b', just return 'b' in this case
-				return b;
-			}
-			
-			if(isBEmpty) {
-				// trying to join empty object 'b' with 'a', just return 'a' in this case
-				return a;
-			}
-			
-			
-			if(canConvertANDtoOR(a)) {
-				convertANDtoOR(a);
-			}
-			
-			if(canConvertANDtoOR(b)){
-				convertANDtoOR(b);
-			}
-			
-			var aHasOwnPropertyAND = a.hasOwnProperty("AND");
-			var aHasOwnPropertyOR = a.hasOwnProperty("OR");
-			
-			var bHasOwnPropertyAND = b.hasOwnProperty("AND");
-			var bHasOwnPropertyOR = b.hasOwnProperty("OR");
-			
-			if(aHasOwnPropertyOR && bHasOwnPropertyOR) {
-				// simple array merge will do
-				a.OR = a.OR.concat(b.OR);
-				return a;
-			}
-			
-			if(aHasOwnPropertyOR && bHasOwnPropertyAND) {
-				// add b as array element to a.OR array
-				a.OR.push(b);
-				return a;
-			}
-			
-			if(aHasOwnPropertyAND && bHasOwnPropertyOR) {
-				// add a as array element to b.OR array
-				b.OR.unshift(a);
-				return b;
-			}
-			
-			if(aHasOwnPropertyAND && bHasOwnPropertyAND) {
-				// Need to wrap everything into a new object here				
-				var result = {OR: [a, b]};
-				return result;
-			}
-			
-			return a; //default, we shouldn't be here
-			
-		};
-		
-		
-		
-		
-		////////////////////////////////////////////////////////////////////////
-        // Functions for gathering the information about the selected options //
-        ////////////////////////////////////////////////////////////////////////		
-		
-		/**
-		 * Gathers all selected options in the selected element group and returns them as an OR condition object.
-		 * 
-		 * @param {JQuery}	$allItemsOption	an option that represents all items, can be null if there is no such option
-		 * @param {JQuery}	$rootGroup	element group in which to search for selected options
-		 * 
-		 * @return {Object} an OR condition object containing all selected options in the selected element group.
-		 */
-		var buildSelectedOptionsObjectAsOR = function($allItemsOption, $rootGroup) {
-
-			var selectedOptions = {OR: []};
-						
-			if ($allItemsOption != null && $allItemsOption.is(':checked')) {
-				
-				var allItemsOptionValue = $allItemsOption.val();
-				if (allItemsOptionValue !== "") {
-					selectedOptions.OR.push(allItemsOptionValue);
-				}
-				
-			} else {
-			
-				var $selectedOptions = $("input:checkbox:checked", $rootGroup);
-
-				$selectedOptions.each(function(i, curOption) {
-						selectedOptions.OR.push(curOption.value);
-				});
-			}
-			
-			return selectedOptions;
-		};
-			
-		/**
-		 * Gathers infomation about the cohort status and returns it as an object.
-		 * Returned information includes: semester, year and cohort.
-		 * 
-		 * @return {Object} A condition object containing the information about the cohort status in the AND field. Return value can be null if nothing is selected. 
-		 */
-		var buildCohortStatusObject = function() {
-			
-			var result = {};
-			
-        	if ($("#cohort_status_specified_students", $sectionC).is(':checked')) {
-        		var semester = $("#designate_term_semester", $cohortStatus).val();
-        		var year = $("#designate_term_year", $cohortStatus).val();
-        		var cohort = $("input[name=cohort_status_terms]:checked", $cohortStatus).val();
-        		
-        		result = {
-					AND: [semester, "designate_term_year_" + year, cohort]
-				};				
-        	}
-        	
-        	return result;        	
-		};
-		
-		/**
-		 * Gathers infomation about the registration status and returns it as an object.
-		 *  
-		 * @return {Object} A condition object containing the information about the registration status.  
-		 */
-		var buildRegistrationStatusObject = function() {
-			
-			var registrationStatus = {};
-			
-			if($("#reg_status_only_designated_statuses", $sectionC).is(':checked')) {						
-				
-				var selectedRegisteredOR = buildSelectedOptionsObjectAsOR(null, $(".reg_status .sub_group", $sectionC));
-				var selectedCurrencyOR = buildSelectedOptionsObjectAsOR(null, $(".current_or_not .sub_group", $sectionC));
-				var selectedWithdrawnOR = buildSelectedOptionsObjectAsOR(null, $(".student_reg_status .sub_group", $sectionC));
-				
-				registrationStatus = joinTwoConditionsByAND(registrationStatus, selectedRegisteredOR);
-				registrationStatus = joinTwoConditionsByAND(registrationStatus, selectedCurrencyOR);
-				registrationStatus = joinTwoConditionsByAND(registrationStatus, selectedWithdrawnOR);
-			}	
-			
-			return registrationStatus;			
-		};
-		
-		/**
-		 * Gathers all undergraduates related information and returns it as an object.
-		 * Returned information includes: undergraduate majors, levels, 'admitted as' status and 'declared' status. 
-		 * 
-		 * @return {Object} A condition object containing all undergraduates related information in the AND field.
-		 */
-		var buildUndergradsObjectAsAND = function() {
-
-			var undergrads = {};
-			
-			var selectedUndergradMajorsOR = buildSelectedOptionsObjectAsOR(null, $(".majors"));
-			var selectedLevelsOR = buildSelectedOptionsObjectAsOR(null, $(".levels"));
-			var selectedAdmittedAsOR = buildSelectedOptionsObjectAsOR(null, $(".admittedAs"));
-			var selectedDeclaredOR = buildSelectedOptionsObjectAsOR(null, $(".declared"));
-
-			undergrads = joinTwoConditionsByAND(undergrads, selectedUndergradMajorsOR);											
-			undergrads = joinTwoConditionsByAND(undergrads, selectedLevelsOR);
-			undergrads = joinTwoConditionsByAND(undergrads, selectedAdmittedAsOR);
-			undergrads = joinTwoConditionsByAND(undergrads, selectedDeclaredOR);						
-			
-			return undergrads;	
-		};
-		
-		/**
-		 * Gathers all graduate students related information and returns it as an object.
-		 * Returned information includes: graduate programs, certificates, emphases, degrees. 
-		 * 
-		 * @return {Object} A condition object containing all graduate students related information in the AND field.
-		 */
-		var buildGradsObjectAsAND = function() {
-
-			var grads = {};
-			
-			var selectedGradProgramsOR = buildSelectedOptionsObjectAsOR(null, $(".programs"));
-			var selectedCertificatesOR = buildSelectedOptionsObjectAsOR(null, $(".certificates"));
-			var selectedEmphasesOR = buildSelectedOptionsObjectAsOR(null, $(".emphases"));
-			var selectedDegreesOR = buildSelectedOptionsObjectAsOR(null, $(".degrees"));
-						
-			grads = joinTwoConditionsByAND(grads, selectedGradProgramsOR);
-			grads = joinTwoConditionsByAND(grads, selectedCertificatesOR);			
-			grads = joinTwoConditionsByAND(grads, selectedEmphasesOR);
-			grads = joinTwoConditionsByAND(grads, selectedDegreesOR);
-						
-			return grads;	
-		};
-		
-		
-		/**
-		 * Gathers all selected options for both undergraduate and graduate students (if available).
-		 * Returns these options as an appropriate condition object.
-		 * 
-		 * @return {Object} a condition object containing all selected options for undergraduate and graduate students.
-		 */		
-		var buildUndergraduatesAndGraduatesResultingObject = function (){
-			
-			var boolIncludeUndergrads = false;
-			var boolIncludeGrads = false;  
-			
-			if(boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
-				// If the both checkboxes are available, need to check their statuses
-				boolIncludeUndergrads = $includeUndergradsCheckbox.length > 0 && $includeUndergradsCheckbox.is(":checked");
-				boolIncludeGrads = $includeGradsCheckbox.length > 0 && $includeGradsCheckbox.is(":checked");
-								
-			} else {
-				if(boolTemplateHasUndergradsData) {
-					// Only undergrads are available, no checkbox
-					boolIncludeUndergrads = true;
-				} else if(boolTemplateHasGradsData) {
-					// Only grads are available, no checkbox
-					boolIncludeGrads = true;
-				}
-			}
-			
-			
-			// For undergrads
-			var undergrads = {};			
-			
-			if (boolIncludeUndergrads) {
-				undergrads = buildUndergradsObjectAsAND();
-				if(isConditionObjectEmpty(undergrads)) {
-					undergrads ={OR: [$includeUndergradsCheckbox.val()]};
-				}				
-			}
-			
-			
-			// For grads
-			var grads = {};
-			
-			if (boolIncludeGrads) {
-				grads = buildGradsObjectAsAND();
-				if(isConditionObjectEmpty(grads)) {
-					grads ={OR: [$includeGradsCheckbox.val()]};
-				}
-								
-			}
-			
-			var result = {};
-									
-			if (boolIncludeUndergrads && boolIncludeGrads) {
-				
-				result = joinTwoConditionsByOR(undergrads, grads);
-																								
-			} else if (boolIncludeUndergrads) {
-				
-				result = undergrads;								
-				
-			} else if (boolIncludeGrads) {
-				
-				result = grads;												
-			}
-			
-			return result;
-		};
-		
-		
-		
-		
-		////////////////////////////////
-        // Dynamic list save function //
-        ////////////////////////////////		
-		
-		/**
-		 * Saves the selected options a new dynamic list
-		 */
-		var saveList = function() {
-						
-			var result = buildUndergraduatesAndGraduatesResultingObject();
-			
-			// Section C
-
-			var registrationStatus = buildRegistrationStatusObject();
-			result = joinTwoConditionsByAND(result, registrationStatus);
-			
-
-			var cohortStatus = buildCohortStatusObject();						
-			result = joinTwoConditionsByAND(result, cohortStatus);
-			
-			
-			var specialPrograms = buildSelectedOptionsObjectAsOR($("#special_program_all_students", $sectionC), $(".special_programs", $sectionC));			
-			result = joinTwoConditionsByAND(result, specialPrograms);
-			
-			var studentStatus = buildSelectedOptionsObjectAsOR($("#student_status_all_students", $sectionC), $(".student_and_residency_status_col_left .sub_group", $sectionC));			
-			result = joinTwoConditionsByAND(result, studentStatus);
-			
-			var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));			
-			result = joinTwoConditionsByAND(result, residencyStatus);
-			 
-			
-
-			
-			$outputJson.val(formatJSON(result));
-		}
-	    
-	    /*-------------------------------- Roman ------------------------------------------*/
-	    
-	    
-	    
 	    /**
 	     *
 	     * Configuration
@@ -612,15 +95,64 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // result.size = $("#list_size").val();
 	        
 			// Gathering the data on standing
-			//TODO: check for errors
-			/*if($("#undergrad:checked").val() == null && $("#grad:checked").val() == null) {
+			var standingArray = [];
+			if($("#undergrad:checked").val() == null && $("#grad:checked").val() == null) {
 				$("#invalid_major").show();
 					return -1;
-			}*/
+			}
 			
+			// Gathering the data on majors
+	        var selectedUndergradMajors = [];
+			if ($("#undergrad:checked").val() && $("#byMajor:checked").val()) {
+	        	$("#ugrad_majors .major_checkbox:checked").each(function() {
+	            	var major = $.trim($(this).val());
+	            	selectedUndergradMajors.push(major);
+	        	});
+				if(selectedUndergradMajors.length == 0) {
+					$("#invalid_major").show();
+					return -1;
+				}
+			} else if($("#undergrad:checked").val() && $("#allUgrads:checked").val()) {
+				$("#ugrad_majors .major_checkbox").each(function() {
+	            	var major = $.trim($(this).val());
+	            	selectedUndergradMajors.push(major);
+	        	});
+			}
+			// Append majors only if something was selected
+			if(selectedUndergradMajors.length > 0) {
+				standingArray.push({
+					"undergrad": {
+						"major": selectedUndergradMajors
+					}
+				});
+			}
 			
+			var selectedGradMajors = [];
+			if ($("#grad:checked").val() && $("#byProgram:checked").val()) {
+				$("#grad_majors .major_checkbox:checked").each(function(){
+					var major = $.trim($(this).val());
+					selectedGradMajors.push(major);
+				});
+				if(selectedGradMajors.length == 0) {
+					$("#invalid_major").show();
+					return -1;
+				}
+			} else if($("#grad:checked").val() && $("#allGrads:checked").val()) {
+				$("#grad_majors .major_checkbox").each(function() {
+	            	var major = $.trim($(this).val());
+	            	selectedGradMajors.push(major);
+	        	});
+			}
+			// Append majors only if something was selected
+			if(selectedGradMajors.length > 0) {
+				standingArray.push({
+					"grad": {
+						"major": selectedGradMajors
+					}
+				});
+			}
 			
-	        result.filter = ;
+	        result.standing = standingArray;
 	        return result;
 	    }
 	    
@@ -1124,7 +656,39 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    };
 	    
 		// List creation events
-	   
+	    $("#undergrad").live("click", function() {
+			if(this.checked) {
+				enableAll(document.getElementById("choose_ugrad"));	
+				$("#choose_ugrad").removeClass("disabledState");		
+				if (savedState.allUndergraduatesSelected) {
+					$("#allUgrads").attr('checked', true);
+				} else {
+					$("#byMajor").attr('checked', true);
+					restoreUndergradSelection();
+				}			
+			} else {			
+				savedState.allUndergraduatesSelected = areAllUndergradsSelected();			
+				$("#choose_ugrad").addClass("disabledState");
+				disableAll(document.getElementById("choose_ugrad"));
+			}
+	    });
+	    
+	    $("#grad").live("click", function() {
+			if(this.checked) {
+				enableAll(document.getElementById("choose_grad"));	
+				$("#choose_grad").removeClass("disabledState");			
+				if (savedState.allGraduatesSelected) {
+					$("#allGrads").attr('checked', true);
+				} else {
+					$("#byProgram").attr('checked', true);
+					restoreGradSelection();
+				}			
+			} else {			
+				savedState.allGraduatesSelected = areAllGradsSelected();
+				$("#choose_grad").addClass("disabledState");			
+				disableAll(document.getElementById("choose_grad"));
+			}
+	    });
 	    
 	    $("#byMajor").live("click", function() {
 			if(this.checked) {		
@@ -1365,16 +929,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    });
 	    
 	    $("#inbox_inbox_cancel_button").live("click", function(){
-	        //editExisting = false;
-	        //clearInputFields();
-			//resetSavedState();
-			//disableAll(document.getElementById("choose_ugrad"));
-			//disableAll(document.getElementById("choose_grad"));
-			//$("#choose_ugrad, #choose_grad").addClass("disabledState");
+	        editExisting = false;
+	        clearInputFields();
+			resetSavedState();
+			disableAll(document.getElementById("choose_ugrad"));
+			disableAll(document.getElementById("choose_grad"));
+			$("#choose_ugrad, #choose_grad").addClass("disabledState");
 	        $.bbq.pushState({"tab": "existing"},2);
 	    });
 	    
-	    $("#dynlist_save_button").live("click", function(){
+	    $("#inbox_inbox_save_button").live("click", function(){
 	        $("#invalid_name").hide();
 	        $("#invalid_major").hide();
 	        // NOT SUPPORTED FOR POC
@@ -1411,84 +975,49 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    $("#existing_link").click(function() {
 	        $.bbq.pushState({"tab": "existing"},2);
 	        
-	        switchToListMode();
-	    });
-	    
-	    
-	    
-	    var switchToEditMode = function() {
-	    	
-	    	// Set headers and tab styling
-	    	$("h1.title").text("Dynamic List Editor");
-	    	
-	    	$("#create_new_list").show();
-	        $("#existing_lists").hide();
+	        // Set headers and tab styling
+	        $("#inbox_new").hide();
+	        $("#inbox_existing").show();
+	        $("#new_list_tab").removeClass("fl-tabs-active");
+	        $("#existing_lists_tab").addClass("fl-tabs-active");
 	        
 	        // Show/hide appropriate buttons
-	        
-	        $("#dynamic_lists_create_new").hide();
-	        
-	        $("#dyn_lists_delete_button").hide();
-	        $("#dyn_lists_copy_button").hide();
-	        $("#dyn_lists_edit_button").hide();
-	        
-	        $("#inbox_inbox_cancel_button").show();
-	        $("#dynlist_save_button").show();
-	    };
-	    
-	    var switchToListMode = function() {
-	    	
-	    	// Set headers and tab styling
-	    	
-	    	$("h1.title").text("Dynamic List Manager");
-	        $("#create_new_list").hide();
-	        $("#existing_lists").show();
-	        
-	        
-	        // Show/hide appropriate buttons
-	        
-	        
-	        $("#dynamic_lists_create_new").show();
-	        
-	        $("#dyn_lists_delete_button").show();
-	        $("#dyn_lists_copy_button").show();
-	        $("#dyn_lists_edit_button").show();
-	        
 	        $("#inbox_inbox_cancel_button").hide();
-	        $("#dynlist_save_button").hide();
-	        
-	        /*$("#inbox_inbox_cancel_button").hide();
-	        $("#dynlist_save_button").hide();
+	        $("#inbox_inbox_save_button").hide();
 	        $("#inbox_inbox_delete_button").show();
 	        $("#inbox_inbox_duplicate_button").show();
-	        $("#inbox_inbox_back_button").show();*/
-	    	
-	    };
+	        $("#inbox_inbox_back_button").show();
+	    });
 	    
-	    
-	    /*-------------------------------- Roman ------------------------------------------*/
-	    $("#dynamic_lists_create_new").click(function() {
+	    $("#create_new_link").click(function() {
 	        $.bbq.pushState({"tab": "new"},2);
 	        
 	        // NOT SUPPORTED FOR POC
 	        // sakai_global.listpage.updateListSize();
 	        
-
-	        switchToEditMode();
+	        // Set headers and tab styling
+	        $("#inbox_existing").hide();
+	        $("#inbox_new").show();
+	        $("#existing_lists_tab").removeClass("fl-tabs-active");
+	        $("#new_list_tab").addClass("fl-tabs-active");
+	        
+	        // Show/hide appropriate buttons
+	        $("#inbox_inbox_delete_button").hide();
+	        $("#inbox_inbox_duplicate_button").hide();
+	        $("#inbox_inbox_back_button").hide();
+	        $("#inbox_inbox_cancel_button").show();
+	        $("#inbox_inbox_save_button").show();
 	    });
-	    /*-------------------------------- Roman ------------------------------------------*/
-	    
-	    
 	    
 	    var setTabState = function(){
 	        var tab = $.bbq.getState("tab");
 	        if (tab) {
 	            switch (tab) {
 	                case "existing":
-	                    switchToListMode();
+	                    $("#existing_link").click();
 	                    break;
 	                case "new":
-	                    switchToEditMode();
+	                    $("#create_new_link").click();
 	                    break;
 	            }
 	        }
@@ -1533,39 +1062,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        });
 	    }
 	    
-	    //////////////////////////
-        // UI related functions //
-        //////////////////////////
-		
-		/**
-		 * Populates designate term Year listbox in the section C with the last 5 year numbers.
-		 * Current year becomes the default choice. 
-		 */
-		var populateDesignateTermYear = function() {
-			
-			var d = new Date();
-			var curr_year = d.getFullYear();
-			var yearsArr = [];
-			for(var i = curr_year-4;i <= curr_year; i++) {
-				if (i != curr_year) {
-					yearsArr.push("<option value='" + i + "'>" + i + "</option>");
-				}
-				else {
-					yearsArr.push("<option value='" + i + "' selected='selected'>" + i + "</option>");
-				}				
-			}
-			$designateTermYear.append(yearsArr.join(''));
-		}
-	    
-	    /////////////////////////////
-        // Initialization function //
-        /////////////////////////////
-
-        /**
-         * Initialization function that is run when the widget is loaded. Determines
-         * which mode the widget is in (settings or main), loads the necessary data
-         * and shows the correct view.
-         */
 	    var doInit = function() {
 			var security = sakai.api.Security;		       
 	        
@@ -1574,137 +1070,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	            security.send403();
 	            return;
 	        }
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        /*-------------------------------- Roman ------------------------------------------*/
-	        
-	        
-	        // Loading template
-            var template;
-			$.ajax({
-                    url: "nauth_ced.json", //sakai.config.URL.POOLED_CONTENT_ACTIVITY_FEED + "?p=" + content_path  + "&items=1000",
-                    type: "GET",
-                    "async":false,
-                    "cache":false,
-                    "dataType":"json",
-                    success: function(data){
-                        if (data) {
-                           template = data;
-                        }
-                    },
-					 error: function(xhr, textStatus, thrownError) {
-                        sakai.api.Util.notification.show(errorText,"",sakai.api.Util.notification.type.ERROR);
-                    }
-            });
-			
-			boolTemplateHasUndergradsData = typeof(template.undergraduates) !== 'undefined' && template.undergraduates != null;
-			boolTemplateHasGradsData = typeof(template.graduates) !== 'undefined' && template.graduates != null; 
-			
-			$view.html(sakai.api.Util.TemplateRenderer($template, template));
-			
-			$includeUndergradsCheckbox = $("#include_undergrads");
-			$includeGradsCheckbox = $("#include_grads");
-			
-			// Define undergrad and grad groups AFTER template has been rendered
-			$undergradsGroup = $(".undergrads_group");
-			$gradsGroup = $(".grads_group");
-			
-			//Disabling all graduate and undergraduate controls
-			if (boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
-				
-				$undergradsGroup.addClass("disabled");
-				$gradsGroup.addClass("disabled");
-								
-				$("input", $gradsGroup).attr("disabled", "disabled");				
-				$("input", $undergradsGroup).attr("disabled", "disabled");
-			
-						
-				$includeGradsCheckbox.click(function(){
-						if($includeGradsCheckbox.is(':checked')){
-							$("input", $gradsGroup).removeAttr("disabled");						
-							$gradsGroup.removeClass("disabled");
-						} else {
-							$("input", $gradsGroup).attr("disabled", "disabled");
-							$gradsGroup.addClass("disabled");
-						}
-											
-				});
-								
-				$includeUndergradsCheckbox.click(function(){
-						if($includeUndergradsCheckbox.is(':checked')){
-							$("input", $undergradsGroup ).removeAttr("disabled");							
-							$undergradsGroup.removeClass("disabled");						
-						} else {
-							$("input", $undergradsGroup ).attr("disabled", "disabled");							
-							$undergradsGroup.addClass("disabled");						
-						}
-											
-				}); 
-			}
-			
-			// Click handlers
-			$('input[id^="undergrad_major_"]').click(function(){
-					$("#undergrad_majors_selected_majors").click();
-				});
-				
-			$('input[id^="grad_program_"]').click(function(){
-					$("#grad_programs_selected_programs").click();
-				});
-            
-            var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group', $sectionC);
-			$regStatusSelectAllInGroup.click(function(){
-				if($regStatusSelectAllInGroup.is(':checked')) {
-					$(".reg_status .sub_group input", $sectionC).attr("checked", "checked");
-				} else {
-					$(".reg_status .sub_group input", $sectionC).removeAttr("checked");
-				}
-			});
-			
-			
-			var $currencyStatusSelectAllInGroup = $('#currency_status_select_all_in_group', $sectionC);
-			$currencyStatusSelectAllInGroup.click(function(){
-				if($currencyStatusSelectAllInGroup.is(':checked')) {
-					$(".current_or_not .sub_group input", $sectionC).attr("checked", "checked");
-				} else {
-					$(".current_or_not .sub_group input", $sectionC).removeAttr("checked");
-				}
-			});
-			
-			var $studentRegStatusSelectAllInGroup = $('#student_reg_status_select_all_in_group', $sectionC);
-			$studentRegStatusSelectAllInGroup.click(function(){
-				if($studentRegStatusSelectAllInGroup.is(':checked')) {
-					$(".student_reg_status .sub_group input", $sectionC).attr("checked", "checked");
-				} else {
-					$(".student_reg_status .sub_group input", $sectionC).removeAttr("checked");
-				}
-			});
-			
-			
-			populateDesignateTermYear();	
-			
-			
-			// section C toggle button
-			var $showMoreOrLess = $("#show_more_or_less");
-			$showMoreOrLess.click(function () {
-				
-				if($sectionC.is(":visible")) {
-					$showMoreOrLess.text("Show More");					
-				} else {
-					$showMoreOrLess.text("Show Less");					
-				}
-				$sectionC.toggle();				
-			});
-			
-	        
-	        /*-------------------------------- Roman ------------------------------------------*/
-	        
-	        
-	        
 	        
 	        userUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 	        resetSavedState();
