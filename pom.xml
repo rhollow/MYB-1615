@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.sakaiproject.nakamura</groupId>
     <artifactId>base</artifactId>
-    <version>0.10</version>
+    <version>0.10-20110426</version>
   </parent>
   <groupId>org.sakaiproject.nakamura</groupId>
   <artifactId>org.sakaiproject.nakamura.uxloader-myberkeley</artifactId>
