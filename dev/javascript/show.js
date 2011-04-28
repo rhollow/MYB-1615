@@ -59,7 +59,6 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var entityWidgetReady = false;
         var renderedPagesWidget = false;
         var renderedEntityWidget = false;
-        var $launch_help = $("#launch_help");
 
 
         /**
@@ -87,8 +86,19 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         newdata["authprofile"] = data;
                         data = newdata;
                         entityType = "group";
+                        if (document.location.pathname.substring(0, 2) === "/~"){
+                            document.location = "/dev/group.html?id=" + document.location.pathname.substring(2);
+                            return;
+                        }
                     } else {
                         entityType = "user";
+                        if (entityID === sakai.data.me.user.userid) {
+                            document.location = "/dev/me.html";
+                            return;
+                        } else {
+                            document.location = "/dev/user.html?id=" + entityID;
+                            return;
+                        }
                     }
                     sakai_global.show.type = entityType;
                     sakai_global.show.id = entityID;
@@ -213,7 +223,6 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     break;
                 case "group":
                     getGroupData();
-                    loadHelp('groupHelp', 'group');
                     break;
             }
         };
@@ -282,10 +291,29 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     $(window).trigger("render.entity.sakai", [whichprofile, data]);
                     break;
                 case "group":
-                    $(window).trigger("render.entity.sakai", ["group", sakai_global.currentgroup.data]);
+
+                    loadGroupEntityWidget();
                     break;
+
             }
         };
+
+        var loadGroupEntityWidget = function(){
+            var context = "group";
+            var type = "group";
+            if (sakai_global.show.canEdit()){
+                type = "group_managed";
+            }
+            $(window).trigger("sakai.entity.init", [context, type, sakai_global.currentgroup.data]);
+        };
+
+        $(window).bind("sakai.entity.ready", function(){
+            loadGroupEntityWidget();
+        });
+
+        $("#entity_manage_group").live("click", function(){
+            document.location = "/dev/group_edit2.html?id=" + entityID;
+        });
 
         var loadPagesWidget = function(){
             renderedPagesWidget = true;
@@ -303,50 +331,51 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 loadEntityWidget();
             }
         });
-
-        $(window).bind("ready.sitespages.sakai", function(e){
-            pagesWidgetReady = true;
-            if (entityDataReady && !renderedPagesWidget) {
-                loadPagesWidget();
+        
+        /////////////////////////
+        // LOAD LEFT HAND SIDE //
+        /////////////////////////
+        
+        var pubdata = {
+            "structure0": {
+                "library": {
+                    "_ref": "533118849",
+                    "_title": "Library",
+                    "_order": 0,
+                    "main": {
+                        "_ref": "533118849",
+                        "_order": 0,
+                        "_title": "Library"
+                    }
+                },
+                "participants": {
+                    "_ref": "9834611274",
+                    "_order": 1,
+                    "_title": "Participants",
+                    "main": {
+                        "_ref": "9834611274",
+                        "_order": 0,
+                        "_title": "Participants"
+                    }
+                }
+            },
+            "533118849": {
+                "page": "<div id='widget_mylibrary' class='widget_inline'/>"
+            },
+            "9834611274": {
+                "page": "Participant List"
             }
+        };
+        
+        var generateNav = function(){
+            $(window).trigger("lhnav.init", [pubdata, {}, {}]);
+        };
+        
+        $(window).bind("lhnav.ready", function(){
+            generateNav();
         });
 
-        var triggerHelp = function(profileFlag, whichHelp) {
-            // only show to the manager who created the group
-            if (canEdit) {
-                $launch_help.show();
-                $launch_help.bind("click", function() {
-                    $(window).trigger("init.help.sakai", {
-                        profileFlag: profileFlag,
-                        whichHelp: whichHelp,
-                        force: true
-                    });
-                    return false;
-                });
-                if (sakai_global.currentgroup &&
-                sakai_global.currentgroup.data &&
-                sakai_global.currentgroup.data.authprofile &&
-                !sakai_global.currentgroup.data.authprofile.beenVisited) {
-                    $(window).trigger("init.help.sakai", {
-                        profileFlag: profileFlag,
-                        whichHelp: whichHelp
-                    });
-                    sakai_global.currentgroup.data.authprofile.beenVisited = true;
-                    sakai.api.Groups.updateGroupProfile(sakai_global.currentgroup.id, sakai_global.currentgroup.data.authprofile);
-                }
-            }
-        };
-
-        var loadHelp = function(profileFlag, whichHelp) {
-            if (!sakai.help || !sakai.help.isReady) {
-                $(window).bind("ready.help.sakai", function() {
-                    triggerHelp(profileFlag, whichHelp);
-                });
-            } else {
-                triggerHelp(profileFlag, whichHelp);
-            }
-        };
-
+        generateNav();
 
         ////////////////////
         // INITIALISATION //
