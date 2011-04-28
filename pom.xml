@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-  <!--
-    * Licensed to the Sakai Foundation (SF) under one * or more contributor license agreements. See
-    the NOTICE file * distributed with this work for additional information * regarding copyright
-    ownership. The SF licenses this file * to you under the Apache License, Version 2.0 (the *
-    "License"); you may not use this file except in compliance * with the License. You may obtain a
-    copy of the License at * * http://www.apache.org/licenses/LICENSE-2.0 * * Unless required by
-    applicable law or agreed to in writing, * software distributed under the License is distributed
-    on an * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY * KIND, either express or
-    implied. See the License for the * specific language governing permissions and limitations under
-    the License.
-  -->
+<!--
+  * Licensed to the Sakai Foundation (SF) under one * or more contributor license agreements. See
+  the NOTICE file * distributed with this work for additional information * regarding copyright
+  ownership. The SF licenses this file * to you under the Apache License, Version 2.0 (the *
+  "License"); you may not use this file except in compliance * with the License. You may obtain a
+  copy of the License at * * http://www.apache.org/licenses/LICENSE-2.0 * * Unless required by
+  applicable law or agreed to in writing, * software distributed under the License is distributed
+  on an * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY * KIND, either express or
+  implied. See the License for the * specific language governing permissions and limitations under
+  the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.sakaiproject.nakamura</groupId>
@@ -41,61 +41,90 @@
       <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley-snapshots/</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
+    <repository>
+      <id>myberkeley-releases</id>
+      <name>MyBerkeley Releases</name>
+      <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </repository>
   </distributionManagement>
   <repositories>
-        <repository>
-            <id>sakai-maven2</id>
-            <name>Sakai Maven Repository</name>
-            <layout>default</layout>
-            <url>http://source.sakaiproject.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>sakai-maven2-snapshots</id>
-            <name>Sakai Maven Repo Snapshots</name>
-            <layout>default</layout>
-            <url>http://source.sakaiproject.org/maven2-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>default</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-           <id>apache-snapshots</id>
-            <name>Apache Snapshot Repository</name>
-           <url>http://repository.apache.org/snapshots/</url>
-          <snapshots>
-             <enabled>true</enabled>
-          </snapshots>
-         <releases>
-            <enabled>false</enabled>
-         </releases>
-       </repository>
+    <repository>
+      <id>sakai-maven2</id>
+      <name>Sakai Maven Repository</name>
+      <layout>default</layout>
+      <url>http://source.sakaiproject.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>sakai-maven2-snapshots</id>
+      <name>Sakai Maven Repo Snapshots</name>
+      <layout>default</layout>
+      <url>http://source.sakaiproject.org/maven2-snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>default</id>
+      <name>Maven Repository Switchboard</name>
+      <layout>default</layout>
+      <url>http://repo1.maven.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>apache-snapshots</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>myberkeley-releases</id>
+      <name>MyBerkeley Releases</name>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <url>http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley/</url>
+    </repository>
+    <repository>
+      <id>myberkeley-snapshots</id>
+      <name>MyBerkeley Snapshots</name>
+      <layout>default</layout>
+      <url>http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
   <properties>
     <ant.target>development</ant.target>
     <dev.content>
-        SLING-INF/content/tests;path:=/tests;uninstall:=false;overwrite:=true,
-        SLING-INF/content/jsdoc;path:=/jsdoc;uninstall:=false;overwrite:=true,
+      SLING-INF/content/tests;path:=/tests;uninstall:=false;overwrite:=true,
+      SLING-INF/content/jsdoc;path:=/jsdoc;uninstall:=false;overwrite:=true,
     </dev.content>
   </properties>
   <profiles>
@@ -107,25 +136,25 @@
         <dev.content></dev.content>
       </properties>
     </profile>
-	<profile>
-	  <id>redeploy</id>
-	  <build>
-	   <plugins>
-	     <plugin>
-	      <groupId>org.apache.sling</groupId>
-	      <artifactId>maven-sling-plugin</artifactId>
-	      <executions>
-	        <execution>
-	          <id>install-bundle</id>
-	          <goals>
-	            <goal>install</goal>
-	          </goals>
-	        </execution>
-	      </executions>
-	     </plugin>
-	   </plugins>
-	  </build>
-	</profile>     
+    <profile>
+      <id>redeploy</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>maven-sling-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install-bundle</id>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
   <build>
     <resources>
@@ -146,15 +175,15 @@
         <configuration>
           <instructions>
             <Sling-Initial-Content>
-                SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
-                SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
-				SLING-INF/content/var/defaults;path:=/var/defaults;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,                
-                SLING-INF/content/var/templates/site;path:=/var/templates/site;uninstall:=false;overwrite:=true,
-		        SLING-INF/content/var/templates/email;path:=/var/templates/email;uninstall:=false;overwrite:=true,
-                SLING-INF/content/var/ux-version;path:=/var/ux-version;uninstall:=false;overwriteProperties:=true;overwrite:=true,
-                SLING-INF/content/apps;path:=/apps;uninstall:=false;overwrite:=true,
-                ${dev.content}
-                SLING-INF/content/root;path:=/;uninstall:=false;overwrite:=true
+              SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
+              SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
+              SLING-INF/content/var/defaults;path:=/var/defaults;ignoreImportProviders:="xml,json,html,jar,zip";overwrite:=true,
+              SLING-INF/content/var/templates/site;path:=/var/templates/site;uninstall:=false;overwrite:=true,
+              SLING-INF/content/var/templates/email;path:=/var/templates/email;uninstall:=false;overwrite:=true,
+              SLING-INF/content/var/ux-version;path:=/var/ux-version;uninstall:=false;overwriteProperties:=true;overwrite:=true,
+              SLING-INF/content/apps;path:=/apps;uninstall:=false;overwrite:=true,
+              ${dev.content}
+              SLING-INF/content/root;path:=/;uninstall:=false;overwrite:=true
             </Sling-Initial-Content>
           </instructions>
         </configuration>
@@ -170,7 +199,7 @@
             <phase>generate-resources</phase>
             <configuration>
               <tasks>
-                <ant target="${ant.target}" inheritRefs="true" antfile="./build.xml" />
+                <ant target="${ant.target}" inheritRefs="true" antfile="./build.xml"/>
               </tasks>
             </configuration>
             <goals>
@@ -187,11 +216,11 @@
             <phase>initialize</phase>
             <configuration>
               <tasks>
-                <exec outputproperty="git.version" executable="git" failifexecutionfails="false" searchpath="true" >
-                  <arg line="describe" />
+                <exec outputproperty="git.version" executable="git" failifexecutionfails="false" searchpath="true">
+                  <arg line="describe"/>
                 </exec>
-                <condition property="git.version.value" value="${git.version}" else="UnknownVersion" >
-                  <isset property="git.version" />
+                <condition property="git.version.value" value="${git.version}" else="UnknownVersion">
+                  <isset property="git.version"/>
                 </condition>
                 <echo file="${project.basedir}/target/scm-version.properties">
                   scm.version=${git.version.value}
