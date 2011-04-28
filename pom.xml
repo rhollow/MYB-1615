@@ -42,7 +42,7 @@
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
     <repository>
-      <id>myberkeley-releases</id>
+      <id>myberkeley</id>
       <name>MyBerkeley Releases</name>
       <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley/</url>
       <uniqueVersion>false</uniqueVersion>
