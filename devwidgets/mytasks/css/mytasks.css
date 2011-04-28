@@ -68,14 +68,14 @@ table.noticewidget_listing th {
     border-bottom: 1px solid #666;
 }
 
-table.noticewidget_listing th.ascending {
+table.noticewidget_listing th.ASC {
     background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
 	background-position: 100% -26px;
 	background-color: #D5DBDF;
 	
 }
 
-table.noticewidget_listing th.descending {
+table.noticewidget_listing th.DESC {
     background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
 	background-position: 100% 0px;
 	background-color: #D5DBDF;

@@ -1,0 +1,60 @@
+{
+    "college": "CED",
+    "undergraduates": {
+        "majors": {
+            "title": "Majors",
+            "select_all_option_name": "All CED undergraduates",
+            "select_one_or_more_option_name": "CED Undergraduates by Major",
+            "items_array": [{
+                "id": "/colleges/CED/standings/undergrad/majors/ARCHITECTURE",
+                "name": "Architecture"
+            },
+			{
+                "id": "/colleges/CED/standings/undergrad/majors/LANDSCAPE ARCH",
+                "name": "Landscape Architecture"
+            },
+			{
+                "id": "/colleges/CED/standings/undergrad/majors/URBAN STUDIES",
+                "name": "Urban Studies"
+            },
+			{
+                "id": "/colleges/CED/standings/undergrad/majors/INDIVIDUAL",
+                "name": "Individual"
+            }
+            
+			]
+        }
+    },
+    "graduates": {
+        "programs": {
+            "title": "Programs",
+            "select_all_option_name": "All CED Graduate Students",
+            "select_one_or_more_option_name": "CED Graduate Students by Program",
+            "items_array": [{
+                "id": "/colleges/CED/standings/grad/programs/ARCHITECTURE",
+                "name": "Architecture"
+            },
+			{
+                "id": "/colleges/CED/standings/grad/programs/CITY REGIONAL PLAN",
+                "name": "City and Regional Planning"
+            },
+			{
+                "id": "/colleges/CED/standings/grad/programs/DESIGN",
+                "name": "Design"
+            },
+			{
+                "id": "/colleges/CED/standings/grad/programs/LAND ARCH AND ENV PLAN",
+                "name": "Landscape Architecture and Environmental Planning"
+            },
+			{
+                "id": "/colleges/CED/standings/grad/programs/URBAN DESIGN",
+                "name": "Urban Design"
+            },
+			{
+                "id": "/colleges/CED/standings/grad/programs/LIMITED",
+                "name": "Limited"
+            }
+            ]
+        }
+    }
+}

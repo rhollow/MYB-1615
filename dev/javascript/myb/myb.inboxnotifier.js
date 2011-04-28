@@ -26,7 +26,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * CONFIGURATION
          *
          */
-        sakai.config.URL.ALL_MESSAGE_BOX_SERVICE = "/var/message/box.json";
 
         var messagesPerPage = 12; // The number of messages per page
         var allMessages = []; // Array that will hold all the messages
@@ -432,7 +431,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * @param {Object} message
          */
         var formatMessage = function(message){
-            var dateString = message["sakai:sendDate"];
+            var dateString = message["sendDate"];
             if (typeof dateString === "string") {
                 var d = new Date();
                 d.setFullYear(parseInt(dateString.substring(0, 4), 10));
@@ -476,10 +475,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 // temporary internal id.
                 // Use the name for the id.
                 response.results[j].nr = j;
-                response.results[j].subject = response.results[j]["sakai:subject"];
-                response.results[j].body = response.results[j]["sakai:body"];
+                response.results[j].subject = response.results[j].calendarWrapper.icalData.SUMMARY;
+                response.results[j].body = response.results[j].calendarWrapper.icalData.DESCRIPTION;
                 response.results[j].messagebox = response.results[j]["sakai:messagebox"];
-                response.results[j].validated = response.results[j]["sakai:validated"];
+                response.results[j].validated = response.results[j].uxState.validated;
                 response.results[j] = formatMessage(response.results[j]);
             }
 
@@ -555,17 +554,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Gets all the messages from the JCR.
          */
         getAllMessages = function(callback){
-            var url = sakai.config.URL.ALL_MESSAGE_BOX_SERVICE + "?box=" + selectedType + "&category=" + "message"
-             + "&items=" + messagesPerPage + "&page=" + currentPage;
-
-            var types = "&types=" + selectedType;
-            if (typeof selectedType === "undefined" || selectedType === "") {
-                types = "";
-            }
-            else
-                if (typeof selectedType === "Array") {
-                    types = "&types=" + selectedType.join(",");
-                }
+            var url = "/var/notifications/search.json?box=" + selectedType;
 
             $.ajax({
                 url: url,
@@ -802,7 +791,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
                 var txt = "";
                 if (pathToMessages.length === 1) {
-                    txt = $(inboxGeneralMessagesMoved_1).text()+toWhere+".";
+                    txt = $(inboxGeneralMessagesMoved_1).text()+" "+toWhere+".";
                 }
                 else {
                     txt = pathToMessages.length+" "+$(inboxGeneralMessagesMoved_x).text()+" "+toWhere+".";
@@ -932,44 +921,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 var url = pathToMessages[d];
                 var pieces = url.split("/");
                 var message = getMessageWithId(pieces[pieces.length-1]);
-                var newMessage={};
 
-                // Common fields.
-                newMessage["sakai:type"] = message["sakai:type"];
-                newMessage["sakai:to"] = message["sakai:to"];
-                newMessage["sakai:from"] = message["sakai:from"];
-                newMessage["sakai:subject"] = "Copy of "+message["sakai:subject"];
-                newMessage["sakai:body"] = message["sakai:body"];
-                newMessage["sakai:authoringbody"] = message["sakai:authoringbody"];
-                newMessage["sakai:sendstate"] = message["sakai:sendstate"];
-                newMessage["sakai:read"] = message["sakai:read"];
+                // clone the old message
+                var newMessage = $.extend(true, {}, message);
+
+                // and replace some of its fields
+                newMessage.calendarWrapper.icalData.SUMMARY = "Copy of " + message.calendarWrapper.icalData.SUMMARY;
                 newMessage["sakai:messagebox"] = toWhere;
-                newMessage["sakai:sendDate"] = message["sakai:sendDate"];
-                newMessage["sakai:sendDate@TypeHint"] = message["sakai:sendDate@TypeHint"];
-                newMessage["sakai:category"] = message["sakai:category"];
-                newMessage["sakai:validated"] = message["sakai:validated"];
-                newMessage["sakai:validated@TypeHint"] = "Boolean";
-
-                // Is it required (a reminder)?
-                if(newMessage["sakai:category"]=="reminder"){
-                    // Is it a task?
-                    if(message["sakai:dueDate"]!=null){
-                        newMessage["sakai:dueDate"] = message["sakai:dueDate"];
-                        newMessage["sakai:dueDate@TypeHint"] = message["sakai:dueDate@TypeHint"];
-                        newMessage["sakai:taskState"] = message["sakai:taskState"];
-                    }
-                    // Or is it an event?
-                    else{
-                        newMessage["sakai:eventDate"] = message["sakai:eventDate"];
-                        newMessage["sakai:eventDate@TypeHint"] = message["sakai:eventDate@TypeHint"];
-                        newMessage["sakai:eventPlace"] = message["sakai:eventPlace"];
-                    }
-                }
+                delete newMessage["id"];
+                delete newMessage["jcr:path"];
+                delete newMessage["jcr:name"];
 
                 $.ajax({
-                    url: "/user/" + me.user.userid + "/message.create.html",
+                    url: "/user/" + me.user.userid + "/.myb-notificationstore.html",
                     type: "POST",
-                    data: newMessage,
+                    data: { notification : $.toJSON(newMessage) },
                     success: function(data){
                         copied++;
                         if (copied === toCopy) {
