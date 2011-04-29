@@ -87,9 +87,6 @@
 { text-align: center; border: none; height: 370px; }
 
 /** List creation **/
-.inbox_main .standing {padding: 5px 5px 5px 15px;}
-
-.inbox_main .majors {padding: 5px 5px 5px 15px;}
 
 .inbox_main #listSpecsTable {padding-left: 15px;}
 
@@ -137,4 +134,248 @@
 
 #choose_ugrad.disabledState, #choose_grad.disabledState {
 	opacity:0.4;
+}
+
+/* ---------------------------------- New stuff --------------------- */
+div.group_header {
+	font-size:15px;
+	font-weight: 700;
+}
+
+.sub_group{
+	margin-left: 20px;
+}
+
+.checkbox input {
+	float:left;
+	display:block;
+	margin:2px 3px 0 0;
+	padding:0;
+	width:13px;
+	height:13px;
+}
+
+.checkbox label {
+	display:block;
+	margin-left: 16px;
+	width:auto;
+}
+
+.readonly_textbox {
+	background-color: #D7D7D7;
+	display: inline-block;    				
+	font-weight: bold;
+	margin: 0;
+	padding: 4px;
+}
+
+.disabled {					
+	-moz-opacity: 0.4;
+	filter:alpha(opacity=40);
+	opacity: 0.4;
+}
+				
+.wrapper{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 100%;
+}
+
+.left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   border-right: 1px solid #000;			   
+   padding: 5px;
+}
+
+.right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;	   
+   padding: 5px;				   
+}
+
+.onecolumn{
+   position: relative;
+   width: 98%;
+   padding: 5px;
+}
+
+
+
+
+/* Registration status layout */
+.reg_status_col_left1{
+   position: relative;
+   float: left;
+   left: 0.5%;
+   width: 33%;		
+   min-height: 175px;
+   margin-bottom:10px;
+   border-right: 1px solid #000;		   
+}
+.reg_status_col_left2{
+   position: relative;
+   float: left;
+   left: 1.5%;
+   width: 33%;
+   min-height: 175px;				   
+   margin-bottom:10px;
+   border-right: 1px solid #000;
+      
+}
+.reg_status_col_right{
+   position: relative;
+   float: right;
+   right: 0.5%;
+   min-height: 175px;width: 31%;
+   margin-bottom:10px;
+   				   
+}
+				
+/* Registration status layout */
+
+
+/* Cohort status layout */
+.cohort_status_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 40%;
+   margin-bottom:10px;
+   padding-top: 5px;				   
+}
+.cohort_status_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 59%;
+   margin-bottom:10px;
+   padding-top: 5px;				   
+}
+/* Cohort status layout */
+
+
+/* Designate term layout */
+.designate_term_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   padding-top:5px;				   				   
+}
+.designate_term_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   padding-top:5px;				   				   
+}
+/* Designate term layout */
+
+
+
+/* Special programs layout */
+.special_prog_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   margin-bottom:10px;				   				   
+}
+.special_prog_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   margin-bottom:10px;	   				   
+}
+/* Special programs layout */
+
+
+
+
+
+/* Student and residency status layout */
+.student_and_residency_status_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   padding-right: 10px;
+   border-right: 1px solid #000;			   				   
+}
+.student_and_residency_status_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;   				   
+}
+/* Student status layout */
+
+
+/* Main view layout */
+#view{
+   /*position: relative;
+   float: left;
+   left: 0;
+   width: 48%;*/
+   			   				   
+}
+
+#section_c{
+	clear:both;	
+   /*position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   padding-left: 10px;
+   border-left: 1px solid #000;*/		
+}
+/* Main view layout */
+
+
+				
+.majors,.levels,.admittedAs,.declared,.programs,.certificates,.emphases,.degrees,.cohort_status,.special_programs,.student_and_residency_status {
+	border-top: 1px solid #000;
+	margin-top: 5px;
+	padding-top: 5px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.main_title {
+	font-size: 20px;
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+.sub_title {
+	font-size: 18px;
+	font-weight: 700;					
+}
+
+.details_link_container {
+	float:right;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.students_targeted_by_list_container {
+	display:inline-block;
+	margin-left: 240px;	
+}
+
+.title_information_container{
+	border-bottom: 3px solid #000;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+}
+
+.border_box {
+	border: 4px solid #D5DBDF;
 }

@@ -239,13 +239,21 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 * @return {Object} an object containing the first condition object joined by AND with the second condition object. 
 		 */
 		var joinTwoConditionsByAND = function(a, b) {
-									
-			if(isConditionObjectEmpty(a)) {
+			
+			var isAEmpty = isConditionObjectEmpty(a);
+			var isBEmpty = isConditionObjectEmpty(b); 									
+			
+			if(isAEmpty && isBEmpty) {
+				var emptyObj = {};
+				return emptyObj;
+			}
+			
+			if(isAEmpty) {
 				// trying to join empty object 'a' with 'b', just return 'b' in this case
 				return b;
 			}
 			
-			if(isConditionObjectEmpty(b)) {
+			if(isBEmpty) {
 				// trying to join empty object 'b' with 'a', just return 'a' in this case
 				return a;
 			}
@@ -304,15 +312,24 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 */
 		var joinTwoConditionsByOR = function(a, b) {
 			
-			if(isConditionObjectEmpty(a)) {
+			var isAEmpty = isConditionObjectEmpty(a);
+			var isBEmpty = isConditionObjectEmpty(b); 						
+						
+			if(isAEmpty && isBEmpty) {
+				var emptyObj = {};
+				return emptyObj;
+			}
+			
+			if(isAEmpty) {
 				// trying to join empty object 'a' with 'b', just return 'b' in this case
 				return b;
 			}
 			
-			if(isConditionObjectEmpty(b)) {
+			if(isBEmpty) {
 				// trying to join empty object 'b' with 'a', just return 'a' in this case
 				return a;
 			}
+			
 			
 			if(canConvertANDtoOR(a)) {
 				convertANDtoOR(a);
@@ -401,33 +418,43 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 		 * @return {Object} A condition object containing the information about the cohort status in the AND field. Return value can be null if nothing is selected. 
 		 */
 		var buildCohortStatusObject = function() {
-									
-			var selectedValue = $("input[name=cohort_statuses]:checked", $cohortStatus).val();									
-        	if (selectedValue === 'cohort_status_specified_students') {
+			
+			var result = {};
+			
+        	if ($("#cohort_status_specified_students", $sectionC).is(':checked')) {
         		var semester = $("#designate_term_semester", $cohortStatus).val();
         		var year = $("#designate_term_year", $cohortStatus).val();
         		var cohort = $("input[name=cohort_status_terms]:checked", $cohortStatus).val();
         		
-        		var result = {
+        		result = {
 					AND: [semester, "designate_term_year_" + year, cohort]
-				};
-				
-				return result;
-        		
-        	} else {
-        		return null;
-        	}        	
+				};				
+        	}
+        	
+        	return result;        	
 		};
 		
 		/**
-		 * Gathers infomation about the special programs and returns it as an object.
+		 * Gathers infomation about the registration status and returns it as an object.
 		 *  
-		 * @return {Object} A condition object containing the information about the special programs in the OR field.  
+		 * @return {Object} A condition object containing the information about the registration status.  
 		 */
-		var buildSpecialProgramsObject = function() {
-									
-			var selectedSpecialProgramsOR = buildSelectedOptionsObjectAsOR($("#special_program_none"), $(".special_programs"));
-			return (selectedSpecialProgramsOR.OR.length === 0)? null: selectedSpecialProgramsOR;			
+		var buildRegistrationStatusObject = function() {
+			
+			var registrationStatus = {};
+			
+			if($("#reg_status_only_designated_statuses", $sectionC).is(':checked')) {						
+				
+				var selectedRegisteredOR = buildSelectedOptionsObjectAsOR(null, $(".reg_status .sub_group", $sectionC));
+				var selectedCurrencyOR = buildSelectedOptionsObjectAsOR(null, $(".current_or_not .sub_group", $sectionC));
+				var selectedWithdrawnOR = buildSelectedOptionsObjectAsOR(null, $(".student_reg_status .sub_group", $sectionC));
+				
+				registrationStatus = joinTwoConditionsByAND(registrationStatus, selectedRegisteredOR);
+				registrationStatus = joinTwoConditionsByAND(registrationStatus, selectedCurrencyOR);
+				registrationStatus = joinTwoConditionsByAND(registrationStatus, selectedWithdrawnOR);
+			}	
+			
+			return registrationStatus;			
 		};
 		
 		/**
@@ -559,19 +586,26 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			var result = buildUndergraduatesAndGraduatesResultingObject();
 			
 			// Section C
-			var cohortStatus = buildCohortStatusObject();			
-			if(cohortStatus != null) {
-				result = joinTwoConditionsByAND(result, cohortStatus);
-			}
+
+			var registrationStatus = buildRegistrationStatusObject();
+			result = joinTwoConditionsByAND(result, registrationStatus);
 			
-			var specialPrograms = buildSpecialProgramsObject();			
-			if(specialPrograms != null) {
-				result = joinTwoConditionsByAND(result, specialPrograms);
-			} 
+
+			var cohortStatus = buildCohortStatusObject();						
+			result = joinTwoConditionsByAND(result, cohortStatus);
 			
 			
-			$outputJson.val(formatJSON(result));
-		}
+			var specialPrograms = buildSelectedOptionsObjectAsOR($("#special_program_all_students", $sectionC), $(".special_programs", $sectionC));			
+			result = joinTwoConditionsByAND(result, specialPrograms);
+			
+			var studentStatus = buildSelectedOptionsObjectAsOR($("#student_status_all_students", $sectionC), $(".student_and_residency_status_col_left .sub_group", $sectionC));			
+			result = joinTwoConditionsByAND(result, studentStatus);
+			
+			var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));			
+			result = joinTwoConditionsByAND(result, residencyStatus);
+			 			
+			return result;
+		};
 		
 		
 		
@@ -600,23 +634,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 			}
 			$designateTermYear.append(yearsArr.join(''));
 		}
-		
-		var disableCohortStatusForSpecifiedStudents = function() {
-						
-			$(".cohort_status_col_left .sub_group", $cohortStatus).addClass("disabled");
-			$(".cohort_status_col_right", $cohortStatus).addClass("disabled");
-			$(".cohort_status_col_left .sub_group select, .cohort_status_col_right input", $cohortStatus).attr("disabled", "disabled");						
-		};
-		
-		var enableCohortStatusForSpecifiedStudents = function() {
-						
-			$(".cohort_status_col_left .sub_group", $cohortStatus).removeClass("disabled");
-			$(".cohort_status_col_right", $cohortStatus).removeClass("disabled");
-			$(".cohort_status_col_left .sub_group select, .cohort_status_col_right input", $cohortStatus).removeAttr("disabled");			
-			
-		};
-		
-		
 		
 		
         /////////////////////////////
@@ -667,9 +684,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				$undergradsGroup.addClass("disabled");
 				$gradsGroup.addClass("disabled");
 								
-				$("input", $gradsGroup).attr("disabled", "disabled");
+				$("input", $gradsGroup).attr("disabled", "disabled");				
 				$("input", $undergradsGroup).attr("disabled", "disabled");
-					
+			
 						
 				$includeGradsCheckbox.click(function(){
 						if($includeGradsCheckbox.is(':checked')){
@@ -703,26 +720,34 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 					$("#grad_programs_selected_programs").click();
 				});
             
-            var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group');
+            var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group', $sectionC);
 			$regStatusSelectAllInGroup.click(function(){
-					if($regStatusSelectAllInGroup.is(':checked')) {
-						$(".reg_status .sub_group input", $sectionC).attr("checked", "checked");
-					} else {
-						$(".reg_status .sub_group input", $sectionC).removeAttr("checked");
-					}
-				});
-			$('input[id^="currency_status_current_"]').click(function(){
-					$("#currency_status_current").click();
-				});
-			$('input[id^="special_program_one_or_more_"]').click(function(){
-					$("#special_program_one_or_more").click();
-				});
-			$('input[id^="student_status_one_or_more_"]').click(function(){
-					$("#student_status_one_or_more").click();
-				});
-			$('input[id^="undergrad_level_selected_levels_"]').click(function(){
-					$("#undergrad_level_selected_levels").click();
-				});
+				if($regStatusSelectAllInGroup.is(':checked')) {
+					$(".reg_status .sub_group input", $sectionC).attr("checked", "checked");
+				} else {
+					$(".reg_status .sub_group input", $sectionC).removeAttr("checked");
+				}
+			});
+			
+			
+			var $currencyStatusSelectAllInGroup = $('#currency_status_select_all_in_group', $sectionC);
+			$currencyStatusSelectAllInGroup.click(function(){
+				if($currencyStatusSelectAllInGroup.is(':checked')) {
+					$(".current_or_not .sub_group input", $sectionC).attr("checked", "checked");
+				} else {
+					$(".current_or_not .sub_group input", $sectionC).removeAttr("checked");
+				}
+			});
+			
+			var $studentRegStatusSelectAllInGroup = $('#student_reg_status_select_all_in_group', $sectionC);
+			$studentRegStatusSelectAllInGroup.click(function(){
+				if($studentRegStatusSelectAllInGroup.is(':checked')) {
+					$(".student_reg_status .sub_group input", $sectionC).attr("checked", "checked");
+				} else {
+					$(".student_reg_status .sub_group input", $sectionC).removeAttr("checked");
+				}
+			});
+			
 			
 			populateDesignateTermYear();	
 			
@@ -739,21 +764,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 				$sectionC.toggle();				
 			});
 			
-			// section C : cohort status
-			disableCohortStatusForSpecifiedStudents();
-			
-			$("input[name=cohort_statuses]", $cohortStatus).change(function(){
-   				var selectedValue = $("input[name=cohort_statuses]:checked", $cohortStatus).val();
-   				if (selectedValue === 'cohort_status_all_students') {
-        			disableCohortStatusForSpecifiedStudents();
-        		} else if (selectedValue === 'cohort_status_specified_students') {
-        			enableCohortStatusForSpecifiedStudents();
-        		}
-        		
-			});
-			
+
 			$saveList.click(saveList);
-			
 						
 		};
 
