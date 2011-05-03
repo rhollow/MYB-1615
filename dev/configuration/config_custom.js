@@ -25,7 +25,23 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     config.PageTitles.pages["/dev/links.html"] = "LINKS";
 
     // set our own default widget arrangement
-    config.widgets.defaults.personalportal.columns = [["mytasks", "mylinks", "recentmessages"], ["myevents","mygroups"]];
+    config.defaultprivstructure[546341435].dashboard.columns.column1[1] = {
+      "uid": "id7813904133752",
+      "visible": "block",
+      "name": "mytasks"
+    };
+
+    config.defaultprivstructure[546341435].dashboard.columns.column2[1] = {
+        "uid": "id12893445620912",
+        "visible": "block",
+        "name": "myevents"
+    };
+
+    config.defaultprivstructure[546341435].dashboard.columns.column3[1] = {
+        "uid": "id63754673110789",
+        "visible": "block",
+        "name": "mylinks"
+    };
 
     // conditional link for notification authoring page
     config.Navigation[config.Navigation.length] = {

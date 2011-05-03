@@ -59,8 +59,6 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             $(window).bind("hashchange nohash.browsedirectory.sakai", handleHashChange);
         };
 
-        /* myBerkeley: Directory is disabled in 0.2 */
-		sakai.api.Security.send404();
         doInit();
 
     };
