@@ -30,8 +30,8 @@
  * @namespace
  * Communication related convenience functions
  */
-define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], function($, sakai_user, sakai_conf) {
-    return {
+define(["jquery", "sakai/sakai.api.user", "sakai/sakai.api.l10n", "sakai/sakai.api.util", "/dev/configuration/config.js"], function($, sakai_user, sakai_l10n, sakai_util, sakai_conf) {
+    var sakaiCommmunicationsAPI =  {
         /**
          * Sends a Sakai message to one or more users. If a group id is received, the
          * message is sent to users that are members of that group.
@@ -45,14 +45,13 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
          * @param {String} [reply] The id of the message you are replying on
          * @param {Function} [callback] A callback function which is executed at the end of the operation
          * @param {Boolean} [sendMail] True if a mail needs to be sent, False if no mail is needed. Unles specified false the default will be true and a mail will be sent
-         * @param {Boolean|String} [mailContent] False or String of content that contains HTML or regular text
+         * @param {Boolean|String} [context] String used in switch to set sakai:templatePath and sakai:templateParams
          *
          */
         sendMessage : function(to, meData, subject, body, category, reply, callback, sendMail, context) {
 
             var toUsers = "";              // aggregates all message recipients
             var sendDone = false;          // has the send been issued?
-
 
             ///////////////////////
             // UTILITY FUNCTIONS //
@@ -132,7 +131,6 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
             var doSendMail = function(){
                 // Basic message details
                 var toSend = buildEmailParams();
-
                 // Send message
                 $.ajax({
                     url: "/~" + meData.user.userid + "/message.create.html",
@@ -176,7 +174,6 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
                 if (reply) {
                     toSend["sakai:previousmessage"] = reply;
                 }
-
                 // Send message
                 $.ajax({
                     url: "/~" + meData.user.userid + "/message.create.html",
@@ -225,7 +222,6 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
                     callback(false, xhr);
                 }
             }
-
             $.ajax({
                 url: "/system/batch",
                 method: "POST",
@@ -251,6 +247,9 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
                 params = {":operation": "delete"};
             } else {
                 params = {"sakai:messagebox": "trash"};
+            }
+            if (typeof messagePaths === 'string'){
+                messagePaths = [messagePaths];
             }
             $.each(messagePaths, function(i, val){
                 var req = {
@@ -314,6 +313,65 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
         },
 
         /**
+         * Processes the messages from the server, stripping out everything we don't need
+         */
+        processMessages : function(data) {
+            var messages = {},
+                ret = $.extend(true, {}, data);
+            $.each(ret, function(i, msg) {
+                var newMsg = {};
+                newMsg.replyAll = [];
+                newMsg.from = {
+                    name:  msg.userFrom[0].userid ? sakai_user.getDisplayName(msg.userFrom[0]) : msg.userFrom[0]["sakai:group-title"],
+                    picture: sakai_util.constructProfilePicture(msg.userFrom[0]),
+                    userObj : {
+                        uuid: msg.userFrom[0].userid ? msg.userFrom[0].userid : msg.userFrom[0].groupid,
+                        username: msg.userFrom[0].userid ? sakai_user.getDisplayName(msg.userFrom[0]) : msg.userFrom[0]["sakai:group-title"],
+                        type: msg.userFrom[0].userid ? "user" : "group"
+                    }
+                };
+                if (newMsg.from.userObj.uuid !== sakai_user.data.me.user.userid) {
+                    newMsg.replyAll.push(newMsg.from.userObj);
+                }
+                newMsg.to = [];
+                newMsg.toList = [];
+                $.each(msg.userTo, function(i, user) {
+                    var tmpUsr = {
+                        name : user.userid ? sakai_user.getDisplayName(user) : user["sakai:group-title"],
+                        picture : sakai_util.constructProfilePicture(user),
+                        userObj : {
+                            uuid: user.userid ? user.userid : user.groupid,
+                            username: user.userid ? sakai_user.getDisplayName(user) : user["sakai:group-title"],
+                            type: user.userid ? "user" : "group"
+                        }
+                    };
+                    if (user.userid !== sakai_user.data.me.user.userid) {
+                        newMsg.replyAll.push(tmpUsr.userObj);
+                    }
+                    newMsg.toList.push(tmpUsr.name);
+                    newMsg.to.push(tmpUsr);
+                });
+                newMsg.body = sakai_util.Security.replaceURL($.trim(msg["sakai:body"].replace(/\n/gi, "<br />")));
+                newMsg.body_nolinebreaks = $.trim(msg["sakai:body"].replace(/\n/gi, " "));
+                newMsg.subject = msg["sakai:subject"];
+                newMsg.date = sakai_l10n.transformDateTimeShort(sakai_l10n.parseDateLong(msg["_created"], sakai_user.data.me));
+                newMsg.id = msg.id;
+                newMsg.read = msg["sakai:read"];
+                newMsg.path = msg["jcr:path"];
+                if (msg.previousMessage) {
+                    newMsg.previousMessage = sakaiCommmunicationsAPI.processMessages([msg.previousMessage]);
+                    $.each(newMsg.previousMessage, function(i,val){
+                        newMsg.previousMessage = val;
+                    });
+                }
+                messages[newMsg.id] = newMsg;
+
+            });
+            ret = messages;
+            return ret;
+        },
+
+        /**
         * Gets all messages from a box
         * 
         * @param {String} box The name of the box to get messages from
@@ -323,8 +381,11 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
         * @param {String} sortBy The name of the field to sort on
         * @param {String} sortOrder Sort messages asc or desc
         * @param {Function} callback The function that will be called on completion
+        * @param {Boolean} doProcessing process the messages after they come back to make them easier to deal with
+        *                               defaults to true
+        * @param {Boolean} doFlip Flip the to and from
         */  
-        getAllMessages : function(box, category, messagesPerPage, currentPage, sortBy, sortOrder, callback) {
+        getAllMessages : function(box, category, messagesPerPage, currentPage, sortBy, sortOrder, callback, doProcessing, doFlip) {
             var url = "";
             if (category) {
                 url = sakai_conf.URL.MESSAGE_BOXCATEGORY_SERVICE + "?box=" + box + "&category=" + category + "&items=" + messagesPerPage + "&page=" + currentPage + "&sortOn=" + sortBy + "&sortOrder=" + sortOrder;
@@ -333,8 +394,11 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
             }
             $.ajax({
                 url: url,
-                cache: false,
+                cache: true,
                 success: function(data){
+                    if (doProcessing !== false) {
+                        data.results = sakaiCommmunicationsAPI.processMessages(data.results, doFlip);
+                    }
                     if ($.isFunction(callback)) {
                         callback(true, data);
                     }
@@ -381,8 +445,12 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
                 url: url,
                 cache: false,
                 success: function(data){
+                    var count = 0;
+                    if (data.count && data.count[0] && data.count[0].count) {
+                        count = data.count[0].count;
+                    }
                     if ($.isFunction(callback)) {
-                        callback(true, data);
+                        callback(true, count);
                     }
                 },
                 error: function(xhr, textStatus, thrownError) {
@@ -429,4 +497,5 @@ define(["jquery", "sakai/sakai.api.user", "/dev/configuration/config.js"], funct
 
         }
     };
+    return sakaiCommmunicationsAPI;
 });
