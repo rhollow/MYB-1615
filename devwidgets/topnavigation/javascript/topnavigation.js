@@ -554,6 +554,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             setUserName();
             addBinding();
             renderOverlays();
+            // myberkeley custom: sign in is link to CAS login
+            $("#topnavigation_user_options_login_link")[0].href = sakai.config.Authentication.external[0].url;
+            if ( ! sakai.config.Authentication.internal ) {
+              $(topnavUserOptionsLoginFields).remove();
+            }
+            // end myberkeley custom
         };
 
         doInit();

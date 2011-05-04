@@ -101,10 +101,13 @@
     </span>
 --></div>
 
+<!-- myberkeley custom: sign in is just a link to CAS -->
 <div id="topnavigation_user_template"><!--
     {if anon}
         <div class="s3d-dropdown-menu" id="topnavigation_user_options_login">
-            <span class="s3d-bold" id="topnavigation_user_options_login">__MSG__SIGN_IN__</span>
+            <span class="s3d-bold" id="topnavigation_user_options_login">
+              <a href="#" class="s3d-bold" title="__MSG__SIGN_IN__" id="topnavigation_user_options_login_link">__MSG__SIGN_IN__</a>
+            </span>
             <div id="topnavigation_user_options_login_fields" class="s3d-dropdown-container" style="display:none;">
                 <form id="topnavigation_user_options_login_form" method="POST">
                     <div id="topnavigation_user_options_login_fields_container" class="s3d-dropdown-menu-content-container">
