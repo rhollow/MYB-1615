@@ -577,6 +577,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
         ///////////////////////////////////////////////////////////////		
 
 		var dumpOptionIDs = function(filterObj, idArray) {
+			
+			if(filterObj == null || idArray == null) {
+				return;
+			}
+			
 			var conditionArray;
 			if (filterObj.hasOwnProperty("AND")) {
 				conditionArray = filterObj.AND;
@@ -651,7 +656,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		/**
 		 * Saves the selected options a new dynamic list
 		 */
-		var saveDynamicList = function() {
+		/*var saveDynamicList = function() {
 						
 			var result = buildUndergraduatesAndGraduatesResultingObject();
 			
@@ -678,7 +683,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 
 			
 			return $outputJson.val(formatJSON(result));
-		}
+		}*/
 	    
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    
@@ -697,7 +702,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    var sortOrder = "descending";
 	    var editExisting = false;
 	    var currList;
-		var savedState = {}; // Saved state for selected majors/programs
+
 	
 	
 	    /**
@@ -804,167 +809,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // var size = query(selectedContext, selectedMajor, selectedStanding);
 	        // document.createListForm.list_size.value = size;
 	    }
-	    
-	    /**
-	     * Clears input fields
-	     */
-	    var clearInputFields = function() {
-	        document.getElementById("createListForm").reset();
-	    };
-	    
-	    // TODO: Document properties.
-	    /**
-	     * Used for the date formatter.
-	     */
-	    var replaceChars = {
-	        date: new Date(),
-	        shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-	        longMonths: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-	        shortDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-	        longDays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-	
-	        // Day
-	        d: function() {
-	            return (replaceChars.date.getDate() < 10 ? '0' : '') + replaceChars.date.getDate();
-	        },
-	        D: function() {
-	            return replaceChars.shortDays[replaceChars.date.getDay()];
-	        },
-	        j: function() {
-	            return replaceChars.date.getDate();
-	        },
-	        l: function() {
-	            return replaceChars.longDays[replaceChars.date.getDay()];
-	        },
-	        N: function() {
-	            return replaceChars.date.getDay() + 1;
-	        },
-	        S: function() {
-	            return (replaceChars.date.getDate() % 10 === 1 && replaceChars.date.getDate() !== 11 ? 'st' : (replaceChars.date.getDate() % 10 === 2 && replaceChars.date.getDate() !== 12 ? 'nd' : (replaceChars.date.getDate() % 10 === 3 && replaceChars.date.getDate() !== 13 ? 'rd' : 'th')));
-	        },
-	        w: function() {
-	            return replaceChars.date.getDay();
-	        },
-	        z: function() {
-	            return "Not Yet Supported";
-	        },
-	        // Week
-	        W: function() {
-	            return "Not Yet Supported";
-	        },
-	        // Month
-	        F: function() {
-	            return replaceChars.longMonths[this.getMonth()];
-	        },
-	        m: function() {
-	            return (replaceChars.date.getMonth() < 11 ? '0' : '') + (replaceChars.date.getMonth() + 1);
-	        },
-	        M: function() {
-	            return replaceChars.shortMonths[replaceChars.date.getMonth()];
-	        },
-	        n: function() {
-	            return replaceChars.date.getMonth() + 1;
-	        },
-	        t: function() {
-	            return "Not Yet Supported";
-	        },
-	        // Year
-	        L: function() {
-	            return "Not Yet Supported";
-	        },
-	        o: function() {
-	            return "Not Supported";
-	        },
-	        Y: function() {
-	            return replaceChars.date.getFullYear();
-	        },
-	        y: function() {
-	            return ('' + replaceChars.date.getFullYear()).substr(2);
-	        },
-	        // Time
-	        a: function() {
-	            return replaceChars.date.getHours() < 12 ? 'am' : 'pm';
-	        },
-	        A: function() {
-	            return replaceChars.date.getHours() < 12 ? 'AM' : 'PM';
-	        },
-	        B: function() {
-	            return "Not Yet Supported";
-	        },
-	        g: function() {
-	            return replaceChars.date.getHours() % 12 || 12;
-	        },
-	        G: function() {
-	            return replaceChars.date.getHours();
-	        },
-	        h: function() {
-	            return ((replaceChars.date.getHours() % 12 || 12) < 10 ? '0' : '') + (replaceChars.date.getHours() % 12 || 12);
-	        },
-	        H: function() {
-	            return (replaceChars.date.getHours() < 10 ? '0' : '') + replaceChars.date.getHours();
-	        },
-	        i: function() {
-	            return (replaceChars.date.getMinutes() < 10 ? '0' : '') + replaceChars.date.getMinutes();
-	        },
-	        s: function() {
-	            return (replaceChars.date.getSeconds() < 10 ? '0' : '') + replaceChars.date.getSeconds();
-	        },
-	        // Timezone
-	        e: function() {
-	            return "Not Yet Supported";
-	        },
-	        I: function() {
-	            return "Not Supported";
-	        },
-	        O: function() {
-	            return (replaceChars.date.getTimezoneOffset() < 0 ? '-' : '+') + (replaceChars.date.getTimezoneOffset() / 60 < 10 ? '0' : '') + (replaceChars.date.getTimezoneOffset() / 60) + '00';
-	        },
-	        T: function() {
-	            return "Not Yet Supported";
-	        },
-	        Z: function() {
-	            return replaceChars.date.getTimezoneOffset() * 60;
-	        },
-	        // Full Date/Time
-	        c: function() {
-	            return "Not Yet Supported";
-	        },
-	        r: function() {
-	            return replaceChars.date.toString();
-	        },
-	        U: function() {
-	            return replaceChars.date.getTime() / 1000;
-	        }
-	    };
-	    
-	    /**
-	     * Format a date to a string.
-	     * See replaceChars for the specific options.
-	     * @param {Date} d
-	     * @param {String} format
-	     */
-	    var formatDate = function(d, format){
-	        var returnStr = '';
-	        replaceChars.date = d;
-	        var replace = replaceChars;
-	        for (var i = 0; i < format.length; i++) {
-	            var curChar = format.charAt(i);
-	            if (replace[curChar]) {
-	                returnStr += replace[curChar].call(d);
-	            }
-	            else {
-	                returnStr += curChar;
-	            }
-	        }
-	        return returnStr;
-	    };
-	    
-	    sakai_global.listpage.getDate = function(dateString){
-	        var d = sakai.api.Util.parseSakaiDate(dateString);
-	        d = formatDate(d, "M j, Y g:i A");
-	        return d;
-	    }
-	    
+	    	    
 	    /**
 	     * Removes all the messages out of the DOM.
 	     * It will also remove the preloader in the table.
@@ -973,11 +818,23 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        $(".inbox_list").remove();
 	    };
 	    
+	    var removeSparseSpecialProperties = function(obj) {
+	    	for (var key in obj) {
+				if(obj.hasOwnProperty(key) && key.match(/^_/)) {
+					delete obj[key];
+				}
+			}
+	    };
+	    
 	    var renderLists = function(response){
 	        allLists = response.lists || [];
 	        
+	        // removing special _properties
+	        removeSparseSpecialProperties(allLists);
+	        
 	        var data = {
-	            "links": allLists
+	            "links": allLists,
+	            sakai: sakai
 	        }
 	        
 	        // remove previous lists
@@ -995,11 +852,14 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	     * @param {String} id    The id of a dynamic list
 	     */
 	    var getListWithId = function(id){
-	        for (var i = 0, j = allLists.length; i < j; i++) {
+	        if(allLists.hasOwnProperty(id)) {
+	        	return allLists[id];
+	        }
+	        /*for (var i = 0, j = allLists.length; i < j; i++) {
 	            if (allLists[i]["sakai:id"] === id) {
 	                return allLists[i];
 	            }
-	        }
+	        }*/
 	        return null;
 	    };
 	    
@@ -1026,9 +886,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			//clearInputFields();
 			
 			resetListEditingFormCheckboxesAndStyles();
-			
-			// Reset the saved state
-			//resetSavedState();		
+				
 	        
 	        // Fill in input fields with list data
 	        var list = getListWithId(id);
@@ -1271,7 +1129,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		}
 	    
 	    var finishSaveAndLoad = function() {
-	        clearInputFields();
+	        //clearInputFields();
 	        $.bbq.pushState({"tab": "existing"},2);
 	        loadData();
 	    };
@@ -1290,8 +1148,58 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        if(index != null && index >= 0) { // we are editing an existing list
 	            allLists[index]["sakai:name"] = data.listName;
 	            allLists[index]["sakai:description"] = data.desc;
+	            //allLists[index]["sakai:dateModified"] = new Date();
+	            //allLists[index]["sakai:dateModified@TypeHint"] = "Date";
+	            //allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
+	            allLists[index].query.context = [data.context];
+	            allLists[index].query.filter = data.filter;
+	        } else { // we are creating a new list
+	            var id = generateId();
+	
+	            var list = {
+	                "sakai:id": id,
+	                "sakai:name": data.listName,
+	                "sakai:description": data.desc,
+	                //"sakai:dateModified": new Date(),
+	                //"sakai:dateModified@TypeHint": "Date",
+	                //"sakai:modifiedBy": sakai.data.me.user.userid,
+	                "query": {
+	                    "context": [data.context],
+	                    "filter": data.filter
+	                }
+	            }
+	            //allLists.push(list);
+	        }
+	       // submitData.lists = allLists;
+	        
+	        
+	        var list = {
+	                "sakai:id": id,
+	                "sakai:name": data.listName,
+	                "sakai:description": data.desc,
+	                //"sakai:dateModified": new Date(),
+	                //"sakai:dateModified@TypeHint": "Date",
+	                //"sakai:modifiedBy": sakai.data.me.user.userid,
+	                "query": {
+	                    "context": [data.context],
+	                    "filter": data.filter
+	                }
+	              };
+	        
+	        sakai.api.Server.saveJSON(userUrl+"/lists/"+id, list, finishSaveAndLoad);
+	    };
+	    
+	    var saveListOld = function(data, index) {        
+	        if (listAlreadyExists(data)) {
+	            showGeneralMessage($("#inbox_generalmessages_already_exists").text());
+	            return;
+	        }
+	        
+	        if(index != null && index >= 0) { // we are editing an existing list
+	            allLists[index]["sakai:name"] = data.listName;
+	            allLists[index]["sakai:description"] = data.desc;
 	            allLists[index]["sakai:dateModified"] = new Date();
-	            allLists[index]["sakai:dateModified@TypeHint"] = "date";
+	            //allLists[index]["sakai:dateModified@TypeHint"] = "Date";
 	            allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
 	            allLists[index].query.context = [data.context];
 	            allLists[index].query.filter = data.filter;
@@ -1303,7 +1211,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	                "sakai:name": data.listName,
 	                "sakai:description": data.desc,
 	                "sakai:dateModified": new Date(),
-	                "sakai:dateModified@TypeHint": "date",
+	                "sakai:dateModified@TypeHint": "Date",
 	                "sakai:modifiedBy": sakai.data.me.user.userid,
 	                "query": {
 	                    "context": [data.context],
@@ -1318,143 +1226,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    
 		// List creation events
 	   
-	    
-	    		
-	    
-		var enableAll = function(el) {
-			try {
-				el.disabled = false;
-			} catch (E) {}
-			
-			if (el && el.childNodes && el.childNodes.length > 0) {
-	            for (var x = 0; x < el.childNodes.length; x++) {
-	                enableAll(el.childNodes[x]);				
-	            }
-	        }
-		}
-		
-		var disableAll = function(el) {
-			try {
-				el.disabled = true;
-				el.checked = false;
-			} catch (E) {}
-			
-			if (el && el.childNodes && el.childNodes.length > 0) {
-	            for (var x = 0; x < el.childNodes.length; x++) {
-	                disableAll(el.childNodes[x]);
-	            }
-	        }
-		}
-		
-	
-		
-		// -------- Start of majors/programs state related block --------
-		
-		/**
-		 * Resets the saved state object
-		 */ 
-		var resetSavedState = function() {
-			savedState = {
-				allUndergraduatesSelected: true,
-				allGraduatesSelected: true,
-				lastSelectedMajors: [],
-				lastSelectedPrograms: []
-			};
-		};
-		
-		/**
-		 * Saves current selection state of undergraduate majors
-		 */
-		var stashUndergradSelection = function() {		
-			savedState.lastSelectedMajors = [];
-			var selectedMajors = savedState.lastSelectedMajors;
-			$("#ugrad_majors .major_checkbox:checked").each(function() {
-	            	var majorId = $(this).attr('id');            		
-					selectedMajors.push(majorId);
-	        });
-		};
-		
-		/**
-		 * Saves current selection state of graduate programs
-		 */
-		var stashGradSelection = function() {		
-			savedState.lastSelectedPrograms = [];
-			var selectedPrograms = savedState.lastSelectedPrograms;
-			$("#grad_majors .major_checkbox:checked").each(function() {
-	            	var programId = $(this).attr('id');            		
-					selectedPrograms.push(programId);
-	        });
-		};
-		
-		/**
-		 * Restores previously selected undergraduate majors
-		 */
-		var restoreUndergradSelection = function() {			
-			var selectedMajors = savedState.lastSelectedMajors;
-			$("#ugrad_majors .major_checkbox").each(function() {            	
-					var majorId = $(this).attr('id');            		
-					// indexOf will not work in IE6
-					if(selectedMajors.indexOf(majorId) !== -1) {
-						$(this).attr("checked", true);						
-					} else {
-						$(this).removeAttr("checked");
-					}				
-	        });
-		};
-		
-		/**
-		 * Restores previously selected graduate programs
-		 */
-		var restoreGradSelection = function() {			
-			var selectedPrograms = savedState.lastSelectedPrograms;
-			$("#grad_majors .major_checkbox").each(function() {            	
-					var programId = $(this).attr('id');            		
-					// indexOf will not work in IE6
-					if(selectedPrograms.indexOf(programId) !== -1) {
-						$(this).attr("checked", true);						
-					} else {
-						$(this).removeAttr("checked");
-					}				
-	        });
-		};
-		
-		/**
-		 * Removes all undergraduate majors from the saved state object 
-		 */
-		var resetUndergradSelection = function() {			
-			$("#ugrad_majors .major_checkbox").each(function() {            		
-				$(this).removeAttr("checked");					
-	        });
-		};
-		
-		/**
-		 * Removes all graduate programs from the saved state object 
-		 */
-		var resetGradSelection = function() {			
-			$("#grad_majors .major_checkbox").each(function() {            		
-				$(this).removeAttr("checked");					
-	        });
-		};
-		
-		/**
-		 * Returns true if "all undergraduate majors" option is selected; otherwise return false 
-		 */
-		var areAllUndergradsSelected = function() {			
-			return $("#allUgrads").attr('checked') === true;
-		};
-		
-		/**
-		 * Returns true if "all graduate programs" option is selected; otherwise return false 
-		 */
-		var areAllGradsSelected = function() {			
-			return $("#allGrads").attr('checked') === true;
-		};
-			
-		// -------- End of majors/programs state related block --------
-		
-		
-		
-		  
+	  
 	    // Button click events
 	    $("#dyn_lists_delete_button").live("click", function(){
 	        var listId = [];
@@ -1504,12 +1276,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    });
 	    
 	    $("#inbox_inbox_cancel_button").live("click", function(){
-	        //editExisting = false;
+	        editExisting = false;
 	        //clearInputFields();
-			//resetSavedState();
-			//disableAll(document.getElementById("choose_ugrad"));
-			//disableAll(document.getElementById("choose_grad"));
-			//$("#choose_ugrad, #choose_grad").addClass("disabledState");
 	        $.bbq.pushState({"tab": "existing"},2);
 	    });
 	    
@@ -1654,7 +1422,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			}
 			 
 	        var result =  {
-	            "_MODIFIERS": {},
 	            "lists": data.lists
 	        };
 	        return result;
@@ -1818,7 +1585,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        
 	        userUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
-	        resetSavedState();
+
 			loadData();
 	    };
 	

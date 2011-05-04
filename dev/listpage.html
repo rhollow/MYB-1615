@@ -90,14 +90,15 @@
         
                         <div id="inbox_inbox_sort_up" style="display:none;"><img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
                         <div id="inbox_inbox_sort_down" style="display:none;"><img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
-                        <!-- {var dateString = sakai_global.listpage.getDate(m['sakai:dateModified'])} <td>${dateString}</td>-->        
-                        <div id="inbox_inbox_lists_template" title=""><!--
-                            {for m in links}
                                 
-                                                                 
+                        <div id="inbox_inbox_lists_template" title=""><!--
+                            {for m in links}                                
+                             	{eval}console.log(m+""){/eval}
+                             	{var dateString = Globalization.format(sakai.api.Util.parseSakaiDate(m['_lastModified']), "MMM d, yyyy hh:mm tt")}
+                                                                
                                 <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
                                     <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['sakai:id']}" id="inbox_check_list_${m['sakai:id']}" title="__MSG__SELECT_LIST__" /></td>
-                                    <td>FIX DATE LATER</td>
+                                    <td>${dateString}</td>
                                     <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m['sakai:name']}</a></td>
                                     <td>${m['sakai:description']}</td>
                                     <td>TODO:</td>
