@@ -116,7 +116,7 @@
     </repository>
   </repositories>
   <properties>
-    <ant.target>development</ant.target>
+    <ant.target>dev_light</ant.target>
     <dev.content>
       SLING-INF/content/tests;path:=/tests;uninstall:=false;overwrite:=true,
       SLING-INF/content/jsdoc;path:=/jsdoc;uninstall:=false;overwrite:=true,
@@ -151,6 +151,14 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>sakai-development</id>
+      <!-- Begin workaround for maven-bundle-plugin 2.0.1 ignoring processed resources. -->
+      <properties>
+        <ant.target>development</ant.target>
+        <dev.content></dev.content>
+      </properties>
     </profile>
   </profiles>
   <build>
