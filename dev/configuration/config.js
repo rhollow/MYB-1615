@@ -393,7 +393,7 @@ define(function(){
                                 "display": true
                             }
                         }
-                    },/* myBerkeley: widget is disabled in 0.2 -----------------------
+                    },
                     "locations": {
                         "label": "__MSG__PROFILE_LOCATIONS_LABEL__",
                         "required": false,
@@ -412,7 +412,7 @@ define(function(){
                                 "type": "location"
                             }
                         }
-                    },*/
+                    },
                     "publications": {
                         "label": "__MSG__PROFILE_PUBLICATIONS_LABEL__",
                         "required": false,
