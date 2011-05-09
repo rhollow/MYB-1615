@@ -106,7 +106,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		/**
 		 * Array of all the lists
 		 */
-		var allLists = [];
+		var allLists = {};
 	    
 	    //////////////////////////////////////////////////////////
         // Functions for manipulating boolean condition objects //
@@ -841,7 +841,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    };
 	    
 	    var renderLists = function(response){
-	        allLists = response || [];
+	        
+	        if(response == null) {
+	        	return;
+	        }
+	        
+	        allLists = response;
 	        
 	        // removing special _properties
 	        removeSparseSpecialProperties(allLists);
@@ -865,8 +870,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    /**
 	     * Displays only the list with that id.
 	     * @param {String} id    The id of a list
+	     * @param {Boolean} copyMode	When set to true string "Copy of " is prepended to the name of the disolayed list and description is cleared
 	     */
-	    var displayList = function(id){
+	    var displayList = function(id, copyMode){
 	        // Display edit list tab
 	        $.bbq.pushState({"tab": "new"},2);
 
@@ -879,9 +885,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        var list = allLists[id];
 	        
 	        // Fill in input fields with list data
-	        $("#list_name").val(list["sakai:name"]);
-	        $("#description").val(list["sakai:description"]);
-	        	        
+	        if(copyMode) {
+	        	$("#list_name").val("Copy of " + list["sakai:name"]);	        	
+	        } else {
+	        	$("#list_name").val(list["sakai:name"]);
+	        	$("#description").val(list["sakai:description"]);	        	
+	        }
+	        
 	        var idArray = [];
 	        var filterAsObject = $.parseJSON(list.query.filter);
 	        dumpOptionIDs(filterAsObject, idArray);
@@ -1167,7 +1177,22 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 		// List creation events
 	   
+	   
+	   var isOnlyOneListSelected = function() {
+	   	 return $(".inbox_inbox_check_list:checked").length === 1;
+	   };
 	  
+	  
+	  	$(".inbox_inbox_check_list").live("click", function(){
+	  		if(isOnlyOneListSelected()){
+	  			$("#dyn_lists_edit_button").removeAttr('disabled');
+	  			$("#dyn_lists_copy_button").removeAttr('disabled');
+	  		} else {
+	  			$("#dyn_lists_edit_button").attr('disabled', 'disabled');
+	  			$("#dyn_lists_copy_button").attr('disabled', 'disabled');
+	  		}
+	  	});
+	  	  
 	    // Button click events
 	    $("#dyn_lists_delete_button").live("click", function(){
 	        var listId = [];
@@ -1176,7 +1201,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	            listId.push(id);
 	        });
 	        
-	        $("#inbox_inbox_checkAll").attr("checked", "");
+	        $("#inbox_inbox_checkAll").removeAttr("checked");
 	        tickMessages();
 	
 	        if (listId.length < 1) {
@@ -1186,30 +1211,58 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	    });
 	    
-	    $("#inbox_inbox_duplicate_button").live("click", function(){
-	        var listId = [];
+	    $("#dyn_lists_copy_button").live("click", function(){
+	        var listIds = [];
 	        $(".inbox_inbox_check_list:checked").each(function(){
 	            var id = $(this).val();
-	            listId.push(id);
+	            listIds.push(id);
 	        });
 	        
-	        $("#inbox_inbox_checkAll").attr("checked", "");
+	        if (listIds.length == 0) {
+	        	return;
+	        }
+	        
+	        $("#inbox_inbox_checkAll").removeAttr("checked");
 	        tickMessages();
 	
-	        if (listId.length < 1) {
+	
+			editExisting = false;	        
+	        currentListIdForEditing = null;
+	        displayList(listIds[0], true);
+	        
+	        
+	       /*if (listId.length < 1) {
 	            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
 	        } else if (listId.length > 1) {
 	            showGeneralMessage($("#inbox_generalmessages_duplicate_multiple").text());
 	        } else {
 	            displayList(listId[0]);
-	        }
+	        }*/
 	    });
+	    
+	    $("#dyn_lists_edit_button").live("click", function(evt){   
+	        	        
+	        var listIds = [];
+	        $(".inbox_inbox_check_list:checked").each(function(){
+	            var id = $(this).val();
+	            listIds.push(id);
+	        });
+	        
+	        if (listIds.length == 0) {
+	        	return;
+	        }
+	        
+	        editExisting = true;	        
+	        currentListIdForEditing = listIds[0];
+	        displayList(currentListIdForEditing, false);
+	    });
+	    
 	    
 	    $(".editLink").live("click", function(evt){   
 	        editExisting = true;
 	        var id = evt.target.id;
 	        currentListIdForEditing = id;
-	        displayList(id);
+	        displayList(id, false);
 	    });
 	    
 	    $("#inbox_inbox_back_button").live("click", function(){
@@ -1274,6 +1327,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        $("#dyn_lists_delete_button").hide();
 	        $("#dyn_lists_copy_button").hide();
 	        $("#dyn_lists_edit_button").hide();
+	        $("#inbox_inbox_back_button").hide();
 	        
 	        $("#inbox_inbox_cancel_button").show();
 	        $("#dynlist_save_button").show();
@@ -1295,7 +1349,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        $("#dyn_lists_delete_button").show();
 	        $("#dyn_lists_copy_button").show();
-	        $("#dyn_lists_edit_button").show();
+	        $("#dyn_lists_edit_button").show();	        
+	        $("#inbox_inbox_back_button").show();
 	        
 	        $("#inbox_inbox_cancel_button").hide();
 	        $("#dynlist_save_button").hide();
@@ -1304,7 +1359,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        $("#dynlist_save_button").hide();
 	        $("#inbox_inbox_delete_button").show();
 	        $("#inbox_inbox_duplicate_button").show();
-	        $("#inbox_inbox_back_button").show();*/
+	        */
 	    	
 	    };
 	    
