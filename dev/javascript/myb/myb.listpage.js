@@ -29,20 +29,45 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
         /////////////////////////////
         
         /**
+		 * Array of all the lists
+		 */
+		var allLists = {};
+		
+        /**
          * Dynamic list prefix
          */
         var DYNAMIC_LIST_PREFIX = "dl-";
-        
-        /**
-         * Trimpath template
-         */
-        var $template = $("#template");
+
+		/**
+		 * Whether the loaded trimpath template includes undergraduate students data
+		 */
+		var boolTemplateHasUndergradsData = false;
 		
 		/**
-		 * View to render the template
+		 * Whether the loaded trimpath template includes graduate students data
 		 */
-		var $view = $("#view");
+		var boolTemplateHasGradsData = false;
 		
+		/**
+		 * Flag that indicates whether we are editing an existing list or creation a new one
+		 */
+		var editExisting = false;
+		
+		/**
+		 * Id of currently selected list (needed only for saving)
+		 */
+		var currentListIdForEditing;				
+		
+		/**
+		 * Dynamic lists base URL (parent node in Sparse), delete this node to remove all dynamic lists for current user
+		 */		
+		var dynamicListsBaseUrl;
+				
+		
+		//////////////////////
+        // jQuery selectors //
+        //////////////////////
+                		
 		/**
 		 * Section C wrapper DIV
 		 */		
@@ -69,16 +94,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		var $gradsGroup;
 		
 		/**
-		 * Save dynamic list button
-		 */	
-		var $saveList = $("#save_list");
-		
-		/**
-		 * Text area for JSON output (debug only)
-		 */
-		var $outputJson = $("#output_json");
-		
-		/**
 		 * 'Include undergraduate students' checkbox (or hidden input when checkbox is not displayed)
 		 */
 		var $includeUndergradsCheckbox;
@@ -87,26 +102,47 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		 * 'Include graduate students' checkbox (or hidden input when checkbox is not displayed)
 		 */
 		var $includeGradsCheckbox;
-
-		/**
-		 * Whether the loaded trimpath template includes undergraduate students data
-		 */
-		var boolTemplateHasUndergradsData = false;
-		
-		/**
-		 * Whether the loaded trimpath template includes graduate students data
-		 */
-		var boolTemplateHasGradsData = false;
-		
-		/**
-		 * Id of currently selected list (needed only for saving)
-		 */
-		var currentListIdForEditing;
-		
-		/**
-		 * Array of all the lists
-		 */
-		var allLists = {};
+        
+        /**
+         * Dynamic list 'Edit' button
+         */
+		var $dynListsEditButton = $("#dyn_lists_edit_button");
+	  	
+	  	/**
+         * Dynamic list 'Copy' button
+         */
+	  	var $dynListsCopyButton = $("#dyn_lists_copy_button");
+	  	
+	  	/**
+         * Dynamic list 'delete' button
+         */
+	  	var $dynListsDeleteButton = $("#dyn_lists_delete_button");
+	  		  	
+	  	/**
+         * Dynamic list 'Back to Group Notification Manager' button
+         */
+	  	var $dynListsBackToNotifManagerButton = $("#dyn_lists_back_to_group_notification_manager_button");	 
+	  	
+	  	/**
+         * Dynamic list 'Save' button
+         */
+	  	var $dynListsSaveButton = $("#dyn_lists_save_button");
+	  		  	
+	  	/**
+         * Dynamic list 'Cancel' button (cancels editing and switches withe my to list mode)
+         */
+	  	var $dynListsCancelEditingButton = $("#dyn_lists_cancel_button");
+	  	
+	  	/**
+	  	 * Dynamic list 'Create' button
+	  	 */
+	  	var $dynListsCreateButton = $("#dynamic_lists_create_new");
+	  	
+	  	/**
+	  	 * Show more/less button in section C (template must be loaded before using this variable)
+	  	 */
+	  	var $showMoreOrLess;
+	  	
 	    
 	    //////////////////////////////////////////////////////////
         // Functions for manipulating boolean condition objects //
@@ -554,11 +590,32 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			$designateTermYear.append(yearsArr.join(''));
 		};
 	    
+	    var hideSectionC = function() {
+	    	$showMoreOrLess.text("Show Less");
+	    	$sectionC.hide();
+	    };
+	    
+	    var toggleSectionC = function () {
+				
+			if($sectionC.is(":visible")) {
+				hideSectionC();					
+			} else {
+				$showMoreOrLess.text("Show Less");
+				$sectionC.show();					
+			}						
+		};
+	    
+	    
+		
+		
 	    /**
 	     * Resets the editing form UI (checkboxes and CSS styles)
 	     * Must be called AFTER loading template.
 	     */
 	    var resetListEditingFormCheckboxesAndStyles = function() {
+	    	
+	    		    	
+	    	hideSectionC();
 	    	
 	    	// reset all checkboxes
 	    	$("input:checkbox:checked", $("#create_new_list")).removeAttr("checked");
@@ -664,57 +721,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		};
 		
 		
-		////////////////////////////////
-        // Dynamic list save function //
-        ////////////////////////////////		
-		
-		/**
-		 * Saves the selected options a new dynamic list
-		 */
-		/*var saveDynamicList = function() {
-						
-			var result = buildUndergraduatesAndGraduatesResultingObject();
-			
-			// Section C
-
-			var registrationStatus = buildRegistrationStatusObject();
-			result = joinTwoConditionsByAND(result, registrationStatus);
-			
-
-			var cohortStatus = buildCohortStatusObject();						
-			result = joinTwoConditionsByAND(result, cohortStatus);
-			
-			
-			var specialPrograms = buildSelectedOptionsObjectAsOR($("#special_program_all_students", $sectionC), $(".special_programs", $sectionC));			
-			result = joinTwoConditionsByAND(result, specialPrograms);
-			
-			var studentStatus = buildSelectedOptionsObjectAsOR($("#student_status_all_students", $sectionC), $(".student_and_residency_status_col_left .sub_group", $sectionC));			
-			result = joinTwoConditionsByAND(result, studentStatus);
-			
-			var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));			
-			result = joinTwoConditionsByAND(result, residencyStatus);
-			 
-			
-
-			
-			return $outputJson.val(formatJSON(result));
-		}*/
-	    
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    
 	    
-	    
-	    /**
-	     *
-	     * Configuration
-	     *
-	     */
-	    
-	    var userUrl;
-	    var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
-	    var sortBy = "name";
-	    var sortOrder = "descending";
-	    var editExisting = false;
+
 
 
 	
@@ -754,12 +764,35 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        sakai.api.Util.notification.show("", msg, type);
 	        
 	    };
+	    	    
+	    var getNumberOfSelectedLists = function() {
+	   	 return $(".inbox_inbox_check_list:checked").length;
+	   	};
+	  
+	  	var updateEditCopyDeleteButtonsStatus = function() {
+	  		var num = getNumberOfSelectedLists();
+	  		if(num === 0) {
+		  		$dynListsEditButton.attr('disabled', 'disabled');
+	  			$dynListsCopyButton.attr('disabled', 'disabled');
+	  			$dynListsDeleteButton.attr('disabled', 'disabled');	  			
+	  		} else if(num === 1){
+		  		$dynListsEditButton.removeAttr('disabled');
+	  			$dynListsCopyButton.removeAttr('disabled');
+	  			$dynListsDeleteButton.removeAttr('disabled');	  			
+	  		} else if(num > 1){
+		  		$dynListsEditButton.attr('disabled', 'disabled');
+	  			$dynListsCopyButton.attr('disabled', 'disabled');
+	  			$dynListsDeleteButton.removeAttr('disabled');
+	  		}
+	  	};
+	    
 	    
 	    /**
 	     * Check or uncheck all messages depending on the top checkbox.
 	     */
 	    var tickMessages = function(){
 	        $(".inbox_inbox_check_list").attr("checked", ($("#inbox_inbox_checkAll").is(":checked") ? "checked" : ''));
+	        updateEditCopyDeleteButtonsStatus();
 	    };
 	    
 	    var getDataFromInput = function() {
@@ -995,6 +1028,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    });
 	    
 	    // Sorters for the inbox.
+	    
+	    //var sortBy = "name";
+	    //var sortOrder = "descending";
 	    /* Commented out for the myBerkeley POC since sorting is broken - eli
 	    $(".inbox_inbox_table_header_sort").bind("mouseenter", function() {
 	        if (sortOrder === 'descending') {
@@ -1079,7 +1115,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	                $("#inbox_table_list_" + currentId).remove();
 	                
 	                // store path to delete
-	                paths.push(userUrl + "/lists/" + currentId);	                	                
+	                paths.push(dynamicListsBaseUrl + "/lists/" + currentId);	                	                
 	                
 	                // delete list from memory
 	                delete allLists[currentId];	                    	                
@@ -1090,7 +1126,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        if(getNumberOfExistingLists() === 0) {
 	        	// delete whole parent node
-	        	sakai.api.Server.removeJSON(userUrl, loadData);
+	        	sakai.api.Server.removeJSON(dynamicListsBaseUrl, loadData);
 	        } else {
 	        	// batch delete nodes selected for deletion
 	        	batchDeleteLists(paths);
@@ -1137,12 +1173,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			
 			return true;
 		}
-	    
-	    var finishSaveAndLoad = function() {
-	        //clearInputFields();
-	        $.bbq.pushState({"tab": "existing"},2);
-	        loadData();
-	    };
+	    	    
 	    
 	    var generateId = function() {
 	        var id = DYNAMIC_LIST_PREFIX + sakai.data.me.user.userid + "-" + new Date().getTime();
@@ -1171,30 +1202,25 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	                }
 	              };
 	        
-	        sakai.api.Server.saveJSON(userUrl + "/lists/" + id, list, finishSaveAndLoad);
+	        sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/lists/" + id, list, function() {
+	        	$.bbq.pushState({"tab": "existing"},2);
+	        	loadData();
+	        });
 	    };
 	    
 	        
 		// List creation events
 	   
 	   
-	   var isOnlyOneListSelected = function() {
-	   	 return $(".inbox_inbox_check_list:checked").length === 1;
-	   };
+	   
 	  
 	  
 	  	$(".inbox_inbox_check_list").live("click", function(){
-	  		if(isOnlyOneListSelected()){
-	  			$("#dyn_lists_edit_button").removeAttr('disabled');
-	  			$("#dyn_lists_copy_button").removeAttr('disabled');
-	  		} else {
-	  			$("#dyn_lists_edit_button").attr('disabled', 'disabled');
-	  			$("#dyn_lists_copy_button").attr('disabled', 'disabled');
-	  		}
+	  		updateEditCopyDeleteButtonsStatus();
 	  	});
 	  	  
 	    // Button click events
-	    $("#dyn_lists_delete_button").live("click", function(){
+	    $dynListsDeleteButton.live("click", function(){
 	        var listId = [];
 	        $(".inbox_inbox_check_list:checked").each(function(){
 	            var id = $(this).val();
@@ -1211,7 +1237,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	    });
 	    
-	    $("#dyn_lists_copy_button").live("click", function(){
+	    $dynListsCopyButton.live("click", function(){
 	        var listIds = [];
 	        $(".inbox_inbox_check_list:checked").each(function(){
 	            var id = $(this).val();
@@ -1240,7 +1266,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }*/
 	    });
 	    
-	    $("#dyn_lists_edit_button").live("click", function(evt){   
+	    $dynListsEditButton.live("click", function(evt){   
 	        	        
 	        var listIds = [];
 	        $(".inbox_inbox_check_list:checked").each(function(){
@@ -1265,17 +1291,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        displayList(id, false);
 	    });
 	    
-	    $("#inbox_inbox_back_button").live("click", function(){
+	    $dynListsBackToNotifManagerButton.live("click", function(){
 	        window.location = "/dev/inboxnotifier.html";
 	    });
 	    
-	    $("#inbox_inbox_cancel_button").live("click", function(){
+	    $dynListsCancelEditingButton.live("click", function(){
 	        editExisting = false;
 	        //clearInputFields();
 	        $.bbq.pushState({"tab": "existing"},2);
 	    });
 	    
-	    $("#dynlist_save_button").live("click", function(){
+	    $dynListsSaveButton.live("click", function(){
 	        $("#invalid_name").hide();
 	        $("#invalid_major").hide();
 	        // NOT SUPPORTED FOR POC
@@ -1300,15 +1326,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	    });
 	    
-	    // NOT SUPPORTED FOR POC
-	    // On selecting checkbox events
-	    /*
-	    $(".major_checkbox").click(function() {
-	        sakai_global.listpage.updateListSize();
-	    });
-	    */
-	 
-	    
 	    
 	    
 	    var switchToEditMode = function() {
@@ -1322,15 +1339,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        // Show/hide appropriate buttons
 	        
-	        $("#dynamic_lists_create_new").hide();
+	        $dynListsCreateButton.hide();
 	        
-	        $("#dyn_lists_delete_button").hide();
-	        $("#dyn_lists_copy_button").hide();
-	        $("#dyn_lists_edit_button").hide();
-	        $("#inbox_inbox_back_button").hide();
+	        $dynListsDeleteButton.hide();
+	        $dynListsCopyButton.hide();
+	        $dynListsEditButton.hide();
+	        $dynListsBackToNotifManagerButton.hide();
 	        
-	        $("#inbox_inbox_cancel_button").show();
-	        $("#dynlist_save_button").show();
+	        $dynListsCancelEditingButton.show();
+	        $dynListsSaveButton.show();
 	    };
 	    
 	    var switchToListMode = function() {
@@ -1345,27 +1362,20 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // Show/hide appropriate buttons
 	        
 	        
-	        $("#dynamic_lists_create_new").show();
+	        $dynListsCreateButton.show();
 	        
-	        $("#dyn_lists_delete_button").show();
-	        $("#dyn_lists_copy_button").show();
-	        $("#dyn_lists_edit_button").show();	        
-	        $("#inbox_inbox_back_button").show();
+	        $dynListsDeleteButton.show();
+	        $dynListsCopyButton.show();
+	        $dynListsEditButton.show();	        
+	        $dynListsBackToNotifManagerButton.show();
 	        
-	        $("#inbox_inbox_cancel_button").hide();
-	        $("#dynlist_save_button").hide();
-	        
-	        /*$("#inbox_inbox_cancel_button").hide();
-	        $("#dynlist_save_button").hide();
-	        $("#inbox_inbox_delete_button").show();
-	        $("#inbox_inbox_duplicate_button").show();
-	        */
-	    	
+	        $dynListsCancelEditingButton.hide();
+	        $dynListsSaveButton.hide();
 	    };
 	    
 	    
 	    /*-------------------------------- Roman ------------------------------------------*/
-	    $("#dynamic_lists_create_new").click(function() {
+	    $dynListsCreateButton.click(function() {
 	        $.bbq.pushState({"tab": "new"},2);
 	        resetListEditingFormCheckboxesAndStyles();
 	        
@@ -1409,7 +1419,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    
 
 	    var loadData = function() {
-	        sakai.api.Server.loadJSON(userUrl, function(success, data){
+	        sakai.api.Server.loadJSON(dynamicListsBaseUrl, function(success, data){
 	            setTabState();	            
 	            if (success) {	               
 	                renderLists(data.lists);
@@ -1446,11 +1456,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        /*-------------------------------- Roman ------------------------------------------*/
 	        
+	       
+        	// Trimpath template for sections A and B of the list editing form (section C is static and doesn't require a templete)
+        	var $listEditFormTemplate = $("#list_edit_form_template");
+                	
+        	// View to render the template for sections A and B
+			var $view = $("#view");
 	        
 	        // Loading template
             var template;
 			$.ajax({
-                    url: "nauth_ced.json", //sakai.config.URL.POOLED_CONTENT_ACTIVITY_FEED + "?p=" + content_path  + "&items=1000",
+                    url: "nauth_ced.json", // TODO: put this into sakai config
                     type: "GET",
                     "async":false,
                     "cache":false,
@@ -1468,7 +1484,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			boolTemplateHasUndergradsData = typeof(template.undergraduates) !== 'undefined' && template.undergraduates !== null;
 			boolTemplateHasGradsData = typeof(template.graduates) !== 'undefined' && template.graduates !== null; 
 			
-			$view.html(sakai.api.Util.TemplateRenderer($template, template));
+			$view.html(sakai.api.Util.TemplateRenderer($listEditFormTemplate, template));
 			
 			$includeUndergradsCheckbox = $("#include_undergrads");
 			$includeGradsCheckbox = $("#include_grads");
@@ -1544,17 +1560,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			populateDesignateTermYear();	
 			
 			
+			
+	  	  	//Show more/less button in section C
+	  		$showMoreOrLess = $("#show_more_or_less");
 			// section C toggle button
-			var $showMoreOrLess = $("#show_more_or_less");
-			$showMoreOrLess.click(function () {
-				
-				if($sectionC.is(":visible")) {
-					$showMoreOrLess.text("Show More");					
-				} else {
-					$showMoreOrLess.text("Show Less");					
-				}
-				$sectionC.toggle();				
-			});
+			$showMoreOrLess.click(toggleSectionC);
+
 			
 	        
 	        // his is needed for the situation when we reload this page with #tab=new
@@ -1565,7 +1576,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        
 	        
-	        userUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
+	        dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
 			loadData();
 	    };
