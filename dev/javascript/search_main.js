@@ -34,6 +34,21 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var usernameLengthStrip = 40;
         var mainFacetedUrl = "";
 
+        ////////////////////////
+        // Temporary redirect //
+        ////////////////////////
+
+        if (document.location.pathname === "/search" || document.location.pathname === "/dev/search.html"){
+            document.location = "/dev/search2.html" + document.location.hash;
+        } else if (document.location.pathname === "/search/content" || document.location.pathname === "/dev/search_content.html"){
+            document.location = "/dev/search2.html" + $.param.fragment("#l=content", document.location.hash);
+        } else if (document.location.pathname === "/search/groups" || document.location.pathname === "/dev/search_groups.html"){
+            document.location = "/dev/search2.html" + $.param.fragment("#l=groups", document.location.hash);
+        } else if (document.location.pathname === "/search/people" || document.location.pathname === "/dev/search_people.html"){
+            document.location = "/dev/search2.html" + $.param.fragment("#l=people", document.location.hash);
+        }
+        
+        return false;
 
         /////////////////////////
         // Sites Functionality //
@@ -359,7 +374,14 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     else if (user.userid === "anonymous"){
                         user.isAnonymous = true;
                     }
-
+                    
+                    var filteredTags = [];
+                    for (var t = 0; t < user["sakai:tags"].length; t++){
+                        if (user["sakai:tags"][t].split("/")[0] !== "directory"){
+                            filteredTags.push(user["sakai:tags"][t]);
+                        }  
+                    }
+                    user["sakai:tags"] = filteredTags;
 
                     finaljson.items.push(user);
                 }

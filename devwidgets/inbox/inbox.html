@@ -1,0 +1,176 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/inbox/css/inbox.css" />
+
+<div id="inbox_widget">
+
+    <!-- WIDGET BODY -->
+    <div class="fl-widget-inbox s3d-widget-inbox s3d-widget-small-inbox">
+        <div class="inbox_main">
+            <!-- Title -->
+            <div id="inbox_header" class="inbox-message-list-view s3d-contentpage-title inbox-message-detail-view inbox-new-message-view" style="display:none">
+              <span id="inbox_box_title" class="inbox-message-list-view inbox-message-detail-view inbox-new-message-view"></span> <span id="inbox_title_total_wrapper" class="inbox-message-list-view" style="display:none">(<span id="inbox_title_total"></span>)</span>
+            </div>
+            <div id="inbox_message_header">
+              <div class="s3d-button s3d-button-link-2-state inbox-message-list-view" id="inbox_select" style="display:none">
+                  <span class="s3d-button-inner s3d-button-link-2-state-inner"><input type="checkbox" id="inbox_select_checkbox"/> __MSG__DOWN_ARROW__</span>
+              </div>
+              <div id="inbox_select_options" style="display:none">
+                <ul>
+                  <li>
+                    <button type="button" id="inbox_select_all" class="s3d-link-button s3d-action">__MSG__ALL__</button>
+                  </li>
+                  <li>
+                    <button type="button" id="inbox_select_unread" class="s3d-link-button  s3d-action">__MSG__UNREAD__</button>
+                  </li>
+                </ul>
+              </div>
+              <button type="button" id="inbox_delete_selected" class="s3d-button s3d-button-link-2-state inbox-message-list-view" disabled="disabled" style="display:none">
+                  <span class="s3d-button-inner s3d-button-link-2-state-inner">__MSG__DELETE_SELECTED__</span>
+              </button>
+              <button type="button" id="inbox_mark_as_read" class="s3d-button s3d-button-link-2-state inbox-message-list-view" disabled="disabled" style="display:none">
+                  <span class="s3d-button-inner s3d-button-link-2-state-inner">__MSG__MARK_AS_READ__</span>
+              </button>
+              <button type="button" id="inbox_back_to_messages" class="inbox-message-detail-view s3d-button s3d-button-link-2-state" style="display:none">
+                  <span class="s3d-button-inner s3d-button-link-2-state-inner">__MSG__BACK_ICON__ __MSG__BACK_TO_MESSAGES__</span>
+              </button>
+              <a href="#newmessage=true" data-remove-params="message, reply" class="s3d-button s3d-button-link-2-state fl-force-right inbox-message-list-view inbox-message-detail-view" id="inbox_create_new_message" style="display:none">
+                  <span class="s3d-button-inner s3d-button-link-2-state-inner" data-state="default">__MSG__CREATE_NEW_MESSAGE__</span>
+              </a>
+              <input type="text" id="inbox_search_messages" disabled="disabled" placeholder="__MSG__SEARCH_MESSAGES__" class="inbox-message-list-view" style="display:none"/>
+            </div>
+
+            <!-- Inbox Items -->
+            <div id="inbox_message_list" style="display:none" class="inbox-message-list-view"></div>
+
+            <!-- Inbox Item Template -->
+            <div id="inbox_message_list_item_template"><!--
+                {for message in data.results}
+                    <div class="fl-container fl-fix inbox_items_container{if message.read !== "true"} unread{/if}{if message_index == data.results.length-1} last{/if}" id="${message.id}">
+                        <div class="inbox_items_inner">
+                            <div class="inbox_left_col inbox_col">
+                                <div class="inbox_placeholder"><input type="checkbox"/></div>
+                                <a href="#message=${message.id}"><img alt="person icon" src="${message.from.picture}"/></a>
+                            </div>
+                            <div class="inbox_middle_col inbox_col">
+                                <div class="inbox_message_data">
+                                  <div class="inbox_name">
+                                    <a href="#message=${message.id}" class="s3d-regular-links s3d-bold personinfo_trigger" data-userid="${message.from.userObj.uuid}">${message.from.name}</a>
+                                    <span class="inbox_to_list">__MSG__TO__: ${_.first(message.toList, 3).join(", ")}{if message.toList.length > 3} + ${message.toList.length-3} __MSG__OTHERS__{/if}</span>
+                                  </div>
+                                  <div class="inbox_date">
+                                    <span>${message.date}</span>
+                                  </div>
+                                  <div class="inbox_subject">
+                                    <a href="#message=${message.id}" class="s3d-regular-links s3d-bold">${message.subject}</a>
+                                  </div>
+                                  <div class="inbox_excerpt">
+                                    <p>${message.body_nolinebreaks}<p>
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="inbox_right_col inbox_col">
+                                <div class="inbox_delete fl-force-right">
+                                  <button type="button" class="s3d-button s3d-button-link-2-state inbox_delete_button">
+                                    <span class="s3d-button-inner s3d-button-link-2-state-inner">__MSG__X__</span>
+                                  </button>
+                                  <a href="#message=${message.id}&reply=true" class="s3d-button s3d-button-link-2-state inbox_reply_button">
+                                    <span class="s3d-button-inner s3d-button-link-2-state-inner">__MSG__REPLY_ICON__</span>
+                                  </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {forelse}
+                    <div class="fl-container fl-fix" id="inbox_no_messages">
+                        <p>__MSG__NO_MESSAGES__</p>
+                    </div>
+                {/for}
+            --></div>
+            <div id="inbox_pager" class="jq_pager inbox-message-list-view" style="display:none"></div>
+
+            <!-- Message show pane -->
+            <div id="inbox_show_message" style="display:none" class="inbox-message-detail-view"></div>
+            <div id="inbox_show_message_template"><!--
+                {macro showMessage(message, reply)}
+                  <div class="inbox_message_container{if reply} reply{/if}">
+                    <div class="inbox_show_message_header">
+                        <div class="fl-container fl-fix inbox_items_container" id="${message.id}">
+                            <div class="inbox_items_inner">
+                                <div class="inbox_left_col inbox_col">
+                                    <div class="inbox_placeholder">&nbsp;</div>
+                                    <img alt="person icon" src="${message.from.picture}"/>
+                                </div>
+                                <div class="inbox_middle_col inbox_col">
+                                    <div class="inbox_message_data">
+                                        <div class="inbox_name">
+                                          <a href="#" class="s3d-regular-links s3d-bold personinfo_trigger" data-userid="${message.from.userObj.uuid}">${message.from.name}</a>
+                                          {if !reply}<span class="inbox_to_list">__MSG__TO__: ${message.toList.join(", ")}</span>{/if}
+                                        </div>
+                                        <div class="inbox_date">
+                                          <span>${message.date}</span>
+                                        </div>
+                                        {if !reply}
+                                        <div class="inbox_subject">
+                                          <a href="#" class="s3d-regular-links s3d-bold">${message.subject}</a>
+                                        </div>
+                                        {/if}
+                                        <div class="inbox_excerpt">
+                                          <p>${message.body}</p>
+                                          {if message.invitation}
+                                            {if message.invited}
+                                              <button class="inbox_invitation inbox_invitation_accept s3d-link-button">__MSG__ACCEPT_INVITATION__</button>
+                                              <span class="inbox_invitation inbox_invitation_divider">|</span>
+                                              <button class="inbox_invitation inbox_invitation_ignore s3d-link-button">__MSG__IGNORE_INVITATION__</button>
+                                            {/if}
+                                            <span class="inbox_ignored"{if !message.ignored} style="display:none"{/if}>__MSG__IGNORED__</span>
+                                            <span class="inbox_accepted"{if (message.ignored || message.invited)} style="display:none;"{/if}>__MSG__ACCEPTED__</span>
+                                          {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inbox_right_col inbox_col">
+                                {if !reply}
+                                    <div class="inbox_delete fl-force-right">
+                                        <button type="button" class="s3d-button s3d-button-link-2-state inbox_delete_button">
+                                            <span class="s3d-button-inner s3d-button-link-2-state-inner">__MSG__X__</span>
+                                        </button>
+                                    </div>
+                                {/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  {if reply && message.previousMessage}
+                      ${showMessage(message.previousMessage, true)}
+                  {/if}
+                  </div>
+                {/macro}
+                <div id="inbox_show_message_main">
+                  ${showMessage(message)}
+                </div>
+                {if message.previousMessage}
+                <div id="inbox_show_message_replies">
+                      ${showMessage(message.previousMessage, true)}
+                </div>
+                {/if}
+                <div id="inbox_show_message_reply">
+                    <img alt="person icon" src="${me.picture}"/>
+                    <span>${me.name} (__MSG__REPLY_LOWER__) <span class="inbox_to_list">__MSG__TO__:</span></span>
+                    <div class="inbox_show_message_reply_fields"></div>
+                </div>
+            --></div>
+
+            <!-- New Message -->
+            <div id="inbox_new_message" class="inbox-new-message-view" style="display:none">
+              <div id="inbox_new_message_sendmessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="s3d-widget-no-options">
+        <div class="s3d-widget-no-options-inner">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/devwidgets/inbox/javascript/inbox.js"></script>

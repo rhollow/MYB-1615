@@ -35,7 +35,7 @@ define(["jquery", "/dev/configuration/config.js"], function($, sakai_conf) {
         /**
          * Perform a batch request to the server
          *
-         * @param {Object} requests The JSON object of requests
+         * @param {Array} requests The JSON object of requests
          * @param {Function} callback Callback function, passes ({Boolean} success, {Object} data)
          * @param {Boolean} cache If we should cache this request or not
          * @param {Boolean} forcePOST if we need to force a POST
@@ -81,7 +81,6 @@ define(["jquery", "/dev/configuration/config.js"], function($, sakai_conf) {
                     }
                 }
             }
-            sakaiServerAPI.removeServerCreatedObjects(_requests);
             $.ajax({
                 url: sakai_conf.URL.BATCH,
                 type: method,
@@ -113,31 +112,31 @@ define(["jquery", "/dev/configuration/config.js"], function($, sakai_conf) {
          * @param {Object} request Request object for the batch request. If this is false the request is not added to the queue.
          */
         bundleRequests : function(groupId, numRequests, requestId, request){
-            if (!this.initialRequests) {
-                this.initialRequests = this.initialRequests || {};
+            if (!sakaiServerAPI.initialRequests) {
+                sakaiServerAPI.initialRequests = sakaiServerAPI.initialRequests || {};
             }
-            if (!this.initialRequests[groupId]){
-                this.initialRequests[groupId] = {};
-                this.initialRequests[groupId].count = 0;
-                this.initialRequests[groupId].requests = [];
-                this.initialRequests[groupId].requestId = [];
+            if (!sakaiServerAPI.initialRequests[groupId]){
+                sakaiServerAPI.initialRequests[groupId] = {};
+                sakaiServerAPI.initialRequests[groupId].count = 0;
+                sakaiServerAPI.initialRequests[groupId].requests = [];
+                sakaiServerAPI.initialRequests[groupId].requestId = [];
             }
             if (request) {
-                this.initialRequests[groupId].requests.push(request);
-                this.initialRequests[groupId].requestId.push(requestId);
+                sakaiServerAPI.initialRequests[groupId].requests.push(request);
+                sakaiServerAPI.initialRequests[groupId].requestId.push(requestId);
             }
-            this.initialRequests[groupId].count++;
-            var that = this;
-            if (numRequests === this.initialRequests[groupId].count) {
-                this.batch(that.initialRequests[groupId].requests, function(success, data) {
+            sakaiServerAPI.initialRequests[groupId].count++;
+            if (numRequests === sakaiServerAPI.initialRequests[groupId].count) {
+                sakaiServerAPI.batch(sakaiServerAPI.initialRequests[groupId].requests, function(success, data) {
                     if (success) {
                         var jsonData = {
                             "groupId": groupId,
-                            "responseId": that.initialRequests[groupId].requestId,
+                            "responseId": sakaiServerAPI.initialRequests[groupId].requestId,
                             "responseData": data.results
                         };
                         $(window).trigger("complete.bundleRequest.Server.api.sakai", jsonData);
                     }
+                    delete sakaiServerAPI.initialRequests[groupId];
                 });
             }
         },
@@ -271,14 +270,14 @@ define(["jquery", "/dev/configuration/config.js"], function($, sakai_conf) {
                     addIndexedFields(val.split("/"), i_data);
                 });
             }
-            sakaiServerAPI.removeServerCreatedObjects(i_data);
+            sakaiServerAPI.removeServerCreatedObjects(i_data, ["_"]);
             postData[":content"] = $.toJSON(i_data);
             // Send request
             $.ajax({
                 url: i_url,
                 type: "POST",
                 data: postData,
-                dataType: "json",
+                dataType: "text",
 
                 success: function(data){
 
@@ -303,50 +302,65 @@ define(["jquery", "/dev/configuration/config.js"], function($, sakai_conf) {
         },
 
         /**
-         * Removes JCR or Sling properties from a JSON object
-         * @param {Object} i_object The JSON object you want to remove the JCR object from
-         * @returns void
-         */
-        removeJCRObjects : function(i_object) {
-
-            if (i_object["jcr:primaryType"]) {
-                delete i_object["jcr:primaryType"];
-            }
-
-            if (i_object["_created"]) {
-                delete i_object["_created"];
-            }
-
-            if (i_object["_createdBy"]) {
-                delete i_object["_createdBy"];
-            }
-
-            if (i_object["jcr:mixinTypes"]) {
-                delete i_object["jcr:mixinTypes"];
-            }
-
-            // Loop through keys and call itself recursively for the next level if an object is found
-            for (var i in i_object) {
-                if (i_object.hasOwnProperty(i) && $.isPlainObject(i_object[i])) {
-                  sakaiServerAPI.removeJCRObjects(i_object[i]);
-                }
-            }
-
-        },
-
-        /**
-         * Removes any object created by the server
+         * Removes any objects with a given namespace
          *
          * @param {Object} the object to clean
+         * @param {Array}  an array containing a string for each namespace to move
          */
-        removeServerCreatedObjects : function(obj) {
-            $.each(obj, function(key,val) {
-                if (key && key.indexOf && key.indexOf("_") === 0 && key.indexOf("__") !== 0 && key.indexOf("_charset_") === -1) {
-                    delete obj[key];
-                } else if ($.isPlainObject(obj[key]) || $.isArray(obj[key])) {
-                    sakaiServerAPI.removeServerCreatedObjects(obj[key]);
+        removeServerCreatedObjects : function(obj, namespace, notToRemove) {
+            var newobj = $.extend(true, {}, obj);
+            notToRemove = notToRemove || [];
+            $.each(newobj, function(key,val) {
+                for (var ns = 0; ns < namespace.length; ns++) {
+                    if (key && key.indexOf && key.indexOf(namespace[ns]) === 0) {
+                        var canRemove = true;
+                        for (var i = 0; i < notToRemove.length; i++) {
+                            if (notToRemove[i] === key) {
+                                canRemove = false;
+                                break;
+                            }
+                        }
+                        if (canRemove) {
+                            delete newobj[key];
+                        }
+                    } else if ($.isPlainObject(newobj[key])) {
+                        newobj[key] = sakaiServerAPI.removeServerCreatedObjects(newobj[key], namespace, notToRemove);
+                    } /* else if ($.isArray(newobj[key])) {
+                        //newobj[key] = sakaiServerAPI.removeServerCreatedObjects(newobj[key], namespace, notToRemove);
+                    } */
                 }
             });
+            return newobj;
+        },
+
+
+        cleanUpSakaiDocObject: function(pagestructure){
+            // Convert the special objects to arrays
+            data = sakaiServerAPI.convertObjectToArray(pagestructure, null, null);
+            var id = pagestructure["jcr:path"];
+            var toFilter = ["_", "jcr:", "sakai:", "sling:"];
+            var toExclude = ["_ref", "_title", "_altTitle", "_order", "_pid", "_count"];
+            pagestructure = sakaiServerAPI.removeServerCreatedObjects(pagestructure, toFilter, toExclude);
+            if (pagestructure["structure0"] && typeof pagestructure["structure0"] === "string"){
+                pagestructure["structure0"] = $.parseJSON(pagestructure["structure0"]);
+            }
+            var removeServerFormating = function(structure, id){
+                for (var i in structure){
+                    if (i.indexOf(id + "/") === 0){
+                        var newid = i.substring(i.lastIndexOf("/") + 1);
+                        structure[newid] = structure[i];
+                        delete structure[i];
+                        structure[newid] = removeServerFormating(structure[newid], id);
+                    }
+                }
+                return structure;
+            }
+            debug.log(pagestructure);
+            if (id){
+                pagestructure = removeServerFormating(pagestructure, id);
+            }
+            debug.log(pagestructure);
+            return pagestructure;
         },
 
         /**
@@ -375,6 +389,10 @@ define(["jquery", "/dev/configuration/config.js"], function($, sakai_conf) {
                 return;
             }
 
+            // Remove the trailing slash if available
+            if (i_url.substring(i_url.length - 1, i_url.length) === "/"){
+                i_url = i_url.substring(0, i_url.length - 1);
+            }
             // append .infinity.json if .json isn't present in the url
             if (i_url.indexOf(".json") === -1) {
                 i_url += ".infinity.json";
@@ -386,9 +404,6 @@ define(["jquery", "/dev/configuration/config.js"], function($, sakai_conf) {
                 dataType: "json",
                 data: data,
                 success: function(data) {
-
-                    // Remove keys which are created by JCR or Sling
-                    sakaiServerAPI.removeJCRObjects(data);
 
                     // Convert the special objects to arrays
                     data = sakaiServerAPI.convertObjectToArray(data, null, null);
