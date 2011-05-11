@@ -44,25 +44,29 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai,
         };
 
         var doInit = function() {
-           if (!isLoggedIn()) {
-               sakai.api.Security.sendToLogin();
-               return;
-           }
 
-            //HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
-            var useRedirect = true;
-            if(typeof(myb.api.security.allowRedirectToParticipantPage) !== 'undefined'){
-                useRedirect = myb.api.security.allowRedirectToParticipantPage;
+          //HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
+          var useRedirect = true;
+          if (typeof(myb.api.security.allowRedirectToParticipantPage) !== 'undefined') {
+            useRedirect = myb.api.security.allowRedirectToParticipantPage;
+          }
+
+          if (!isLoggedIn()) {
+            if ( useRedirect ) {
+              sakai.api.Security.sendToLogin();
             }
-            // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
-            // redirect him to the participation explanation page
-            if (!myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
-               sendToNotAMyBerkeleyParticipantPage();
-            }
+            return;
+          }
+
+          // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+          // redirect him to the participation explanation page
+          if (!myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
+            sendToNotAMyBerkeleyParticipantPage();
+          }
 
         };
 
-        doInit();
+      doInit();
     };
 
     sakai.api.Widgets.Container.registerForLoad("mybsecurepage");

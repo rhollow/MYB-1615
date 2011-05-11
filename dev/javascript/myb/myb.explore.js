@@ -179,14 +179,20 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
         });
 
-        /////////////////////////////
+      var isLoggedIn = function() {
+        var person = sakai.data.me;
+        var uuid = person.user.userid;
+        return !(!uuid || person.user.anon);
+      };
+
+      /////////////////////////////
         // Initialization function //
         /////////////////////////////
 
         var doInit = function() {
             // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
             // redirect him to the participation explanation page
-            if (!myb.api.security.isMyBerkeleyParticipant()) {
+            if (isLoggedIn() && !myb.api.security.isMyBerkeleyParticipant()) {
                 // We will show a nice Join myBerkeley dialog on this page
                 $("#join_myberkeley_dialog").jqm({
                          modal: true,
