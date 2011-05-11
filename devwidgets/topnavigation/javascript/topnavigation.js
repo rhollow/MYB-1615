@@ -495,14 +495,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             sakai.api.Widgets.widgetLoader.insertWidgets(tuid);
         };
 
-        // Create a group
-
-        $(window).bind("sakai.overlays.createGroup", function(ev){
-            $("#creategroupcontainer").show();
-            // Load the creategroup widget.
-            $(window).trigger("init.creategroup.sakai");
-        });
-
         // Add content
 
         $(".sakai_add_content_overlay, #subnavigation_add_content_link").live("click", function(ev) {
@@ -515,14 +507,19 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         $(".sakai_sendmessage_overlay").live("click", function(ev){
             var el = $(this);
             var person = false;
+            var people = [];
             if (el.attr("sakai-entityid") && el.attr("sakai-entityname")){
-                person = {
-                    "uuid": el.attr("sakai-entityid"),
-                    "username": el.attr("sakai-entityname"),
-                    "type": el.attr("sakai-entitytype") || "user"
-                };
+                var userIDArr = el.attr("sakai-entityid").split(",");
+                var userNameArr = el.attr("sakai-entityname").split(",");
+                for(var i = 0; i < userNameArr.length; i++){
+                    people.push({
+                        "uuid": userIDArr[i],
+                        "username": userNameArr[i],
+                        "type": el.attr("sakai-entitytype") || "user"
+                    });
+                }
             }
-            $(window).trigger("initialize.sendmessage.sakai", [person]);
+            $(window).trigger("initialize.sendmessage.sakai", [people]);
         });
 
         // Add to contacts

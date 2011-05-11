@@ -54,7 +54,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 // Get the content information, the members and managers and version information
                 var batchRequests = [
                     {
-                        "url": content_path + ".2.json",
+                        "url": content_path + ".infinity.json",
                         "method":"GET",
                         "cache":false,
                         "dataType":"json"
@@ -474,13 +474,6 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             }
         };
 
-        $(window).bind("finished.sharecontent.sakai finished.savecontent.sakai", function(e, peopleList){
-            if(!peopleList.mode || peopleList.mode === undefined){
-                peopleList.mode = "viewers";
-            }
-            addRemoveUsers(peopleList.mode, peopleList, 'add');
-        });
-
         $("#entity_content_permissions").live("click", function(){
             var pl_config = {
                 "title": sakai_global.content_profile.content_data.data["sakai:pooled-content-file-name"],
@@ -561,6 +554,10 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         $(window).bind("lhnav.ready", function(){
             generateNav(globalPageStructure);
+        });
+
+        $(window).bind("ready.sakaidocs.sakai", function(){
+            $(window).trigger("init.sakaidocs.sakai", sakai_global.content_profile.content_data.isManager);
         });
 
         var getPageCount = function(pagestructure){
