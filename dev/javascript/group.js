@@ -17,7 +17,7 @@
  */
 /*global $, QueryString */
 
-require(["jquery","sakai/sakai.api.core"], function($, sakai) {
+require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai) {
 
     sakai_global.currentgroup = sakai_global.currentgroup || {};
     sakai_global.currentgroup.id = sakai_global.currentgroup.id || {};
