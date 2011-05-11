@@ -427,18 +427,18 @@
                             <!-- List of buttons for Existing Lists tab and New List tab -->
                             <div class="button-list">
 
-								<button type="button" id="dyn_lists_delete_button" style="display:none1;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                                <button type="button" id="dyn_lists_copy_button" style="display:none1;" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
-                                <button type="button" id="dyn_lists_edit_button" style="display:none1;" class="s3d-button"><span class="s3d-button-inner">__MSG__EDIT__</span></button>
+								<button type="button" id="dyn_lists_delete_button" class="s3d-button" disabled="disabled"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                                <button type="button" id="dyn_lists_copy_button" class="s3d-button" disabled="disabled"><span class="s3d-button-inner">__MSG__COPY__</span></button>
+                                <button type="button" id="dyn_lists_edit_button" class="s3d-button" disabled="disabled"><span class="s3d-button-inner">__MSG__EDIT__</span></button>
 
 
 
 
-                                <button type="button" id="inbox_inbox_delete_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                                <button type="button" id="inbox_inbox_duplicate_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__DUPLICATE__</span></button>
-                                <button type="button" id="inbox_inbox_back_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_GROUP_NOTIFICATION_MANAGER__</span></button>
-                                <button type="button" id="inbox_inbox_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                                <button type="button" id="dynlist_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
+                                
+
+                                <button type="button" id="dyn_lists_back_to_group_notification_manager_button" class="s3d-button"><span class="s3d-button-inner">__MSG__BACK_TO_GROUP_NOTIFICATION_MANAGER__</span></button>
+                                <button type="button" id="dyn_lists_cancel_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                                <button type="button" id="dyn_lists_save_button" style="display:none;" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
                             </div>
                         </div>
                     </div>
@@ -447,7 +447,7 @@
 		
 		<!-- DYNAMIC LIST SECTIONS A AND B TEMPLATE -->
 		
-		<div id="template" style="display:none"><!--        						
+		<div id="list_edit_form_template" style="display:none"><!--        						
 			
 			{macro renderSubGroup(subGroup, prefix, parent)}    			
 				<div class="sub_group">

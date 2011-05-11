@@ -226,7 +226,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 var valString = (val) ? " value='" + val + "'" : "";
                 var selectedString = (selectedTorF) ? " selected='selected'" : "";
                 return "<option " + valString + selectedString + ">" + title + "</option>\n";
-            }
+            };
             var optionsString = "";
 
             if (firstEmpty) {
@@ -246,18 +246,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         var dynamicListInit = function(selectedID) {
             sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists", function(success, data) {
 
-                // if there is a selectedID remove "notice:" from it
-                selectedID = (selectedID) ? selectedID.substr(selectedID.indexOf(":") + 1) : null;
-
                 if (success) {
                     // Iterate through data.lists and make new array for createOptions. (id:name)
                     var dynamicListArray = {};
-
-                    var numLists = data.lists.length;
-
-                    for (var i = 0; i < numLists; i++) {
-                        dynamicListArray[data.lists[i]["sakai:id"]] = data.lists[i]["sakai:name"];
+                    for (var element in data.lists ) {
+                        if ( element.substr(0, 3) === "dl-") {
+                          dynamicListArray[data.lists[element]["_path"]] = data.lists[element]["sakai:name"];
+                        }
                     }
+
                     // Call createOptions with our new array.
                     var optionsHTML = createOptions(dynamicListArray, selectedID, true);
                 }
@@ -1014,7 +1011,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var saveData = function(box, isValidated) {
             // Filling out all common fields.
-            var msgTo = "notice:" + $(messageFieldTo).val() || ""; // "notice:" is required for notice routing 
+            var msgTo = $(messageFieldTo).val() || "";
 
             var toPost = {
                 "dynamicListID": msgTo,

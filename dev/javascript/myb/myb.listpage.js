@@ -29,15 +29,45 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
         /////////////////////////////
         
         /**
-         * Trimpath template
+		 * Array of all the lists
+		 */
+		var allLists = {};
+		
+        /**
+         * Dynamic list prefix
          */
-        var $template = $("#template");
+        var DYNAMIC_LIST_PREFIX = "dl-";
+
+		/**
+		 * Whether the loaded trimpath template includes undergraduate students data
+		 */
+		var boolTemplateHasUndergradsData = false;
 		
 		/**
-		 * View to render the template
+		 * Whether the loaded trimpath template includes graduate students data
 		 */
-		var $view = $("#view");
+		var boolTemplateHasGradsData = false;
 		
+		/**
+		 * Flag that indicates whether we are editing an existing list or creation a new one
+		 */
+		var editExisting = false;
+		
+		/**
+		 * Id of currently selected list (needed only for saving)
+		 */
+		var currentListIdForEditing;				
+		
+		/**
+		 * Dynamic lists base URL (parent node in Sparse), delete this node to remove all dynamic lists for current user
+		 */		
+		var dynamicListsBaseUrl;
+				
+		
+		//////////////////////
+        // jQuery selectors //
+        //////////////////////
+                		
 		/**
 		 * Section C wrapper DIV
 		 */		
@@ -64,16 +94,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		var $gradsGroup;
 		
 		/**
-		 * Save dynamic list button
-		 */	
-		var $saveList = $("#save_list");
-		
-		/**
-		 * Text area for JSON output (debug only)
-		 */
-		var $outputJson = $("#output_json");
-		
-		/**
 		 * 'Include undergraduate students' checkbox (or hidden input when checkbox is not displayed)
 		 */
 		var $includeUndergradsCheckbox;
@@ -82,16 +102,47 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		 * 'Include graduate students' checkbox (or hidden input when checkbox is not displayed)
 		 */
 		var $includeGradsCheckbox;
-
-		/**
-		 * Whether the loaded trimpath template includes undergraduate students data
-		 */
-		var boolTemplateHasUndergradsData = false;
-		
-		/**
-		 * Whether the loaded trimpath template includes graduate students data
-		 */
-		var boolTemplateHasGradsData = false;
+        
+        /**
+         * Dynamic list 'Edit' button
+         */
+		var $dynListsEditButton = $("#dyn_lists_edit_button");
+	  	
+	  	/**
+         * Dynamic list 'Copy' button
+         */
+	  	var $dynListsCopyButton = $("#dyn_lists_copy_button");
+	  	
+	  	/**
+         * Dynamic list 'delete' button
+         */
+	  	var $dynListsDeleteButton = $("#dyn_lists_delete_button");
+	  		  	
+	  	/**
+         * Dynamic list 'Back to Group Notification Manager' button
+         */
+	  	var $dynListsBackToNotifManagerButton = $("#dyn_lists_back_to_group_notification_manager_button");	 
+	  	
+	  	/**
+         * Dynamic list 'Save' button
+         */
+	  	var $dynListsSaveButton = $("#dyn_lists_save_button");
+	  		  	
+	  	/**
+         * Dynamic list 'Cancel' button (cancels editing and switches withe my to list mode)
+         */
+	  	var $dynListsCancelEditingButton = $("#dyn_lists_cancel_button");
+	  	
+	  	/**
+	  	 * Dynamic list 'Create' button
+	  	 */
+	  	var $dynListsCreateButton = $("#dynamic_lists_create_new");
+	  	
+	  	/**
+	  	 * Show more/less button in section C (template must be loaded before using this variable)
+	  	 */
+	  	var $showMoreOrLess;
+	  	
 	    
 	    //////////////////////////////////////////////////////////
         // Functions for manipulating boolean condition objects //
@@ -316,7 +367,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 
 			var selectedOptions = {OR: []};
 						
-			if ($allItemsOption != null && $allItemsOption.is(':checked')) {
+			if ($allItemsOption !== null && $allItemsOption.is(':checked')) {
 				
 				var allItemsOptionValue = $allItemsOption.val();
 				if (allItemsOptionValue !== "") {
@@ -539,17 +590,38 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			$designateTermYear.append(yearsArr.join(''));
 		};
 	    
+	    var hideSectionC = function() {
+	    	$showMoreOrLess.text("Show Less");
+	    	$sectionC.hide();
+	    };
+	    
+	    var toggleSectionC = function () {
+				
+			if($sectionC.is(":visible")) {
+				hideSectionC();					
+			} else {
+				$showMoreOrLess.text("Show Less");
+				$sectionC.show();					
+			}						
+		};
+	    
+	    
+		
+		
 	    /**
 	     * Resets the editing form UI (checkboxes and CSS styles)
 	     * Must be called AFTER loading template.
 	     */
 	    var resetListEditingFormCheckboxesAndStyles = function() {
 	    	
+	    		    	
+	    	hideSectionC();
+	    	
 	    	// reset all checkboxes
 	    	$("input:checkbox:checked", $("#create_new_list")).removeAttr("checked");
 	    	
 	    	$("#list_name").val("");
-	    	$("#description").text("");
+	    	$("#description").val("");
 	    	$undergradsGroup.addClass("disabled");
 			$gradsGroup.addClass("disabled");
 								
@@ -578,7 +650,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 
 		var dumpOptionIDs = function(filterObj, idArray) {
 			
-			if(filterObj == null || idArray == null) {
+			if(filterObj === null || idArray === null) {
 				return;
 			}
 			
@@ -649,59 +721,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		};
 		
 		
-		////////////////////////////////
-        // Dynamic list save function //
-        ////////////////////////////////		
-		
-		/**
-		 * Saves the selected options a new dynamic list
-		 */
-		/*var saveDynamicList = function() {
-						
-			var result = buildUndergraduatesAndGraduatesResultingObject();
-			
-			// Section C
-
-			var registrationStatus = buildRegistrationStatusObject();
-			result = joinTwoConditionsByAND(result, registrationStatus);
-			
-
-			var cohortStatus = buildCohortStatusObject();						
-			result = joinTwoConditionsByAND(result, cohortStatus);
-			
-			
-			var specialPrograms = buildSelectedOptionsObjectAsOR($("#special_program_all_students", $sectionC), $(".special_programs", $sectionC));			
-			result = joinTwoConditionsByAND(result, specialPrograms);
-			
-			var studentStatus = buildSelectedOptionsObjectAsOR($("#student_status_all_students", $sectionC), $(".student_and_residency_status_col_left .sub_group", $sectionC));			
-			result = joinTwoConditionsByAND(result, studentStatus);
-			
-			var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));			
-			result = joinTwoConditionsByAND(result, residencyStatus);
-			 
-			
-
-			
-			return $outputJson.val(formatJSON(result));
-		}*/
-	    
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    
 	    
-	    
-	    /**
-	     *
-	     * Configuration
-	     *
-	     */
-	    var submitData = {}; // Data to be passed to saveJSON
-	    var allLists = []; // Array of all the lists
-	    var userUrl;
-	    var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
-	    var sortBy = "name";
-	    var sortOrder = "descending";
-	    var editExisting = false;
-	    var currList;
+
+
 
 	
 	
@@ -740,12 +764,35 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        sakai.api.Util.notification.show("", msg, type);
 	        
 	    };
+	    	    
+	    var getNumberOfSelectedLists = function() {
+	   	 return $(".inbox_inbox_check_list:checked").length;
+	   	};
+	  
+	  	var updateEditCopyDeleteButtonsStatus = function() {
+	  		var num = getNumberOfSelectedLists();
+	  		if(num === 0) {
+		  		$dynListsEditButton.attr('disabled', 'disabled');
+	  			$dynListsCopyButton.attr('disabled', 'disabled');
+	  			$dynListsDeleteButton.attr('disabled', 'disabled');	  			
+	  		} else if(num === 1){
+		  		$dynListsEditButton.removeAttr('disabled');
+	  			$dynListsCopyButton.removeAttr('disabled');
+	  			$dynListsDeleteButton.removeAttr('disabled');	  			
+	  		} else if(num > 1){
+		  		$dynListsEditButton.attr('disabled', 'disabled');
+	  			$dynListsCopyButton.attr('disabled', 'disabled');
+	  			$dynListsDeleteButton.removeAttr('disabled');
+	  		}
+	  	};
+	    
 	    
 	    /**
 	     * Check or uncheck all messages depending on the top checkbox.
 	     */
 	    var tickMessages = function(){
 	        $(".inbox_inbox_check_list").attr("checked", ($("#inbox_inbox_checkAll").is(":checked") ? "checked" : ''));
+	        updateEditCopyDeleteButtonsStatus();
 	    };
 	    
 	    var getDataFromInput = function() {
@@ -753,7 +800,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			
 			result.context = "g-ced-students";
 	        result.listName = $.trim($("#list_name").val());
-			if(result.listName == null || result.listName == "") {
+			if(result.listName === null || result.listName === "") {
 				$("#invalid_name").show();
 				return -1;
 			}
@@ -764,7 +811,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 			// Gathering the data on standing
 			//TODO: check for errors
-			/*if($("#undergrad:checked").val() == null && $("#grad:checked").val() == null) {
+			/*if($("#undergrad:checked").val() === null && $("#grad:checked").val() === null) {
 				$("#invalid_major").show();
 					return -1;
 			}*/
@@ -827,7 +874,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    };
 	    
 	    var renderLists = function(response){
-	        allLists = response.lists || [];
+	        
+	        if(response == null) {
+	        	return;
+	        }
+	        
+	        allLists = response;
 	        
 	        // removing special _properties
 	        removeSparseSpecialProperties(allLists);
@@ -846,55 +898,36 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // do checkboxes
 	        tickMessages();
 	    }
-	    
-	    /**
-	     * Get the dynamic list out of the list with the specific id.
-	     * @param {String} id    The id of a dynamic list
-	     */
-	    var getListWithId = function(id){
-	        if(allLists.hasOwnProperty(id)) {
-	        	return allLists[id];
-	        }
-	        /*for (var i = 0, j = allLists.length; i < j; i++) {
-	            if (allLists[i]["sakai:id"] === id) {
-	                return allLists[i];
-	            }
-	        }*/
-	        return null;
-	    };
-	    
-	    /**
-	     * Returns the index of the list with the specific id.
-	     * @param {Object} id
-	     */
-	    var getIndexFromId = function(id) {
-	        for (var i = 0, j = allLists.length; i < j; i++) {
-	            if (allLists[i]["sakai:id"] === id) {
-	                return i;
-	            }
-	        }
-	        return -1;
-	    }
+	    	    
 	    
 	    /**
 	     * Displays only the list with that id.
 	     * @param {String} id    The id of a list
+	     * @param {Boolean} copyMode	When set to true string "Copy of " is prepended to the name of the disolayed list and description is cleared
 	     */
-	    var displayList = function(id){
+	    var displayList = function(id, copyMode){
 	        // Display edit list tab
 	        $.bbq.pushState({"tab": "new"},2);
-			//clearInputFields();
+
 			
 			resetListEditingFormCheckboxesAndStyles();
-				
+	        
+	        if(!allLists.hasOwnProperty(id) || allLists[id] == null) {
+	        	return;
+	        }
+	        var list = allLists[id];
 	        
 	        // Fill in input fields with list data
-	        var list = getListWithId(id);
-	        $("#list_name").val(list["sakai:name"]);
-	        $("#description").text(list["sakai:description"]);
-	        	        
+	        if(copyMode) {
+	        	$("#list_name").val("Copy of " + list["sakai:name"]);	        	
+	        } else {
+	        	$("#list_name").val(list["sakai:name"]);
+	        	$("#description").val(list["sakai:description"]);	        	
+	        }
+	        
 	        var idArray = [];
-	        dumpOptionIDs(list.query.filter, idArray);
+	        var filterAsObject = $.parseJSON(list.query.filter);
+	        dumpOptionIDs(filterAsObject, idArray);
 	        var includeAllGradsId = $includeGradsCheckbox.val();
 	        var includeAllUndergradsId = $includeUndergradsCheckbox.val();
 	        
@@ -995,6 +1028,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    });
 	    
 	    // Sorters for the inbox.
+	    
+	    //var sortBy = "name";
+	    //var sortOrder = "descending";
 	    /* Commented out for the myBerkeley POC since sorting is broken - eli
 	    $(".inbox_inbox_table_header_sort").bind("mouseenter", function() {
 	        if (sortOrder === 'descending') {
@@ -1017,28 +1053,85 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    });
 	    */
 	    
-	    var deleteLists = function(listsArray) {
-	        var listId = listsArray;
-	        
-	        for (var i = 0, j = listId.length; i < j; i++) {
-	            var index = getIndexFromId(listId[i]);
-	            if(index >= 0) {
-	                $("#inbox_table_list_" + listId[i]).empty();
-	                $("#inbox_table_list_" + listId[i]).remove();
+	    /**
+         * This will do a DELETE request to the specified paths and delete each list.
+         * @param {String[]} paths The array of dynamic lists that you want to delete.         
+         */
+	    var batchDeleteLists = function(paths) {
+	    	var requests = [];
+            $(paths).each(function(i,val) {
+                var req = {
+                    "url": val,
+                    "method": "POST",
+                    "parameters": {
+                        ":operation": "delete"
+                    }
+                };
+                requests.push(req);
+            });
+            $.ajax({
+                url: sakai.config.URL.BATCH,
+                traditional: true,
+                type: "POST",
+                data: {
+                    requests: $.toJSON(requests)
+                },
+                success: function(data) {
+                     //showGeneralMessage("Lists successfully deleted.");
+                },
+                error: function(xhr, textStatus, thrownError) {
+                   showGeneralMessage("Error deleting lists.");
+                }
+            });
+	    };
+	    
+	    
+	    
+	    var getNumberOfExistingLists = function() {
+	    	
+	    	var numberOfItems = 0;
+	    	var pattern = '^' + DYNAMIC_LIST_PREFIX;
+	    	var re = new RegExp(pattern, '');
+	    		    	
+	    	for (var key in allLists) {
+				if(allLists.hasOwnProperty(key) && re.test(key)) {
+					numberOfItems++;
+				}
+			}
+			
+			return numberOfItems;
+	    };
+	    
+	    var deleteLists = function(listIds) {
+
+	        var paths = []; // paths to nodes to delete
+	        for (var i = 0, j = listIds.length; i < j; i++) {
+	            
+	            var currentId = listIds[i];
+	            
+	            if(allLists.hasOwnProperty(currentId)) {
+	            
+	                $("#inbox_table_list_" + currentId).empty();
+	                $("#inbox_table_list_" + currentId).remove();
 	                
-	                if (allLists.length == 1) {
-	                    sakai.api.Server.removeJSON(userUrl, loadData);
-	                    return;
-	                } else {
-	                    allLists.splice(index, 1);
-	                }
+	                // store path to delete
+	                paths.push(dynamicListsBaseUrl + "/lists/" + currentId);	                	                
+	                
+	                // delete list from memory
+	                delete allLists[currentId];	                    	                
 	            } else {
-	                alert("Error: list not found");
+	                alert("Error: list \"" + currentId + "\" not found");
 	            }
 	        }
 	        
-	        submitData.lists = allLists;
-	        sakai.api.Server.saveJSON(userUrl, submitData, loadData);
+	        if(getNumberOfExistingLists() === 0) {
+	        	// delete whole parent node
+	        	sakai.api.Server.removeJSON(dynamicListsBaseUrl, loadData);
+	        } else {
+	        	// batch delete nodes selected for deletion
+	        	batchDeleteLists(paths);
+	        }
+	        
 	    };
 	    
 		/**
@@ -1052,7 +1145,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			for (var i = 0, j = allLists.length; i < j; i++) {
 				var exsistingList = allLists[i];
 				var exsistingListObj = {
-					"context" : exsistingList.query.context[0], 
+					"context" : exsistingList.query.context, 
 					"listName": exsistingList["sakai:name"],
 					"desc": exsistingList["sakai:description"],
 					"filter": exsistingList.query.filter				
@@ -1076,166 +1169,65 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			return false;
 			//TODO: debug
 					
-			if(list1.context !== list2.context) return false;
-			if(list1.listName !== list2.listName) return false;
-			if(list1.desc !== list2.desc) return false;
-	
-			var list1Standing = list1.standing;
-			var list2Standing = list2.standing;
-					
-			var list1StandingLength = list1Standing.length;
-			var list2StandingLength = list2Standing.length;
 			
-			if(list1StandingLength !== list2StandingLength) return false;
-			
-			// Comparing lists of majors
-			
-			var list1UndergradMajors = [];
-			var list2UndergradMajors = [];
-			var list1GradMajors = [];
-			var list2GradMajors = [];
-			
-			// Assigning udergraduate and graduate majors to appropriate variables
-			// Assuming that list1StandingLength == list2StandingLength
-			for (var i = 0; i < list1StandingLength; i++) {
-				
-				if(list1Standing[i].hasOwnProperty("undergrad")) {
-					list1UndergradMajors = list1Standing[i].undergrad.major;
-				} else if(list1Standing[i].hasOwnProperty("grad")) {
-					list1GradMajors = list1Standing[i].grad.major;
-				}
-				
-				if(list2Standing[i].hasOwnProperty("undergrad")) {
-					list2UndergradMajors = list2Standing[i].undergrad.major;
-				} else if(list2Standing[i].hasOwnProperty("grad")) {
-					list2GradMajors = list2Standing[i].grad.major;
-				}
-			}
-			
-			if(list1UndergradMajors.length !== list2UndergradMajors.length) return false;
-			if(list1GradMajors.length !== list2GradMajors.length) return false;
-			
-			// Comparing undergraduate majors lists (assuming that both arrays have the same length)
-			for(var i = 0, j = list1UndergradMajors.length; i < j; i++) {
-				if(list2UndergradMajors.indexOf(list1UndergradMajors[i]) === -1) return false;
-			}
-			
-			// Comparing graduate majors lists (assuming that both arrays have the same length)
-			for(var i = 0, j = list1GradMajors.length; i < j; i++) {
-				if(list2GradMajors.indexOf(list1GradMajors[i]) === -1) return false;
-			}
 			
 			return true;
 		}
-	    
-	    var finishSaveAndLoad = function() {
-	        //clearInputFields();
-	        $.bbq.pushState({"tab": "existing"},2);
-	        loadData();
-	    };
+	    	    
 	    
 	    var generateId = function() {
-	        var id = "dl-" + sakai.data.me.user.userid + "-" + new Date().getTime();
+	        var id = DYNAMIC_LIST_PREFIX + sakai.data.me.user.userid + "-" + new Date().getTime();
 	        return id;
 	    }
 	    
-	    var saveList = function(data, index) {        
+	    var saveList = function(data, listId) {        
 	        if (listAlreadyExists(data)) {
 	            showGeneralMessage($("#inbox_generalmessages_already_exists").text());
 	            return;
 	        }
-	        
-	        if(index != null && index >= 0) { // we are editing an existing list
-	            allLists[index]["sakai:name"] = data.listName;
-	            allLists[index]["sakai:description"] = data.desc;
-	            //allLists[index]["sakai:dateModified"] = new Date();
-	            //allLists[index]["sakai:dateModified@TypeHint"] = "Date";
-	            //allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
-	            allLists[index].query.context = [data.context];
-	            allLists[index].query.filter = data.filter;
-	        } else { // we are creating a new list
-	            var id = generateId();
-	
-	            var list = {
-	                "sakai:id": id,
-	                "sakai:name": data.listName,
-	                "sakai:description": data.desc,
-	                //"sakai:dateModified": new Date(),
-	                //"sakai:dateModified@TypeHint": "Date",
-	                //"sakai:modifiedBy": sakai.data.me.user.userid,
-	                "query": {
-	                    "context": [data.context],
-	                    "filter": data.filter
-	                }
-	            }
-	            //allLists.push(list);
+	        	        
+	        var id = listId; // list id used for saving
+	        if(listId === null){
+	        	// creating a new list
+	        	id = generateId();
 	        }
-	       // submitData.lists = allLists;
-	        
 	        
 	        var list = {
 	                "sakai:id": id,
 	                "sakai:name": data.listName,
-	                "sakai:description": data.desc,
-	                //"sakai:dateModified": new Date(),
-	                //"sakai:dateModified@TypeHint": "Date",
-	                //"sakai:modifiedBy": sakai.data.me.user.userid,
+	                "sakai:description": data.desc,	                
 	                "query": {
-	                    "context": [data.context],
+	                    "context": data.context,
 	                    "filter": data.filter
 	                }
 	              };
 	        
-	        sakai.api.Server.saveJSON(userUrl+"/lists/"+id, list, finishSaveAndLoad);
+	        sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/lists/" + id, list, function() {
+	        	$.bbq.pushState({"tab": "existing"},2);
+	        	loadData();
+	        });
 	    };
 	    
-	    var saveListOld = function(data, index) {        
-	        if (listAlreadyExists(data)) {
-	            showGeneralMessage($("#inbox_generalmessages_already_exists").text());
-	            return;
-	        }
 	        
-	        if(index != null && index >= 0) { // we are editing an existing list
-	            allLists[index]["sakai:name"] = data.listName;
-	            allLists[index]["sakai:description"] = data.desc;
-	            allLists[index]["sakai:dateModified"] = new Date();
-	            //allLists[index]["sakai:dateModified@TypeHint"] = "Date";
-	            allLists[index]["sakai:modifiedBy"] = sakai.data.me.user.userid;
-	            allLists[index].query.context = [data.context];
-	            allLists[index].query.filter = data.filter;
-	        } else { // we are creating a new list
-	            var id = generateId();
-	
-	            var list = {
-	                "sakai:id": id,
-	                "sakai:name": data.listName,
-	                "sakai:description": data.desc,
-	                "sakai:dateModified": new Date(),
-	                "sakai:dateModified@TypeHint": "Date",
-	                "sakai:modifiedBy": sakai.data.me.user.userid,
-	                "query": {
-	                    "context": [data.context],
-	                    "filter": data.filter
-	                }
-	            }
-	            allLists.push(list);
-	        }
-	        submitData.lists = allLists;
-	        sakai.api.Server.saveJSON(userUrl, submitData, finishSaveAndLoad);
-	    };
-	    
 		// List creation events
 	   
+	   
+	   
 	  
+	  
+	  	$(".inbox_inbox_check_list").live("click", function(){
+	  		updateEditCopyDeleteButtonsStatus();
+	  	});
+	  	  
 	    // Button click events
-	    $("#dyn_lists_delete_button").live("click", function(){
+	    $dynListsDeleteButton.live("click", function(){
 	        var listId = [];
 	        $(".inbox_inbox_check_list:checked").each(function(){
 	            var id = $(this).val();
 	            listId.push(id);
 	        });
 	        
-	        $("#inbox_inbox_checkAll").attr("checked", "");
+	        $("#inbox_inbox_checkAll").removeAttr("checked");
 	        tickMessages();
 	
 	        if (listId.length < 1) {
@@ -1245,43 +1237,71 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	    });
 	    
-	    $("#inbox_inbox_duplicate_button").live("click", function(){
-	        var listId = [];
+	    $dynListsCopyButton.live("click", function(){
+	        var listIds = [];
 	        $(".inbox_inbox_check_list:checked").each(function(){
 	            var id = $(this).val();
-	            listId.push(id);
+	            listIds.push(id);
 	        });
 	        
-	        $("#inbox_inbox_checkAll").attr("checked", "");
+	        if (listIds.length == 0) {
+	        	return;
+	        }
+	        
+	        $("#inbox_inbox_checkAll").removeAttr("checked");
 	        tickMessages();
 	
-	        if (listId.length < 1) {
+	
+			editExisting = false;	        
+	        currentListIdForEditing = null;
+	        displayList(listIds[0], true);
+	        
+	        
+	       /*if (listId.length < 1) {
 	            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
 	        } else if (listId.length > 1) {
 	            showGeneralMessage($("#inbox_generalmessages_duplicate_multiple").text());
 	        } else {
 	            displayList(listId[0]);
-	        }
+	        }*/
 	    });
+	    
+	    $dynListsEditButton.live("click", function(evt){   
+	        	        
+	        var listIds = [];
+	        $(".inbox_inbox_check_list:checked").each(function(){
+	            var id = $(this).val();
+	            listIds.push(id);
+	        });
+	        
+	        if (listIds.length == 0) {
+	        	return;
+	        }
+	        
+	        editExisting = true;	        
+	        currentListIdForEditing = listIds[0];
+	        displayList(currentListIdForEditing, false);
+	    });
+	    
 	    
 	    $(".editLink").live("click", function(evt){   
 	        editExisting = true;
 	        var id = evt.target.id;
-	        currList = id;
-	        displayList(id);
+	        currentListIdForEditing = id;
+	        displayList(id, false);
 	    });
 	    
-	    $("#inbox_inbox_back_button").live("click", function(){
+	    $dynListsBackToNotifManagerButton.live("click", function(){
 	        window.location = "/dev/inboxnotifier.html";
 	    });
 	    
-	    $("#inbox_inbox_cancel_button").live("click", function(){
+	    $dynListsCancelEditingButton.live("click", function(){
 	        editExisting = false;
 	        //clearInputFields();
 	        $.bbq.pushState({"tab": "existing"},2);
 	    });
 	    
-	    $("#dynlist_save_button").live("click", function(){
+	    $dynListsSaveButton.live("click", function(){
 	        $("#invalid_name").hide();
 	        $("#invalid_major").hide();
 	        // NOT SUPPORTED FOR POC
@@ -1299,21 +1319,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			// It should be called like this $.trim($('#selector').text())
 			// See http://bit.ly/d8mDx2
 	        if (editExisting) {
-	            saveList(data, getIndexFromId(currList));
+	            saveList(data, currentListIdForEditing);
 				editExisting = false;
 	        } else {
 	            saveList(data, null);
 	        }
 	    });
-	    
-	    // NOT SUPPORTED FOR POC
-	    // On selecting checkbox events
-	    /*
-	    $(".major_checkbox").click(function() {
-	        sakai_global.listpage.updateListSize();
-	    });
-	    */
-	 
 	    
 	    
 	    
@@ -1328,14 +1339,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        // Show/hide appropriate buttons
 	        
-	        $("#dynamic_lists_create_new").hide();
+	        $dynListsCreateButton.hide();
 	        
-	        $("#dyn_lists_delete_button").hide();
-	        $("#dyn_lists_copy_button").hide();
-	        $("#dyn_lists_edit_button").hide();
+	        $dynListsDeleteButton.hide();
+	        $dynListsCopyButton.hide();
+	        $dynListsEditButton.hide();
+	        $dynListsBackToNotifManagerButton.hide();
 	        
-	        $("#inbox_inbox_cancel_button").show();
-	        $("#dynlist_save_button").show();
+	        $dynListsCancelEditingButton.show();
+	        $dynListsSaveButton.show();
 	    };
 	    
 	    var switchToListMode = function() {
@@ -1350,33 +1362,29 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // Show/hide appropriate buttons
 	        
 	        
-	        $("#dynamic_lists_create_new").show();
+	        $dynListsCreateButton.show();
 	        
-	        $("#dyn_lists_delete_button").show();
-	        $("#dyn_lists_copy_button").show();
-	        $("#dyn_lists_edit_button").show();
+	        $dynListsDeleteButton.show();
+	        $dynListsCopyButton.show();
+	        $dynListsEditButton.show();	        
+	        $dynListsBackToNotifManagerButton.show();
 	        
-	        $("#inbox_inbox_cancel_button").hide();
-	        $("#dynlist_save_button").hide();
-	        
-	        /*$("#inbox_inbox_cancel_button").hide();
-	        $("#dynlist_save_button").hide();
-	        $("#inbox_inbox_delete_button").show();
-	        $("#inbox_inbox_duplicate_button").show();
-	        $("#inbox_inbox_back_button").show();*/
-	    	
+	        $dynListsCancelEditingButton.hide();
+	        $dynListsSaveButton.hide();
 	    };
 	    
 	    
 	    /*-------------------------------- Roman ------------------------------------------*/
-	    $("#dynamic_lists_create_new").click(function() {
+	    $dynListsCreateButton.click(function() {
 	        $.bbq.pushState({"tab": "new"},2);
+	        resetListEditingFormCheckboxesAndStyles();
+	        
+	        
 	        
 	        // NOT SUPPORTED FOR POC
 	        // sakai_global.listpage.updateListSize();
 	        
-			resetListEditingFormCheckboxesAndStyles();
-	        switchToEditMode();
+
 	    });
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    
@@ -1409,32 +1417,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
 	    }
 	    
-	    /**
-	     * Takes the data returned by the server and formats it to get it ready for posting to the server
-	     * @param {Object} data
-	     */
-	    var formatData = function(data) {
-	       
-	       // filter data is stored as a string, it needs to be parsed 
-	        for (var i=0; i < data.lists.length; i++) {
-				var list = data.lists[i];
-				list.query.filter = $.parseJSON(list.query.filter);
-			}
-			 
-	        var result =  {
-	            "lists": data.lists
-	        };
-	        return result;
-	    }
-	    
+
 	    var loadData = function() {
-	        sakai.api.Server.loadJSON(userUrl, function(success, data){
-	            //$("#tabs").tabs();
-	            setTabState();
-	            
-	            if (success) {
-	                submitData = formatData(data);
-	                renderLists(submitData);
+	        sakai.api.Server.loadJSON(dynamicListsBaseUrl, function(success, data){
+	            setTabState();	            
+	            if (success) {	               
+	                renderLists(data.lists);
 	            } else {
 	                createDefaultList();
 	            }
@@ -1468,11 +1456,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        /*-------------------------------- Roman ------------------------------------------*/
 	        
+	       
+        	// Trimpath template for sections A and B of the list editing form (section C is static and doesn't require a templete)
+        	var $listEditFormTemplate = $("#list_edit_form_template");
+                	
+        	// View to render the template for sections A and B
+			var $view = $("#view");
 	        
 	        // Loading template
             var template;
 			$.ajax({
-                    url: "nauth_ced.json", //sakai.config.URL.POOLED_CONTENT_ACTIVITY_FEED + "?p=" + content_path  + "&items=1000",
+                    url: "nauth_ced.json", // TODO: put this into sakai config
                     type: "GET",
                     "async":false,
                     "cache":false,
@@ -1487,10 +1481,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
                     }
             });
 			
-			boolTemplateHasUndergradsData = typeof(template.undergraduates) !== 'undefined' && template.undergraduates != null;
-			boolTemplateHasGradsData = typeof(template.graduates) !== 'undefined' && template.graduates != null; 
+			boolTemplateHasUndergradsData = typeof(template.undergraduates) !== 'undefined' && template.undergraduates !== null;
+			boolTemplateHasGradsData = typeof(template.graduates) !== 'undefined' && template.graduates !== null; 
 			
-			$view.html(sakai.api.Util.TemplateRenderer($template, template));
+			$view.html(sakai.api.Util.TemplateRenderer($listEditFormTemplate, template));
 			
 			$includeUndergradsCheckbox = $("#include_undergrads");
 			$includeGradsCheckbox = $("#include_grads");
@@ -1566,25 +1560,23 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			populateDesignateTermYear();	
 			
 			
-			// section C toggle button
-			var $showMoreOrLess = $("#show_more_or_less");
-			$showMoreOrLess.click(function () {
-				
-				if($sectionC.is(":visible")) {
-					$showMoreOrLess.text("Show More");					
-				} else {
-					$showMoreOrLess.text("Show Less");					
-				}
-				$sectionC.toggle();				
-			});
 			
+	  	  	//Show more/less button in section C
+	  		$showMoreOrLess = $("#show_more_or_less");
+			// section C toggle button
+			$showMoreOrLess.click(toggleSectionC);
+
+			
+	        
+	        // his is needed for the situation when we reload this page with #tab=new
+	        resetListEditingFormCheckboxesAndStyles();
 	        
 	        /*-------------------------------- Roman ------------------------------------------*/
 	        
 	        
 	        
 	        
-	        userUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
+	        dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
 			loadData();
 	    };
