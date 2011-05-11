@@ -327,8 +327,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
             parseMessages(data, dataArr);
             //parseUsers(data, dataArr);
             //parseInvitations(data, dataArr);
-
-            renderCarousel(dataArr);
+            if (dataArr.length) {
+                renderCarousel(dataArr);
+            }
         };
 
         var checkDataParsable = function(data){
@@ -346,7 +347,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                 "invitations": false
             };
             $.ajax({
-                url: "/var/search/pool/me/manager-all.1.json?sortOn=_created&sortOrder=desc&page=0&items=50",
+                url: "/var/search/pool/all-all.json?page=0&items=15&q=*&_charset_=utf-8",
                 cache: false,
                 success: function(data){
                     dataArr.content = data;

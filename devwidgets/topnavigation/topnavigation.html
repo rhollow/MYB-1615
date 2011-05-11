@@ -38,7 +38,7 @@
 
 <div id="search_template" style="display:none"><!--
         {if files && files.length}
-            <a href="/dev/search2.html#l=groups&q=${query}" class="topnavigation_search_results_section_header">__MSG__CONTENT__</a>
+            <a href="/dev/search2.html#l=content&q=${query}" class="topnavigation_search_results_section_header">__MSG__CONTENT__</a>
             <ul>
                {for file in files}
                     <li>
@@ -149,13 +149,6 @@
 
 <!-- OVERLAYS -->
 
-<!-- Create Group Widget Container -->
-<div id="creategroupcontainer" style="display:none;">
-    <!-- We need this container to show the pop-up where you can add a group -->
-    <div id="widget_creategroup" class="widget_inline">
-    </div>
-</div>
-
 <!-- Upload Content Widget Container -->
 <div id="fileupload_container" style="display:none;">
 	<div id="widget_fileupload" class="widget_inline"></div>
@@ -177,6 +170,15 @@
 
 <!-- Change Picture Widget Container -->
 <div id="widget_changepic" class="widget_inline"></div>
+
+<!-- Save Content Widget Container -->
+<div id="widget_savecontent" class="widget_inline"></div>
+
+<!-- Share Content Widget Container -->
+<div id="widget_newsharecontent" class="widget_inline"></div>
+
+<!-- Personinfo Widget Container -->
+<div id="widget_personinfo" class="widget_inline"></div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/topnavigation/javascript/topnavigation.js"></script>

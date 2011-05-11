@@ -73,7 +73,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             var fullSizeContainer = $("#contentpreview_fullsize_preview");
             sakai.api.Util.TemplateRenderer($("#contentpreview_fullsize_template"), {}, fullSizeContainer);
             sakai.api.Widgets.widgetLoader.insertWidgets(fullSizeContainer, false, false, [{cpFullSizePreview:sakData}]);
-            $("#contentpreview_fullsize_preview").show();
         };
 
         var renderDefaultPreview = function(){
@@ -89,7 +88,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             $("#content_preview_delete").unbind("click");
             $("#upload_content").unbind("click");
             // Open the delete content pop-up
-            $("#content_preview_delete").bind("click", function(){
+            $("#content_preview_delete").bind("click", function(e){
+                e.preventDefault();
                 window.scrollTo(0,0);
                 $(window).trigger('init.deletecontent.sakai', [sakai_global.content_profile.content_data,
                     function (success) {
@@ -102,6 +102,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         }
                     }]
                 );
+                $('#newentitywidget_widget').jqmHide();
             });
             $("#upload_content").die("click");
             $("#upload_content").live("click", function() {
@@ -116,23 +117,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             });
         };
 
-        var determineFileCreator = function(){
-            $.ajax({
-                url: "/~" + sakai_global.content_profile.content_data.data["sakai:pool-content-created-for"] + "/public/authprofile.infinity.json",
-                success: function(profile){
-                    sakai_global.content_profile.content_data.creator = sakai.api.User.getDisplayName(profile);
-                    determineDataType();
-                    bindButtons();
-                },
-                error: function(xhr, textStatus, thrownError){
-                    determineDataType();
-                    bindButtons();
-                }
-            });
-        };
-
         $(window).bind("start.contentpreview.sakai", function(){
-            determineFileCreator();
+            determineDataType();
+            bindButtons();
         });
 
         $(window).bind("updated.version.content.sakai",function() {
@@ -144,6 +131,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         $(window).trigger("ready.contentpreview.sakai", {});
 
     };
-
+    
     sakai.api.Widgets.widgetLoader.informOnLoad("contentpreview");
 });

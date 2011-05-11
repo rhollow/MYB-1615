@@ -306,6 +306,18 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          */
         var createMenuList = function(i){
             var temp = getNavItem(i, sakai.config.Navigation);
+            
+            // Add in the template categories
+            if (sakai.config.Navigation[i].id === "navigation_create_and_add_link"){
+                for (var c = 0; c < sakai.config.worldTemplates.length; c++){
+                    var category = sakai.config.worldTemplates[c];
+                    sakai.config.Navigation[i].subnav.push({
+                        "id": "subnavigation_" + category.id + "_link",
+                        "label": category.title,
+                        "url": "/dev/createnew.html#l=categories/" + category.id
+                    });
+                }
+            }
 
             if (sakai.config.Navigation[i].subnav) {
                 temp.subnav = [];
@@ -446,7 +458,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 }, function(success){
                     if (success) {
                         // Go to You when you're on explore page
-                        if (window.location.pathname === "/dev/directory2.html" || window.location.pathname === "/dev/create_new_account2.html") {
+                        if (window.location.pathname === "/dev/explore.html" || window.location.pathname === "/dev/create_new_account2.html") {
                             window.location = "/dev/me.html";
                         } else {
                             // Just reload the page
@@ -473,14 +485,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             sakai.api.Widgets.widgetLoader.insertWidgets(tuid);
         };
 
-        // Create a group
-
-        $(window).bind("sakai.overlays.createGroup", function(ev){
-            $("#creategroupcontainer").show();
-            // Load the creategroup widget.
-            $(window).trigger("init.creategroup.sakai");
-        });
-
         // Add content
 
         $(".sakai_add_content_overlay, #subnavigation_add_content_link").live("click", function(ev) {
@@ -493,14 +497,19 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         $(".sakai_sendmessage_overlay").live("click", function(ev){
             var el = $(this);
             var person = false;
+            var people = [];
             if (el.attr("sakai-entityid") && el.attr("sakai-entityname")){
-                person = {
-                    "uuid": el.attr("sakai-entityid"),
-                    "username": el.attr("sakai-entityname"),
-                    "type": el.attr("sakai-entitytype") || "user"
-                };
+                var userIDArr = el.attr("sakai-entityid").split(",");
+                var userNameArr = el.attr("sakai-entityname").split(",");
+                for(var i = 0; i < userNameArr.length; i++){
+                    people.push({
+                        "uuid": userIDArr[i],
+                        "username": userNameArr[i],
+                        "type": el.attr("sakai-entitytype") || "user"
+                    });
+                }
             }
-            $(window).trigger("initialize.sendmessage.sakai", [person]);
+            $(window).trigger("initialize.sendmessage.sakai", [people]);
         });
 
         // Add to contacts

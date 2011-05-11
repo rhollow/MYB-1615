@@ -51,7 +51,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         var finishUtilInit = function(){
             $(window).trigger("sakai.search.util.finish");
-        }
+        };
 
         ///////////////////////////
         // Prepare for rendering //
@@ -120,7 +120,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     var user = {};
                     user.userid = item["rep:userId"];
                     // Parse the user his info.
-                    user.path = "/~" + user.userid + "/public/";
+                    user.path = item.homePath + "/public/";
                     var person = item;
                     if (person && person.basic && person.basic.elements && person.basic.elements.picture && $.parseJSON(person.basic.elements.picture.value).name){
                         person.picture = person.basic.elements.picture.value;
@@ -142,10 +142,18 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     } else {
                         user.picture = sakai.config.URL.USER_DEFAULT_ICON_URL;
                     }
+                    user.counts = item.counts;
                     user.name = sakai.api.User.getDisplayName(item);
                     user.name = sakai.api.Util.applyThreeDots(user.name, 180, {max_rows: 1,whole_word: false}, "s3d-bold");
                     user.firstName = sakai.api.User.getProfileBasicElementValue(item, "firstName");
                     user.lastName = sakai.api.User.getProfileBasicElementValue(item, "lastName");
+
+                    if (item["sakai:tags"] && item["sakai:tags"].length > 0){
+                        user["sakai:tags"] = item["sakai:tags"];
+                    }
+                    if (item.basic && item.basic.elements && item.basic.elements.description){
+                        user.extra = sakai.api.Util.applyThreeDots(item.basic.elements.description.value, $("#sites_header .search_results_part_header").width() - 80, {max_rows: 1,whole_word: false}, "search_result_course_site_excerpt");
+                    }
 
                     user.connected = false;
                     user.invited = item.invited !== undefined ? item.invited : false;
@@ -159,6 +167,10 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 // if invited state set invited to true
                                 if(friend.details["sakai:state"] === "INVITED"){
                                     user.invited = true;
+                                } else if(friend.details["sakai:state"] === "PENDING"){
+                                    user.pending = true;
+                                } else if(friend.details["sakai:state"] === "NONE"){
+                                    user.none = true;
                                 }
                             }
                         }
@@ -167,6 +179,16 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     // logged in user
                     if (user.userid === sakai.data.me.user.userid) {
                         user.isMe = true;
+                    }
+                    
+                    if (user["sakai:tags"]) {
+                        var filteredTags = [];
+                        for (var t = 0; t < user["sakai:tags"].length; t++) {
+                            if (user["sakai:tags"][t].split("/")[0] !== "directory") {
+                                filteredTags.push(user["sakai:tags"][t]);
+                            }
+                        }
+                        user["sakai:tags"] = filteredTags;
                     }
 
                     finaljson.items.push(user);
