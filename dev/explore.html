@@ -41,8 +41,76 @@
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
+        <!-- MyBerkeley custom begin -->
+        <!-- BEGIN JOIN MYBERKELEY DIALOG -->
+        <div id="join_myberkeley_dialog" class="dialog">
+          <!-- Dialog Header -->
+          <div class="dialog_header">
+            <div class="dialog_header_inner">
+              <h1>Accept myBerkeley Beta Program</h1>
+            </div>
+          </div>
+          <!-- Dialog Content -->
+          <div class="dialog_content">
+            <img alt="myBerkeley Beta" src="/dev/images/myb/myb-beta-lrg-logotype.png">
+
+            <p>Welcome to the myBerkeley Beta.</p>
+
+            <p><b>myBerkeley</b> is a program designed to bring many campus online services under one roof. The current
+              beta has a limited number of features. It will allow Berkeley to send you reminders of important tasks and
+              events, as well as more general messages.</p>
+
+            <p><b>What you should know before joining this program:</b></p>
+            <ul>
+              <li>You may receive multiple messages for the same task or event.</li>
+              <li>Messages may be deleted at any time due to system or project events.</li>
+              <li>The design and features presented may change at any time.</li>
+              <li>By participating in this program you may be invited to participate in surveys and focus groups to help
+                us determine the effectiveness of the design and features presented here.
+              </li>
+              <li>Some settings allow some or all of the myBerkeley information about you to be found and viewed by
+                anyone in the world. Please proceed accordingly.
+              </li>
+            </ul>
+            <p>
+              <input id="chk_agree_to_socu" type="checkbox"/> <label for="chk_agree_to_socu">I have read and agree to
+              the official</label> <a href="http://technology.berkeley.edu/policy/usepolicy.html" style="color:blue"
+                                      target="_blank">campus statement on computer use.</a><br/>
+              <input id="chk_agree_to_receive_advisor_messages" type="checkbox"/> <label
+                    for="chk_agree_to_receive_advisor_messages">I give permission for my advisor to send me messages via
+              this portal.</label>
+            </p>
+
+            <p>Please <a href="mailto:portal@berkeley.edu?subject=Feedback on My Berkeley" style="color:blue">send us
+              feedback</a> about your first impressions, what you like or don't like, and ideas for future features and
+              functionality. There is a feedback link on each page of</p>
+
+            <p>To participate in this program, click <b>Join myBerkeley</b> below, or click <b>Cancel</b> to sign
+              out.<br/>
+              (If you're not ready to join now, you may come back at any time.)</p>
+
+            <div class="dialog_buttons" style="text-align:right">
+              <button type="button" class="s3d-button" onclick="javascript:document.location='/dev/logout.html'"><span
+                      class="s3d-button-inner">__MSG__CANCEL__</span></button>
+              <button type="button" id="btn_join_my_berkeley" class="s3d-button s3d-button-primary" disabled="disabled">
+                <span class="s3d-button-inner">Join myBerkeley</span></button>
+            </div>
+          </div>
+          <!-- Dialog Footer -->
+          <div class="dialog_footer">
+            <div class="dialog_footer_inner"><!--
+                    --></div>
+          </div>
+        </div>
+        <!-- END JOIN MYBERKELEY DIALOG -->
+        <!-- MyBerkeley custom end -->
+
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
         <script>require(["/dev/javascript/explore.js"]);</script>
+
+        <!-- MyBerkeley custom JS -->
+        <script>require(["/dev/javascript/myb/myb.explore.js"]);</script>
+
     </body>
 </html>

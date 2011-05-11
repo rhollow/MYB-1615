@@ -25,7 +25,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
      See myb.securepage.js for details. */
     myb.api.security.allowRedirectToParticipantPage = false;
 
-    sakai_global.myberkeleymysakai = function(){
+    sakai_global.myberkeleyexplore = function(){
 
         /////////////////////////////
         // Configuration variables //
@@ -204,6 +204,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         doInit();
     };
 
-    sakai.api.Widgets.Container.registerForLoad("myberkeleymysakai");
+    sakai.api.Widgets.Container.registerForLoad("myberkeleyexplore");
 
 });
