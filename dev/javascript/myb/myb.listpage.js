@@ -62,6 +62,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		 * Dynamic lists base URL (parent node in Sparse), delete this node to remove all dynamic lists for current user
 		 */		
 		var dynamicListsBaseUrl;
+		
+		/**
+		 * Url for counting number of people targeted by a filter
+		 */
+		var dynamicListsPeopleCountingUrl = "/var/myberkeley/dynamiclists/g-ced-students.json";
+		
+		/**
+		 * Needed to prevent unnecessary people counting requests when editing a new list
+		 */
+		var lastUsedFilterString = "";
 				
 		
 		//////////////////////
@@ -142,6 +152,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	  	 * Show more/less button in section C (template must be loaded before using this variable)
 	  	 */
 	  	var $showMoreOrLess;
+	  	
+	  	/**
+	  	 * HTML div to diplay the number of users targeted by the current list
+	  	 */
+	  	var $studentsTargetedByCurrentList;
 	  	
 	    
 	    //////////////////////////////////////////////////////////
@@ -614,6 +629,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	     */
 	    var resetListEditingFormCheckboxesAndStyles = function() {
 	    	
+	    	
+	    	lastUsedFilterString = "";
+	    	$studentsTargetedByCurrentList.text("0");
 	    		    	
 	    	hideSectionC();
 	    	
@@ -643,6 +661,29 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			$("#residency_status_all_students", $sectionC).attr("checked", "checked");
 			
 	    };
+		
+		var getNumberOfPeopleSelectedByFilter = function(filterString) {
+			
+			if(lastUsedFilterString === filterString) {
+				 return;
+			}
+			
+			lastUsedFilterString = filterString;
+				
+			var parameters = {criteria: filterString};
+	        sakai.api.Server.loadJSON(dynamicListsPeopleCountingUrl, function(success, data){	            	            
+	            if (success) {	               
+	                $studentsTargetedByCurrentList.text(data.count);
+	                //alert("Success: "+data.count);
+	                renderLists(data.lists);
+	            } else {
+	                $studentsTargetedByCurrentList.text("N/A");
+	            }
+	        }, parameters);
+	    
+			
+			//curl -g -u admin:admin "http://localhost:8080/var/myberkeley/dynamiclists/g-ced-students.json?criteria="
+		};
 		
 		///////////////////////////////////////////////////////////////
         // Functions for loading the information from a dynamic list //
@@ -795,27 +836,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        updateEditCopyDeleteButtonsStatus();
 	    };
 	    
-	    var getDataFromInput = function() {
-	        var result = {};
-			
-			result.context = "g-ced-students";
-	        result.listName = $.trim($("#list_name").val());
-			if(result.listName === null || result.listName === "") {
-				$("#invalid_name").show();
-				return -1;
-			}
-	        result.desc = $.trim($("#description").val());
-	        
-	        // NOT SUPPORTED FOR POC
-	        // result.size = $("#list_size").val();
-	        
-			// Gathering the data on standing
-			//TODO: check for errors
-			/*if($("#undergrad:checked").val() === null && $("#grad:checked").val() === null) {
-				$("#invalid_major").show();
-					return -1;
-			}*/
-			
+	    
+	    var buildFilterStringFromListEditingForm = function() {
 			var dynamicListFilter = buildUndergraduatesAndGraduatesResultingObject();
 			
 			// Section C
@@ -837,7 +859,31 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));			
 			dynamicListFilter = joinTwoConditionsByAND(dynamicListFilter, residencyStatus);
 			
-	        result.filter = $.toJSON(dynamicListFilter);
+	        return $.toJSON(dynamicListFilter);	    	
+	    };
+	    
+	    var getDataFromInput = function() {
+	        var result = {};
+			
+			result.context = "g-ced-students";
+	        result.listName = $.trim($("#list_name").val());
+			if(result.listName === null || result.listName === "") {
+				$("#invalid_name").show();
+				return -1;
+			}
+	        result.desc = $.trim($("#description").val());
+	        
+	        // NOT SUPPORTED FOR POC
+	        // result.size = $("#list_size").val();
+	        
+			// Gathering the data on standing
+			//TODO: check for errors
+			/*if($("#undergrad:checked").val() === null && $("#grad:checked").val() === null) {
+				$("#invalid_major").show();
+					return -1;
+			}*/
+									
+	        result.filter = buildFilterStringFromListEditingForm();
 	        
 	        return result;
 	    }
@@ -855,7 +901,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // STILL NEEDS TO BE IMPLEMENTED
 	        // var size = query(selectedContext, selectedMajor, selectedStanding);
 	        // document.createListForm.list_size.value = size;
-	    }
+	    };
 	    	    
 	    /**
 	     * Removes all the messages out of the DOM.
@@ -865,6 +911,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        $(".inbox_list").remove();
 	    };
 	    
+	    //TODO: remove this
 	    var removeSparseSpecialProperties = function(obj) {
 	    	for (var key in obj) {
 				if(obj.hasOwnProperty(key) && key.match(/^_/)) {
@@ -881,13 +928,27 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        allLists = response;
 	        
+	        var filterStrings = [];
 	        // removing special _properties
-	        removeSparseSpecialProperties(allLists);
+	        for (var key in allLists) {
+				if(allLists.hasOwnProperty(key) && key.match(/^_/)) {
+					delete allLists[key];
+				} else if(allLists[key].hasOwnProperty("query") && allLists[key].query.hasOwnProperty("filter")) {
+					filterStrings.push(allLists[key].query.filter);	
+				}									
+			}
+			
+			if(filterStrings.length>0){
+				batchGetNumberOfPeopleTargetedByLists(filterStrings);
+			}
+	        //removeSparseSpecialProperties(allLists);
 	        
 	        var data = {
 	            "links": allLists,
 	            sakai: sakai
 	        }
+	        
+	        
 	        
 	        // remove previous lists
 	        removeAllListsOutDOM();
@@ -1020,6 +1081,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // NOT SUPPORTED FOR POC
 	        // document.createListForm.list_size.value = list["sakai:size"];
 	        
+	        getNumberOfPeopleSelectedByFilter(list.query.filter);
+	        
 	    }
 	
 	    // Check all messages
@@ -1085,6 +1148,35 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
             });
 	    };
 	    
+	    
+	    var batchGetNumberOfPeopleTargetedByLists = function(filterStrings) {
+	    	var requests = [];
+            $(filterStrings).each(function(i,val) {
+                var req = {
+                    "url": dynamicListsPeopleCountingUrl,
+                    "method": "GET",
+                    "parameters": {
+                        "criteria": val
+                    }
+                };
+                requests.push(req);
+            });
+            $.ajax({
+                url: sakai.config.URL.BATCH,
+                traditional: true,
+                type: "POST",
+                data: {
+                    requests: $.toJSON(requests)
+                },
+                success: function(data) {
+                     //showGeneralMessage("Lists successfully deleted.");
+                     console.log(data);
+                },
+                error: function(xhr, textStatus, thrownError) {
+                   //showGeneralMessage("Error deleting lists.");
+                }
+            });
+	    };
 	    
 	    
 	    var getNumberOfExistingLists = function() {
@@ -1559,7 +1651,19 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			
 			populateDesignateTermYear();	
 			
+			$studentsTargetedByCurrentList = $(".students_targeted_by_list_container .readonly_textbox");
 			
+			
+			// iteractive number of users
+			var $listEditingDiv = $("#create_new_list");
+			$("input:checkbox, input:radio", $listEditingDiv).click(function() {
+				var filterString = buildFilterStringFromListEditingForm();
+				getNumberOfPeopleSelectedByFilter(filterString);
+			});
+			$("select", $listEditingDiv).change(function() {
+				var filterString = buildFilterStringFromListEditingForm();
+				getNumberOfPeopleSelectedByFilter(filterString);
+			});
 			
 	  	  	//Show more/less button in section C
 	  		$showMoreOrLess = $("#show_more_or_less");

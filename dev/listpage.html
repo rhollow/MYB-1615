@@ -92,8 +92,7 @@
                         <div id="inbox_inbox_sort_down" style="display:none;"><img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
                                 
                         <div id="inbox_inbox_lists_template" title=""><!--
-                            {for m in links}                                
-                             	{eval}console.log(m+""){/eval}
+                            {for m in links}                                                             	
                              	{var dateString = Globalization.format(sakai.api.Util.parseSakaiDate(m['_lastModified']), "MMM d, yyyy hh:mm tt")}
                                                                 
                                 <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
