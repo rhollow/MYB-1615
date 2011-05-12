@@ -27,3 +27,6 @@
 .accountpreferences .preferences-form{margin-top:25px;}
 .accountpreferences .preferences-form select{height:21px;width:330px;}
 div.accountpreferences_error{color:#9F3333;font-weight:bold;left:180px;position:relative;top:5px;width:300px;}
+
+/* MyBerkeley custom: change password is hidden */
+#accountpreferences_changePassContainer { display: none }
