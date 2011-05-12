@@ -1285,6 +1285,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	        
 	        var list = {
+                  "sling:resourceType":"myberkeley/dynamiclist",
 	                "sakai:id": id,
 	                "sakai:name": data.listName,
 	                "sakai:description": data.desc,	                
