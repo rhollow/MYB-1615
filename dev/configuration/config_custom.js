@@ -113,6 +113,17 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
             "editable": false
         }
     };
+	
+	 /*
+     * Institution contact details are displayed in the footer
+     */
+	config.Institution = {
+        helpLinkText: "Contact Us",
+        helpLinkUrl: "https://confluence.media.berkeley.edu/confluence/display/MYB/Portal+Help",
+        helpPhone: ""
+    };
+
+
 
     // so that user gets redirected to CAS logout
     config.followLogoutRedirects = true;
