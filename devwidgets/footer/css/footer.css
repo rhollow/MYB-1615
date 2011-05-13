@@ -51,80 +51,9 @@
 .footer_index{bottom:0;background:url(/dev/images/dashboard_sprite.png) no-repeat scroll -10px -819px transparent;clear:both;padding-bottom:0;position:fixed;margin-bottom:0;z-index:99;}
 .footer_push{height:45px;}
 
+
 /* MyBerkeley custom begin */
 
-#footer_main_br {
-    display: none;
-}
-
-#footer_logo {
-    background: url('../images/myberkeley/myberkeley_logo_footer.png') no-repeat bottom center;
-    width: 166px;
-    height: 42px;
-    margin-right: 22px;
-}
-
-.footer_main {
-    background: url('../images/myberkeley/full_footer.png') no-repeat bottom center;
-    margin: 0 auto 45px;
-}
-
-.footer_main #footer_debug_info {
-    margin: 0;
-}
-
-/* Feedback box */
-.footer_main .feedback {
-    background-color: transparent;
-    width: 204px;
-    text-align: center;
-    padding: 5px 0 0 3px;
-    float: left;
-}
-
-.footer_main .feedback p {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.footer_main .feedback {
-    font-size: 9pt;
-    color: #FFFFFF;
-    font-family: Comic Sans MS;
-}
-
-.footer_main .feedback a {
-    background: url("/dev/images/mail_icon.png") no-repeat 0 8px;
-    padding: 0 0 0 22px;
-    color: white;
-    font-size: 11pt;
-    text-decoration: none;
-}
-
-
-/* Fixed Container */
-.footer_main .fixed-container {
-    background-color: transparent;
-    width: 709px;
-    padding: 10px 22px 8px;
-}
-
-.footer_main .fixed-container img {
-    float: left;
-    margin-right: 22px;
-}
-
-/* Footer on the login page */
-.index .footer_main {
-    width:960px;
-    bottom: 0;
-    background: url('../images/myberkeley/full_footer_index.png') center top no-repeat;
-    clear: both;
-    padding-bottom: 0;
-    position: fixed;
-    margin-bottom: 0;
-    z-index: 99;
-}
+#footer_logo{background:url(/devwidgets/footer/images/myberkeley/myb-small-black-logotype.png) no-repeat scroll 0 0 transparent;width:114px;height:28px;float:left;margin-right:15px;}
 
 /* MyBerkeley custom end */
-..
