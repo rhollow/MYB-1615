@@ -16,3 +16,44 @@
  * specific language governing permissions and limitations under the License.
  */
 .welcome_widget {margin:12px;}
+
+.welcome-body {
+	float: right;
+	width: 414px;
+}
+
+.welcome-body .tag-line {
+    font-size: 1.25em;
+	padding-top: 0.2em;
+}
+
+.welcome-body .message-defined {
+    color: #555;
+    font-size: 1.25em;
+	line-height: 116%;
+}
+
+.welcome-body .message-defined strong {
+    font-size: 1.10em;
+}
+
+.welcome-body .feedback {
+    font-size: 1.1em;
+}
+
+.header-smallline .preview-tag {
+    display: inline;
+    padding: 13px 41px;
+    background: url(/dev/images/myb/beta-tag.png) no-repeat 00 scroll;
+}
+
+.myb-frontdoor-image {
+	float: left;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    width: 234px;
+    height: 234px;
+    background: url(/dev/images/myb/ucb-45-pano.jpg) no-repeat 3% 50% scroll;
+}
