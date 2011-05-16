@@ -669,20 +669,24 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			}
 			
 			lastUsedFilterString = filterString;
-				
-			var parameters = {criteria: filterString};
-	        sakai.api.Server.loadJSON(dynamicListsPeopleCountingUrl, function(success, data){	            	            
-	            if (success) {	               
-	                $studentsTargetedByCurrentList.text(data.count);
-	                //alert("Success: "+data.count);
-	                renderLists(data.lists);
-	            } else {
-	                $studentsTargetedByCurrentList.text("N/A");
-	            }
-	        }, parameters);
-	    
-			
-			//curl -g -u admin:admin "http://localhost:8080/var/myberkeley/dynamiclists/g-ced-students.json?criteria="
+
+      $.ajax({
+        url: dynamicListsPeopleCountingUrl,
+        traditional: true,
+        type: "POST",
+        data: {
+          criteria: filterString
+        },
+        success: function(data) {
+          $studentsTargetedByCurrentList.text(data.count);
+          //alert("Success: "+data.count);
+          renderLists(data.lists);
+        },
+        error: function(xhr, textStatus, thrownError) {
+          $studentsTargetedByCurrentList.text("N/A");
+        }
+      });
+
 		};
 		
 		///////////////////////////////////////////////////////////////
@@ -1154,7 +1158,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
             $(filterStrings).each(function(i,val) {
                 var req = {
                     "url": dynamicListsPeopleCountingUrl,
-                    "method": "GET",
+                    "method": "POST",
                     "parameters": {
                         "criteria": val
                     }
