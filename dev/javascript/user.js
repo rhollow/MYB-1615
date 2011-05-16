@@ -48,8 +48,8 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             profilestructure._order = pub.structure0.profile._order;
             pub.structure0.profile = {};
             $.each(sakai.config.Profile.configuration.defaultConfig, function(title, section) {
-                var widgetID = ""+Math.ceil(Math.random() * 1000000000);
-                var widgetUUID = ""+Math.ceil(Math.random() * 1000000000);
+                var widgetID = sakai.api.Util.generateWidgetId();
+                var widgetUUID = sakai.api.Util.generateWidgetId();
                 profilestructure[title] = {
                     _ref: widgetID,
                     _order: section.order,
@@ -127,16 +127,13 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 addCount(pubdata, "library", contextData.profile.counts["contentCount"]);
                 addCount(pubdata, "contacts", contextData.profile.counts["contactsCount"]);
                 addCount(pubdata, "memberships", contextData.profile.counts["membershipsCount"]);
+                addCount(privdata, "messages", sakai.data.me.messages.unread);
             }
         };
 
         var addCount = function(pubdata, pageid, count){
-            if (pubdata.structure0) {
-                for (var i in pubdata.structure0) {
-                    if (i === pageid){
-                        pubdata.structure0[i]._count = count;
-                    }
-                }
+            if (pubdata.structure0 && pubdata.structure0[pageid]) {
+                pubdata.structure0[pageid]._count = count;
             }
         };
 
@@ -224,6 +221,8 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             } else {
                 contextType = "user_other";
             }
+            renderEntity();
+            loadSpaceData();
         };
 
         var generateNav = function(){
@@ -259,6 +258,14 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         $(window).bind("lhnav.ready", function(){
             generateNav();
+        });
+
+        $(window).bind("updated.counts.lhnav.sakai", function(){
+            sakai.api.User.getUpdatedCounts(sakai.data.me, function(success){
+                addCounts();
+                renderEntity();
+                generateNav();
+            });
         });
 
         $(window).bind("complete.fileupload.sakai", determineContext);
