@@ -18,6 +18,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     config.Authentication.hideLoginOn = [
         "/dev/create_new_account.html"
     ];
+    config.allowPasswordChange = false;
 
     // Page titles for myB-unique pages
     config.PageTitles.pages["/dev/inboxnotifier.html"] = "NOTIFICATIONS";
