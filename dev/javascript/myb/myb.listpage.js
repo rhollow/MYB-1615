@@ -605,11 +605,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			$designateTermYear.append(yearsArr.join(''));
 		};
 	    
+	    /**
+	     * Hides section C (common filter settings).
+	     */
 	    var hideSectionC = function() {
 	    	$showMoreOrLess.text("Show Less");
 	    	$sectionC.hide();
 	    };
 	    
+	    /**
+	     * Toggles section C visibility.
+	     */
 	    var toggleSectionC = function () {
 				
 			if($sectionC.is(":visible")) {
@@ -620,9 +626,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			}						
 		};
 	    
-	    
-		
-		
+	    		
 	    /**
 	     * Resets the editing form UI (checkboxes and CSS styles)
 	     * Must be called AFTER loading template.
@@ -655,13 +659,19 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			$("#designate_term_year option:last", $sectionC).attr("selected", "selected");
 			
 
-
 			$("#special_program_all_students", $sectionC).attr("checked", "checked");
 			$("#student_status_all_students", $sectionC).attr("checked", "checked");
 			$("#residency_status_all_students", $sectionC).attr("checked", "checked");
 			
 	    };
 		
+		/**
+		 * Gets the number of people selected by filter string.
+		 * 
+		 * @param {String} filterString	a condition object represented as a string
+		 * 
+		 * @return {Integer}	the number of people selected by filter string.
+		 */
 		var getNumberOfPeopleSelectedByFilter = function(filterString) {
 			
 			if(lastUsedFilterString === filterString) {
@@ -670,22 +680,20 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			
 			lastUsedFilterString = filterString;
 
-      $.ajax({
-        url: dynamicListsPeopleCountingUrl,
-        traditional: true,
-        type: "POST",
-        data: {
-          criteria: filterString
-        },
-        success: function(data) {
-          $studentsTargetedByCurrentList.text(data.count);
-          //alert("Success: "+data.count);
-          renderLists(data.lists);
-        },
-        error: function(xhr, textStatus, thrownError) {
-          $studentsTargetedByCurrentList.text("N/A");
-        }
-      });
+	      	$.ajax({
+		        url: dynamicListsPeopleCountingUrl,
+		        traditional: true,
+		        type: "POST",
+		        data: {
+		          criteria: filterString
+		        },
+		        success: function(data) {
+		          $studentsTargetedByCurrentList.text(data.count);          
+		        },
+		        error: function(xhr, textStatus, thrownError) {
+		          $studentsTargetedByCurrentList.text("N/A");
+		        }
+	      });
 
 		};
 		
@@ -712,7 +720,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			
 			for (var i=0; i < conditionArray.length; i++) {
 				var arrayElement = conditionArray[i];
-				if(jQuery.type(arrayElement) === "string") {
+				if($.type(arrayElement) === "string") {
 					idArray.push(conditionArray[i]);
 				} else {
 					// assuming the object is a container
@@ -892,20 +900,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        return result;
 	    }
 	    
-	    // NOT SUPPORTED FOR POC
-	    /**
-	     * Updates the input field that displays the current size of the list being created
-	     */
-	    sakai_global.listpage.updateListSize = function(){
-	        var data = getDataFromInput();
-			if(data < 0) {
-				alert("Error");
-			}
-	        
-	        // STILL NEEDS TO BE IMPLEMENTED
-	        // var size = query(selectedContext, selectedMajor, selectedStanding);
-	        // document.createListForm.list_size.value = size;
-	    };
 	    	    
 	    /**
 	     * Removes all the messages out of the DOM.
@@ -915,14 +909,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        $(".inbox_list").remove();
 	    };
 	    
-	    //TODO: remove this
-	    var removeSparseSpecialProperties = function(obj) {
-	    	for (var key in obj) {
-				if(obj.hasOwnProperty(key) && key.match(/^_/)) {
-					delete obj[key];
-				}
-			}
-	    };
 	    
 	    var renderLists = function(response){
 	        
@@ -931,29 +917,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	        
 	        allLists = response;
-	        
-	        var filterStrings = [];
-	        // removing special _properties
-	        for (var key in allLists) {
-				if(allLists.hasOwnProperty(key) && key.match(/^_/)) {
-					delete allLists[key];
-				} else if(allLists[key].hasOwnProperty("query") && allLists[key].query.hasOwnProperty("filter")) {
-					filterStrings.push(allLists[key].query.filter);	
-				}									
-			}
-			
-			if(filterStrings.length>0){
-				batchGetNumberOfPeopleTargetedByLists(filterStrings);
-			}
-	        //removeSparseSpecialProperties(allLists);
-	        
+	        	        
 	        var data = {
 	            "links": allLists,
 	            sakai: sakai
 	        }
-	        
-	        
-	        
+	        	        
 	        // remove previous lists
 	        removeAllListsOutDOM();
 	        
@@ -991,8 +960,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	        
 	        var idArray = [];
-	        var filterAsObject = $.parseJSON(list.query.filter);
-	        dumpOptionIDs(filterAsObject, idArray);
+	        var filterAsObject = $.parseJSON(list.filter);
+	        dumpOptionIDs(filterAsObject, idArray); // dumped IDs are stored in idArray
 	        var includeAllGradsId = $includeGradsCheckbox.val();
 	        var includeAllUndergradsId = $includeUndergradsCheckbox.val();
 	        
@@ -1085,7 +1054,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        // NOT SUPPORTED FOR POC
 	        // document.createListForm.list_size.value = list["sakai:size"];
 	        
-	        getNumberOfPeopleSelectedByFilter(list.query.filter);
+	        getNumberOfPeopleSelectedByFilter(list.filter);
 	        
 	    }
 	
@@ -1153,51 +1122,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    };
 	    
 	    
-	    var batchGetNumberOfPeopleTargetedByLists = function(filterStrings) {
-	    	var requests = [];
-            $(filterStrings).each(function(i,val) {
-                var req = {
-                    "url": dynamicListsPeopleCountingUrl,
-                    "method": "POST",
-                    "parameters": {
-                        "criteria": val
-                    }
-                };
-                requests.push(req);
-            });
-            $.ajax({
-                url: sakai.config.URL.BATCH,
-                traditional: true,
-                type: "POST",
-                data: {
-                    requests: $.toJSON(requests)
-                },
-                success: function(data) {
-                     //showGeneralMessage("Lists successfully deleted.");
-                     console.log(data);
-                },
-                error: function(xhr, textStatus, thrownError) {
-                   //showGeneralMessage("Error deleting lists.");
-                }
-            });
-	    };
-	    
-	    
-	    var getNumberOfExistingLists = function() {
-	    	
-	    	var numberOfItems = 0;
-	    	var pattern = '^' + DYNAMIC_LIST_PREFIX;
-	    	var re = new RegExp(pattern, '');
-	    		    	
-	    	for (var key in allLists) {
-				if(allLists.hasOwnProperty(key) && re.test(key)) {
-					numberOfItems++;
-				}
-			}
-			
-			return numberOfItems;
-	    };
-	    
 	    var deleteLists = function(listIds) {
 
 	        var paths = []; // paths to nodes to delete
@@ -1211,7 +1135,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	                $("#inbox_table_list_" + currentId).remove();
 	                
 	                // store path to delete
-	                paths.push(dynamicListsBaseUrl + "/lists/" + currentId);	                	                
+	                paths.push(dynamicListsBaseUrl + "/" + currentId);	                	                
 	                
 	                // delete list from memory
 	                delete allLists[currentId];	                    	                
@@ -1220,13 +1144,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	            }
 	        }
 	        
-	        if(getNumberOfExistingLists() === 0) {
-	        	// delete whole parent node
-	        	sakai.api.Server.removeJSON(dynamicListsBaseUrl, loadData);
-	        } else {
-	        	// batch delete nodes selected for deletion
-	        	batchDeleteLists(paths);
-	        }
+	        
+	        // batch delete nodes selected for deletion
+	        batchDeleteLists(paths);
+	        
 	        
 	    };
 	    
@@ -1238,13 +1159,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	     */
 		var listAlreadyExists = function(listToCheck) {
 			
-			for (var i = 0, j = allLists.length; i < j; i++) {
-				var exsistingList = allLists[i];
+			//TODO: rewrite!!!!!
+			
+			for (var key in allLists) {
+				if(!allLists.hasOwnProperty(key)) {
+					continue;
+				}
+				var exsistingList = allLists[key];
 				var exsistingListObj = {
-					"context" : exsistingList.query.context, 
+					"context" : exsistingList.context, 
 					"listName": exsistingList["sakai:name"],
 					"desc": exsistingList["sakai:description"],
-					"filter": exsistingList.query.filter				
+					"filter": exsistingList.filter				
 				} 
 				
 				if(listEquals(exsistingListObj, listToCheck)) return true;
@@ -1283,23 +1209,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        }
 	        	        
 	        var id = listId; // list id used for saving
-	        if(listId === null){
+	        if(id === null){
 	        	// creating a new list
 	        	id = generateId();
 	        }
 	        
 	        var list = {
-                  "sling:resourceType":"myberkeley/dynamiclist",
+                  	"sling:resourceType": "myberkeley/dynamiclist",
 	                "sakai:id": id,
 	                "sakai:name": data.listName,
-	                "sakai:description": data.desc,	                
-	                "query": {
-	                    "context": data.context,
-	                    "filter": data.filter
-	                }
+	                "sakai:description": data.desc,	                	                
+                    context: data.context,
+                    filter: data.filter	                
 	              };
 	        
-	        sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/lists/" + id, list, function() {
+	        sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/" + id, list, function() {
 	        	$.bbq.pushState({"tab": "existing"},2);
 	        	loadData();
 	        });
@@ -1319,7 +1243,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    // Button click events
 	    $dynListsDeleteButton.live("click", function(){
 	        var listId = [];
-	        $(".inbox_inbox_check_list:checked").each(function(){
+	        $(".inbox_inbox_check_list:checked").each(function(){	            
 	            var id = $(this).val();
 	            listId.push(id);
 	        });
@@ -1474,14 +1398,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    $dynListsCreateButton.click(function() {
 	        $.bbq.pushState({"tab": "new"},2);
-	        resetListEditingFormCheckboxesAndStyles();
-	        
-	        
-	        
-	        // NOT SUPPORTED FOR POC
-	        // sakai_global.listpage.updateListSize();
-	        
-
+	        resetListEditingFormCheckboxesAndStyles();	        
 	    });
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    
@@ -1505,13 +1422,30 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        setTabState();
 	    });
 	    
-	    var createDefaultList = function() {
+	    var createEmptyRootNodeForDynamicLists = function() {
 	        allLists = [];
 	        var emptyData = {
 	            "links": []
 	        }
 	        
 	        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
+	        
+	        // create dynamic lists node
+	        var props = {
+	        	"sling:resourceType": "myberkeley/dynamicliststore"
+	        };
+	        
+	        $.ajax({
+                type: "POST",
+                url: dynamicListsBaseUrl,
+                async: false,
+                cache: false,
+                dataType:"json",
+                data: props,                
+                error: function(xhr, textStatus, thrownError) {
+                        sakai.api.Util.notification.show(errorText,"",sakai.api.Util.notification.type.ERROR);
+                }                
+            });	        
 	    }
 	    
 
@@ -1519,9 +1453,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        sakai.api.Server.loadJSON(dynamicListsBaseUrl, function(success, data){
 	            setTabState();	            
 	            if (success) {	               
-	                renderLists(data.lists);
+	                renderLists(data);
 	            } else {
-	                createDefaultList();
+	                createEmptyRootNodeForDynamicLists();
 	            }
 	        });
 	    }
