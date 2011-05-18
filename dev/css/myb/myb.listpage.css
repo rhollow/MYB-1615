@@ -379,3 +379,7 @@ div.group_header {
 .border_box {
 	border: 4px solid #D5DBDF;
 }
+
+.noStudentsTargeted {
+	color: #F00;	
+}

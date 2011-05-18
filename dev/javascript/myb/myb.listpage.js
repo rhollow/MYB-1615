@@ -18,8 +18,7 @@
 
 /* global $, Config, opensocial */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
-    "/dev/lib/myb/jquery/jquery-ui-tabs-min.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 	sakai_global.listpage = function(){
 	    
 	    
@@ -46,17 +45,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		/**
 		 * Whether the loaded trimpath template includes graduate students data
 		 */
-		var boolTemplateHasGradsData = false;
-		
-		/**
-		 * Flag that indicates whether we are editing an existing list or creation a new one
-		 */
-		var editExisting = false;
-		
-		/**
-		 * Id of currently selected list (needed only for saving)
-		 */
-		var currentListIdForEditing;				
+		var boolTemplateHasGradsData = false;			
 		
 		/**
 		 * Dynamic lists base URL (parent node in Sparse), delete this node to remove all dynamic lists for current user
@@ -157,6 +146,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	  	 * HTML div to diplay the number of users targeted by the current list
 	  	 */
 	  	var $studentsTargetedByCurrentList;
+	  	
+	  	
+	  	var $tableOfLists = $("#inbox_table");
 	  	
 	    
 	    //////////////////////////////////////////////////////////
@@ -631,11 +623,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	     * Resets the editing form UI (checkboxes and CSS styles)
 	     * Must be called AFTER loading template.
 	     */
-	    var resetListEditingFormCheckboxesAndStyles = function() {
+	    var resetListEditingForm = function() {
 	    	
 	    	
 	    	lastUsedFilterString = "";
-	    	$studentsTargetedByCurrentList.text("0");
+	    	$studentsTargetedByCurrentList.addClass("noStudentsTargeted").text("0");
 	    		    	
 	    	hideSectionC();
 	    	
@@ -664,6 +656,58 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			$("#residency_status_all_students", $sectionC).attr("checked", "checked");
 			
 	    };
+				
+		/**
+	     * This will show the preloader.
+	     */
+	    var showLoader = function(){
+	        $tableOfLists.append(sakai.api.Util.TemplateRenderer("inbox_table_preloader", {}));
+	    };
+	    
+	    /**
+	     * Shows a general message on the top screen
+	     * @param {String} msg    the message you want to display
+	     * @param {Boolean} isError    true for error (red block)/false for normal message(green block)
+	     */
+	    var showGeneralMessage = function(msg, isError){
+	    
+	        // Check whether to show an error type message or an information one
+	        var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
+	        
+	        // Show the message to the user
+	        sakai.api.Util.notification.show("", msg, type);
+	        
+	    };
+	    
+	    /**
+	     * Check or uncheck all messages depending on the top checkbox.
+	     */
+	    var tickMessages = function(){
+	        $(".inbox_inbox_check_list").attr("checked", ($("#inbox_inbox_checkAll").is(":checked") ? "checked" : ''));
+	        updateEditCopyDeleteButtonsStatus();
+	    };
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		/**
 		 * Gets the number of people selected by filter string.
@@ -688,19 +732,55 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		          criteria: filterString
 		        },
 		        success: function(data) {
+		          if(data.count > 0) {
+		          	$studentsTargetedByCurrentList.removeClass("noStudentsTargeted");
+		          } else {
+		          	$studentsTargetedByCurrentList.addClass("noStudentsTargeted");
+		          }
 		          $studentsTargetedByCurrentList.text(data.count);          
 		        },
 		        error: function(xhr, textStatus, thrownError) {
+		          $studentsTargetedByCurrentList.addClass("noStudentsTargeted");
 		          $studentsTargetedByCurrentList.text("N/A");
 		        }
 	      });
 
 		};
 		
-		///////////////////////////////////////////////////////////////
-        // Functions for loading the information from a dynamic list //
-        ///////////////////////////////////////////////////////////////		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//////////////////////////////////////////////////////////////////////
+        // Functions for loading dynamic lists data from a condition object //
+        //////////////////////////////////////////////////////////////////////		
 
+		/**
+		 * Recursively traverses the condition object and builds an array of all used option IDs.
+		 * 
+		 * @param {Object} filterObj	A condition object
+		 * @param {Array} idArray	An array to which option IDs will be appended
+		 */
 		var dumpOptionIDs = function(filterObj, idArray) {
 			
 			if(filterObj === null || idArray === null) {
@@ -729,14 +809,30 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			};
 						
 		};
-				
+		
+		/**
+		 * Return the number of options (checkboxes) in a group.
+		 * 
+		 * @param {jQuery} $groupRoot jQuery selector
+		 * 
+		 * @return {Integer} the number of options (checkboxes) in the specified group.
+		 */		
 		var getNumberOfOptionsInGroup = function($groupRoot) {
 			 return $("input:checkbox", $groupRoot).length;
 		};
 		
+		
+		/**
+		 * Return the number of checked options (checkboxes) in a group.
+		 * 
+		 * @param {jQuery} $groupRoot jQuery selector
+		 * 
+		 * @return {Integer} the number of checked options (checkboxes) in the specified group.
+		 */
 		var getNumberOfSelectedOptionsInGroup = function($groupRoot) {
 			 return $("input:checkbox:checked", $groupRoot).length;
 		};
+		
 		
 		var isSomethingSelectedInUndergradsSection = function () {			
 			return getNumberOfSelectedOptionsInGroup($undergradsGroup) > 0;
@@ -776,47 +872,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 		
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    
-	    
-
-
-
-	
-	
-	    /**
-	     *
-	     * CSS IDs
-	     *
-	     */
-	    var inboxID = "#inbox";
-	    var inboxClass = ".inbox";
-	    var inbox = "inbox";
-	    var inboxArrow = inboxClass + "_arrow";
-	    var inboxTable = inboxID + "_table";
-	    var inboxTablePreloader = inboxTable + "_preloader";
-	    var inboxGeneralMessage = inboxID + "_general_message";
-	    var inboxMessageError = inbox + "_error_message";
-	
-	    /**
-	     * This will show the preloader.
-	     */
-	    var showLoader = function(){
-	        $(inboxTable).append(sakai.api.Util.TemplateRenderer(inboxTablePreloader.substring(1), {}));
-	    };
-	    
-	    /**
-	     * Shows a general message on the top screen
-	     * @param {String} msg    the message you want to display
-	     * @param {Boolean} isError    true for error (red block)/false for normal message(green block)
-	     */
-	    var showGeneralMessage = function(msg, isError){
-	    
-	        // Check whether to show an error type message or an information one
-	        var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
-	        
-	        // Show the message to the user
-	        sakai.api.Util.notification.show("", msg, type);
-	        
-	    };
 	    	    
 	    var getNumberOfSelectedLists = function() {
 	   	 return $(".inbox_inbox_check_list:checked").length;
@@ -840,13 +895,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	  	};
 	    
 	    
-	    /**
-	     * Check or uncheck all messages depending on the top checkbox.
-	     */
-	    var tickMessages = function(){
-	        $(".inbox_inbox_check_list").attr("checked", ($("#inbox_inbox_checkAll").is(":checked") ? "checked" : ''));
-	        updateEditCopyDeleteButtonsStatus();
-	    };
+	    
 	    
 	    
 	    var buildFilterStringFromListEditingForm = function() {
@@ -884,10 +933,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 				return -1;
 			}
 	        result.desc = $.trim($("#description").val());
-	        
-	        // NOT SUPPORTED FOR POC
-	        // result.size = $("#list_size").val();
-	        
+	        	        
 			// Gathering the data on standing
 			//TODO: check for errors
 			/*if($("#undergrad:checked").val() === null && $("#grad:checked").val() === null) {
@@ -927,7 +973,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        removeAllListsOutDOM();
 	        
 	        // Add them to the DOM
-	        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", data));
+	        $tableOfLists.children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", data));
 	        
 	        // do checkboxes
 	        tickMessages();
@@ -940,11 +986,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	     * @param {Boolean} copyMode	When set to true string "Copy of " is prepended to the name of the disolayed list and description is cleared
 	     */
 	    var displayList = function(id, copyMode){
-	        // Display edit list tab
-	        $.bbq.pushState({"tab": "new"},2);
-
-			
-			resetListEditingFormCheckboxesAndStyles();
+	        			
+			resetListEditingForm();
 	        
 	        if(!allLists.hasOwnProperty(id) || allLists[id] == null) {
 	        	return;
@@ -1063,31 +1106,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        tickMessages();
 	    });
 	    
-	    // Sorters for the inbox.
-	    
-	    //var sortBy = "name";
-	    //var sortOrder = "descending";
-	    /* Commented out for the myBerkeley POC since sorting is broken - eli
-	    $(".inbox_inbox_table_header_sort").bind("mouseenter", function() {
-	        if (sortOrder === 'descending') {
-	            $(this).append(sakai.api.Security.saneHTML($(inboxInboxSortUp).html()));
-	        }
-	        else {
-	            $(this).append(sakai.api.Security.saneHTML($(inboxInboxSortDown).html()));
-	        }
-	    });
-	    
-	    $(".inbox_inbox_table_header_sort").bind("mouseout", function() {
-	        $(inboxTable + " " + inboxArrow).remove();
-	    });
-	    
-	    $(".inbox_inbox_table_header_sort").bind("click", function() {
-	        sortBy = $(this).attr("id").replace(/inbox_table_header_/gi, "");
-	        sortOrder = (sortOrder === "descending") ? "ascending" : "descending";
-	
-	        getAllMessages(); // no such function defined, but the function should sort the data and re-populate the inbox
-	    });
-	    */
+
 	    
 	    /**
          * This will do a DELETE request to the specified paths and delete each list.
@@ -1223,7 +1242,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	              };
 	        
 	        sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/" + id, list, function() {
-	        	$.bbq.pushState({"tab": "existing"},2);
+	        	$.bbq.pushState({},2);
 	        	loadData();
 	        });
 	    };
@@ -1272,19 +1291,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        $("#inbox_inbox_checkAll").removeAttr("checked");
 	        tickMessages();
 	
-	
-			editExisting = false;	        
-	        currentListIdForEditing = null;
-	        displayList(listIds[0], true);
+	        // Display new list
+	        $.bbq.pushState({"copy": listIds[0]},2);	        
 	        
-	        
-	       /*if (listId.length < 1) {
-	            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
-	        } else if (listId.length > 1) {
-	            showGeneralMessage($("#inbox_generalmessages_duplicate_multiple").text());
-	        } else {
-	            displayList(listId[0]);
-	        }*/
 	    });
 	    
 	    $dynListsEditButton.live("click", function(evt){   
@@ -1298,18 +1307,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        if (listIds.length == 0) {
 	        	return;
 	        }
-	        
-	        editExisting = true;	        
-	        currentListIdForEditing = listIds[0];
-	        displayList(currentListIdForEditing, false);
+	        	        
+	        // Display edit list
+	        $.bbq.pushState({"edit": listIds[0]},2);
 	    });
 	    
 	    
 	    $(".editLink").live("click", function(evt){   
-	        editExisting = true;
+
 	        var id = evt.target.id;
-	        currentListIdForEditing = id;
-	        displayList(id, false);
+	        	        
+	        // Display edit list
+	        $.bbq.pushState({"edit": id},2);
 	    });
 	    
 	    $dynListsBackToNotifManagerButton.live("click", function(){
@@ -1317,9 +1326,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    });
 	    
 	    $dynListsCancelEditingButton.live("click", function(){
-	        editExisting = false;
-	        //clearInputFields();
-	        $.bbq.pushState({"tab": "existing"},2);
+	        //editExisting = false;
+	        $.bbq.pushState({},2);
 	    });
 	    
 	    $dynListsSaveButton.live("click", function(){
@@ -1332,19 +1340,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 			if(data < 0) {
 				return;
 			}
-	        
-	        // NOT SUPPORTED FOR POC
-	        // var size = $("#list_size").val();
+	        	        
 	        
 			// In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()
 			// It should be called like this $.trim($('#selector').text())
 			// See http://bit.ly/d8mDx2
-	        if (editExisting) {
-	            saveList(data, currentListIdForEditing);
-				editExisting = false;
-	        } else {
-	            saveList(data, null);
-	        }
+	        
+	        var state = $.bbq.getState();
+	        
+	        if(state.hasOwnProperty("edit") ) {
+	       		saveList(data, state.edit);
+	       	} else if(state.hasOwnProperty("new")) {
+	        	saveList(data, null);
+	        } else if(state.hasOwnProperty("copy")) {
+	        	saveList(data, null);
+	        }	        
 	    });
 	    
 	    
@@ -1397,38 +1407,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    $dynListsCreateButton.click(function() {
-	        $.bbq.pushState({"tab": "new"},2);
-	        resetListEditingFormCheckboxesAndStyles();	        
+	        $.bbq.pushState("new",2);	        
 	    });
 	    /*-------------------------------- Roman ------------------------------------------*/
 	    
-	    
-	    
-	    var setTabState = function(){
-	        var tab = $.bbq.getState("tab");
-	        if (tab) {
-	            switch (tab) {
-	                case "existing":
-	                    switchToListMode();
-	                    break;
-	                case "new":
-	                    switchToEditMode();
-	                    break;
-	            }
-	        }
-	    };
-	    
-	    $(window).bind('hashchange', function(e) {
-	        setTabState();
-	    });
-	    
+	    	    
 	    var createEmptyRootNodeForDynamicLists = function() {
 	        allLists = [];
 	        var emptyData = {
 	            "links": []
 	        }
 	        
-	        $(inboxTable).children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
+	        $tableOfLists.children("tbody").append(sakai.api.Util.TemplateRenderer("#inbox_inbox_lists_template", emptyData));
 	        
 	        // create dynamic lists node
 	        var props = {
@@ -1450,16 +1440,42 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	    
 
 	    var loadData = function() {
-	        sakai.api.Server.loadJSON(dynamicListsBaseUrl, function(success, data){
-	            setTabState();	            
+	        sakai.api.Server.loadJSON(dynamicListsBaseUrl, function(success, data){	           	           
 	            if (success) {	               
 	                renderLists(data);
 	            } else {
 	                createEmptyRootNodeForDynamicLists();
 	            }
+	            setTabState();
 	        });
 	    }
 
+
+	    ////////////////////////////////
+        // Hashchange events handling //
+        ////////////////////////////////
+
+		 var setTabState = function(){
+	        
+	        var state = $.bbq.getState();
+	        
+	        if (state.hasOwnProperty("new")) {	
+	        	resetListEditingForm();        	
+	        	switchToEditMode();
+	        } else if(state.hasOwnProperty("edit")) {	        	
+				displayList(state.edit, false);	        	
+	        	switchToEditMode();
+	        }  else if (state.hasOwnProperty("copy")) {	        	
+	        	displayList(state.copy, true);
+	        	switchToEditMode();
+	        } else {
+	        	switchToListMode();
+	        }	        
+	    };
+		
+		 $(window).bind('hashchange', function(e) {
+	        setTabState();
+	    });
 		
 	    /////////////////////////////
         // Initialization function //
@@ -1611,8 +1627,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 
 			
 	        
-	        // his is needed for the situation when we reload this page with #tab=new
-	        resetListEditingFormCheckboxesAndStyles();
+	        // this is needed for the situation when we reload this page with #new
+	        resetListEditingForm();
 	        
 	        /*-------------------------------- Roman ------------------------------------------*/
 	        
