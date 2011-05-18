@@ -247,14 +247,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists.0.json", function(success, data) {
 
                 if (success) {
-                    // Iterate through data and make new array for createOptions. (id:name)
-                    var dynamicListArray = {};
+                    // Iterate through data and make new array for createOptions.
+                    var dynamicListOptions = {};
                     for (var element in data) {
-                      dynamicListArray[element] = data[element]["sakai:name"];
+                      var optionValue = data[element]["jcr:path"];
+                      dynamicListOptions[optionValue] = data[element]["sakai:name"];
                     }
 
                     // Call createOptions with our new array.
-                    var optionsHTML = createOptions(dynamicListArray, selectedID, true);
+                    var optionsHTML = createOptions(dynamicListOptions, selectedID, true);
                 }
 
                 // Clear any old values and then append the new dynamic list options.          
