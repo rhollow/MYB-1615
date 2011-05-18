@@ -1216,7 +1216,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	        
 	        var list = {
                   	"sling:resourceType": "myberkeley/dynamiclist",
-	                "sakai:id": id,
 	                "sakai:name": data.listName,
 	                "sakai:description": data.desc,	                	                
                     context: data.context,
@@ -1255,6 +1254,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core",
 	            showGeneralMessage($("#inbox_generalmessages_none_selected").text());
 	        } else {
 	            deleteLists(listId);
+	            loadData();
 	        }
 	    });
 	    

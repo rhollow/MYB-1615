@@ -89,12 +89,12 @@
                             {for m in links}                                                             	
                              	{var dateString = Globalization.format(sakai.api.Util.parseSakaiDate(m['_lastModified']), "MMM d, yyyy hh:mm tt")}
                                                                 
-                                <tr class="inbox_list" id="inbox_table_list_${m['sakai:id']}">
-                                    <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['sakai:id']}" id="inbox_check_list_${m['sakai:id']}" title="__MSG__SELECT_LIST__" /></td>
+                                <tr class="inbox_list" id="inbox_table_list_${m['jcr:name']}">
+                                    <td><input type="checkbox" class="inbox_inbox_check_list" value="${m['jcr:name']}" id="inbox_check_list_${m['jcr:name']}" title="__MSG__SELECT_LIST__" /></td>
                                     <td>${dateString}</td>
-                                    <td><a class="editLink" id="${m['sakai:id']}" href="javascript:;">${m['sakai:name']}</a></td>
+                                    <td><a class="editLink" id="${m['jcr:name']}" href="javascript:;">${m['sakai:name']}</a></td>
                                     <td>${m['sakai:description']}</td>
-                                    <td>TODO:</td>
+                                    <td>${m['numusers']}</td>
                                 </tr>
                                     
                             {forelse}
