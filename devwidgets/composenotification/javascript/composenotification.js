@@ -244,15 +244,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * the 'Send To' field) based on the array pre-defined earlier in the JS.
          */
         var dynamicListInit = function(selectedID) {
-            sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists", function(success, data) {
+            sakai.api.Server.loadJSON("/~" + me.user.userid + "/private/dynamic_lists.0.json", function(success, data) {
 
                 if (success) {
-                    // Iterate through data.lists and make new array for createOptions. (id:name)
+                    // Iterate through data and make new array for createOptions. (id:name)
                     var dynamicListArray = {};
-                    for (var element in data.lists ) {
-                        if ( element.substr(0, 3) === "dl-") {
-                          dynamicListArray[data.lists[element]["_path"]] = data.lists[element]["sakai:name"];
-                        }
+                    for (var element in data) {
+                      dynamicListArray[element] = data[element]["sakai:name"];
                     }
 
                     // Call createOptions with our new array.
