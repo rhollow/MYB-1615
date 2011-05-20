@@ -1,47 +1,47 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
-
     <head>
-
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title></title>
 
         <!-- Sakai Core CSS -->
-        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.corev1.css"/>
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.explore.css"/>
 
-        <!-- Sakai Page CSS -->
+        <!-- MyBerkeley Page CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.inboxnotifier.css" />
 
         <!-- 3rd party CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.components.jq_pager.css" />
         <link rel="stylesheet" type="text/css" href="/dev/lib/jquery/plugins/gritter/css/jquery.gritter.css" />
-
     </head>
-
-    <body class="fl-centered inbox_main inbox_detail i18nable">               
-
-        <!-- NAVIGATION -->
-        <div id="widget_topnavigation" class="widget_inline"></div>
-
+    <body class="fl-centered inbox_main inbox_detail i18nable">
         <!-- HEADER -->
         <div class="fl-container-flex header s3d-header">
+            <div class="s3d-navigation-container">
+                <div id="widget_topnavigation" class="widget_inline"></div>
+            </div>
             <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
-            	<div class="s3d-decor-left"><!-- --></div>
-                <div class="s3d-decor"><!-- --></div>
-                <div class="decor"></div>
-            
+                <div class="s3d-container-shadow-left"><!----></div>
+                <div class="s3d-container-shadow-right"><!----></div>
+
                 <!-- TITLE BAR  -->
-                <div class="s3d-site-heading">
-                    <h1 id="sitetitle">__MSG__GROUP_NOTIFICATION_MANAGER__</h1>
+                <div class="s3d-site-heading fl-force-left">
+                  <h1 id="sitetitle">__MSG__GROUP_NOTIFICATION_MANAGER__</h1>
                 </div>
+
             </div>
         </div>
 
-        <!-- CONTENT -->
+        <!-- NOTIFICATION CONTENT -->
         <div class="fl-fix fl-centered fixed-container">
 
             <!-- MAIN PAGE -->
             <div class="fl-fix fl-col-mixed main_container">
+
+                <!-- TITLE -->
+                <h1 class="title" style="margin-bottom:10px">__MSG__GROUP_NOTIFICATION_MANAGER__</h1>
 
                 <!-- Nav -->
                 <div class="fl-col fl-fix side_panel">
@@ -288,9 +288,6 @@
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
-        <!-- CHAT -->
-        <div id="widget_chat" class="widget_inline"></div>
-
         <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
         <span id="inbox_generalmessages_error_read_fail" style="display:none;">__MSG__FAILED_TO_MARK_THIS_MESSAGE_AS_READ__.</span>
@@ -306,7 +303,6 @@
         <span id="inbox_generalmessages_copied_failed" style="display:none;">__MSG__THERE_WAS_AN_ERROR_IN_COPYING_YOUR_MESSAGES__</span>
         <div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
         <span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>        
-
 
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require-jquery.js"></script>
