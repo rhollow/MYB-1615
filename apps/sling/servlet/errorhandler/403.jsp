@@ -101,15 +101,15 @@ response.setStatus(403);
                         <ul>
                             <li><a class="s3d-regular-links s3d-bold" href="/dev/explore.html">__MSG__EXPLORE_THE_INSTITUTION__</a></li>
                             <li><a class="s3d-regular-links s3d-bold" href="/dev/allcategories.html">__MSG__BROWSE_INSTITUTION_CATEGORIES__</a></li>
-                            <li><a class="s3d-regular-links s3d-bold" href="http://sakaiproject.org/">__MSG__VIEW_THE_INSTITUTION_WEBSITE__</a></li>
-                            <li><a class="s3d-regular-links s3d-bold" href="http://sakaiproject.org/">__MSG__VISIT_THE_SUPPORT_FORUM__</a></li>
+                            <li><a class="s3d-regular-links s3d-bold" href="http://www.berkeley.edu/">__MSG__VIEW_THE_INSTITUTION_WEBSITE__</a></li>
+                            <!--<li><a class="s3d-regular-links s3d-bold" href="http://sakaiproject.org/">__MSG__VISIT_THE_SUPPORT_FORUM__</a></li>-->
                             <li><button id="error_goback" class="s3d-link-button s3d-bold">__MSG__GO_BACK_BY_USING_YOUR_BROWSER_BACK_BUTTON__</button></li>
                         </ul>
                         
                         <h3>__MSG__GET_IN_TOUCH__</h3>
                         <ul>
-                            <li><a class="s3d-regular-links s3d-bold" href="http://sakaiproject.org/">__MSG__SEND_US_YOUR_FEEDBACK__</a></li>
-                            <li><a class="s3d-regular-links s3d-bold" href="http://sakaiproject.org/">__MSG__CONTACT_SUPPORT__</a></li>
+                            <li><a class="s3d-regular-links s3d-bold" href="portal@berkeley.edu?subject=Feedback on MyBerkeley">__MSG__SEND_US_YOUR_FEEDBACK__</a></li>
+                            <li><a class="s3d-regular-links s3d-bold" href="portal@berkeley.edu?subject=Feedback on MyBerkeley">__MSG__CONTACT_SUPPORT__</a></li>
                         </ul>
                         
                     </div>  
