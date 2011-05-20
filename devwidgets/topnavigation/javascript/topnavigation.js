@@ -51,6 +51,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         var topnavExplore = ".topnavigation_explore";
         var topnavUserOptions = ".topnavigation_user_options";
         var topnavUserDropdown = ".topnavigation_user_dropdown";
+        var topnavigationlogin = "#topnavigation_user_options_login_wrapper";
 
         // Form
         var topnavUserOptionsLoginForm = "#topnavigation_user_options_login_form";
@@ -484,8 +485,20 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                     "password": $(topnavUseroptionsLoginFieldsPassword).val()
                 }, function(success){
                     if (success) {
+                        var qs = new Querystring();
                         // Go to You when you're on explore page
                         if (window.location.pathname === "/dev/explore.html" || window.location.pathname === "/dev/create_new_account2.html") {
+                            window.location = "/dev/me.html";
+                        // 403/404 and not logged in
+                        } else if (sakai_global.nopermissions && sakai.data.me.user.anon && !sakai_global.nopermissions.error500){
+                            var url = qs.get("url");
+                            if (url){
+                                window.location = url;
+                            } else {
+                                location.reload(true);
+                            }
+                        // 500 not logged in
+                        } else if (sakai_global.nopermissions && sakai.data.me.user.anon && sakai_global.nopermissions.error500){
                             window.location = "/dev/me.html";
                         } else {
                             // Just reload the page
@@ -500,6 +513,13 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                     }
                 });
                 return false;
+            });
+            
+            $(topnavigationlogin).hover(function(){
+                $('#topnavigation_user_options_login_fields').show();
+            },
+            function(){
+                $('#topnavigation_user_options_login_fields').hide();
             });
         };
 
