@@ -1,46 +1,55 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
-
     <head>
-
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title></title>
 
         <!-- Sakai Core CSS -->
-        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css"/>
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.corev1.css"/>
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.explore.css"/>
 
-        <!-- Sakai Page CSS -->
+        <!-- MyBerkeley Page CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/myb/myb.listpage.css" />
 
         <!-- 3rd party CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.components.jq_pager.css" />
         <link rel="stylesheet" type="text/css" href="/dev/lib/jquery/plugins/gritter/css/jquery.gritter.css" />
         <link rel="stylesheet" type="text/css" href="/dev/css/lib/jquery.autoSuggest.css" />
-
     </head>
-
     <body class="fl-centered fl-container inbox_main inbox_detail i18nable">
-		
+
 		<!-- This script is used for dynamic geneartion of sections A and B -->
 		<script type="text/javascript">
 			var propExists = function(prop) {
-     			return typeof(prop) !== 'undefined' && prop != null;					
+     			return typeof(prop) !== 'undefined' && prop != null;
     		}
 		</script>
-		
-        <!-- NAVIGATION -->
-        <div id="widget_topnavigation" class="widget_inline"></div>
+
+        <!-- HEADER -->
+        <div class="fl-container-flex header s3d-header">
+            <div class="s3d-navigation-container">
+                <div id="widget_topnavigation" class="widget_inline"></div>
+            </div>
+            <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
+                <div class="s3d-container-shadow-left"><!----></div>
+                <div class="s3d-container-shadow-right"><!----></div>
+
+                <!-- TITLE BAR  -->
+                <div class="s3d-site-heading fl-force-left">
+                  <h1 id="sitetitle">__MSG__DYNAMIC_LIST_MANAGER__</h1>
+                </div>
+
+            </div>
+        </div>
 
         <!-- CONTENT -->
         <div class="fl-container fl-fix fl-container-flex s3d-header content_inbox">
             <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
-            	<div class="s3d-decor-left"><!-- --></div>
-                <div class="s3d-decor"><!-- --></div>
-                <div class="decor"><!-- --></div>
-                
+
                 <!-- TITLE -->
                 <h1 class="title" style="margin-bottom:10px">__MSG__DYNAMIC_LIST_MANAGER__</h1>
-                                    
+
                 <button type="button" id="dynamic_lists_create_new" class="s3d-button" style="margin-bottom:10px;"><span class="s3d-button-inner">Create New</span></button>   
                     
                     
@@ -598,9 +607,6 @@
 		
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
-
-        <!-- CHAT -->
-        <div id="widget_chat" class="widget_inline"></div>
 
        <!-- ERRORS AND MESSAGES -->
         <div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
