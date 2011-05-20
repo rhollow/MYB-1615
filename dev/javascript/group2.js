@@ -36,6 +36,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                 if (success){
                     groupData = {};
                     groupData.authprofile = data.properties;
+                    groupData.authprofile.picture = sakai.api.Groups.getProfilePicture(groupData.authprofile);
                     sakai_global.group2.groupData = groupData.authprofile;
                     sakai.api.Security.showPage(function() {
                         if (groupData.authprofile["sakai:customStyle"]) {
@@ -78,7 +79,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
         /////////////////////////
         // LOAD LEFT HAND SIDE //
         /////////////////////////
-        
+
         var filterOutUnwanted = function(){
             var roles = $.parseJSON(groupData.authprofile["sakai:roles"]);
             for (var i in pubdata.structure0){
