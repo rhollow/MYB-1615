@@ -261,18 +261,19 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
             $('#ew_upload>a').click(function(e){
                 e.preventDefault();
-                $(window).trigger("init.fileupload.sakai");
+                $(window).trigger("init.uploadnewversion.sakai");
                 $('#entity_contentsettings_dropdown').jqmHide();
             });
 
-            $(".addpeople_init").click(function(){
-                $(window).trigger("init.addpeople.sakai", [tuid]);
-                $("#entity_groupsettings_dropdown").jqmHide();
-            })
-
-        });
-
-        $(window).bind("ready.contentpreview.sakai", function(){
+            $("#ew_revhistory").click(function(e){
+                $(window).trigger("init.versions.sakai", {
+                    pageSavePath: sakai_global.content_profile.content_data.content_path,
+                    saveRef: "",
+                    showByDefault: true
+                });
+                $('#entity_contentsettings_dropdown').jqmHide();
+            });
+            
             $("#ew_content_preview_delete>a").bind("click", function(e){
                 e.preventDefault();
                 window.scrollTo(0,0);
@@ -289,6 +290,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 );
                 $('#entity_contentsettings_dropdown').jqmHide();
             });
+
+            $(".addpeople_init").click(function(){
+                $(window).trigger("init.addpeople.sakai", [tuid]);
+                $("#entity_groupsettings_dropdown").jqmHide();
+            })
+
         });
 
         // An event to call from the worldsettings dialog so that we can

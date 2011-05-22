@@ -573,6 +573,15 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             }
         });
 
+        // Join group
+
+        $(".sakai_joingroup_overlay").live("click", function(ev){
+            var el = $(this);
+            if (el.attr("data-groupid")){
+                $(window).trigger("initialize.joingroup.sakai", [el.attr("data-groupid"), el]);
+            }
+        });
+
 
         /////////////////////////
         /////// INITIALISE //////

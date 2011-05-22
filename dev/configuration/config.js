@@ -1345,7 +1345,7 @@ define(function(){
                 }
             },
             easiaticlanguagesliterature: {
-                title: "Eastern, Asiatic, African, American and Australasian Languages, Literature and related subjects",
+                title: "Exotic Languages, Literature and related subjects",
                 children: {
                     chinesestudies: {
                         title: "Chinese studies"
@@ -1682,16 +1682,6 @@ define(function(){
                 "threecolumn": {
                     "name": "Three equal columns",
                     "widths": [33, 33, 33],
-                    "siteportal": false
-                },
-                "fourcolumn": {
-                    "name": "Four equal columns",
-                    "widths": [25, 25, 25, 25],
-                    "siteportal": false
-                },
-                "fivecolumn": {
-                    "name": "Five equal columns",
-                    "widths": [20, 20, 20, 20, 20],
                     "siteportal": false
                 }
             },
