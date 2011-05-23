@@ -253,6 +253,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 .jqmShow();
             });
 
+            $("#ew_group_categories_link").click(function(){
+                $("#assignlocation_container").jqmShow();
+                $('#entity_groupsettings_dropdown').jqmHide();
+            });
+
             $('#ew_permissions>a').click(function(e){
                 e.preventDefault();
                 $(window).trigger("init.contentpermissions.sakai");
