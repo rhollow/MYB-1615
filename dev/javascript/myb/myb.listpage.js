@@ -115,11 +115,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Dynamic list 'delete' button
          */
 	  	var $dynListsDeleteButton = $("#dyn_lists_delete_button");
-	  		  	
-	  	/**
-         * Dynamic list 'Back to Group Notification Manager' button
-         */
-	  	var $dynListsBackToNotifManagerButton = $("#dyn_lists_back_to_group_notification_manager_button");	 
 	  	
 	  	/**
          * Dynamic list 'Save' button
@@ -605,6 +600,14 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	    	$showMoreOrLess.text("Show More");
 	    	$sectionC.hide();
 	    };
+
+        /**
+	     * Shows section C (common filter settings).
+	     */
+	    var showSectionC = function() {
+	    	$showMoreOrLess.text("Show Less");
+		    $sectionC.show();
+	    };
 	    
 	    /**
 	     * Toggles section C visibility.
@@ -614,8 +617,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 			if($sectionC.is(":visible")) {
 				hideSectionC();					
 			} else {
-				$showMoreOrLess.text("Show Less");
-				$sectionC.show();					
+				showSectionC();
 			}						
 		};
 	    
@@ -729,6 +731,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
 		};
 
+        /**
+         * Switches to edit dynamic list mode
+         */
         var switchToEditMode = function() {
 
 	    	// Set headers and tab styling
@@ -745,12 +750,14 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	        $dynListsDeleteButton.hide();
 	        $dynListsCopyButton.hide();
 	        $dynListsEditButton.hide();
-	        $dynListsBackToNotifManagerButton.hide();
 
 	        $dynListsCancelEditingButton.show();
 	        $dynListsSaveButton.show();
 	    };
 
+        /**
+         * Switches to dynamic lists table mode
+         */
 	    var switchToListMode = function() {
 
 	    	// Set headers and tab styling
@@ -768,7 +775,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	        $dynListsDeleteButton.show();
 	        $dynListsCopyButton.show();
 	        $dynListsEditButton.show();
-	        $dynListsBackToNotifManagerButton.show();
 
 	        $dynListsCancelEditingButton.hide();
 	        $dynListsSaveButton.hide();
@@ -781,11 +787,41 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	    var removeAllListsOutDOM = function(){
 	        $(".inbox_list").remove();
 	    };
-		
+
+
+        /**
+         * sorts an array of dynamic lists on the date of last modification, this can be used with the JavaScript sort function.
+         *
+         * @param {Object} a  a dynamic list item
+         * @param {Object} b  another dynamic list item
+         *
+         * @return {Integer} Less than 0: Sort "a" to be a lower index than "b";
+         *                   Zero: "a" and "b" should be considered equal, and no sorting performed;
+         *                   Greater than 0: Sort "b" to be a lower index than "a".
+         */
+        var sortByDateFunction = function(a, b) {
+
+            return a['_lastModified'] - b['_lastModified'];
+        };
+
+        /**
+         * Renders loaded lists to the lists table
+         */
 		var displayLoadedLists = function() {
 
+            //Sort by date
+            var listsArray = [];
+            for(var key in allLists){
+                if(allLists.hasOwnProperty(key)) {
+                    listsArray.push(allLists[key]);
+                }
+            }
+            listsArray.sort(sortByDateFunction);
+
+
+
             var data = {
-                links: allLists,
+                links: listsArray, //allLists,
                 sakai: sakai
             };
 
@@ -917,6 +953,48 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 						
 		};
 
+        /**
+         * Returns true is something selected in section C.
+         *
+         * @param idArray an array of filter IDs.
+         *
+         * @return {Boolean} Returns true if something is selected in section C; otherwise returns false.
+         */
+        var isSomethingSelectedInSectionC = function(idArray) {
+
+            if(idArray.length === 0) return false;
+
+            // list of regular expressions to match condition IDs from section C
+            var reg_status = /^reg_status_/;
+            var currency_status = /^currency_status_/;
+            var student_reg_status = /^student_reg_status_/;
+            var designate_term_semester = /^designate_term_semester_/;
+            var designate_term_year = /^designate_term_year_/;
+            var cohort_status_term = /^cohort_status_term_/;
+            var special_program = /^special_program_/;
+            var student_status = /^student_status_/;
+            var residency_status = /^residency_status_/;
+
+            for (var i = 0; i < idArray.length; i++) {
+                var currentId = idArray[i];
+                if (    currentId.match(reg_status) ||
+                        currentId.match(currency_status) ||
+                        currentId.match(student_reg_status) ||
+                        currentId.match(designate_term_semester) ||
+                        currentId.match(designate_term_year) ||
+                        currentId.match(cohort_status_term) ||
+                        currentId.match(special_program) ||
+                        currentId.match(student_status) ||
+                        currentId.match(residency_status)
+                        ) {
+                    return true;
+
+                }
+            }
+
+            return false;
+        };
+
 	    /**
          * Resets the editing form and loads the list with specified id into it.
          * @param {String} id    The id of a list
@@ -942,6 +1020,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             var idArray = [];
             var filterAsObject = $.parseJSON(list.filter);
             dumpOptionIDs(filterAsObject, idArray); // dumped IDs are stored in idArray
+
             var includeAllGradsId = $includeGradsCheckbox.val();
             var includeAllUndergradsId = $includeUndergradsCheckbox.val();
 
@@ -1027,6 +1106,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             updateNumberOfPeopleSelectedByFilter(list.filter);
 
+             if(isSomethingSelectedInSectionC(idArray)) {
+                 showSectionC();
+             }
+
         };
 
         var createEmptyRootNodeForDynamicLists = function() {
@@ -1075,9 +1158,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Gathers all information from sections A, B and C.
          * Returns a condition object created from this data as string.
          *
-         *  @return {String} a condition object created from sections A, B, C data as string.
+         *  @return {Object} a condition object created from sections A, B, C data.
          */
-         var buildFilterStringFromListEditingForm = function() {
+         var buildFilterFromListEditingForm = function() {
 
 			 // Sections A and B
              var dynamicListFilter = buildUndergraduatesAndGraduatesResultingObject();
@@ -1101,7 +1184,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 			var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));
 			dynamicListFilter = joinTwoConditionsByAND(dynamicListFilter, residencyStatus);
 
-	        return $.toJSON(dynamicListFilter);
+	        return dynamicListFilter;
+	    };
+
+        /**
+         * Gathers all information from sections A, B and C.
+         * Returns a condition object created from this data as string.
+         *
+         *  @return {String} a condition object created from sections A, B, C data as string.
+         */
+         var buildFilterStringFromListEditingForm = function() {
+
+	        return $.toJSON(buildFilterFromListEditingForm());
 	    };
 
         var validateUserInput = function() {
@@ -1183,9 +1277,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	    	var requests = [];
             $(paths).each(function(i,val) {
                 var req = {
-                    "url": val,
-                    "method": "POST",
-                    "parameters": {
+                    url: val,
+                    method: "POST",
+                    parameters: {
                         ":operation": "delete"
                     }
                 };
@@ -1358,10 +1452,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	        	        
 	        // Display edit list
 	        $.bbq.pushState({"edit": id},2);
-	    });
-	    
-	    $dynListsBackToNotifManagerButton.live("click", function(){
-	        window.location = "/dev/inboxnotifier.html";
 	    });
 	    
 	    $dynListsCancelEditingButton.live("click", function(){
@@ -1537,6 +1627,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         // Hashchange events handling //
         ////////////////////////////////
 
+        /**
+         * Sets current state of this component (list mode or edit mode).
+         * This function is called when hashchange event fires.
+         */
 		 var setTabState = function(){
 	        
 	        var state = $.bbq.getState();
