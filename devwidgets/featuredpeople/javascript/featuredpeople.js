@@ -40,7 +40,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         var renderPeople = function(data){
                 $featuredpeopleContainer.html(sakai.api.Util.TemplateRenderer(featuredpeopleTemplate, {
                     "data": data,
-                    "category": pageData.category
+                    "category": pageData.category,
+                    "sakai": sakai
                 }));
         }
 
@@ -61,7 +62,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         var fetchPeople = function(){
             var q = "";
             if(pageData){
-                q = pageData.category;
+                q = pageData.category.replace("-", "/");
             }
             sakai.api.Server.loadJSON("/var/search/users.infinity.json", parsePeople, {
                 page: 0,
