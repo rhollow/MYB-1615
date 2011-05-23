@@ -206,7 +206,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 		var isConditionObjectEmpty = function(obj) {
 			var objHasOwnPropertyAND = obj.hasOwnProperty("AND");
 			var objHasOwnPropertyOR = obj.hasOwnProperty("OR");
-			return (objHasOwnPropertyAND && obj.AND.length === 0) || (objHasOwnPropertyOR && obj.OR.length === 0) || (!objHasOwnPropertyAND && !objHasOwnPropertyOR);
+			return (objHasOwnPropertyAND && obj.AND.length === 0)
+                    || (objHasOwnPropertyOR && obj.OR.length === 0)
+                    || (!objHasOwnPropertyAND && !objHasOwnPropertyOR);
 		};
 		
 		/**
@@ -396,7 +398,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 		 * Gathers infomation about the cohort status and returns it as an object.
 		 * Returned information includes: semester, year and cohort.
 		 * 
-		 * @return {Object} A condition object containing the information about the cohort status in the AND field. Return value can be null if nothing is selected. 
+		 * @return {Object} a condition object containing the information about the cohort status in the AND field. Return value can be null if nothing is selected.
 		 */
 		var buildCohortStatusObject = function() {
 			
@@ -418,7 +420,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 		/**
 		 * Gathers infomation about the registration status and returns it as an object.
 		 *  
-		 * @return {Object} A condition object containing the information about the registration status.  
+		 * @return {Object} a condition object containing the information about the registration status.
 		 */
 		var buildRegistrationStatusObject = function() {
 			
@@ -442,7 +444,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 		 * Gathers all undergraduates related information and returns it as an object.
 		 * Returned information includes: undergraduate majors, levels, 'admitted as' status and 'declared' status. 
 		 * 
-		 * @return {Object} A condition object containing all undergraduates related information in the AND field.
+		 * @return {Object} a condition object containing all undergraduates related information in the AND field.
 		 */
 		var buildUndergradsObjectAsAND = function() {
 
@@ -465,7 +467,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 		 * Gathers all graduate students related information and returns it as an object.
 		 * Returned information includes: graduate programs, certificates, emphases, degrees. 
 		 * 
-		 * @return {Object} A condition object containing all graduate students related information in the AND field.
+		 * @return {Object} a condition object containing all graduate students related information in the AND field.
 		 */
 		var buildGradsObjectAsAND = function() {
 
@@ -600,7 +602,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	     * Hides section C (common filter settings).
 	     */
 	    var hideSectionC = function() {
-	    	$showMoreOrLess.text("Show Less");
+	    	$showMoreOrLess.text("Show More");
 	    	$sectionC.hide();
 	    };
 	    
@@ -696,7 +698,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 		 *
 		 */
 		var updateNumberOfPeopleSelectedByFilter = function(filterString) {
-			
+
+			// Prevent unnecessary AJAX requests
 			if(lastUsedFilterString === filterString) {
 				 return;
 			}
@@ -857,42 +860,23 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             return $(".inbox_inbox_check_list:checked").length;
            };
 
-          var updateEditCopyDeleteButtonsStatus = function() {
-              var num = getNumberOfSelectedLists();
-              if(num === 0) {
-                  $dynListsEditButton.attr('disabled', 'disabled');
-                  $dynListsCopyButton.attr('disabled', 'disabled');
-                  $dynListsDeleteButton.attr('disabled', 'disabled');
-              } else if(num === 1){
-                  $dynListsEditButton.removeAttr('disabled');
-                  $dynListsCopyButton.removeAttr('disabled');
-                  $dynListsDeleteButton.removeAttr('disabled');
-              } else if(num > 1){
-                  $dynListsEditButton.attr('disabled', 'disabled');
-                  $dynListsCopyButton.attr('disabled', 'disabled');
-                  $dynListsDeleteButton.removeAttr('disabled');
-              }
-          };
+        var updateEditCopyDeleteButtonsStatus = function() {
+          var num = getNumberOfSelectedLists();
+          if(num === 0) {
+              $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsDeleteButton.attr('disabled', 'disabled');
+          } else if(num === 1){
+              $dynListsEditButton.removeAttr('disabled');
+              $dynListsCopyButton.removeAttr('disabled');
+              $dynListsDeleteButton.removeAttr('disabled');
+          } else if(num > 1){
+              $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsDeleteButton.removeAttr('disabled');
+          }
+        };
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		//////////////////////////////////////////////////////////////////////
         // Functions for loading dynamic lists data from a condition object //
@@ -1087,6 +1071,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         // Dynamic lists saving //
         //////////////////////////
 
+        /**
+         * Gathers all information from sections A, B and C.
+         * Returns a condition object created from this data as string.
+         *
+         *  @return {String} a condition object created from sections A, B, C data as string.
+         */
          var buildFilterStringFromListEditingForm = function() {
 
 			 // Sections A and B
@@ -1114,33 +1104,46 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	        return $.toJSON(dynamicListFilter);
 	    };
 
+        var validateUserInput = function() {
+            var listName = $.trim($("#list_name").val());
+            if (listName === null || listName === "") {
+                $("#invalid_name").show();
+                return false;
+            }
+
+            return true;
+        };
+
         var getDataFromInput = function() {
             var result = {};
 
             result.context = "g-ced-students";
             result.listName = $.trim($("#list_name").val());
-            if (result.listName === null || result.listName === "") {
-                $("#invalid_name").show();
-                return -1;
-            }
             result.desc = $.trim($("#description").val());
 
             // Gathering the data on standing
             //TODO: check for errors
-            /*if($("#undergrad:checked").val() === null && $("#grad:checked").val() === null) {
-             $("#invalid_major").show();
-             return -1;
-             }*/
 
             result.filter = buildFilterStringFromListEditingForm();
 
             return result;
         };
 
+        /**
+         * Generates a unique ID for a new dynamic list
+         *
+         * @returns {String} generated list ID. For ex. "dl-892685-1305835896429"
+         */
         var generateId = function() {
             return DYNAMIC_LIST_PREFIX + sakai.data.me.user.userid + "-" + new Date().getTime();
         };
 
+        /**
+         * Saves the given list.
+         *
+         * @param data  List object
+         * @param listId    Existing list ID if you want to overwrite it or null for a new list.
+         */
 	    var saveList = function(data, listId) {
 	        if (listAlreadyExists(data)) {
 	            showGeneralMessage($("#inbox_generalmessages_already_exists").text());
@@ -1204,7 +1207,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             });
 	    };
 
-
+        /**
+         * Removes lists with provided IDs from DOM and sends batch delete AJAX request.
+         *
+         *  @param listIds {Array} IDs of lists to delete
+         */
 	    var deleteLists = function(listIds) {
 
 	        var paths = []; // paths to nodes to delete
@@ -1366,10 +1373,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	        $("#invalid_name").hide();
 	        $("#invalid_major").hide();
 
+            if(!validateUserInput()) {
+                return;
+            }
 	        var data = getDataFromInput();
-			if(data < 0) {
-				return;
-			}
 
 			// In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()
 			// It should be called like this $.trim($('#selector').text())
@@ -1391,26 +1398,139 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	        tickMessages();
 	    });
 
+        /**
+         * Defines variables and sets up event handlers for template-dependent page elements
+         * (i.e. elements that do not exist before template loading).
+         */
+        var setupTemplateDependentVarsAndEventHandlers = function() {
+
+            $includeUndergradsCheckbox = $("#include_undergrads");
+			$includeGradsCheckbox = $("#include_grads");
+
+			// Define undergrad and grad groups AFTER template has been rendered
+			$undergradsGroup = $(".undergrads_group");
+			$gradsGroup = $(".grads_group");
+
+			//Disabling all graduate and undergraduate controls
+			if (boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
+
+				$includeGradsCheckbox.click(function(){
+						if($includeGradsCheckbox.is(':checked')){
+							$("input", $gradsGroup).removeAttr("disabled");
+							$gradsGroup.removeClass("disabled");
+						} else {
+							$("input", $gradsGroup).attr("disabled", "disabled");
+							$gradsGroup.addClass("disabled");
+						}
+
+				});
+
+				$includeUndergradsCheckbox.click(function(){
+						if($includeUndergradsCheckbox.is(':checked')){
+							$("input", $undergradsGroup ).removeAttr("disabled");
+							$undergradsGroup.removeClass("disabled");
+						} else {
+							$("input", $undergradsGroup ).attr("disabled", "disabled");
+							$undergradsGroup.addClass("disabled");
+						}
+
+				});
+			}
+
+            // TODO: ask Rachel if we need these two handlers (design has changed)
+			$('input[id^="undergrad_major_"]').click(function(){
+					$("#undergrad_majors_selected_majors").click();
+				});
+
+			$('input[id^="grad_program_"]').click(function(){
+					$("#grad_programs_selected_programs").click();
+				});
+
+            var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group', $sectionC);
+			$regStatusSelectAllInGroup.click(function(){
+				if($regStatusSelectAllInGroup.is(':checked')) {
+					$(".reg_status .sub_group input", $sectionC).attr("checked", "checked");
+				} else {
+					$(".reg_status .sub_group input", $sectionC).removeAttr("checked");
+				}
+			});
 
 
+			var $currencyStatusSelectAllInGroup = $('#currency_status_select_all_in_group', $sectionC);
+			$currencyStatusSelectAllInGroup.click(function(){
+				if($currencyStatusSelectAllInGroup.is(':checked')) {
+					$(".current_or_not .sub_group input", $sectionC).attr("checked", "checked");
+				} else {
+					$(".current_or_not .sub_group input", $sectionC).removeAttr("checked");
+				}
+			});
 
+			var $studentRegStatusSelectAllInGroup = $('#student_reg_status_select_all_in_group', $sectionC);
+			$studentRegStatusSelectAllInGroup.click(function(){
+				if($studentRegStatusSelectAllInGroup.is(':checked')) {
+					$(".student_reg_status .sub_group input", $sectionC).attr("checked", "checked");
+				} else {
+					$(".student_reg_status .sub_group input", $sectionC).removeAttr("checked");
+				}
+			});
 
+            $studentsTargetedByCurrentList = $(".students_targeted_by_list_container .readonly_textbox");
 
+			// interactive number of users
+			var $listEditingDiv = $("#create_new_list");
+			$("input:checkbox, input:radio", $listEditingDiv).click(function() {
+				var filterString = buildFilterStringFromListEditingForm();
+				updateNumberOfPeopleSelectedByFilter(filterString);
+			});
+			$("select", $listEditingDiv).change(function() {
+				var filterString = buildFilterStringFromListEditingForm();
+				updateNumberOfPeopleSelectedByFilter(filterString);
+			});
 
+	  	  	//Show more/less button in section C
+	  		$showMoreOrLess = $("#show_more_or_less");
+			// section C toggle button
+			$showMoreOrLess.click(toggleSectionC);
+        };
 
+        ////////////////////
+        // Page templates //
+        ////////////////////
 
+        /**
+         * Loads page template form the given url and renders it.
+         *
+         * @param templateUrl Template URL, for ex. "nauth_ced.json"
+         */
+        var loadTemplate = function(templateUrl) {
 
+            // Trimpath template for sections A and B of the list editing form (section C is static and doesn't require a templete)
+        	var $listEditFormTemplate = $("#list_edit_form_template");
 
-	    
-	    
+        	// View to render the template for sections A and B
+			var $view = $("#view");
 
-	    
+            $.ajax({
+                    url: templateUrl,
+                    type: "GET",
+                    async: false,
+                    cache: false,
+                    dataType: "json",
+                    success: function(data){
+                        if (data) {
+                           // what information do we have?
+                           boolTemplateHasUndergradsData = typeof(data.undergraduates) !== 'undefined' && data.undergraduates !== null;
+                           boolTemplateHasGradsData = typeof(data.graduates) !== 'undefined' && data.graduates !== null;
 
-
-
-	    
-	    	    
-
+                           // rendering the loaded template
+                           $view.html(sakai.api.Util.TemplateRenderer($listEditFormTemplate, data));
+                        }
+                    },
+                     error: function(xhr, textStatus, thrownError) {
+                        sakai.api.Util.notification.show(errorText,"",sakai.api.Util.notification.type.ERROR);
+                    }
+            });
+        };
 
 
 	    ////////////////////////////////
@@ -1440,11 +1560,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	    });
 
 
-
-
-
-
-
 	    /////////////////////////////
         // Initialization function //
         /////////////////////////////
@@ -1463,130 +1578,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 	            return;
 	        }
 	       
-        	// Trimpath template for sections A and B of the list editing form (section C is static and doesn't require a templete)
-        	var $listEditFormTemplate = $("#list_edit_form_template");
-                	
-        	// View to render the template for sections A and B
-			var $view = $("#view");
-	        
-	        // Loading template
-            var template;
-			$.ajax({
-                    url: "nauth_ced.json", // TODO: put this into sakai config
-                    type: "GET",
-                    "async":false,
-                    "cache":false,
-                    "dataType":"json",
-                    success: function(data){
-                        if (data) {
-                           template = data;
-                        }
-                    },
-					 error: function(xhr, textStatus, thrownError) {
-                        sakai.api.Util.notification.show(errorText,"",sakai.api.Util.notification.type.ERROR);
-                    }
-            });
-			
-			boolTemplateHasUndergradsData = typeof(template.undergraduates) !== 'undefined' && template.undergraduates !== null;
-			boolTemplateHasGradsData = typeof(template.graduates) !== 'undefined' && template.graduates !== null; 
-			
-			$view.html(sakai.api.Util.TemplateRenderer($listEditFormTemplate, template));
-			
-			$includeUndergradsCheckbox = $("#include_undergrads");
-			$includeGradsCheckbox = $("#include_grads");
-			
-			// Define undergrad and grad groups AFTER template has been rendered
-			$undergradsGroup = $(".undergrads_group");
-			$gradsGroup = $(".grads_group");
-			
-			//Disabling all graduate and undergraduate controls
-			if (boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
-														
-				$includeGradsCheckbox.click(function(){
-						if($includeGradsCheckbox.is(':checked')){
-							$("input", $gradsGroup).removeAttr("disabled");						
-							$gradsGroup.removeClass("disabled");
-						} else {
-							$("input", $gradsGroup).attr("disabled", "disabled");
-							$gradsGroup.addClass("disabled");
-						}
-											
-				});
-								
-				$includeUndergradsCheckbox.click(function(){
-						if($includeUndergradsCheckbox.is(':checked')){
-							$("input", $undergradsGroup ).removeAttr("disabled");							
-							$undergradsGroup.removeClass("disabled");						
-						} else {
-							$("input", $undergradsGroup ).attr("disabled", "disabled");							
-							$undergradsGroup.addClass("disabled");						
-						}
-											
-				}); 
-			}
-			
-			// Click handlers
-			$('input[id^="undergrad_major_"]').click(function(){
-					$("#undergrad_majors_selected_majors").click();
-				});
-				
-			$('input[id^="grad_program_"]').click(function(){
-					$("#grad_programs_selected_programs").click();
-				});
-            
-            var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group', $sectionC);
-			$regStatusSelectAllInGroup.click(function(){
-				if($regStatusSelectAllInGroup.is(':checked')) {
-					$(".reg_status .sub_group input", $sectionC).attr("checked", "checked");
-				} else {
-					$(".reg_status .sub_group input", $sectionC).removeAttr("checked");
-				}
-			});
-			
-			
-			var $currencyStatusSelectAllInGroup = $('#currency_status_select_all_in_group', $sectionC);
-			$currencyStatusSelectAllInGroup.click(function(){
-				if($currencyStatusSelectAllInGroup.is(':checked')) {
-					$(".current_or_not .sub_group input", $sectionC).attr("checked", "checked");
-				} else {
-					$(".current_or_not .sub_group input", $sectionC).removeAttr("checked");
-				}
-			});
-			
-			var $studentRegStatusSelectAllInGroup = $('#student_reg_status_select_all_in_group', $sectionC);
-			$studentRegStatusSelectAllInGroup.click(function(){
-				if($studentRegStatusSelectAllInGroup.is(':checked')) {
-					$(".student_reg_status .sub_group input", $sectionC).attr("checked", "checked");
-				} else {
-					$(".student_reg_status .sub_group input", $sectionC).removeAttr("checked");
-				}
-			});
-			
-			
-			populateDesignateTermYear();	
-			
-			$studentsTargetedByCurrentList = $(".students_targeted_by_list_container .readonly_textbox");
-			
-			
-			// interactive number of users
-			var $listEditingDiv = $("#create_new_list");
-			$("input:checkbox, input:radio", $listEditingDiv).click(function() {
-				var filterString = buildFilterStringFromListEditingForm();
-				updateNumberOfPeopleSelectedByFilter(filterString);
-			});
-			$("select", $listEditingDiv).change(function() {
-				var filterString = buildFilterStringFromListEditingForm();
-				updateNumberOfPeopleSelectedByFilter(filterString);
-			});
-			
-	  	  	//Show more/less button in section C
-	  		$showMoreOrLess = $("#show_more_or_less");
-			// section C toggle button
-			$showMoreOrLess.click(toggleSectionC);
+            loadTemplate("nauth_ced.json");
 
-			
-	        
-	        // this is needed for the situation when we reload this page with #new
+			populateDesignateTermYear();
+
+            setupTemplateDependentVarsAndEventHandlers();
+
+	        // this is needed for the situation when we reload this page with some hash parameter, like #new
 	        resetListEditingForm();
 	        
 	        dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
