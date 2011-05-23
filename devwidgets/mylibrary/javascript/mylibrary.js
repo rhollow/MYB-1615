@@ -59,7 +59,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var $mylibrary_livefilter = $("#mylibrary_livefilter", $rootel);
         var $mylibrary_sortarea = $("#mylibrary_sortarea", $rootel);
         var $mylibrary_empty = $("#mylibrary_empty", $rootel);
-        var $mylibrary_empty_note = $("#mylibrary_empty_note", $rootel);
         var $mylibrary_admin_actions = $("#mylibrary_admin_actions", $rootel);
         var $mylibrary_addcontent = $("#mylibrary_addcontent", $rootel);
         var $mylibrary_groupfilter_selection = $("#mylibrary_groupfilter_selection", $rootel);
@@ -83,6 +82,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * @param {String} query  optional query string to limit search results
          */
         var reset = function (query) {
+            mylibrary.currentPagenum = mylibrary.currentPagenum || 1;
             $mylibrary_items.html("");
             $mylibrary_check_all.removeAttr("checked");
             $mylibrary_remove.attr("disabled", "disabled");
@@ -254,7 +254,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     return null;
                 }
                 var formatted_tags = [];
-                $.each(tags, function (i, name) {
+                $.each(sakai.api.Util.formatTagsExcludeLocation(tags), function (i, name) {
                     formatted_tags.push({
                         name: name,
                         link: "/search#tag=/tags/" + name
@@ -325,7 +325,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         items.push({
                             id: result["jcr:path"],
                             filename: result["sakai:pooled-content-file-name"],
-                            link: "/content#content_path=/p/" + result["jcr:path"],
+                            link: "/content#p=" + result["jcr:path"],
                             last_updated: $.timeago(new Date(result["_lastModified"])),
                             type: sakai.api.i18n.General.getValueForKey(mimetypeObj.description),
                             type_src: mimetypeObj.URL,
@@ -421,7 +421,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 $mylibrary_sortarea.hide();
                 //$("#mylibrary_title_bar").hide();
                 $mylibrary_items.hide();
-                $mylibrary_empty_note.html(getPersonalizedText("NO_ITEMS_IN_YOUR_LIBRARY"));
+                var who = "";
+                if(sakai_global.profile){
+                    who = sakai_global.profile.main.mode.value
+                }else if (sakai_global.group2){
+                    who = "group"
+                }
+                $mylibrary_empty.html(sakai.api.Util.TemplateRenderer("mylibrary_empty_template", {who:who}))
                 $mylibrary_empty.show();
                 if (mylibrary.isOwnerViewing) {
                     $mylibrary_addcontent.show();
@@ -560,9 +566,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
         // Listen for complete.fileupload.sakai event (from the fileupload widget)
         // to refresh this widget's file listing
-        $(window).bind("complete.fileupload.sakai", function() {
-            mylibrary.currentPagenum = 1;
-            reset();
+        $(window).bind("complete.fileupload.sakai", function(){
+            var t = setTimeout(reset, 2000);
         });
 
     };

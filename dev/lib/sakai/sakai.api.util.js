@@ -228,14 +228,18 @@ define(["jquery",
          * @param {String} inputTags Unformatted, comma separated, string of tags put in by a user
          * @return {Array} Array of formatted tags
          */
-        getDirectoryTags : function(input){
+        getDirectoryTags : function(input, returnFullTag){
             var item;
             var inputTags = this.formatTags(input);
             if (inputTags.length) {
                 var tags = [];
                 for (item in inputTags){
                     if (inputTags.hasOwnProperty(item) && inputTags[item] && inputTags[item].split("/")[0] === "directory") {
-                        tags.push(inputTags[item].split("directory/")[1].split("/"));
+                        if (returnFullTag){
+                             tags.push(inputTags[item]);
+                        } else {
+                             tags.push(inputTags[item].split("directory/")[1].split("/"));
+                        }
                     }
                 }
                 return tags;
@@ -908,7 +912,7 @@ define(["jquery",
         getPageContext : function() {
             if (sakai_global.content_profile) {
                 return "content";
-            } else if (sakai_global.group || sakai_global.groupedit) {
+            } else if (sakai_global.group || sakai_global.group2 || sakai_global.groupedit) {
                 return "group";
             } else if (sakai_global.directory) {
                 return "directory";
@@ -1303,7 +1307,7 @@ define(["jquery",
             replaceURL : function(message){
                 // link is already wrap in anchor tag do nothing
                 // but if it is not wrap in the anchor tag, wrap in the anchor tag.
-                return message.replace(/(<a[^>]*>)?((\w+):\/\/[\S]+(\b|$))/g, function($0,$1){
+                return message.replace(/(<a[^>]*>)?((\w+):\/\/[\S]+([^<br]\b|$))/g, function($0,$1){
                     return $1?$0:"<a href='"+$0+"' class='my_link s3d-regular-links s3d-bold' target='_blank'>"+$0+"</a>";
                 });
             },
