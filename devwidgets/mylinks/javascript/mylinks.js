@@ -127,7 +127,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         $(this).addClass("selected");
       });
 
-      $("#accordion table:eq(0)").show();
+      $("#accordion table.accordion_opened").show();
     };
 
     var translate = function(key) {
