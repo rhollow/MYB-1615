@@ -17,28 +17,7 @@
             },
 			{
                 "id": "/colleges/CED/standings/undergrad/majors/URBAN STUDIES",
-                "name": "Urban Studies",
-				"sub_group": {
-                    "items_array": [{
-                        "id": "NIN1",
-                        "name": "Ninjutsu",
-                        "sub_group": {
-                            "title": "Sub majors2",
-                            "items_array": [{
-                                "id": "SUM1",
-                                "name": "Sumo"
-                            },
-                            {
-                                "id": "KEN1",
-                                "name": "Kendo"
-                            }]
-                        }
-                    },
-                    {
-                        "id": "KAR",
-                        "name": "Karate"
-                    }]
-                }
+                "name": "Urban Studies"
             },
 			{
                 "id": "/colleges/CED/standings/undergrad/majors/INDIVIDUAL",

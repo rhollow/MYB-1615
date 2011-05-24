@@ -103,7 +103,7 @@
 .inbox_main .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}
 
 
-.inbox_main .inbox_inbox_table_header_sort { cursor:pointer;}
+.inbox_main .inbox_inbox_table_header_sort { /*cursor:pointer;*/ }
 
 
 .inbox_main .inbox_inbox_table_header_sort span { float:left; }
