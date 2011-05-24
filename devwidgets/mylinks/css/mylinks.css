@@ -38,7 +38,7 @@
 
 .mylinks_widget .link_list a {
     display: block;
-    padding: 6px 10px 5px 40px;
+    padding: 6px 10px 5px 0;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -53,7 +53,7 @@
 
 /* Edit mode */
 .mylinks_widget .link_list .edit {
-	display: hidden;
+	display: none;
 }
 
 /* Accordion */

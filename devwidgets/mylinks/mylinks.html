@@ -11,22 +11,29 @@
       <div id="accordion_template" style="display:none;"><!--
 
           {for section in sections}
-            {var class = "notSelected"}
-            {if section.selected == "true"}
-              {class = "selected"}
-            {/if}
-
             <li>
               <div class="notSelected">${section.label}</div>
 
               <table class="accordion_pane">
-              {for link in section.links}
-                  <li class="link">
+
+              {var i = 0}
+              <tr>
+                {for link in section.links}
+                  {if i % 2 == 0}
+                    <tr>
+                  {/if}
+                  <td class="link">
                       <a href="${link.url}" id="${link.id}" target="_blank">${link.name|default:"no name"}</a>
-                  </li>
-              {forelse}
+                  </td>
+
+                  {eval}
+                    i = i + 1
+                  {/eval}
+                {forelse}
                   <span>Sorry, there was a failure loading your list of links.</span>
-              {/for}
+                {/for}
+              </tr>
+
               </table>
             </li>
           {/for}
