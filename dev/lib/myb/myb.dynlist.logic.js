@@ -144,7 +144,8 @@ define([], function() {
 
 			if(aHasOwnPropertyOR && bHasOwnPropertyOR) {
 				// Need to wrap everything into a new object here
-				var result = {AND: [this, b]};
+				var result = new Condition();
+                result.AND = [this, b];
 				return result;
 			}
 
@@ -214,7 +215,8 @@ define([], function() {
 
 			if(aHasOwnPropertyAND && bHasOwnPropertyAND) {
 				// Need to wrap everything into a new object here
-				var result = {OR: [this, b]};
+				var result = new Condition();
+                result.OR = [this, b];
 				return result;
 			}
 
