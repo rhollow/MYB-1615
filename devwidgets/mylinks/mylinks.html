@@ -23,7 +23,10 @@
                     <tr>
                   {/if}
                   <td class="link">
-                      <a href="${link.url}" id="${link.id}" target="_blank">${link.name|default:"no name"}</a>
+                      <a href="${link.url}"
+                        id="${link.id}"
+                        target="_blank"
+                        title="${link.popup_description}">${link.name|default:"no name"}</a>
                   </td>
 
                   {eval}
