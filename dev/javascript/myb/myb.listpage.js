@@ -645,14 +645,29 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
              return $("input:checkbox:checked", $groupRoot).length;
         };
 
+        /**
+         * Checks if there are selected options in the undergraduates section in section B.
+         *
+         * @return {Boolean} true if there are selected options in the undergraduates section in section B; otherwise false.
+         */
         var isSomethingSelectedInUndergradsSection = function () {
             return getNumberOfSelectedOptionsInGroup($undergradsGroup) > 0;
         };
 
+        /**
+         * Checks if there are selected options in the graduates section in section B.
+         *
+         * @return {Boolean} true if there are selected options in the graduates section in section B; otherwise false.
+         */
         var isSomethingSelectedInGradsSection = function () {
             return getNumberOfSelectedOptionsInGroup($gradsGroup) > 0;
         };
 
+        /**
+         * Checks if there are selected options in the registration status section in section C.
+         *
+         * @return {Boolean} true if there are selected options in the registration status section in section C; otherwise false.
+         */
         var isSomethingSelectedInRegistrationStatusSection = function () {
             var totalOptionsSelected = getNumberOfSelectedOptionsInGroup($(".reg_status .sub_group", $sectionC)) +
             getNumberOfSelectedOptionsInGroup($(".current_or_not .sub_group", $sectionC)) +
@@ -661,18 +676,40 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             return totalOptionsSelected	> 0;
         };
 
+        /**
+         * Checks if there are selected options in the special programs section in section C.
+         *
+         * @return {Boolean} true if there are selected options in the special programs section in section C; otherwise false.
+         */
         var isSomethingSelectedInSpecialProgramsSection = function () {
             return getNumberOfSelectedOptionsInGroup($(".special_programs .sub_group", $sectionC)) > 0;
         };
 
+        /**
+         * Checks if there are selected options in the student status section in section C.
+         *
+         * @return {Boolean} true if there are selected options in the student status section in section C; otherwise false.
+         */
         var isSomethingSelectedInStudentStatusSection = function () {
             return getNumberOfSelectedOptionsInGroup($(".student_and_residency_status_col_left .sub_group", $sectionC)) > 0;
         };
 
+        /**
+         * Checks if there are selected options in the residency status section in section C.
+         *
+         * @return {Boolean} true if there are selected options in the residency status section in section C; otherwise false.
+         */
         var isSomethingSelectedInResidencyStatusSection = function () {
             return getNumberOfSelectedOptionsInGroup($(".student_and_residency_status_col_right .sub_group", $sectionC)) > 0;
         };
 
+        /**
+         * Checks if all options in the given group are selected
+         *
+         * @param $groupRoot {jQuery} group (jQuery selector) to check for selected options
+         *
+         * @return  {Boolean} true if all options in the given group are selected; otherwise false.
+         */
         var areAllOptionsInGroupSelected = function ($groupRoot) {
              var numberOfOptions = getNumberOfOptionsInGroup($groupRoot);
              var numberOfSelectedOptions = getNumberOfSelectedOptionsInGroup($groupRoot);
