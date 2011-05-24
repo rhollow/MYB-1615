@@ -33,21 +33,19 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
     var academicLinksTemplate = "academic_links_template";
 
     // data files and paths
-    var userLinks = "my_links";
-    var linksDataNode = "/~" + sakai.data.me.user.userid + "/private/" + userLinks;
+    var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
 
     // path for the default list of links to display in the widget
-    //var defaultLinksPath = "/var/defaults/mylinks/mylinks-defaults.json";
     var defaultLinksPath = "/devwidgets/mylinks/default-links.json";
 
     /**
      * write the users links to JCR
      */
     var saveLinkList = function (updatedList) {
-      sakai.api.Server.saveJSON(linksDataNode, updatedList);
+      sakai.api.Server.saveJSON(linksDataPath, updatedList);
     };
 
-    var createLinkList = function (data) {
+    var renderLinkList = function (data) {
       $admin_links.html(sakai.api.Util.TemplateRenderer(academicLinksTemplate, data));
       // Add Google Analytics outbound links tracking
       $("div.mylinks_widget li.link a").click(function () {
@@ -65,8 +63,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                 cache: false,
                 dataType: "json",
                 success: function(data) {
-                  // create the link list from the default list and then save it back
-                  createLinkList(data);
+                  renderLinkList(data);
                   // save the default link list back to the server
                   //saveLinkList(parsedData);
                 },
@@ -136,7 +133,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
      */
 
     var doInit = function() {
-      sakai.api.Server.loadJSON(linksDataNode, function (success) {
+      sakai.api.Server.loadJSON(linksDataPath, function (success) {
         if (success) {
           // load the users link list from their saved link data
           //createLinkList(data);
