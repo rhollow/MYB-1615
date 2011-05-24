@@ -1,33 +1,72 @@
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="/devwidgets/mylinks/css/mylinks.css" />
+<link rel="stylesheet" type="text/css" href="/devwidgets/mylinks/css/mylinks.css"/>
 
 <div class="mylinks_widget">
-    <div class="fl-widget-content s3d-widget-content">
-        <!-- MAIN PANEL: List of links and categories. -->                 
-        <div class="link_list">
-	        <ul id="accordion">
-	            <li>
-	                <div class="notSelected">Administrative</div>                    
-                     <table class="accordion_pane">
-		            	<tr>
-		                	<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-		                </tr>
-						<tr>
-		                    <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-		                </tr>
-		            </table>
-                                                                                            		
-	            </li>
-	            <li>
-	                <div class="selected">Academic</div>
-	                <table class="accordion_pane" id="academic_links">                           		          
-                        
-    		        </table>
-                    <table class="accordion_pane" id="academic_links_template" style="display:none"><!--
+  <div class="fl-widget-content s3d-widget-content">
+    <!-- MAIN PANEL: List of links and categories. -->
+    <div class="link_list">
+      <ul id="accordion"><!-- filled by trimpath --></ul>
+
+
+      <div id="accordion_template" style="display:none;"><!--
+
+          {for section in sections}
+            {var class = "notSelected"}
+            {if section.selected == "true"}
+              {class = "selected"}
+            {/if}
+
+            <li>
+              <div class="notSelected">${section.label}</div>
+
+              <table class="accordion_pane">
+              {for link in section.links}
+                  <li class="link">
+                      <a href="${link.url}" id="${link.id}" target="_blank">${link.name|default:"no name"}</a>
+                  </li>
+              {forelse}
+                  <span>Sorry, there was a failure loading your list of links.</span>
+              {/for}
+              </table>
+            </li>
+          {/for}
+
+      --></div>
+
+
+
+
+
+
+        <!--
+        <li>
+          <div class="notSelected">Administrative</div>
+          <table class="accordion_pane">
+            <tr>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+            </tr>
+          </table>
+
+        </li>
+        <li>
+          <div class="selected">Academic</div>
+          <table class="accordion_pane" id="academic_links">
+
+          </table>
+          <table class="accordion_pane" id="academic_links_template" style="display:none">
                     {for i in academic}
                         <li class="link">
                             <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
@@ -35,87 +74,101 @@
                     {forelse}
                         <span>Sorry, there was a failure loading your list of links.</span>
                     {/for}
-                    --></table>
-	            </li>
-	            <li>
-	                <div class="notSelected">Student Life</div>
-	                <table class="accordion_pane">
-		            	<tr>
-		                	<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-		                </tr>
-						<tr>
-		                    <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-		                </tr>
-		            </table>
-	            </li>
-				<li>
-	                <div class="notSelected">Miscellaneous</div>
-	                <table class="accordion_pane">
-		            	<tr>
-		                	<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-		                </tr>
-						<tr>
-		                    <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-							<td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/></td>
-		                </tr>
-		            </table>
-	            </li>
-	        </ul>
-        </div>
-        
-        <!-- ADD/EDIT LINK PANEL: Allows user to add a new link or edit an existing link. -->
-        <div class="addedit_link_panel">                
-            <form class="link-form" action="" method="post"> 
+                    </table>
+        </li>
+        <li>
+          <div class="notSelected">Student Life</div>
+          <table class="accordion_pane">
+            <tr>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+            </tr>
+          </table>
+        </li>
+        <li>
+          <div class="notSelected">Miscellaneous</div>
+          <table class="accordion_pane">
+            <tr>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+              <td class="link"><a href="#">Golf</a><img class="edit" href="/devwidgets/mylinks/images/pencil.jpeg"/>
+              </td>
+            </tr>
+          </table>
+        </li>
+
+        -->
+
+    </div>
+
+    <!-- ADD/EDIT LINK PANEL: Allows user to add a new link or edit an existing link. -->
+    <div class="addedit_link_panel">
+      <form class="link-form" action="" method="post">
                 <span class="link-form-element">
                     <label for="link-title">Link Title:</label>       
-                    <input type="text" id="link-title" />   
-                </span> 
-                <br><br>
+                    <input type="text" id="link-title"/>
+                </span>
+        <br><br>
                 <span class="link-form-element">
                     <label for="link-url">Link URL:</label>       
-                    <input type="text" id="link-url" />   
-                </span> 
-                <br><br>                        
+                    <input type="text" id="link-url"/>
+                </span>
+        <br><br>
                 <span class="link-form-element">
                      <label for="link-category">Category:</label>
                     <select id="link-category"></select>  
-                </span>                            
-            </form>
-            <br><br>
+                </span>
+      </form>
+      <br><br>
             <span class="button-list"> 
                 <button id="addlink-button" class="s3d-button"><span class="s3d-button-inner">Add Link</span></button>
                 <button id="editlink-button" class="s3d-button"><span class="s3d-button-inner">Save</span></button>
                 <button id="cancel-button" class="s3d-button"><span class="s3d-button-inner">Cancel</span></button>
             </span>
-        </div>
-    </div>       
-    
-    <!-- widget footer --> 
-    <div class="fl-widget-options fl-fix" style="overflow:hidden;">
-        <div class="fl-widget-options-footer-top">
-            <div class="fl-widget-options-top-right"></div>
-        </div>
-        <div class="widget-options-inner">
-            <ul>
-                <li id="modify-links-mode"><a href="javascript: void(0);">__MSG__MODIFY_LINKS__</a></li>
-				<li id="normal-mode" style="display: none"><a href="javascript: void(0);">Done Modifying Links</a></li>
-                <li><span class="pipe_divider">|</span></li>
-                <li><a href="javascript: void(0);" id="add-link-mode">Add a Link</a></li>
-            </ul>
-        </div>
-        <div class="s3d-widget-options-footer-left">
-            <div class="s3d-widget-options-footer-right">
-            </div>
-        </div>
     </div>
-    
+  </div>
+
+  <!-- widget footer -->
+  <div class="fl-widget-options fl-fix" style="overflow:hidden;">
+    <div class="fl-widget-options-footer-top">
+      <div class="fl-widget-options-top-right"></div>
+    </div>
+    <div class="widget-options-inner">
+      <ul>
+        <li id="modify-links-mode"><a href="javascript: void(0);">__MSG__MODIFY_LINKS__</a></li>
+        <li id="normal-mode" style="display: none"><a href="javascript: void(0);">Done Modifying Links</a></li>
+        <li><span class="pipe_divider">|</span></li>
+        <li><a href="javascript: void(0);" id="add-link-mode">Add a Link</a></li>
+      </ul>
+    </div>
+    <div class="s3d-widget-options-footer-left">
+      <div class="s3d-widget-options-footer-right">
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- JAVASCRIPT -->

@@ -1,335 +1,352 @@
 {
-  "academic" : [
-    {
-      "id"   : "bspace",
-      "name" : "bSpace",
-      "url" : "http://bspace.berkeley.edu",
-      "custom"  : false,
-      "hidden" : false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id"   : "campus_bookstore",
-      "name" : "Campus Bookstore",
-      "url"  : "http://www.bkstr.com/webapp/wcs/stores/servlet/StoreCatalogDisplay?storeId=10433",
-      "custom"  : false,
-      "hidden" : false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "course_catalog",
-      "name": "Course Catalog",
-      "url": "http://sis.berkeley.edu/catalog/gcc_search_menu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id"   : "dars",
-      "name" : "DARS",
-      "url"  : "https://marin.berkeley.edu/darsweb/servlet/ListAuditsServlet",
-      "custom"  : false,
-      "hidden" : false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "decal",
-      "name": "DeCal Courses",
-      "url": "http://www.decal.org",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "future_campus_calendars",
-      "name": "Future Campus Calendars",
-      "url": "http://opa.berkeley.edu/AcademicCalendar",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "class_schedule",
-      "name": "Schedule of Classes",
-      "url": "http://schedule.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "tele_bears",
-      "name": "Tele-BEARS",
-      "url": "http://telebears.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": true
-        }
-      ]
-    }
-  ],
-  "administrative" : [
-    {
-      "id": "bear_facts",
-      "name": "Bear Facts",
-      "url": "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": true
-        }
-      ]
-    },
-    {
-      "id": "calmail",
-      "name": "CalMail",
-      "url": "http://calmail.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "campus_calendar",
-      "name": "Campus Events Calendar",
-      "url": "http://events.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "career_center",
-      "name": "Career Center",
-      "url": "http://career.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "finaid",
-      "name": "Financial Aid",
-      "url": "http://students.berkeley.edu/finaid",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    }
-  ],
-  "studentlife" : [
-    {
-      "id": "asuc",
-      "name": "ASUC",
-      "url": "http://www.asuc.org",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "cal1card",
-      "name": "Cal-1-Card",
-      "url": "http://services.housing.berkeley.edu/c1c/static/aboutc1c.htm",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "caldining",
-      "name": "CalDining",
-      "url": "http://caldining.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "public_service",
-      "name": "Public Service",
-      "url": "http://calcorps.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "rescomp",
-      "name": "Residential Computing",
-      "url": "http://rescomp.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "rsf",
-      "name": "Recreational Sports Facility",
-      "url": "http://www.recsports.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "student_groups",
-      "name": "Student Groups and Programs",
-      "url": "http://students.berkeley.edu/osl",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "uhs",
-      "name": "UHS - Tang Center",
-      "url": "http://uhs.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    }
-  ],
-  "misc" : [
-    {
-      "id": "campus_map",
-      "name": "Campus Map",
-      "url": "http://berkeley.edu/map",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "campus_safety",
-      "name": "Campus Safety / Police",
-      "url": "http://police.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "library",
-      "name": "Library",
-      "url": "http://www.lib.berkeley.edu",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    },
-    {
-      "id": "parking_and_transportation",
-      "name": "Parking & Transportation",
-      "url": "http://pt.berkeley.edu/park",
-      "custom": false,
-      "hidden": false,
-      "audience": [
-        {
-          "name": "student",
-          "required": false
-        }
-      ]
-    }
-  ]
+  "academic" : {
+    "label" : "Academic",
+    "selected" : true,
+    "links" : [
+      {
+        "id"   : "bspace",
+        "name" : "bSpace",
+        "url" : "http://bspace.berkeley.edu",
+        "custom"  : false,
+        "hidden" : false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id"   : "campus_bookstore",
+        "name" : "Campus Bookstore",
+        "url"  : "http://www.bkstr.com/webapp/wcs/stores/servlet/StoreCatalogDisplay?storeId=10433",
+        "custom"  : false,
+        "hidden" : false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "course_catalog",
+        "name": "Course Catalog",
+        "url": "http://sis.berkeley.edu/catalog/gcc_search_menu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id"   : "dars",
+        "name" : "DARS",
+        "url"  : "https://marin.berkeley.edu/darsweb/servlet/ListAuditsServlet",
+        "custom"  : false,
+        "hidden" : false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "decal",
+        "name": "DeCal Courses",
+        "url": "http://www.decal.org",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "future_campus_calendars",
+        "name": "Future Campus Calendars",
+        "url": "http://opa.berkeley.edu/AcademicCalendar",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "class_schedule",
+        "name": "Schedule of Classes",
+        "url": "http://schedule.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "tele_bears",
+        "name": "Tele-BEARS",
+        "url": "http://telebears.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  "administrative" : {
+    "label" : "Administrative",
+    "selected" : false,
+    "links" : [
+      {
+        "id": "bear_facts",
+        "name": "Bear Facts",
+        "url": "https://bearfacts.berkeley.edu/bearfacts/student/studentMain.do?bfaction=welcome",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "calmail",
+        "name": "CalMail",
+        "url": "http://calmail.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "campus_calendar",
+        "name": "Campus Events Calendar",
+        "url": "http://events.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "career_center",
+        "name": "Career Center",
+        "url": "http://career.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "finaid",
+        "name": "Financial Aid",
+        "url": "http://students.berkeley.edu/finaid",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      }
+    ]
+  },
+  "studentlife" : {
+    "label" : "Student Life",
+    "selected" : false,
+    "links" : [
+      {
+        "id": "asuc",
+        "name": "ASUC",
+        "url": "http://www.asuc.org",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "cal1card",
+        "name": "Cal-1-Card",
+        "url": "http://services.housing.berkeley.edu/c1c/static/aboutc1c.htm",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "caldining",
+        "name": "CalDining",
+        "url": "http://caldining.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "public_service",
+        "name": "Public Service",
+        "url": "http://calcorps.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "rescomp",
+        "name": "Residential Computing",
+        "url": "http://rescomp.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "rsf",
+        "name": "Recreational Sports Facility",
+        "url": "http://www.recsports.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "student_groups",
+        "name": "Student Groups and Programs",
+        "url": "http://students.berkeley.edu/osl",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "uhs",
+        "name": "UHS - Tang Center",
+        "url": "http://uhs.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      }
+    ]
+  },
+  "misc" : {
+    "label" : "Miscellaneous",
+    "selected" : false,
+    "links" : [
+      {
+        "id": "campus_map",
+        "name": "Campus Map",
+        "url": "http://berkeley.edu/map",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "campus_safety",
+        "name": "Campus Safety / Police",
+        "url": "http://police.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "library",
+        "name": "Library",
+        "url": "http://www.lib.berkeley.edu",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "parking_and_transportation",
+        "name": "Parking & Transportation",
+        "url": "http://pt.berkeley.edu/park",
+        "custom": false,
+        "hidden": false,
+        "audience": [
+          {
+            "name": "student",
+            "required": false
+          }
+        ]
+      }
+    ]
+  }
 }
+

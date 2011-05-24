@@ -25,12 +25,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
   sakai_global.mylinks = function (tuid) {
 
     // page elements
-    var $elm_container = $("#" + tuid);
-    var $admin_links = $("#academic_links", $elm_container);
-
-    // templates
-    // var mylinksListTemplate = "mylinks_list_template";
-    var academicLinksTemplate = "academic_links_template";
+    var widgetContainer = $("#" + tuid);
+    var accordionContainer = $("#accordion");
 
     // data files and paths
     var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
@@ -46,12 +42,17 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
     };
 
     var renderLinkList = function (data) {
-      $admin_links.html(sakai.api.Util.TemplateRenderer(academicLinksTemplate, data));
+      debug.log(data);
+      accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", { sections : data }));
+
       // Add Google Analytics outbound links tracking
       $("div.mylinks_widget li.link a").click(function () {
         myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
         return false;
       });
+
+
+      setupAccordion();
     };
 
     /**
@@ -68,7 +69,9 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                   //saveLinkList(parsedData);
                 },
                 error: function() {
-                  //alert("An error has occurred.");
+                  sakai.api.Util.notification.show("", translate("AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
+                          sakai.api.Util.notification.type.ERROR, false);
+                  debug.error("Got error contacting the server.");
                 }
               });
     };
@@ -127,6 +130,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
       $("#accordion table:eq(0)").show();
     };
 
+    var translate = function(key) {
+      return sakai.api.i18n.Widgets.getValueForKey("mylinks", "default", key);
+    };
+
     /**
      * Set up the widget
      * grab the users link data, then fire callback loadLinksList
@@ -144,7 +151,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         }
       });
       setupEventHandlers();
-      setupAccordion();
     };
 
     doInit();
