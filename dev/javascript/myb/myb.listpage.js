@@ -30,11 +30,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var allLists = {};
 
         /**
-         * Dynamic list prefix
-         */
-        var DYNAMIC_LIST_PREFIX = "dl-";
-
-        /**
          * Whether the loaded trimpath template includes undergraduate students data
          */
         var boolTemplateHasUndergradsData = false;
@@ -145,13 +140,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
         ////////////////////////////////////////////////////////////////////////
         // Functions for gathering the information about the selected options //
-        ////////////////////////////////////////////////////////////////////////		
+        ////////////////////////////////////////////////////////////////////////
 
         /**
          * Gathers all selected options in the selected element group and returns them as an OR condition object.
          *
-         * @param {JQuery}	$allItemsOption	an option that represents all items, can be null if there is no such option
-         * @param {JQuery}	$rootGroup	element group in which to search for selected options
+         * @param $allItemsOption	an option that represents all items, can be null if there is no such option
+         * @param $rootGroup	element group in which to search for selected options
          *
          * @return {Object} an OR condition object containing all selected options in the selected element group.
          */
@@ -448,15 +443,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
         };
 
-
-        //TODO: showLoader is not used, maybe we should remove it
-        /**
-         * This will show the preloader.
-         */
-        var showLoader = function(){
-            $tableOfLists.append(sakai.api.Util.TemplateRenderer("inbox_table_preloader", {}));
-        };
-
         /**
          * Shows a general message on the top screen
          * @param {String} msg    the message you want to display
@@ -511,7 +497,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                   }
                   $studentsTargetedByCurrentList.text(data.count);
                 },
-                error: function(xhr, textStatus, thrownError) {
+                error: function() {
                   $studentsTargetedByCurrentList.addClass("noStudentsTargeted");
                   $studentsTargetedByCurrentList.text("N/A");
                 }
@@ -583,7 +569,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * @param {Object} a  a dynamic list item
          * @param {Object} b  another dynamic list item
          *
-         * @return {Integer} Less than 0: Sort "a" to be a lower index than "b";
+         * @return {Number} Less than 0: Sort "a" to be a lower index than "b";
          *                   Zero: "a" and "b" should be considered equal, and no sorting performed;
          *                   Greater than 0: Sort "b" to be a lower index than "a".
          */
@@ -628,7 +614,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          *
          * @param {jQuery} $groupRoot jQuery selector
          *
-         * @return {Integer} the number of options (checkboxes) in the specified group.
+         * @return {Number} the number of options (checkboxes) in the specified group.
          */
         var getNumberOfOptionsInGroup = function($groupRoot) {
              return $("input:checkbox", $groupRoot).length;
@@ -639,7 +625,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          *
          * @param {jQuery} $groupRoot jQuery selector
          *
-         * @return {Integer} the number of checked options (checkboxes) in the specified group.
+         * @return {Number} the number of checked options (checkboxes) in the specified group.
          */
         var getNumberOfSelectedOptionsInGroup = function($groupRoot) {
              return $("input:checkbox:checked", $groupRoot).length;
@@ -741,7 +727,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
         //////////////////////////////////////////////////////////////////////
         // Functions for loading dynamic lists data from a condition object //
-        //////////////////////////////////////////////////////////////////////		
+        //////////////////////////////////////////////////////////////////////
 
         /**
          * Recursively traverses the condition object and builds an array of all used option IDs.
@@ -829,7 +815,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             resetListEditingForm();
 
-            if (!allLists.hasOwnProperty(id) || allLists[id] == null) {
+            if (!allLists.hasOwnProperty(id) || allLists[id] === null) {
                 return;
             }
             var list = allLists[id];
@@ -1054,7 +1040,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * @returns {String} generated list ID. For ex. "dl-892685-1305835896429"
          */
         var generateId = function() {
-            return DYNAMIC_LIST_PREFIX + sakai.data.me.user.userid + "-" + new Date().getTime();
+            return "dl-" + sakai.data.me.user.userid + "-" + new Date().getTime();
         };
 
         /**
@@ -1065,7 +1051,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var saveList = function(data, listId) {
             if (listAlreadyExists(data)) {
-                showGeneralMessage($("#inbox_generalmessages_already_exists").text());
+                showGeneralMessage($("#inbox_generalmessages_already_exists").text(), true);
                 return;
             }
 
@@ -1117,11 +1103,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 data: {
                     requests: $.toJSON(requests)
                 },
-                success: function(data) {
-                     //showGeneralMessage("Lists successfully deleted.");
-                },
-                error: function(xhr, textStatus, thrownError) {
-                   showGeneralMessage("Error deleting lists.");
+                error: function() {
+                   showGeneralMessage("Error deleting lists.", true);
                 }
             });
         };
@@ -1229,7 +1212,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             tickMessages();
 
             if (listId.length < 1) {
-                showGeneralMessage($("#inbox_generalmessages_none_selected").text());
+                showGeneralMessage($("#inbox_generalmessages_none_selected").text(), true);
             } else {
                 deleteLists(listId);
                 loadDynamicListsFromServer();
@@ -1243,7 +1226,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 listIds.push(id);
             });
 
-            if (listIds.length == 0) {
+            if (listIds.length === 0) {
                 return;
             }
 
@@ -1263,7 +1246,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 listIds.push(id);
             });
 
-            if (listIds.length == 0) {
+            if (listIds.length === 0) {
                 return;
             }
 
@@ -1497,7 +1480,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 return;
             }
 
-            loadTemplate("nauth_ced.json");
+            loadTemplate("nauth_ced.json"); // TODO load from advisor's node? or somewhere else based on college membership?
 
             populateDesignateTermYear();
 

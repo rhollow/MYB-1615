@@ -50,7 +50,6 @@ define([], function() {
          * Converts the condition object from OR form to AND form.
          * The function doesn't do any checks before conversion.
          *
-         * @param {Condition}    obj    object to convert
          */
         Condition.prototype.convertORtoAND = function() {
             this.AND = this.OR;
@@ -61,7 +60,6 @@ define([], function() {
          * Converts the condition object from AND form to OR form.
          * The function doesn't do any checks before conversion.
          *
-         * @param {Condition}    obj    object to convert
          */
         Condition.prototype.convertANDtoOR = function() {
             this.OR = this.AND;
@@ -86,9 +84,9 @@ define([], function() {
 		 * This function tries to optimeze the output object to avoid excessive object wrapping.
 		 * To avoid object cloning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
 		 *
-		 * @param {Condition}	b	condition object to join (must contain either AND or OR field)
+		 * @param b	condition object to join (must contain either AND or OR field)
 		 *
-		 * @return {Condition} an object containing the this condition object joined by AND with the provided condition object.
+		 * @return a Condition object containing the this condition object joined by AND with the provided condition object.
 		 */
 		Condition.prototype.joinTwoConditionsByAND = function(b) {
 
@@ -157,9 +155,9 @@ define([], function() {
 		 * This function tries to optimeze the output object to avoid excessive object wrapping.
 		 * To avoid object cloning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
 		 *
-		 * @param {Condition}	b	condition object to join (must contain either AND or OR field)
+		 * @param b	condition object to join (must contain either AND or OR field)
 		 *
-		 * @return {Condition} an object containing the this condition object joined by OR with the provided condition object.
+		 * @return a Condition object containing the this condition object joined by OR with the provided condition object.
 		 */
 		Condition.prototype.joinTwoConditionsByOR = function(b) {
 
