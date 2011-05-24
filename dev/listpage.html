@@ -80,7 +80,7 @@
                         <div class="main_content_container">
                             <div class="inbox-heading inbox_inbox_header" id="inbox_existing">__MSG__DYNAMIC_LISTS__</div>
                             
-                            <table class="inbox-table" id="inbox_table" summary="Your existing lists." cellspacing="0">
+                            <table class="inbox-table" id="inbox_table" summary="Your existing lists.">
                                 <tr class="different">
                                     <th class="inbox-checkbox" id="inbox_tableHeader_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__"/></th>
                                     <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
@@ -90,10 +90,7 @@
                                 </tr>
                             </table>
                         </div>
-        
-                        <div id="inbox_inbox_sort_up" style="display:none;"><img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
-                        <div id="inbox_inbox_sort_down" style="display:none;"><img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
-                                
+
                         <div id="inbox_inbox_lists_template" title=""><!--
                             {for m in links}                                                             	
                              	{var dateString = Globalization.format(sakai.api.Util.parseSakaiDate(m['_lastModified']), "MMM d, yyyy hh:mm tt")}
@@ -112,13 +109,7 @@
                                 </tr>
                             {/for}
                             --></div>
-    
-                            <div id="inbox_table_preloader"><!--
-                                <tr class="inbox_message">
-                                    <td colspan="5" class="inbox_message_none"><img src="/dev/images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
-                                </tr>
-                             --></div>
-                             
+
                              <div class="search_tab_content_bottom"><div class="search_tab_content_bottom_inner"><!-- --></div></div>
                              
                     </div>
@@ -139,7 +130,7 @@
                             
                             
                                
-                                <div class="" style="float:right;"><div>Description</div> 
+                                <div class="" style="float:right;"><div><label for="description">Description</label></div>
                                     
                                     <textarea id="description" rows="2" style="width: 600px;"></textarea> 
                                     <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
@@ -147,7 +138,7 @@
                                 
                                 
                                 
-                                <div class="" style="margin-bottom:20px"><div>List Name</div> 
+                                <div class="" style="margin-bottom:20px"><div><label for="list_name">List Name</label></div>
                                     <input type="text" id="list_name" size="25" maxlength="40" style="width:290px;" /> 
                                     <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
                                 </div> 
@@ -275,14 +266,14 @@
 														<div class="group_header">Designate Term:</div>
 														<div class="wrapper">
 															<div class="designate_term_col_left">
-																<div class="group_header">Semester</div>
+																<div class="group_header"><label for="designate_term_semester">Semester</label></div>
 																<select name="semester" id="designate_term_semester">
 																  <option value="designate_term_semester_spring">Spring</option>
 																  <option value="designate_term_semester_fall">Fall</option>
 																</select>
 															</div>
 															<div class="designate_term_col_right">
-																<div class="group_header">Year</div>
+																<div class="group_header"><label for="designate_term_year">Year</label></div>
 																<select name="year" id="designate_term_year">
 																  <!-- populated by JavaScript -->
 																</select>
