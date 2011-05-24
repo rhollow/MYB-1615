@@ -34,9 +34,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         // path for the default list of links to display in the widget
         var defaultLinksPath = "/devwidgets/mylinks/default-links.json";
 
-        /**
-         * write the users links to JCR
-         */
         var saveLinkList = function (updatedList) {
             sakai.api.Server.saveJSON(linksDataPath, updatedList);
         };
@@ -67,42 +64,26 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                     });
         };
 
-        var gotoMainMode = function() {
-            $(".link_list").show();
-            $(".addedit_link_panel").hide();
-            setupEventHandlers();
-        };
-
-        var gotoAddLinkMode = function() {
-            $(".link_list").hide();
-            $(".addedit_link_panel").show();
-            $("#editlink-button").hide();
-            setupEventHandlers();
-        };
-
-        var gotoModifyMode = function() {
-            $(".edit").css("display", "block");
-            $("#modify-links-mode").css("display", "none");
-            $("#normal-mode").css("display", "block");
-        };
-
-        var gotoNormalMode = function() {
-            $(".edit").css("display", "hidden");
-            $("#normal-mode").css("display", "none");
-            $("#modify-links-mode").css("display", "block");
-        };
-
-        var resetEventHandlers = function() {
-            $("#add-link-mode").die();
-            $("#cancel-button").die();
-        };
-
         var setupEventHandlers = function() {
-            resetEventHandlers();
-            $("#add-link-mode").click(gotoAddLinkMode);
-            $("#modify-links-mode").click(gotoModifyMode);
-            $("#normal-mode").click(gotoNormalMode);
-            $("#cancel-button").click(gotoMainMode);
+            $("#add-link-mode").live("click", function() {
+                $(".link_list").hide();
+                $(".addedit_link_panel").show();
+                $("#editlink-button").hide();
+            });
+            $("#modify-links-mode").live("click", function() {
+                $(".edit").css("display", "block");
+                $("#modify-links-mode").css("display", "none");
+                $("#normal-mode").css("display", "block");
+            });
+            $("#normal-mode").live("click", function() {
+                $(".edit").css("display", "hidden");
+                $("#normal-mode").css("display", "none");
+                $("#modify-links-mode").css("display", "block");
+            });
+            $("#cancel-button").live("click", function() {
+                $(".link_list").show();
+                $(".addedit_link_panel").hide();
+            });
         };
 
         var setupAccordion = function() {
@@ -135,7 +116,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
          * Set up the widget
          * grab the users link data, then fire callback loadLinksList
          */
-
         var doInit = function() {
             sakai.api.Server.loadJSON(linksDataPath, function (success) {
                 if (success) {
