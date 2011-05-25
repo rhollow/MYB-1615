@@ -20,7 +20,7 @@
  global $, Config, jQuery, sakai, sdata, fluid
  */
 
-require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai, myb) {
+require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/mylinks/default-links.js"], function($, sakai, myb, defaultLinks) {
 
     sakai_global.mylinks = function (tuid) {
 
@@ -31,11 +31,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         // data files and paths
         var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
 
-        // path for the default list of links to display in the widget
-        var defaultLinksPath = "/devwidgets/mylinks/default-links.json";
+        var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
 
         var saveUserList = function(updatedList) {
-            //sakai.api.Server.saveJSON(linksDataPath, updatedList);
+            sakai.api.Server.saveJSON(linksDataPath, updatedList);
         };
 
         var renderLinkList = function(data) {
@@ -46,34 +45,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         var loadUserList = function() {
             sakai.api.Server.loadJSON(linksDataPath, function (success, data) {
                 if (success) {
-                    // load the users link list from their saved link data
-                    renderLinkList(data);
-                } else {
-                    // else retrieve default data, use that and save it back
-                    loadDefaultList();
+                    // merge the user's links with the default links
+                    userLinkData = data;
+                    defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
                 }
+                renderLinkList(defaultLinks);
             });
-        };
-
-        /**
-         * retrieve default data, use that and save it back
-         */
-        var loadDefaultList = function() {
-            $.ajax({
-                        url: defaultLinksPath,
-                        cache: false,
-                        dataType: "json",
-                        success: function(data) {
-                            renderLinkList(data);
-                            // save the default link list back to the server
-                            saveUserList(data);
-                        },
-                        error: function() {
-                            sakai.api.Util.notification.show("", translate("AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
-                                    sakai.api.Util.notification.type.ERROR, false);
-                            debug.error("Got error contacting the server.");
-                        }
-                    });
         };
 
         var setupEventHandlers = function() {
@@ -108,10 +85,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             });
 
             $("#accordion table.accordion_opened", widgetContainer).show();
-        };
-
-        var translate = function(key) {
-            return sakai.api.i18n.Widgets.getValueForKey("mylinks", "default", key);
         };
 
         /**
