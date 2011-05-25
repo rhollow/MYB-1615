@@ -94,18 +94,14 @@
 
 /* Add/Edit Link Panel */
 .mylinks_widget .addedit_link_panel {
-    overflow: auto;
-    max-height: 200px;
-    padding: 10px 20px;
+    overflow: hidden;
+    max-height: 250px;
+    padding: 4px;
     display: none;
 }
 
 .mylinks_widget .addedit_link_panel .link-form input {
-    width: 330px;
-}
-
-.mylinks_widget .addedit_link_panel .link-form select {
-    width: 150px;
+    width: 200px;
 }
 
 .mylinks_widget .addedit_link_panel .button-list {
