@@ -82,16 +82,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                 $(".addedit_link_panel").show();
                 $("#editlink-button").hide();
             });
-            $("#modify-links-mode", widgetContainer).live("click", function() {
-                $(".edit").css("display", "block");
-                $("#modify-links-mode").css("display", "none");
-                $("#normal-mode").css("display", "block");
-            });
-            $("#normal-mode", widgetContainer).live("click", function() {
-                $(".edit").css("display", "hidden");
-                $("#normal-mode").css("display", "none");
-                $("#modify-links-mode").css("display", "block");
-            });
             $("#cancel-button", widgetContainer).live("click", function() {
                 $(".link_list").show();
                 $(".addedit_link_panel").hide();
