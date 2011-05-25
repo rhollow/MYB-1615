@@ -10,8 +10,9 @@
 
       <div id="accordion_template" style="display:none;"><!--
 
+          {var systemProperty = /^_/}
           {for section in sections}
-            {if ! ( section_index.match(/^_/) ) }
+            {if ! ( section_index.match(systemProperty) ) }
               <li>
                 {if section.selected}
                   <div class="selected">${section.label}</div>
