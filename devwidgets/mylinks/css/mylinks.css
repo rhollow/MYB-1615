@@ -44,7 +44,6 @@
 .mylinks_widget .link_list a {
     display: block;
     padding: 6px 10px 5px 0;
-    text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     outline: none;
@@ -75,14 +74,9 @@
     list-style: circle;
 }
 
-.mylinks_widget .link_list #accordion .notSelected {
-    background: #D5DBDF url("/devwidgets/mylinks/images/arrow-sort.png") no-repeat scroll 100% -26px;
-    border-bottom: 0;
-}
-
+.mylinks_widget .link_list #accordion .notSelected,
 .mylinks_widget .link_list #accordion .selected {
-    background: #D5DBDF url("/devwidgets/mylinks/images/arrow-sort.png") no-repeat scroll 100% 0;
-    border-bottom: 1px solid #000000;
+    background: #D5DBDF;
 }
 
 .mylinks_widget .link_list #accordion .accordion_pane {
