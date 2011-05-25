@@ -1,7 +1,7 @@
 {
-    "description":"My Links: a list of your favorite Berkeley websites",
+    "description":"Quick Links: a list of your favorite Berkeley websites",
     "id":"mylinks",
-    "name":"My Links",
+    "name":"Quick Links",
     "personalportal":true,
     "url":"/devwidgets/mylinks/mylinks.html",
     "i18n": {

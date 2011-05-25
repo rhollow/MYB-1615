@@ -35,11 +35,11 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         var defaultLinksPath = "/devwidgets/mylinks/default-links.json";
 
         var saveUserList = function(updatedList) {
-            sakai.api.Server.saveJSON(linksDataPath, updatedList);
+            //sakai.api.Server.saveJSON(linksDataPath, updatedList);
         };
 
         var renderLinkList = function(data) {
-            accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", { sections : data }));
+            accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
             setupAccordion();
         };
 
