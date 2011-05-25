@@ -26,7 +26,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
         // page elements
         var widgetContainer = $("#" + tuid);
-        var accordionContainer = $("#accordion");
+        var accordionContainer = $("ul#accordion", widgetContainer);
 
         // data files and paths
         var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
@@ -34,19 +34,31 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         // path for the default list of links to display in the widget
         var defaultLinksPath = "/devwidgets/mylinks/default-links.json";
 
-        var saveLinkList = function (updatedList) {
+        var saveUserList = function(updatedList) {
             sakai.api.Server.saveJSON(linksDataPath, updatedList);
         };
 
-        var renderLinkList = function (data) {
+        var renderLinkList = function(data) {
             accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", { sections : data }));
             setupAccordion();
+        };
+
+        var loadUserList = function() {
+            sakai.api.Server.loadJSON(linksDataPath, function (success, data) {
+                if (success) {
+                    // load the users link list from their saved link data
+                    renderLinkList(data);
+                } else {
+                    // else retrieve default data, use that and save it back
+                    loadDefaultList();
+                }
+            });
         };
 
         /**
          * retrieve default data, use that and save it back
          */
-        var loadDefaultList = function () {
+        var loadDefaultList = function() {
             $.ajax({
                         url: defaultLinksPath,
                         cache: false,
@@ -54,7 +66,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                         success: function(data) {
                             renderLinkList(data);
                             // save the default link list back to the server
-                            //saveLinkList(parsedData);
+                            saveUserList(data);
                         },
                         error: function() {
                             sakai.api.Util.notification.show("", translate("AN_ERROR_OCCURRED_CONTACTING_THE_SERVER"),
@@ -65,33 +77,33 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         };
 
         var setupEventHandlers = function() {
-            $("#add-link-mode").live("click", function() {
+            $("#add-link-mode", widgetContainer).live("click", function() {
                 $(".link_list").hide();
                 $(".addedit_link_panel").show();
                 $("#editlink-button").hide();
             });
-            $("#modify-links-mode").live("click", function() {
+            $("#modify-links-mode", widgetContainer).live("click", function() {
                 $(".edit").css("display", "block");
                 $("#modify-links-mode").css("display", "none");
                 $("#normal-mode").css("display", "block");
             });
-            $("#normal-mode").live("click", function() {
+            $("#normal-mode", widgetContainer).live("click", function() {
                 $(".edit").css("display", "hidden");
                 $("#normal-mode").css("display", "none");
                 $("#modify-links-mode").css("display", "block");
             });
-            $("#cancel-button").live("click", function() {
+            $("#cancel-button", widgetContainer).live("click", function() {
                 $(".link_list").show();
                 $(".addedit_link_panel").hide();
             });
         };
 
         var setupAccordion = function() {
-            $("#accordion > li > div").click(function() {
+            $("#accordion > li > div", widgetContainer).click(function() {
                 if (false === $(this).next().is(':visible')) {
-                    $("#accordion div").removeClass("selected");
-                    $("#accordion div").addClass("notSelected");
-                    $("#accordion table").slideUp(300);
+                    $("#accordion div", widgetContainer).removeClass("selected");
+                    $("#accordion div", widgetContainer).addClass("notSelected");
+                    $("#accordion table", widgetContainer).slideUp(300);
                 }
 
                 $(this).next().slideToggle(300);
@@ -100,12 +112,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             });
 
             // Add Google Analytics outbound links tracking
-            $("ul#accordion td.link a").click(function () {
+            $("ul#accordion td.link a", widgetContainer).click(function () {
                 myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
                 return false;
             });
 
-            $("#accordion table.accordion_opened").show();
+            $("#accordion table.accordion_opened", widgetContainer).show();
         };
 
         var translate = function(key) {
@@ -117,16 +129,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
          * grab the users link data, then fire callback loadLinksList
          */
         var doInit = function() {
-            sakai.api.Server.loadJSON(linksDataPath, function (success) {
-                if (success) {
-                    // load the users link list from their saved link data
-                    //createLinkList(data);
-                    loadDefaultList();
-                } else {
-                    // else retrieve default data, use that and save it back
-                    loadDefaultList();
-                }
-            });
+            loadUserList();
             setupEventHandlers();
         };
 

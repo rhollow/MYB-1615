@@ -11,38 +11,40 @@
       <div id="accordion_template" style="display:none;"><!--
 
           {for section in sections}
-            <li>
-              {if section.selected}
-                <div class="selected">${section.label}</div>
-                <table class="accordion_pane accordion_opened">
-              {else}
-                <div class="notSelected">${section.label}</div>
-                <table class="accordion_pane">
-              {/if}
+            {if ! ( section_index.match(/^_/) ) }
+              <li>
+                {if section.selected}
+                  <div class="selected">${section.label}</div>
+                  <table class="accordion_pane accordion_opened">
+                {else}
+                  <div class="notSelected">${section.label}</div>
+                  <table class="accordion_pane">
+                {/if}
 
-              {var i = 0}
-              <tr>
-                {for link in section.links}
-                  {if i % 2 == 0}
-                    <tr>
-                  {/if}
-                  <td class="link">
-                      <a href="${link.url}"
-                        id="${link.id}"
-                        target="_blank"
-                        title="${link.popup_description}">${link.name|default:"no name"}</a>
-                  </td>
+                {var i = 0}
+                <tr>
+                  {for link in section.links}
+                    {if i % 2 == 0}
+                      <tr>
+                    {/if}
+                    <td class="link">
+                        <a href="${link.url}"
+                          id="${link.id}"
+                          target="_blank"
+                          title="${link.popup_description}">${link.name|default:"no name"}</a>
+                    </td>
 
-                  {eval}
-                    i = i + 1
-                  {/eval}
-                {forelse}
-                  <span>Sorry, there was a failure loading your list of links.</span>
-                {/for}
-              </tr>
+                    {eval}
+                      i = i + 1
+                    {/eval}
+                  {forelse}
+                    <span>Sorry, there was a failure loading your list of links.</span>
+                  {/for}
+                </tr>
 
-              </table>
-            </li>
+                </table>
+              </li>
+            {/if}
           {/for}
 
       --></div>
