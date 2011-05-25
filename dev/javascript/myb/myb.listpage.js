@@ -47,7 +47,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         /**
          * Url for counting number of people targeted by a filter
          */
-        var dynamicListsPeopleCountingUrl = "/var/myberkeley/dynamiclists/g-ced-students.json";
+        var dynamicListsPeopleCountingUrl = "/var/myberkeley/dynamiclists/myb-ced-students.json";
 
         /**
          * Needed to prevent unnecessary people counting requests when editing a new list
@@ -1033,7 +1033,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var getDataFromInput = function() {
             var result = {};
 
-            result.context = "g-ced-students";
+            result.context = "myb-ced-students";
             result.listName = $.trim($("#list_name").val());
             result.desc = $.trim($("#description").val());
 

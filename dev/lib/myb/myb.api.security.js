@@ -21,7 +21,7 @@ define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
     var security = {};
 
-    security.groupCEDAdvisors = "g-ced-advisers"; // CED Advisors group ID
+    security.groupCEDAdvisors = "myb-advisers-ced-students"; // CED Advisors group ID
 
     security.isUserAnAdvisor = function() {
         return security.isCurrentUserAMember(security.groupCEDAdvisors);
