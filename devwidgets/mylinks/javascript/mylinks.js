@@ -20,7 +20,7 @@
  global $, Config, jQuery, sakai, sdata, fluid
  */
 
-require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/mylinks/default-links.js"], function($, sakai, myb, defaultLinks) {
+require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/mylinks/javascript/default-links.js"], function($, sakai, myb, defaultLinks) {
 
     sakai_global.mylinks = function (tuid) {
 
