@@ -19,13 +19,6 @@
     </head>
     <body class="fl-centered fl-container inbox_main inbox_detail i18nable">
 
-		<!-- This script is used for dynamic geneartion of sections A and B -->
-		<script type="text/javascript">
-			var propExists = function(prop) {
-     			return typeof(prop) !== 'undefined' && prop != null;
-    		}
-		</script>
-
         <!-- HEADER -->
         <div class="fl-container-flex header s3d-header">
             <div class="s3d-navigation-container">
@@ -440,158 +433,157 @@
 		<!-- DYNAMIC LIST SECTIONS A AND B TEMPLATE -->
 		
 		<div id="list_edit_form_template" style="display:none"><!--        						
-			
-			{macro renderSubGroup(subGroup, prefix, parent)}    			
-				<div class="sub_group">
-					{if subGroup.title}<div class="group_header">${subGroup.title}</div>{/if}
-					{var counter = 1}
-					{for item in subGroup.items_array}											
-						<div class="checkbox"><input type="checkbox" id="${prefix}_${counter}" value="${item.id}" /><label for="${prefix}_${counter}">${item.name}</label></div>
 
-						{if propExists(item.sub_group) }
-							${renderSubGroup(item.sub_group, prefix + "_" + counter, item)}
-						{/if}
-						
-						${counter=counter+1|eat}
-					{/for}
-				</div>
-  			{/macro}		
-			
-			{macro renderMajors(majors)}
-    			<div class="majors">
-					{if propExists(majors.title)}<div class="group_header">${majors.title}</div>{/if}
-					{var counter = 1}
-					{for item in majors.items_array}											
-						<div class="checkbox"><input type="checkbox" id="undergrad_major_${counter}" value="${item.id}" /><label for="undergrad_major_${counter}">${item.name}</label></div>
-						{if propExists(item.sub_group) }
-							${renderSubGroup(item.sub_group, "undergrad_major_" + counter, item)}
-						{/if}
-						${counter=counter+1|eat}
-					{/for}					
-				</div>
-  			{/macro}
-			
-			{macro renderPrograms(programs)}
-    			<div class="programs">
-					{if propExists(programs.title)}<div class="group_header">${programs.title}</div>{/if}
-					{var counter = 1}
-					{for item in programs.items_array}											
-						<div class="checkbox"><input type="checkbox" id="grad_program_${counter}" value="${item.id}" /><label for="grad_program_${counter}">${item.name}</label></div>
-						{if propExists(item.sub_group) }
-							${renderSubGroup(item.sub_group, "grad_program_" + counter, item)}
-						{/if}
-						${counter=counter+1|eat}
-					{/for}					
-				</div>
-  			{/macro}
-			
 			{macro renderLevels()}
-    			<div class="levels">				
-					<div class="group_header">Level</div>
-					<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_freshman" value="undergrad_level_selected_levels_freshman" /><label for="undergrad_level_selected_levels_freshman">Freshman</label></div>
-					<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_sophomore" value="undergrad_level_selected_levels_sophomore" /><label for="undergrad_level_selected_levels_sophomore">Sophomore</label></div>
-					<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_junior" value="undergrad_level_selected_levels_junior" /><label for="undergrad_level_selected_levels_junior">Junior</label></div>
-					<div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_senior" value="undergrad_level_selected_levels_senior" /><label for="undergrad_level_selected_levels_senior">Senior</label></div>					
-				</div>
-  			{/macro}
-			
-			{macro renderAdmittedAs()}
-    			<div class="admittedAs">				
-					<div class="group_header">Admitted As</div>					
-					<div class="checkbox"><input type="checkbox" value="undergrad_admitted_as_freshman" id="undergrad_admitted_as_freshman" /><label for="undergrad_admitted_as_freshman">Freshman</label></div>
-					<div class="checkbox"><input type="checkbox" value="undergrad_admitted_as_transfer" id="undergrad_admitted_as_transfer" /><label for="undergrad_admitted_as_transfer">Transfer</label></div>					
-				</div>
-  			{/macro}
-			
-			{macro renderDeclared()}
-    			<div class="declared">		
-					<div class="group_header">Declared</div>					
-					<div class="checkbox"><input type="checkbox" value="undergrad_declared_declared_only" id="undergrad_declared_declared_only" /><label for="undergrad_declared_declared_only">Declared only</label></div>
-					<div class="checkbox"><input type="checkbox" value="undergrad_declared_undeclared_only" id="undergrad_declared_undeclared_only" /><label for="undergrad_declared_undeclared_only">Undeclared only</label></div>
-				</div>
-  			{/macro}
-			
-			{macro renderCertificates(certificates)}
-    			<div class="certificates">				
-					<div class="group_header">Certificates</div>
-					{var counter = 1}
-					{for cert in certificates}						
-						<div class="checkbox"><input type="checkbox" id="grad_certificate_${counter}" value="${cert.id}" /><label for="grad_certificate_${counter}">${cert.name}</label></div>
-						${counter=counter+1|eat}
-					{/for}					
-				</div>
-  			{/macro}
-			
-			{macro renderEmphases(emphases)}
-    			<div class="emphases">				
-					<div class="group_header">Emphases</div>
-					{var counter = 1}
-					{for emph in emphases}						
-						<div class="checkbox"><input type="checkbox" id="grad_emphasis_${counter}" value="${emph.id}" /><label for="grad_emphasis_${counter}">${emph.name}</label></div>
-						${counter=counter+1|eat}
-					{/for}	
-				</div>
-  			{/macro}
-			
-			{macro renderDegrees()}
-    			<div class="degrees">
-					<div class="group_header">Degrees</div>					
-					<div class="checkbox"><input type="checkbox" value="grad_degree_ms_students" id="grad_degree_ms_students" /><label for="grad_degree_ms_students">Masters students</label></div>
-					<div class="checkbox"><input type="checkbox" value="grad_degree_phd_students" id="grad_degree_phd_students" /><label for="grad_degree_phd_students">PhD</label></div>
-					<div class="checkbox"><input type="checkbox" value="grad_degree_phd_all_but_degree" id="grad_degree_phd_all_but_degree" /><label for="grad_degree_phd_all_but_degree">PhD All But Degree</label></div>					
-				</div>
-  			{/macro}
-			
-			{macro renderUndergraduates()}
-    			{if propExists(undergraduates.majors)}${renderMajors(undergraduates.majors)}{/if}
-				${renderLevels()}
-				${renderAdmittedAs()}
-				{if propExists(undergraduates.declared) && undergraduates.declared }${renderDeclared()}{/if}
-  			{/macro}
-			
-			{macro renderGraduates()}
-    			{if propExists(graduates.programs)}${renderPrograms(graduates.programs)}{/if}
-				{if propExists(graduates.certificates)}${renderCertificates(graduates.certificates)}{/if}
-				{if propExists(graduates.emphases)}${renderEmphases(graduates.emphases)}{/if}
-				${renderDegrees()}
-  			{/macro}
-			
-						
+                <div class="levels">
+                    <div class="group_header">Level</div>
+                    <div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_freshman" value="undergrad_level_selected_levels_freshman" /><label for="undergrad_level_selected_levels_freshman">Freshman</label></div>
+                    <div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_sophomore" value="undergrad_level_selected_levels_sophomore" /><label for="undergrad_level_selected_levels_sophomore">Sophomore</label></div>
+                    <div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_junior" value="undergrad_level_selected_levels_junior" /><label for="undergrad_level_selected_levels_junior">Junior</label></div>
+                    <div class="checkbox"><input type="checkbox" id="undergrad_level_selected_levels_senior" value="undergrad_level_selected_levels_senior" /><label for="undergrad_level_selected_levels_senior">Senior</label></div>
+                </div>
+            {/macro}
+
+            {macro renderAdmittedAs()}
+                <div class="admittedAs">
+                    <div class="group_header">Admitted As</div>
+                    <div class="checkbox"><input type="checkbox" value="undergrad_admitted_as_freshman" id="undergrad_admitted_as_freshman" /><label for="undergrad_admitted_as_freshman">Freshman</label></div>
+                    <div class="checkbox"><input type="checkbox" value="undergrad_admitted_as_transfer" id="undergrad_admitted_as_transfer" /><label for="undergrad_admitted_as_transfer">Transfer</label></div>
+                </div>
+            {/macro}
+
+            {macro renderDegrees()}
+                <div class="degrees">
+                    <div class="group_header">Degrees</div>
+                    <div class="checkbox"><input type="checkbox" value="grad_degree_ms_students" id="grad_degree_ms_students" /><label for="grad_degree_ms_students">Masters students</label></div>
+                    <div class="checkbox"><input type="checkbox" value="grad_degree_phd_students" id="grad_degree_phd_students" /><label for="grad_degree_phd_students">PhD</label></div>
+                    <div class="checkbox"><input type="checkbox" value="grad_degree_phd_all_but_degree" id="grad_degree_phd_all_but_degree" /><label for="grad_degree_phd_all_but_degree">PhD All But Degree</label></div>
+                </div>
+            {/macro}
+
+            {macro renderSubGroup(subGroup, prefix, parent)}
+                <div class="sub_group">
+                    {if subGroup.title}<div class="group_header">${subGroup.title}</div>{/if}
+                    {var counter = 1}
+                    {for item in subGroup.items_array}
+                        <div class="checkbox"><input type="checkbox" id="${prefix}_${counter}" value="${item.id}" /><label for="${prefix}_${counter}">${item.name}</label></div>
+
+                        {if propExists(item.sub_group) }
+                            ${renderSubGroup(item.sub_group, prefix + "_" + counter, item)}
+                        {/if}
+
+                        ${counter=counter+1|eat}
+                    {/for}
+                </div>
+            {/macro}
+
+            {macro renderMajors(majors)}
+                <div class="majors">
+                    {if propExists(majors.title)}<div class="group_header">${majors.title}</div>{/if}
+                    {var counter = 1}
+                    {for item in majors.items_array}
+                        <div class="checkbox"><input type="checkbox" id="undergrad_major_${counter}" value="${item.id}" /><label for="undergrad_major_${counter}">${item.name}</label></div>
+                        {if propExists(item.sub_group) }
+                            ${renderSubGroup(item.sub_group, "undergrad_major_" + counter, item)}
+                        {/if}
+                        ${counter=counter+1|eat}
+                    {/for}
+                </div>
+            {/macro}
+
+            {macro renderDeclared()}
+                <div class="declared">
+                    <div class="group_header">Declared</div>
+                    <div class="checkbox"><input type="checkbox" value="undergrad_declared_declared_only" id="undergrad_declared_declared_only" /><label for="undergrad_declared_declared_only">Declared only</label></div>
+                    <div class="checkbox"><input type="checkbox" value="undergrad_declared_undeclared_only" id="undergrad_declared_undeclared_only" /><label for="undergrad_declared_undeclared_only">Undeclared only</label></div>
+                </div>
+            {/macro}
+
+            {macro renderPrograms(programs)}
+                <div class="programs">
+                    {if propExists(programs.title)}<div class="group_header">${programs.title}</div>{/if}
+                    {var counter = 1}
+                    {for item in programs.items_array}
+                        <div class="checkbox"><input type="checkbox" id="grad_program_${counter}" value="${item.id}" /><label for="grad_program_${counter}">${item.name}</label></div>
+                        {if propExists(item.sub_group) }
+                            ${renderSubGroup(item.sub_group, "grad_program_" + counter, item)}
+                        {/if}
+                        ${counter=counter+1|eat}
+                    {/for}
+                </div>
+            {/macro}
+
+            {macro renderCertificates(certificates)}
+                <div class="certificates">
+                    <div class="group_header">Certificates</div>
+                    {var counter = 1}
+                    {for cert in certificates}
+                        <div class="checkbox"><input type="checkbox" id="grad_certificate_${counter}" value="${cert.id}" /><label for="grad_certificate_${counter}">${cert.name}</label></div>
+                        ${counter=counter+1|eat}
+                    {/for}
+                </div>
+            {/macro}
+
+            {macro renderEmphases(emphases)}
+                <div class="emphases">
+                    <div class="group_header">Emphases</div>
+                    {var counter = 1}
+                    {for emph in emphases}
+                        <div class="checkbox"><input type="checkbox" id="grad_emphasis_${counter}" value="${emph.id}" /><label for="grad_emphasis_${counter}">${emph.name}</label></div>
+                        ${counter=counter+1|eat}
+                    {/for}
+                </div>
+            {/macro}
+
+            {macro renderUndergraduates()}
+                {if propExists(data.undergraduates.majors)}${renderMajors(data.undergraduates.majors)}{/if}
+                ${renderLevels()}
+                ${renderAdmittedAs()}
+                {if propExists(data.undergraduates.declared) && data.undergraduates.declared }${renderDeclared()}{/if}
+            {/macro}
+
+            {macro renderGraduates()}
+                {if propExists(data.graduates.programs)}${renderPrograms(data.graduates.programs)}{/if}
+                {if propExists(data.graduates.certificates)}${renderCertificates(data.graduates.certificates)}{/if}
+                {if propExists(data.graduates.emphases)}${renderEmphases(data.graduates.emphases)}{/if}
+                ${renderDegrees()}
+            {/macro}
+
 			<div class="details_link_container"><a id="show_more_or_less" href="#">Show More</a></div>
-			
-			<div class="title_information_container">College <div class="readonly_textbox">${college}</div> <div class="students_targeted_by_list_container" >Students now targeted by this list: <div class="readonly_textbox">*TODO*</div></div></div>
-			<form name="frm_main_dynamic">
-				<div class="wrapper">
-				{if (typeof(undergraduates) !== 'undefined' && undergraduates != null ) && (typeof(graduates) !== 'undefined' && graduates != null) }			
-	        		<div class="left">
-	            		<div class="checkbox"><input type="checkbox" id="include_undergrads" value="{if propExists(undergraduates.id)}${undergraduates.id}{/if}" /><label for="include_undergrads">Include Undergraduates</label></div>
-						<div class="undergrads_group">
-							${renderUndergraduates()}
-						</div>	
-	        		</div>
-	        		<div class="right">
-	            		<div class="checkbox"><input type="checkbox" id="include_grads" value="{if propExists(graduates.id)}${graduates.id}{/if}" /><label for="include_grads">Include Graduate Students</label></div>
-						<div class="grads_group">
-							${renderGraduates()}
-						</div>
-	        		</div>     		
-				{else}
-					<div class="onecolumn">
-	            		{if typeof(undergraduates) !== 'undefined' && undergraduates != null }
-							<input type="hidden" id="include_undergrads" value="{if propExists(undergraduates.id)}${undergraduates.id}{/if}" />
-							<div class="undergrads_group">
-								${renderUndergraduates()}
-							</div>
-						{elseif typeof(graduates) !== 'undefined' && graduates != null } 					
-							<input type="hidden" id="include_grads" value="{if propExists(graduates.id)}${graduates.id}{/if}" />
-							<div class="grads_group">							
-								${renderGraduates()}
-							</div>
-						{/if}
-	        		</div>
-				{/if}
-				</div>
-			</form>
+
+            <div class="title_information_container">College <div class="readonly_textbox">${data.college}</div> <div class="students_targeted_by_list_container" >Students now targeted by this list: <div class="readonly_textbox">*TODO*</div></div></div>
+            <form name="frm_main_dynamic">
+                <div class="wrapper">
+                {if (typeof(data.undergraduates) !== 'undefined' && data.undergraduates != null ) && (typeof(data.graduates) !== 'undefined' && data.graduates != null) }
+                    <div class="left">
+                        <div class="checkbox"><input type="checkbox" id="include_undergrads" value="{if propExists(data.undergraduates.id)}${data.undergraduates.id}{/if}" /><label for="include_undergrads">Include Undergraduates</label></div>
+                        <div class="undergrads_group">
+                            ${renderUndergraduates()}
+                        </div>
+                    </div>
+                    <div class="right">
+                        <div class="checkbox"><input type="checkbox" id="include_grads" value="{if propExists(data.graduates.id)}${data.graduates.id}{/if}" /><label for="include_grads">Include Graduate Students</label></div>
+                        <div class="grads_group">
+                            ${renderGraduates()}
+                        </div>
+                    </div>
+                {else}
+                    <div class="onecolumn">
+                        {if typeof(data.undergraduates) !== 'undefined' && data.undergraduates != null }
+                            <input type="hidden" id="include_undergrads" value="{if propExists(data.undergraduates.id)}${data.undergraduates.id}{/if}" />
+                            <div class="undergrads_group">
+                                ${renderUndergraduates()}
+                            </div>
+                        {elseif typeof(data.graduates) !== 'undefined' && data.graduates != null }
+                            <input type="hidden" id="include_grads" value="{if propExists(data.graduates.id)}${data.graduates.id}{/if}" />
+                            <div class="grads_group">
+                                ${renderGraduates()}
+                            </div>
+                        {/if}
+                    </div>
+                {/if}
+                </div>
+            </form>
 						
     	--></div>
 		
