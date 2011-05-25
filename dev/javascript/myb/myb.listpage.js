@@ -422,11 +422,22 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             $("#list_name").val("");
             $("#description").val("");
-            $undergradsGroup.addClass("disabled");
-            $gradsGroup.addClass("disabled");
 
-            $("input", $gradsGroup).attr("disabled", "disabled");
-            $("input", $undergradsGroup).attr("disabled", "disabled");
+            if(hasUndergradsData && hasGradsData) {
+                $undergradsGroup.addClass("disabled");
+                $gradsGroup.addClass("disabled");
+
+                $("input", $gradsGroup).attr("disabled", "disabled");
+                $("input", $undergradsGroup).attr("disabled", "disabled");
+
+            } else if(hasUndergradsData) {
+                $("input", $undergradsGroup ).removeAttr("disabled");
+                $undergradsGroup.removeClass("disabled");
+            } else if(hasGradsData) {
+                $("input", $gradsGroup).removeAttr("disabled");
+                $gradsGroup.removeClass("disabled");
+            }
+
 
             // section c
             $("#reg_status_include_all", $sectionC).attr("checked", "checked");
@@ -1455,6 +1466,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             if (state.hasOwnProperty("new")) {
                 resetListEditingForm();
                 switchToEditMode();
+                // When only undergraduates or graduates data exists in the template, we need to update the users count.
+                // This is necessary because include undergrads/grads checkbox is checked by default in this case, but hidden.
+                if((hasGradsData && !hasUndergradsData) || (!hasGradsData && hasUndergradsData)) {
+                    var filterString = buildFilterStringFromListEditingForm();
+                    updateNumberOfPeopleSelectedByFilter(filterString);
+                }
             } else if(state.hasOwnProperty("edit")) {
                 loadListIntoEditingForm(state.edit, false);
                 switchToEditMode();
