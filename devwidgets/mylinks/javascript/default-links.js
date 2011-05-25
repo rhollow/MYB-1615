@@ -118,6 +118,19 @@ define(function() {
                             }
                         ]
                     },
+
+                    {
+                        "id": "schedule_planning",
+                        "name": "Schedule Planning Tools",
+                        "url": "http://asuc.org/newsite2010/student-services/schedule-planning-tools/",
+                        "popup_description": "Tools to help you plan your class schedule.",
+                        "audience": [
+                            {
+                                "name": "student",
+                                "required": false
+                            }
+                        ]
+                    },
                     {
                         "id": "tele_bears",
                         "name": "Tele-BEARS",
@@ -229,6 +242,19 @@ define(function() {
                         ]
                     },
                     {
+                        "id": "atoz_sites",
+                        "name": "Berkeley Sites (A-Z)",
+                        "url": "http://www.berkeley.edu/a-z/a.shtml",
+                        "popup_description": "Comprehensive list of official campus websites.",
+                        "featured_description": "N/A",
+                        "audience": [
+                            {
+                                "name": "student",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
                         "id": "cal1card",
                         "name": "Cal-1-Card",
                         "url": "http://services.housing.berkeley.edu/c1c/static/aboutc1c.htm",
@@ -313,20 +339,6 @@ define(function() {
                         ]
                     },
                     {
-                        "id": "rescomp",
-                        "name": "Residential Computing",
-                        "url": "http://rescomp.berkeley.edu",
-                        "popup_description": "Computing help for the residence halls.",
-                        "custom": false,
-                        "hidden": false,
-                        "audience": [
-                            {
-                                "name": "student",
-                                "required": false
-                            }
-                        ]
-                    },
-                    {
                         "id": "rsf",
                         "name": "Recreational Sports Facility",
                         "url": "http://www.recsports.berkeley.edu",
@@ -341,12 +353,52 @@ define(function() {
                         ]
                     },
                     {
+                        "id": "rescomp",
+                        "name": "Residential Computing",
+                        "url": "http://rescomp.berkeley.edu",
+                        "popup_description": "Computing help for the residence halls.",
+                        "custom": false,
+                        "hidden": false,
+                        "audience": [
+                            {
+                                "name": "student",
+                                "required": false
+                            }
+                        ]
+                    },
+                    {
+                        "id": "resource_guide",
+                        "name": "Resource Guide for Students",
+                        "url": "http://resource.berkeley.edu",
+                        "popup_description": "Information about campus resources.",
+                        "audience": [
+                            {
+                                "name": "student",
+                                "required": false
+                            }
+                        ]
+                    },
+
+                    {
                         "id": "student_groups",
                         "name": "Student Groups and Programs",
                         "url": "http://students.berkeley.edu/osl",
                         "popup_description": "Student organizations, leadership programs, and GenEq.",
                         "custom": false,
                         "hidden": false,
+                        "audience": [
+                            {
+                                "name": "student",
+                                "required": false
+                            }
+                        ]
+                    },
+
+                    {
+                        "id": "student_services",
+                        "name": "Student Services",
+                        "url": "http://www.berkeley.edu/students",
+                        "popup_description": "Several student sites grouped by function.",
                         "audience": [
                             {
                                 "name": "student",
