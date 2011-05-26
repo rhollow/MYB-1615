@@ -200,7 +200,8 @@ define(function() {
             {
                 "label" : "My Links",
                 "selected" : false,
-                "links" : []
+                "links" : [],
+                "isEditable" : true
             }
         ]
     };

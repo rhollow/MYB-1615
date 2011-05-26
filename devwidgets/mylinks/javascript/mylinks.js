@@ -42,6 +42,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var renderLinkList = function(data) {
             accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
             setupAccordion();
+            setupEditIcons();
         };
 
         var loadUserList = function() {
@@ -54,23 +55,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     defaultLinks.sections[0].selected = true;
                 }
                 renderLinkList(defaultLinks);
-            });
-        };
-
-        var setupEventHandlers = function() {
-            $("#add-link-mode", widgetContainer).live("click", function() {
-                linkList.hide();
-                addEditPanel.show();
-                saveLinkButton.hide();
-            });
-            $("#cancel-button", widgetContainer).live("click", function() {
-                cancelEditMode();
-            });
-            $("#addlink-button", widgetContainer).live("click", function() {
-                saveLink();
-            });
-            saveLinkButton.live("click", function() {
-                saveLink();
             });
         };
 
@@ -95,8 +79,9 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             }
 
             if (isValid) {
-                userLinkData.links[userLinkData.links.length] = {
-                    "id"   : "",
+                var index = userLinkData.links.length;
+                userLinkData.links[index] = {
+                    "id"   : index,
                     "name" : linkTitleInput.value,
                     "url" : linkUrlInput.value,
                     "popup_description": linkTitleInput.value
@@ -121,6 +106,38 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 defaultLinks.sections[i].selected = false;
             }
             defaultLinks.sections[defaultLinks.userSectionIndex].selected = true;
+        };
+
+        var setupEventHandlers = function() {
+            $("#add-link-mode", widgetContainer).live("click", function() {
+                linkList.hide();
+                addEditPanel.show();
+                saveLinkButton.hide();
+            });
+            $("#cancel-button", widgetContainer).live("click", function() {
+                cancelEditMode();
+            });
+            $("#addlink-button", widgetContainer).live("click", function() {
+                saveLink();
+            });
+            saveLinkButton.live("click", function() {
+                saveLink();
+            });
+        };
+
+        var setupEditIcons = function() {
+            for ( var i = 0; i < userLinkData.links.length; i++ ) {
+                var thisLink = userLinkData.links[i];
+                var editIcon = $("#mylinks_edit_" + thisLink.id, widgetContainer);
+                var deleteIcon = $("#mylinks_delete_" + thisLink.id, widgetContainer);
+                editIcon.click(function() {
+                    alert("edit mode for " + thisLink.id);
+                });
+                deleteIcon.click(function() {
+                    alert("delete link " + thisLink.id);
+                });
+
+            }
         };
 
         var setupAccordion = function() {
