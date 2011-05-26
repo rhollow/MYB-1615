@@ -43,6 +43,18 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         // the user's own links ("My Links")
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
 
+        var validator = $("#mylinks-form").validate({
+                    rules : {
+                        "link-title" : {
+                            required: true
+                        },
+                        "link-url" : {
+                            required : true,
+                            url : true
+                        }
+                    }
+                });
+
         var renderLinkList = function(data) {
             accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
             setupAccordion();
@@ -91,18 +103,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var saveLink = function() {
-            var isValid = true;
-
-            if (linkTitleInput[0].value.length === 0) {
-                sakai.api.Util.notification.show("", "You must enter a link title.",
-                        sakai.api.Util.notification.type.ERROR, false);
-                isValid = false;
-            } else if (linkUrlInput[0].value.length === 0) {
-                sakai.api.Util.notification.show("", "You must enter a link URL.",
-                        sakai.api.Util.notification.type.ERROR, false);
-                isValid = false;
-            }
-
+            var isValid = validator.form();
             if (isValid) {
                 var index = currentLinkIndex;
                 if (index === null) {
