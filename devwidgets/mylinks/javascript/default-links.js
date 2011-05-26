@@ -4,7 +4,7 @@ define(function() {
         "sections" : [
             {
                 "label" : "Academic",
-                "selected" : true,
+                "selected" : false,
                 "links" : [
                     {
                         "id"   : "bspace",

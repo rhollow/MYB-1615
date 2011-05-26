@@ -33,8 +33,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
 
-        var saveUserList = function(updatedList) {
-            sakai.api.Server.saveJSON(linksDataPath, updatedList);
+        var saveUserList = function(updatedList, callback) {
+            sakai.api.Server.saveJSON(linksDataPath, updatedList, callback);
         };
 
         var renderLinkList = function(data) {
@@ -48,6 +48,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     // merge the user's links with the default links
                     userLinkData = data;
                     defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
+                } else {
+                    defaultLinks.sections[0].selected = true;
                 }
                 renderLinkList(defaultLinks);
             });
@@ -57,12 +59,70 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             $("#add-link-mode", widgetContainer).live("click", function() {
                 $(".link_list").hide();
                 $(".addedit_link_panel").show();
-                $("#editlink-button").hide();
+                $("#savelink-button").hide();
             });
             $("#cancel-button", widgetContainer).live("click", function() {
-                $(".link_list").show();
-                $(".addedit_link_panel").hide();
+                cancelEditMode();
             });
+            $("#addlink-button", widgetContainer).live("click", function() {
+                validateLink();
+            });
+            $("#savelink-button", widgetContainer).live("click", function() {
+                validateLink();
+            });
+
+        };
+
+        var cancelEditMode = function() {
+            $(".link_list").show();
+            $(".addedit_link_panel").hide();
+        };
+
+        var validateLink = function() {
+            var linkTitle = $("#link-title")[0].value;
+            var linkUrl = $("#link-url")[0].value;
+            var isValid = true;
+
+            if (linkTitle.length === 0) {
+                sakai.api.Util.notification.show("", "You must enter a link title.",
+                        sakai.api.Util.notification.type.ERROR, false);
+                isValid = false;
+            }
+            if (linkUrl.length === 0) {
+                sakai.api.Util.notification.show("", "You must enter a link URL.",
+                        sakai.api.Util.notification.type.ERROR, false);
+                isValid = false;
+            }
+
+            if (isValid) {
+                userLinkData.links[userLinkData.links.length] = {
+                    "id"   : "",
+                    "name" : linkTitle,
+                    "url" : linkUrl,
+                    "popup_description": linkTitle
+                };
+                defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
+                selectUserSection();
+
+                debug.log("defaultLinks after update = ", defaultLinks);
+
+                saveUserList(userLinkData, function(success) {
+                    if (success) {
+                        cancelEditMode();
+                        renderLinkList(defaultLinks);
+                    } else {
+                        sakai.api.Util.notification.show("", "A server error occurred while trying to save your link.",
+                                sakai.api.Util.notification.type.ERROR, false);
+                    }
+                });
+            }
+        };
+
+        var selectUserSection = function () {
+            for (var i = 0; i < defaultLinks.sections.length; i++) {
+                defaultLinks.sections[i].selected = false;
+            }
+            defaultLinks.sections[defaultLinks.userSectionIndex].selected = true;
         };
 
         var setupAccordion = function() {
