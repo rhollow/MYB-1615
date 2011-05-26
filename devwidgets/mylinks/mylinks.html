@@ -1,47 +1,102 @@
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="/devwidgets/mylinks/css/mylinks.css" />
+<link rel="stylesheet" type="text/css" href="/devwidgets/mylinks/css/mylinks.css"/>
 
 <div class="mylinks_widget">
-    <div class="fl-widget-content s3d-widget-content">
-        <div class="link_list">            
-            <ul class="movable_list">
-            	<!-- non-empty node added to fix a IE7/8-Trimpath interaction bug, IE ignores empty elements causing the template to not render
-        			 see http://tinyurl.com/2bd4v for details -->
-				&nbsp;
-            </ul>
-        </div>
+  <div class="fl-widget-content s3d-widget-content">
+    <!-- MAIN PANEL: List of links and categories. -->
+    <div class="link_list">
+      <ul id="accordion"><!-- filled by trimpath --></ul>
+
+
+      <div id="accordion_template" style="display:none;"><!--
+
+          {var systemProperty = /^_/}
+          {for section in sections}
+            {if ! ( section_index.match(systemProperty) ) }
+              <li>
+                {if section.selected}
+                  <div class="selected">${section.label}</div>
+                  <table class="accordion_pane accordion_opened">
+                {else}
+                  <div class="notSelected">${section.label}</div>
+                  <table class="accordion_pane">
+                {/if}
+
+                {var i = 0}
+                <tr>
+                  {for link in section.links}
+                    {if i % 2 == 0}
+                      <tr>
+                    {/if}
+                    <td class="link">
+                        <a href="${link.url}"
+                          id="${link.id}"
+                          target="_blank"
+                          title="${link.popup_description}">${link.name|default:"no name"}</a>
+                          {if section.isEditable}
+                            <span class="edit_icon" id="mylinks_edit_${i}">E</span> |
+                            <span class="delete_icon" id="mylinks_delete_${i}">X</span>
+                          {/if}
+
+                    </td>
+
+                    {eval}
+                      i = i + 1
+                    {/eval}
+                  {forelse}
+                    <span>There are no links in this section yet.</span>
+                  {/for}
+                </tr>
+
+                </table>
+              </li>
+            {/if}
+          {/for}
+
+      --></div>
+
     </div>
 
-    <ul id="mylinks_list_template" style="display:none"><!--
-        {for i in links}
-            <li class="link">
-                <a href="${i.url}" id="${i.id}" target="_blank">${i.name|default:"no name"}</a>
-            </li>
-        {forelse}
-            <span>Sorry, there was a failure loading your list of links.</span>
-        {/for}
-    --></ul>
-    
-    <!-- widget footer --> 
-
-    <div class="fl-widget-options fl-fix" style="overflow:hidden;">
-        <div class="fl-widget-options-footer-top">
-            <div class="fl-widget-options-top-right"></div>
-        </div>
-        <div class="widget-options-inner">
-            <ul>
-                <li><a href="/dev/links.html">__MSG__MODIFY_LINKS__</a></li>
-            </ul>
-        </div>
-        <div class="s3d-widget-options-footer-left">
-            <div class="s3d-widget-options-footer-right">
-            </div>
-        </div>
+    <!-- ADD/EDIT LINK PANEL: Allows user to add a new link or edit an existing link. -->
+    <div class="addedit_link_panel">
+      <form id="mylinks-form" class="link-form" action="" method="post">
+                <span class="link-form-element">
+                    <label for="link-title">Link Title:</label>       
+                    <input type="text" id="link-title" name="link-title"/>
+                </span>
+        <br><br>
+                <span class="link-form-element">
+                    <label for="link-url">Link URL:</label>       
+                    <input type="text" id="link-url" name="link-url"/>
+                </span>
+      </form>
+      <br><br>
+            <span class="button-list"> 
+                <button id="addlink-button" class="s3d-button"><span class="s3d-button-inner">Add Link</span></button>
+                <button id="savelink-button" class="s3d-button"><span class="s3d-button-inner">Save</span></button>
+                <button id="cancel-button" class="s3d-button"><span class="s3d-button-inner">Cancel</span></button>
+            </span>
     </div>
-    
+  </div>
+
+  <!-- widget footer -->
+  <div class="fl-widget-options fl-fix" style="overflow:hidden;">
+    <div class="fl-widget-options-footer-top">
+      <div class="fl-widget-options-top-right"></div>
+    </div>
+    <div class="widget-options-inner">
+      <ul>
+        <li><a href="javascript: void(0);" id="add-link-mode">Add a Link</a></li>
+      </ul>
+    </div>
+    <div class="s3d-widget-options-footer-left">
+      <div class="s3d-widget-options-footer-right">
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/mylinks/javascript/mylinks.js"></script>
-
 
