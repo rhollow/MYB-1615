@@ -32,6 +32,9 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var linkList = $(".link_list", widgetContainer);
         var addEditPanel = $(".addedit_link_panel", widgetContainer);
         var saveLinkButton = $("#savelink-button", widgetContainer);
+        var addLinkButton = $("#addlink-button", widgetContainer);
+
+        var currentLinkID = null;
 
         // data files and paths
         var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
@@ -59,10 +62,30 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var cancelEditMode = function() {
+            currentLinkID = null;
             linkList.show();
             addEditPanel.hide();
             linkTitleInput.value = "";
             linkUrlInput.value = "";
+        };
+
+        var enterAddMode = function() {
+            currentLinkID = null;
+            linkList.hide();
+            addEditPanel.show();
+            addLinkButton.show();
+            saveLinkButton.hide();
+        };
+
+        var enterEditMode = function(link) {
+            debug.log("Entering edit mode with link " + link.id);
+            linkTitleInput.value = link.name;
+            linkUrlInput.value = link.url;
+            currentLinkID = link.id;
+            linkList.hide();
+            addEditPanel.show();
+            addLinkButton.hide();
+            saveLinkButton.show();
         };
 
         var saveLink = function() {
@@ -79,7 +102,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             }
 
             if (isValid) {
-                var index = userLinkData.links.length;
+                var index = currentLinkID;
+                if ( index === null ) {
+                    index = userLinkData.links.length;
+                }
                 userLinkData.links[index] = {
                     "id"   : index,
                     "name" : linkTitleInput.value,
@@ -89,6 +115,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
                 selectUserSection();
 
+                debug.log("Saving link; CurrentLinkID = " + currentLinkID, userLinkData);
                 sakai.api.Server.saveJSON(linksDataPath, userLinkData, function(success) {
                     if (success) {
                         cancelEditMode();
@@ -110,9 +137,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var setupEventHandlers = function() {
             $("#add-link-mode", widgetContainer).live("click", function() {
-                linkList.hide();
-                addEditPanel.show();
-                saveLinkButton.hide();
+                enterAddMode();
             });
             $("#cancel-button", widgetContainer).live("click", function() {
                 cancelEditMode();
@@ -126,17 +151,17 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var setupEditIcons = function() {
-            for ( var i = 0; i < userLinkData.links.length; i++ ) {
-                var thisLink = userLinkData.links[i];
-                var editIcon = $("#mylinks_edit_" + thisLink.id, widgetContainer);
-                var deleteIcon = $("#mylinks_delete_" + thisLink.id, widgetContainer);
+            for (var i = 0; i < userLinkData.links.length; i++) {
+                var editIcon = $("#mylinks_edit_" + userLinkData.links[i].id, widgetContainer);
                 editIcon.click(function() {
-                    alert("edit mode for " + thisLink.id);
+                    var id = this.id.replace("mylinks_edit_", "");
+                    enterEditMode(userLinkData.links[id]);
                 });
+                var deleteIcon = $("#mylinks_delete_" + userLinkData.links[i].id, widgetContainer);
                 deleteIcon.click(function() {
-                    alert("delete link " + thisLink.id);
+                    var id = this.id.replace("mylinks_delete_", "");
+                    debug.log("delete link ", userLinkData.links[id]);
                 });
-
             }
         };
 
