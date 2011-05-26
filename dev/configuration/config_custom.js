@@ -23,7 +23,6 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     // Page titles for myB-unique pages
     config.PageTitles.pages["/dev/inboxnotifier.html"] = "NOTIFICATIONS";
     config.PageTitles.pages["/dev/listpage.html"] = "DYNAMIC_LISTS";
-    config.PageTitles.pages["/dev/links.html"] = "LINKS";
 
     // set our own default widget arrangement
     config.defaultprivstructure.id546341435.dashboard.columns.column1[1] = {
