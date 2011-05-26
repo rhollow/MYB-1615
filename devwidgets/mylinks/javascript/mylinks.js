@@ -33,10 +33,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
 
-        var saveUserList = function(updatedList, callback) {
-            sakai.api.Server.saveJSON(linksDataPath, updatedList, callback);
-        };
-
         var renderLinkList = function(data) {
             accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
             setupAccordion();
@@ -65,12 +61,11 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 cancelEditMode();
             });
             $("#addlink-button", widgetContainer).live("click", function() {
-                validateLink();
+                saveLink();
             });
             $("#savelink-button", widgetContainer).live("click", function() {
-                validateLink();
+                saveLink();
             });
-
         };
 
         var cancelEditMode = function() {
@@ -78,7 +73,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             $(".addedit_link_panel").hide();
         };
 
-        var validateLink = function() {
+        var saveLink = function() {
             var linkTitle = $("#link-title")[0].value;
             var linkUrl = $("#link-url")[0].value;
             var isValid = true;
@@ -87,8 +82,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 sakai.api.Util.notification.show("", "You must enter a link title.",
                         sakai.api.Util.notification.type.ERROR, false);
                 isValid = false;
-            }
-            if (linkUrl.length === 0) {
+            } else if (linkUrl.length === 0) {
                 sakai.api.Util.notification.show("", "You must enter a link URL.",
                         sakai.api.Util.notification.type.ERROR, false);
                 isValid = false;
@@ -104,9 +98,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
                 selectUserSection();
 
-                debug.log("defaultLinks after update = ", defaultLinks);
-
-                saveUserList(userLinkData, function(success) {
+                sakai.api.Server.saveJSON(linksDataPath, userLinkData, function(success) {
                     if (success) {
                         cancelEditMode();
                         renderLinkList(defaultLinks);
