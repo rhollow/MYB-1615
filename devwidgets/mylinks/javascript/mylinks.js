@@ -136,16 +136,16 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var setupEventHandlers = function() {
-            $("#add-link-mode", widgetContainer).live("click", function() {
+            $("#add-link-mode", widgetContainer).click(function() {
                 enterAddMode();
             });
-            $("#cancel-button", widgetContainer).live("click", function() {
+            $("#cancel-button", widgetContainer).click(function() {
                 cancelEditMode();
             });
-            addLinkButton.live("click", function() {
+            addLinkButton.click(function() {
                 saveLink();
             });
-            saveLinkButton.live("click", function() {
+            saveLinkButton.click(function() {
                 saveLink();
             });
             linkTitleInput.keydown(function(event) {
