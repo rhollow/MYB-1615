@@ -27,8 +27,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         // page elements
         var widgetContainer = $("#" + tuid);
         var accordionContainer = $("ul#accordion", widgetContainer);
-        var linkTitleInput = $("#link-title", widgetContainer)[0];
-        var linkUrlInput = $("#link-url", widgetContainer)[0];
+        var linkTitleInput = $("#link-title", widgetContainer);
+        var linkUrlInput = $("#link-url", widgetContainer);
         var linkList = $(".link_list", widgetContainer);
         var addEditPanel = $(".addedit_link_panel", widgetContainer);
         var saveLinkButton = $("#savelink-button", widgetContainer);
@@ -66,8 +66,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             currentLinkIndex = null;
             linkList.show();
             addEditPanel.hide();
-            linkTitleInput.value = "";
-            linkUrlInput.value = "";
+            linkTitleInput[0].value = "";
+            linkUrlInput[0].value = "";
         };
 
         var enterAddMode = function() {
@@ -76,28 +76,28 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             addEditPanel.show();
             addLinkButton.show();
             saveLinkButton.hide();
-            linkTitleInput.focus();
+            linkTitleInput[0].focus();
         };
 
         var enterEditMode = function(index, link) {
-            linkTitleInput.value = link.name;
-            linkUrlInput.value = link.url;
+            linkTitleInput[0].value = link.name;
+            linkUrlInput[0].value = link.url;
             currentLinkIndex = index;
             linkList.hide();
             addEditPanel.show();
             addLinkButton.hide();
             saveLinkButton.show();
-            linkTitleInput.focus();
+            linkTitleInput[0].focus();
         };
 
         var saveLink = function() {
             var isValid = true;
 
-            if (linkTitleInput.value.length === 0) {
+            if (linkTitleInput[0].value.length === 0) {
                 sakai.api.Util.notification.show("", "You must enter a link title.",
                         sakai.api.Util.notification.type.ERROR, false);
                 isValid = false;
-            } else if (linkUrlInput.value.length === 0) {
+            } else if (linkUrlInput[0].value.length === 0) {
                 sakai.api.Util.notification.show("", "You must enter a link URL.",
                         sakai.api.Util.notification.type.ERROR, false);
                 isValid = false;
@@ -109,9 +109,9 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     index = userLinkData.links.length;
                 }
                 userLinkData.links[index] = {
-                    "name" : linkTitleInput.value,
-                    "url" : linkUrlInput.value,
-                    "popup_description": linkTitleInput.value
+                    "name" : linkTitleInput[0].value,
+                    "url" : linkUrlInput[0].value,
+                    "popup_description": linkTitleInput[0].value
                 };
                 defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
                 selectUserSection();
@@ -147,6 +147,18 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             });
             saveLinkButton.live("click", function() {
                 saveLink();
+            });
+            linkTitleInput.keydown(function(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    saveLink();
+                }
+            });
+            linkUrlInput.keydown(function(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    saveLink();
+                }
             });
         };
 
