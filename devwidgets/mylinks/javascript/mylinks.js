@@ -34,7 +34,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var saveLinkButton = $("#savelink-button", widgetContainer);
         var addLinkButton = $("#addlink-button", widgetContainer);
 
-        var currentLinkID = null;
+        // index of the link currently being edited
+        var currentLinkIndex = null;
 
         // data files and paths
         var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
@@ -62,7 +63,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var cancelEditMode = function() {
-            currentLinkID = null;
+            currentLinkIndex = null;
             linkList.show();
             addEditPanel.hide();
             linkTitleInput.value = "";
@@ -70,22 +71,23 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var enterAddMode = function() {
-            currentLinkID = null;
+            currentLinkIndex = null;
             linkList.hide();
             addEditPanel.show();
             addLinkButton.show();
             saveLinkButton.hide();
+            linkTitleInput.focus();
         };
 
-        var enterEditMode = function(link) {
-            debug.log("Entering edit mode with link " + link.id);
+        var enterEditMode = function(index, link) {
             linkTitleInput.value = link.name;
             linkUrlInput.value = link.url;
-            currentLinkID = link.id;
+            currentLinkIndex = index;
             linkList.hide();
             addEditPanel.show();
             addLinkButton.hide();
             saveLinkButton.show();
+            linkTitleInput.focus();
         };
 
         var saveLink = function() {
@@ -102,12 +104,11 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             }
 
             if (isValid) {
-                var index = currentLinkID;
-                if ( index === null ) {
+                var index = currentLinkIndex;
+                if (index === null) {
                     index = userLinkData.links.length;
                 }
                 userLinkData.links[index] = {
-                    "id"   : index,
                     "name" : linkTitleInput.value,
                     "url" : linkUrlInput.value,
                     "popup_description": linkTitleInput.value
@@ -115,7 +116,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
                 selectUserSection();
 
-                debug.log("Saving link; CurrentLinkID = " + currentLinkID, userLinkData);
                 sakai.api.Server.saveJSON(linksDataPath, userLinkData, function(success) {
                     if (success) {
                         cancelEditMode();
@@ -142,7 +142,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             $("#cancel-button", widgetContainer).live("click", function() {
                 cancelEditMode();
             });
-            $("#addlink-button", widgetContainer).live("click", function() {
+            addLinkButton.live("click", function() {
                 saveLink();
             });
             saveLinkButton.live("click", function() {
@@ -152,15 +152,28 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var setupEditIcons = function() {
             for (var i = 0; i < userLinkData.links.length; i++) {
-                var editIcon = $("#mylinks_edit_" + userLinkData.links[i].id, widgetContainer);
+
+                // edit button
+                var editIcon = $("#mylinks_edit_" + i, widgetContainer);
                 editIcon.click(function() {
-                    var id = this.id.replace("mylinks_edit_", "");
-                    enterEditMode(userLinkData.links[id]);
+                    var idx = this.id.replace("mylinks_edit_", "");
+                    enterEditMode(idx, userLinkData.links[idx]);
                 });
-                var deleteIcon = $("#mylinks_delete_" + userLinkData.links[i].id, widgetContainer);
+
+                // delete button
+                var deleteIcon = $("#mylinks_delete_" + i, widgetContainer);
                 deleteIcon.click(function() {
-                    var id = this.id.replace("mylinks_delete_", "");
-                    debug.log("delete link ", userLinkData.links[id]);
+                    var idx = this.id.replace("mylinks_delete_", "");
+                    userLinkData.links.splice(idx, 1);
+                    defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
+                    sakai.api.Server.saveJSON(linksDataPath, userLinkData, function(success) {
+                        if (success) {
+                            renderLinkList(defaultLinks);
+                        } else {
+                            sakai.api.Util.notification.show("", "A server error occurred while trying to delete your link.",
+                                    sakai.api.Util.notification.type.ERROR, false);
+                        }
+                    }, true);
                 });
             }
         };
