@@ -27,10 +27,16 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         // page elements
         var widgetContainer = $("#" + tuid);
         var accordionContainer = $("ul#accordion", widgetContainer);
+        var linkTitleInput = $("#link-title", widgetContainer)[0];
+        var linkUrlInput = $("#link-url", widgetContainer)[0];
+        var linkList = $(".link_list", widgetContainer);
+        var addEditPanel = $(".addedit_link_panel", widgetContainer);
+        var saveLinkButton = $("#savelink-button", widgetContainer);
 
         // data files and paths
         var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
 
+        // the user's own links ("My Links")
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
 
         var renderLinkList = function(data) {
@@ -53,9 +59,9 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var setupEventHandlers = function() {
             $("#add-link-mode", widgetContainer).live("click", function() {
-                $(".link_list").hide();
-                $(".addedit_link_panel").show();
-                $("#savelink-button").hide();
+                linkList.hide();
+                addEditPanel.show();
+                saveLinkButton.hide();
             });
             $("#cancel-button", widgetContainer).live("click", function() {
                 cancelEditMode();
@@ -63,26 +69,26 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             $("#addlink-button", widgetContainer).live("click", function() {
                 saveLink();
             });
-            $("#savelink-button", widgetContainer).live("click", function() {
+            saveLinkButton.live("click", function() {
                 saveLink();
             });
         };
 
         var cancelEditMode = function() {
-            $(".link_list").show();
-            $(".addedit_link_panel").hide();
+            linkList.show();
+            addEditPanel.hide();
+            linkTitleInput.value = "";
+            linkUrlInput.value = "";
         };
 
         var saveLink = function() {
-            var linkTitle = $("#link-title")[0].value;
-            var linkUrl = $("#link-url")[0].value;
             var isValid = true;
 
-            if (linkTitle.length === 0) {
+            if (linkTitleInput.value.length === 0) {
                 sakai.api.Util.notification.show("", "You must enter a link title.",
                         sakai.api.Util.notification.type.ERROR, false);
                 isValid = false;
-            } else if (linkUrl.length === 0) {
+            } else if (linkUrlInput.value.length === 0) {
                 sakai.api.Util.notification.show("", "You must enter a link URL.",
                         sakai.api.Util.notification.type.ERROR, false);
                 isValid = false;
@@ -91,9 +97,9 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             if (isValid) {
                 userLinkData.links[userLinkData.links.length] = {
                     "id"   : "",
-                    "name" : linkTitle,
-                    "url" : linkUrl,
-                    "popup_description": linkTitle
+                    "name" : linkTitleInput.value,
+                    "url" : linkUrlInput.value,
+                    "popup_description": linkTitleInput.value
                 };
                 defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
                 selectUserSection();
