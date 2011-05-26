@@ -32,12 +32,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         /**
          * Whether the loaded trimpath template includes undergraduate students data
          */
-        var boolTemplateHasUndergradsData = false;
+        var hasUndergradsData = false;
 
         /**
          * Whether the loaded trimpath template includes graduate students data
          */
-        var boolTemplateHasGradsData = false;
+        var hasGradsData = false;
 
         /**
          * Dynamic lists base URL (parent node in Sparse), delete this node to remove all dynamic lists for current user
@@ -273,21 +273,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var buildUndergraduatesAndGraduatesResultingObject = function (){
 
-            var boolIncludeUndergrads = false;
-            var boolIncludeGrads = false;
+            var includeUndergrads = false;
+            var includeGrads = false;
 
-            if(boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
+            if(hasUndergradsData && hasGradsData) {
                 // If the both checkboxes are available, need to check their statuses
-                boolIncludeUndergrads = $includeUndergradsCheckbox.length > 0 && $includeUndergradsCheckbox.is(":checked");
-                boolIncludeGrads = $includeGradsCheckbox.length > 0 && $includeGradsCheckbox.is(":checked");
+                includeUndergrads = $includeUndergradsCheckbox.length > 0 && $includeUndergradsCheckbox.is(":checked");
+                includeGrads = $includeGradsCheckbox.length > 0 && $includeGradsCheckbox.is(":checked");
 
             } else {
-                if(boolTemplateHasUndergradsData) {
+                if(hasUndergradsData) {
                     // Only undergrads are available, no checkbox
-                    boolIncludeUndergrads = true;
-                } else if(boolTemplateHasGradsData) {
+                    includeUndergrads = true;
+                } else if(hasGradsData) {
                     // Only grads are available, no checkbox
-                    boolIncludeGrads = true;
+                    includeGrads = true;
                 }
             }
 
@@ -295,7 +295,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             // For undergrads
             var undergrads = new Condition();
 
-            if (boolIncludeUndergrads) {
+            if (includeUndergrads) {
                 undergrads = buildUndergradsObjectAsAND();
                 if(undergrads.isConditionObjectEmpty()) {
                     undergrads.OR =[$includeUndergradsCheckbox.val()];
@@ -306,7 +306,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             // For grads
             var grads = new Condition();
 
-            if (boolIncludeGrads) {
+            if (includeGrads) {
                 grads = buildGradsObjectAsAND();
                 if(grads.isConditionObjectEmpty()) {
                     grads.OR = [$includeGradsCheckbox.val()];
@@ -316,15 +316,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             var result = new Condition();
 
-            if (boolIncludeUndergrads && boolIncludeGrads) {
+            if (includeUndergrads && includeGrads) {
 
                 result = undergrads.joinTwoConditionsByOR(grads);
 
-            } else if (boolIncludeUndergrads) {
+            } else if (includeUndergrads) {
 
                 result = undergrads;
 
-            } else if (boolIncludeGrads) {
+            } else if (includeGrads) {
 
                 result = grads;
             }
@@ -422,11 +422,22 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             $("#list_name").val("");
             $("#description").val("");
-            $undergradsGroup.addClass("disabled");
-            $gradsGroup.addClass("disabled");
 
-            $("input", $gradsGroup).attr("disabled", "disabled");
-            $("input", $undergradsGroup).attr("disabled", "disabled");
+            if(hasUndergradsData && hasGradsData) {
+                $undergradsGroup.addClass("disabled");
+                $gradsGroup.addClass("disabled");
+
+                $("input", $gradsGroup).attr("disabled", "disabled");
+                $("input", $undergradsGroup).attr("disabled", "disabled");
+
+            } else if(hasUndergradsData) {
+                $("input", $undergradsGroup ).removeAttr("disabled");
+                $undergradsGroup.removeClass("disabled");
+            } else if(hasGradsData) {
+                $("input", $gradsGroup).removeAttr("disabled");
+                $gradsGroup.removeClass("disabled");
+            }
+
 
             // section c
             $("#reg_status_include_all", $sectionC).attr("checked", "checked");
@@ -1310,7 +1321,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             $gradsGroup = $(".grads_group");
 
             //Disabling all graduate and undergraduate controls
-            if (boolTemplateHasUndergradsData && boolTemplateHasGradsData) {
+            if (hasUndergradsData && hasGradsData) {
 
                 $includeGradsCheckbox.click(function(){
                         if($includeGradsCheckbox.is(':checked')){
@@ -1396,6 +1407,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         ////////////////////
 
         /**
+         * This script is used for dynamic generation of sections A and B
+         * @param prop a property to check
+         *
+         * @return true if property exists and is not null; otherwise false.
+         */
+        var propExists = function(prop) {
+     			return typeof(prop) !== 'undefined' && prop !== null;
+    	};
+
+        /**
          * Loads page template form the given url and renders it.
          *
          * @param templateUrl Template URL, for ex. "nauth_ced.json"
@@ -1417,11 +1438,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     success: function(data){
                         if (data) {
                            // what information do we have?
-                           boolTemplateHasUndergradsData = typeof(data.undergraduates) !== 'undefined' && data.undergraduates !== null;
-                           boolTemplateHasGradsData = typeof(data.graduates) !== 'undefined' && data.graduates !== null;
-
+                           hasUndergradsData = propExists(data.undergraduates);
+                           hasGradsData = propExists(data.graduates);
                            // rendering the loaded template
-                           $view.html(sakai.api.Util.TemplateRenderer($listEditFormTemplate, data));
+                           $view.html(sakai.api.Util.TemplateRenderer($listEditFormTemplate, {data: data, propExists: propExists}));
                         }
                     },
                      error: function(xhr, textStatus, thrownError) {
@@ -1446,6 +1466,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             if (state.hasOwnProperty("new")) {
                 resetListEditingForm();
                 switchToEditMode();
+                // When only undergraduates or graduates data exists in the template, we need to update the users count.
+                // This is necessary because include undergrads/grads checkbox is checked by default in this case, but hidden.
+                if((hasGradsData && !hasUndergradsData) || (!hasGradsData && hasUndergradsData)) {
+                    var filterString = buildFilterStringFromListEditingForm();
+                    updateNumberOfPeopleSelectedByFilter(filterString);
+                }
             } else if(state.hasOwnProperty("edit")) {
                 loadListIntoEditingForm(state.edit, false);
                 switchToEditMode();
