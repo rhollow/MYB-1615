@@ -37,7 +37,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var currentLinkIndex = null;
 
         // data files and paths
-        var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
+        var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links.2.json";
 
         // the user's own links ("My Links")
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
