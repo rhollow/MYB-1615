@@ -339,7 +339,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                     sakai.config.Navigation[i].subnav.push({
                         "id": "subnavigation_explore_" + categoryx.id + "_link",
                         "label": categoryx.title,
-                        "url": "/dev/search2.html#l=" + categoryx.id
+                        "url": "/search#l=" + categoryx.id
                     });
                 }
             }
@@ -419,7 +419,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             if ($(topnavSearchResultsContainer).find("li.selected").length) {
                 document.location = $(topnavSearchResultsContainer).find("li.selected a").attr("href");
             } else {
-                document.location = "/dev/search2.html#q=" + $.trim($("#topnavigation_search_input").val());
+                document.location = "/search#q=" + $.trim($("#topnavigation_search_input").val());
             }
         };
 
@@ -553,8 +553,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         // Add content
 
         $(".sakai_add_content_overlay, #subnavigation_add_content_link").live("click", function(ev) {
-            //$(window).trigger("init.fileupload.sakai");
             $(window).trigger("init.newaddcontent.sakai");
+            return false;
         });
 
         // Send a message
