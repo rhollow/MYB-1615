@@ -26,7 +26,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         // page elements
         var widgetContainer = $("#" + tuid);
-        var accordionContainer = $("ul#accordion", widgetContainer);
         var linkTitleInput = $("#link-title", widgetContainer);
         var linkUrlInput = $("#link-url", widgetContainer);
         var linkList = $(".link_list", widgetContainer);
@@ -56,11 +55,15 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 });
 
         var renderLinkList = function(data) {
-            accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
+            $("ul#accordion", widgetContainer).html(sakai.api.Util.TemplateRenderer("accordion_template", data));
             setupAccordion();
             setupEditIcons();
         };
 
+        /*
+            Load user's list if there is one, and merge it with the default links. If no user's list, just use
+            the default ones.
+         */
         var loadUserList = function() {
             sakai.api.Server.loadJSON(linksDataPath, function (success, data) {
                 if (success) {
@@ -91,7 +94,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             linkTitleInput[0].focus();
         };
 
-        var enterEditMode = function(index, link) {
+        var enterEditMode = function(index) {
+            var link = userLinkData.links[index];
             linkTitleInput[0].value = link.name;
             linkUrlInput[0].value = link.url;
             currentLinkIndex = index;
@@ -170,7 +174,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 var editIcon = $("#mylinks_edit_" + i, widgetContainer);
                 editIcon.click(function() {
                     var idx = this.id.replace("mylinks_edit_", "");
-                    enterEditMode(idx, userLinkData.links[idx]);
+                    enterEditMode(idx);
                 });
 
                 // delete button
@@ -213,10 +217,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             $("#accordion table.accordion_opened", widgetContainer).show();
         };
 
-        /**
-         * Set up the widget
-         * grab the users link data, then fire callback loadLinksList
-         */
         var doInit = function() {
             loadUserList();
             setupEventHandlers();
