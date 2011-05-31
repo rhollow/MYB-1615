@@ -5,7 +5,7 @@
   <div class="fl-widget-content s3d-widget-content">
     <!-- MAIN PANEL: List of links and categories. -->
     <div class="link_list">
-      <ul id="accordion"><!-- filled by trimpath --></ul>
+      <div id="accordion"><!-- filled by trimpath --></div>
 
 
       <div id="accordion_template" style="display:none;"><!--
@@ -13,22 +13,20 @@
           {var systemProperty = /^_/}
           {for section in sections}
             {if ! ( section_index.match(systemProperty) ) }
-              <li>
+              <div>
                 {if section.selected}
-                  <div class="selected">${section.label}</div>
-                  <table class="accordion_pane accordion_opened">
+                  <div class="section_label selected">${section.label}</div>
+                  <ul class="accordion_pane accordion_opened">
                 {else}
-                  <div class="notSelected">${section.label}</div>
-                  <table class="accordion_pane">
+                  <div class="section_label notSelected">${section.label}</div>
+                  <ul class="accordion_pane">
                 {/if}
 
                 {var i = 0}
-                <tr>
+
                   {for link in section.links}
-                    {if i % 2 == 0}
-                      <tr>
-                    {/if}
-                    <td class="link">
+
+                    <li class="link featuredcontent_content featuredcontent_content_medium">
                         <a href="${link.url}"
                           id="${link.id}"
                           target="_blank"
@@ -38,7 +36,7 @@
                             <span class="delete_icon" id="mylinks_delete_${i}">X</span>
                           {/if}
 
-                    </td>
+                    </li>
 
                     {eval}
                       i = i + 1
@@ -46,10 +44,10 @@
                   {forelse}
                     <span>There are no links in this section yet.</span>
                   {/for}
-                </tr>
+                
 
-                </table>
-              </li>
+                </ul>
+              </div>
             {/if}
           {/for}
 
@@ -61,17 +59,17 @@
     <div class="addedit_link_panel">
       <form id="mylinks-form" class="link-form" action="" method="post">
                 <span class="link-form-element">
-                    <label for="link-title">Link Title:</label>       
+                    <label for="link-title">Link Title:</label>
                     <input type="text" id="link-title" name="link-title"/>
                 </span>
         <br><br>
                 <span class="link-form-element">
-                    <label for="link-url">Link URL:</label>       
+                    <label for="link-url">Link URL:</label>
                     <input type="text" id="link-url" name="link-url"/>
                 </span>
       </form>
       <br><br>
-            <span class="button-list"> 
+            <span class="button-list">
                 <button id="addlink-button" class="s3d-button"><span class="s3d-button-inner">Add Link</span></button>
                 <button id="savelink-button" class="s3d-button"><span class="s3d-button-inner">Save</span></button>
                 <button id="cancel-button" class="s3d-button"><span class="s3d-button-inner">Cancel</span></button>
@@ -99,4 +97,3 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/mylinks/javascript/mylinks.js"></script>
-

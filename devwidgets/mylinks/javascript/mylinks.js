@@ -32,6 +32,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var addEditPanel = $(".addedit_link_panel", widgetContainer);
         var saveLinkButton = $("#savelink-button", widgetContainer);
         var addLinkButton = $("#addlink-button", widgetContainer);
+        var accordionContainer = $("#accordion", widgetContainer);
 
         // index of the link currently being edited
         var currentLinkIndex = null;
@@ -55,7 +56,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 });
 
         var renderLinkList = function(data) {
-            $("ul#accordion", widgetContainer).html(sakai.api.Util.TemplateRenderer("accordion_template", data));
+            accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
             setupAccordion();
             setupEditIcons();
         };
@@ -194,27 +195,37 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 });
             }
         };
+        
+        var showPane = function (pane) {
+            pane.removeClass("notSelected").addClass("selected");
+            pane.siblings(".accordion_pane").slideToggle(300);
+        }
+        
+        var hidePane = function (pane) {
+            pane.removeClass("selected").addClass("notSelected");
+            pane.siblings(".accordion_pane").slideUp(300);
+        }
+        
+        var closePanes = function () {
+            $(".section_label").each(function () {
+                hidePane($(this));
+            });
+        }
 
         var setupAccordion = function() {
-            $("#accordion > li > div", widgetContainer).click(function() {
-                if (false === $(this).next().is(':visible')) {
-                    $("#accordion div", widgetContainer).removeClass("selected");
-                    $("#accordion div", widgetContainer).addClass("notSelected");
-                    $("#accordion table", widgetContainer).slideUp(300);
-                }
 
-                $(this).next().slideToggle(300);
-                $(this).removeClass("notSelected");
-                $(this).addClass("selected");
+            $(".section_label", accordionContainer).click(function() {
+                closePanes();
+                showPane($(this));
             });
 
             // Add Google Analytics outbound links tracking
-            $("ul#accordion td.link a", widgetContainer).click(function () {
+            $("li.link a", accordionContainer).click(function () {
                 myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
                 return false;
             });
 
-            $("#accordion table.accordion_opened", widgetContainer).show();
+            $("ul.accordion_opened", accordionContainer).show();
         };
 
         var doInit = function() {
