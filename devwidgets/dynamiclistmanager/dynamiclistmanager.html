@@ -1,0 +1,64 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/dynamiclistmanager/css/dynamiclistmanager.css" />
+
+
+<div class="dynamiclistmanager_widget">
+    <!-- TITLE -->
+    <h1 class="title" style="margin-bottom:10px">__MSG__DYNAMIC_LIST_MANAGER__</h1>
+
+    <button type="button" id="dynamic_lists_create_new" class="s3d-button" style="margin-bottom:10px;"><span class="s3d-button-inner">Create New</span></button>
+
+
+    <div id="existing_lists list_main">
+        <div class="search_tab_content_top">
+            <div class="search_tab_content_top_inner"><!-- --></div>
+        </div>
+
+        <div class="main_content_container">
+            <div class="list-heading list_list_header" id="list_existing">__MSG__DYNAMIC_LISTS__</div>
+
+            <table class="list-table" id="list_table" summary="Your existing lists.">
+                <tr class="different">
+                    <th class="list-checkbox" id="list_tableHeader_chk"><input type="checkbox" id="list_list_checkAll" title="__MSG__CHECK_ALL__"/></th>
+                    <th class="list_list_table_header_sort" id="list_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
+                    <th class="list_list_table_header_sort" id="list_table_header_name"><span>__MSG__NAME__</span></th>
+                    <th class="list_list_table_header_sort" id="list_table_header_description"><span>__MSG__DESCRIPTION__</span></th>
+                    <th class="list_list_table_header_sort" id="list_table_header_size"><span>__MSG__CURRENT_LIST_SIZE__</span></th>
+                </tr>
+            </table>
+        </div>
+
+        <div id="list_list_lists_template" title=""><!--
+            {for m in links}
+                {var dateString = Globalization.format(sakai.api.Util.parseSakaiDate(m['_lastModified']), "MMM d, yyyy hh:mm tt")}
+
+                <tr class="list_list" id="list_table_list_${m['jcr:name']}">
+                    <td><input type="checkbox" class="list_list_check_list" value="${m['jcr:name']}" id="list_check_list_${m['jcr:name']}" title="__MSG__SELECT_LIST__" /></td>
+                    <td>${dateString}</td>
+                    <td><a class="editLink" id="${m['jcr:name']}" href="javascript:;">${m['sakai:name']}</a></td>
+                    <td>${m['sakai:description']}</td>
+                    <td>${m['numusers']}</td>
+                </tr>
+
+            {forelse}
+                <tr class="list_list">
+                    <td colspan="5" class="list_message_none">__MSG__NO_LISTS_FOUND__.</td>
+                </tr>
+            {/for}
+            --></div>
+
+    </div>
+
+    <!-- List of buttons -->
+    <div class="button-list">
+        <button type="button" id="dyn_lists_delete_button" class="s3d-button" disabled="disabled"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+        <button type="button" id="dyn_lists_copy_button" class="s3d-button" disabled="disabled"><span class="s3d-button-inner">__MSG__COPY__</span></button>
+        <button type="button" id="dyn_lists_edit_button" class="s3d-button" disabled="disabled"><span class="s3d-button-inner">__MSG__EDIT__</span></button>
+    </div>
+
+</div>
+<!-- existing_lists end -->
+
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/dynamiclistmanager/javascript/dynamiclistmanager.js"></script>

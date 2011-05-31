@@ -1,0 +1,118 @@
+/** LAYOUT **/
+
+.dynamiclistmanager_widget .button-list {
+    float: right;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
+/** LIST MAIN PANE **/
+
+.dynamiclistmanager_widget .list-heading {
+    font-weight: bold;
+    color: #333;
+    font-size: 17px;
+    padding-left: 5px;
+}
+
+/** Table **/
+
+.dynamiclistmanager_widget .main_content_container {
+    border: 4px solid #d5dbdf;
+    min-height: 400px;
+    padding-bottom: 10px;
+}
+
+.dynamiclistmanager_widget .list-table {
+    margin: 0;
+    table-layout: fixed;
+}
+
+/** Header **/
+.dynamiclistmanager_widget .list_list_header {
+    padding: 5px 5px 5px 7px;
+    border-bottom: 3px solid #D4DADE;
+}
+
+.dynamiclistmanager_widget .list-table .different {
+    background: #eaedef;
+}
+
+.dynamiclistmanager_widget .list-table .different th {
+    border-bottom: 4px solid #d5dbdf;
+    padding-left: 5px;
+}
+
+.dynamiclistmanager_widget .list-table #list_tableHeader_chk {
+    width: 2%;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_date_modified {
+    width: 20%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_name {
+    width: 34%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_description {
+    width: 44%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_size {
+    width: 12%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+/** List **/
+.dynamiclistmanager_widget .list-table a:hover {
+    text-decoration: none;
+}
+
+.dynamiclistmanager_widget .list-table th {
+    color: #333;
+    text-align: left;
+    height: 26px;
+    border: none;
+}
+
+.dynamiclistmanager_widget .list-table tr {
+    color: #666;
+}
+
+.dynamiclistmanager_widget .list-table td {
+    border: none;
+    color: #666;
+    text-align: left;
+    font-size: 1em;
+    border-bottom: 1px solid #d5dbdf;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.dynamiclistmanager_widget .list-table .list_message_none {
+    text-align: center;
+    border: none;
+    height: 370px;
+}
+
+.dynamiclistmanager_widget .list_list_table_header_sort {
+    /*cursor:pointer;*/
+}
+
+.dynamiclistmanager_widget .list_list_table_header_sort span {
+    float: left;
+}
+
+.dynamiclistmanager_widget a.editLink:link {
+    text-decoration: underline;
+}
+
