@@ -123,7 +123,41 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
         helpPhone: ""
     };
 
-
+    /*
+     * These links are displayed in the 403 and 404 error pages.
+     */
+    config.ErrorPage = {
+        Links: {
+            whatToDo: [
+                {
+                    "title": "EXPLORE_MYBERKELEY",
+                    "url": "/dev/explore.html"
+                },
+                {
+                    "title": "BROWSE_MYBERKELEY_CATEGORIES",
+                    "url": "/dev/allcategories.html"
+                },
+                {
+                    "title": "GO_TO_BERKELEY_EDU",
+                    "url": "http://berkeley.edu/"
+                },
+                {
+                    "title": "VISIT_THE_SUPPORT_FORUM",
+                    "url": "http://sakaiproject.org/"
+                }
+            ],
+            getInTouch: [
+                {
+                    "title": "SEND_US_YOUR_FEEDBACK",
+                    "url": "mailto:portal@berkeley.edu"
+                },
+                {
+                    "title": "CONTACT_SUPPORT",
+                    "url": "mailto:portal@berkeley.edu"
+                }
+            ]
+        }
+    };
 
     // so that user gets redirected to CAS logout
     config.followLogoutRedirects = true;
