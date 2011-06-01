@@ -18,6 +18,18 @@
 /* global $, Config, jQuery, sakai, sdata */
 
 require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.dynlist.logic.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb, Condition) {
+    /**
+     * @name sakai_global.dynamiclisteditor
+     *
+     * @class dynamiclisteditor
+     *
+     * @description
+     * Dynamic list editor widget
+     *
+     * @version 0.0.1
+     * @param {String} tuid Unique id of the widget
+     * @param {Boolean} showSettings Show the settings of the widget or not
+     */
     sakai_global.dynamiclisteditor = function(tuid) {
 
         /////////////////////////////

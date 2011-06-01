@@ -18,7 +18,19 @@
 /* global $, Config, jQuery, sakai, sdata */
 
 require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.dynlist.logic.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb, Condition) {
-    sakai_global.dynamiclistmanager = function(tuid) {
+    /**
+     * @name sakai_global.dynamiclistmanager
+     *
+     * @class dynamiclistmanager
+     *
+     * @description
+     * Dynamic list manager widget
+     *
+     * @version 0.0.1
+     * @param {String} tuid Unique id of the widget
+     * @param {Boolean} showSettings Show the settings of the widget or not
+     */
+    sakai_global.dynamiclistmanager = function(tuid, showSettings) {
 
         /////////////////////////////
         // Configuration variables //
