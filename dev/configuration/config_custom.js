@@ -162,6 +162,9 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     // so that user gets redirected to CAS logout
     config.followLogoutRedirects = true;
 
+    // remove the SIGN UP feature for anonymous users
+    delete(config.Navigation[4]);
+
     return config;
 
 });
