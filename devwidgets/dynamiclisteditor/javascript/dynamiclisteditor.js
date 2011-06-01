@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations under the License.
  */
 /* global $, Config, jQuery, sakai, sdata */
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.dynlist.logic.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb, Condition) {
-    sakai_global.dynamiclistmanager = function(tuid) {
 
-                /////////////////////////////
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.dynlist.logic.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb, Condition) {
+    sakai_global.dynamiclisteditor = function(tuid) {
+
+        /////////////////////////////
         // Configuration variables //
         /////////////////////////////
 
@@ -94,21 +95,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var $includeGradsCheckbox;
 
         /**
-         * Dynamic list 'Edit' button
-         */
-        var $dynListsEditButton = $("#dyn_lists_edit_button");
-
-        /**
-         * Dynamic list 'Copy' button
-         */
-        var $dynListsCopyButton = $("#dyn_lists_copy_button");
-
-        /**
-         * Dynamic list 'delete' button
-         */
-        var $dynListsDeleteButton = $("#dyn_lists_delete_button");
-
-        /**
          * Dynamic list 'Save' button
          */
         var $dynListsSaveButton = $("#dyn_lists_save_button");
@@ -119,11 +105,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var $dynListsCancelEditingButton = $("#dyn_lists_cancel_button");
 
         /**
-         * Dynamic list 'Create' button
-         */
-        var $dynListsCreateButton = $("#dynamic_lists_create_new");
-
-        /**
          * Show more/less button in section C (template must be loaded before using this variable)
          */
         var $showMoreOrLess;
@@ -132,9 +113,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * HTML div to diplay the number of users targeted by the current list
          */
         var $studentsTargetedByCurrentList;
-
-
-        var $tableOfLists = $("#list_table");
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -469,15 +447,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         /**
-         * Check or uncheck all messages depending on the top checkbox.
-         */
-        var tickMessages = function(){
-            $(".list_list_check_list").attr("checked", ($("#list_list_checkAll").is(":checked") ? "checked" : ''));
-            updateEditCopyDeleteButtonsStatus();
-        };
-
-
-        /**
          * Updates the number of people selected by filter string.
          *
          * @param {String} filterString	a condition object represented as a string
@@ -528,64 +497,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
 
             // Show/hide appropriate buttons
-
-            $dynListsCreateButton.hide();
-
-            $dynListsDeleteButton.hide();
-            $dynListsCopyButton.hide();
-            $dynListsEditButton.hide();
-
             $dynListsCancelEditingButton.show();
             $dynListsSaveButton.show();
-        };
-
-        /**
-         * Switches to dynamic lists table mode
-         */
-        var switchToListMode = function() {
-
-            // Set headers and tab styling
-
-            $("h1.title").text("Dynamic List Manager");
-            $("#create_new_list").hide();
-            $("#existing_lists").show();
-
-
-            // Show/hide appropriate buttons
-
-
-            $dynListsCreateButton.show();
-
-            $dynListsDeleteButton.show();
-            $dynListsCopyButton.show();
-            $dynListsEditButton.show();
-
-            $dynListsCancelEditingButton.hide();
-            $dynListsSaveButton.hide();
-        };
-
-        /**
-         * Removes all the messages out of the DOM.
-         * It will also remove the preloader in the table.
-         */
-        var removeAllListsOutDOM = function(){
-            $(".list_list").remove();
-        };
-
-
-        /**
-         * sorts an array of dynamic lists on the date of last modification, this can be used with the JavaScript sort function.
-         *
-         * @param {Object} a  a dynamic list item
-         * @param {Object} b  another dynamic list item
-         *
-         * @return {Number} Less than 0: Sort "a" to be a lower index than "b";
-         *                   Zero: "a" and "b" should be considered equal, and no sorting performed;
-         *                   Greater than 0: Sort "b" to be a lower index than "a".
-         */
-        var sortByDateFunction = function(a, b) {
-
-            return a['_lastModified'] - b['_lastModified'];
         };
 
         /**
@@ -600,7 +513,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     listsArray.push(allLists[key]);
                 }
             }
-            listsArray.sort(sortByDateFunction);
 
 
 
@@ -609,14 +521,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 sakai: sakai
             };
 
-            // remove previous lists
-            removeAllListsOutDOM();
-
-            // Add them to the DOM
-            $tableOfLists.children("tbody").append(sakai.api.Util.TemplateRenderer("#list_list_lists_template", data));
-
-            // do checkboxes
-            tickMessages();
         };
 
         /**
@@ -712,28 +616,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
              return numberOfSelectedOptions > 0 && numberOfOptions === numberOfSelectedOptions;
         };
-
-        var getNumberOfSelectedLists = function() {
-            return $(".list_list_check_list:checked").length;
-           };
-
-        var updateEditCopyDeleteButtonsStatus = function() {
-          var num = getNumberOfSelectedLists();
-          if(num === 0) {
-              $dynListsEditButton.attr('disabled', 'disabled');
-              $dynListsCopyButton.attr('disabled', 'disabled');
-              $dynListsDeleteButton.attr('disabled', 'disabled');
-          } else if(num === 1){
-              $dynListsEditButton.removeAttr('disabled');
-              $dynListsCopyButton.removeAttr('disabled');
-              $dynListsDeleteButton.removeAttr('disabled');
-          } else if(num > 1){
-              $dynListsEditButton.attr('disabled', 'disabled');
-              $dynListsCopyButton.attr('disabled', 'disabled');
-              $dynListsDeleteButton.removeAttr('disabled');
-          }
-        };
-
 
         //////////////////////////////////////////////////////////////////////
         // Functions for loading dynamic lists data from a condition object //
@@ -1085,73 +967,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             });
         };
 
-
-        ////////////////////////////
-        // Dynamic lists deletion //
-        ////////////////////////////
-
-         /**
-         * This will do a DELETE request to the specified paths and delete each list.
-         * @param {String[]} paths The array of dynamic lists that you want to delete.
-         */
-        var batchDeleteLists = function(paths) {
-            var requests = [];
-            $(paths).each(function(i,val) {
-                var req = {
-                    url: val,
-                    method: "POST",
-                    parameters: {
-                        ":operation": "delete"
-                    }
-                };
-                requests.push(req);
-            });
-            $.ajax({
-                url: sakai.config.URL.BATCH,
-                traditional: true,
-                type: "POST",
-                data: {
-                    requests: $.toJSON(requests)
-                },
-                error: function() {
-                   showGeneralMessage("Error deleting lists.", true);
-                }
-            });
-        };
-
-        /**
-         * Removes lists with provided IDs from DOM and sends batch delete AJAX request.
-         *
-         *  @param listIds {Array} IDs of lists to delete
-         */
-        var deleteLists = function(listIds) {
-
-            var paths = []; // paths to nodes to delete
-            for (var i = 0, j = listIds.length; i < j; i++) {
-
-                var currentId = listIds[i];
-
-                if(allLists.hasOwnProperty(currentId)) {
-
-                    $("#list_table_list_" + currentId).empty();
-                    $("#list_table_list_" + currentId).remove();
-
-                    // store path to delete
-                    paths.push(dynamicListsBaseUrl + "/" + currentId);
-
-                    // delete list from memory
-                    delete allLists[currentId];
-                } else {
-                    alert("Error: list \"" + currentId + "\" not found");
-                }
-            }
-
-
-            // batch delete nodes selected for deletion
-            batchDeleteLists(paths);
-        };
-
-
         /////////////////////////////
         // Dynamic lists comparing //
         /////////////////////////////
@@ -1201,77 +1016,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         // Click handlers //
         ////////////////////
 
-        $dynListsCreateButton.click(function() {
-            $.bbq.pushState("new",2);
-        });
-
-
-        $(".list_list_check_list").live("click", function(){
-            updateEditCopyDeleteButtonsStatus();
-        });
-
-        // Button click events
-        $dynListsDeleteButton.live("click", function(){
-            var listId = [];
-            $(".list_list_check_list:checked").each(function(){
-                var id = $(this).val();
-                listId.push(id);
-            });
-
-            $("#list_list_checkAll").removeAttr("checked");
-            tickMessages();
-
-            if (listId.length < 1) {
-                showGeneralMessage($("#list_generalmessages_none_selected").text(), true);
-            } else {
-                deleteLists(listId);
-                loadDynamicListsFromServer();
-            }
-        });
-
-        $dynListsCopyButton.live("click", function(){
-            var listIds = [];
-            $(".list_list_check_list:checked").each(function(){
-                var id = $(this).val();
-                listIds.push(id);
-            });
-
-            if (listIds.length === 0) {
-                return;
-            }
-
-            $("#list_list_checkAll").removeAttr("checked");
-            tickMessages();
-
-            // Display new list
-            $.bbq.pushState({"copy": listIds[0]},2);
-
-        });
-
-        $dynListsEditButton.live("click", function(){
-
-            var listIds = [];
-            $(".list_list_check_list:checked").each(function(){
-                var id = $(this).val();
-                listIds.push(id);
-            });
-
-            if (listIds.length === 0) {
-                return;
-            }
-
-            // Display edit list
-            $.bbq.pushState({"edit": listIds[0]},2);
-        });
-
-        $(".editLink").live("click", function(evt){
-
-            var id = evt.target.id;
-
-            // Display edit list
-            $.bbq.pushState({"edit": id},2);
-        });
-
         $dynListsCancelEditingButton.live("click", function(){
             //editExisting = false;
             $.bbq.pushState({},2);
@@ -1299,11 +1043,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             } else if(state.hasOwnProperty("copy")) {
                 saveList(data, null);
             }
-        });
-
-        // Check all messages
-        $("#list_list_checkAll").change(function(){
-            tickMessages();
         });
 
         /**
@@ -1464,7 +1203,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             if (state.hasOwnProperty("new")) {
                 resetListEditingForm();
-                switchToEditMode();
                 // When only undergraduates or graduates data exists in the template, we need to update the users count.
                 // This is necessary because include undergrads/grads checkbox is checked by default in this case, but hidden.
                 if((hasGradsData && !hasUndergradsData) || (!hasGradsData && hasUndergradsData)) {
@@ -1473,14 +1211,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 }
             } else if(state.hasOwnProperty("edit")) {
                 loadListIntoEditingForm(state.edit, false);
-                switchToEditMode();
             }  else if (state.hasOwnProperty("copy")) {
                 loadListIntoEditingForm(state.copy, true);
-                switchToEditMode();
-            } else {
-                //switchToListMode();
-                switchToEditMode();
             }
+
+            switchToEditMode();
         };
 
          $(window).bind('hashchange', function() {
@@ -1500,7 +1235,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var doInit = function() {
             var security = sakai.api.Security;
 
-            // if the user is not a member of the advisors group then bail
+            // if the user is not a member of the advisers group then bail
             if (!myb.api.security.isUserAnAdvisor()) {
                 security.send403();
                 return;
@@ -1524,6 +1259,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
     };
 
-    sakai.api.Widgets.widgetLoader.informOnLoad("dynamiclistmanager");
+    sakai.api.Widgets.widgetLoader.informOnLoad("dynamiclisteditor");
 
 });

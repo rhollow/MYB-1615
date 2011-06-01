@@ -1,118 +1,246 @@
-/** LAYOUT **/
-
-.dynamiclistmanager_widget .button-list {
-    float: right;
-    margin-top: 10px;
-    padding-bottom: 10px;
+div.group_header {
+	font-size:15px;
+	font-weight: 700;
 }
 
-/** LIST MAIN PANE **/
-
-.dynamiclistmanager_widget .list-heading {
-    font-weight: bold;
-    color: #333;
-    font-size: 17px;
-    padding-left: 5px;
+.sub_group{
+	margin-left: 20px;
 }
 
-/** Table **/
-
-.dynamiclistmanager_widget .main_content_container {
-    border: 4px solid #d5dbdf;
-    min-height: 400px;
-    padding-bottom: 10px;
+.checkbox input {
+	float:left;
+	display:block;
+	margin:2px 3px 0 0;
+	padding:0;
+	width:13px;
+	height:13px;
 }
 
-.dynamiclistmanager_widget .list-table {
-    margin: 0;
-    table-layout: fixed;
+.checkbox label {
+	display:block;
+	margin-left: 16px;
+	width:auto;
 }
 
-/** Header **/
-.dynamiclistmanager_widget .list_list_header {
-    padding: 5px 5px 5px 7px;
-    border-bottom: 3px solid #D4DADE;
+.readonly_textbox {
+	background-color: #D7D7D7;
+	display: inline-block;
+	font-weight: bold;
+	margin: 0;
+	padding: 4px;
 }
 
-.dynamiclistmanager_widget .list-table .different {
-    background: #eaedef;
+.disabled {
+	-moz-opacity: 0.4;
+	filter:alpha(opacity=40);
+	opacity: 0.4;
 }
 
-.dynamiclistmanager_widget .list-table .different th {
-    border-bottom: 4px solid #d5dbdf;
-    padding-left: 5px;
+.wrapper{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 100%;
 }
 
-.dynamiclistmanager_widget .list-table #list_tableHeader_chk {
-    width: 2%;
+.left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   border-right: 1px solid #000;
+   padding: 5px;
 }
 
-.dynamiclistmanager_widget .list-table #list_table_header_date_modified {
-    width: 20%;
-    border-left: 1px solid #D4DADE;
-    color: #666666;
+.right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   padding: 5px;
 }
 
-.dynamiclistmanager_widget .list-table #list_table_header_name {
-    width: 34%;
-    border-left: 1px solid #D4DADE;
-    color: #666666;
+.onecolumn{
+   position: relative;
+   width: 98%;
+   padding: 5px;
 }
 
-.dynamiclistmanager_widget .list-table #list_table_header_description {
-    width: 44%;
-    border-left: 1px solid #D4DADE;
-    color: #666666;
+
+
+
+/* Registration status layout */
+.reg_status_col_left1{
+   position: relative;
+   float: left;
+   left: 0.5%;
+   width: 33%;
+   min-height: 175px;
+   margin-bottom:10px;
+   border-right: 1px solid #000;
+}
+.reg_status_col_left2{
+   position: relative;
+   float: left;
+   left: 1.5%;
+   width: 33%;
+   min-height: 175px;
+   margin-bottom:10px;
+   border-right: 1px solid #000;
+
+}
+.reg_status_col_right{
+   position: relative;
+   float: right;
+   right: 0.5%;
+   min-height: 175px;width: 31%;
+   margin-bottom:10px;
+
 }
 
-.dynamiclistmanager_widget .list-table #list_table_header_size {
-    width: 12%;
-    border-left: 1px solid #D4DADE;
-    color: #666666;
+/* Registration status layout */
+
+
+/* Cohort status layout */
+.cohort_status_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 40%;
+   margin-bottom:10px;
+   padding-top: 5px;
+}
+.cohort_status_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 59%;
+   margin-bottom:10px;
+   padding-top: 5px;
+}
+/* Cohort status layout */
+
+
+/* Designate term layout */
+.designate_term_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   padding-top:5px;
+}
+.designate_term_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   padding-top:5px;
+}
+/* Designate term layout */
+
+
+
+/* Special programs layout */
+.special_prog_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   margin-bottom:10px;
+}
+.special_prog_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   margin-bottom:10px;
+}
+/* Special programs layout */
+
+
+
+
+
+/* Student and residency status layout */
+.student_and_residency_status_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   padding-right: 10px;
+   border-right: 1px solid #000;
+}
+.student_and_residency_status_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+}
+/* Student status layout */
+
+
+/* Main view layout */
+#view{
+   /*position: relative;
+   float: left;
+   left: 0;
+   width: 48%;*/
+
 }
 
-/** List **/
-.dynamiclistmanager_widget .list-table a:hover {
-    text-decoration: none;
+#section_c{
+	clear:both;
+   /*position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   padding-left: 10px;
+   border-left: 1px solid #000;*/
+}
+/* Main view layout */
+
+
+
+.majors,.levels,.admittedAs,.declared,.programs,.certificates,.emphases,.degrees,.cohort_status,.special_programs,.student_and_residency_status {
+	border-top: 1px solid #000;
+	margin-top: 5px;
+	padding-top: 5px;
+	margin-left: 20px;
+	margin-right: 20px;
 }
 
-.dynamiclistmanager_widget .list-table th {
-    color: #333;
-    text-align: left;
-    height: 26px;
-    border: none;
+.main_title {
+	font-size: 20px;
+	font-weight: 700;
+	margin-bottom: 10px;
 }
 
-.dynamiclistmanager_widget .list-table tr {
-    color: #666;
+.sub_title {
+	font-size: 18px;
+	font-weight: 700;
 }
 
-.dynamiclistmanager_widget .list-table td {
-    border: none;
-    color: #666;
-    text-align: left;
-    font-size: 1em;
-    border-bottom: 1px solid #d5dbdf;
-    white-space: nowrap;
-    overflow: hidden;
-    padding: 5px;
+.details_link_container {
+	float:right;
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 
-.dynamiclistmanager_widget .list-table .list_message_none {
-    text-align: center;
-    border: none;
-    height: 370px;
+.students_targeted_by_list_container {
+	display:inline-block;
+	margin-left: 240px;
 }
 
-.dynamiclistmanager_widget .list_list_table_header_sort {
-    /*cursor:pointer;*/
+.title_information_container{
+	border-bottom: 3px solid #000;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
 }
 
-.dynamiclistmanager_widget .list_list_table_header_sort span {
-    float: left;
+.border_box {
+	border: 4px solid #D5DBDF;
 }
 
-.dynamiclistmanager_widget a.editLink:link {
-    text-decoration: underline;
+.noStudentsTargeted {
+	color: #F00;
 }
-
