@@ -38,7 +38,7 @@
     margin: 0;
     padding: 0;
     display: none;
-    max-height: 200px;
+    height: 146px;
 }
 
 .mylinks_widget ul {
@@ -82,7 +82,7 @@
 
 .mylinks_widget .link_list .no_links_message {
     text-align: center;
-    padding: 8px 8px 2px;
+    padding: 48px 8px 2px;
 }
 
 .mylinks_widget .link_list a {
@@ -124,3 +124,13 @@
 .mylinks_widget .addedit_link_panel .button-list {
     float: right;
 }
+
+.mylinks_widget .s3d-link-button {
+    margin-right: 30px;
+}
+
+label.error {
+    display: block;
+    text-align: center;
+}
+
