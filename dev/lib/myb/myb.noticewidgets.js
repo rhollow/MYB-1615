@@ -419,8 +419,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             };
 
             var scroller = function() {
-                var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-                tbody.toggleClass("scroller", (tbody.height() > 150));
+                var tbody = $("table.noticewidget_listing", config.rootContainer);
+                tbody.toggleClass("scroller", (tbody.height() > 180));
             };
 
             var filterStatus = function() {
