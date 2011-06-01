@@ -253,7 +253,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                         } else {
 
                                             var nowDate = new Date();
-                                            var dueDate = sakai.api.Util.parseSakaiDate(rowData['DUE']);
+                                            var dueDate = sakai.api.Util.parseSakaiDate(rowData.icalData.DUE);
 
                                             if (dueDate < nowDate && rowData["isArchived"] !== true) {
                                                 // add 'overDueTask' CSS class if the task is overdue
