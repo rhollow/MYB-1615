@@ -165,6 +165,8 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     // remove the SIGN UP feature for anonymous users
     delete(config.Navigation[4]);
 
+    config.Navigation[0].label = "ME";
+
     return config;
 
 });
