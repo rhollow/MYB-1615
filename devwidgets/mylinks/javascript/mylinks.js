@@ -197,17 +197,19 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
         
         var showPane = function (pane) {
-            pane.removeClass("notSelected").addClass("selected");
-            pane.siblings(".accordion_pane").slideToggle(300);
+            pane.addClass("accordion_open");
+            pane.children(".accordion_content").slideToggle(300, function(){
+                pane.children(".accordion_content").css("overflow","auto");
+            });
         }
         
         var hidePane = function (pane) {
-            pane.removeClass("selected").addClass("notSelected");
-            pane.siblings(".accordion_pane").slideUp(300);
+            pane.removeClass("accordion_open");
+            pane.children(".accordion_content").slideUp(300);
         }
         
         var closePanes = function () {
-            $(".section_label").each(function () {
+            $(".accordion_pane", accordionContainer).each(function () {
                 hidePane($(this));
             });
         }
@@ -216,7 +218,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
             $(".section_label", accordionContainer).click(function() {
                 closePanes();
-                showPane($(this));
+                showPane($(this).parent());
             });
 
             // Add Google Analytics outbound links tracking
@@ -225,7 +227,14 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 return false;
             });
 
-            $("ul.accordion_opened", accordionContainer).show();
+            if (accordionContainer.width() > 250) {
+                accordionContainer.addClass("link_grid")
+            }
+            
+            showPane($(".accordion_open", accordionContainer));
+
+            //$(".accordion_open .accordion_content", accordionContainer).show();
+            
         };
 
         var doInit = function() {

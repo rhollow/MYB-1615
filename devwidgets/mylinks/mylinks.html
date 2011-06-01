@@ -13,40 +13,39 @@
           {var systemProperty = /^_/}
           {for section in sections}
             {if ! ( section_index.match(systemProperty) ) }
-              <div>
-                {if section.selected}
-                  <div class="section_label selected">${section.label}</div>
-                  <ul class="accordion_pane accordion_opened">
-                {else}
-                  <div class="section_label notSelected">${section.label}</div>
-                  <ul class="accordion_pane">
-                {/if}
-
-                {var i = 0}
-
-                  {for link in section.links}
-
-                    <li class="link featuredcontent_content featuredcontent_content_medium">
-                        <a href="${link.url}"
-                          id="${link.id}"
-                          target="_blank"
-                          title="${link.popup_description}">${link.name|default:"no name"}</a>
-                          {if section.isEditable}
-                            <span class="edit_icon" id="mylinks_edit_${i}">E</span> |
-                            <span class="delete_icon" id="mylinks_delete_${i}">X</span>
-                          {/if}
-
-                    </li>
-
-                    {eval}
-                      i = i + 1
-                    {/eval}
-                  {forelse}
-                    <span>There are no links in this section yet.</span>
-                  {/for}
-                
-
-                </ul>
+              {if section.selected}
+              <div class="accordion_pane accordion_open">
+              {else}  
+              <div class="accordion_pane">
+              {/if}
+                <div class="section_label">${section.label}</div>
+                <div class="accordion_content">
+                  <ul>
+  
+                  {var i = 0}
+  
+                    {for link in section.links}
+  
+                      <li class="link featuredcontent_content featuredcontent_content_medium">
+                          <a href="${link.url}"
+                            id="${link.id}"
+                            target="_blank"
+                            title="${link.popup_description}">${link.name|default:"no name"}</a>
+                            {if section.isEditable}
+                              <span class="edit_icon" id="mylinks_edit_${i}">E</span> |
+                              <span class="delete_icon" id="mylinks_delete_${i}">X</span>
+                            {/if}
+  
+                      </li>
+  
+                      {eval}
+                        i = i + 1
+                      {/eval}
+                    {forelse}
+                      <div class="no_links_message">There are no links in this section yet.</div>
+                    {/for}
+                  </ul>
+                </div>
               </div>
             {/if}
           {/for}
