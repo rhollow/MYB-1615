@@ -32,7 +32,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         /////////////////////////////
 
         var chkAgreeToSocu = "#chk_agree_to_socu";
-        var chkAgreeToReceiveAdvisorMessages = "#chk_agree_to_receive_advisor_messages";
+        var chkAgreeToReceiveAdviserMessages = "#chk_agree_to_receive_adviser_messages";
         var btnJoinMyBerkeley = "#btn_join_my_berkeley";
 
         var ajaxPostTryNumber = 0;				// Counts failed AJAX POST tries before giving up
@@ -50,7 +50,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         */
         function checkIfUserAgreed() {
 
-            var enableJoinButton = ($(chkAgreeToSocu).is(":checked") && $(chkAgreeToReceiveAdvisorMessages).is(":checked"));
+            var enableJoinButton = ($(chkAgreeToSocu).is(":checked") && $(chkAgreeToReceiveAdviserMessages).is(":checked"));
 
             $(btnJoinMyBerkeley).attr('disabled', !enableJoinButton);
 
@@ -154,17 +154,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             checkIfUserAgreed();
         });
 
-        $(chkAgreeToReceiveAdvisorMessages).change(function() {
+        $(chkAgreeToReceiveAdviserMessages).change(function() {
             checkIfUserAgreed();
         });
 
         // Makes keyboard navigation easier
         $(chkAgreeToSocu).keyup(function() {
-            $(chkAgreeToReceiveAdvisorMessages).focus();
+            $(chkAgreeToReceiveAdviserMessages).focus();
         });
 
         // Makes keyboard navigation easier
-        $(chkAgreeToReceiveAdvisorMessages).keyup(function() {
+        $(chkAgreeToReceiveAdviserMessages).keyup(function() {
             $(btnJoinMyBerkeley).focus();
         });
 

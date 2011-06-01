@@ -25,25 +25,25 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 "LIMITED", "LAND ARCH AND ENV PLAN", "URBAN DESIGN" ];
 
         var dryRun = true;
-        var advisors = [];
+        var advisers = [];
 
         var logData = function(doit, data) {
-            console.log("g-ced-advisors are: ")
+            console.log("g-ced-advisers are: ")
             console.log(data);
-            advisors = data;
+            advisers = data;
         };
 
-        // get the advisors who may have old dynamic lists
-        var loadAdvisors = function() {
-            sakai.api.Groups.getMembers("g-ced-advisors", logData);
+        // get the advisers who may have old dynamic lists
+        var loadAdvisers = function() {
+            sakai.api.Groups.getMembers("g-ced-advisers", logData);
         };
 
         // save the new transformed lists
-        var saveLists = function(lists, advisorId) {
+        var saveLists = function(lists, adviserId) {
             var submitData = {};
             if (dryRun === false) {
-                console.log("saving new lists for advisor " + advisorId);
-                var url = "/~" + advisorId + SAVE_LIST_URL;
+                console.log("saving new lists for adviser " + adviserId);
+                var url = "/~" + adviserId + SAVE_LIST_URL;
                 submitData.lists = lists
                 sakai.api.Server.saveJSON(url, submitData);
             }
@@ -52,11 +52,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             }
         }
 
-        // delete all lists for advisor
-        var deleteLists = function(advisorId) {
+        // delete all lists for adviser
+        var deleteLists = function(adviserId) {
             if (dryRun === false) {
-                console.log("deleting all lists for advisor " + advisorId);
-                var url = "/~" + advisorId + DELETE_LIST_URL;
+                console.log("deleting all lists for adviser " + adviserId);
+                var url = "/~" + adviserId + DELETE_LIST_URL;
                 sakai.api.Server.removeJSON(url);
             }
             else {
@@ -65,8 +65,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         }
 
         // the callback from loadJSON, transform list structure if
-        // the advisor has any lists and log if advisor has no lists
-        var handleLists = function(doit, data, advisorId) {
+        // the adviser has any lists and log if adviser has no lists
+        var handleLists = function(doit, data, adviserId) {
             var list, lists;
             if (data && data.lists) {
                 lists = data.lists;
@@ -89,15 +89,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
                 // Do we have any upgraded lists at all?
                 if(listsToSave.length > 0) {
-                    saveLists(listsToSave, advisorId);
+                    saveLists(listsToSave, adviserId);
                 } else {
-                    // Deleting all lists for this advisor
-                    deleteLists(advisorId);
-                    console.warn("Advisor " + advisorId + " has lists, but none of then can be upgraded. All existing non-upgradable lists for this advisor were deleted");
+                    // Deleting all lists for this adviser
+                    deleteLists(adviserId);
+                    console.warn("Adviser " + adviserId + " has lists, but none of then can be upgraded. All existing non-upgradable lists for this adviser were deleted");
                 }
 
             } else {
-                console.log("advisor " + advisorId + " has no lists to upgrade");
+                console.log("adviser " + adviserId + " has no lists to upgrade");
             }
         };
 
@@ -169,16 +169,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             return containsMajor;
         }
 
-        // retrieve any lists for each advisor
-        var loadListsForAdvisor = function(advisorId) {
-            var url = "/~" + advisorId + GET_LIST_URL;
-            console.log("loading lists for advisor " + advisorId);
+        // retrieve any lists for each adviser
+        var loadListsForAdviser = function(adviserId) {
+            var url = "/~" + adviserId + GET_LIST_URL;
+            console.log("loading lists for adviser " + adviserId);
             sakai.api.Server.loadJSON(url, function(doit, data) {
-                handleLists(doit, data, advisorId)
+                handleLists(doit, data, adviserId)
             });
         };
 
-        // load the advisors on page load and
+        // load the advisers on page load and
         // load and transform the lists when clicking on the anchor "button"
         var doInit = function() {
             var querystring = new Querystring();
@@ -186,12 +186,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     && querystring.get("dryRun") === "false") {
                 dryRun = false;
             }
-            loadAdvisors();
+            loadAdvisers();
             $("#upgrade_dynamiclists_button").live("click", function() {
                 console.log("Running upgrade; dryRun=" + dryRun);
-                for ( var i = 0; i < advisors.length; i++) {
-                    var advisorId = advisors[i]["rep:userId"];
-                    loadListsForAdvisor(advisorId);
+                for ( var i = 0; i < advisers.length; i++) {
+                    var adviserId = advisers[i]["rep:userId"];
+                    loadListsForAdviser(adviserId);
                 }
             });
         };

@@ -365,10 +365,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             for (var i in sakai.config.Navigation) {
                 if (sakai.config.Navigation.hasOwnProperty(i)) {
 
-                    // myberkeley custom begin: tab might be flagged as advisors only, so check, and skip if
-                	// tab is restricted and user's not an advisor.
-                	if ( sakai.config.Navigation[i].requiresAdvisorMembership ) {
-                    	if (!myb.api.security.isUserAnAdvisor()) {
+                    // myberkeley custom begin: tab might be flagged as advisers only, so check, and skip if
+                	// tab is restricted and user's not an adviser.
+                	if ( sakai.config.Navigation[i].requiresAdviserMembership ) {
+                    	if (!myb.api.security.isUserAnAdviser()) {
                         continue;
                     	}
                 	}

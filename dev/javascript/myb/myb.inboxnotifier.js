@@ -1148,8 +1148,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          */
         var doInit = function(){
             debug.info("notificationsinbox init()");
-            // if the user is not a member of the advisors group then bail
-            if (!myb.api.security.isUserAnAdvisor()) {
+            // if the user is not a member of the advisers group then bail
+            if (!myb.api.security.isUserAnAdviser()) {
                 sakai.api.Security.send403();
                 return;
             }

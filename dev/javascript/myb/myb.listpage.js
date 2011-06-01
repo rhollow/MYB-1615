@@ -1500,13 +1500,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var doInit = function() {
             var security = sakai.api.Security;
 
-            // if the user is not a member of the advisors group then bail
-            if (!myb.api.security.isUserAnAdvisor()) {
+            // if the user is not a member of the advisers group then bail
+            if (!myb.api.security.isUserAnAdviser()) {
                 security.send403();
                 return;
             }
 
-            loadTemplate("nauth_ced.json"); // TODO load from advisor's node? or somewhere else based on college membership?
+            loadTemplate("nauth_ced.json"); // TODO load from adviser's node? or somewhere else based on college membership?
 
             populateDesignateTermYear();
 

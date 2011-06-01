@@ -47,7 +47,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     config.Navigation[config.Navigation.length] = {
         "url" : "/dev/inboxnotifier.html",
         "label" : "NOTIFICATION_MANAGER",
-        "requiresAdvisorMembership" : true
+        "requiresAdviserMembership" : true
     };
 
     // Overriding Sakai profile

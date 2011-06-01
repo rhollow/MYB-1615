@@ -21,10 +21,10 @@ define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
     var security = {};
 
-    security.groupCEDAdvisors = "myb-advisers-ced-students"; // CED Advisors group ID
+    security.groupCEDAdvisers = "myb-advisers-ced-students"; // CED Advisers group ID
 
-    security.isUserAnAdvisor = function() {
-        return security.isCurrentUserAMember(security.groupCEDAdvisors);
+    security.isUserAnAdviser = function() {
+        return security.isCurrentUserAMember(security.groupCEDAdvisers);
     };
 
     /**
