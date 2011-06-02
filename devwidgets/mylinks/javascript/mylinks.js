@@ -37,7 +37,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var currentLinkIndex = null;
 
         // data files and paths
-        var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links.2.json";
+        var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
 
         // the user's own links ("My Links")
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
@@ -65,7 +65,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             the default ones.
          */
         var loadUserList = function() {
-            sakai.api.Server.loadJSON(linksDataPath, function (success, data) {
+            sakai.api.Server.loadJSON(linksDataPath + ".2.json", function (success, data) {
                 if (success) {
                     // merge the user's links with the default links
                     userLinkData = data;
