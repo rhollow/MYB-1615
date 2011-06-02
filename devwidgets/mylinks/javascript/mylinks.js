@@ -32,6 +32,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var addEditPanel = $(".addedit_link_panel", widgetContainer);
         var saveLinkButton = $("#savelink-button", widgetContainer);
         var addLinkButton = $("#addlink-button", widgetContainer);
+        var addEditPanelTitle = $(".addedit_link_panel_title", widgetContainer);
         var accordionContainer = $("#accordion", widgetContainer);
 
         // index of the link currently being edited
@@ -77,18 +78,25 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 renderLinkList(defaultLinks);
             });
         };
+        
+        
+        var setAddEditLinkTitle = function (title) {
+            addEditPanelTitle.text(title);
+        };
 
         var cancelEditMode = function() {
+            
             currentLinkIndex = null;
-            linkList.show();
+            //linkList.show();
             addEditPanel.hide();
-            linkTitleInput[0].value = "";
-            linkUrlInput[0].value = "";
+            linkTitleInput.attr("value","").removeClass("error");
+            linkUrlInput.attr("value","").removeClass("error");
+            $("label.error").hide();
         };
 
         var enterAddMode = function() {
+            setAddEditLinkTitle("Add link");
             currentLinkIndex = null;
-            linkList.hide();
             addEditPanel.show();
             addLinkButton.show();
             saveLinkButton.hide();
@@ -97,10 +105,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var enterEditMode = function(index) {
             var link = userLinkData.links[index];
+            setAddEditLinkTitle("Edit link");
             linkTitleInput[0].value = link.name;
             linkUrlInput[0].value = link.url;
             currentLinkIndex = index;
-            linkList.hide();
             addEditPanel.show();
             addLinkButton.hide();
             saveLinkButton.show();
@@ -126,6 +134,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     if (success) {
                         cancelEditMode();
                         renderLinkList(defaultLinks);
+                        showPane($(".accordion_pane:last"));
                     } else {
                         sakai.api.Util.notification.show("", "A server error occurred while trying to save your link.",
                                 sakai.api.Util.notification.type.ERROR, false);
@@ -197,27 +206,29 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
         
         var showPane = function (pane) {
-            pane.addClass("accordion_open");
-            pane.children(".accordion_content").slideToggle(300, function(){
+            if (!pane.hasClass("accordion_open")) {
+                closePanes();
+                pane.addClass("accordion_open");
+            }
+            pane.children(".accordion_content").slideDown(300, function(){
                 pane.children(".accordion_content").css("overflow","auto");
             });
-        }
+        };
         
         var hidePane = function (pane) {
             pane.removeClass("accordion_open");
             pane.children(".accordion_content").slideUp(300);
-        }
+        };
         
         var closePanes = function () {
             $(".accordion_pane", accordionContainer).each(function () {
                 hidePane($(this));
             });
-        }
+        };
 
         var setupAccordion = function() {
 
             $(".section_label", accordionContainer).click(function() {
-                closePanes();
                 showPane($(this).parent());
             });
 

@@ -19,7 +19,7 @@
               <div class="accordion_pane">
               {/if}
                 <div class="section_label">${section.label}</div>
-                <div class="accordion_content">
+                <div class="accordion_content {if section.isEditable} mylinks_section{/if}">
                   <ul>
   
                   {var i = 0}
@@ -32,8 +32,10 @@
                             target="_blank"
                             title="${link.popup_description}">${link.name|default:"no name"}</a>
                             {if section.isEditable}
-                              <span class="edit_icon" id="mylinks_edit_${i}">E</span> |
-                              <span class="delete_icon" id="mylinks_delete_${i}">X</span>
+                              <div class="edit_buttons">
+                                <div class="icon_button delete_icon" id="mylinks_delete_${i}"><span class="fl-offScreen-hidden">Delete link: ${link.name|default:"no name"}</div>
+                                <div class="icon_button edit_icon" id="mylinks_edit_${i}"><span class="fl-offScreen-hidden">Edit link: ${link.name|default:"no name"}</div>
+                              </div>
                             {/if}
   
                       </li>
@@ -56,23 +58,23 @@
 
     <!-- ADD/EDIT LINK PANEL: Allows user to add a new link or edit an existing link. -->
     <div class="addedit_link_panel">
-      <form id="mylinks-form" class="link-form" action="" method="post">
-                <span class="link-form-element">
-                    <label for="link-title">Link Title:</label>
-                    <input type="text" id="link-title" name="link-title"/>
-                </span>
-        <br><br>
-                <span class="link-form-element">
-                    <label for="link-url">Link URL:</label>
-                    <input type="text" id="link-url" name="link-url"/>
-                </span>
-      </form>
-      <br><br>
-            <span class="button-list">
-                <button id="cancel-button" class="s3d-link-button s3d-bold">Cancel</button>
-                <button id="addlink-button" class="s3d-button s3d-button-link-2-state"><span class="s3d-button-inner s3d-button-link-2-state-inner">Add Link</span></button>
-                <button id="savelink-button" class="s3d-button s3d-button-link-2-state"><span class="s3d-button-inner s3d-button-link-2-state-inner">Save</span></button>
-            </span>
+        <form id="mylinks-form" class="link-form" action="" method="post">
+            <h2 class="addedit_link_panel_title s3d-addlink-header">Add link</h2>
+            <div class="link-form-element">
+                <label class="elm-label" for="link-title">Link Title:</label>
+                <input type="text" id="link-title" name="link-title" aria-required="true" />
+            </div>
+            <div class="link-form-element">
+                <label class="elm-label" for="link-url">Link URL:</label>
+                <input type="text" id="link-url" name="link-url" aria-required="true" />
+            </div>
+        </form>
+      
+        <div class="button-list">
+            <button id="cancel-button" class="s3d-link-button s3d-bold">Cancel</button>
+            <button id="addlink-button" class="s3d-button s3d-button-link-2-state"><span class="s3d-button-inner s3d-button-link-2-state-inner">Add Link</span></button>
+            <button id="savelink-button" class="s3d-button s3d-button-link-2-state"><span class="s3d-button-inner s3d-button-link-2-state-inner">Save</span></button>
+        </div>
     </div>
   </div>
 
