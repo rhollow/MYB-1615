@@ -150,6 +150,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                 } else {
                     hideOverdueMsg();
                 }
+            } else{
+                hideOverdueMsg();
             }
         };
 
