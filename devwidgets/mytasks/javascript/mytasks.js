@@ -126,17 +126,29 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
         };
 
         var onModelChange = function (model) {
+            var showOverdueMsg = function() {
+                $(".mytasks_overdue_tasks_msg", rootContainer).show();
+                $(rootContainer).addClass("mytasks_overdue_tasks_exist");
+            };
+
+            var hideOverdueMsg = function() {
+                if ($(".mytasks_overdue_tasks_msg", rootContainer).is(":visible")) {
+                    $(".mytasks_overdue_tasks_msg", rootContainer).hide();
+                }
+                if ($(rootContainer).is(".mytasks_overdue_tasks_exist")) {
+                    $(rootContainer).removeClass("mytasks_overdue_tasks_exist");
+                }
+            };
+
             if (!model.archiveMode) {
                 if (model.data.hasOverdueTasks) {
-                    $(".mytasks_overdue_tasks_msg", rootContainer).show();
-                    $(rootContainer).addClass("mytasks_overdue_tasks_exist");
+                    if (getDateRange() === "overdue") {
+                        hideOverdueMsg();
+                    } else {
+                        showOverdueMsg();
+                    }
                 } else {
-                    if ($(".mytasks_overdue_tasks_msg", rootContainer).is(":visible")) {
-                        $(".mytasks_overdue_tasks_msg", rootContainer).hide();
-                    }
-                    if ($(rootContainer).is(".mytasks_overdue_tasks_exist")) {
-                        $(rootContainer).removeClass("mytasks_overdue_tasks_exist");
-                    }
+                    hideOverdueMsg();
                 }
             }
         };
