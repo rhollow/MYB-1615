@@ -135,7 +135,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 cache: false,
                 success: function(data) {
                     loadingIndicator.hide();
-                    loadingIndicator.removeClass("noTopMargin");
                     listingTable.show();
                     if (data.results) {
                         model.data = data;
@@ -180,7 +179,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 });
 
                 $("input:radio", config.rootContainer).live("click", function() {
-                    loadingIndicator.addClass("noTopMargin");
                     that.saveFilterSettingsAndGetNotices();
                 });
             };
@@ -329,8 +327,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         return;
                     }
 
-                    loadingIndicator.addClass("noTopMargin");
-
                     var calendars = [];
                     if (model.archiveMode) {
                         $.each(model.data.results, function(index, rowData) {
@@ -419,8 +415,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             };
 
             var scroller = function() {
-                var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-                tbody.toggleClass("scroller", (tbody.height() > 150));
+                var tbody = $("table.noticewidget_listing", config.rootContainer);
+                tbody.toggleClass("scroller", (tbody.height() > 180));
             };
 
             var filterStatus = function() {
