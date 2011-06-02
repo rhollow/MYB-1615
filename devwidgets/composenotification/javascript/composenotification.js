@@ -250,7 +250,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     // Iterate through data and make new array for createOptions.
                     var dynamicListOptions = {};
                     for (var element in data) {
-                      var optionValue = data[element]["jcr:path"];
+                      var optionValue = data[element]["_path"];
                       dynamicListOptions[optionValue] = data[element]["sakai:name"];
                     }
 
