@@ -242,6 +242,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 accordionContainer.addClass("link_grid")
             }
             
+            closePanes();
             showPane($(".accordion_open", accordionContainer));
 
             //$(".accordion_open .accordion_content", accordionContainer).show();

@@ -162,7 +162,7 @@
     position: absolute;
     top: 2.4em;
     left: 4%;
-    width: 80%;
+    width: 92%;
  
     display: none;
     
@@ -170,7 +170,6 @@
     border: 1px solid darkGray;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    padding: 7px 20px 12px;
     box-shadow: 0 0 10px black;
     -moz-box-shadow: 0 0 10px black;
     -webkit-box-shadow: 0 0 10px black;
@@ -194,7 +193,7 @@
 
 .mylinks_widget .addedit_link_panel .button-list {
     float: right;
-    margin-top: 6px;
+    padding: 9px 6% 6px;
 }
 
 .mylinks_widget .s3d-link-button {
@@ -211,6 +210,10 @@ label.error {
     font-size: 1.1em;
     font-weight: normal;
     padding-bottom: 6px;
-    margin: 8px 0 6px;
+    margin: 9px 6% 6px;
+}
+
+.mylinks_widget .addedit_link_panel .link-form-element {
+    padding: 0 6%;
 }
 
