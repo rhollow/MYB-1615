@@ -148,13 +148,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/profile_edit.js"], f
                     // if it is tag filter the directory
                     if (fieldName === "tags") {
                         var splitDir = value.split(",");
-                        var tagList = [];
-                        $.each(splitDir, function(i, tag){
-                            if($.trim(tag.split("/")[0]) !== "directory"){
-                                tagList.push(tag);
-                            }
-                        });
-                        value = tagList.toString();
+                        value = sakai.api.Util.formatTagsExcludeLocation(splitDir).join(", ");
                     }
                     sakai_global.profile.main.data[currentsection].elements[fieldName].value = value;
                     json_config.data = sakai_global.profile.main.data[currentsection].elements[fieldName];
@@ -512,9 +506,9 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/profile_edit.js"], f
         };
 
         var renderLocation = function(data){
-            sakai_global.profile.main.data["sakai:tags"] = data.tags;
+            sakai_global.profile.main.data["sakai:tags"] = data.data["sakai:tags"];
             sakai_global.profile.main.directory = sakai.api.User.parseDirectory(sakai_global.profile);
-            sakai.data.me.profile.saveddirectory = data.saveddirectory;
+            sakai.data.me.profile.saveddirectory = data.data.saveddirectory;
             renderTemplateGeneralInfo("locations");
         };
 
