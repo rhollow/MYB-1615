@@ -95,6 +95,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var enterAddMode = function() {
+            showPane($(".accordion_pane:last"));
             setAddEditLinkTitle("Add link");
             currentLinkIndex = null;
             addEditPanel.show();
@@ -134,7 +135,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     if (success) {
                         cancelEditMode();
                         renderLinkList(defaultLinks);
-                        showPane($(".accordion_pane:last"));
                     } else {
                         sakai.api.Util.notification.show("", "A server error occurred while trying to save your link.",
                                 sakai.api.Util.notification.type.ERROR, false);
@@ -242,14 +242,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 accordionContainer.addClass("link_grid")
             }
             
-            closePanes();
             showPane($(".accordion_open", accordionContainer));
-
-            //$(".accordion_open .accordion_content", accordionContainer).show();
             
         };
 
         var doInit = function() {
+            console.log("beep");
             loadUserList();
             setupEventHandlers();
         };
