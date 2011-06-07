@@ -2,11 +2,12 @@
 <link rel="stylesheet" type="text/css" href="/devwidgets/dynamiclistmanager/css/dynamiclistmanager.css" />
 
 
-<div class="dynamiclistmanager_widget">
-    <!-- TITLE -->
-    <h1 class="title" style="margin-bottom:10px">__MSG__DYNAMIC_LIST_MANAGER__</h1>
+<div class="dynamiclistmanager_widget" style="display: none;">
 
-    <button type="button" id="dynamic_lists_create_new" class="s3d-button" style="margin-bottom:10px;"><span class="s3d-button-inner">Create New</span></button>
+    <button type="button" id="dynamic_lists_create_new" class="s3d-button" style="float:right"><span class="s3d-button-inner">Create New</span></button>
+
+    <!-- TITLE -->
+    <div class="s3d-contentpage-title">__MSG__DYNAMIC_LIST_MANAGER__</div>
 
 
     <div id="existing_lists list_main">
@@ -15,15 +16,13 @@
         </div>
 
         <div class="main_content_container">
-            <div class="list-heading list_list_header" id="list_existing">__MSG__DYNAMIC_LISTS__</div>
-
             <table class="list-table" id="list_table" summary="Your existing lists.">
                 <tr class="different">
                     <th class="list-checkbox" id="list_tableHeader_chk"><input type="checkbox" id="list_list_checkAll" title="__MSG__CHECK_ALL__"/></th>
                     <th class="list_list_table_header_sort" id="list_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
                     <th class="list_list_table_header_sort" id="list_table_header_name"><span>__MSG__NAME__</span></th>
-                    <th class="list_list_table_header_sort" id="list_table_header_description"><span>__MSG__DESCRIPTION__</span></th>
-                    <th class="list_list_table_header_sort" id="list_table_header_size"><span>__MSG__CURRENT_LIST_SIZE__</span></th>
+                    <!--th class="list_list_table_header_sort" id="list_table_header_description"><span>__MSG__DESCRIPTION__</span></th-->
+                    <th class="list_list_table_header_sort" id="list_table_header_size"><span>__MSG__LIST_SIZE__</span></th>
                 </tr>
             </table>
         </div>
@@ -31,12 +30,14 @@
         <div id="list_list_lists_template" title=""><!--
             {for m in links}
                 {var dateString = Globalization.format(sakai.api.Util.parseSakaiDate(m['_lastModified']), "MMM d, yyyy hh:mm tt")}
+                {var _path = m['_path']}
+                {var listId = _path.substring(_path.lastIndexOf('/')+1)}
 
-                <tr class="list_list" id="list_table_list_${m['jcr:name']}">
-                    <td><input type="checkbox" class="list_list_check_list" value="${m['jcr:name']}" id="list_check_list_${m['jcr:name']}" title="__MSG__SELECT_LIST__" /></td>
+                <tr class="list_list" id="list_table_list_${listId}">
+                    <td><input type="checkbox" class="list_list_check_list" value="${listId}" id="list_check_list_${listId}" title="__MSG__SELECT_LIST__" /></td>
                     <td>${dateString}</td>
-                    <td><a class="editLink" id="${m['jcr:name']}" href="javascript:;">${m['sakai:name']}</a></td>
-                    <td>${m['sakai:description']}</td>
+                    <td><a class="editLink" id="${listId}" href="javascript:;">${m['sakai:name']}</a></td>
+                    {if false}<td>${m['sakai:description']}</td>{/if}
                     <td>${m['numusers']}</td>
                 </tr>
 

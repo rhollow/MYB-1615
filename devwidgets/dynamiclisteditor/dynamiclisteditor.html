@@ -3,30 +3,32 @@
 
 
 <div class="dynamiclisteditor_widget" style="display: none;">
+
     <!-- TITLE -->
-    <h1 class="title" style="margin-bottom:10px">__MSG__DYNAMIC_LIST_EDITOR__</h1>
-
-
+    <div class="s3d-contentpage-title">__MSG__DYNAMIC_LIST_EDITOR__</div>
 
     <div id="create_new_list" >
 
-        <div class="" style="float:right;"><div><label for="description">Description</label></div>
+        <div style="background-color: #f4f4f4;padding: 10px; padding-bottom: 30px; width: 704px;border-radius: 10px;border-bottom: none;z-index: 1" class="border_box">
+            <div class="" style="margin-bottom:10px"><div><label for="list_name">List Name *</label></div>
+                <input type="text" id="list_name" size="25" maxlength="40" style="width:290px;" />
+                <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
+            </div>
 
-            <textarea id="description" rows="2" style="width: 600px;"></textarea>
-            <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
+            <div class="" style=""><div><label for="description">Description</label></div>
+                <textarea id="description" rows="2" style="width: 95%;"></textarea>
+                <span id="invalid_desc" class="invalid_span" style="display:none;">Invalid</span>
+            </div>
         </div>
 
 
 
-        <div class="" style="margin-bottom:20px"><div><label for="list_name">List Name</label></div>
-            <input type="text" id="list_name" size="25" maxlength="40" style="width:290px;" />
-            <span id="invalid_name" class="invalid_span" style="display:none;">Invalid</span>
-        </div>
 
 
-        <div class="main_title">Select Students</div>
 
-        <div class="wrapper border_box" style="width:97%;padding:10px;">
+
+        <div class="wrapper border_box" style="padding:10px;border-top-right-radius: 10px;border-top-left-radius: 10px;top: -15px;z-index: 2000;background-color: #fff;margin-bottom: -15px; width: 704px">
+            <div class="main_title">Select Students</div>
             <div id="view">
                 <!-- TEMPLATE_PLACEHOLDER -->
             </div>

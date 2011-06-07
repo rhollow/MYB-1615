@@ -103,23 +103,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             $(".list_list_check_list").attr("checked", ($("#list_list_checkAll").is(":checked") ? "checked" : ''));
             updateEditCopyDeleteButtonsStatus();
         };
-                
-        /**
-         * Switches to dynamic lists table mode
-         */
-        var switchToListMode = function() {
-
-            //$("#create_new_list").hide();
-
-            // Show/hide appropriate buttons
-
-
-            $dynListsCreateButton.show();
-
-            $dynListsDeleteButton.show();
-            $dynListsCopyButton.show();
-            $dynListsEditButton.show();
-        };
 
         /**
          * Removes all the messages out of the DOM.
@@ -206,6 +189,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     allLists = [];
                     displayLoadedLists();
                 }
+
+                // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
+                $("div.dynamiclistmanager_widget", $rootElement).show();
+
             });
         };
 
@@ -323,7 +310,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             tickMessages();
 
             // Display new list
-            $.bbq.pushState({"copy": listIds[0]},2);
+            $.bbq.pushState({"copy": listIds[0]});
 
         });
 
@@ -372,7 +359,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             if (state.hasOwnProperty("new") || state.hasOwnProperty("edit") || state.hasOwnProperty("copy")) {
                  $rootElement.hide();
             } else {
-                switchToListMode();
                 loadDynamicListsFromServer();
                 $rootElement.show();
             }
@@ -405,6 +391,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
+            setTabState();
             loadDynamicListsFromServer();
         };
 

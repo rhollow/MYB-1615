@@ -1,3 +1,9 @@
+.dynamiclisteditor_widget .button-list {
+    float: right;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
 div.group_header {
 	font-size:15px;
 	font-weight: 700;
@@ -244,3 +250,5 @@ div.group_header {
 .noStudentsTargeted {
 	color: #F00;
 }
+
+.dynamiclisteditor_widget .invalid_span { padding-left: 10px; color: #CC0000; font-weight: bold; }
