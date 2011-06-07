@@ -72,6 +72,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         //////////////////////
 
         /**
+         * Widget's root element
+         */
+        var $rootElement = $("#" + tuid);
+        // HACK: hide widget as soon as it is loaded
+
+        /**
          * Section C wrapper DIV
          */
         var $sectionC = $("#section_c");
@@ -501,10 +507,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var switchToEditMode = function() {
 
-            // Set headers and tab styling
-            $("h1.title").text("Dynamic List Editor");
-
-            $("#existing_lists").hide();
             $("#create_new_list").show();
 
 
@@ -859,6 +861,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     displayLoadedLists();
                 }
                 setTabState();
+                // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
+                $("div.dynamiclisteditor_widget", $rootElement).show();
             });
         };
 
@@ -974,7 +978,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                   };
 
             sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/" + id, list, function() {
-                $.bbq.pushState({},2);
+                $.bbq.removeState(["new","copy","edit"]);
                 loadDynamicListsFromServer();
             });
         };
@@ -1029,8 +1033,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         ////////////////////
 
         $dynListsCancelEditingButton.live("click", function(){
-            //editExisting = false;
-            $.bbq.pushState({},2);
+            $.bbq.removeState(["new","copy","edit"]);
         });
 
         $dynListsSaveButton.live("click", function(){
@@ -1221,13 +1224,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     var filterString = buildFilterStringFromListEditingForm();
                     updateNumberOfPeopleSelectedByFilter(filterString);
                 }
+                switchToEditMode();
+                $rootElement.show();
             } else if(state.hasOwnProperty("edit")) {
                 loadListIntoEditingForm(state.edit, false);
+                switchToEditMode();
+                $rootElement.show();
             }  else if (state.hasOwnProperty("copy")) {
                 loadListIntoEditingForm(state.copy, true);
+                switchToEditMode();
+                $rootElement.show();
+            } else {
+                $rootElement.hide();
             }
 
-            switchToEditMode();
+
         };
 
          $(window).bind('hashchange', function() {
@@ -1265,6 +1276,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
             loadDynamicListsFromServer();
+
         };
 
         doInit();

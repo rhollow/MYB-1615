@@ -1,5 +1,5 @@
 define(["/dev/configuration/config.js"], function(config) {
-    config.isDev = false;
+    config.isDev = true;
 	
 	// Tracking and statistics
     config.Tracking = {

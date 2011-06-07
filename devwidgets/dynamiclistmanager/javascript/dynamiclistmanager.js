@@ -17,7 +17,7 @@
  */
 /* global $, Config, jQuery, sakai, sdata */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.dynlist.logic.js", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb, Condition) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
     /**
      * @name sakai_global.dynamiclistmanager
      *
@@ -49,6 +49,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         //////////////////////
         // jQuery selectors //
         //////////////////////
+
+        /**
+         * Widget's root element
+         */
+        var $rootElement = $("#" + tuid);
 
         /**
          * Dynamic list 'Edit' button
@@ -104,10 +109,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var switchToListMode = function() {
 
-            // Set headers and tab styling
-
-            $("h1.title").text("Dynamic List Manager");
-            $("#create_new_list").hide();
+            //$("#create_new_list").hide();
 
             // Show/hide appropriate buttons
 
@@ -204,7 +206,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     allLists = [];
                     displayLoadedLists();
                 }
-                setTabState();
             });
         };
 
@@ -280,7 +281,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         ////////////////////
 
         $dynListsCreateButton.click(function() {
-            $.bbq.pushState("new",2);
+            $.bbq.pushState({"new": true});
         });
 
 
@@ -329,7 +330,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         $dynListsEditButton.live("click", function(){
 
             var listIds = [];
-            $(".list_list_check_list:checked").each(function(){
+            $(".list_list_check_list:checked", $rootElement).each(function(){
                 var id = $(this).val();
                 listIds.push(id);
             });
@@ -339,7 +340,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             }
 
             // Display edit list
-            $.bbq.pushState({"edit": listIds[0]},2);
+            $.bbq.pushState({"edit": listIds[0]});
         });
 
         $(".editLink").live("click", function(evt){
@@ -347,7 +348,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             var id = evt.target.id;
 
             // Display edit list
-            $.bbq.pushState({"edit": id},2);
+            $.bbq.pushState({"edit": id});
         });
 
         // Check all messages
@@ -368,15 +369,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             var state = $.bbq.getState();
 
-            if (state.hasOwnProperty("new")) {
-
-            } else if(state.hasOwnProperty("edit")) {
-                
-            }  else if (state.hasOwnProperty("copy")) {
-                
+            if (state.hasOwnProperty("new") || state.hasOwnProperty("edit") || state.hasOwnProperty("copy")) {
+                 $rootElement.hide();
+            } else {
+                switchToListMode();
+                loadDynamicListsFromServer();
+                $rootElement.show();
             }
             
-            switchToListMode();
+
         };
 
          $(window).bind('hashchange', function() {

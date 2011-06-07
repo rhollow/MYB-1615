@@ -75,6 +75,29 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
             pub.structure0.profile._ref = firstWidgetRef;
         };
 
+        // myBerkeley: We need a custom left-land navigation structure
+        var appendMyBerkeleyCustomItemsToDefaultPrivStructure = function(privdata) {
+
+            privdata.structure0.dynlists = {
+                    "_title": "My dynamic lists",
+                    "_ref": "id1307386414",
+                    "_order": 2,
+                    "_canEdit": true,
+                    "_canSubedit": true,
+                    "_nonEditable": true
+            };
+
+            privdata.id1307386414 = {
+                "page": "<div id='widget_dynamiclistmanager_id1307386502' class='widget_inline'></div>" +
+                        "<div id='widget_dynamiclisteditor_id1307390214' class='widget_inline'></div>"
+            };
+            //privdata.id1307390195 = {
+            //    "page": "<div id='widget_dynamiclisteditor_id1307390214' class='widget_inline'/>"
+            //};
+        };
+
+        // end of myBerkeley specific code
+
         var loadSpaceData = function(){
             var isMe = false;
             var userid = false;
@@ -110,6 +133,10 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                         if (!success2){
                             privdata = $.extend(true, {}, sakai.config.defaultprivstructure);
                             privateToStore = $.extend(true, {}, sakai.config.defaultprivstructure);
+                            // myBerkeley: add custom items to left-hand navigation widget
+                            appendMyBerkeleyCustomItemsToDefaultPrivStructure(privdata);
+                            appendMyBerkeleyCustomItemsToDefaultPrivStructure(privateToStore);
+                            // end of myBerkeley specific code
                         } else {
                             privdata = data2;
                             privdata = sakai.api.Server.cleanUpSakaiDocObject(privdata);
