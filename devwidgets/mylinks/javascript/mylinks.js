@@ -32,12 +32,14 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var addEditPanel = $(".addedit_link_panel", widgetContainer);
         var saveLinkButton = $("#savelink-button", widgetContainer);
         var addLinkButton = $("#addlink-button", widgetContainer);
+        var addEditPanelTitle = $(".addedit_link_panel_title", widgetContainer);
+        var accordionContainer = $("#accordion", widgetContainer);
 
         // index of the link currently being edited
         var currentLinkIndex = null;
 
         // data files and paths
-        var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links.2.json";
+        var linksDataPath = "/~" + sakai.data.me.user.userid + "/private/my_links";
 
         // the user's own links ("My Links")
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
@@ -55,7 +57,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 });
 
         var renderLinkList = function(data) {
-            $("ul#accordion", widgetContainer).html(sakai.api.Util.TemplateRenderer("accordion_template", data));
+            accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
             setupAccordion();
             setupEditIcons();
         };
@@ -65,7 +67,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             the default ones.
          */
         var loadUserList = function() {
-            sakai.api.Server.loadJSON(linksDataPath, function (success, data) {
+            sakai.api.Server.loadJSON(linksDataPath + ".2.json", function (success, data) {
                 if (success) {
                     // merge the user's links with the default links
                     userLinkData = data;
@@ -76,18 +78,26 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 renderLinkList(defaultLinks);
             });
         };
+        
+        
+        var setAddEditLinkTitle = function (title) {
+            addEditPanelTitle.text(title);
+        };
 
         var cancelEditMode = function() {
+            
             currentLinkIndex = null;
-            linkList.show();
+            //linkList.show();
             addEditPanel.hide();
-            linkTitleInput[0].value = "";
-            linkUrlInput[0].value = "";
+            linkTitleInput.attr("value","").removeClass("error");
+            linkUrlInput.attr("value","").removeClass("error");
+            $("label.error").hide();
         };
 
         var enterAddMode = function() {
+            showPane($(".accordion_pane:last"));
+            setAddEditLinkTitle("Add link");
             currentLinkIndex = null;
-            linkList.hide();
             addEditPanel.show();
             addLinkButton.show();
             saveLinkButton.hide();
@@ -96,10 +106,10 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var enterEditMode = function(index) {
             var link = userLinkData.links[index];
+            setAddEditLinkTitle("Edit link");
             linkTitleInput[0].value = link.name;
             linkUrlInput[0].value = link.url;
             currentLinkIndex = index;
-            linkList.hide();
             addEditPanel.show();
             addLinkButton.hide();
             saveLinkButton.show();
@@ -194,30 +204,50 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 });
             }
         };
+        
+        var showPane = function (pane) {
+            if (!pane.hasClass("accordion_open")) {
+                closePanes();
+                pane.addClass("accordion_open");
+            }
+            pane.children(".accordion_content").slideDown(300, function(){
+                pane.children(".accordion_content").css("overflow","auto");
+            });
+        };
+        
+        var hidePane = function (pane) {
+            pane.removeClass("accordion_open");
+            pane.children(".accordion_content").slideUp(300);
+        };
+        
+        var closePanes = function () {
+            $(".accordion_pane", accordionContainer).each(function () {
+                hidePane($(this));
+            });
+        };
 
         var setupAccordion = function() {
-            $("#accordion > li > div", widgetContainer).click(function() {
-                if (false === $(this).next().is(':visible')) {
-                    $("#accordion div", widgetContainer).removeClass("selected");
-                    $("#accordion div", widgetContainer).addClass("notSelected");
-                    $("#accordion table", widgetContainer).slideUp(300);
-                }
 
-                $(this).next().slideToggle(300);
-                $(this).removeClass("notSelected");
-                $(this).addClass("selected");
+            $(".section_label", accordionContainer).click(function() {
+                showPane($(this).parent());
             });
 
             // Add Google Analytics outbound links tracking
-            $("ul#accordion td.link a", widgetContainer).click(function () {
+            $("li.link a", accordionContainer).click(function () {
                 myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
                 return false;
             });
 
-            $("#accordion table.accordion_opened", widgetContainer).show();
+            if (accordionContainer.width() > 250) {
+                accordionContainer.addClass("link_grid")
+            }
+            
+            showPane($(".accordion_open", accordionContainer));
+            
         };
 
         var doInit = function() {
+            console.log("beep");
             loadUserList();
             setupEventHandlers();
         };

@@ -31,24 +31,16 @@
 .noticewidget_listing_loading {
     font-style: italic;
     color: #333;
-	margin-top: -12px;
 	margin-left:20px;
     padding-top: 6px;
-}
-
-/* Changes div.noticewidget_listing_loading's margin when there is another div visible on top (like filters) */
-.noTopMargin {
-		margin-top: 0 !important;
 }
 
 table.noticewidget_listing {
     border-collapse: collapse;
     border-spacing: 0;
-    overflow: auto;
-    max-height: 300px;  
-    position: relative;
     margin-bottom: 0;
 	width: 100%; /* needed for IE7 */
+    display: block;
 }
 
 .archiveView {
@@ -87,8 +79,9 @@ table.noticewidget_listing td, table.noticewidget_listing th {
     padding: 2px 20px 0px 20px;       
 }
 
-table.noticewidget_listing tbody.scroller {
-    height: 150px;
+table.noticewidget_listing.scroller {
+    display:block;
+    height: 180px;
     overflow: auto;
     overflow-x: hidden;
     border-bottom: 1px solid #555;

@@ -21,31 +21,80 @@
     background: url("/devwidgets/mylinks/images/mylinks_widget_icon.png") no-repeat transparent;
 }
 
-.myreminders .s3d-widget-titlebar {
-    height: 47px;
-}
-
 .mylinks_widget .fl-widget-content {
+    position: relative;
     padding: 0;
-    border-right: 3px solid #D4DADE;
-    border-left: 3px solid #D4DADE;
     margin: 0;
 }
 
-.mylinks_widget .link_list {
+/* Accordion */
+.mylinks_widget .link_list #accordion {
+    padding: 0;
+}
+
+.mylinks_widget .link_list #accordion .accordion_pane {
+}
+
+.mylinks_widget .link_list .accordion_content {
+    margin: 0;
+    padding: 0;
+    display: none;
+    height: 146px;
+}
+
+.mylinks_widget ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 2px 0;
+}
+
+.mylinks_widget .section_label {
+    display: block;
+    font-weight: bold;
+    border-top: 2px solid #D5DBDF;
+    cursor: pointer;
+    padding: 5px 5px 5px 7px;
+}
+
+
+.mylinks_widget .section_label {
+    background-color: #EBEDEE;
+    color: #555
+}
+
+.mylinks_widget .accordion_open .section_label {
+    background-color: #D5DBDF;
+    color: #222;
 }
 
 .mylinks_widget .link_list li {
+    display: block;
+    position: relative;
     list-style: none;
-    max-height: 200px;
-    overflow: auto;
+    margin-top: 1%;
+    margin-left: 1%;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.mylinks_widget .link_list .link_grid li {
+    float: left;
+    width: 48%;
+}
+
+.mylinks_widget .link_list li:hover {
+    background-color: #EFEFEF;
+}
+
+.mylinks_widget .link_list .no_links_message {
+    text-align: center;
+    padding: 48px 8px 2px;
 }
 
 .mylinks_widget .link_list a {
     display: block;
-    padding: 6px 10px 5px 0;
-    overflow: hidden;
-    white-space: nowrap;
+    padding: 5px 24px 5px 5px;
     outline: none;
 }
 
@@ -54,34 +103,49 @@
     text-decoration: none;
 }
 
+.mylinks_widget .icon_button {
+    display: block;
+    float: right;
+    background-image: url("/devwidgets/mylinks/images/edit-delete-icon-sprite.png");
+    background-color: #EFEFEF;
+    border: 1px solid #CCC;
+    border-radius: 3px;
+    height: 16px;
+    width: 16px;
+}
+
+.mylinks_widget .link_list li .edit_buttons {
+    display: none;
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    z-index: 100;
+    padding: 3px;
+    background-color: #EFEFEF;
+    border-radius: 3px;
+}
+
+.mylinks_widget .link_list li:hover .edit_buttons {
+    display: block;
+}
+
+.mylinks_widget .icon_button:hover {
+    border: 1px solid #2683BC;
+    background-color: white;
+}
+
+.mylinks_widget .delete_icon {
+    background-position: 0 0;
+}
+
+.mylinks_widget .edit_icon {
+    background-position: -20px 0;
+    margin-right: 3px;
+}
+
 /* Edit mode */
 .mylinks_widget .link_list .edit {
     display: none;
-}
-
-/* Accordion */
-.mylinks_widget .link_list #accordion {
-    list-style: none;
-    padding: 0 0 0 0;
-}
-
-.mylinks_widget .link_list #accordion div {
-    display: block;
-    font-weight: bold;
-    border-top: 1px solid #000000;
-    cursor: pointer;
-    padding: 5px 5px 5px 7px;
-    list-style: circle;
-}
-
-.mylinks_widget .link_list #accordion .notSelected,
-.mylinks_widget .link_list #accordion .selected {
-    background: #D5DBDF;
-}
-
-.mylinks_widget .link_list #accordion .accordion_pane {
-    display: none;
-    overflow: auto;
 }
 
 .mylinks_widget .link_list #accordion a {
@@ -93,17 +157,63 @@
 }
 
 /* Add/Edit Link Panel */
+
 .mylinks_widget .addedit_link_panel {
-    overflow: hidden;
-    max-height: 250px;
-    padding: 4px;
+    position: absolute;
+    top: 2.4em;
+    left: 4%;
+    width: 92%;
+ 
     display: none;
+    
+    background-color: white;
+    border: 1px solid darkGray;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px black;
+    -moz-box-shadow: 0 0 10px black;
+    -webkit-box-shadow: 0 0 10px black;
+    color: #424242;
+}
+
+.mylinks_widget .addedit_link_panel label {
+    display: block;
+    font-size: 0.9em;
+    padding: 0.3em;
+}
+
+.mylinks_widget .addedit_link_panel .elm-label {
+    color: #555;
 }
 
 .mylinks_widget .addedit_link_panel .link-form input {
-    width: 200px;
+    width: 98%;
+    padding: 0.2em;
 }
 
 .mylinks_widget .addedit_link_panel .button-list {
     float: right;
+    padding: 9px 6% 6px;
 }
+
+.mylinks_widget .s3d-link-button {
+    margin-right: 6px;
+}
+
+label.error {
+    text-align: center;
+}
+
+.mylinks_widget .addedit_link_panel h2.s3d-addlink-header {
+    border-bottom: 1px dotted #D4D4D4;
+    color: #666;
+    font-size: 1.1em;
+    font-weight: normal;
+    padding-bottom: 6px;
+    margin: 9px 6% 6px;
+}
+
+.mylinks_widget .addedit_link_panel .link-form-element {
+    padding: 0 6%;
+}
+

@@ -316,6 +316,9 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
             if (i_object.basic && i_object.basic.elements && i_object.basic.elements["tags"]) {
                 delete i_object.basic.elements["tags"];
             }
+            if (i_object.basic && i_object.basic.elements && i_object.basic.elements["sakai:tags"]) {
+                delete i_object.basic.elements["sakai:tags"];
+            }
         };
 
 

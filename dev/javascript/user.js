@@ -38,6 +38,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
 
         var contextType = false;
         var contextData = false;
+        var newContent = 0;
         var qs = new Querystring();
 
         var setupProfile = function(pub) {
@@ -187,6 +188,10 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
             if (pubdata.structure0 && pubdata.structure0[pageid]) {
                 pubdata.structure0[pageid]._count = count;
             }
+            if (pageid === "library") {
+                pubdata.structure0[pageid]._count += newContent;
+                newContent = 0;
+            }
         };
 
         var getUserPicture = function(profile, userid){
@@ -322,7 +327,18 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
             });
         });
 
-        $(window).bind("complete.fileupload.sakai", determineContext);
+        $(window).bind("done.newaddcontent.sakai", function(e, data, library) {
+            if (data && data.length && library === sakai.data.me.user.userid) {
+                newContent = data.length;
+                addCounts();
+                generateNav();
+            }
+        });
+
+        $(window).bind("done.deletecontent.sakai", function(e, data) {
+            addCounts();
+            generateNav();
+        });
 
         determineContext();
         renderEntity();

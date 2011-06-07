@@ -185,12 +185,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
             // Create tags for the directory structure
             // For every groupbasicinfo_added_directory we create tags
-
-			      $("#groupbasicinfo_directory li").each(function(ev, value){
+            $("#groupbasicinfo_directory li").each(function(ev, value){
                 var directory = $(value).attr("class");
                 sakai_global.currentgroup.data.authprofile["sakai:tags"].push(directory);
             });
-            
+
             // group description (can be blank)
             var groupDesc = $.trim($(groupBasicInfoGroupDesc, $rootel).val());
 
@@ -265,9 +264,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 "data" : sakai_global.currentgroup.data.authprofile,
                 "mode" : mode,
                 "tags" : tags,
-
-				        "directory" : directory,
-                "saveddirectory" : directoryJSON,
+                "directory" : directory,
+                //"saveddirectory" : directoryJSON,
                 /* the following perSectionPermissions switch is used to turn off
                    the "Who can view or search this?" permissions dropdown for now.
                    The dropdown will need to be enabled and fully implemented later
@@ -277,8 +275,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             return json;
         };
 
-        var renderLocations = function(data){
-            sakai_global.currentgroup.data.authprofile["sakai:tags"] = data.tags;
+        var renderLocations = function(){
             var mode = '';
             // Show in Edit mode
             if (showSettings) {
@@ -334,13 +331,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         };
 
         // Indicate that the widget has finished loading
-        $(window).trigger("sakai.api.UI.groupbasicinfo.ready", {});
+        $(window).trigger("ready.groupbasicinfo.sakai", {});
 
         // Bind to the global update location
-		    $(window).bind("sakai-contentmetadata-renderlocations", function(ev, data){
+        $(window).bind("renderlocations.contentmetadata.sakai", function(ev){
             ev.stopImmediatePropagation();
             // render location in profile Section
-            renderLocations(data);
+            renderLocations();
         });
 
         sakai.api.Widgets.widgetLoader.insertWidgets(tuid);

@@ -135,7 +135,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 cache: false,
                 success: function(data) {
                     loadingIndicator.hide();
-                    loadingIndicator.removeClass("noTopMargin");
                     listingTable.show();
                     if (data.results) {
                         model.data = data;
@@ -180,7 +179,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 });
 
                 $("input:radio", config.rootContainer).live("click", function() {
-                    loadingIndicator.addClass("noTopMargin");
                     that.saveFilterSettingsAndGetNotices();
                 });
             };
@@ -238,32 +236,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     isArchived : rowData.isArchived}
                             ])},
                             function() {
-                                // update UI so it reflects the new model state
-                                $.each($(".task-completed-checkbox", config.rootContainer).get(), function(index, element) {
-                                    var checkboxIndex = this.id.replace(/\w+_/gi, "");
-                                    if (checkboxIndex === rowIndex) {
-                                        element.checked = rowData["isCompleted"] === true;
-                                        // We need to remove overdue class from completed tasks and add it again if user unchecks an overdue task
-                                        if (rowData["isCompleted"] === true) {
-
-                                            // remove 'overDueTask' CSS class
-                                            // function parents() travels several levels up to find the row
-                                            $(this).parents("tr.notice_row").removeClass("overDueTask");
-
-                                        } else {
-
-                                            var nowDate = new Date();
-                                            var dueDate = sakai.api.Util.parseSakaiDate(rowData.icalData.DUE);
-
-                                            if (dueDate < nowDate && rowData["isArchived"] !== true) {
-                                                // add 'overDueTask' CSS class if the task is overdue
-                                                $(this).parents("tr.notice_row").addClass("overDueTask");
-                                            }
-                                        }
-
-                                    }
-                                });
-                                that.updateUI();
+                                that.getNotices();
                             }
                             );
                 });
@@ -328,8 +301,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 );
                         return;
                     }
-
-                    loadingIndicator.addClass("noTopMargin");
 
                     var calendars = [];
                     if (model.archiveMode) {
@@ -419,8 +390,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             };
 
             var scroller = function() {
-                var tbody = $("table.noticewidget_listing tbody", config.rootContainer);
-                tbody.toggleClass("scroller", (tbody.height() > 150));
+                var tbody = $("table.noticewidget_listing", config.rootContainer);
+                tbody.toggleClass("scroller", (tbody.height() > 180));
             };
 
             var filterStatus = function() {
