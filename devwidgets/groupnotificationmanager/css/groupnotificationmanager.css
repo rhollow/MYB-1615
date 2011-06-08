@@ -1,0 +1,402 @@
+/** LAYOUT **/
+
+.dynamiclistmanager_widget .button-list {
+    float: right;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
+/** LIST MAIN PANE **/
+
+.dynamiclistmanager_widget .list-heading {
+    font-weight: bold;
+    color: #333;
+    font-size: 17px;
+    padding-left: 5px;
+}
+
+/** Table **/
+
+.dynamiclistmanager_widget .main_content_container {
+    border: 4px solid #d5dbdf;
+    min-height: 400px;
+    padding-bottom: 10px;
+}
+
+.dynamiclistmanager_widget .list-table {
+    margin: 0;
+    table-layout: fixed;
+}
+
+/** Header **/
+.dynamiclistmanager_widget .list_list_header {
+    padding: 5px 5px 5px 7px;
+    border-bottom: 3px solid #D4DADE;
+}
+
+.dynamiclistmanager_widget .list-table .different {
+    background: #eaedef;
+}
+
+.dynamiclistmanager_widget .list-table .different th {
+    border-bottom: 4px solid #d5dbdf;
+    padding-left: 5px;
+}
+
+.dynamiclistmanager_widget .list-table #list_tableHeader_chk {
+    width: 2%;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_date_modified {
+    width: 20%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_name {
+    width: 64%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_description {
+    width: 44%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+.dynamiclistmanager_widget .list-table #list_table_header_size {
+    width: 10%;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
+/** List **/
+.dynamiclistmanager_widget .list-table a:hover {
+    text-decoration: none;
+}
+
+.dynamiclistmanager_widget .list-table th {
+    color: #333;
+    text-align: left;
+    height: 26px;
+    border: none;
+}
+
+.dynamiclistmanager_widget .list-table tr {
+    color: #666;
+}
+
+.dynamiclistmanager_widget .list-table td {
+    border: none;
+    color: #666;
+    text-align: left;
+    font-size: 1em;
+    border-bottom: 1px solid #d5dbdf;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.dynamiclistmanager_widget .list-table .list_message_none {
+    text-align: center;
+    border: none;
+    height: 370px;
+}
+
+.dynamiclistmanager_widget .list_list_table_header_sort {
+    /*cursor:pointer;*/
+}
+
+.dynamiclistmanager_widget .list_list_table_header_sort span {
+    float: left;
+}
+
+.dynamiclistmanager_widget a.editLink:link {
+    text-decoration: underline;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.current_tab
+{ background-color: #C6DEFF; margin: 0px; padding: 0px; }
+
+/** CONTAINER **/
+
+.fixed-container
+{ background: #fff;}
+
+/** LAYOUT **/
+
+.groupnotificationmanager_widget .main_container
+{ border:medium none; margin:0 0 20px; padding:0; }
+
+.groupnotificationmanager_widget .side_panel
+{ padding: 0; }
+
+.groupnotificationmanager_widget .col-main
+{   }
+
+.button-list
+{ margin-top: 10px; float: right; }
+
+
+/** SIDE NAV **/
+
+/** Side Folders **/
+.groupnotificationmanager_widget .fl-widget .fl-widget-titlebar .widget_title_icon{background:url(/dev/images/icons_sprite.png) no-repeat scroll -420px -17px transparent;}
+.groupnotificationmanager_widget .inbox-folders{width:230px;margin:0;padding:0;overflow:hidden;}
+.groupnotificationmanager_widget .inbox-folders .if_titlebar_inner{padding:18px 0 0 17px;}
+.groupnotificationmanager_widget .inbox-folders .if_title{color:#878A8C;font-size:1em;padding-left:25px;margin:0;}
+.groupnotificationmanager_widget .inbox-folders .if_content ul{padding:0 0 0 20px;margin:0;}
+.groupnotificationmanager_widget .inbox-folders .if_content ul li{list-style-type:none;padding:3px 0;}
+.groupnotificationmanager_widget .inbox-folders .if_content ul li a{font-weight:normal;}
+.groupnotificationmanager_widget .inbox-folders .if_content ul li span{font-weight:normal;color:#999;}
+.groupnotificationmanager_widget .inbox-folders .if_content .tab{height: 25px; margin: 5px 0px;}
+.groupnotificationmanager_widget .inbox-folders .if_content .tab a{font-size:1.2em; position: relative; top: 5px;}
+.if_content .inbox_filter .inbox_icon{float: left;height: 17px;margin-right: 10px;width: 16px;}
+
+.groupnotificationmanager_widget .inbox-folders .if_bottom
+{ background:transparent url(/dev/images/content_bl.png) no-repeat scroll left bottom; height: 5px; padding: 0 0 0 10px; }
+.groupnotificationmanager_widget .inbox-folders .if_bottom_inner
+{ background:transparent url(/dev/images/content_br.png) no-repeat scroll right bottom; height: 5px; }
+
+
+/** INBOX PANE & DEFAULT SETUP **/
+
+.groupnotificationmanager_widget .inbox-heading
+{ font-weight: bold; color: #333; font-size: 17px; padding: 4px 0 0 5px; }
+
+/** Table **/
+.groupnotificationmanager_widget .main_content_container
+{  border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 300px; }
+
+.groupnotificationmanager_widget .inbox-table
+{ width:100%; margin:0; border-spacing:0; border-collapse:collapse; }
+
+.groupnotificationmanager_widget .top_decor
+{height:32px;padding:9px 0 0 7px;border: 3px solid #e6e6e6;border-top-left-radius: 10px;border-top-right-radius: 10px;}
+
+/** Header **/
+.groupnotificationmanager_widget .inbox-table .different
+{ background: #eaedef; }
+.groupnotificationmanager_widget .inbox-table .different th
+{ border-bottom: 3px solid #d5dbdf; }
+
+.groupnotificationmanager_widget .inbox-table #inbox_table_header_chk
+{ width:3%; }
+.groupnotificationmanager_widget .inbox-table #inbox_table_header_from
+{ width:25%; border-left: 1px solid #D4DADE; color: #666666; }
+.groupnotificationmanager_widget .inbox-table #inbox_table_header_subject
+{ width:49%; border-left: 1px solid #D4DADE; color: #666666; }
+.groupnotificationmanager_widget .inbox-table #inbox_table_header_date
+{ width:25%; border-left: 1px solid #D4DADE; color: #666666; }
+
+#inbox_inbox_checkAll
+{ margin: 5px; }
+.inbox_inbox_check_message
+{ margin-left: 5px; }
+
+/** List **/
+.groupnotificationmanager_widget .inbox-table th
+{color:#333;text-align:left;height:26px;border:none;padding:3px 5px;}
+.groupnotificationmanager_widget .inbox-table tr
+{ color: #666; }
+.groupnotificationmanager_widget .inbox-table tr.inbox_message:hover
+{ background-color:#d9eaf5; cursor:pointer; }
+.groupnotificationmanager_widget .inbox-table td
+{ border:none;color:#666;text-align:left;font-size:1em;border-bottom:1px solid #d5dbdf;padding:4px 4px 4px 4px; }
+.groupnotificationmanager_widget .inbox-table tr.inbox-subject-read *
+{ font-weight:normal;}
+.groupnotificationmanager_widget .inbox-table tr.inbox-subject-unread *
+{ font-weight: bold; }
+.groupnotificationmanager_widget .inbox-table td a.inbox_inbox_message {color:#058EC4}
+.groupnotificationmanager_widget .inbox-table .inbox_message_none
+{ text-align: center; border: none; height: 370px; }
+.groupnotificationmanager_widget .inbox-table tr.inbox-message-unvalidated *
+{ font-weight: normal; font-style: italic; }
+.groupnotificationmanager_widget .inbox-table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.groupnotificationmanager_widget .bottom_decor
+{ border: 3px solid #e6e6e6;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;height:41px; }
+
+
+/** NOTIFICATION DETAIL **/
+
+.groupnotificationmanager_widget .compose-notification
+{ background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; }
+
+.groupnotificationmanager_widget .compose-reply
+{ background: #fff; width: 500px; height: auto; position: relative; top:-15px;}
+
+.groupnotificationmanager_widget .compose-form
+{ padding: 0; color: #333; font-size: 13px; }
+.groupnotificationmanager_widget .compose-form .compose-to, .compose-subject, .compose-body
+{ border-top: 1px solid #ccc; border-left: 1px solid #ccc; border-bottom: 1px solid #e6e6e6; border-right: 1px solid #e6e6e6; }
+.groupnotificationmanager_widget .compose-form .compose-to
+{ width:575px; height: 50px; padding:3px; margin:0; }
+.groupnotificationmanager_widget .compose-form .compose-subject
+{ width: 575px; padding: 2px; margin: 5px 3px 10px 3px; }
+.groupnotificationmanager_widget .compose-form .compose-body
+{height: 140px; width:575px; padding:2px; margin: 5px 3px 10px 3px; }
+
+.groupnotificationmanager_widget .compose-cancel
+{padding-left: 7px;}
+
+.datepicker img
+{ position: relative; top: 6px; left: 5px; cursor: pointer; }
+.datepicker input
+{ width: 70px; }
+
+
+/** INBOX MESSAGE VIEW PANE **/
+
+.inbox_detail .top_toolbar
+{ padding: 0; }
+
+.inbox_detail .sender-options
+{ color:#058ec4; font-size: 1em; padding: 0 12px 5px 0; }
+.inbox_detail .sender-options a
+{ color:#058ec4; font-size: 1em; }
+.inbox_detail .sender_details
+{ height: 32px; background: #f4f4f4; border-bottom: 3px solid #D4DADE; padding: 5px; }
+.inbox_detail .sender_picture_container
+{ float: left; margin: 0 0 0 3px; }
+.inbox_detail .sender-picture
+{ width:32px; height:32px; }
+
+.inbox_detail .inbox-heading a
+{ color: #058ec4; font-size: 13px; }
+.inbox_detail .inbox-heading span
+{ font-size: 16px; }
+
+.inbox_detail .sender-name
+{ color: #058ec4; font-weight: bold; }
+.inbox_detail .sender-timestamp
+{ color: #999999; font-size: 11px; }
+.inbox_detail .sender-body
+{ position: relative; }
+.inbox_detail .sender-message
+{ display:inline; height: auto; width: 100%; }
+
+.inbox_detail .message-arrow
+{ background: url(/dev/images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
+.inbox_detail .message-body
+{ padding: 20px 37px 30px; color:#333; font-size: 13px; }
+.inbox_detail .message-header
+{ font-weight: bold; font-size: 16px; padding-bottom: 5px; margin-top: 5px; margin-left: 5px; }
+.inbox_detail .message-options
+{ padding: 15px 15px 0 0; }
+.inbox_detail .message-options a
+{ color:#058ec4; font-weight: bold; }
+
+.inbox_detail .pipe-divider
+{ color:#d2d2d2; padding: 0 10px 0 10px; }
+
+.inbox_detail .reply-options
+{ padding: 15px 0 0 0; }
+.inbox_detail .reply-options a
+{ color:#058ec4; font-weight: bold; }
+
+.inbox_detail .inbox_message_user
+{ position:relative; margin-left: 42px; }
+
+.inbox_detail #inbox_message_previous_messages
+{ margin: 0 0 0 38px; }
+.inbox_detail #inbox_message_replies
+{ margin: 0 0 0 38px; background: #f4f4f4; }
+.inbox_detail #inbox_compose_replies_template_chats
+{ margin: 0 0 0 38px; background: #f4f4f4; }
+
+
+/** NOTIFICATIONS, ERROR MESSAGES **/
+
+.inbox_error_message
+{ font-weight:bold; padding:10px; border:3px solid #ff0000; background-color:#f7d8d8; width:80%;float:left; }
+
+.inbox_normal_message
+{ padding:10px; border:3px solid #00ff00; background-color:#d9f7d8; width:80%;float:left; }
+
+.groupnotificationmanager_widget .user-personal a
+{color: #058ec4; font-size: 12px;}
+.groupnotificationmanager_widget .user-personal strong
+{color: #058ec4;}
+.groupnotificationmanager_widget .user-personal li
+{border-left: 1px solid #999; padding: 0 2px 0 6px;}
+.groupnotificationmanager_widget .user-personal .first{border-left: none;}
+
+.groupnotificationmanager_widget .user-name{color: #058ec4; background: url(/dev/images/user_online.gif) no-repeat 7px 2px;}
+.groupnotificationmanager_widget .user-name strong{padding-left: 14px;}
+
+.groupnotificationmanager_widget .user-arrow-down{position: relative; top: -1px; padding-left: 3px;}
+
+.groupnotificationmanager_widget .user-mail{background: url(/dev/images/user_mail_icon.gif) no-repeat 6px 3px;}
+.groupnotificationmanager_widget .user-mail a{color: #666; padding-left: 16px;}
+
+.groupnotificationmanager_widget .inbox-checkbox{width: 16px;}
+
+.groupnotificationmanager_widget .inbox-delete{padding: 10px 0 12px 0;}
+.groupnotificationmanager_widget #inbox_delete {margin:10px 0px 10px 0px;display:inline-block;;}
+
+.groupnotificationmanager_widget .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}
+
+.groupnotificationmanager_widget .inbox_inbox_table_header_sort { cursor:pointer;}
+.groupnotificationmanager_widget .inbox_inbox_table_header_sort span { float:left; }
+
+.groupnotificationmanager_widget #inbox_compose_new img { border:none;}
+
+.groupnotificationmanager_widget .user-name strong{padding-left: 14px;}
+
+.groupnotificationmanager_widget .user-arrow-down{position: relative; top: -1px; padding-left: 3px;}
+
+.groupnotificationmanager_widget .user-mail{background: url(/dev/images/user_mail_icon.gif) no-repeat 6px 3px;}
+.groupnotificationmanager_widget .user-mail a{color: #666; padding-left: 16px;}
+
+.groupnotificationmanager_widget .inbox-checkbox{width: 16px;}
+
+.groupnotificationmanager_widget .inbox-delete{padding: 10px 0 12px 0;}
+.groupnotificationmanager_widget #inbox_delete {margin:10px 0px 10px 0px;display:inline-block;;}
+
+.groupnotificationmanager_widget .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}
+
+.groupnotificationmanager_widget .inbox_inbox_table_header_sort { cursor:pointer;}
+.groupnotificationmanager_widget .inbox_inbox_table_header_sort span { float:left; }
+
+.groupnotificationmanager_widget #inbox_compose_new img { border:none;}

@@ -1,0 +1,271 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/groupnotificationmanager/css/groupnotificationmanager.css" />
+
+
+<div class="groupnotificationmanager_widget">
+
+    <button type="button" id="inbox-new-button" class="s3d-button" style="float:right"><span class="s3d-button-inner">Create New</span></button>
+
+    <!-- TITLE -->
+    <div class="s3d-contentpage-title">__MSG__GROUP_NOTIFICATION_MANAGER__</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <!-- Main -->
+                <div class="col-main">
+
+                    <!-- INBOXES OF NOTIFICATIONS (DEFAULT VIEW) -->
+                    <div id="inbox_pane_inbox" class="inbox_pane">
+
+                        <form name="my-inbox" action="" method="post">
+
+                            <!-- HEADERS -->
+                            <div class="top_decor">
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_drafts">__MSG__DRAFTS__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_queue" style="display:none;">__MSG__QUEUE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__ARCHIVE__</div>
+                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
+                            </div>
+
+                            <!-- INBOX -->
+                            <div class="main_content_container">
+                                <table class="inbox-table" id="inbox_table" summary="All of your notification drafts.">
+                                    <tr class="different">
+                                        <th id="inbox_table_header_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__" /></th>
+                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_from"><span>__MSG__FROM__</span></th>
+                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_subject"><span>__MSG__SUBJECT__</span></th>
+                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__SEND_DATE__</span></th>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="bottom_decor">
+                                <div id="inbox_pager" class="jq_pager"></div>
+                            </div>
+
+                            <div id="inbox_inbox_sort_up" style="display:none;"><img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
+                            <div id="inbox_inbox_sort_down" style="display:none;"><img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
+
+                            <div id="inbox_inbox_messages_template" title=""><!--
+                            {for m in messages}
+                                {var readClass="inbox-subject-unread"}
+                                {if m.read}
+                                    {var readClass="inbox-subject-read"}
+                                {/if}
+								{var validatedClass=""}
+								{if !m.validated && m.messagebox === "drafts"}
+                                    {var validatedClass="inbox-message-unvalidated"}
+                                {/if}
+
+                                <tr class="inbox_message ${readClass} ${validatedClass}" id="inbox_table_message_${m['jcr:name']}">
+                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
+
+										{if m.messagebox === "outbox"}
+                                            {if m.userTo}
+                                                <td>
+                                                {for toUser in m.userTo}
+                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${toUser.userid}">${toUser.firstName} ${toUser.lastName}</a>
+                                                {/for}
+                                                </td>
+                                            {else}
+                                                <td><a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:to']}">${m['sakai:to']}</a></td>
+                                            {/if}
+                                        {elseif m.messagebox === "drafts"}
+											<td>
+												{if m.userFrom}
+	                                                {for fromUser in m.userFrom}
+	                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${sakai.api.User.getDisplayName(fromUser)}</a>
+	                                                {/for}
+	                                            {else}
+	                                                <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:from']}">${m['sakai:to']}</a>
+	                                            {/if}
+												<input type="hidden" value="${m['sakai:validated']}" id="drafts_message_validated_${m['jcr:name']}" />
+											</td>
+										{else}
+											{if m.userFrom}
+                                                <td>
+                                                {for fromUser in m.userFrom}
+                                                    <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${fromUser.userid}">${fromUser.firstName} ${fromUser.lastName}</a>
+                                                {/for}
+                                                </td>
+                                            {else}
+                                                <td><a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:from']}">${m['sakai:to']}</a></td>
+                                            {/if}
+                                        {/if}
+                                        <td id="inbox_table_subject_${m.id}" class="subject-td">
+                                            <a href="javascript:;" class="inbox_inbox_message ellipsis_text" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a>
+                                        </td>
+                                        <td>${m.date}</td>
+                                </tr>
+                            {forelse}
+                                <tr class="inbox_message">
+                                    <td colspan="5" class="inbox_message_none">__MSG__NO_MESSAGES_FOUND__.</td>
+                                </tr>
+                            {/for}
+                            --></div>
+
+                            <div id="inbox_table_preloader"><!--
+                                <tr class="inbox_message">
+                                    <td colspan="5" class="inbox_message_none"><img src="/dev/images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
+                                </tr>
+                            --></div>
+
+                            <div id="inbox_results"></div>
+                        </form>
+
+                        <!-- BUTTON LISTS-->
+						<div class="button-list" id="buttons-drafts">
+						    <button id="inbox-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+							<button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_TRASH__</span></button>
+                            <button id="inbox-draftscopy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
+					   </div>
+					   <div class="button-list" id="buttons-queue" style="display:none;">
+                            <button id="inbox-queuetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
+						    <button id="inbox-queuecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                            <button id="inbox-queuedelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_TRASH__</span></button>
+					   </div>
+                       <div class="button-list" id="buttons-archive" style="display:none;">
+                            <button id="inbox-archivetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+					   </div>
+                       <div class="button-list" id="buttons-trash" style="display:none;">
+						    <button id="inbox-emptytrash-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                            <button id="inbox-trashtodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
+					   </div>
+
+                    </div>
+
+                    <!-- NOTIFICATION COMPOSING & DETAILS -->
+                    <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
+
+                        <div class="top_decor">
+                            <!-- Header -->
+                            <div class="inbox-heading">__MSG__CREATE_OR_EDIT_A_NOTIFICATION__</div>
+                        </div>
+
+                        <!-- Create/Edit Notification -->
+                        <div class="main_content_container">
+                            <div class="compose-notification">
+                                    <div id="inbox_compose_new_container">
+                                        <div id="widget_composenotification" class="widget_inline"></div>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div class="bottom_decor"></div>
+
+                        <!-- Button Lists-->
+                        <div class="button-list notifdetail-buttons" id="createnew-buttons">
+                            <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                            <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+                            <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>
+                        </div>
+                        <div class="button-list notifdetail-buttons" id="editdraft-buttons" style="display:none;">
+                            <button id="cn-queuedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
+                            <button id="cn-updatedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
+                            <button id="cn-deletedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                        </div>
+                        <div class="button-list notifdetail-buttons" id="queueview-buttons" style="display:none;">
+                            <button id="cn-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
+                            <button id="cn-queuecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                            <button id="cn-deletequeued-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                        </div>
+                        <div class="button-list notifdetail-buttons" id="archiveview-buttons" style="display:none;">
+                            <button id="cn-archivecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                        </div>
+                        <div class="button-list notifdetail-buttons" id="trashview-buttons" style="display:none;">
+                            <button id="cn-editrashed-button" class="s3d-button"><span class="s3d-button-inner">__MSG__ENABLE_EDITING__</span></button>
+                            <button id="cn-deletetrashed-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
+                        </div>
+                    </div>
+
+                    <!-- VIEW A SPECIFIC MESSAGE -->
+                    <div id="inbox_pane_message" class="inbox_pane" style="display:none;">
+
+                        <div class="top_decor">
+                            <!-- <div class="inbox-heading">__MSG__MESSAGE__</div> -->
+                            <div class="message-header" id="inbox_message_subject"></div>
+                        </div>
+
+                        <div class="main_content_container">
+                            <!-- Sender details -->
+                            <div class="sender_details">
+                                <div class="sender_picture_container">
+                                    <a href="javascript:;" title="__MSG__TO_SEE_THE_SENDERS_PROFILE__"><img src="/dev/images/profile_picture.gif" class="sender-picture" id="inbox_message_picture" alt="__MSG__SENDERS_PROFILE_PIC__" /></a>
+                                </div>
+                                <div class="inbox_message_user">
+                                    <a href="javascript:;" class="sender-name" id="inbox_message_from" title="__MSG__FROM__"></a>
+                                    <br />
+                                    <div class="sender-timestamp">__MSG__SENT_THIS_ON__ <span id="inbox_message_date"></span></div>
+                                </div>
+                            </div>
+
+                            <!-- Message -->
+                            <div class="sender-body">
+                                <div class="message-arrow"></div>
+
+                                <div class="sender-message">
+                                    <div class="message-body">
+
+                                        <!-- <div class="message-header" id="inbox_message_subject"></div> -->
+
+                                        <div id="inbox_message_body"></div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="bottom_decor"></div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<!-- existing_lists end -->
+
+
+<!-- JAVASCRIPT -->
+
+
+
+<script type="text/javascript" src="/devwidgets/groupnotificationmanager/javascript/groupnotificationmanager.js"></script>
+<!--script type="text/javascript" src="/devwidgets/composenotification/javascript/composenotification.js"></script-->

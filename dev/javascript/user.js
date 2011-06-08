@@ -79,10 +79,57 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
         // myBerkeley: We need a custom left-land navigation structure
         var appendMyBerkeleyCustomItemsToDefaultPrivStructure = function(privdata) {
 
+            // My notifications
+            privdata.structure0.notifications = {
+                "_title": "My Notifications",
+                "_ref": "id1165301022",
+                "_order": 2,
+                "_canEdit": true,
+                "_canSubedit": true,
+                "_nonEditable": true,
+                "drafts": {
+                    "_ref": "id1307490615",
+                    "_order": 0,
+                    "_title": "Drafts",
+                    "_canEdit": true,
+                    "_canSubedit": true,
+                    "_nonEditable": true
+                },
+                "queue": {
+                    "_ref": "id1307490615",
+                    "_order": 1,
+                    "_title": "Queue",
+                    "_canEdit": true,
+                    "_canSubedit": true,
+                    "_nonEditable": true
+                },
+                "archive": {
+                    "_ref": "id1307490615",
+                    "_order": 2,
+                    "_title": "Archive",
+                    "_canEdit": true,
+                    "_canSubedit": true,
+                    "_nonEditable": true
+                },
+                "trash": {
+                    "_ref": "id1307490615",
+                    "_order": 3,
+                    "_title": "Trash",
+                    "_canEdit": true,
+                    "_canSubedit": true,
+                    "_nonEditable": true
+                }
+            };
+
+            privdata.id1307490615 = {
+                "page": "<div id='widget_groupnotificationmanager_id1307490671' class='widget_inline'></div>"
+            };
+
+            // My dynamic lists
             privdata.structure0.dynlists = {
                     "_title": "My dynamic lists",
                     "_ref": "id1307386414",
-                    "_order": 2,
+                    "_order": 3,
                     "_canEdit": true,
                     "_canSubedit": true,
                     "_nonEditable": true
@@ -92,9 +139,8 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                 "page": "<div id='widget_dynamiclistmanager_id1307386502' class='widget_inline'></div>" +
                         "<div id='widget_dynamiclisteditor_id1307390214' class='widget_inline'></div>"
             };
-            //privdata.id1307390195 = {
-            //    "page": "<div id='widget_dynamiclisteditor_id1307390214' class='widget_inline'/>"
-            //};
+
+
         };
 
         // end of myBerkeley specific code
