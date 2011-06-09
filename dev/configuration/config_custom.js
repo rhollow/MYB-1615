@@ -43,13 +43,6 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
         "name": "mylinks"
     };
 
-    // conditional link for notification authoring page
-    config.Navigation[config.Navigation.length] = {
-        "url" : "/dev/inboxnotifier.html",
-        "label" : "NOTIFICATION_MANAGER",
-        "requiresAdviserMembership" : true
-    };
-
     // Overriding Sakai profile
     // Basic Information --------------
     config.Profile.configuration.defaultConfig.basic.elements = {
@@ -166,6 +159,24 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     delete(config.Navigation[4]);
 
     config.Navigation[0].label = "ME";
+
+    // Add My Notification and My Dynamic Lists to Navigation
+    config.Navigation[0].subnav.splice(2,0,
+        {
+            "url": "/dev/me.html#l=notifications/drafts",
+            "id": "subnavigation_notifications_link",
+            "label": "MY_NOTIFICATIONS",
+            "requiresAdviserMembership": true
+        }
+    );
+    config.Navigation[0].subnav.splice(3,0,
+        {
+            "url": "/dev/me.html#l=dynlists",
+            "id": "subnavigation_dynlists_link",
+            "label": "MY_DYNAMIC_LISTS",
+            "requiresAdviserMembership": true
+        }
+    );
 
     return config;
 

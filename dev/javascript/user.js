@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
 
     sakai_global.profile = sakai_global.profile || {};
     sakai_global.profile.main = sakai_global.profile.main || {};
@@ -81,9 +81,14 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
         // myBerkeley: We need a custom left-land navigation structure
         var appendMyBerkeleyCustomItemsToDefaultPrivStructure = function(privdata) {
 
+            // Add these items only for advisers
+            if(!myb.api.security.isUserAnAdviser()) {
+                return;
+            }
+
             // My notifications
             privdata.structure0.notifications = {
-                "_title": "My Notifications",
+                "_title": "__MSG__MY_NOTIFICATIONS__",
                 "_ref": "id1165301022",
                 "_order": 2,
                 "_canEdit": true,
@@ -129,7 +134,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
 
             // My dynamic lists
             privdata.structure0.dynlists = {
-                    "_title": "My dynamic lists",
+                    "_title": "__MSG__MY_DYNAMIC_LISTS__",
                     "_ref": "id1307386414",
                     "_order": 3,
                     "_canEdit": true,
