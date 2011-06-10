@@ -178,6 +178,75 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
         }
     );
 
+	config.Directory = {
+		ced: {
+			title: "Environmental Design, College of",
+			children: {
+				architecture: {
+					title: "Architecture"
+				},
+				cityregionalplanning: {
+					title: "City &amp; Regional Planning"
+				},
+				landscapearchitecture: {
+					title: "Landscape Architecture & Environmental Planning"
+				},
+				urbandesign: {
+					title: "Urban Design"
+				}
+			}
+		},
+		cnr: {
+			title: "Natural Resources, College of",
+			children: {
+				agriculturaleconomics: {
+					title: "Agricultural and Resource Economics"
+				},
+				environmentalscience: {
+					title: "Environmental Science, Policy, &amp; Management"
+				},
+				nutritionalscience: {
+					title: "Nutritional Science &amp; Toxicology"
+				},
+				plantmicrobialbiology: {
+					title: "Plant &amp; Microbial Biology"
+				}
+			}
+		},
+		studentgroups: {
+			title: "Student Groups",
+			children: {
+				stg_academic: {
+					title: "Academic"
+				},
+				stg_arts: {
+					title: "Arts"
+				},
+				stg_cultural: {
+					title: "Cultural"
+				},
+				stg_political: {
+					title: "Political"
+				},
+				stg_professional: {
+					title: "Professional"
+				},
+				stg_sport: {
+					title: "Sport"
+				},
+				stg_religious: {
+					title: "Religious"
+				},
+				stg_service: {
+					title: "Service"
+				},
+				stg_other: {
+					title: "Other"
+				}
+			}
+		}
+	};
+		
     return config;
 
 });
