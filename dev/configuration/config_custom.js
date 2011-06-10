@@ -180,7 +180,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
 
 	config.Directory = {
 		ced: {
-			title: "Environmental Design, College of",
+			title: "Environmental Design",
 			children: {
 				architecture: {
 					title: "Architecture"
@@ -197,7 +197,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
 			}
 		},
 		cnr: {
-			title: "Natural Resources, College of",
+			title: "Natural Resources",
 			children: {
 				agriculturaleconomics: {
 					title: "Agricultural and Resource Economics"
@@ -213,7 +213,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
 				}
 			}
 		},
-		studentgroups: {
+		studentservices: {
 			title: "Student Groups",
 			children: {
 				stg_academic: {
@@ -242,6 +242,23 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
 				},
 				stg_other: {
 					title: "Other"
+				}
+			}
+		},
+		studentgroups: {
+			title: "Student Services",
+			children: {
+				ss_academic: {
+					title: "Academic"
+				},
+				sd_career: {
+					title: "Career"
+				},
+				ss_financial: {
+					title: "Financial"
+				},
+				ss_campuslife: {
+					title: "Campus Life"
 				}
 			}
 		}
