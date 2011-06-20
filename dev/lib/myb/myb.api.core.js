@@ -19,13 +19,15 @@
 define(
         [
             "myb/myb.api.security",
-            "myb/myb.api.google"
+            "myb/myb.api.google",
+            "myb/myb.dynlistcontexts"
         ],
-      function(security, google) {
+      function(security, google, dynlistcontexts) {
           return {
               api : {
                   security : security,
-                  google : google
+                  google : google,
+                  dynlistcontexts : dynlistcontexts
               }
           };
       });

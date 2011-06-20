@@ -21,10 +21,9 @@ define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
     var security = {};
 
-    security.groupCEDAdvisers = "myb-advisers-ced-students"; // CED Advisers group ID
-
     security.isUserAnAdviser = function() {
-        return security.isCurrentUserAMember(security.groupCEDAdvisers);
+        return (sakai.data.me.dynamiclistcontexts &&
+                sakai.data.me.dynamiclistcontexts.length > 0);
     };
 
     /**
