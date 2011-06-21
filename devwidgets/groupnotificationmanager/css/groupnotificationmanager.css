@@ -280,10 +280,7 @@
 .groupnotificationmanager_widget .compose-cancel
 {padding-left: 7px;}
 
-.datepicker img
-{ position: relative; top: 6px; left: 5px; cursor: pointer; }
-.datepicker input
-{ width: 70px; }
+
 
 
 /** INBOX MESSAGE VIEW PANE **/

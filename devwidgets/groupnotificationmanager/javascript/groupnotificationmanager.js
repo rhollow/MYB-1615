@@ -53,6 +53,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var chooseCategory = {"Message": "message", "Reminder": "reminder"};
         var inboxComposeNewPanelOpen = false;
 
+        //////////////////////
+        // jQuery selectors //
+        //////////////////////
+
+        /**
+         * Widget's root element
+         */
+        var $rootElement = $("#" + tuid);
+
+
+
+
+
+
+
         /**
          *
          * CSS IDS
@@ -989,7 +1004,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             // unhighlight the tabs
             $("[id|=tab]").removeClass("current_tab");
             // initialise the composenotification widget
-            sakai_global.composenotification.initialise(null, null);
+            //sakai_global.composenotification.initialise(null, null);
             // display the proper buttonlist
             $("#createnew-buttons").show();
             $("#inbox-new-button").hide();
@@ -998,7 +1013,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         });
 
         // For when user cancels notification authoring (cancel button on pane 2).
-        $("#cn-cancel-button").live("click", function(){
+        /*$("#cn-cancel-button").live("click", function(){
             // jump back to previous pane
             showPane(inboxPaneInbox);
             $(".inbox_inbox_header").each(function(){
@@ -1008,7 +1023,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             });
             $(inboxInboxCheckAll).attr("checked", false);
             $("#inbox-new-button").show();
-        });
+        });*/
 
         var showFilteredList = function (filter, boxID) {
             currentFilter = filter
@@ -1019,29 +1034,29 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         };
 
         sakai_global.groupnotificationmanager.showDrafts = function () {
-            $.bbq.removeState(["new", "edit"]);
-            $.bbq.pushState({l: "notifications/drafts"});
+            //$.bbq.removeState(["new", "edit"]);
+            //$.bbq.pushState({l: "notifications/drafts"});
             //setState();
             //showFilteredList("drafts", inboxFilterDrafts);
         };
 
         sakai_global.groupnotificationmanager.showQueue = function () {
-            $.bbq.removeState(["new", "edit"]);
-            $.bbq.pushState({l: "notifications/queue"});
+            //$.bbq.removeState(["new", "edit"]);
+            //$.bbq.pushState({l: "notifications/queue"});
             //setState();
             //showFilteredList("queue", inboxFilterQueue);
         };
 
         sakai_global.groupnotificationmanager.showArchive = function () {
-            $.bbq.removeState(["new", "edit"]);
-            $.bbq.pushState({l: "notifications/archive"});
+            //$.bbq.removeState(["new", "edit"]);
+            //$.bbq.pushState({l: "notifications/archive"});
             //setState();
             //showFilteredList("archive", inboxFilterArchive);
         };
 
         sakai_global.groupnotificationmanager.showTrash = function () {
-            $.bbq.removeState(["new", "edit"]);
-            $.bbq.pushState({l: "notifications/trash"});
+            //$.bbq.removeState(["new", "edit"]);
+            //$.bbq.pushState({l: "notifications/trash"});
             //setState();
             //showFilteredList("trash", inboxFilterTrash);
         };
@@ -1183,6 +1198,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             var state = $.bbq.getState();
 
             if(state.hasOwnProperty("new") || state.hasOwnProperty("edit")) {
+                $rootElement.hide();
                 return;
             }
             var box;
@@ -1203,6 +1219,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 showFilteredList("trash", inboxFilterTrash);
                 $("#inbox-new-button").show();
             }
+
+            $rootElement.show();
 
 
         };
@@ -1242,10 +1260,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 filterMessages("drafts", "", "all", inboxFilterDrafts);
             }
 
-            sakai.api.Widgets.widgetLoader.insertWidgets("#"+tuid);
+            //sakai.api.Widgets.widgetLoader.insertWidgets("#"+tuid);
 
-            $.bbq.removeState(["new", "edit"]);
+            //$.bbq.removeState(["new", "edit"]);
             setState();
+
+             // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
+            $("div.groupnotificationmanager_widget", $rootElement).show();
 
         };
 

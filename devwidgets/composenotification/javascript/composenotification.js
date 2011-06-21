@@ -18,11 +18,27 @@
 
 /*global $, sdata, opensocial, Config */
 
-require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sakai.api.core"], function($, $datepick, sakai) {
+require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sakai.api.core", "myb/myb.api.core"], function($, $datepick, sakai, myb) {
+
 
     sakai_global.composenotification = function(tuid, showSettings) {
 
-        var rootel = $("#" + tuid);
+
+         //////////////////////
+        // jQuery selectors //
+        //////////////////////
+
+        /**
+         * Widget's root element
+         */
+        var $rootElement = $("#" + tuid);
+
+
+
+
+
+
+
 
         var user = false; // user object that contains the information for the user that should be posted to
         var me = sakai.data.me;
@@ -178,7 +194,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         /**
          * Unbind everything to prevent duplicacy issues.
          */
-        var unbindAll = function() {
+        /*var unbindAll = function() {
             $("#cn-saveasdraft-button").die();
             $("#cn-queue-button").die();
             $("#cn-queuedraft-button").die();
@@ -191,7 +207,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $("#cn-editrashed-button").die();
             $("#cn-archivecopytodrafts-button").die();
             $("#dlc-save").die();
-        };
+        };*/
 
         /**
          * This will reset the whole widget to its default state.
@@ -558,22 +574,22 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         // Return to drafts panel.
         var backToDrafts = function () {
-            sakai_global.groupnotificationmanager.showDrafts();
+            //sakai_global.groupnotificationmanager.showDrafts();
         };
 
         // Return to queue panel.
         var backToQueue = function () {
-            sakai_global.groupnotificationmanager.showQueue();
+            //sakai_global.groupnotificationmanager.showQueue();
         };
 
         // Return to archive panel.
         var backToArchive = function () {
-            sakai_global.groupnotificationmanager.showArchive();
+            //sakai_global.groupnotificationmanager.showArchive();
         };
 
         // Return to trash panel.
         var backToTrash = function() {
-            sakai_global.groupnotificationmanager.showTrash();
+            //sakai_global.groupnotificationmanager.showTrash();
         };
 
         /**
@@ -1181,7 +1197,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             resetView();
             clearInvalids();
             hideAllButtonLists();
-            unbindAll();
+            //unbindAll();
             eventTimeInit(null, null, null);
             isDirty = false;
 
@@ -1340,22 +1356,155 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 // Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
                 reenableView();
 
-                // When someone clicks on the 'Queue' button from base panel.
-                $("#cn-queue-button").live('click', function() {
-                    if (checkFieldsForErrors(true)) {
-                        postNotification(saveData("queue", true), backToDrafts, null, null, "Queue");
-                    }
-                });
-                // When someone clicks on the 'Save as Draft' button from base panel.
-                $("#cn-saveasdraft-button").live('click', function() {
-                    if ($(messageFieldSubject).val() != "") {
-                        postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
-                    } else {
-                        $(messageFieldSubject).addClass(invalidClass);
-                    }
-                });
+
             }
         };
+
+         // When someone clicks on the 'Queue' button from base panel.
+        $("#cn-queue-button").live('click', function() {
+            if (checkFieldsForErrors(true)) {
+                postNotification(saveData("queue", true), backToDrafts, null, null, "Queue");
+            }
+        });
+        // When someone clicks on the 'Save as Draft' button from base panel.
+        $("#cn-saveasdraft-button").live('click', function() {
+            if ($(messageFieldSubject).val() != "") {
+                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
+            } else {
+                $(messageFieldSubject).addClass(invalidClass);
+            }
+        });
+
+        $("#cn-cancel-button").live("click", function(){
+             $.bbq.removeState(['new', 'edit']);
+            //return false;
+        });
+
+
+
+        var notificationTypeInit = function (type) {
+            if (type === "task") {
+                $("#composenotification_event_date").hide();
+                $("#composenotification_event_time").hide();
+                $("#composenotification_event_place").hide();
+
+                $("#composenotification_task_due_date").show();
+
+                $("#cn-requiredyes", $rootElement).attr("checked", "checked");
+                $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
+            } else {
+                $("#composenotification_event_date").show();
+                $("#composenotification_event_time").show();
+                $("#composenotification_event_place").show();
+
+                $("#composenotification_task_due_date").hide();
+
+                $("#cn-requiredyes", $rootElement).removeAttr("checked");
+                $("#cn-requiredno", $rootElement).removeAttr("checked");
+                $("#composenotification_required .right input", $rootElement).removeAttr("disabled");
+            }
+        };
+
+
+
+
+
+        $("#cn-notification-type").change(function()
+        {
+            var value = $(this).attr('value');
+            notificationTypeInit(value);
+        });
+
+
+        /**
+         * Resets the editing form UI (checkboxes and CSS styles)
+         * Must be called AFTER loading template.
+         */
+        var resetForm = function() {
+
+            notificationTypeInit("task");
+            dynamicListInit(null);
+            eventTimeInit(null, null, null);
+            isDirty = false;
+
+        };
+
+
+        /**
+         * Sets current state of this component (list mode or edit mode).
+         * This function is called when hashchange event fires.
+         */
+         var setState = function(){
+
+            var state = $.bbq.getState();
+
+            if(state.hasOwnProperty("new") || state.hasOwnProperty("edit")) {
+                $rootElement.show();
+            } else {
+                $rootElement.hide();
+            }
+            //var box;
+
+            /*if(state.hasOwnProperty("l")) {
+                box = state.l;
+            }
+
+            if (box === "notifications/drafts") {
+                showFilteredList("drafts", inboxFilterDrafts);
+                $("#inbox-new-button").show();
+            } else if(box === "notifications/queue") {
+                showFilteredList("queue", inboxFilterQueue);
+                $("#inbox-new-button").show();
+            } else if(box === "notifications/archive") {
+                showFilteredList("archive", inboxFilterArchive);
+                $("#inbox-new-button").show();
+            } else if(box === "notifications/trash") {
+                showFilteredList("trash", inboxFilterTrash);
+                $("#inbox-new-button").show();
+            }
+
+            $rootElement.show();*/
+
+
+        };
+
+        $(window).bind('hashchange', function() {
+            setState();
+        });
+
+
+
+        /////////////////////////////
+        // Initialization function //
+        /////////////////////////////
+
+        /**
+         * Initialization function that is run when the widget is loaded. Determines
+         * which mode the widget is in (settings or main), loads the necessary data
+         * and shows the correct view.
+         */
+        var doInit = function() {
+            var security = sakai.api.Security;
+
+            // if the user is not a member of the advisers group then bail
+            if (!myb.api.security.isUserAnAdviser()) {
+                security.send403();
+                return;
+            }
+
+            resetForm();
+
+            // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
+            $("div.composenotification_widget", $rootElement).show();
+
+            setState();
+
+
+        };
+
+        doInit();
+
+
     };
 
     debug.info("Asking for load of composenotification widget");

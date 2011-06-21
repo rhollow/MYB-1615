@@ -129,7 +129,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             };
 
             privdata.id1307490615 = {
-                "page": "<div id='widget_groupnotificationmanager_id1307490671' class='widget_inline'></div>"
+                "page": "<div id='widget_groupnotificationmanager_id1307490671' class='widget_inline'></div>" +
+                        "<div id='widget_composenotification_id1307666089' class='widget_inline'></div>"
             };
 
             // My dynamic lists
