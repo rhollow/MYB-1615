@@ -421,6 +421,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             generateNav();
         });
 
+        $(window).bind("read.message.sakai", function(){
+            $(window).trigger("updated.counts.lhnav.sakai");
+        });
+
         determineContext();
         renderEntity();
         generateNav();
