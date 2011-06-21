@@ -97,7 +97,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var inboxPane = inboxID + "_pane";
         var inboxPaneClass = inboxClass + "_pane";
         var inboxPaneInbox = inboxPane + "_inbox";
-        var inboxPaneCompose = inboxPane + "_compose";
         var inboxPaneMessage = inboxPane + "_message";
 
         // Main inbox view
@@ -1000,14 +999,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          */
         // For when user clicks on "Create New" button.
         $("#inbox-new-button").live("click", function(){
-            showPane(inboxPaneCompose);
-            // unhighlight the tabs
-            $("[id|=tab]").removeClass("current_tab");
-            // initialise the composenotification widget
-            //sakai_global.composenotification.initialise(null, null);
-            // display the proper buttonlist
-            $("#createnew-buttons").show();
-            $("#inbox-new-button").hide();
+            $.bbq.removeState("edit");
             $.bbq.removeState("edit");
             $.bbq.pushState({"new": true});
         });

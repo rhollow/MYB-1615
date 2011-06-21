@@ -42,7 +42,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         var user = false; // user object that contains the information for the user that should be posted to
         var me = sakai.data.me;
-        var callbackWhenDone = null; // callback function for when the message gets sent                 
+
         var isDirty = false; // Determines whether a notification has changed since it was last created or saved               
 
         /**
@@ -241,7 +241,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             var makeOption = function (val, title, selectedTorF) {
                 var valString = (val) ? " value='" + val + "'" : "";
                 var selectedString = (selectedTorF) ? " selected='selected'" : "";
-                return "<option " + valString + selectedString + ">" + title + "</option>\n";
+                // escaping < and > with \x3C and \x3E
+                return "\x3Coption " + valString + selectedString + "\x3E" + title + "\x3C/option\x3E\n";
             };
             var optionsString = "";
 
@@ -296,23 +297,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             // Filling in AM/PM dropdown menu.
             var ampmOptionsHTML = createOptions(allAMPMOptions, AMPMSelectedID, true);
             $(messageEventTimeAMPM).empty().append(ampmOptionsHTML);
-        };
-
-        /**
-         * Given a date String in the general format, parse it to return a new
-         * date String in the format of "Day of the Week Month Day, Year".
-         * ie: Friday December 13, 1991
-         * @param {Object} dateStr The date String we are going to parse.
-         */
-        var formatDate = function(dateStr) {
-            dateObj = new Date(dateStr);
-            var daysoftheweek = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-            var monthsoftheyear = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-            var month = dateObj.getMonth();
-            var day = dateObj.getDate();
-            var year = dateObj.getFullYear();
-            var dayofweek = dateObj.getDay();
-            return daysoftheweek[dayofweek] + " " + monthsoftheyear[month] + " " + day + ", " + year;
         };
 
         /**
@@ -510,9 +494,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $(".composenotification_taskorevent").find(".compose-form-elm").each(function() {
                     clearElement(this);
                 });
-                eventTimeInit(null);
+                eventTimeInit(null, null, null);
             }
-            ;
+
             isDirty = true;
         });
         // If task is checked, show the information and make sure the event
@@ -524,7 +508,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $(".cn-event").find(".compose-form-elm").each(function() {
                 clearElement(this);
             });
-            eventTimeInit(null);
+            eventTimeInit(null, null, null);
             $(messageEventDate).removeClass(invalidClass);
             $(messageEventTimeHour).removeClass(invalidClass);
             $(messageEventTimeMinute).removeClass(invalidClass);
@@ -671,13 +655,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         var AMPM = "AM";
                         $(messageEventDate).datepicker("setDate", eventDate);
                         if (hours > 11) {
-                            if (hours != 12) {
+                            if (hours !== 12) {
                                 hours = hours - 12;
                             }
                             AMPM = "PM";
                         }
                         else
-                        if (hours == 0) {
+                        if (hours === 0) {
                             hours = hours + 12;
                         }
                         eventTimeInit(hours, minutes, AMPM);
@@ -716,12 +700,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     var AMPM = "AM";
                     $(messageEventDate).datepicker("setDate", eventDate);
                     if (hours > 11) {
-                        if (hours != 12) {
+                        if (hours !== 12) {
                             hours = hours - 12;
                         }
                         AMPM = "PM";
                     }
-                    else if (hours == 0) {
+                    else if (hours === 0) {
                         hours = hours + 12;
                     }
                     eventTimeInit(hours, minutes, AMPM);
@@ -878,7 +862,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     }
                     else {
                         // If the event date is today, check that the time hasn't already passed.
-                        if ((eventDateObj.getTime() - modtoday.getTime()) == 0) {
+                        if ((eventDateObj.getTime() - modtoday.getTime()) === 0) {
                             if (eventTimeHour && eventTimeMinute && eventTimeAMPM) {
                                 var compareToHour = parseInt(eventTimeHour);
                                 var compareToMin = parseInt(eventTimeMinute);
@@ -1045,7 +1029,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         DESCRIPTION : $(messageFieldBody).val()
                     }
                 }
-            }
+            };
 
             // sendDate is handled a little differently, because it is called
             // by a sakai date parsing util which throws an error if not
@@ -1368,10 +1352,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         });
         // When someone clicks on the 'Save as Draft' button from base panel.
         $("#cn-saveasdraft-button").live('click', function() {
-            if ($(messageFieldSubject).val() != "") {
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
-            } else {
+            if ($(messageFieldSubject).val() === "") {
                 $(messageFieldSubject).addClass(invalidClass);
+            } else {
+                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
             }
         });
 
@@ -1409,7 +1393,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
 
-        $("#cn-notification-type").change(function()
+        $("#cn-notification-type", $rootElement).change(function()
         {
             var value = $(this).attr('value');
             notificationTypeInit(value);
@@ -1417,15 +1401,27 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
         /**
-         * Resets the editing form UI (checkboxes and CSS styles)
-         * Must be called AFTER loading template.
+         * Resets the editing form UI
          */
         var resetForm = function() {
 
+            $("#cn-notification-type", $rootElement).val("task");
             notificationTypeInit("task");
+
             dynamicListInit(null);
             eventTimeInit(null, null, null);
+            $("#datepicker-taskduedate-text", $rootElement).val("");
+            $("#datepicker-eventdate-text", $rootElement).val("");
+            $("#cn-event-place", $rootElement).val("");
+            $("#cn-consequence", $rootElement).val("");
+            $("#datepicker-senddate-text", $rootElement).val("");
+            $("#cn-subject", $rootElement).val("");
+            $("#cn-body", $rootElement).val("");
+            $("#cn-email", $rootElement).val("");
+            $("#cn-link", $rootElement).val("");
+
             isDirty = false;
+
 
         };
 
@@ -1439,6 +1435,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             var state = $.bbq.getState();
 
             if(state.hasOwnProperty("new") || state.hasOwnProperty("edit")) {
+                resetForm();
                 $rootElement.show();
             } else {
                 $rootElement.hide();
