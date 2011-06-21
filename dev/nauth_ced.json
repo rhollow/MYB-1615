@@ -36,27 +36,27 @@
             "select_all_option_name": "All CED Graduate Students",			
             "select_one_or_more_option_name": "CED Graduate Students by Program",
             "items_array": [{
-                "id": "/colleges/ENV DSGN/standings/grad/programs/ARCHITECTURE",
+                "id": "/colleges/ENV DSGN/standings/grad/majors/ARCHITECTURE",
                 "name": "Architecture"
             },
 			{
-                "id": "/colleges/ENV DSGN/standings/grad/programs/CITY REGIONAL PLAN",
+                "id": "/colleges/ENV DSGN/standings/grad/majors/CITY REGIONAL PLAN",
                 "name": "City and Regional Planning"
             },
 			{
-                "id": "/colleges/ENV DSGN/standings/grad/programs/DESIGN",
+                "id": "/colleges/ENV DSGN/standings/grad/majors/DESIGN",
                 "name": "Design"
             },
 			{
-                "id": "/colleges/ENV DSGN/standings/grad/programs/LAND ARCH &amp; ENV PLAN",
+                "id": "/colleges/ENV DSGN/standings/grad/majors/LAND ARCH &amp; ENV PLAN",
                 "name": "Landscape Architecture and Environmental Planning"
             },
 			{
-                "id": "/colleges/ENV DSGN/standings/grad/programs/URBAN DESIGN",
+                "id": "/colleges/ENV DSGN/standings/grad/majors/URBAN DESIGN",
                 "name": "Urban Design"
             },
 			{
-                "id": "/colleges/ENV DSGN/standings/grad/programs/LIMITED",
+                "id": "/colleges/ENV DSGN/standings/grad/majors/LIMITED",
                 "name": "Limited"
             }
             ]
