@@ -1042,8 +1042,71 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 toPost["sendDate"] = formatISO8601(sendDate);
             }
 
+
+            var type = $("#cn-notification-type", $rootElement).val();
+
+            switch(type) {
+                case "task":
+
+                    toPost["type"] = "calendar";
+
+                    // Tasks are considered always required
+                    toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
+
+                    toPost.calendarWrapper.component = "VTODO";
+                    toPost.calendarWrapper.icalData.STATUS = "NEEDS-ACTION";
+                    if ($(messageTaskDueDate).val() !== "") {
+                        toPost.calendarWrapper.icalData.DUE = formatISO8601($(messageTaskDueDate).datepicker("getDate"));
+                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601($(messageTaskDueDate).datepicker("getDate"));
+                    }
+
+                    break;
+
+                case "event":
+
+                    toPost["type"] = "calendar";
+                    if ($(messageRequiredYes).attr("checked")) {
+                        toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
+                    } else {
+                        toPost.calendarWrapper.icalData.CATEGORIES = [];
+                    }
+
+                    toPost.calendarWrapper.component = "VEVENT";
+                    // If the event date is filled out, we handle this normally and save the time information there.
+                    if ($(messageEventDate).datepicker("getDate") != null) {
+                        var startDate = $(messageEventDate).datepicker("getDate");
+                        startDate.setMinutes($(messageEventTimeMinute).val());
+                        // Get the event time details and add to the eventDate obj.
+                        if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
+                            startDate.setHours(parseInt($(messageEventTimeHour).val()) + 12);
+                        }
+                        else {
+                            startDate.setHours($(messageEventTimeHour).val());
+                        }
+                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
+                    }
+                    // Otherwise, we need to check for and save the time information in case the user filled this out.
+                    else {
+                        toPost.uxState["eventMin"] = $(messageEventTimeMinute).val();
+                        toPost.uxState["eventAMPM"] = $(messageEventTimeAMPM).val();
+                        toPost.uxState["eventHour"] = $(messageEventTimeHour).val();
+                    }
+                    toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
+
+
+                    break;
+                default:
+
+                    break;
+            }
+
+
+
+            //-------------------------------------------------------------------------------
+
+
             // This notification is a REMINDER--required task or event.              
-            if ($(messageRequiredYes).attr("checked")) {
+            /*if ($(messageRequiredYes).attr("checked")) {
                 // Fields common to reminders.
                 toPost["category"] = "reminder";
                 toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
@@ -1114,7 +1177,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     }
                     toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
                 }
-            }
+            } */
             return toPost;
         };
 
@@ -1176,8 +1239,35 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)
          */
-        sakai_global.composenotification.initialise = function(calledFrom, message) {
-            // Reset page back to its original condition.            
+        var loadNotification = function(calledFrom, message) {
+
+            var url = "/~" + sakai.data.me.user.userid + "/_myberkeley_notificationstore/" + message + ".json";
+
+            $.ajax({
+                url: url,
+                cache: false,
+                async: false,
+                success: function(data){
+                    message = data;
+                    message.calendarWrapper = $.parseJSON(message.calendarWrapper);
+                    message.uxState = $.parseJSON(message.uxState);
+
+                },
+                error: function(xhr, textStatus, thrownError){
+                    showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
+                    // Commented out because this displays the tiny bit of text at the bottom of the panel that
+                    // says an error has occurred. Felt this was a bit redundant to have both the text and a
+                    // popup alerting the user that there was an error, and also, the error message does not
+                    // ever disappear for the remainder of the time the user spends on this page (unless they
+                    // refresh or leave and come back).
+                    //$(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
+                }
+            });
+
+
+
+
+            // Reset page back to its original condition.
             resetView();
             clearInvalids();
             hideAllButtonLists();
@@ -1434,35 +1524,37 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             var state = $.bbq.getState();
 
-            if(state.hasOwnProperty("new") || state.hasOwnProperty("edit")) {
+            if(state.hasOwnProperty("new")) {
                 resetForm();
                 $rootElement.show();
+            } else if(state.hasOwnProperty("edit")) {
+                resetForm();
+
+                var box, msgId;
+
+                if(state.hasOwnProperty("l")) {
+                    box = state.l;
+                }
+
+                if(state.hasOwnProperty("edit")) {
+                    msgId = state.edit;
+                }
+
+                if (box === "notifications/drafts") {
+                    loadNotification("drafts", msgId);
+                } else if(box === "notifications/queue") {
+                    loadNotification("queue", msgId);
+                } else if(box === "notifications/archive") {
+                    loadNotification("archive", msgId);
+                } else if(box === "notifications/trash") {
+                    loadNotification("trash", msgId);
+                }
+
+                $rootElement.show();
+
             } else {
                 $rootElement.hide();
             }
-            //var box;
-
-            /*if(state.hasOwnProperty("l")) {
-                box = state.l;
-            }
-
-            if (box === "notifications/drafts") {
-                showFilteredList("drafts", inboxFilterDrafts);
-                $("#inbox-new-button").show();
-            } else if(box === "notifications/queue") {
-                showFilteredList("queue", inboxFilterQueue);
-                $("#inbox-new-button").show();
-            } else if(box === "notifications/archive") {
-                showFilteredList("archive", inboxFilterArchive);
-                $("#inbox-new-button").show();
-            } else if(box === "notifications/trash") {
-                showFilteredList("trash", inboxFilterTrash);
-                $("#inbox-new-button").show();
-            }
-
-            $rootElement.show();*/
-
-
         };
 
         $(window).bind('hashchange', function() {

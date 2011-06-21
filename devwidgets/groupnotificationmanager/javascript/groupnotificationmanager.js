@@ -637,14 +637,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 var messageBox = selectedMessage["sakai:messagebox"];
 
                 // Show the correct nofitication detail pane to get ready for the widget.
-                showPane(inboxPaneCompose);
+                $.bbq.pushState({edit: id});
+                //showPane(inboxPaneCompose);
 
                 // Initialise the widget, which will prepopulate the fields and
                 // set the correct buttonlist based on where it was called from.
-                sakai_global.composenotification.initialise(messageBox, selectedMessage);
+                //sakai_global.composenotification.initialise(messageBox, selectedMessage);
 
                 // Unhighlight all tabs.
-                $("[id|=tab]").removeClass("current_tab");
+                //$("[id|=tab]").removeClass("current_tab");
             }
         };
 
@@ -1135,7 +1136,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             var id = e.target.id;
             id = id.split('_');
             displayMessage(id[id.length - 1]);
-            $.bbq.pushState({edit: true});
         });
 
         /**
