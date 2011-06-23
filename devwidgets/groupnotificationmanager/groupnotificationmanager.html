@@ -1,6 +1,23 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/groupnotificationmanager/css/groupnotificationmanager.css" />
 
+<!-- //TODO: remove unused messages -->
+<!-- ERRORS AND MESSAGES -->
+<div id="inbox_generalmessages_error_general" style="display:none;"><b>__MSG__AN_ERROR_HAS_OCCURRED__.</b> __MSG__PLEASE_TRY_AGAIN_LATER__.</div>
+<span id="inbox_generalmessages_error_read_fail" style="display:none;">__MSG__FAILED_TO_MARK_THIS_MESSAGE_AS_READ__.</span>
+<span id="inbox_generalmessages_error_send_fail" style="display:none;">__MSG__UNABLE_TO_SEND_YOUR_MESSAGE__.</span>
+<span id="inbox_generalmessages_deleted_1" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_DELETED__.</span>
+<span id="inbox_generalmessages_deleted_x" style="display:none;"> __MSG__MESSAGES_HAVE_BEEN_DELETED__.</span>
+<span id="inbox_generalmessages_deleted_failed" style="display:none;">__MSG__UNABLE_TO_DELETE_MESSAGES__.</span>
+<span id="inbox_generalmessages_moved_1" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_MOVED_TO__</span>
+<span id="inbox_generalmessages_moved_x" style="display:none;">__MSG__MESSAGES_HAVE_BEEN_MOVED_TO__</span>
+<span id="inbox_generalmessages_moved_failed" style="display:none;">__MSG__THERE_WAS_AN_ERROR_IN_MOVING_YOUR_MESSAGES__</span>
+<span id="inbox_generalmessages_copied_1" style="display:none;">__MSG__THE_MESSAGE_HAS_BEEN_COPIED_TO__</span>
+<span id="inbox_generalmessages_copied_x" style="display:none;">__MSG__MESSAGES_HAVE_BEEN_COPIED_TO__</span>
+<span id="inbox_generalmessages_copied_failed" style="display:none;">__MSG__THERE_WAS_AN_ERROR_IN_COPYING_YOUR_MESSAGES__</span>
+<div id="inbox_generalmessages_nr_new_messages" style="display:none;"> <span class="inbox_bold inbox_filter_nrMessages">(__NR__)</span></div>
+<span id="inbox_generalmessages_sent" style="display:none;">__MSG__YOUR_MESSAGE_HAS_BEEN_SENT__.</span>
+
 
 <div class="groupnotificationmanager_widget" style="display: none;">
 
@@ -54,8 +71,8 @@
                                 <div id="inbox_pager" class="jq_pager"></div>
                             </div>
 
-                            <div id="inbox_inbox_sort_up" style="display:none;"><img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /></div>
-                            <div id="inbox_inbox_sort_down" style="display:none;"><img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /></div>
+                            <div id="inbox_inbox_sort_up" style="display:none;"><!--img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /--></div>
+                            <div id="inbox_inbox_sort_down" style="display:none;"><!--img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /--></div>
 
                             <div id="inbox_inbox_messages_template" title=""><!--
                             {for m in messages}
@@ -90,7 +107,7 @@
 	                                            {else}
 	                                                <a class="inbox_inbox_message_from" href="/dev/profile.html?user=${m['sakai:from']}">${m['sakai:to']}</a>
 	                                            {/if}
-												<input type="hidden" value="${m['sakai:validated']}" id="drafts_message_validated_${m['jcr:name']}" />
+												<input type="hidden" value="${m['uxState']['validated']}" id="drafts_message_validated_${m['jcr:name']}" />
 											</td>
 										{else}
 											{if m.userFrom}
@@ -149,23 +166,16 @@
                     <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
 
                         <!-- Button Lists-->
-                        <div class="button-list notifdetail-buttons" id="editdraft-buttons" style="display:none;">
-                            <button id="cn-queuedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-                            <button id="cn-updatedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
-                            <button id="cn-deletedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                        </div>
-                        <div class="button-list notifdetail-buttons" id="queueview-buttons" style="display:none;">
-                            <button id="cn-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
-                            <button id="cn-queuecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
-                            <button id="cn-deletequeued-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                        </div>
-                        <div class="button-list notifdetail-buttons" id="archiveview-buttons" style="display:none;">
-                            <button id="cn-archivecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
-                        </div>
-                        <div class="button-list notifdetail-buttons" id="trashview-buttons" style="display:none;">
-                            <button id="cn-editrashed-button" class="s3d-button"><span class="s3d-button-inner">__MSG__ENABLE_EDITING__</span></button>
-                            <button id="cn-deletetrashed-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                        </div>
+
+
+
+
+
+
+
+
+
+
                     </div>
 
                     <!-- VIEW A SPECIFIC MESSAGE -->

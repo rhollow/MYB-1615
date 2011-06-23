@@ -372,7 +372,7 @@
 .groupnotificationmanager_widget .inbox-delete{padding: 10px 0 12px 0;}
 .groupnotificationmanager_widget #inbox_delete {margin:10px 0px 10px 0px;display:inline-block;;}
 
-.groupnotificationmanager_widget .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}
+/*.groupnotificationmanager_widget .inbox_arrow {float:right;width:6px;height:3px;display:inline;margin-top:5px;}*/
 
 .groupnotificationmanager_widget .inbox_inbox_table_header_sort { cursor:pointer;}
 .groupnotificationmanager_widget .inbox_inbox_table_header_sort span { float:left; }

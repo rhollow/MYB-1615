@@ -23,6 +23,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
     sakai_global.composenotification = function(tuid, showSettings) {
 
+        /**
+         * Id of a message being edited (or null for new messages)
+         */
+        var currentMessageId = null;
+
+        /**
+         * A message being edited (or null for new messages)
+         */
+        var currentMessage = null;
 
          //////////////////////
         // jQuery selectors //
@@ -460,7 +469,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // If 'No' is checked for required, it CANNOT be a task.
         // Disable the task radiobox and show the appropriate message.
         $(messageRequiredNo).change(function() {
-            $(messageFieldRequiredCheck).removeClass(invalidClass); // Clearing validation errors
+            $(messageFieldRequiredCheck + " .right").removeClass(invalidClass); // Clearing validation errors
             $(messageRequiredNo).attr("checked", "checked");
             $("#task-radio").attr("disabled", "disabled");
             $("#must-be-req").show();
@@ -468,7 +477,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         });
         // If 'Yes' is checked for required, show the task/event field.
         $(messageRequiredYes).change(function() {
-            $(messageFieldRequiredCheck).removeClass(invalidClass); // Clearing validation errors
+            $(messageFieldRequiredCheck + " .right").removeClass(invalidClass); // Clearing validation errors
             $(messageReminderCheckbox).attr("checked", "checked");
             $(".composenotification_taskorevent").show();
             $("#must-be-req").hide();
@@ -558,21 +567,25 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         // Return to drafts panel.
         var backToDrafts = function () {
+            $.bbq.pushState({l: "notifications/drafts"}, 2);
             //sakai_global.groupnotificationmanager.showDrafts();
         };
 
         // Return to queue panel.
         var backToQueue = function () {
+            $.bbq.pushState({l: "notifications/queue"}, 2);
             //sakai_global.groupnotificationmanager.showQueue();
         };
 
         // Return to archive panel.
         var backToArchive = function () {
+            $.bbq.pushState({l: "notifications/archive"}, 2);
             //sakai_global.groupnotificationmanager.showArchive();
         };
 
         // Return to trash panel.
         var backToTrash = function() {
+            $.bbq.pushState({l: "notifications/trash"}, 2);
             //sakai_global.groupnotificationmanager.showTrash();
         };
 
@@ -630,7 +643,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             // If it's a reminder, fill in the reminder categories after checking if it
             // is a task or an event, and show the proper fields for the user.
-            if (message["category"] == "reminder") {
+            if (message.type === "calendar") {
                 $(messageRequiredYes).attr("checked", true);
                 $(messageReminderCheckbox).attr("checked", true);
                 $(messageReminderCheck).show();
@@ -788,7 +801,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             if (!requiredYes && !requiredNo) {
                 if (!displayErrors) return false;
                 valid = false;
-                requiredEl.addClass(invalidClass);
+                $(".right", requiredEl).addClass(invalidClass);
             }
             if (!sendDate) {
                 if (!displayErrors) return false;
@@ -1239,9 +1252,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
          * @param {Object} message Message data for if we are pre-filling with information. (default: null)
          */
-        var loadNotification = function(calledFrom, message) {
+        var loadNotification = function(calledFrom, messageId) {
 
-            var url = "/~" + sakai.data.me.user.userid + "/_myberkeley_notificationstore/" + message + ".json";
+            currentMessageId = messageId;
+
+            var message = null;
+            var url = "/~" + sakai.data.me.user.userid + "/_myberkeley_notificationstore/" + messageId + ".json";
 
             $.ajax({
                 url: url,
@@ -1264,6 +1280,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 }
             });
 
+            //TODO: fix this later, we need only one variable for this
+            currentMessage = message;
+
 
 
 
@@ -1285,59 +1304,49 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 dynamicListInit(null);
             }
 
-            // Event handler for when user clicks on DLC "Save" button.
-            $("#dlc-save").live('click', function() {
-                // Check that the subject field isn't empty before saving
-                if ($(messageFieldSubject).val() != "") {
-                    // Save the draft.
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, message, null, null);
-                } else {
-                    // If subject field is empty, cancel jqm dialog and highlight subject field.
-                    $("#save_reminder_dialog").jqmHide();
-                    $(messageFieldSubject).addClass(invalidClass);
-                }
-            });
+            // Chose notification type
+            var type = message.calendarWrapper.component;
 
-            // Event handler for when you click on the "Don't Save" button on DLC dialog.
-            $("#dlc-dontsave").live('click', function() {
-                // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
-                // back to this page with the dialog box still open
-                $("#save_reminder_dialog").jqmHide();
-                goToCDNLPage();
-            });
+            switch(type) {
+                case "VTODO":
+                    $("#cn-notification-type", $rootElement).val("task");
+                    notificationTypeInit("task");
+                    break;
+                case "VEVENT":
+                    $("#cn-notification-type", $rootElement).val("event");
+                    notificationTypeInit("event");
+                    break;
+                default:
+                    break;
+            }
+
+
+
+
+             // Hide all the buttons
+             hideAllButtonLists();
 
             // Are we calling this from drafts?
             if (calledFrom == "drafts") {
                 // Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
                 reenableView();
 
+                $("#cn-widget-title").text("Edit Notification");
+
                 // Fill out the proper information.
                 fillInMessage(message, checkFieldsForErrors(false));
 
-                // Hide all the buttons and show the proper button list.
-                hideAllButtonLists();
+                // Show the proper button list
                 $("#editdraft-buttons").show();
 
-                // Queueing this draft...                
-                $("#cn-queuedraft-button").live('click', function() {
-                    if (checkFieldsForErrors(true)) {
-                        postNotification(saveData("queue", true), backToDrafts, message, null, "Queue");
-                    }
-                });
 
-                // Updating and re-saving this draft...
-                $("#cn-updatedraft-button").live('click', function() {
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, message, null, "Save");
-                });
-
-                // Deleting the draft...
-                $("#cn-deletedraft-button").live('click', function() {
-                    postNotification(saveData("trash", false), backToDrafts, message, null, "Delete");
-                });
             }
 
             // Are we calling this from queue?
             if (calledFrom == "queue") {
+
+                $("#cn-widget-title").text("View Notification");
+
                 // Disable the form, disallowing the user to edit.
                 disableView();
 
@@ -1347,24 +1356,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 // Display the proper buttons.                
                 $("#queueview-buttons").show();
 
-                // Moving message from queue to drafts...
-                $("#cn-movetodrafts-button").live('click', function() {
-                    postNotification(saveData("drafts", true), backToQueue, message, null, "Move");
-                });
-
-                // Copying message to drafts...
-                $("#cn-queuecopytodrafts-button").live('click', function() {
-                    postNotification(saveData("drafts", true), backToQueue, null, true, "Copy");
-                });
-
-                // Deleting message...
-                $("#cn-deletequeued-button").live('click', function() {
-                    postNotification(saveData("trash", false), backToQueue, message, null, "Delete");
-                });
             }
 
             // Are we calling this from acrhive?
             if (calledFrom == "archive") {
+
+                $("#cn-widget-title").text("View Notification");
+
                 // Disable the form, disallowing the user to edit.
                 disableView();
 
@@ -1382,6 +1380,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             // Are we calling this from trash?       
             if (calledFrom == "trash") {
+
+                $("#cn-widget-title").text("View Notification");
+
                 // Now fill out the proper information.
                 fillInMessage(message, null);
 
@@ -1391,48 +1392,62 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 // Display the proper buttons.                
                 $("#trashview-buttons").show();
 
-                // Enable editing of message (move it to drafts and re-initialise widget).
-                $("#cn-editrashed-button").live('click', function() {
-                    postNotification(saveData("drafts", checkFieldsForErrors(false)), sakai_global.composenotification.initialise("drafts", message), message, false, null);
-                });
 
-                // Hard delete this message (delete it from the trash).
-                $("#cn-deletetrashed-button").live('click', function() {
-                    var requests = [];
-                    var toDelete = {
-                        "url": message["jcr:path"],
-                        "method": "POST",
-                        "parameters": {
-                            ":operation": "delete"
-                        }
-                    };
-                    requests.push(toDelete);
-                    $.ajax({
-                        url: sakai.config.URL.BATCH,
-                        traditional: true,
-                        type: "POST",
-                        data: {
-                            requests: $.toJSON(requests)
-                        },
-                        success: function(data) {
-                            showGeneralMessage("Delete successful.");
-                            backToTrash();
-                        },
-                        error: function(xhr, textStatus, thrownError) {
-                            showGeneralMessage("Delete failed.");
-                        }
-                    });
-                });
             }
 
             // Else, user is creating a brand new blank notification.
             if (calledFrom == null) {
+
+                $("#cn-widget-title").text("Create Notification");
+
                 // Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
                 reenableView();
 
+                // Show the proper button list
+                $("#createnew-buttons").show();
 
             }
         };
+
+
+        // Event handler for when user clicks on DLC "Save" button.
+        $("#dlc-save").live('click', function() {
+            // Check that the subject field isn't empty before saving
+            if ($(messageFieldSubject).val() != "") {
+                // Save the draft.
+                postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, currentMessage, null, null);
+            } else {
+                // If subject field is empty, cancel jqm dialog and highlight subject field.
+                $("#save_reminder_dialog").jqmHide();
+                $(messageFieldSubject).addClass(invalidClass);
+            }
+        });
+
+        // Event handler for when you click on the "Don't Save" button on DLC dialog.
+        $("#dlc-dontsave").live('click', function() {
+            // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
+            // back to this page with the dialog box still open
+            $("#save_reminder_dialog").jqmHide();
+            goToCDNLPage();
+        });
+
+
+        // Queueing this draft...
+        $("#cn-queuedraft-button").live('click', function() {
+            if (checkFieldsForErrors(true)) {
+                postNotification(saveData("queue", true), backToDrafts, currentMessage, null, "Queue");
+            }
+        });
+
+        // Updating and re-saving this draft...
+        $("#cn-updatedraft-button").live('click', function() {
+            postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, currentMessage, null, "Save");
+        });
+
+        // Deleting the draft...
+        $("#cn-deletedraft-button").live('click', function() {
+            postNotification(saveData("trash", false), backToDrafts, currentMessage, null, "Delete");
+        });
 
          // When someone clicks on the 'Queue' button from base panel.
         $("#cn-queue-button").live('click', function() {
@@ -1452,6 +1467,56 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         $("#cn-cancel-button").live("click", function(){
              $.bbq.removeState(['new', 'edit']);
             //return false;
+        });
+
+        // Moving message from queue to drafts...
+        $("#cn-movetodrafts-button").live('click', function() {
+            postNotification(saveData("drafts", true), backToQueue, currentMessage, null, "Move");
+        });
+
+        // Copying message to drafts...
+        $("#cn-queuecopytodrafts-button").live('click', function() {
+            postNotification(saveData("drafts", true), backToQueue, null, true, "Copy");
+        });
+
+        // Deleting message...
+        $("#cn-deletequeued-button").live('click', function() {
+            postNotification(saveData("trash", false), backToQueue, currentMessage, null, "Delete");
+        });
+
+        // Enable editing of message (move it to drafts and re-initialise widget).
+        $("#cn-editrashed-button").live('click', function() {
+            postNotification(saveData("drafts", checkFieldsForErrors(false)), loadNotification("drafts", currentMessageId), currentMessage, false, null);
+        });
+
+        // Hard delete this message (delete it from the trash).
+        $("#cn-deletetrashed-button").live('click', function() {
+            var requests = [];
+            var msgUrl = "/~" + sakai.data.me.user.userid + "/_myberkeley_notificationstore/" + currentMessageId;
+
+            var toDelete = {
+                "url": msgUrl,
+                "method": "POST",
+                "parameters": {
+                    ":operation": "delete"
+                }
+            };
+            requests.push(toDelete);
+            $.ajax({
+                url: sakai.config.URL.BATCH,
+                traditional: true,
+                type: "POST",
+                data: {
+                    requests: $.toJSON(requests)
+                },
+                success: function(data) {
+                    showGeneralMessage("Delete successful.");
+                    backToTrash();
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    showGeneralMessage("Delete failed.");
+                }
+            });
         });
 
 
@@ -1495,12 +1560,16 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var resetForm = function() {
 
+            $(".compose-form-elm", $rootElement).each(function() {
+                clearElement(this);
+            });
+
             $("#cn-notification-type", $rootElement).val("task");
-            notificationTypeInit("task");
+
 
             dynamicListInit(null);
             eventTimeInit(null, null, null);
-            $("#datepicker-taskduedate-text", $rootElement).val("");
+            /*$("#datepicker-taskduedate-text", $rootElement).val("");
             $("#datepicker-eventdate-text", $rootElement).val("");
             $("#cn-event-place", $rootElement).val("");
             $("#cn-consequence", $rootElement).val("");
@@ -1509,6 +1578,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $("#cn-body", $rootElement).val("");
             $("#cn-email", $rootElement).val("");
             $("#cn-link", $rootElement).val("");
+             */
+
+            reenableView();
+            // Must be called after reenableView because it disables 'Required?' radio buttons
+            notificationTypeInit("task");
 
             isDirty = false;
 
@@ -1522,10 +1596,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
          var setState = function(){
 
+            hideAllButtonLists();
             var state = $.bbq.getState();
 
             if(state.hasOwnProperty("new")) {
                 resetForm();
+                //TODO: refactor this
+                $("#cn-widget-title").text("Create Notification");
+                $("#createnew-buttons").show();
                 $rootElement.show();
             } else if(state.hasOwnProperty("edit")) {
                 resetForm();
