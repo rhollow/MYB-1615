@@ -1362,10 +1362,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 // Display the proper buttons.                
                 $("#archiveview-buttons").show();
 
-                // Copying message to drafts...
-                $("#cn-archivecopytodrafts-button").live('click', function() {
-                    postNotification(saveData("drafts", true), backToArchive, null, true, "Copy");
-                });
             }
 
             // Are we calling this from trash?       
@@ -1399,6 +1395,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
         };
 
+         // Copying message to drafts...
+        $("#cn-archivecopytodrafts-button").live('click', function() {
+            postNotification(saveData("drafts", true), backToArchive, null, true, "Copy");
+        });
 
         // Event handler for when user clicks on DLC "Save" button.
         $("#dlc-save").live('click', function() {
