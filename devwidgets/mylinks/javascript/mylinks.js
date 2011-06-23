@@ -28,7 +28,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var widgetContainer = $("#" + tuid);
         var linkTitleInput = $("#link-title", widgetContainer);
         var linkUrlInput = $("#link-url", widgetContainer);
-        var linkList = $(".link_list", widgetContainer);
         var addEditPanel = $(".addedit_link_panel", widgetContainer);
         var saveLinkButton = $("#savelink-button", widgetContainer);
         var addLinkButton = $("#addlink-button", widgetContainer);
@@ -87,7 +86,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var cancelEditMode = function() {
             currentLinkIndex = null;
-            //linkList.show();
             addEditPanel.hide();
             linkTitleInput.attr("value", "").removeClass("error");
             linkUrlInput.attr("value", "").removeClass("error");
@@ -198,7 +196,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var showPane = function (pane) {
-
             if (!pane.hasClass("accordion_open")) {
                 closePanes();
                 pane.addClass("accordion_open");

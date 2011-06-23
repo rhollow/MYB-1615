@@ -638,12 +638,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $(messageFieldSendDate).datepicker("setDate", sendDate);
             }
             dynamicListInit(message["dynamicListID"]);
-            $(messageFieldSubject).val(message.calendarWrapper.icalData.SUMMARY);
-            $(messageFieldBody).val(message.calendarWrapper.icalData.DESCRIPTION);
 
             // If it's a reminder, fill in the reminder categories after checking if it
             // is a task or an event, and show the proper fields for the user.
             if (message.type === "calendar") {
+
+                // it's a task or event
+                $(messageFieldSubject).val(message.calendarWrapper.icalData.SUMMARY);
+                $(messageFieldBody).val(message.calendarWrapper.icalData.DESCRIPTION);
+
                 $(messageRequiredYes).attr("checked", true);
                 $(messageReminderCheckbox).attr("checked", true);
                 $(messageReminderCheck).show();
@@ -697,47 +700,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 }
             }
             else {
+
+                // it's a message
+
+                $(messageFieldSubject).val(message.subject);
+                $(messageFieldBody).val(message.body);
                 $(messageRequiredNo).attr("checked", "checked");
                 $("#task-radio").attr("disabled", "disabled");
                 $("#must-be-req").show();
-                // Though not required, it could still be an event, so we should check 
-                // and fill out the fields if necessary and show the correct page elements.
-                if (message.calendarWrapper.icalData.DTSTART != null) {
-                    $(messageReminderCheckbox).attr("checked", "checked");
-                    $(messageReminderCheck).show();
-                    $(messageEventCheck).attr("checked", "checked");
-                    $(".cn-event").show();
-                    eventDate = sakai.api.Util.parseSakaiDate(message.calendarWrapper.icalData.DTSTART);
-                    var hours = eventDate.getHours();
-                    var minutes = eventDate.getMinutes();
-                    var AMPM = "AM";
-                    $(messageEventDate).datepicker("setDate", eventDate);
-                    if (hours > 11) {
-                        if (hours !== 12) {
-                            hours = hours - 12;
-                        }
-                        AMPM = "PM";
-                    }
-                    else if (hours === 0) {
-                        hours = hours + 12;
-                    }
-                    eventTimeInit(hours, minutes, AMPM);
-                }
-                // If it was not filled out properly but the time fields were still filled out by the user, we
-                // still need to handle this case and put in the information properly.
-                else if (!check) {
-                    $(messageReminderCheckbox).attr("checked", "checked");
-                    $(messageReminderCheck).show();
-                    $(messageEventCheck).attr("checked", "checked");
-                    $(".cn-event").show();
 
-                    var hours = message.uxState["eventHour"];
-                    var minutes = message.uxState["eventMin"];
-                    var AMPM = message.uxState["eventAMPM"];
-
-                    eventTimeInit(hours, minutes, AMPM);
-                }
-                $(messageEventPlace).val(message.calendarWrapper.icalData.LOCATION);
             }
             if ($.isFunction(callback)) {
                 callback(true);
@@ -1000,7 +971,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
         var checkEventFields = function(message) {
-            if (message.calendarWrapper.icalData.LOCATION != null) {
+            if ((message.calendarWrapper) && message.calendarWrapper.icalData.LOCATION != null) {
                 return false;
             }
             else if (message.uxState["eventMin"] != null) {
@@ -1108,6 +1079,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
                     break;
+
+                case "message":
+                    toPost["type"] = "message";
+                    toPost["subject"] = $(messageFieldSubject).val();
+                    toPost["body"] = $(messageFieldBody).val();
+                    delete(toPost.calendarWrapper); // messages don't have calendar data
+
                 default:
 
                     break;
@@ -1211,7 +1189,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             // Are we creating a copy of an existing notification?
             if (copyCheck) {
-                toPost.calendarWrapper.icalData.SUMMARY = "Copy of " + toPost.calendarWrapper.icalData.SUMMARY;
+                if ( toPost.type === "message") {
+                    toPost.subject = "Copy of " + toPost.subject;
+                } else {
+                    toPost.calendarWrapper.icalData.SUMMARY = "Copy of " + toPost.calendarWrapper.icalData.SUMMARY;
+                }
+
             }
 
             // Are we modifying an existing notification?
@@ -1305,7 +1288,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             // Chose notification type
-            var type = message.calendarWrapper.component;
+            var type = message.type;
+            if ( type === "calendar" ) {
+                type = message.calendarWrapper.component;
+            }
 
             switch(type) {
                 case "VTODO":
@@ -1315,6 +1301,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 case "VEVENT":
                     $("#cn-notification-type", $rootElement).val("event");
                     notificationTypeInit("event");
+                    break;
+                case "message":
+                    $("#cn-notification-type", $rootElement).val("message");
+                    notificationTypeInit("message");
                     break;
                 default:
                     break;
@@ -1522,7 +1512,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
         var notificationTypeInit = function (type) {
-            if (type === "task") {
+            if ( type === "message" ) {
+                $("#composenotification_event_date").hide();
+                $("#composenotification_event_time").hide();
+                $("#composenotification_event_place").hide();
+                $("#composenotification_task_due_date").hide();
+                $("#cn-requiredno", $rootElement).attr("checked", "checked");
+                $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
+                $("#composenotification_required", $rootElement).hide();
+            } else if (type === "task") {
                 $("#composenotification_event_date").hide();
                 $("#composenotification_event_time").hide();
                 $("#composenotification_event_place").hide();
@@ -1530,6 +1528,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $("#composenotification_task_due_date").show();
 
                 $("#cn-requiredyes", $rootElement).attr("checked", "checked");
+                $("#composenotification_required", $rootElement).show();
                 $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
             } else {
                 $("#composenotification_event_date").show();
@@ -1540,6 +1539,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
                 $("#cn-requiredyes", $rootElement).removeAttr("checked");
                 $("#cn-requiredno", $rootElement).removeAttr("checked");
+                $("#composenotification_required", $rootElement).show();
                 $("#composenotification_required .right input", $rootElement).removeAttr("disabled");
             }
         };

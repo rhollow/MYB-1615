@@ -500,8 +500,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 // temporary internal id.
                 // Use the name for the id.
                 response.results[j].nr = j;
-                response.results[j].subject = response.results[j].calendarWrapper.icalData.SUMMARY;
-                response.results[j].body = response.results[j].calendarWrapper.icalData.DESCRIPTION;
+                if ( response.results[j].type != "message") {
+                    response.results[j].subject = response.results[j].calendarWrapper.icalData.SUMMARY;
+                    response.results[j].body = response.results[j].calendarWrapper.icalData.DESCRIPTION;
+                }
                 response.results[j].messagebox = response.results[j]["sakai:messagebox"];
                 response.results[j].validated = response.results[j].uxState.validated;
                 response.results[j] = formatMessage(response.results[j]);
