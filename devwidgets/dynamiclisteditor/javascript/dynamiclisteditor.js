@@ -57,14 +57,14 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var dynamicListsBaseUrl;
 
         /**
-         * Url for counting number of people targeted by a filter
+         * Url for counting number of people targeted by a criteria
          */
         var dynamicListsPeopleCountingUrl = "/var/myberkeley/dynamiclists/myb-ced-students.json";
 
         /**
          * Needed to prevent unnecessary people counting requests when editing a new list
          */
-        var lastUsedFilterString = "";
+        var lastUsedCriteriaString = "";
 
 
         //////////////////////
@@ -372,7 +372,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         /**
-         * Hides section C (common filter settings).
+         * Hides section C (common criteria settings).
          */
         var hideSectionC = function() {
             $showMoreOrLess.text("Show More");
@@ -380,7 +380,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         /**
-         * Shows section C (common filter settings).
+         * Shows section C (common criteria settings).
          */
         var showSectionC = function() {
             $showMoreOrLess.text("Show Less");
@@ -407,7 +407,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var resetListEditingForm = function() {
 
 
-            lastUsedFilterString = "";
+            lastUsedCriteriaString = "";
             $studentsTargetedByCurrentList.addClass("noStudentsTargeted").text("0");
 
             hideSectionC();
@@ -465,26 +465,26 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         /**
-         * Updates the number of people selected by filter string.
+         * Updates the number of people selected by criteria string.
          *
-         * @param {String} filterString	a condition object represented as a string
+         * @param {String} criteriaString	a condition object represented as a string
          *
          */
-        var updateNumberOfPeopleSelectedByFilter = function(filterString) {
+        var updateNumberOfPeopleSelectedByCriteria = function(criteriaString) {
 
             // Prevent unnecessary AJAX requests
-            if(lastUsedFilterString === filterString) {
+            if(lastUsedCriteriaString === criteriaString) {
                  return;
             }
 
-            lastUsedFilterString = filterString;
+            lastUsedCriteriaString = criteriaString;
 
             $.ajax({
                 url: dynamicListsPeopleCountingUrl,
                 traditional: true,
                 type: "POST",
                 data: {
-                  criteria: filterString
+                  criteria: criteriaString
                 },
                 success: function(data) {
                   if(data.count > 0) {
@@ -638,20 +638,20 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         /**
          * Recursively traverses the condition object and builds an array of all used option IDs.
          *
-         * @param {Object} filterObj	A condition object
+         * @param {Object} criteriaObj	A condition object
          * @param {Array} idArray	An array to which option IDs will be appended
          */
-        var dumpOptionIDs = function(filterObj, idArray) {
+        var dumpOptionIDs = function(criteriaObj, idArray) {
 
-            if(filterObj === null || idArray === null) {
+            if(criteriaObj === null || idArray === null) {
                 return;
             }
 
             var conditionArray;
-            if (filterObj.hasOwnProperty("AND")) {
-                conditionArray = filterObj.AND;
-            } else if (filterObj.hasOwnProperty("OR")) {
-                conditionArray = filterObj.OR;
+            if (criteriaObj.hasOwnProperty("AND")) {
+                conditionArray = criteriaObj.AND;
+            } else if (criteriaObj.hasOwnProperty("OR")) {
+                conditionArray = criteriaObj.OR;
             } else {
                 // empty object
                 return;
@@ -673,7 +673,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         /**
          * Returns true is something selected in section C.
          *
-         * @param idArray an array of filter IDs.
+         * @param idArray an array of criteria IDs.
          *
          * @return {Boolean} Returns true if something is selected in section C; otherwise returns false.
          */
@@ -735,8 +735,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             }
 
             var idArray = [];
-            var filterAsObject = $.parseJSON(list.filter);
-            dumpOptionIDs(filterAsObject, idArray); // dumped IDs are stored in idArray
+            var criteriaAsObject = $.parseJSON(list.criteria);
+            dumpOptionIDs(criteriaAsObject, idArray); // dumped IDs are stored in idArray
 
             var includeAllGradsId = $includeGradsCheckbox.val();
             var includeAllUndergradsId = $includeUndergradsCheckbox.val();
@@ -821,7 +821,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 $("#residency_status_specified_students", $sectionC).attr("checked", "checked");
             }
 
-            updateNumberOfPeopleSelectedByFilter(list.filter);
+            updateNumberOfPeopleSelectedByCriteria(list.criteria);
 
              if(isSomethingSelectedInSectionC(idArray)) {
                  showSectionC();
@@ -879,31 +879,31 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          *
          *  @return {Object} a condition object created from sections A, B, C data.
          */
-         var buildFilterFromListEditingForm = function() {
+         var buildCriteriaFromListEditingForm = function() {
 
              // Sections A and B
-             var dynamicListFilter = buildUndergraduatesAndGraduatesResultingObject();
+             var dynamicListCriteria = buildUndergraduatesAndGraduatesResultingObject();
 
             // Section C
 
             var registrationStatus = buildRegistrationStatusObject();
-            dynamicListFilter = dynamicListFilter.joinTwoConditionsByAND(registrationStatus);
+            dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(registrationStatus);
 
 
             var cohortStatus = buildCohortStatusObject();
-            dynamicListFilter = dynamicListFilter.joinTwoConditionsByAND(cohortStatus);
+            dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(cohortStatus);
 
 
             var specialPrograms = buildSelectedOptionsObjectAsOR($("#special_program_all_students", $sectionC), $(".special_programs", $sectionC));
-            dynamicListFilter = dynamicListFilter.joinTwoConditionsByAND(specialPrograms);
+            dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(specialPrograms);
 
             var studentStatus = buildSelectedOptionsObjectAsOR($("#student_status_all_students", $sectionC), $(".student_and_residency_status_col_left .sub_group", $sectionC));
-            dynamicListFilter = dynamicListFilter.joinTwoConditionsByAND(studentStatus);
+            dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(studentStatus);
 
             var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));
-            dynamicListFilter = dynamicListFilter.joinTwoConditionsByAND(residencyStatus);
+            dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(residencyStatus);
 
-            return dynamicListFilter;
+            return dynamicListCriteria;
         };
 
         /**
@@ -912,9 +912,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          *
          *  @return {String} a condition object created from sections A, B, C data as string.
          */
-         var buildFilterStringFromListEditingForm = function() {
+         var buildCriteriaStringFromListEditingForm = function() {
 
-            return $.toJSON(buildFilterFromListEditingForm());
+            return $.toJSON(buildCriteriaFromListEditingForm());
         };
 
         var validateUserInput = function() {
@@ -937,7 +937,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             // Gathering the data on standing
             //TODO: check for errors
 
-            result.filter = buildFilterStringFromListEditingForm();
+            result.criteria = buildCriteriaStringFromListEditingForm();
 
             return result;
         };
@@ -974,7 +974,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     "sakai:name": data.listName,
                     "sakai:description": data.desc,
                     context: data.context,
-                    filter: data.filter
+                    criteria: data.criteria
                   };
 
             sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/" + id, list, function() {
@@ -1006,7 +1006,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     "context" : existingList.context,
                     "listName": existingList["sakai:name"],
                     "desc": existingList["sakai:description"],
-                    "filter": existingList.filter
+                    "criteria": existingList.criteria
                 };
 
                 if(listEquals(existingListObj, listToCheck)) return true;
@@ -1141,12 +1141,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             // interactive number of users
             var $listEditingDiv = $("#create_new_list");
             $("input:checkbox, input:radio", $listEditingDiv).click(function() {
-                var filterString = buildFilterStringFromListEditingForm();
-                updateNumberOfPeopleSelectedByFilter(filterString);
+                var criteriaString = buildCriteriaStringFromListEditingForm();
+                updateNumberOfPeopleSelectedByCriteria(criteriaString);
             });
             $("select", $listEditingDiv).change(function() {
-                var filterString = buildFilterStringFromListEditingForm();
-                updateNumberOfPeopleSelectedByFilter(filterString);
+                var criteriaString = buildCriteriaStringFromListEditingForm();
+                updateNumberOfPeopleSelectedByCriteria(criteriaString);
             });
 
             //Show more/less button in section C
@@ -1221,8 +1221,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 // When only undergraduates or graduates data exists in the template, we need to update the users count.
                 // This is necessary because include undergrads/grads checkbox is checked by default in this case, but hidden.
                 if((hasGradsData && !hasUndergradsData) || (!hasGradsData && hasUndergradsData)) {
-                    var filterString = buildFilterStringFromListEditingForm();
-                    updateNumberOfPeopleSelectedByFilter(filterString);
+                    var criteriaString = buildCriteriaStringFromListEditingForm();
+                    updateNumberOfPeopleSelectedByCriteria(criteriaString);
                 }
                 switchToEditMode();
                 $rootElement.show();
