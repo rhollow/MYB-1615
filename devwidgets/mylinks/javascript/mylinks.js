@@ -63,8 +63,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         /*
-            Load user's list if there is one, and merge it with the default links. If no user's list, just use
-            the default ones.
+         Load user's list if there is one, and merge it with the default links. If no user's list, just use
+         the default ones.
          */
         var loadUserList = function() {
             sakai.api.Server.loadJSON(linksDataPath + ".2.json", function (success, data) {
@@ -73,24 +73,24 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     userLinkData = data;
                     defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
                 } else {
-                    defaultLinks.sections[0].selected = true;
+                    userLinkData.activeSection = 0;
                 }
+                defaultLinks.activeSection = userLinkData.activeSection;
                 renderLinkList(defaultLinks);
             });
         };
-        
-        
+
+
         var setAddEditLinkTitle = function (title) {
             addEditPanelTitle.text(title);
         };
 
         var cancelEditMode = function() {
-            
             currentLinkIndex = null;
             //linkList.show();
             addEditPanel.hide();
-            linkTitleInput.attr("value","").removeClass("error");
-            linkUrlInput.attr("value","").removeClass("error");
+            linkTitleInput.attr("value", "").removeClass("error");
+            linkUrlInput.attr("value", "").removeClass("error");
             $("label.error").hide();
         };
 
@@ -129,7 +129,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     "popup_description": linkTitleInput[0].value
                 };
                 defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
-                selectUserSection();
 
                 sakai.api.Server.saveJSON(linksDataPath, userLinkData, function(success) {
                     if (success) {
@@ -141,13 +140,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     }
                 });
             }
-        };
-
-        var selectUserSection = function () {
-            for (var i = 0; i < defaultLinks.sections.length; i++) {
-                defaultLinks.sections[i].selected = false;
-            }
-            defaultLinks.sections[defaultLinks.userSectionIndex].selected = true;
         };
 
         var setupEventHandlers = function() {
@@ -204,22 +196,35 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                 });
             }
         };
-        
+
         var showPane = function (pane) {
+
             if (!pane.hasClass("accordion_open")) {
                 closePanes();
                 pane.addClass("accordion_open");
             }
-            pane.children(".accordion_content").slideDown(300, function(){
-                pane.children(".accordion_content").css("overflow","auto");
+            pane.children(".accordion_content").slideDown(300, function() {
+                pane.children(".accordion_content").css("overflow", "auto");
             });
+
+            var previousActiveSection = userLinkData.activeSection;
+            if ( typeof pane[0] != 'undefined') {
+                userLinkData.activeSection = pane[0].id.replace("mylinks_section_", "");
+            } else {
+                userLinkData.activeSection = 0;
+            }
+            defaultLinks.activeSection = userLinkData.activeSection;
+            if (previousActiveSection != userLinkData.activeSection) {
+                // save active section only if it's different
+                sakai.api.Server.saveJSON(linksDataPath, userLinkData);
+            }
         };
-        
+
         var hidePane = function (pane) {
             pane.removeClass("accordion_open");
             pane.children(".accordion_content").slideUp(300);
         };
-        
+
         var closePanes = function () {
             $(".accordion_pane", accordionContainer).each(function () {
                 hidePane($(this));
@@ -241,13 +246,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             if (accordionContainer.width() > 250) {
                 accordionContainer.addClass("link_grid")
             }
-            
+
             showPane($(".accordion_open", accordionContainer));
-            
+
         };
 
         var doInit = function() {
-            console.log("beep");
             loadUserList();
             setupEventHandlers();
         };
