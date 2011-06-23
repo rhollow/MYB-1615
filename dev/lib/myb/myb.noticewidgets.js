@@ -278,7 +278,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     });
                 });
                 $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
-                    if ($(this).is(".s3d-disabled")) {
+                    if ($(this).is(":disabled")) {
                         // don't attempt to archive a task whose archive button is disabled
                         return;
                     }
@@ -381,11 +381,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 }
                 var parent = archiveTasksButtonText.parent();
                 if (enabled) {
-                    parent.removeClass("s3d-disabled");
-                    parent.addClass("s3d-button-primary");
+                    parent.removeAttr("disabled");
                 } else {
-                    parent.addClass("s3d-disabled");
-                    parent.removeClass("s3d-button-primary");
+                    parent.attr("disabled", true);
                 }
             };
 

@@ -377,8 +377,12 @@ table.noticewidget_listing tr.notice_row:hover {
     margin-right: -10px;
 }
 
-.noticewidget_archive_tasks_button .s3d-button {
-    margin-bottom: 0;
+.s3d-widget-footer a.noticewidget_view_task_archive {
+    float: left;
+}
+
+.noticewidget_archive_tasks_button {
+    margin: -5px -5px 0 0;
 }
 
 table.noticewidget_listing tr.overDueTask {
