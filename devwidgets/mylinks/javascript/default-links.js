@@ -4,7 +4,6 @@ define(function() {
         "sections" : [
             {
                 "label" : "Academic",
-                "selected" : false,
                 "links" : [
                     {
                         "id"   : "bspace",
@@ -71,7 +70,6 @@ define(function() {
             },
             {
                 "label" : "Administrative",
-                "selected" : false,
                 "links" : [
                     {
                         "id": "bear_facts",
@@ -107,7 +105,6 @@ define(function() {
             },
             {
                 "label" : "Campus Life",
-                "selected" : false,
                 "links" : [
                     {
                         "id": "asuc",
@@ -199,9 +196,9 @@ define(function() {
             },
             {
                 "label" : "My Links",
-                "selected" : false,
                 "links" : [],
-                "isEditable" : true
+                "isEditable" : true,
+                "activeSection" : 0
             }
         ]
     };
