@@ -25,8 +25,7 @@ define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                var inner = data[key];
                if (inner.hasOwnProperty("sling:resourceType")) {
                    if (inner["sling:resourceType"] === "myberkeley/dynamicListContext") {
-                       inner["name"] = key;
-                       children.push(inner);
+                       children.push(key);
                    }
                }
             });
@@ -36,16 +35,7 @@ define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         /**
          * Load the available dynamic list contexts. They will look like so:
          * 
-         * [{
-         *    "name": "myb-cnr-grads-plant",
-         *    "sling:resourceType": "myberkeley/dynamicListContext",
-         *    "myb-clauses": [
-         *       "/colleges/NAT RES/standings/grad/majors/PLANT BIOLOGY",
-         *       "/colleges/NAT RES/standings/grad/majors/Microbiology",
-         *       "/colleges/NAT RES/standings/grad/majors/AGRICULTURAL CHEM"
-         *    ],
-         *    "myb-filters": ["/student/*"]
-         * }, ... ]
+         * ["myb-cnr-grads-plant", "myb-ced-students"]
          */
         var loadDynamicListContexts = function() {
             var availableDynamicListContexts;
