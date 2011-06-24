@@ -177,7 +177,13 @@ define([], function() {
 				// trying to join empty object 'b' with 'a', just return 'a' in this case
 				return this;
 			}
-
+			
+			if (this.hasOwnProperty("FILTER") || b.hasOwnProperty("FILTER")) {
+			    // Do not try to combine filtered criteria.
+                var result = new Condition();
+                result.OR = [this, b];
+                return result;			    
+			}
 
 			if(this.canConvertANDtoOR()) {
 				this.convertANDtoOR();
@@ -222,7 +228,36 @@ define([], function() {
 
 		};
 
+        /**
+         * Adds a filter condition to the condition object.
+         * This function tries to optimeze the output object to avoid excessive object wrapping.
+         * To avoid object cloning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
+         *
+         * @param b condition object to use as filter
+         *
+         * @return a Condition object containing the this condition object joined by FILTER with the provided condition object.
+         */
+        Condition.prototype.joinFilterToCondition = function(b) {
+            var isAEmpty = this.isConditionObjectEmpty();
+            var isBEmpty = b.isConditionObjectEmpty();
 
+            if(isAEmpty && isBEmpty) {
+                return new Condition();
+            }
+
+            if(isAEmpty) {
+                // trying to filter empty object 'a' by 'b' is not allowed
+                return new Condition();
+            }
+
+            if(isBEmpty) {
+                // trying to filter 'a' by empty object 'b', just return 'a' in this case
+                return this;
+            }
+            
+            this.FILTER = b;
+            return this;
+        };
 
     return Condition;
 

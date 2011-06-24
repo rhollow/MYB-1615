@@ -222,16 +222,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var buildUndergradsObjectAsAND = function() {
 
             var undergrads = new Condition();
+            var undergradsFilter = new Condition();
 
             var selectedUndergradMajorsOR = buildSelectedOptionsObjectAsOR(null, $(".majors"));
             var selectedLevelsOR = buildSelectedOptionsObjectAsOR(null, $(".levels"));
-            var selectedAdmittedAsOR = buildSelectedOptionsObjectAsOR(null, $(".admittedAs"));
-            var selectedDeclaredOR = buildSelectedOptionsObjectAsOR(null, $(".declared"));
+            // var selectedAdmittedAsOR = buildSelectedOptionsObjectAsOR(null, $(".admittedAs"));
 
-            undergrads = undergrads.joinTwoConditionsByAND(selectedUndergradMajorsOR);
-            undergrads = undergrads.joinTwoConditionsByAND(selectedLevelsOR);
-            undergrads = undergrads.joinTwoConditionsByAND(selectedAdmittedAsOR);
-            undergrads = undergrads.joinTwoConditionsByAND(selectedDeclaredOR);
+            undergrads = selectedUndergradMajorsOR;
+            if(undergrads.isConditionObjectEmpty()) {
+                undergrads.OR =[$includeUndergradsCheckbox.val()];
+            }
+            
+            undergradsFilter = selectedLevelsOR;
+            // undergradsFilter = undergradsFilter.joinTwoConditionsByAND(selectedAdmittedAsOR);
+            
+            undergrads.joinFilterToCondition(undergradsFilter);
 
             return undergrads;
         };
@@ -245,16 +250,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var buildGradsObjectAsAND = function() {
 
             var grads = new Condition();
+            var gradsFilter = new Condition();
 
             var selectedGradProgramsOR = buildSelectedOptionsObjectAsOR(null, $(".programs"));
-            var selectedCertificatesOR = buildSelectedOptionsObjectAsOR(null, $(".certificates"));
-            var selectedEmphasesOR = buildSelectedOptionsObjectAsOR(null, $(".emphases"));
             var selectedDegreesOR = buildSelectedOptionsObjectAsOR(null, $(".degrees"));
 
             grads = grads.joinTwoConditionsByAND(selectedGradProgramsOR);
-            grads = grads.joinTwoConditionsByAND(selectedCertificatesOR);
-            grads = grads.joinTwoConditionsByAND(selectedEmphasesOR);
-            grads = grads.joinTwoConditionsByAND(selectedDegreesOR);
+            if(grads.isConditionObjectEmpty()) {
+                grads.OR = [$includeGradsCheckbox.val()];
+            }
+            gradsFilter = gradsFilter.joinTwoConditionsByAND(selectedDegreesOR);
+            grads.joinFilterToCondition(gradsFilter);
 
             return grads;
         };
@@ -292,9 +298,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             if (includeUndergrads) {
                 undergrads = buildUndergradsObjectAsAND();
-                if(undergrads.isConditionObjectEmpty()) {
-                    undergrads.OR =[$includeUndergradsCheckbox.val()];
-                }
             }
 
 
@@ -303,10 +306,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             if (includeGrads) {
                 grads = buildGradsObjectAsAND();
-                if(grads.isConditionObjectEmpty()) {
-                    grads.OR = [$includeGradsCheckbox.val()];
-                }
-
             }
 
             var result = new Condition();
@@ -879,12 +878,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          *
          *  @return {Object} a condition object created from sections A, B, C data.
          */
-         var buildCriteriaFromListEditingForm = function() {
+        var buildCriteriaFromListEditingForm = function() {
 
-             // Sections A and B
-             var dynamicListCriteria = buildUndergraduatesAndGraduatesResultingObject();
+            // Sections A and B
+            var dynamicListCriteria = buildUndergraduatesAndGraduatesResultingObject();
 
             // Section C
+            // TODO THE BELOW IS NOT YET ENABLED AND WILL NOT WORK AS CODED.
 
             var registrationStatus = buildRegistrationStatusObject();
             dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(registrationStatus);

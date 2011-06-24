@@ -2,8 +2,7 @@
     "college": "CED",
     "undergraduates": {
         "id" : "/colleges/ENV DSGN/standings/undergrad",
-		
-		"majors": {
+        "majors": {
             "title": "Majors",
             "select_all_option_name": "All CED undergraduates",
             "select_one_or_more_option_name": "CED Undergraduates by Major",
@@ -11,71 +10,50 @@
                 "id": "/colleges/ENV DSGN/standings/undergrad/majors/ARCHITECTURE",
                 "name": "Architecture"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/undergrad/majors/LANDSCAPE ARCH",
                 "name": "Landscape Architecture"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/undergrad/majors/URBAN STUDIES",
                 "name": "Urban Studies"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/undergrad/majors/INDIVIDUAL",
                 "name": "Individual"
-            }
-            
-			]
-        },
-		"declared": true
-    },
+            }]
+        }
+     },
     "graduates": {
         "id" : "/colleges/ENV DSGN/standings/grad",
-		
-		"programs": {
+        "programs": {
             "title": "Programs",
-            "select_all_option_name": "All CED Graduate Students",			
+            "select_all_option_name": "All CED Graduate Students",      
             "select_one_or_more_option_name": "CED Graduate Students by Program",
             "items_array": [{
                 "id": "/colleges/ENV DSGN/standings/grad/majors/ARCHITECTURE",
                 "name": "Architecture"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/grad/majors/CITY REGIONAL PLAN",
                 "name": "City and Regional Planning"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/grad/majors/DESIGN",
                 "name": "Design"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/grad/majors/LAND ARCH &amp; ENV PLAN",
                 "name": "Landscape Architecture and Environmental Planning"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/grad/majors/URBAN DESIGN",
                 "name": "Urban Design"
             },
-			{
+            {
                 "id": "/colleges/ENV DSGN/standings/grad/majors/LIMITED",
                 "name": "Limited"
-            }
-            ]
-        },
-        "certificates": [{
-            "id": "CERT1",
-            "name": "MOT"
-        },
-        {
-            "id": "CERT2",
-            "name": "Logistics"
-        }],
-        "emphases": [{
-            "id": "EMPH1",
-            "name": "Nanotechnology"
-        },
-        {
-            "id": "EMPH2",
-            "name": "Computational Engineering Science"
-        }]
+            }]
+        }
     }
 }
