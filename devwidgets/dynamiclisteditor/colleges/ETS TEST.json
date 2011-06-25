@@ -1,0 +1,67 @@
+{
+    "college": "CED",
+    "undergraduates": {
+        "id" : "/colleges/ETS TEST/standings/undergrad",
+        "majors": {
+            "title": "Majors",
+            "items_array": [{
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/JON",
+                "name": "Jon Hays"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/KEVIN",
+                "name": "Kevin"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/OLIVER",
+                "name": "Oliver"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/OWEN",
+                "name": "Owen"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/RACHEL",
+                "name": "Rachel"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/RAY",
+                "name": "Ray"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/ROMAN",
+                "name": "Roman"
+            }]
+        }
+     },
+    "graduates": {
+        "id" : "/colleges/ETS TEST/standings/grad",
+        "programs": {
+            "title": "Programs",
+            "items_array": [{
+                "id": "/colleges/ETS TEST/standings/grad/majors/ALLISON",
+                "name": "Allison"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/grad/majors/CHRIS",
+                "name": "Chris"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/grad/majors/DAPHNE",
+                "name": "Daphne"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/grad/majors/DARLENE",
+                "name": "Darlene"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/grad/majors/ELI",
+                "name": "Eli"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/grad/majors/JOHN",
+                "name": "John King"
+            }]
+        }
+    }
+}
