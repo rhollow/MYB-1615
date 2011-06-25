@@ -55,11 +55,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * Dynamic lists base URL (parent node in Sparse), delete this node to remove all dynamic lists for current user
          */
         var dynamicListsBaseUrl;
-
+        
         /**
-         * Url for counting number of people targeted by a criteria
+         * The dynamic list context which is in effect for this editing session.
          */
-        var dynamicListsPeopleCountingUrl = "/var/myberkeley/dynamiclists/myb-ced-students.json";
+        var dynamicListContext;
+        var dynamicListContextUrl;
 
         /**
          * Needed to prevent unnecessary people counting requests when editing a new list
@@ -479,7 +480,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             lastUsedCriteriaString = criteriaString;
 
             $.ajax({
-                url: dynamicListsPeopleCountingUrl,
+                url: dynamicListContextUrl + ".json",
                 traditional: true,
                 type: "POST",
                 data: {
@@ -913,7 +914,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          *  @return {String} a condition object created from sections A, B, C data as string.
          */
          var buildCriteriaStringFromListEditingForm = function() {
-
             return $.toJSON(buildCriteriaFromListEditingForm());
         };
 
@@ -1170,12 +1170,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
     	};
 
         /**
-         * Loads page template form the given url and renders it.
-         *
-         * @param templateUrl Template URL, for ex. "nauth_ced.json"
+         * Loads page template form the current dynamic list context and renders it.
          */
-        var loadTemplate = function(templateUrl) {
-
+        var loadTemplate = function() {
+            // Derive the college template from the context.
+            var firstCriterion = dynamicListContext["myb-clauses"][0];
+            var matches = firstCriterion.match(/\/colleges\/([^/]+)/);
+            var collegeName = matches[1];
+            var templateUrl = "/devwidgets/dynamiclisteditor/colleges/" + collegeName + ".json";
+            
             // Trimpath template for sections A and B of the list editing form (section C is static and doesn't require a templete)
             var $listEditFormTemplate = $("#list_edit_form_template");
 
@@ -1186,7 +1189,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     url: templateUrl,
                     type: "GET",
                     async: false,
-                    cache: false,
+                    cache: true,
                     dataType: "json",
                     success: function(data){
                         if (data) {
@@ -1244,8 +1247,29 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          $(window).bind('hashchange', function() {
             setTabState();
         });
-
-
+        
+        /**
+         * Virtually all advisers will have access to only one Dynamic List context,
+         * and so the UX design does not yet include a way to switch contexts.
+         * To support testing and "super-advisers" (e.g., Tony), I've added this
+         * URL-based hack.
+         */
+        var setDynamicListContext = function() {
+            var state = $.bbq.getState();
+            if (state.hasOwnProperty("context")) {
+                var contextName = state.context;
+                for (var i=0; i < sakai.data.me.dynamiclistcontexts.length; i++) {
+                    if (sakai.data.me.dynamiclistcontexts[i].name === contextName) {
+                        dynamicListContext = sakai.data.me.dynamiclistcontexts[i];
+                        break;
+                    }
+                }
+            } else {
+                dynamicListContext = sakai.data.me.dynamiclistcontexts[0];
+            }
+            dynamicListContextUrl = "/var/myberkeley/dynamiclists/" + dynamicListContext.name;
+        };
+        
         /////////////////////////////
         // Initialization function //
         /////////////////////////////
@@ -1263,8 +1287,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 security.send403();
                 return;
             }
-
-            loadTemplate("/dev/nauth_ced.json"); // TODO load from adviser's node? or somewhere else based on college membership?
+            
+            setDynamicListContext();
+            loadTemplate();
 
             populateDesignateTermYear();
 
@@ -1282,7 +1307,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         doInit();
 
     };
-
+    
     sakai.api.Widgets.widgetLoader.informOnLoad("dynamiclisteditor");
 
 });
