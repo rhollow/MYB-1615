@@ -61,6 +61,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var dynamicListContext;
         var dynamicListContextUrl;
+        var dynamicListContextAllowed;
 
         /**
          * Needed to prevent unnecessary people counting requests when editing a new list
@@ -1159,6 +1160,48 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             // section C toggle button
             $showMoreOrLess.click(toggleSectionC);
         };
+        
+        var filterTemplateDataByContext = function(data) {
+            if (propExists(data.undergraduates)) {
+                if (propExists(data.undergraduates.id) && !dynamicListContextAllowed.test(data.undergraduates.id)) {
+                    console.log("Stripping out undergraduates.id " + data.undergraduates.id);
+                    delete data.undergraduates.id;
+                }
+                if (propExists(data.undergraduates.majors)) {
+                    filterItemsArrayByContext(data.undergraduates, "majors");
+                }
+                if (!propExists(data.undergraduates.id) && !propExists(data.undergraduates.majors)) {
+                    delete data.undergraduates;
+                }
+            }
+            if (propExists(data.graduates)) {
+                if (propExists(data.graduates.id) && !dynamicListContextAllowed.test(data.graduates.id)) {
+                    console.log("Stripping out graduates.id " + data.graduates.id);
+                    delete data.graduates.id;
+                }
+                if (propExists(data.graduates.programs)) {
+                    filterItemsArrayByContext(data.graduates, "programs");
+                }
+                if (!propExists(data.graduates.id) && !propExists(data.graduates.programs)) {
+                    delete data.graduates;
+                }
+            }
+        };
+        
+        var filterItemsArrayByContext = function(data, arrayHolder) {
+          var newItemArray = [];
+          for (var i = 0; i < data[arrayHolder].items_array.length; i++) {
+              var item = data[arrayHolder].items_array[i];
+              if (propExists(item.id) && dynamicListContextAllowed.test(item.id)) {
+                  newItemArray.push(item);
+              }
+          }
+          if (newItemArray.length > 0) {
+              data[arrayHolder].items_array = newItemArray;
+          } else {
+              delete data[arrayHolder];
+          }
+        };
 
         ////////////////////
         // Page templates //
@@ -1198,6 +1241,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     dataType: "json",
                     success: function(data){
                         if (data) {
+                            filterTemplateDataByContext(data);
+                            
                            // what information do we have?
                            hasUndergradsData = propExists(data.undergraduates);
                            hasGradsData = propExists(data.graduates);
@@ -1279,6 +1324,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 dynamicListContext = sakai.data.me.dynamiclistcontexts[0];
             }
             dynamicListContextUrl = "/var/myberkeley/dynamiclists/" + dynamicListContext.name;
+            
+            // Initialize filtering pattern from the context clauses.
+            var pattern = "";
+            var alloweds = dynamicListContext["myb-clauses"];
+            for (var i = 0; i < alloweds.length; i++) {
+                if (i > 0) {
+                    pattern += "|";
+                }
+                pattern += alloweds[i].replace("*", ".*");
+            }
+            console.log("pattern = " + pattern);
+            dynamicListContextAllowed = new RegExp(pattern);
         };
         
         /////////////////////////////
