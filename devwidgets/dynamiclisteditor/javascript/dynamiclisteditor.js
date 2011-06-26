@@ -725,6 +725,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 return;
             }
             var list = allLists[id];
+            
+            // TODO See note on bug in doInit().
+            if (list.context !== dynamicListContext.name) {
+                alert("Congratulations! You have found a bug!");
+            }
 
             // Fill in input fields with list data
             if (copyMode) {
@@ -930,7 +935,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var getDataFromInput = function() {
             var result = {};
 
-            result.context = "myb-ced-students";
+            result.context = dynamicListContext.name;
             result.listName = $.trim($("#list_name").val());
             result.desc = $.trim($("#description").val());
 
@@ -1247,6 +1252,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          $(window).bind('hashchange', function() {
             setTabState();
         });
+         
+        var findDynamicListContext = function(contextName) {           
+            for (var i=0; i < sakai.data.me.dynamiclistcontexts.length; i++) {
+                if (sakai.data.me.dynamiclistcontexts[i].name === contextName) {
+                    return sakai.data.me.dynamiclistcontexts[i];
+                }
+            }
+            return null;
+        };
         
         /**
          * Virtually all advisers will have access to only one Dynamic List context,
@@ -1257,13 +1271,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var setDynamicListContext = function() {
             var state = $.bbq.getState();
             if (state.hasOwnProperty("context")) {
-                var contextName = state.context;
-                for (var i=0; i < sakai.data.me.dynamiclistcontexts.length; i++) {
-                    if (sakai.data.me.dynamiclistcontexts[i].name === contextName) {
-                        dynamicListContext = sakai.data.me.dynamiclistcontexts[i];
-                        break;
-                    }
-                }
+                dynamicListContext = findDynamicListContext(state.context);
+            } else if (sakai.data.me.dynamiclistcontexts.length > 0) {
+                // For easier testing.
+                dynamicListContext = findDynamicListContext("myb-ced-students");
             } else {
                 dynamicListContext = sakai.data.me.dynamiclistcontexts[0];
             }
@@ -1287,6 +1298,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 security.send403();
                 return;
             }
+            
+            // TODO This logic is broken for anyone who has access to more than one
+            // Dynamic List context. If we are editing or copying an existing list, we
+            // need to look at the list's context in order to load the correct template for that list.
+            // But with the current code, we don't look at the selected list until after
+            // the template is already loaded!
             
             setDynamicListContext();
             loadTemplate();
