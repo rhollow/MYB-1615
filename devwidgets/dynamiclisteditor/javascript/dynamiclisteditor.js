@@ -1161,7 +1161,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var filterTemplateDataByContext = function(data) {
             if (propExists(data.undergraduates)) {
                 if (propExists(data.undergraduates.id) && !dynamicListContextAllowed.test(data.undergraduates.id)) {
-                    console.log("Stripping out undergraduates.id " + data.undergraduates.id);
                     delete data.undergraduates.id;
                 }
                 if (propExists(data.undergraduates.majors)) {
@@ -1173,7 +1172,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             }
             if (propExists(data.graduates)) {
                 if (propExists(data.graduates.id) && !dynamicListContextAllowed.test(data.graduates.id)) {
-                    console.log("Stripping out graduates.id " + data.graduates.id);
                     delete data.graduates.id;
                 }
                 if (propExists(data.graduates.programs)) {
