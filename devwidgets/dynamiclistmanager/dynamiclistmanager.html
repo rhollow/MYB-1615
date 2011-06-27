@@ -4,7 +4,12 @@
 
 <div class="dynamiclistmanager_widget" style="display: none;">
 
-    <button type="button" id="dynamic_lists_create_new" class="s3d-button" style="float:right"><span class="s3d-button-inner">Create New</span></button>
+    <div id="create_button_container" class="s3d-dropdown-menu" style="float:right;padding: 0 !important;margin: 0 !important;">
+        <div id="create_button_div" style="padding: 7px 4px 4px 4px"><span id="dynamic_lists_create_new" class="s3d-button">Create New</span><span id="small_arrow"></span></div>
+        <div id="available_contexts_popup" class="s3d-dropdown-container" style="display:none" >
+            <ul></ul>
+        </div>
+    </div>
 
     <!-- TITLE -->
     <div class="s3d-contentpage-title">__MSG__DYNAMIC_LIST_MANAGER__</div>

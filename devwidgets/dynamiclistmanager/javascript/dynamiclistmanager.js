@@ -268,7 +268,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         ////////////////////
 
         $dynListsCreateButton.click(function() {
-            $.bbq.pushState({"new": true});
+            $.bbq.pushState({"new": true, "context": sakai.data.me.dynamiclistcontexts[0].name});
         });
 
 
@@ -393,6 +393,28 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             setTabState();
             loadDynamicListsFromServer();
+
+
+            $("#create_button_container").hover(function(){
+                var $popup = $("#available_contexts_popup");
+                $popup.show();
+            }, function(){
+                var $popup = $("#available_contexts_popup");
+                $popup.hide();
+            });
+
+            var contexts = sakai.data.me.dynamiclistcontexts;
+            var $list = $("#create_button_container #available_contexts_popup ul", $rootElement);
+            for(var key in contexts) {
+                var c = contexts[key];
+                $list.append('<li><a  class="dynlist_context" style="font-weight: bold;">'+c.name+'</a></li>');
+            }
+
+            $("a.dynlist_context", $list).click(function() {
+               var $a=$(this);
+                $.bbq.pushState({"new": true, "context": $a.text()});
+            });
+
         };
 
         doInit();

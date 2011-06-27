@@ -726,11 +726,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 return;
             }
             var list = allLists[id];
-            
-            // TODO See note on bug in doInit().
-            if (list.context !== dynamicListContext.name) {
-                alert("Congratulations! You have found a bug!");
-            }
+
+            reloadTemplate(list.context);
 
             // Fill in input fields with list data
             if (copyMode) {
@@ -984,7 +981,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                   };
 
             sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/" + id, list, function() {
-                $.bbq.removeState(["new","copy","edit"]);
+                $.bbq.removeState(["new","copy","edit","context"]);
                 loadDynamicListsFromServer();
             });
         };
@@ -1039,7 +1036,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         ////////////////////
 
         $dynListsCancelEditingButton.live("click", function(){
-            $.bbq.removeState(["new","copy","edit"]);
+            $.bbq.removeState(["new","copy","edit","context"]);
         });
 
         $dynListsSaveButton.live("click", function(){
@@ -1270,6 +1267,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             var state = $.bbq.getState();
 
             if (state.hasOwnProperty("new")) {
+
+                reloadTemplate();
+
                 resetListEditingForm();
                 // When only undergraduates or graduates data exists in the template, we need to update the users count.
                 // This is necessary because include undergrads/grads checkbox is checked by default in this case, but hidden.
@@ -1280,10 +1280,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 switchToEditMode();
                 $rootElement.show();
             } else if(state.hasOwnProperty("edit")) {
+
                 loadListIntoEditingForm(state.edit, false);
                 switchToEditMode();
                 $rootElement.show();
             }  else if (state.hasOwnProperty("copy")) {
+
+
                 loadListIntoEditingForm(state.copy, true);
                 switchToEditMode();
                 $rootElement.show();
@@ -1313,15 +1316,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * To support testing and "super-advisers" (e.g., Tony), I've added this
          * URL-based hack.
          */
-        var setDynamicListContext = function() {
-            var state = $.bbq.getState();
-            if (state.hasOwnProperty("context")) {
-                dynamicListContext = findDynamicListContext(state.context);
-            } else if (sakai.data.me.dynamiclistcontexts.length > 0) {
-                // For easier testing.
-                dynamicListContext = findDynamicListContext("myb-ced-students");
+        var setDynamicListContext = function(contextName) {
+
+            if(contextName) {
+                dynamicListContext = findDynamicListContext(contextName);
             } else {
-                dynamicListContext = sakai.data.me.dynamiclistcontexts[0];
+                var state = $.bbq.getState();
+                if (state.hasOwnProperty("context")) {
+                    dynamicListContext = findDynamicListContext(state.context);
+                }  else {
+                    dynamicListContext = sakai.data.me.dynamiclistcontexts[0];
+                }
             }
             dynamicListContextUrl = "/var/myberkeley/dynamiclists/" + dynamicListContext.name;
             
@@ -1334,8 +1339,14 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 }
                 pattern += alloweds[i].replace("*", ".*");
             }
-            console.log("pattern = " + pattern);
+            //console.log("pattern = " + pattern);
             dynamicListContextAllowed = new RegExp(pattern);
+        };
+
+        var reloadTemplate = function(contextName) {
+            setDynamicListContext(contextName);
+            loadTemplate();
+            setupTemplateDependentVarsAndEventHandlers();
         };
         
         /////////////////////////////
@@ -1355,19 +1366,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 security.send403();
                 return;
             }
-            
-            // TODO This logic is broken for anyone who has access to more than one
-            // Dynamic List context. If we are editing or copying an existing list, we
-            // need to look at the list's context in order to load the correct template for that list.
-            // But with the current code, we don't look at the selected list until after
-            // the template is already loaded!
-            
-            setDynamicListContext();
-            loadTemplate();
+
+            reloadTemplate(null);
 
             populateDesignateTermYear();
-
-            setupTemplateDependentVarsAndEventHandlers();
 
             // this is needed for the situation when we reload this page with some hash parameter, like #new
             resetListEditingForm();
