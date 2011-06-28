@@ -71,9 +71,19 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var $dynListsDeleteButton = $("#dyn_lists_delete_button");
 
         /**
-         * Dynamic list 'Create' button
+         * Dynamic list 'Create' button (multiple contexts)
          */
         var $dynListsCreateButton = $("#dynamic_lists_create_new");
+
+        /**
+         * Dynamic list 'Create' button (single context)
+         */
+        var $dynListsCreateButtonSingleChoice = $("#dynamic_lists_create_new_single_choice");
+
+        /**
+         * Dynamic list 'Create' button container for multiple contexts
+         */
+        var $dynListsCreateButtonContainer = $("#dlm_create_button_multiple_choice_container");
 
         var $tableOfLists = $("#list_table");
 
@@ -271,6 +281,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             $.bbq.pushState({"new": true, "context": sakai.data.me.dynamiclistcontexts[0].name});
         });
 
+        $dynListsCreateButtonSingleChoice.click(function() {
+            $.bbq.pushState({"new": true, "context": sakai.data.me.dynamiclistcontexts[0].name});
+        });
+
 
         $(".list_list_check_list").live("click", function(){
             updateEditCopyDeleteButtonsStatus();
@@ -394,27 +408,32 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             setTabState();
             loadDynamicListsFromServer();
 
-
-            $("#create_button_container").hover(function(){
-                var $popup = $("#available_contexts_popup");
-                $popup.show();
-            }, function(){
-                var $popup = $("#available_contexts_popup");
-                $popup.hide();
-            });
-
             var contexts = sakai.data.me.dynamiclistcontexts;
-            var $list = $("#create_button_container #available_contexts_popup ul", $rootElement);
-            for(var key in contexts) {
-                var c = contexts[key];
-                $list.append('<li><a  class="dynlist_context" style="font-weight: bold;">'+c.name+'</a></li>');
+
+            if(contexts.length>1) {
+                // Display multiple choice drop-down menu
+                $dynListsCreateButtonContainer.hover(function(){
+                    var $popup = $("#dlm_create_button_dropdown");
+                    $popup.show();
+                }, function(){
+                    var $popup = $("#dlm_create_button_dropdown");
+                    $popup.hide();
+                });
+
+                var $list = $("#dlm_create_button_multiple_choice_container #dlm_create_button_dropdown ul", $rootElement);
+                for(var key in contexts) {
+                    var c = contexts[key];
+                    $list.append('<li><a  class="dynlist_context" style="font-weight: bold;">'+c.name+'</a></li>');
+                }
+
+                $("a.dynlist_context", $list).click(function() {
+                    var $a=$(this);
+                    $.bbq.pushState({"new": true, "context": $a.text()});
+                });
+                $dynListsCreateButtonContainer.show();
+            } else {
+                $dynListsCreateButtonSingleChoice.show();
             }
-
-            $("a.dynlist_context", $list).click(function() {
-               var $a=$(this);
-                $.bbq.pushState({"new": true, "context": $a.text()});
-            });
-
         };
 
         doInit();
