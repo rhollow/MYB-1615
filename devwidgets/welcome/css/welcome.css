@@ -36,8 +36,9 @@
 	line-height: 116%;
 }
 
-.welcome-body .message-defined strong {
+.welcome-body .message-defined span.strong {
     font-size: 1.10em;
+    font-weight: bold;
 }
 
 .welcome-body .feedback {
@@ -47,7 +48,7 @@
 .header-smallline .preview-tag {
     display: inline;
     padding: 13px 41px;
-    background: url(/dev/images/myb/beta-tag.png) no-repeat 00 scroll;
+    background: url(/dev/images/myb/beta-tag.png) no-repeat 0 0 scroll;
 }
 
 .myb-frontdoor-image {
@@ -59,5 +60,5 @@
     width: 234px;
     height: 234px;
     background: url(/dev/images/myb/ucb-45-pano.jpg) no-repeat 3% 50% scroll;
-
+}
 /* MyBerkeley custom end */
