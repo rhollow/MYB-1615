@@ -457,7 +457,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          */
         var formatMessage = function(message){
             var dateString = message["sendDate"];
-            if (typeof dateString === "string") {
+            if (typeof dateString === "string" && dateString != "null") {
                 var d = new Date();
                 d.setFullYear(parseInt(dateString.substring(0, 4), 10));
                 d.setMonth(parseInt(dateString.substring(5, 7), 10) - 1);
