@@ -148,25 +148,6 @@
       </properties>
     </profile>
     <profile>
-      <id>redeploy</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>maven-sling-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>install-bundle</id>
-                <goals>
-                  <goal>install</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>sakai-development</id>
       <!-- Begin workaround for maven-bundle-plugin 2.0.1 ignoring processed resources. -->
       <properties>
