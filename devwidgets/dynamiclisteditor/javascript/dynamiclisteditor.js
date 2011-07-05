@@ -228,7 +228,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             var selectedUndergradMajorsOR = buildSelectedOptionsObjectAsOR(null, $(".majors"));
             var selectedLevelsOR = buildSelectedOptionsObjectAsOR(null, $(".levels"));
-            // var selectedAdmittedAsOR = buildSelectedOptionsObjectAsOR(null, $(".admittedAs"));
+            var selectedAdmittedAsOR = buildSelectedOptionsObjectAsOR(null, $(".admittedAs"));
 
             undergrads = selectedUndergradMajorsOR;
             if(undergrads.isConditionObjectEmpty()) {
@@ -236,7 +236,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             }
             
             undergradsFilter = selectedLevelsOR;
-            // undergradsFilter = undergradsFilter.joinTwoConditionsByAND(selectedAdmittedAsOR);
+            undergradsFilter = undergradsFilter.joinTwoConditionsByAND(selectedAdmittedAsOR);
             
             undergrads.joinFilterToCondition(undergradsFilter);
 

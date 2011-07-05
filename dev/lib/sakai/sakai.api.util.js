@@ -28,15 +28,18 @@
  * @namespace
  * General utility functions
  */
-define(["jquery",
+define(
+    [
+        "jquery",
         "sakai/sakai.api.server",
         "sakai/sakai.api.l10n",
-        "/dev/configuration/config.js",
-        "/dev/configuration/config_custom.js",
-        "/dev/lib/misc/trimpath.template.js",
-        "/dev/lib/jquery/plugins/jquery.ba-bbq.js"],
-        function($, sakai_serv, sakai_l10n, sakai_conf, sakai_conf_custom) {
-    
+        "../../configuration/config.js",
+        "../../configuration/config_custom.js",
+        "../../lib/misc/trimpath.template.js",
+        "../../lib/jquery/plugins/jquery.ba-bbq.js"
+    ],
+    function($, sakai_serv, sakai_l10n, sakai_conf, sakai_conf_custom) {
+
     var sakai_util = {
 
         startup : function(meData) {
@@ -934,7 +937,7 @@ define(["jquery",
         getPageContext : function() {
             if (sakai_global.content_profile) {
                 return "content";
-            } else if (sakai_global.group || sakai_global.group2 || sakai_global.groupedit) {
+            } else if (sakai_global.group || sakai_global.groupedit) {
                 return "group";
             } else if (sakai_global.directory) {
                 return "directory";

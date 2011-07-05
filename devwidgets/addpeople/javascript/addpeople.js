@@ -77,9 +77,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
         var renderContacts = function(){
             if ($addpeopleContactsContainer.text() === "") {
+                var groups = sakai.api.Groups.getMemberships(sakai.data.me.groups);
+                groups = _.without(groups, sakai_global.group.groupData["sakai:group-id"]);
                 $addpeopleContactsContainer.html(sakai.api.Util.TemplateRenderer(addpeopleContactsTemplate, {
                     "contacts": sakai.data.me.mycontacts,
-                    "groups": sakai.api.Groups.getMemberships(sakai.data.me.groups),
+                    "groups": groups,
                     "sakai": sakai
                 }));
             }
@@ -106,7 +108,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         };
 
         var decideEnableDisableControls = function(el){
-            if($("."+el.currentTarget.className + ":checked").length){
+            if($("." + el.currentTarget.className + ":checked").length){
                 enableDisableControls(false);
             }else{
                 enableDisableControls(true);
@@ -120,7 +122,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * Also hide the overlay
          */
         var finishAdding = function(){
-            if (sakai_global.group2) {
+            if (sakai_global.group) {
                 var managerSelected = false;
                 var permissionsToDelete = [];
                 $.each(selectedUsers, function(index, user){
@@ -138,7 +140,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     });
                 });
             }
-            if (managerSelected || !sakai_global.group2) {
+            if (managerSelected || !sakai_global.group) {
                 $(window).trigger("sakai.addpeople.usersswitchedpermission", [tuid.replace("addpeople", ""), permissionsToDelete]);
                 $(window).trigger("sakai.addpeople.usersselected", [tuid.replace("addpeople", ""), selectedUsers]);
                 $addpeopleContainer.jqmHide();
@@ -153,7 +155,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var checkAll = function(el, peopleContainer){
             if($(el).is(":checked")){
                 $(peopleContainer).attr("checked","checked");
-                if (peopleContainer != addpeopleSelectedCheckbox) {
+                if (peopleContainer !== addpeopleSelectedCheckbox) {
                     $(peopleContainer).change();
                     renderSelectedContacts();
                 }else{
@@ -161,7 +163,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 }
             }else{
                 $(peopleContainer).removeAttr("checked");
-                if (peopleContainer != addpeopleSelectedCheckbox) {
+                if (peopleContainer !== addpeopleSelectedCheckbox) {
                     $(peopleContainer).removeAttr("checked");
                     $(peopleContainer).change();
                     renderSelectedContacts();
@@ -245,7 +247,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     $(item).parent().next().remove();
                     $(item).parent().remove();
                 });
-                sakai.api.Groups.removeUsersFromGroup(sakai_global.group2.groupData["sakai:group-id"], false, usersToDelete, sakai.data.me);
+                sakai.api.Groups.removeUsersFromGroup(sakai_global.group.groupData["sakai:group-id"], false, usersToDelete, sakai.data.me);
                 $addpeopleSelectAllSelectedContacts.removeAttr("checked");
             } else {
                 sakai.api.Util.notification.show(sakai.api.i18n.Widgets.getValueForKey("addpeople", "", "MANAGE_PARTICIPANTS"), sakai.api.i18n.Widgets.getValueForKey("addpeople", "", "SELECT_AT_LEAST_ONE_MANAGER"));
@@ -349,7 +351,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         };
 
         var fetchMembers = function(){
-            sakai.api.Groups.getMembers(sakai_global.group2.groupData["sakai:group-id"], "", prepareSelectedContacts);
+            sakai.api.Groups.getMembers(sakai_global.group.groupData["sakai:group-id"], "", prepareSelectedContacts);
         };
 
         /**
@@ -400,12 +402,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         ////////////
 
         $(window).bind("init.addpeople.sakai", function(e, initTuid){
-            if (initTuid + "addpeople" === tuid || sakai_global.group2) {
+            if (initTuid + "addpeople" === tuid || sakai_global.group) {
                 if (!hasbeenInit) {
                     if (!widgetData) {
                         widgetData = {
-                            "category": sakai_global.group2.groupData["sakai:category"],
-                            "id": sakai_global.group2.groupData["sakai:templateid"]
+                            "category": sakai_global.group.groupData["sakai:category"],
+                            "id": sakai_global.group.groupData["sakai:templateid"]
                         };
                     }
                     loadRoles();
@@ -414,7 +416,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     initializeJQM();
                     hasbeenInit = true;
                 }
-                if(sakai_global.group2){
+                if(sakai_global.group){
                     fetchMembers();
                 }
                 showDialog();

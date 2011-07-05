@@ -1,5 +1,5 @@
 {
-    "college": "CED",
+    "college": "ETS",
     "undergraduates": {
         "id" : "/colleges/ETS TEST/standings/undergrad",
         "majors": {
@@ -41,6 +41,10 @@
             "items_array": [{
                 "id": "/colleges/ETS TEST/standings/grad/majors/ALLISON",
                 "name": "Allison"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/grad/majors/CARINA",
+                "name": "Carina"
             },
             {
                 "id": "/colleges/ETS TEST/standings/grad/majors/CHRIS",

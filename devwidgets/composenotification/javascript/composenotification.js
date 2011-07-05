@@ -152,7 +152,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         var formatISO8601 = function(date) {
             var gmtDate = sakai.api.Util.Datetime.toGMT(date);
-            return Globalization.format(gmtDate, "yyyyMMddTHHmmssZ");
+            return Globalization.format(gmtDate, "yyyy-MM-ddTHH:mm:ssZ"); // eg 2011-06-30T00:00:00-07:00
         };
 
         /**
@@ -639,8 +639,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             var taskDate;
             var sendDate;
 
-            // Fill out all the common fields.                    
-            if (currentMessage["sendDate"] != null) {
+            // Fill out all the common fields.
+            if (currentMessage["sendDate"] != null && currentMessage["sendDate"] !== "null") {
                 sendDate = sakai.api.Util.parseSakaiDate(currentMessage["sendDate"]);
                 $messageFieldSendDate.datepicker("setDate", sendDate);
             }
