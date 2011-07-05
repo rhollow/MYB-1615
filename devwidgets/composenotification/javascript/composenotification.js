@@ -20,8 +20,24 @@
 
 require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sakai.api.core", "myb/myb.api.core"], function($, $datepick, sakai, myb) {
 
-
+    /**
+     * @name sakai_global.composenotification
+     *
+     * @class composenotification
+     *
+     * @description
+     * Compose notification widget
+     *
+     * @version 0.0.1
+     * @param {String} tuid Unique id of the widget
+     * @param {Boolean} showSettings Show the settings of the widget or not
+     */
     sakai_global.composenotification = function(tuid, showSettings) {
+
+
+        /////////////////////////////
+        // Configuration variables //
+        /////////////////////////////
 
         /**
          * Id of a message being edited (or null for new messages)
@@ -33,6 +49,23 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var currentMessage = null;
 
+        /**
+         * User object that contains the information for the user that should be posted to
+         */
+        var user = false;
+
+        /**
+         * Shortcut for data.me property
+         */
+        var me = sakai.data.me;
+
+        /**
+         * Determines whether a notification has changed since it was last created or saved
+         */
+        var isDirty = false;
+
+
+
          //////////////////////
         // jQuery selectors //
         //////////////////////
@@ -42,17 +75,19 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var $rootElement = $("#" + tuid);
 
+        var $messageFieldRequiredCheck = $("#composenotification_required", $rootElement);
+        var $messageRequiredYes = $("#cn-requiredyes", $rootElement);
+        var $messageRequiredNo = $("#cn-requiredno", $rootElement);
+        var $messageFieldSendDate = $("#datepicker-senddate-text", $rootElement);
+        var $messageFieldTo = $("#cn-dynamiclistselect", $rootElement);
+        var $messageFieldSubject = $("#cn-subject", $rootElement);
+        var $messageFieldBody = $("#cn-body", $rootElement);
 
 
 
 
 
 
-
-        var user = false; // user object that contains the information for the user that should be posted to
-        var me = sakai.data.me;
-
-        var isDirty = false; // Determines whether a notification has changed since it was last created or saved               
 
         /**
          *
@@ -60,17 +95,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          *
          */
         //All required unless otherwise stated.
-        var messageFieldRequiredCheck = "#composenotification_required";
-        var messageRequiredYes = "#cn-requiredyes";
-        var messageRequiredNo = "#cn-requiredno";
-        var messageFieldSendDate = "#datepicker-senddate-text";
-        var messageFieldTo = "#cn-dynamiclistselect";
-        var messageFieldSubject = "#cn-subject";
-        var messageFieldBody = "#cn-body";
 
-        // Optional, unless required is checked.
-        var messageReminderCheck = "#task-or-event-check";
-        var messageReminderCheckbox = "#cn-remindercheck";
+
 
         // Optional, unless messageReminderCheck is checked.
         var messageTaskCheck = "#task-radio";
@@ -285,7 +311,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 }
 
                 // Clear any old values and then append the new dynamic list options.          
-                $(messageFieldTo).empty().append(optionsHTML);
+                $messageFieldTo.empty().append(optionsHTML);
             });
         };
 
@@ -313,13 +339,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * DATEPICKER INITIALISATION FUNCTIONS
          *
          */
-        $(messageFieldSendDate).datepicker({
+        $messageFieldSendDate.datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function(dateText, inst) {
-                $(messageFieldSendDate).removeClass(invalidClass);
+                $messageFieldSendDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
         });
@@ -358,12 +384,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * VALIDATION EVENT HANDLERS
          *
          */
-        $(messageFieldSendDate).change(function() {
+        $messageFieldSendDate.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
-        $(messageFieldSendDate).keypress(function() {
+        $messageFieldSendDate.keypress(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
@@ -403,23 +429,23 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          $(this).removeClass(invalidClass);
          });*/
 
-        $(messageFieldSubject).change(function() {
+        $messageFieldSubject.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
-        $(messageFieldSubject).keypress(function() {
+        $messageFieldSubject.keypress(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
-        $(messageFieldBody).change(function() {
+        $messageFieldBody.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
-        $(messageFieldBody).keypress(function() {
+        $messageFieldBody.keypress(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
@@ -436,7 +462,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             isDirty = true;
         });
 
-        $(messageFieldTo).change(function() {
+        $messageFieldTo.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
@@ -468,25 +494,26 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         // If 'No' is checked for required, it CANNOT be a task.
         // Disable the task radiobox and show the appropriate message.
-        $(messageRequiredNo).change(function() {
-            $(messageFieldRequiredCheck + " .right").removeClass(invalidClass); // Clearing validation errors
-            $(messageRequiredNo).attr("checked", "checked");
+        $messageRequiredNo.change(function() {
+            $("#composenotification_required .right").removeClass(invalidClass); // Clearing validation errors
+            $messageRequiredNo.attr("checked", "checked");
             $("#task-radio").attr("disabled", "disabled");
             $("#must-be-req").show();
             isDirty = true;
         });
         // If 'Yes' is checked for required, show the task/event field.
-        $(messageRequiredYes).change(function() {
-            $(messageFieldRequiredCheck + " .right").removeClass(invalidClass); // Clearing validation errors
-            $(messageReminderCheckbox).attr("checked", "checked");
+        $messageRequiredYes.change(function() {
+            $("#composenotification_required .right").removeClass(invalidClass); // Clearing validation errors
+
             $(".composenotification_taskorevent").show();
             $("#must-be-req").hide();
             $("#task-radio").removeAttr("disabled");
             isDirty = true;
         });
+
         // If we check that this message has a date (and is a task or event),
         // reset and show the task/event information fields.
-        $(messageReminderCheckbox).change(function() {
+        /*$(messageReminderCheckbox).change(function() {
             $(messageTaskDueDate).removeClass(invalidClass);
             $(messageEventDate).removeClass(invalidClass);
             $(messageEventTimeHour).removeClass(invalidClass);
@@ -507,11 +534,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             isDirty = true;
-        });
+        });*/
+
+
         // If task is checked, show the information and make sure the event
         // details are hidden. Restore to their default state.        
         $(messageTaskCheck).change(function() {
-            $(messageReminderCheck).removeClass(invalidClass); // Clearing validation errors
+
             $(".cn-task").show();
             $(".cn-event").hide();
             $(".cn-event").find(".compose-form-elm").each(function() {
@@ -528,35 +557,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // If event is checked, show the information and make sure the task
         // details are hidden. Restore to thier default state.     
         $(messageEventCheck).change(function() {
-            $(messageReminderCheck).removeClass(invalidClass); // Clearing validation errors
+
             $(".cn-task").hide();
             $(".cn-event").show();
             $(".cn-task").find(".compose-form-elm").each(function() {
                 clearElement(this);
             });
             $(messageTaskDueDate).removeClass(invalidClass);
-            isDirty = true;
-        });
-        // If this event is marked as required, it MUST be a reminder (task or event).                                 
-        $(messageReminderCheckbox).change(function() {
-            if (!$(messageReminderCheckbox).attr("checked")) {
-                if ($(messageRequiredYes).attr("checked")) {
-                    $(messageReminderCheckbox).attr("checked", true);
-                    $(".composenotification_taskorevent").show();
-
-                    // Dialog overlay window to remind user that required notifications (reminders)
-                    // require a date and are either a task or event.
-                    $("#required_must_have_date_dialog").jqm({
-                        modal: true,
-                        overlay: 20,
-                        toTop: true,
-                        onShow: null
-                    });
-                    $("#required_must_have_date_dialog").css("position", "absolute");
-                    $("#required_must_have_date_dialog").css("top", "250px");
-                    $("#required_must_have_date_dialog").jqmShow();
-                }
-            }
             isDirty = true;
         });
 
@@ -626,37 +633,35 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * Fill in the notification detail page with the message's information.
          * @param {Object} message The message whose info we will extract.
          */
-        var fillInMessage = function(message, callback) {
-            var check = checkEventFields(message);
+        var fillInMessage = function(callback) {
+            var check = checkEventFields(currentMessage);
             var eventDate;
             var taskDate;
             var sendDate;
 
             // Fill out all the common fields.                    
-            if (message["sendDate"] != null) {
-                sendDate = sakai.api.Util.parseSakaiDate(message["sendDate"]);
-                $(messageFieldSendDate).datepicker("setDate", sendDate);
+            if (currentMessage["sendDate"] != null) {
+                sendDate = sakai.api.Util.parseSakaiDate(currentMessage["sendDate"]);
+                $messageFieldSendDate.datepicker("setDate", sendDate);
             }
-            dynamicListInit(message["dynamicListID"]);
+            dynamicListInit(currentMessage["dynamicListID"]);
 
             // If it's a reminder, fill in the reminder categories after checking if it
             // is a task or an event, and show the proper fields for the user.
-            if (message.type === "calendar") {
+            if (currentMessage.type === "calendar") {
 
                 // it's a task or event
-                $(messageFieldSubject).val(message.calendarWrapper.icalData.SUMMARY);
-                $(messageFieldBody).val(message.calendarWrapper.icalData.DESCRIPTION);
+                $messageFieldSubject.val(currentMessage.calendarWrapper.icalData.SUMMARY);
+                $messageFieldBody.val(currentMessage.calendarWrapper.icalData.DESCRIPTION);
 
-                $(messageRequiredYes).attr("checked", true);
-                $(messageReminderCheckbox).attr("checked", true);
-                $(messageReminderCheck).show();
+                $messageRequiredYes.attr("checked", true);
 
                 // Is it a task or an event?                
-                if (message.calendarWrapper.icalData.DUE != null) {
+                if (currentMessage.calendarWrapper.icalData.DUE != null) {
                     // It's a task.
                     $(messageTaskCheck).attr("checked", true);
                     $(".cn-task").show();
-                    taskDate = sakai.api.Util.parseSakaiDate(message.calendarWrapper.icalData.DUE);
+                    taskDate = sakai.api.Util.parseSakaiDate(currentMessage.calendarWrapper.icalData.DUE);
                     $(messageTaskDueDate).datepicker("setDate", taskDate);
                 }
                 else if (!check) {
@@ -664,8 +669,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     $(messageEventCheck).attr("checked", true);
                     $(".cn-event").show();
                     // If the event date was filled out properly, we can extract all the proper date and time information from it.                       
-                    if (message.calendarWrapper.icalData.DTSTART != null) {
-                        eventDate = sakai.api.Util.parseSakaiDate(message.calendarWrapper.icalData.DTSTART);
+                    if (currentMessage.calendarWrapper.icalData.DTSTART != null) {
+                        eventDate = sakai.api.Util.parseSakaiDate(currentMessage.calendarWrapper.icalData.DTSTART);
                         var hours = eventDate.getHours();
                         var minutes = eventDate.getMinutes();
                         var AMPM = "AM";
@@ -685,27 +690,25 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     // If it was not filled out properly but the time fields were still filled out by the user, we
                     // still need to handle this case and put in the information properly.
                     else if (!check) {
-                        $(messageReminderCheckbox).attr("checked", "checked");
-                        $(messageReminderCheck).show();
                         $(messageEventCheck).attr("checked", "checked");
                         $(".cn-event").show();
 
-                        var hours = message.uxState["eventHour"];
-                        var minutes = message.uxState["eventMin"];
-                        var AMPM = message.uxState["eventAMPM"];
+                        var hours = currentMessage.uxState["eventHour"];
+                        var minutes = currentMessage.uxState["eventMin"];
+                        var AMPM = currentMessage.uxState["eventAMPM"];
 
                         eventTimeInit(hours, minutes, AMPM);
                     }
-                    $(messageEventPlace).val(message.calendarWrapper.icalData.LOCATION);
+                    $(messageEventPlace).val(currentMessage.calendarWrapper.icalData.LOCATION);
                 }
             }
             else {
 
                 // it's a message
 
-                $(messageFieldSubject).val(message.subject);
-                $(messageFieldBody).val(message.body);
-                $(messageRequiredNo).attr("checked", "checked");
+                $messageFieldSubject.val(currentMessage.subject);
+                $messageFieldBody.val(currentMessage.body);
+                $messageRequiredNo.attr("checked", "checked");
                 $("#task-radio").attr("disabled", "disabled");
                 $("#must-be-req").show();
 
@@ -731,12 +734,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             var modtoday = new Date(year, month, day); // today's date with 00:00:00 time
 
             // Collect all elements that require validation on the page.
-            var requiredEl = $(messageFieldRequiredCheck);
-            var sendDateEl = $(messageFieldSendDate);
-            var sendToEl = $(messageFieldTo);
-            var subjectEl = $(messageFieldSubject);
-            var bodyEl = $(messageFieldBody);
-            var reminderCheckEl = $(messageReminderCheck);
+            var requiredEl = $messageFieldRequiredCheck;
+            var sendDateEl = $messageFieldSendDate;
+            var sendToEl = $messageFieldTo;
+            var subjectEl = $messageFieldSubject;
+            var bodyEl = $messageFieldBody;
+            //var reminderCheckEl = $(messageReminderCheck);
             var taskDueDateEl = $(messageTaskDueDate);
             var eventDateEl = $(messageEventDate);
             var eventTimeHourEl = $(messageEventTimeHour);
@@ -745,15 +748,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             var eventPlaceEl = $(messageEventPlace);
 
             // Collect the values of each of the elements that require validation.
-            var requiredYes = $(messageRequiredYes).attr("checked");
-            var requiredNo = $(messageRequiredNo).attr("checked");
+            var requiredYes = $messageRequiredYes.attr("checked");
+            var requiredNo = $messageRequiredNo.attr("checked");
             var sendDate = sendDateEl.val();
             var sendTo = sendToEl.val();
             var subject = subjectEl.val();
             var body = bodyEl.val();
-            var reminderCheck = $(messageReminderCheckbox).attr("checked");
-            var taskCheck = $(messageTaskCheck).attr("checked");
-            var eventCheck = $(messageEventCheck).attr("checked");
             var taskDueDate = taskDueDateEl.val();
             var eventDate = eventDateEl.val();
             var eventTimeHour = eventTimeHourEl.val();
@@ -800,17 +800,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 valid = false;
                 bodyEl.addClass(invalidClass);
             }
-            if (reminderCheck) {
-                // This notification is a REMINDER. Either task or event must be checked.
-                if (!taskCheck && !eventCheck) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    reminderCheckEl.addClass(invalidClass);
-                }
 
-                // Now check to see what it is (task or event)...
-                else if (taskCheck) {
-                    // The reminder is a TASK.
+
+            var type = $("#cn-notification-type", $rootElement).val();
+
+            switch(type) {
+                case "task":
                     if (!taskDueDate) {
                         if (!displayErrors) return false;
                         valid = false;
@@ -826,9 +821,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         valid = false;
                         taskDueDateEl.addClass(invalidClass);
                     }
-                }
-                else if (eventCheck) {
-                    // The reminder is an EVENT.
+                    break;
+
+                case "event":
                     if (!eventDate) {
                         if (!displayErrors) return false;
                         valid = false;
@@ -892,73 +887,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         valid = false;
                         eventPlaceEl.addClass(invalidClass);
                     }
-                }
-            }
-            // Even if it isn't a reminder, it could still be a non-required event.
-            if (eventCheck) {
-                if (!eventDate) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    eventDateEl.addClass(invalidClass);
-                }
-                else if (modtoday > eventDateObj) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    eventDateEl.addClass(invalidClass);
-                }
-                else if (sendDateObj > eventDateObj) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    eventDateEl.addClass(invalidClass);
-                }
-                else {
-                    // If the event date is today, check that the time hasn't already passed.
-                    if ((eventDateObj.getTime() - modtoday.getTime()) == 0) {
-                        if (eventTimeHour && eventTimeMinute && eventTimeAMPM) {
-                            var compareToHour = parseInt(eventTimeHour);
-                            var compareToMin = parseInt(eventTimeMinute);
 
-                            // Convert to military time.
-                            if (eventTimeAMPM == "PM") {
-                                if (compareToHour < 12) {
-                                    compareToHour = compareToHour + 12;
-                                }
-                            }
+                    break;
 
-                            eventDateObj.setHours(compareToHour);
-                            eventDateObj.setMinutes(compareToMin);
+                case "message":
+                     //TODO: Add validation for messages
 
-                            // If the event is today and the time of the event has already passed...
-                            if (today.getTime() > eventDateObj.getTime()) {
-                                if (!displayErrors) return false;
-                                valid = false;
-                                eventTimeHourEl.addClass(invalidClass);
-                                eventTimeMinuteEl.addClass(invalidClass);
-                                eventTimeAMPMEl.addClass(invalidClass);
-                            }
-                        }
-                    }
-                }
-                if (!eventTimeHour) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    eventTimeHourEl.addClass(invalidClass);
-                }
-                if (!eventTimeMinute) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    eventTimeMinuteEl.addClass(invalidClass);
-                }
-                if (!eventTimeAMPM) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    eventTimeAMPMEl.addClass(invalidClass);
-                }
-                if (!eventPlace) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    eventPlaceEl.addClass(invalidClass);
-                }
+                default:
+
+                    break;
             }
 
             // Displays an error message if displayErrors is true and valid is false.
@@ -995,7 +932,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var saveData = function(box, isValidated) {
             // Filling out all common fields.
-            var msgTo = $(messageFieldTo).val() || "";
+            var msgTo = $messageFieldTo.val() || "";
 
             var toPost = {
                 "dynamicListID": msgTo,
@@ -1009,8 +946,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     uri : null,
                     etag : formatISO8601(new Date()),
                     icalData : {
-                        SUMMARY : $(messageFieldSubject).val(),
-                        DESCRIPTION : $(messageFieldBody).val()
+                        SUMMARY : $messageFieldSubject.val(),
+                        DESCRIPTION : $messageFieldBody.val()
                     }
                 }
             };
@@ -1018,7 +955,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             // sendDate is handled a little differently, because it is called
             // by a sakai date parsing util which throws an error if not
             // the proper Date object type.
-            var sendDate = $(messageFieldSendDate).datepicker("getDate");
+            var sendDate = $messageFieldSendDate.datepicker("getDate");
             if (sendDate === null) {
                 toPost["sendDate"] = null;
             }
@@ -1049,7 +986,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 case "event":
 
                     toPost["type"] = "calendar";
-                    if ($(messageRequiredYes).attr("checked")) {
+                    if ($messageRequiredYes.attr("checked")) {
                         toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
                     } else {
                         toPost.calendarWrapper.icalData.CATEGORIES = [];
@@ -1082,8 +1019,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
                 case "message":
                     toPost["type"] = "message";
-                    toPost["subject"] = $(messageFieldSubject).val();
-                    toPost["body"] = $(messageFieldBody).val();
+                    toPost["subject"] = $messageFieldSubject.val();
+                    toPost["body"] = $messageFieldBody.val();
                     delete(toPost.calendarWrapper); // messages don't have calendar data
 
                 default:
@@ -1091,84 +1028,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     break;
             }
 
-
-
-            //-------------------------------------------------------------------------------
-
-
-            // This notification is a REMINDER--required task or event.              
-            /*if ($(messageRequiredYes).attr("checked")) {
-                // Fields common to reminders.
-                toPost["category"] = "reminder";
-                toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
-
-                // This reminder is a TASK.
-                if ($(messageTaskCheck).attr("checked")) {
-                    toPost.calendarWrapper.component = "VTODO";
-                    toPost.calendarWrapper.icalData.STATUS = "NEEDS-ACTION";
-                    if ($(messageTaskDueDate).val() != "") {
-                        toPost.calendarWrapper.icalData.DUE = formatISO8601($(messageTaskDueDate).datepicker("getDate"));
-                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601($(messageTaskDueDate).datepicker("getDate"));
-                    }
-                }
-
-                // This reminder is an EVENT.
-                else {
-                    toPost.calendarWrapper.component = "VEVENT";
-                    // If the event date is filled out, we handle this normally and save the time information there. 
-                    if ($(messageEventDate).datepicker("getDate") != null) {
-                        var startDate = $(messageEventDate).datepicker("getDate");
-                        startDate.setMinutes($(messageEventTimeMinute).val());
-                        // Get the event time details and add to the eventDate obj.                    
-                        if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
-                            startDate.setHours(parseInt($(messageEventTimeHour).val()) + 12);
-                        }
-                        else {
-                            startDate.setHours($(messageEventTimeHour).val());
-                        }
-                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
-                    }
-                    // Otherwise, we need to check for and save the time information in case the user filled this out.
-                    else {
-                        toPost.uxState["eventMin"] = $(messageEventTimeMinute).val();
-                        toPost.uxState["eventAMPM"] = $(messageEventTimeAMPM).val();
-                        toPost.uxState["eventHour"] = $(messageEventTimeHour).val();
-                    }
-                    toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
-                }
-            }
-
-            // This is a general NOTIFICATION--nonrequired message or event.
-            else {
-                // Common field for all notifications.                     
-                toPost["category"] = "message";
-                toPost.calendarWrapper.icalData.CATEGORIES = [];
-
-                // This is a NON-REQUIRED EVENT.
-                if ($(messageEventCheck).attr("checked")) {
-                    toPost.calendarWrapper.component = "VEVENT";
-                    // If the event date is filled out, we handle this normally and save the time information there.                                                                  
-                    if ($(messageEventDate).datepicker("getDate") != null) {
-                        var startDate = $(messageEventDate).datepicker("getDate");
-                        startDate.setMinutes($(messageEventTimeMinute).val());
-                        // Get the event time details and add to the eventDate obj.                    
-                        if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
-                            startDate.setHours(parseInt($(messageEventTimeHour).val()) + 12);
-                        }
-                        else {
-                            startDate.setHours($(messageEventTimeHour).val());
-                        }
-                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
-                    }
-                    // Otherwise, we need to check for and save the time information in case the user filled this out.
-                    else {
-                        toPost.uxState["eventMin"] = $(messageEventTimeMinute).val();
-                        toPost.uxState["eventAMPM"] = $(messageEventTimeAMPM).val();
-                        toPost.uxState["eventHour"] = $(messageEventTimeHour).val();
-                    }
-                    toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
-                }
-            } */
             return toPost;
         };
 
@@ -1238,34 +1097,23 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         var loadNotification = function(calledFrom, messageId) {
 
             currentMessageId = messageId;
+            currentMessage = null;
 
-            var message = null;
-            var url = "/~" + sakai.data.me.user.userid + "/_myberkeley_notificationstore/" + messageId + ".json";
+            var url = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + messageId + ".json";
 
             $.ajax({
                 url: url,
                 cache: false,
                 async: false,
                 success: function(data){
-                    message = data;
-                    message.calendarWrapper = $.parseJSON(message.calendarWrapper);
-                    message.uxState = $.parseJSON(message.uxState);
-
+                    currentMessage = data;
+                    currentMessage.calendarWrapper = $.parseJSON(data.calendarWrapper);
+                    currentMessage.uxState = $.parseJSON(data.uxState);
                 },
                 error: function(xhr, textStatus, thrownError){
                     showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
-                    // Commented out because this displays the tiny bit of text at the bottom of the panel that
-                    // says an error has occurred. Felt this was a bit redundant to have both the text and a
-                    // popup alerting the user that there was an error, and also, the error message does not
-                    // ever disappear for the remainder of the time the user spends on this page (unless they
-                    // refresh or leave and come back).
-                    //$(inboxResults).html(sakai.api.Security.saneHTML($(inboxGeneralMessagesErrorGeneral).text()));
                 }
             });
-
-            //TODO: fix this later, we need only one variable for this
-            currentMessage = message;
-
 
 
 
@@ -1273,7 +1121,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             resetView();
             clearInvalids();
             hideAllButtonLists();
-            //unbindAll();
+
             eventTimeInit(null, null, null);
             isDirty = false;
 
@@ -1283,14 +1131,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             // To prevent concurrency issues between these 2 calls, check if we are
             // NOT creating a new notification, and if this is indeed the case,
             // then initialise a blank dropdown. Otherwise, fillInMessage should handle it.
-            if (message == null || message["dynamicListID"] == null) {
+            if (currentMessage == null || currentMessage["dynamicListID"] == null) {
                 dynamicListInit(null);
             }
 
             // Chose notification type
-            var type = message.type;
+            var type = currentMessage.type;
             if ( type === "calendar" ) {
-                type = message.calendarWrapper.component;
+                type = currentMessage.calendarWrapper.component;
             }
 
             switch(type) {
@@ -1324,7 +1172,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $("#cn-widget-title").text("Edit Notification");
 
                 // Fill out the proper information.
-                fillInMessage(message, checkFieldsForErrors(false));
+                fillInMessage(checkFieldsForErrors(false));
 
                 // Show the proper button list
                 $("#editdraft-buttons").show();
@@ -1341,7 +1189,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 disableView();
 
                 // Now fill out the proper information.
-                fillInMessage(message, null);
+                fillInMessage(null);
 
                 // Display the proper buttons.                
                 $("#queueview-buttons").show();
@@ -1357,7 +1205,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 disableView();
 
                 // Now fill out the proper information.
-                fillInMessage(message, null);
+                fillInMessage(null);
 
                 // Display the proper buttons.                
                 $("#archiveview-buttons").show();
@@ -1370,7 +1218,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $("#cn-widget-title").text("View Notification");
 
                 // Now fill out the proper information.
-                fillInMessage(message, null);
+                fillInMessage(null);
 
                 // And disable the form, disallowing the user to edit.
                 disableView();
@@ -1403,13 +1251,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // Event handler for when user clicks on DLC "Save" button.
         $("#dlc-save").live('click', function() {
             // Check that the subject field isn't empty before saving
-            if ($(messageFieldSubject).val() != "") {
+            if ($messageFieldSubject.val() !== "") {
                 // Save the draft.
                 postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, currentMessage, null, null);
             } else {
                 // If subject field is empty, cancel jqm dialog and highlight subject field.
                 $("#save_reminder_dialog").jqmHide();
-                $(messageFieldSubject).addClass(invalidClass);
+                $messageFieldSubject.addClass(invalidClass);
             }
         });
 
@@ -1447,8 +1295,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         });
         // When someone clicks on the 'Save as Draft' button from base panel.
         $("#cn-saveasdraft-button").live('click', function() {
-            if ($(messageFieldSubject).val() === "") {
-                $(messageFieldSubject).addClass(invalidClass);
+            if ($messageFieldSubject.val() === "") {
+                $messageFieldSubject.addClass(invalidClass);
             } else {
                 postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
             }
@@ -1482,7 +1330,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // Hard delete this message (delete it from the trash).
         $("#cn-deletetrashed-button").live('click', function() {
             var requests = [];
-            var msgUrl = "/~" + sakai.data.me.user.userid + "/_myberkeley_notificationstore/" + currentMessageId;
+            var msgUrl = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + currentMessageId;
 
             var toDelete = {
                 "url": msgUrl,
@@ -1552,6 +1400,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         {
             var value = $(this).attr('value');
             notificationTypeInit(value);
+            isDirty = true;
         });
 
 
@@ -1569,16 +1418,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             dynamicListInit(null);
             eventTimeInit(null, null, null);
-            /*$("#datepicker-taskduedate-text", $rootElement).val("");
-            $("#datepicker-eventdate-text", $rootElement).val("");
-            $("#cn-event-place", $rootElement).val("");
-            $("#cn-consequence", $rootElement).val("");
-            $("#datepicker-senddate-text", $rootElement).val("");
-            $("#cn-subject", $rootElement).val("");
-            $("#cn-body", $rootElement).val("");
-            $("#cn-email", $rootElement).val("");
-            $("#cn-link", $rootElement).val("");
-             */
 
             reenableView();
             // Must be called after reenableView because it disables 'Required?' radio buttons
@@ -1674,7 +1513,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
     };
 
-    debug.info("Asking for load of composenotification widget");
     sakai.api.Widgets.widgetLoader.informOnLoad("composenotification");
 
 });
