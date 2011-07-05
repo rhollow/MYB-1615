@@ -64,6 +64,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var isDirty = false;
 
+        /**
+         * Invalid class for field validation.
+         */
+        var invalidClass = "composenotification_invalid";
+
 
 
          //////////////////////
@@ -82,39 +87,29 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         var $messageFieldTo = $("#cn-dynamiclistselect", $rootElement);
         var $messageFieldSubject = $("#cn-subject", $rootElement);
         var $messageFieldBody = $("#cn-body", $rootElement);
-
-
-
-
-
-
+        var $messageTaskDueDate = $("#datepicker-taskduedate-text", $rootElement);
+        var $messageEventDate = $("#datepicker-eventdate-text", $rootElement);
+        var $messageEventTimeHour = $("#cn-event-timehour", $rootElement);
+        var $messageEventTimeMinute = $("#cn-event-timeminute");
+        var $messageEventTimeAMPM = $("#cn-event-timeampm");
+        var $messageEventPlace = $("#cn-event-place");
+        var $saveReminderDialog = $("#save_reminder_dialog", $rootElement);
+        var $taskDueDateContainer = $("#composenotification_task_due_date", $rootElement);
 
         /**
-         *
-         * NOTIFICATION AUTHORING FORM ELEMENT IDS
-         *
+         * Container element for var $messageEventTimeHour, $messageEventTimeMinute and $messageEventTimeAMPM
          */
-        //All required unless otherwise stated.
+        var $eventTimeContainer = $("#composenotification_event_time", $rootElement);
+        var $eventDateContainer = $("#composenotification_event_date", $rootElement);
+        var $eventPlaceContainer = $("#composenotification_event_place", $rootElement);
 
 
 
-        // Optional, unless messageReminderCheck is checked.
-        var messageTaskCheck = "#task-radio";
-        var messageEventCheck = "#event-radio";
 
-        // Optional, unless messageTaskCheck is checked.
-        var messageTaskDueDate = "#datepicker-taskduedate-text";
 
-        // Optional, unless messageEventCheck is checked.
-        var messageEventDate = "#datepicker-eventdate-text";
-        var messageEventStopDate = "#datepicker-eventstopdate-text";
-        var messageEventTimeHour = "#cn-event-timehour";
-        var messageEventTimeMinute = "#cn-event-timeminute";
-        var messageEventTimeAMPM = "#cn-event-timeampm";
-        var messageEventPlace = "#cn-event-place";
 
-        // Invalid class for field validation.   
-        var invalidClass = "composenotification_invalid";
+
+
 
         /**
          *
@@ -199,7 +194,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * Removes invalidClass from all elements that are currently within that class.
          */
         var clearInvalids = function() {
-            $("." + invalidClass).removeClass(invalidClass);
+            $("." + invalidClass, $rootElement).removeClass(invalidClass);
         };
 
         /**
@@ -323,15 +318,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         var eventTimeInit = function(hrSelectedID, minSelectedID, AMPMSelectedID) {
             // Filling in the hours dropdown menu.
             var hoursOptionsHTML = createOptions(allHourOptions, hrSelectedID, true);
-            $(messageEventTimeHour).empty().append(hoursOptionsHTML);
+            $messageEventTimeHour.empty().append(hoursOptionsHTML);
 
             // Filling in minutes dropdown menu.                             
             var minuteOptionsHTML = createOptions(allMinuteOptions, minSelectedID, true);
-            $(messageEventTimeMinute).empty().append(minuteOptionsHTML);
+            $messageEventTimeMinute.empty().append(minuteOptionsHTML);
 
             // Filling in AM/PM dropdown menu.
             var ampmOptionsHTML = createOptions(allAMPMOptions, AMPMSelectedID, true);
-            $(messageEventTimeAMPM).empty().append(ampmOptionsHTML);
+            $messageEventTimeAMPM.empty().append(ampmOptionsHTML);
         };
 
         /**
@@ -349,34 +344,25 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 isDirty = true;
             } // Clearing validation errors
         });
-        $(messageTaskDueDate).datepicker({
+        $messageTaskDueDate.datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function(dateText, inst) {
-                $(messageTaskDueDate).removeClass(invalidClass);
+                $messageTaskDueDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
         });
-        $(messageEventDate).datepicker({
+        $messageEventDate.datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function(dateText, inst) {
-                $(messageEventDate).removeClass(invalidClass);
+                $messageEventDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
-        });
-
-        // There is no event stop date yet (it will be added later; and when you add it don't forget to set isDirty flag to true when you select something)
-        // This code does nothing
-        $(messageEventStopDate).datepicker({
-            showOn: 'button',
-            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
-            buttonImageOnly: true,
-            buttonText: 'Click to pick a date.'
         });
 
         /**
@@ -395,39 +381,27 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             isDirty = true;
         });
 
-        $(messageTaskDueDate).change(function() {
+        $messageTaskDueDate.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
-        $(messageTaskDueDate).keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $(messageEventDate).change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-        $(messageEventDate).keypress(function() {
+        $messageTaskDueDate.keypress(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
-        // There is no event stop date yet (it will be added later; and when you add it don't forget to set isDirty flag to true when you select something)
-        // This code was commented out on purpose
-        /*
-         $(messageEventStopDate).change(function(){
-         // Clearing validation errors
-         $(this).removeClass(invalidClass);
-         });
-         $(messageEventStopDate).keypress(function(){
-         // Clearing validation errors
-         $(this).removeClass(invalidClass);
-         });*/
+        $messageEventDate.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+        $messageEventDate.keypress(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
 
         $messageFieldSubject.change(function() {
             // Clearing validation errors
@@ -451,12 +425,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             isDirty = true;
         });
 
-        $(messageEventPlace).change(function() {
+        $messageEventPlace.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
-        $(messageEventPlace).keypress(function() {
+        $messageEventPlace.keypress(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
@@ -468,19 +442,19 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             isDirty = true;
         });
 
-        $(messageEventTimeHour).change(function() {
+        $messageEventTimeHour.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
-        $(messageEventTimeMinute).change(function() {
+        $messageEventTimeMinute.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
-        $(messageEventTimeAMPM).change(function() {
+        $messageEventTimeAMPM.change(function() {
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
@@ -511,61 +485,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             isDirty = true;
         });
 
-        // If we check that this message has a date (and is a task or event),
-        // reset and show the task/event information fields.
-        /*$(messageReminderCheckbox).change(function() {
-            $(messageTaskDueDate).removeClass(invalidClass);
-            $(messageEventDate).removeClass(invalidClass);
-            $(messageEventTimeHour).removeClass(invalidClass);
-            $(messageEventTimeMinute).removeClass(invalidClass);
-            $(messageEventTimeAMPM).removeClass(invalidClass);
-            $(messageEventPlace).removeClass(invalidClass);
-            if ($("#cn-remindercheck").is(":checked")) {
-                $(".composenotification_taskorevent").show();
-            }
-            else {
-                $(".cn-task").hide();
-                $(".cn-event").hide();
-                $(".composenotification_taskorevent").hide();
-                $(".composenotification_taskorevent").find(".compose-form-elm").each(function() {
-                    clearElement(this);
-                });
-                eventTimeInit(null, null, null);
-            }
-
-            isDirty = true;
-        });*/
-
-
-        // If task is checked, show the information and make sure the event
-        // details are hidden. Restore to their default state.        
-        $(messageTaskCheck).change(function() {
-
-            $(".cn-task").show();
-            $(".cn-event").hide();
-            $(".cn-event").find(".compose-form-elm").each(function() {
-                clearElement(this);
-            });
-            eventTimeInit(null, null, null);
-            $(messageEventDate).removeClass(invalidClass);
-            $(messageEventTimeHour).removeClass(invalidClass);
-            $(messageEventTimeMinute).removeClass(invalidClass);
-            $(messageEventTimeAMPM).removeClass(invalidClass);
-            $(messageEventPlace).removeClass(invalidClass);
-            isDirty = true;
-        });
-        // If event is checked, show the information and make sure the task
-        // details are hidden. Restore to thier default state.     
-        $(messageEventCheck).change(function() {
-
-            $(".cn-task").hide();
-            $(".cn-event").show();
-            $(".cn-task").find(".compose-form-elm").each(function() {
-                clearElement(this);
-            });
-            $(messageTaskDueDate).removeClass(invalidClass);
-            isDirty = true;
-        });
 
         /**
          *
@@ -603,18 +522,18 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         // For dialog-overlay to remind user to save their draft.
         // (When user clicks on 'Create New Dyanmic List' button.)
-        $("#save_reminder_dialog").jqm({
+        $saveReminderDialog.jqm({
             modal: true,
             overlay: 20,
             toTop: true,
             onShow: null
         });
-        $("#save_reminder_dialog").css("position", "absolute");
-        $("#save_reminder_dialog").css("top", "250px");
+        $saveReminderDialog.css("position", "absolute");
+        $saveReminderDialog.css("top", "250px");
 
         $("#create-new-dynamic-list-button").live("click", function() {
             if (isDirty) {
-                $('#save_reminder_dialog').jqmShow();
+                $saveReminderDialog.jqmShow();
             }
             else {
                 goToCDNLPage();
@@ -659,14 +578,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 // Is it a task or an event?                
                 if (currentMessage.calendarWrapper.icalData.DUE != null) {
                     // It's a task.
-                    $(messageTaskCheck).attr("checked", true);
-                    $(".cn-task").show();
+                      $(".cn-task").show();
                     taskDate = sakai.api.Util.parseSakaiDate(currentMessage.calendarWrapper.icalData.DUE);
-                    $(messageTaskDueDate).datepicker("setDate", taskDate);
+                    $messageTaskDueDate.datepicker("setDate", taskDate);
                 }
                 else if (!check) {
-                    // It's an event.                                       
-                    $(messageEventCheck).attr("checked", true);
+                    // It's an event.
                     $(".cn-event").show();
                     // If the event date was filled out properly, we can extract all the proper date and time information from it.                       
                     if (currentMessage.calendarWrapper.icalData.DTSTART != null) {
@@ -674,7 +591,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         var hours = eventDate.getHours();
                         var minutes = eventDate.getMinutes();
                         var AMPM = "AM";
-                        $(messageEventDate).datepicker("setDate", eventDate);
+                        $messageEventDate.datepicker("setDate", eventDate);
                         if (hours > 11) {
                             if (hours !== 12) {
                                 hours = hours - 12;
@@ -690,7 +607,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     // If it was not filled out properly but the time fields were still filled out by the user, we
                     // still need to handle this case and put in the information properly.
                     else if (!check) {
-                        $(messageEventCheck).attr("checked", "checked");
                         $(".cn-event").show();
 
                         var hours = currentMessage.uxState["eventHour"];
@@ -699,7 +615,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
                         eventTimeInit(hours, minutes, AMPM);
                     }
-                    $(messageEventPlace).val(currentMessage.calendarWrapper.icalData.LOCATION);
+                    $messageEventPlace.val(currentMessage.calendarWrapper.icalData.LOCATION);
                 }
             }
             else {
@@ -733,37 +649,23 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             var year = today.getFullYear();
             var modtoday = new Date(year, month, day); // today's date with 00:00:00 time
 
-            // Collect all elements that require validation on the page.
-            var requiredEl = $messageFieldRequiredCheck;
-            var sendDateEl = $messageFieldSendDate;
-            var sendToEl = $messageFieldTo;
-            var subjectEl = $messageFieldSubject;
-            var bodyEl = $messageFieldBody;
-            //var reminderCheckEl = $(messageReminderCheck);
-            var taskDueDateEl = $(messageTaskDueDate);
-            var eventDateEl = $(messageEventDate);
-            var eventTimeHourEl = $(messageEventTimeHour);
-            var eventTimeMinuteEl = $(messageEventTimeMinute);
-            var eventTimeAMPMEl = $(messageEventTimeAMPM);
-            var eventPlaceEl = $(messageEventPlace);
-
             // Collect the values of each of the elements that require validation.
             var requiredYes = $messageRequiredYes.attr("checked");
             var requiredNo = $messageRequiredNo.attr("checked");
-            var sendDate = sendDateEl.val();
-            var sendTo = sendToEl.val();
-            var subject = subjectEl.val();
-            var body = bodyEl.val();
-            var taskDueDate = taskDueDateEl.val();
-            var eventDate = eventDateEl.val();
-            var eventTimeHour = eventTimeHourEl.val();
-            var eventTimeMinute = eventTimeMinuteEl.val();
-            var eventTimeAMPM = eventTimeAMPMEl.val();
-            var eventPlace = eventPlaceEl.val();
+            var sendDate = $messageFieldSendDate.val();
+            var sendTo = $messageFieldTo.val();
+            var subject = $messageFieldSubject.val();
+            var body = $messageFieldBody.val();
+            var taskDueDate = $messageTaskDueDate.val();
+            var eventDate = $messageEventDate.val();
+            var eventTimeHour = $messageEventTimeHour.val();
+            var eventTimeMinute = $messageEventTimeMinute.val();
+            var eventTimeAMPM = $messageEventTimeAMPM.val();
+            var eventPlace = $messageEventPlace.val();
 
-            var sendDateObj = $(sendDateEl).datepicker("getDate");
-            var taskDueDateObj = $(taskDueDateEl).datepicker("getDate");
-            var eventDateObj = $(eventDateEl).datepicker("getDate");
+            var sendDateObj = $($messageFieldSendDate).datepicker("getDate");
+            var taskDueDateObj = $($messageTaskDueDate).datepicker("getDate");
+            var eventDateObj = $($messageEventDate).datepicker("getDate");
 
             // Remove the invalidClass from each element first.
             if (displayErrors) clearInvalids();
@@ -772,33 +674,33 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             if (!requiredYes && !requiredNo) {
                 if (!displayErrors) return false;
                 valid = false;
-                $(".right", requiredEl).addClass(invalidClass);
+                $(".right", $messageFieldRequiredCheck).addClass(invalidClass);
             }
             if (!sendDate) {
                 if (!displayErrors) return false;
                 valid = false;
-                sendDateEl.addClass(invalidClass);
+                $messageFieldSendDate.addClass(invalidClass);
             }
             else if (modtoday > sendDateObj) {
                 if (!displayErrors) return false;
                 valid = false;
-                sendDateEl.addClass(invalidClass);
+                $messageFieldSendDate.addClass(invalidClass);
             }
             if (!sendTo) {
                 if (!displayErrors) return false;
                 valid = false;
-                sendToEl.addClass(invalidClass);
+                $messageFieldTo.addClass(invalidClass);
             }
 
             if (!subject) {
                 if (!displayErrors) return false;
                 valid = false;
-                subjectEl.addClass(invalidClass);
+                $messageFieldSubject.addClass(invalidClass);
             }
             if (!body) {
                 if (!displayErrors) return false;
                 valid = false;
-                bodyEl.addClass(invalidClass);
+                $messageFieldBody.addClass(invalidClass);
             }
 
 
@@ -809,17 +711,17 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     if (!taskDueDate) {
                         if (!displayErrors) return false;
                         valid = false;
-                        taskDueDateEl.addClass(invalidClass);
+                        $messageTaskDueDate.addClass(invalidClass);
                     }
                     else if (modtoday > taskDueDateObj) {
                         if (!displayErrors) return false;
                         valid = false;
-                        taskDueDateEl.addClass(invalidClass);
+                        $messageTaskDueDate.addClass(invalidClass);
                     }
                     else if (sendDateObj > taskDueDateObj) {
                         if (!displayErrors) return false;
                         valid = false;
-                        taskDueDateEl.addClass(invalidClass);
+                        $messageTaskDueDate.addClass(invalidClass);
                     }
                     break;
 
@@ -827,17 +729,17 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     if (!eventDate) {
                         if (!displayErrors) return false;
                         valid = false;
-                        eventDateEl.addClass(invalidClass);
+                        $messageEventDate.addClass(invalidClass);
                     }
                     else if (modtoday > eventDateObj) {
                         if (!displayErrors) return false;
                         valid = false;
-                        eventDateEl.addClass(invalidClass);
+                        $messageEventDate.addClass(invalidClass);
                     }
                     else if (sendDateObj > eventDateObj) {
                         if (!displayErrors) return false;
                         valid = false;
-                        eventDateEl.addClass(invalidClass);
+                        $messageEventDate.addClass(invalidClass);
                     }
                     else {
                         // If the event date is today, check that the time hasn't already passed.
@@ -860,9 +762,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                                 if (today.getTime() > eventDateObj.getTime()) {
                                     if (!displayErrors) return false;
                                     valid = false;
-                                    eventTimeHourEl.addClass(invalidClass);
-                                    eventTimeMinuteEl.addClass(invalidClass);
-                                    eventTimeAMPMEl.addClass(invalidClass);
+                                    $messageEventTimeHour.addClass(invalidClass);
+                                    $messageEventTimeMinute.addClass(invalidClass);
+                                    $messageEventTimeAMPM.addClass(invalidClass);
                                 }
                             }
                         }
@@ -870,22 +772,22 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     if (!eventTimeHour) {
                         if (!displayErrors) return false;
                         valid = false;
-                        eventTimeHourEl.addClass(invalidClass);
+                        $messageEventTimeHour.addClass(invalidClass);
                     }
                     if (!eventTimeMinute) {
                         if (!displayErrors) return false;
                         valid = false;
-                        eventTimeMinuteEl.addClass(invalidClass);
+                        $messageEventTimeMinute.addClass(invalidClass);
                     }
                     if (!eventTimeAMPM) {
                         if (!displayErrors) return false;
                         valid = false;
-                        eventTimeAMPMEl.addClass(invalidClass);
+                        $messageEventTimeAMPM.addClass(invalidClass);
                     }
                     if (!eventPlace) {
                         if (!displayErrors) return false;
                         valid = false;
-                        eventPlaceEl.addClass(invalidClass);
+                        $messageEventPlace.addClass(invalidClass);
                     }
 
                     break;
@@ -976,9 +878,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
                     toPost.calendarWrapper.component = "VTODO";
                     toPost.calendarWrapper.icalData.STATUS = "NEEDS-ACTION";
-                    if ($(messageTaskDueDate).val() !== "") {
-                        toPost.calendarWrapper.icalData.DUE = formatISO8601($(messageTaskDueDate).datepicker("getDate"));
-                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601($(messageTaskDueDate).datepicker("getDate"));
+                    if ($messageTaskDueDate.val() !== "") {
+                        toPost.calendarWrapper.icalData.DUE = formatISO8601($messageTaskDueDate.datepicker("getDate"));
+                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601($messageTaskDueDate.datepicker("getDate"));
                     }
 
                     break;
@@ -994,25 +896,25 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
                     toPost.calendarWrapper.component = "VEVENT";
                     // If the event date is filled out, we handle this normally and save the time information there.
-                    if ($(messageEventDate).datepicker("getDate") != null) {
-                        var startDate = $(messageEventDate).datepicker("getDate");
-                        startDate.setMinutes($(messageEventTimeMinute).val());
+                    var startDate = $messageEventDate.datepicker("getDate");
+                    if (startDate != null) {
+                        startDate.setMinutes($messageEventTimeMinute.val());
                         // Get the event time details and add to the eventDate obj.
-                        if ($(messageEventTimeAMPM).val() == "PM" && parseInt($(messageEventTimeHour).val()) != 12) {
-                            startDate.setHours(parseInt($(messageEventTimeHour).val()) + 12);
+                        if ($messageEventTimeAMPM.val() == "PM" && parseInt($messageEventTimeHour.val()) != 12) {
+                            startDate.setHours(parseInt($messageEventTimeHour.val()) + 12);
                         }
                         else {
-                            startDate.setHours($(messageEventTimeHour).val());
+                            startDate.setHours($messageEventTimeHour.val());
                         }
                         toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
                     }
                     // Otherwise, we need to check for and save the time information in case the user filled this out.
                     else {
-                        toPost.uxState["eventMin"] = $(messageEventTimeMinute).val();
-                        toPost.uxState["eventAMPM"] = $(messageEventTimeAMPM).val();
-                        toPost.uxState["eventHour"] = $(messageEventTimeHour).val();
+                        toPost.uxState["eventMin"] = $messageEventTimeMinute.val();
+                        toPost.uxState["eventAMPM"] = $messageEventTimeAMPM.val();
+                        toPost.uxState["eventHour"] = $messageEventTimeHour.val();
                     }
-                    toPost.calendarWrapper.icalData.LOCATION = $(messageEventPlace).val();
+                    toPost.calendarWrapper.icalData.LOCATION = $messageEventPlace.val();
 
 
                     break;
@@ -1256,7 +1158,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, currentMessage, null, null);
             } else {
                 // If subject field is empty, cancel jqm dialog and highlight subject field.
-                $("#save_reminder_dialog").jqmHide();
+                $saveReminderDialog.jqmHide();
                 $messageFieldSubject.addClass(invalidClass);
             }
         });
@@ -1265,7 +1167,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         $("#dlc-dontsave").live('click', function() {
             // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
             // back to this page with the dialog box still open
-            $("#save_reminder_dialog").jqmHide();
+            $saveReminderDialog.jqmHide();
             goToCDNLPage();
         });
 
@@ -1360,36 +1262,47 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
         var notificationTypeInit = function (type) {
+
+            clearInvalids();
+
             if ( type === "message" ) {
-                $("#composenotification_event_date").hide();
-                $("#composenotification_event_time").hide();
-                $("#composenotification_event_place").hide();
-                $("#composenotification_task_due_date").hide();
-                $("#cn-requiredno", $rootElement).attr("checked", "checked");
+                $eventDateContainer.hide();
+                $eventTimeContainer.hide();
+                $eventPlaceContainer.hide();
+                $taskDueDateContainer.hide();
+                $messageRequiredNo.attr("checked", "checked");
                 $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
                 $("#composenotification_required", $rootElement).hide();
             } else if (type === "task") {
-                $("#composenotification_event_date").hide();
-                $("#composenotification_event_time").hide();
-                $("#composenotification_event_place").hide();
+                $eventDateContainer.hide();
+                $eventTimeContainer.hide();
+                $eventPlaceContainer.hide();
 
-                $("#composenotification_task_due_date").show();
+                $messageTaskDueDate.val("");
+                $taskDueDateContainer.show();
 
-                $("#cn-requiredyes", $rootElement).attr("checked", "checked");
-                $("#composenotification_required", $rootElement).show();
+                $messageRequiredYes.attr("checked", "checked");
                 $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
+                $("#composenotification_required", $rootElement).show();
+
             } else {
-                $("#composenotification_event_date").show();
-                $("#composenotification_event_time").show();
-                $("#composenotification_event_place").show();
+                eventTimeInit(null, null, null);
+                $eventTimeContainer.show();
 
-                $("#composenotification_task_due_date").hide();
+                $messageEventDate.val("");
+                $eventDateContainer.show();
 
-                $("#cn-requiredyes", $rootElement).removeAttr("checked");
-                $("#cn-requiredno", $rootElement).removeAttr("checked");
+                $messageEventPlace.val("");
+                $eventPlaceContainer.show();
+
+                $taskDueDateContainer.hide();
+
+                $messageRequiredYes.removeAttr("checked");
+                $messageRequiredNo.removeAttr("checked");
                 $("#composenotification_required", $rootElement).show();
                 $("#composenotification_required .right input", $rootElement).removeAttr("disabled");
             }
+
         };
 
 

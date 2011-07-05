@@ -49,3 +49,24 @@
 { width: 70px; }
 
 #ui-datepicker-div {display: none;}
+
+#composenotification_box span.left{
+     display:block;
+     text-align:right;
+     width:140px;
+     float:left;
+     margin-bottom:10px;
+ }
+#composenotification_box span.right{
+    float:left;
+
+    margin-left:10px;
+    margin-bottom:10px;
+}
+#composenotification_required span {
+    margin-left:0;
+}
+
+#composenotification_required input[type=radio] {
+     top: -1px;
+}

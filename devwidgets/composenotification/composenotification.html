@@ -13,31 +13,6 @@
     <!-- TITLE -->
     <div id="cn-widget-title" class="s3d-contentpage-title">Create Notification</div>
 
-        <style type="text/css">
-            #composenotification_box span.left{
-                 display:block;
-                 text-align:right;
-                 width:140px;
-                 float:left;
-                 margin-bottom:10px;
-             }
-            #composenotification_box span.right{
-                float:left;
-
-                margin-left:10px;
-                margin-bottom:10px;
-            }
-            #composenotification_required span {
-                margin-left:0;
-            }
-
-            #composenotification_required input[type=radio] {
-                 top: -1px;
-            }
-        </style>
-
-
-
     <!-- FORM -->
     <div id="message_form" style="background-color: #efefef;border: 3px solid #e6e6e6;border-radius: 10px;padding:  10px;padding-bottom: 0px;">
     
@@ -106,7 +81,8 @@
                         <span class="left"><label for="cn-consequence">Consequence(s) for Not Completing This Task</label></span>
                         <span class="right"><textarea class="compose-form-elm text-field" id="cn-consequence" style="width:500px" rows="1"></textarea></span>
                     </div>
-                    <!--div>&nbsp;</div-->
+                    <!-- HACK: cosmetic fix for messages -->
+                    <div style="clear:both;height:0;margin:0;padding:0;"></div>
 
                 </div>
 
@@ -127,31 +103,6 @@
                             <select class="compose-form-elm" id="cn-dynamiclistselect"></select>
                             <button id="create-new-dynamic-list-button" class="s3d-button s3d-overlay-button">__MSG__CREATE_OR_EDIT_DYNAMIC_LISTS__</button>
                         </span>
-                    </div>
-
-                    <!-- SAVE REMINDER DIALOG -->
-                    <div id="save_reminder_dialog" class="dialog">
-                        <!-- Dialog Header -->
-                        <div class="dialog_header">
-                            <div class="dialog_header_inner">
-                                <h1>__MSG__WARNING__</h1>
-                                <a href="javascript:;" class="jqmClose dialog_close_image" title="__MSG__CLOSE_DIALOG__">__MSG__CLOSE_DIALOG__</a>
-                            </div>
-                        </div>
-                        <!-- Dialog Content -->
-                        <div class="dialog_content">
-                            <p>__MSG__YOU_ARE_ABOUT_TO_LEAVE_THE_CREATE/EDIT_NOTIFICATION_PANE_DO_YOU_WANT_TO_SAVE_YOUR_NOTIFICATION_BEFORE_YOU_CREATE_A_NEW_LIST_IF_YOU_DON'T_ANY_CHANGES_YOU'VE_MADE_WILL_BE_LOST__</p>
-                            <div class="dialog_buttons">
-                                <button type="button" id="dlc-save" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
-                                <button type="button" id="dlc-dontsave" class="s3d-button"><span class="s3d-button-inner">__MSG__DON'T_SAVE__</span></button>
-                                <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                            </div>
-                        </div>
-                        <!-- Dialog Footer -->
-                        <div class="dialog_footer">
-                            <div class="dialog_footer_inner"><!--
-                            --></div>
-                        </div>
                     </div>
 
                     <!-- SUBJECT-->
@@ -210,6 +161,32 @@
         </div>                             
     
     </div>
+
+    <!-- SAVE REMINDER DIALOG -->
+    <div id="save_reminder_dialog" class="dialog">
+        <!-- Dialog Header -->
+        <div class="dialog_header">
+            <div class="dialog_header_inner">
+                <h1>__MSG__WARNING__</h1>
+                <a href="javascript:;" class="jqmClose dialog_close_image" title="__MSG__CLOSE_DIALOG__">__MSG__CLOSE_DIALOG__</a>
+            </div>
+        </div>
+        <!-- Dialog Content -->
+        <div class="dialog_content">
+            <p>__MSG__YOU_ARE_ABOUT_TO_LEAVE_THE_CREATE/EDIT_NOTIFICATION_PANE_DO_YOU_WANT_TO_SAVE_YOUR_NOTIFICATION_BEFORE_YOU_CREATE_A_NEW_LIST_IF_YOU_DON'T_ANY_CHANGES_YOU'VE_MADE_WILL_BE_LOST__</p>
+            <div class="dialog_buttons">
+                <button type="button" id="dlc-save" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
+                <button type="button" id="dlc-dontsave" class="s3d-button"><span class="s3d-button-inner">__MSG__DON'T_SAVE__</span></button>
+                <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+            </div>
+        </div>
+        <!-- Dialog Footer -->
+        <div class="dialog_footer">
+            <div class="dialog_footer_inner"><!--
+            --></div>
+        </div>
+    </div>
+
  </div>
 
 <!-- JAVASCRIPT -->
