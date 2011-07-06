@@ -69,52 +69,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var invalidClass = "composenotification_invalid";
 
-
-
-         //////////////////////
-        // jQuery selectors //
-        //////////////////////
-
-        /**
-         * Widget's root element
-         */
-        var $rootElement = $("#" + tuid);
-
-        var $messageFieldRequiredCheck = $("#composenotification_required", $rootElement);
-        var $messageRequiredYes = $("#cn-requiredyes", $rootElement);
-        var $messageRequiredNo = $("#cn-requiredno", $rootElement);
-        var $messageFieldSendDate = $("#datepicker-senddate-text", $rootElement);
-        var $messageFieldTo = $("#cn-dynamiclistselect", $rootElement);
-        var $messageFieldSubject = $("#cn-subject", $rootElement);
-        var $messageFieldBody = $("#cn-body", $rootElement);
-        var $messageTaskDueDate = $("#datepicker-taskduedate-text", $rootElement);
-        var $messageEventDate = $("#datepicker-eventdate-text", $rootElement);
-        var $messageEventTimeHour = $("#cn-event-timehour", $rootElement);
-        var $messageEventTimeMinute = $("#cn-event-timeminute");
-        var $messageEventTimeAMPM = $("#cn-event-timeampm");
-        var $messageEventPlace = $("#cn-event-place");
-        var $saveReminderDialog = $("#save_reminder_dialog", $rootElement);
-        var $taskDueDateContainer = $("#composenotification_task_due_date", $rootElement);
-
-        /**
-         * Container element for var $messageEventTimeHour, $messageEventTimeMinute and $messageEventTimeAMPM
-         */
-        var $eventTimeContainer = $("#composenotification_event_time", $rootElement);
-        var $eventDateContainer = $("#composenotification_event_date", $rootElement);
-        var $eventPlaceContainer = $("#composenotification_event_place", $rootElement);
-
-
-
-
-
-
-
-
-
         /**
          *
          * EVENT TIME KEY-VALUE PAIRS
-         * (used for populating the dropdown menus)
+         * (used for populating the drop-down menus)
          *
          */
         // Various arrays for event time picking.
@@ -144,6 +102,57 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             'AM' : 'AM',
             'PM' : 'PM'
         };
+
+
+
+         //////////////////////
+        // jQuery selectors //
+        //////////////////////
+
+        /**
+         * Widget's root element
+         */
+        var $rootElement = $("#" + tuid);
+
+        var $messageFieldType = $("#cn-notification-type", $rootElement);
+        var $messageFieldRequiredCheck = $("#composenotification_required", $rootElement);
+        var $messageRequiredYes = $("#cn-requiredyes", $rootElement);
+        var $messageRequiredNo = $("#cn-requiredno", $rootElement);
+        var $messageFieldSendDate = $("#datepicker-senddate-text", $rootElement);
+        var $messageFieldTo = $("#cn-dynamiclistselect", $rootElement);
+        var $messageFieldSubject = $("#cn-subject", $rootElement);
+        var $messageFieldBody = $("#cn-body", $rootElement);
+        var $messageTaskDueDate = $("#datepicker-taskduedate-text", $rootElement);
+        var $messageEventDate = $("#datepicker-eventdate-text", $rootElement);
+        var $messageEventTimeHour = $("#cn-event-timehour", $rootElement);
+        var $messageEventTimeMinute = $("#cn-event-timeminute");
+        var $messageEventTimeAMPM = $("#cn-event-timeampm");
+        var $messageEventPlace = $("#cn-event-place");
+
+        var $taskDueDateContainer = $("#composenotification_task_due_date", $rootElement);
+        /**
+         * Container element for var $messageEventTimeHour, $messageEventTimeMinute and $messageEventTimeAMPM
+         */
+        var $eventTimeContainer = $("#composenotification_event_time", $rootElement);
+        var $eventDateContainer = $("#composenotification_event_date", $rootElement);
+        var $eventPlaceContainer = $("#composenotification_event_place", $rootElement);
+
+        /**
+         * For dialog-overlay to remind user to save their draft.
+         * (When user clicks on 'Create New DyNamic List' button.)
+         */
+        var $saveReminderDialog = $("#save_reminder_dialog", $rootElement).jqm({
+            modal: true,
+            overlay: 20,
+            toTop: true,
+            onShow: null
+        }).css("position", "absolute").css("top", "250px");
+
+
+
+        //////////////////////////
+        // UI related functions //
+        //////////////////////////
 
         var formatISO8601 = function(date) {
             var gmtDate = sakai.api.Util.Datetime.toGMT(date);
@@ -221,23 +230,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $(".notifdetail-buttons").hide();
         };
 
-        /**
-         * Unbind everything to prevent duplicacy issues.
-         */
-        /*var unbindAll = function() {
-            $("#cn-saveasdraft-button").die();
-            $("#cn-queue-button").die();
-            $("#cn-queuedraft-button").die();
-            $("#cn-updatedraft-button").die();
-            $("#cn-deletedraft-button").die();
-            $("#cn-deletetrashed-button").die();
-            $("#cn-movetodrafts-button").die();
-            $("#cn-queuecopytodrafts-button").die();
-            $("#cn-deletequeued-button").die();
-            $("#cn-editrashed-button").die();
-            $("#cn-archivecopytodrafts-button").die();
-            $("#dlc-save").die();
-        };*/
 
         /**
          * This will reset the whole widget to its default state.
@@ -248,11 +240,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $(".compose-form-elm").each(function() {
                 clearElement(this);
             });
-            $(".cn-task").hide();
-            $(".cn-event").hide();
-            $("#must-be-req").hide();
-            $("#task-radio").removeAttr("disabled");
-            $(".composenotification_taskorevent").hide();
+
         };
 
         /**
@@ -365,125 +353,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             } // Clearing validation errors
         });
 
-        /**
-         *
-         * VALIDATION EVENT HANDLERS
-         *
-         */
-        $messageFieldSendDate.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-        $messageFieldSendDate.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageTaskDueDate.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-        $messageTaskDueDate.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageEventDate.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-        $messageEventDate.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageFieldSubject.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-        $messageFieldSubject.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageFieldBody.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-        $messageFieldBody.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageEventPlace.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-        $messageEventPlace.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageFieldTo.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageEventTimeHour.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageEventTimeMinute.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-        $messageEventTimeAMPM.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
-            isDirty = true;
-        });
-
-
-        /**
-         *
-         * EVENT HANDLERS FOR REMINDERS
-         *
-         */
-        // If 'No' is checked for required, it CANNOT be a task.
-        // Disable the task radiobox and show the appropriate message.
-        $messageRequiredNo.change(function() {
-            $("#composenotification_required .right").removeClass(invalidClass); // Clearing validation errors
-            $messageRequiredNo.attr("checked", "checked");
-            $("#task-radio").attr("disabled", "disabled");
-            $("#must-be-req").show();
-            isDirty = true;
-        });
-        // If 'Yes' is checked for required, show the task/event field.
-        $messageRequiredYes.change(function() {
-            $("#composenotification_required .right").removeClass(invalidClass); // Clearing validation errors
-
-            $(".composenotification_taskorevent").show();
-            $("#must-be-req").hide();
-            $("#task-radio").removeAttr("disabled");
-            isDirty = true;
-        });
 
 
         /**
@@ -516,16 +385,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * CREATE NEW DYNAMIC LIST BUTTON FUNCTIONS
          *
          */
-        // For dialog-overlay to remind user to save their draft.
-        // (When user clicks on 'Create New Dyanmic List' button.)
-        $saveReminderDialog.jqm({
-            modal: true,
-            overlay: 20,
-            toTop: true,
-            onShow: null
-        });
-        $saveReminderDialog.css("position", "absolute");
-        $saveReminderDialog.css("top", "250px");
+
 
         $("#create-new-dynamic-list-button").live("click", function() {
             if (isDirty) {
@@ -539,91 +399,122 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Redirect to the Create New Dynamic Lists page.
         var goToCDNLPage = function() {
-            //resetView();
             $.bbq.pushState({l: "dynlists"}, 2);
+        };
+
+        var fillInTaskSpecificData = function () {
+            $messageFieldType.val("task");
+            notificationTypeInit("task");
+            $messageRequiredYes.attr("checked", true); // tasks are always required
+            $messageFieldSubject.val(currentMessage.calendarWrapper.icalData.SUMMARY);
+            $messageFieldBody.val(currentMessage.calendarWrapper.icalData.DESCRIPTION);
+            if (currentMessage.calendarWrapper.icalData.DUE != null) {
+                var taskDate = sakai.api.Util.parseSakaiDate(currentMessage.calendarWrapper.icalData.DUE);
+                $messageTaskDueDate.datepicker("setDate", taskDate);
+            }
+        };
+
+        var messageHasSavedUXState = function() {
+            if (currentMessage.uxState["eventMin"] != null) {
+                return true;
+            }
+            else if (currentMessage.uxState["eventHour"] != null) {
+                return true;
+            }
+            else if (currentMessage.uxState["eventAMPM"] != null) {
+                return true;
+            }
+            return false;
+        };
+
+        var fillInEventSpecificData = function () {
+            $messageFieldType.val("event");
+            notificationTypeInit("event");
+            //var isRequired = $.isArray(currentMessage.calendarWrapper.icalData.CATEGORIES) &&  $.inArray("MyBerkeley-Required", currentMessage.calendarWrapper.icalData.CATEGORIES) !== -1;
+            if(currentMessage.calendarWrapper.isRequired) {
+                $messageRequiredYes.attr("checked", true);
+            } else {
+                $messageRequiredNo.attr("checked", true);
+            }
+
+            $messageFieldSubject.val(currentMessage.calendarWrapper.icalData.SUMMARY);
+            $messageFieldBody.val(currentMessage.calendarWrapper.icalData.DESCRIPTION);
+            // If the event date was filled out properly, we can extract all the proper date and time information from it.
+            if (currentMessage.calendarWrapper.icalData.DTSTART != null) {
+                var eventDate = sakai.api.Util.parseSakaiDate(currentMessage.calendarWrapper.icalData.DTSTART);
+                var hours = eventDate.getHours();
+                var minutes = eventDate.getMinutes();
+                var AMPM = "AM";
+                $messageEventDate.datepicker("setDate", eventDate);
+                if (hours > 11) {
+                    if (hours !== 12) {
+                        hours = hours - 12;
+                    }
+                    AMPM = "PM";
+                }
+                else
+                if (hours === 0) {
+                    hours = hours + 12;
+                }
+                eventTimeInit(hours, minutes, AMPM);
+            }
+            // If it was not filled out properly but the time fields were still filled out by the user, we
+            // still need to handle this case and put in the information properly.
+            else if (messageHasSavedUXState()) {
+
+                var hours = currentMessage.uxState["eventHour"];
+                var minutes = currentMessage.uxState["eventMin"];
+                var AMPM = currentMessage.uxState["eventAMPM"];
+
+                eventTimeInit(hours, minutes, AMPM);
+            }
+
+            if(currentMessage.calendarWrapper.icalData.LOCATION != null) {
+                $messageEventPlace.val(currentMessage.calendarWrapper.icalData.LOCATION);
+            }
+        };
+
+        var fillInMessageSpecificData = function () {
+            $messageFieldType.val("message");
+            notificationTypeInit("message");
+            $messageFieldSubject.val(currentMessage.subject);
+            $messageFieldBody.val(currentMessage.body);
+            $messageRequiredNo.attr("checked", "checked"); //messages are not required
         };
 
         /**
          * Fill in the notification detail page with the message's information.
-         * @param {Object} message The message whose info we will extract.
          */
         var fillInMessage = function(callback) {
-            var check = checkEventFields(currentMessage);
-            var eventDate;
-            var taskDate;
-            var sendDate;
 
             // Fill out all the common fields.
             if (currentMessage["sendDate"] != null && currentMessage["sendDate"] !== "null") {
-                sendDate = sakai.api.Util.parseSakaiDate(currentMessage["sendDate"]);
+                var sendDate = sakai.api.Util.parseSakaiDate(currentMessage["sendDate"]);
                 $messageFieldSendDate.datepicker("setDate", sendDate);
             }
+
             dynamicListInit(currentMessage["dynamicListID"]);
 
-            // If it's a reminder, fill in the reminder categories after checking if it
-            // is a task or an event, and show the proper fields for the user.
-            if (currentMessage.type === "calendar") {
-
-                // it's a task or event
-                $messageFieldSubject.val(currentMessage.calendarWrapper.icalData.SUMMARY);
-                $messageFieldBody.val(currentMessage.calendarWrapper.icalData.DESCRIPTION);
-
-                $messageRequiredYes.attr("checked", true);
-
-                // Is it a task or an event?                
-                if (currentMessage.calendarWrapper.icalData.DUE != null) {
-                    // It's a task.
-                      $(".cn-task").show();
-                    taskDate = sakai.api.Util.parseSakaiDate(currentMessage.calendarWrapper.icalData.DUE);
-                    $messageTaskDueDate.datepicker("setDate", taskDate);
-                }
-                else if (!check) {
-                    // It's an event.
-                    $(".cn-event").show();
-                    // If the event date was filled out properly, we can extract all the proper date and time information from it.                       
-                    if (currentMessage.calendarWrapper.icalData.DTSTART != null) {
-                        eventDate = sakai.api.Util.parseSakaiDate(currentMessage.calendarWrapper.icalData.DTSTART);
-                        var hours = eventDate.getHours();
-                        var minutes = eventDate.getMinutes();
-                        var AMPM = "AM";
-                        $messageEventDate.datepicker("setDate", eventDate);
-                        if (hours > 11) {
-                            if (hours !== 12) {
-                                hours = hours - 12;
-                            }
-                            AMPM = "PM";
-                        }
-                        else
-                        if (hours === 0) {
-                            hours = hours + 12;
-                        }
-                        eventTimeInit(hours, minutes, AMPM);
-                    }
-                    // If it was not filled out properly but the time fields were still filled out by the user, we
-                    // still need to handle this case and put in the information properly.
-                    else if (!check) {
-                        $(".cn-event").show();
-
-                        var hours = currentMessage.uxState["eventHour"];
-                        var minutes = currentMessage.uxState["eventMin"];
-                        var AMPM = currentMessage.uxState["eventAMPM"];
-
-                        eventTimeInit(hours, minutes, AMPM);
-                    }
-                    $messageEventPlace.val(currentMessage.calendarWrapper.icalData.LOCATION);
-                }
+            // Chose notification type
+            var type = currentMessage.type;
+            if ( type === "calendar" ) {
+                type = currentMessage.calendarWrapper.component;
             }
-            else {
 
-                // it's a message
-
-                $messageFieldSubject.val(currentMessage.subject);
-                $messageFieldBody.val(currentMessage.body);
-                $messageRequiredNo.attr("checked", "checked");
-                $("#task-radio").attr("disabled", "disabled");
-                $("#must-be-req").show();
-
+            switch(type) {
+                case "VTODO":
+                    fillInTaskSpecificData();
+                    break;
+                case "VEVENT":
+                    fillInEventSpecificData();
+                    break;
+                case "message":
+                    fillInMessageSpecificData();
+                    break;
+                default:
+                    break;
             }
+
             if ($.isFunction(callback)) {
                 callback(true);
             }
@@ -699,7 +590,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
 
-            var type = $("#cn-notification-type", $rootElement).val();
+            var type = $messageFieldType.val();
 
             switch(type) {
                 case "task":
@@ -804,21 +695,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             return valid;
         };
 
-        var checkEventFields = function(message) {
-            if ((message.calendarWrapper) && message.calendarWrapper.icalData.LOCATION != null) {
-                return false;
-            }
-            else if (message.uxState["eventMin"] != null) {
-                return false;
-            }
-            else if (message.uxState["eventHour"] != null) {
-                return false;
-            }
-            else if (message.uxState["eventAMPM"] != null) {
-                return false;
-            }
-            return true;
-        };
+
 
         /**
          * Save the information currently on the notifiaction detail page
@@ -861,7 +738,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
 
-            var type = $("#cn-notification-type", $rootElement).val();
+            var type = $messageFieldType.val();
 
             switch(type) {
                 case "task":
@@ -1032,35 +909,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 dynamicListInit(null);
             }
 
-            // Chose notification type
-            var type = currentMessage.type;
-            if ( type === "calendar" ) {
-                type = currentMessage.calendarWrapper.component;
-            }
-
-            switch(type) {
-                case "VTODO":
-                    $("#cn-notification-type", $rootElement).val("task");
-                    notificationTypeInit("task");
-                    break;
-                case "VEVENT":
-                    $("#cn-notification-type", $rootElement).val("event");
-                    notificationTypeInit("event");
-                    break;
-                case "message":
-                    $("#cn-notification-type", $rootElement).val("message");
-                    notificationTypeInit("message");
-                    break;
-                default:
-                    break;
-            }
-
-
-
-
-             // Hide all the buttons
-             hideAllButtonLists();
-
             // Are we calling this from drafts?
             if (calledFrom == "drafts") {
                 // Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
@@ -1140,119 +988,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
         };
 
-         // Copying message to drafts...
-        $("#cn-archivecopytodrafts-button").live('click', function() {
-            postNotification(saveData("drafts", true), backToArchive, null, true, "Copy");
-        });
 
-        // Event handler for when user clicks on DLC "Save" button.
-        $("#dlc-save").live('click', function() {
-            // Check that the subject field isn't empty before saving
-            if ($messageFieldSubject.val() !== "") {
-                // Save the draft.
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, currentMessage, null, null);
-            } else {
-                // If subject field is empty, cancel jqm dialog and highlight subject field.
-                $saveReminderDialog.jqmHide();
-                $messageFieldSubject.addClass(invalidClass);
-            }
-        });
-
-        // Event handler for when you click on the "Don't Save" button on DLC dialog.
-        $("#dlc-dontsave").live('click', function() {
-            // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
-            // back to this page with the dialog box still open
-            $saveReminderDialog.jqmHide();
-            goToCDNLPage();
-        });
-
-
-        // Queueing this draft...
-        $("#cn-queuedraft-button").live('click', function() {
-            if (checkFieldsForErrors(true)) {
-                postNotification(saveData("queue", true), backToDrafts, currentMessage, null, "Queue");
-            }
-        });
-
-        // Updating and re-saving this draft...
-        $("#cn-updatedraft-button").live('click', function() {
-            postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, currentMessage, null, "Save");
-        });
-
-        // Deleting the draft...
-        $("#cn-deletedraft-button").live('click', function() {
-            postNotification(saveData("trash", false), backToDrafts, currentMessage, null, "Delete");
-        });
-
-         // When someone clicks on the 'Queue' button from base panel.
-        $("#cn-queue-button").live('click', function() {
-            if (checkFieldsForErrors(true)) {
-                postNotification(saveData("queue", true), backToDrafts, null, null, "Queue");
-            }
-        });
-        // When someone clicks on the 'Save as Draft' button from base panel.
-        $("#cn-saveasdraft-button").live('click', function() {
-            if ($messageFieldSubject.val() === "") {
-                $messageFieldSubject.addClass(invalidClass);
-            } else {
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
-            }
-        });
-
-        $("#cn-cancel-button").live("click", function(){
-             $.bbq.removeState(['new', 'edit']);
-            //return false;
-        });
-
-        // Moving message from queue to drafts...
-        $("#cn-movetodrafts-button").live('click', function() {
-            postNotification(saveData("drafts", true), backToQueue, currentMessage, null, "Move");
-        });
-
-        // Copying message to drafts...
-        $("#cn-queuecopytodrafts-button").live('click', function() {
-            postNotification(saveData("drafts", true), backToQueue, null, true, "Copy");
-        });
-
-        // Deleting message...
-        $("#cn-deletequeued-button").live('click', function() {
-            postNotification(saveData("trash", false), backToQueue, currentMessage, null, "Delete");
-        });
-
-        // Enable editing of message (move it to drafts and re-initialise widget).
-        $("#cn-editrashed-button").live('click', function() {
-            postNotification(saveData("drafts", checkFieldsForErrors(false)), loadNotification("drafts", currentMessageId), currentMessage, false, null);
-        });
-
-        // Hard delete this message (delete it from the trash).
-        $("#cn-deletetrashed-button").live('click', function() {
-            var requests = [];
-            var msgUrl = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + currentMessageId;
-
-            var toDelete = {
-                "url": msgUrl,
-                "method": "POST",
-                "parameters": {
-                    ":operation": "delete"
-                }
-            };
-            requests.push(toDelete);
-            $.ajax({
-                url: sakai.config.URL.BATCH,
-                traditional: true,
-                type: "POST",
-                data: {
-                    requests: $.toJSON(requests)
-                },
-                success: function(data) {
-                    showGeneralMessage("Delete successful.");
-                    backToTrash();
-                },
-                error: function(xhr, textStatus, thrownError) {
-                    showGeneralMessage("Delete failed.");
-                }
-            });
-        });
 
 
 
@@ -1301,15 +1037,256 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
 
+        ////////////////////
+        // Event handlers //
+        ////////////////////
 
-
-
-        $("#cn-notification-type", $rootElement).change(function()
-        {
+        // Notification type combo
+        $messageFieldType.change(function() {
             var value = $(this).attr('value');
             notificationTypeInit(value);
             isDirty = true;
         });
+
+        // Copying message to drafts...
+        $("#cn-archivecopytodrafts-button").click(function() {
+            postNotification(saveData("drafts", true), backToArchive, null, true, "Copy");
+        });
+
+        // Event handler for when user clicks on DLC "Save" button.
+        $("#dlc-save").click(function() {
+            // Check that the subject field isn't empty before saving
+            if ($messageFieldSubject.val() !== "") {
+                // Save the draft.
+                postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, currentMessage, null, null);
+            } else {
+                // If subject field is empty, cancel jqm dialog and highlight subject field.
+                $saveReminderDialog.jqmHide();
+                $messageFieldSubject.addClass(invalidClass);
+            }
+        });
+
+        // Event handler for when you click on the "Don't Save" button on DLC dialog.
+        $("#dlc-dontsave").click(function() {
+            // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
+            // back to this page with the dialog box still open
+            $saveReminderDialog.jqmHide();
+            goToCDNLPage();
+        });
+
+        // Queueing this draft...
+        $("#cn-queuedraft-button").click(function() {
+            if (checkFieldsForErrors(true)) {
+                postNotification(saveData("queue", true), backToDrafts, currentMessage, null, "Queue");
+            }
+        });
+
+        // Updating and re-saving this draft...
+        $("#cn-updatedraft-button").click(function() {
+            postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, currentMessage, null, "Save");
+        });
+
+        // Deleting the draft...
+        $("#cn-deletedraft-button").click(function() {
+            postNotification(saveData("trash", false), backToDrafts, currentMessage, null, "Delete");
+        });
+
+        // When someone clicks on the 'Queue' button from base panel.
+        $("#cn-queue-button").click(function() {
+            if (checkFieldsForErrors(true)) {
+                postNotification(saveData("queue", true), backToDrafts, null, null, "Queue");
+            }
+        });
+
+        // When someone clicks on the 'Save as Draft' button from base panel.
+        $("#cn-saveasdraft-button").click(function() {
+            if ($messageFieldSubject.val() === "") {
+                $messageFieldSubject.addClass(invalidClass);
+            } else {
+                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, "Save");
+            }
+        });
+
+        $("#cn-cancel-button").click(function(){
+             $.bbq.removeState(['new', 'edit']);
+            //return false;
+        });
+
+        // Moving message from queue to drafts...
+        $("#cn-movetodrafts-button").click(function() {
+            postNotification(saveData("drafts", true), backToQueue, currentMessage, null, "Move");
+        });
+
+        // Copying message to drafts...
+        $("#cn-queuecopytodrafts-button").click(function() {
+            postNotification(saveData("drafts", true), backToQueue, null, true, "Copy");
+        });
+
+        // Deleting message...
+        $("#cn-deletequeued-button").click(function() {
+            postNotification(saveData("trash", false), backToQueue, currentMessage, null, "Delete");
+        });
+
+        // Enable editing of message (move it to drafts and re-initialise widget).
+        $("#cn-editrashed-button").click(function() {
+            postNotification(saveData("drafts", checkFieldsForErrors(false)), loadNotification("drafts", currentMessageId), currentMessage, false, null);
+        });
+
+        // Hard delete this message (delete it from the trash).
+        $("#cn-deletetrashed-button").click(function() {
+            var requests = [];
+            var msgUrl = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + currentMessageId;
+
+            var toDelete = {
+                "url": msgUrl,
+                "method": "POST",
+                "parameters": {
+                    ":operation": "delete"
+                }
+            };
+            requests.push(toDelete);
+            $.ajax({
+                url: sakai.config.URL.BATCH,
+                traditional: true,
+                type: "POST",
+                data: {
+                    requests: $.toJSON(requests)
+                },
+                success: function(data) {
+                    showGeneralMessage("Delete successful.");
+                    backToTrash();
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    showGeneralMessage("Delete failed.");
+                }
+            });
+        });
+
+
+
+        ///////////////////////////////
+        // Validation event handlers //
+        ///////////////////////////////
+
+        $messageRequiredNo.change(function() {
+            // Clearing validation errors
+            $("#composenotification_required .right", $rootElement).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageRequiredYes.change(function() {
+            // Clearing validation errors
+            $("#composenotification_required .right", $rootElement).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageFieldSendDate.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+        $messageFieldSendDate.keypress(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageTaskDueDate.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+        $messageTaskDueDate.keypress(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageEventDate.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageEventDate.keypress(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageFieldSubject.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageFieldSubject.keypress(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageFieldBody.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageFieldBody.keypress(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageEventPlace.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageEventPlace.keypress(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageFieldTo.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageEventTimeHour.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageEventTimeMinute.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+        $messageEventTimeAMPM.change(function() {
+            // Clearing validation errors
+            $(this).removeClass(invalidClass);
+            isDirty = true;
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         /**
@@ -1321,7 +1298,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 clearElement(this);
             });
 
-            $("#cn-notification-type", $rootElement).val("task");
+            $messageFieldType.val("task");
 
 
             dynamicListInit(null);
