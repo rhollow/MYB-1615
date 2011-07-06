@@ -117,17 +117,17 @@
 }
 
 /* For context selection drop-down menu */
-#dlm_create_button_multiple_choice_container:hover span#dynamic_lists_create_new {
+.dynamiclistmanager_widget #dlm_create_button_multiple_choice_container:hover span#dynamic_lists_create_new {
     color: #fff;
 }
 
-#dlm_create_button_multiple_choice_container:hover #dlm_create_button_and_arrow_div span#small_arrow{
+.dynamiclistmanager_widget #dlm_create_button_multiple_choice_container:hover #dlm_create_button_and_arrow_div span#small_arrow{
     display:inline-block;
     background:url('/devwidgets/entity/images/entity_changepic_hover_arrow.png') no-repeat top left transparent;
     height: 8px;
     width: 12px;
 }
-#dlm_create_button_multiple_choice_container #dlm_create_button_and_arrow_div span#small_arrow{
+.dynamiclistmanager_widget #dlm_create_button_multiple_choice_container #dlm_create_button_and_arrow_div span#small_arrow{
     display:inline-block;
     background:url('/devwidgets/entity/images/entity_changepic_arrow.png') no-repeat top left transparent;
     height: 8px;

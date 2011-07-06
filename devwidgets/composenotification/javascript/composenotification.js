@@ -494,25 +494,21 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // Return to drafts panel.
         var backToDrafts = function () {
             $.bbq.pushState({l: "notifications/drafts"}, 2);
-            //sakai_global.groupnotificationmanager.showDrafts();
         };
 
         // Return to queue panel.
         var backToQueue = function () {
             $.bbq.pushState({l: "notifications/queue"}, 2);
-            //sakai_global.groupnotificationmanager.showQueue();
         };
 
         // Return to archive panel.
         var backToArchive = function () {
             $.bbq.pushState({l: "notifications/archive"}, 2);
-            //sakai_global.groupnotificationmanager.showArchive();
         };
 
         // Return to trash panel.
         var backToTrash = function() {
             $.bbq.pushState({l: "notifications/trash"}, 2);
-            //sakai_global.groupnotificationmanager.showTrash();
         };
 
         /**
@@ -543,9 +539,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Redirect to the Create New Dynamic Lists page.
         var goToCDNLPage = function() {
-            resetView();
+            //resetView();
             $.bbq.pushState({l: "dynlists"}, 2);
-            //window.location = "/dev/listpage.html#tab=existing"; // modified link to reflect bbq state
         };
 
         /**
