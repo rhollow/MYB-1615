@@ -163,29 +163,18 @@
     </div>
 
     <!-- SAVE REMINDER DIALOG -->
-    <div id="save_reminder_dialog" class="dialog">
-        <!-- Dialog Header -->
-        <div class="dialog_header">
-            <div class="dialog_header_inner">
-                <h1>__MSG__WARNING__</h1>
-                <a href="javascript:;" class="jqmClose dialog_close_image" title="__MSG__CLOSE_DIALOG__">__MSG__CLOSE_DIALOG__</a>
-            </div>
-        </div>
-        <!-- Dialog Content -->
-        <div class="dialog_content">
-            <p>__MSG__YOU_ARE_ABOUT_TO_LEAVE_THE_CREATE/EDIT_NOTIFICATION_PANE_DO_YOU_WANT_TO_SAVE_YOUR_NOTIFICATION_BEFORE_YOU_CREATE_A_NEW_LIST_IF_YOU_DON'T_ANY_CHANGES_YOU'VE_MADE_WILL_BE_LOST__</p>
-            <div class="dialog_buttons">
-                <button type="button" id="dlc-save" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
-                <button type="button" id="dlc-dontsave" class="s3d-button"><span class="s3d-button-inner">__MSG__DON'T_SAVE__</span></button>
-                <button type="button" class="s3d-button jqmClose"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-            </div>
-        </div>
-        <!-- Dialog Footer -->
-        <div class="dialog_footer">
-            <div class="dialog_footer_inner"><!--
-            --></div>
+    <div class="s3d-dialog s3d-dialog-container" id="save_reminder_dialog" style="z-index: 9999; display: none;">
+        <div class="s3d-dialog-close jqmClose"></div>
+        <h1 class="s3d-dialog-header">__MSG__WARNING__</h1>
+        <p style="margin-bottom: 40px;">__MSG__YOU_ARE_ABOUT_TO_LEAVE_THE_CREATE/EDIT_NOTIFICATION_PANE_DO_YOU_WANT_TO_SAVE_YOUR_NOTIFICATION_BEFORE_YOU_CREATE_A_NEW_LIST_IF_YOU_DON'T_ANY_CHANGES_YOU'VE_MADE_WILL_BE_LOST__</p>
+
+        <div id="save_reminder_dialog_container_actions" style="bottom: -6px;margin: 0 19px 20px 0; position: absolute;right: 0;">
+            <button type="button" class="s3d-link-button jqmClose s3d-bold">__MSG__CANCEL__</button>
+            <button type="button" id="dlc-save" class="s3d-button s3d-overlay-button" style="margin-left: 15px;">__MSG__SAVE__</button>
+            <button type="button" id="dlc-dontsave" class="s3d-button s3d-overlay-button" style="margin-left: 20px;">__MSG__DON'T_SAVE__</button>
         </div>
     </div>
+
 
  </div>
 

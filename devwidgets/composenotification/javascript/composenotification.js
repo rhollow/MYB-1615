@@ -148,6 +148,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             onShow: null
         }).css("position", "absolute").css("top", "250px");
 
+        var $createNewDynamicListButton = $("#create-new-dynamic-list-button");
+
 
 
         //////////////////////////
@@ -182,7 +184,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 var buttonImage = $("img[src$='" + buttonImagePath + "']");
                 $(buttonImage).show();
             });
-            $("#create-new-dynamic-list-button").show();
+            $createNewDynamicListButton.show();
         };
 
         /**
@@ -196,7 +198,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 var buttonImage = $("img[src$='" + buttonImagePath + "']");
                 $(buttonImage).hide();
             });
-            $("#create-new-dynamic-list-button").hide();
+            $createNewDynamicListButton.hide();
         };
 
         /**
@@ -231,23 +233,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
 
-        /**
-         * This will reset the whole widget to its default state.
-         * It will clear any values or texts that might have been entered.
-         * Called every time the widget is initalised.
-         */
-        var resetView = function() {
-            $(".compose-form-elm").each(function() {
-                clearElement(this);
-            });
 
-        };
+        ///////////////////////////////////////////////////////////
+        // Dynamic lists drop-down menu initialization functions //
+        ///////////////////////////////////////////////////////////
 
-        /**
-         *
-         * DROPDOWN MENU INITIALISATION FUNCTIONS
-         *
-         */
 
         /**
          * Returns a string containing a set of option elements.
@@ -317,11 +307,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $messageEventTimeAMPM.empty().append(ampmOptionsHTML);
         };
 
-        /**
-         *
-         * DATEPICKER INITIALISATION FUNCTIONS
-         *
-         */
+
+        //////////////////////////////////////////
+        // Date picker initialization functions //
+        //////////////////////////////////////////
+
         $messageFieldSendDate.datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
@@ -332,6 +322,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 isDirty = true;
             } // Clearing validation errors
         });
+
         $messageTaskDueDate.datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
@@ -342,6 +333,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 isDirty = true;
             } // Clearing validation errors
         });
+
         $messageEventDate.datepicker({
             showOn: 'button',
             buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
@@ -354,12 +346,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         });
 
 
+        //////////////////////////////
+        // BBQ navigation functions //
+        //////////////////////////////
 
-        /**
-         *
-         * PANEL NAVIGATION FUNCTIONS
-         *
-         */
         // Return to drafts panel.
         var backToDrafts = function () {
             $.bbq.pushState({l: "notifications/drafts"}, 2);
@@ -380,27 +370,31 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $.bbq.pushState({l: "notifications/trash"}, 2);
         };
 
-        /**
-         *
-         * CREATE NEW DYNAMIC LIST BUTTON FUNCTIONS
-         *
-         */
-
-
-        $("#create-new-dynamic-list-button").live("click", function() {
-            if (isDirty) {
-                $saveReminderDialog.jqmShow();
-            }
-            else {
-                goToCDNLPage();
-            }
-            return false;
-        });
-
-        // Redirect to the Create New Dynamic Lists page.
-        var goToCDNLPage = function() {
+        var switchToDynamicListsCreationWidget = function() {
             $.bbq.pushState({l: "dynlists"}, 2);
         };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         var fillInTaskSpecificData = function () {
             $messageFieldType.val("task");
@@ -430,7 +424,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         var fillInEventSpecificData = function () {
             $messageFieldType.val("event");
             notificationTypeInit("event");
-            //var isRequired = $.isArray(currentMessage.calendarWrapper.icalData.CATEGORIES) &&  $.inArray("MyBerkeley-Required", currentMessage.calendarWrapper.icalData.CATEGORIES) !== -1;
+
             if(currentMessage.calendarWrapper.isRequired) {
                 $messageRequiredYes.attr("checked", true);
             } else {
@@ -890,24 +884,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             });
 
 
-
-            // Reset page back to its original condition.
-            resetView();
-            clearInvalids();
-            hideAllButtonLists();
-
             eventTimeInit(null, null, null);
             isDirty = false;
-
-            // There are 2 calls to DLinit when we initialise the widget:
-            // 1) to set up the dropdown with its options
-            // 2) to select an option if there is an existing message
-            // To prevent concurrency issues between these 2 calls, check if we are
-            // NOT creating a new notification, and if this is indeed the case,
-            // then initialise a blank dropdown. Otherwise, fillInMessage should handle it.
-            if (currentMessage == null || currentMessage["dynamicListID"] == null) {
-                dynamicListInit(null);
-            }
 
             // Are we calling this from drafts?
             if (calledFrom == "drafts") {
@@ -926,7 +904,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             // Are we calling this from queue?
-            if (calledFrom == "queue") {
+            else if (calledFrom == "queue") {
 
                 $("#cn-widget-title").text("View Notification");
 
@@ -942,7 +920,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             // Are we calling this from acrhive?
-            if (calledFrom == "archive") {
+            else if (calledFrom == "archive") {
 
                 $("#cn-widget-title").text("View Notification");
 
@@ -958,7 +936,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             // Are we calling this from trash?       
-            if (calledFrom == "trash") {
+            else if (calledFrom == "trash") {
 
                 $("#cn-widget-title").text("View Notification");
 
@@ -970,22 +948,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
                 // Display the proper buttons.                
                 $("#trashview-buttons").show();
-
-
             }
 
-            // Else, user is creating a brand new blank notification.
-            if (calledFrom == null) {
-
-                $("#cn-widget-title").text("Create Notification");
-
-                // Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
-                reenableView();
-
-                // Show the proper button list
-                $("#createnew-buttons").show();
-
-            }
         };
 
 
@@ -1041,6 +1005,16 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // Event handlers //
         ////////////////////
 
+        $createNewDynamicListButton.click(function() {
+            if (isDirty) {
+                $saveReminderDialog.jqmShow();
+            }
+            else {
+                switchToDynamicListsCreationWidget();
+            }
+            return false;
+        });
+
         // Notification type combo
         $messageFieldType.change(function() {
             var value = $(this).attr('value');
@@ -1058,7 +1032,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             // Check that the subject field isn't empty before saving
             if ($messageFieldSubject.val() !== "") {
                 // Save the draft.
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), goToCDNLPage, currentMessage, null, null);
+                postNotification(saveData("drafts", checkFieldsForErrors(false)), switchToDynamicListsCreationWidget, currentMessage, null, null);
             } else {
                 // If subject field is empty, cancel jqm dialog and highlight subject field.
                 $saveReminderDialog.jqmHide();
@@ -1071,7 +1045,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
             // back to this page with the dialog box still open
             $saveReminderDialog.jqmHide();
-            goToCDNLPage();
+            switchToDynamicListsCreationWidget();
         });
 
         // Queueing this draft...
@@ -1290,7 +1264,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
         /**
-         * Resets the editing form UI
+         * This will reset the whole widget to its default state.
+         * It will clear any values or texts that might have been entered.
+         * Should be called every time the widget is initialised.
          */
         var resetForm = function() {
 
@@ -1298,15 +1274,20 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 clearElement(this);
             });
 
+            clearInvalids();
+
+            hideAllButtonLists();
+
             $messageFieldType.val("task");
 
-
-            dynamicListInit(null);
             eventTimeInit(null, null, null);
 
             reenableView();
             // Must be called after reenableView because it disables 'Required?' radio buttons
             notificationTypeInit("task");
+
+            // Resetting dynamic lists
+            $messageFieldTo.empty();
 
             isDirty = false;
 
@@ -1325,11 +1306,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             if(state.hasOwnProperty("new")) {
                 resetForm();
+                dynamicListInit(null);
+
                 //TODO: refactor this
                 $("#cn-widget-title").text("Create Notification");
                 $("#createnew-buttons").show();
                 $rootElement.show();
+
             } else if(state.hasOwnProperty("edit")) {
+
                 resetForm();
 
                 var box, msgId;
@@ -1383,12 +1368,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 return;
             }
 
-            resetForm();
+            //resetForm();
+
+            setState();
 
             // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
             $("div.composenotification_widget", $rootElement).show();
 
-            setState();
+
 
 
         };
