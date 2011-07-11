@@ -1,4 +1,4 @@
-define(["config/config", "config/env"], function(config, env) {
+define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(config) {
 
     // Insert custom configuration here
 
