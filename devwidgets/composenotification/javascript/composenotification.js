@@ -103,6 +103,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             'PM' : 'PM'
         };
 
+        /**
+         * The overlay transparency as a percentage. If 0 the overlay is disabled, and the page will remain interactive.
+         * If 100 the overlay will be 100% opaque.
+         */
+        var dialogOverlayTransparency = 20;
+
+        var datePickerButtonImageUrl = "/devwidgets/composenotification/images/calendar_icon.gif";
 
 
          //////////////////////
@@ -143,12 +150,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var $saveReminderDialog = $("#save_reminder_dialog", $rootElement).jqm({
             modal: true,
-            overlay: 20,
+            overlay: dialogOverlayTransparency,
             toTop: true,
             onShow: null
         }).css("position", "absolute").css("top", "250px");
 
-        var $createNewDynamicListButton = $("#create-new-dynamic-list-button");
+        var $createNewDynamicListButton = $("#create-new-dynamic-list-button", $rootElement);
+        var $widgetTitle = $("#cn-widget-title", $rootElement);
 
 
 
@@ -178,8 +186,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * Re-enables previously disabled fields.
          */
         var reenableView = function() {
-            $(".compose-form-elm").removeAttr("disabled");
-            $('input[id|=datepicker]').each(function() {
+            $(".compose-form-elm", $rootElement).removeAttr("disabled");
+            $('input[id|=datepicker]', $rootElement).each(function() {
                 var buttonImagePath = $(this).datepicker("option", "buttonImage");
                 var buttonImage = $("img[src$='" + buttonImagePath + "']");
                 $(buttonImage).show();
@@ -192,8 +200,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * notification authoring page. (used to create a non-editable mode)
          */
         var disableView = function() {
-            $(".compose-form-elm").attr("disabled", "disabled");
-            $('input[id|=datepicker]').each(function() {
+            $(".compose-form-elm", $rootElement).attr("disabled", "disabled");
+            $('input[id|=datepicker]', $rootElement).each(function() {
                 var buttonImagePath = $(this).datepicker("option", "buttonImage");
                 var buttonImage = $("img[src$='" + buttonImagePath + "']");
                 $(buttonImage).hide();
@@ -225,11 +233,81 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
         /**
+         * Initializes the form according to the selected notification type
+         * @param {String} type One of the following values: message, task or event
+         */
+        var notificationTypeInit = function (type) {
+
+            clearInvalids();
+
+            if ( type === "message" ) {
+                $eventDateContainer.hide();
+                $eventTimeContainer.hide();
+                $eventPlaceContainer.hide();
+                $taskDueDateContainer.hide();
+                $messageRequiredNo.attr("checked", "checked");
+                $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
+                $messageFieldRequiredCheck.hide();
+            } else if (type === "task") {
+                $eventDateContainer.hide();
+                $eventTimeContainer.hide();
+                $eventPlaceContainer.hide();
+                $messageTaskDueDate.val("");
+                $taskDueDateContainer.show();
+                $messageRequiredYes.attr("checked", "checked");
+                $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
+                $messageFieldRequiredCheck.show();
+
+            } else {
+                eventTimeInit(null, null, null);
+                $eventTimeContainer.show();
+                $messageEventDate.val("");
+                $eventDateContainer.show();
+                $messageEventPlace.val("");
+                $eventPlaceContainer.show();
+                $taskDueDateContainer.hide();
+                $messageRequiredYes.removeAttr("checked");
+                $messageRequiredNo.removeAttr("checked");
+                $messageFieldRequiredCheck.show();
+                $("#composenotification_required .right input", $rootElement).removeAttr("disabled");
+            }
+        };
+
+        /**
          * Hide all the button lists (usually called as
          * part of resetting the page).
          */
         var hideAllButtonLists = function() {
-            $(".notifdetail-buttons").hide();
+            $(".notifdetail-buttons", $rootElement).hide();
+        };
+
+        /**
+         * This will reset the whole widget to its default state.
+         * It will clear any values or texts that might have been entered.
+         * Should be called every time the widget is initialised.
+         */
+        var resetForm = function() {
+
+            $(".compose-form-elm", $rootElement).each(function() {
+                clearElement(this);
+            });
+
+            clearInvalids();
+
+            hideAllButtonLists();
+
+            $messageFieldType.val("task");
+
+            eventTimeInit(null, null, null);
+
+            reenableView();
+            // Must be called after reenableView because it disables 'Required?' radio buttons
+            notificationTypeInit("task");
+
+            // Resetting dynamic lists
+            $messageFieldTo.empty();
+
+            isDirty = false;
         };
 
 
@@ -314,10 +392,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         $messageFieldSendDate.datepicker({
             showOn: 'button',
-            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
+            buttonImage: datePickerButtonImageUrl,
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
-            onSelect: function(dateText, inst) {
+            onSelect: function() {
                 $messageFieldSendDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
@@ -325,10 +403,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         $messageTaskDueDate.datepicker({
             showOn: 'button',
-            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
+            buttonImage: datePickerButtonImageUrl,
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
-            onSelect: function(dateText, inst) {
+            onSelect: function() {
                 $messageTaskDueDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
@@ -336,10 +414,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         $messageEventDate.datepicker({
             showOn: 'button',
-            buttonImage: '/devwidgets/composenotification/images/calendar_icon.gif',
+            buttonImage: datePickerButtonImageUrl,
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
-            onSelect: function(dateText, inst) {
+            onSelect: function() {
                 $messageEventDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
@@ -375,26 +453,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        ////////////////////////////////////
+        // Notification loading functions //
+        ////////////////////////////////////
 
         var fillInTaskSpecificData = function () {
             $messageFieldType.val("task");
@@ -515,6 +576,102 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
         /**
+         * Loads a notification by sending an AJAX request
+         * @param {String} calledFrom What message box we called this function from so we know what mode to put it in.
+         * @param {String} messageId Id of a message to load
+         */
+        var loadNotification = function(calledFrom, messageId) {
+
+            currentMessageId = messageId;
+            currentMessage = null;
+
+            var url = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + messageId + ".json";
+
+            $.ajax({
+                url: url,
+                cache: false,
+                async: false,
+                success: function(data){
+                    currentMessage = data;
+                    currentMessage.calendarWrapper = $.parseJSON(data.calendarWrapper);
+                    currentMessage.uxState = $.parseJSON(data.uxState);
+                },
+                error: function(){
+                    // $rootElement cannot be used in this selector because this message is out of root element's scope
+                    showGeneralMessage($("#composenotification_message_load_error").text(), true);
+                }
+            });
+
+
+            eventTimeInit(null, null, null);
+            isDirty = false;
+
+            switch(calledFrom) {
+                case "drafts":
+
+                    $widgetTitle.text("Edit Notification");
+
+                    // Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
+                    reenableView();
+
+                    // Fill out the proper information.
+                    fillInMessage(checkFieldsForErrors(false));
+
+                    // Show the proper button list
+                    $("#editdraft-buttons", $rootElement).show();
+                    break;
+                case "queue":
+
+                    $widgetTitle.text("View Notification");
+
+                    // Disable the form, disallowing the user to edit.
+                    disableView();
+
+                    // Now fill out the proper information.
+                    fillInMessage(null);
+
+                    // Display the proper buttons.
+                    $("#queueview-buttons", $rootElement).show();
+                    break;
+                case "archive":
+
+                    $widgetTitle.text("View Notification");
+
+                    // Disable the form, disallowing the user to edit.
+                    disableView();
+
+                    // Now fill out the proper information.
+                    fillInMessage(null);
+
+                    // Display the proper buttons.
+                    $("#archiveview-buttons", $rootElement).show();
+
+                    break;
+                case "trash":
+
+                    $widgetTitle.text("View Notification");
+
+                    // Now fill out the proper information.
+                    fillInMessage(null);
+
+                    // And disable the form, disallowing the user to edit.
+                    disableView();
+
+                    // Display the proper buttons.
+                    $("#trashview-buttons", $rootElement).show();
+                    break;
+                default:
+                    break;
+            }
+        };
+
+
+
+        //////////////////////////
+        // Validation functions //
+        //////////////////////////
+
+        /**
          * This method will check if there are any required fields that are not filled in.
          * If a field is not filled in the invalidClass will be added to that field.
          * Returns a boolean that determines if the fields are valid or not.
@@ -631,7 +788,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                                 // Convert to military time.
                                 if (eventTimeAMPM == "PM") {
                                     if (compareToHour < 12) {
-                                        compareToHour = compareToHour + 12;
+                                        compareToHour += 12;
                                     }
                                 }
 
@@ -682,7 +839,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             // Displays an error message if displayErrors is true and valid is false.
             if (!valid && displayErrors) {
-                showGeneralMessage("Please correct invalid fields.");
+                showGeneralMessage("Please correct invalid fields.", true);
             }
 
             // Return the status of the form.
@@ -690,9 +847,76 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
 
+        //////////////////////////////////
+        // Save notifications functions //
+        //////////////////////////////////
 
         /**
-         * Save the information currently on the notifiaction detail page
+         * Loads task's data into appropriate fields of the POST object.
+         * @param {Object} toPost Storage object
+         */
+        var initPostObjectWithTaskData = function(toPost) {
+            toPost["type"] = "calendar";
+
+            // Tasks are considered always required
+            toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
+
+            toPost.calendarWrapper.component = "VTODO";
+            toPost.calendarWrapper.icalData.STATUS = "NEEDS-ACTION";
+            if ($messageTaskDueDate.val() !== "") {
+                toPost.calendarWrapper.icalData.DUE = formatISO8601($messageTaskDueDate.datepicker("getDate"));
+                toPost.calendarWrapper.icalData.DTSTART = formatISO8601($messageTaskDueDate.datepicker("getDate"));
+            }
+        };
+
+        /**
+         * Loads event's data into appropriate fields of the POST object.
+         * @param {Object} toPost Storage object
+         */
+        var initPostObjectWithEventData = function(toPost) {
+            toPost["type"] = "calendar";
+            if ($messageRequiredYes.attr("checked")) {
+                toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
+            } else {
+                toPost.calendarWrapper.icalData.CATEGORIES = [];
+            }
+
+            toPost.calendarWrapper.component = "VEVENT";
+            // If the event date is filled out, we handle this normally and save the time information there.
+            var startDate = $messageEventDate.datepicker("getDate");
+            if (startDate != null) {
+                startDate.setMinutes($messageEventTimeMinute.val());
+                // Get the event time details and add to the eventDate obj.
+                if ($messageEventTimeAMPM.val() == "PM" && parseInt($messageEventTimeHour.val()) != 12) {
+                    startDate.setHours(parseInt($messageEventTimeHour.val()) + 12);
+                }
+                else {
+                    startDate.setHours($messageEventTimeHour.val());
+                }
+                toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
+            }
+            // Otherwise, we need to check for and save the time information in case the user filled this out.
+            else {
+                toPost.uxState["eventMin"] = $messageEventTimeMinute.val();
+                toPost.uxState["eventAMPM"] = $messageEventTimeAMPM.val();
+                toPost.uxState["eventHour"] = $messageEventTimeHour.val();
+            }
+            toPost.calendarWrapper.icalData.LOCATION = $messageEventPlace.val();
+        };
+
+        /**
+         * Loads message's data into appropriate fields of the POST object.
+         * @param {Object} toPost Storage object
+         */
+        var initPostObjectWithMessageData = function(toPost) {
+            toPost["type"] = "message";
+            toPost["subject"] = $messageFieldSubject.val();
+            toPost["body"] = $messageFieldBody.val();
+            delete(toPost.calendarWrapper); // messages don't have calendar data
+        };
+
+        /**
+         * Save the information currently on the notification detail page
          * into a ready-to-post message.
          * @param {Object} box The box to which we are going to save this message to.
          * @param {Object} isValidated Whether or not the message is validated via checkFieldsForErrors().
@@ -736,63 +960,18 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             switch(type) {
                 case "task":
-
-                    toPost["type"] = "calendar";
-
-                    // Tasks are considered always required
-                    toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
-
-                    toPost.calendarWrapper.component = "VTODO";
-                    toPost.calendarWrapper.icalData.STATUS = "NEEDS-ACTION";
-                    if ($messageTaskDueDate.val() !== "") {
-                        toPost.calendarWrapper.icalData.DUE = formatISO8601($messageTaskDueDate.datepicker("getDate"));
-                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601($messageTaskDueDate.datepicker("getDate"));
-                    }
-
+                    initPostObjectWithTaskData(toPost);
                     break;
 
                 case "event":
-
-                    toPost["type"] = "calendar";
-                    if ($messageRequiredYes.attr("checked")) {
-                        toPost.calendarWrapper.icalData.CATEGORIES = ["MyBerkeley-Required"];
-                    } else {
-                        toPost.calendarWrapper.icalData.CATEGORIES = [];
-                    }
-
-                    toPost.calendarWrapper.component = "VEVENT";
-                    // If the event date is filled out, we handle this normally and save the time information there.
-                    var startDate = $messageEventDate.datepicker("getDate");
-                    if (startDate != null) {
-                        startDate.setMinutes($messageEventTimeMinute.val());
-                        // Get the event time details and add to the eventDate obj.
-                        if ($messageEventTimeAMPM.val() == "PM" && parseInt($messageEventTimeHour.val()) != 12) {
-                            startDate.setHours(parseInt($messageEventTimeHour.val()) + 12);
-                        }
-                        else {
-                            startDate.setHours($messageEventTimeHour.val());
-                        }
-                        toPost.calendarWrapper.icalData.DTSTART = formatISO8601(startDate);
-                    }
-                    // Otherwise, we need to check for and save the time information in case the user filled this out.
-                    else {
-                        toPost.uxState["eventMin"] = $messageEventTimeMinute.val();
-                        toPost.uxState["eventAMPM"] = $messageEventTimeAMPM.val();
-                        toPost.uxState["eventHour"] = $messageEventTimeHour.val();
-                    }
-                    toPost.calendarWrapper.icalData.LOCATION = $messageEventPlace.val();
-
-
+                    initPostObjectWithEventData(toPost);
                     break;
 
                 case "message":
-                    toPost["type"] = "message";
-                    toPost["subject"] = $messageFieldSubject.val();
-                    toPost["body"] = $messageFieldBody.val();
-                    delete(toPost.calendarWrapper); // messages don't have calendar data
+                    initPostObjectWithMessageData(toPost);
+                    break;
 
                 default:
-
                     break;
             }
 
@@ -807,9 +986,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * is null (and therefore has a valid id) or not.
          * @param {Object} toPost Message to post; usually created via saveData() function.
          * @param {Object} successCallback (optional) Function to call if successful post; usually redirect function.
-         * @param {Object} original (optional) The original message, if this is an update.
+         * @param {String} original (optional) The original message, if this is an update.
          * @param {boolean} copyCheck (optional) Are we copying? If we are, we need to append "Copy to" to the subject.
-         * @param {Object} String to be used in the popup message text indicating success or failure.
+         * @param {String} msgTxt String to be used in the popup message text indicating success or failure.
          */
         var postNotification = function (toPost, successCallback, original, copyCheck, msgTxt) {
             var url = "/user/" + me.user.userid + "/.myb-notificationstore.html";
@@ -837,7 +1016,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 data: { notification : $.toJSON(toPost) },
                 success: function() {
                     if (msgTxt != null) {
-                        showGeneralMessage(msgTxt + " successful.");
+                        showGeneralMessage(msgTxt + " successful.", false);
                     }
                     // If a callback function is specified in argument, call it.
                     if ($.isFunction(successCallback)) {
@@ -846,158 +1025,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 },
                 error: function(data) {
                     if (msgTxt != null) {
-                        showGeneralMessage(msgTxt + " failed.");
+                        showGeneralMessage(msgTxt + " failed.", true);
                     }
                     else {
-                        showGeneralMessage("An error occurred.");
+                        showGeneralMessage("An error occurred.", true);
                     }
                 }
             });
-        };
-
-        /**
-         * This is the method that can be called from other widgets or pages.
-         * @param {Object} userObj The user object containing the necessary information.
-         * @param {Object} callback When the message is sent this function will be called. If no callback is provided a standard message will be shown that fades out.
-         * @param {Object} calledFrom What pane we called this widget from so we know what mode to put it in. (default: null)
-         * @param {Object} message Message data for if we are pre-filling with information. (default: null)
-         */
-        var loadNotification = function(calledFrom, messageId) {
-
-            currentMessageId = messageId;
-            currentMessage = null;
-
-            var url = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + messageId + ".json";
-
-            $.ajax({
-                url: url,
-                cache: false,
-                async: false,
-                success: function(data){
-                    currentMessage = data;
-                    currentMessage.calendarWrapper = $.parseJSON(data.calendarWrapper);
-                    currentMessage.uxState = $.parseJSON(data.uxState);
-                },
-                error: function(xhr, textStatus, thrownError){
-                    showGeneralMessage($(inboxGeneralMessagesErrorGeneral).text());
-                }
-            });
-
-
-            eventTimeInit(null, null, null);
-            isDirty = false;
-
-            // Are we calling this from drafts?
-            if (calledFrom == "drafts") {
-                // Re-enable all buttons and textboxes in case they were disabled during viewing of Queue or Trash notifications
-                reenableView();
-
-                $("#cn-widget-title").text("Edit Notification");
-
-                // Fill out the proper information.
-                fillInMessage(checkFieldsForErrors(false));
-
-                // Show the proper button list
-                $("#editdraft-buttons").show();
-
-
-            }
-
-            // Are we calling this from queue?
-            else if (calledFrom == "queue") {
-
-                $("#cn-widget-title").text("View Notification");
-
-                // Disable the form, disallowing the user to edit.
-                disableView();
-
-                // Now fill out the proper information.
-                fillInMessage(null);
-
-                // Display the proper buttons.                
-                $("#queueview-buttons").show();
-
-            }
-
-            // Are we calling this from acrhive?
-            else if (calledFrom == "archive") {
-
-                $("#cn-widget-title").text("View Notification");
-
-                // Disable the form, disallowing the user to edit.
-                disableView();
-
-                // Now fill out the proper information.
-                fillInMessage(null);
-
-                // Display the proper buttons.                
-                $("#archiveview-buttons").show();
-
-            }
-
-            // Are we calling this from trash?       
-            else if (calledFrom == "trash") {
-
-                $("#cn-widget-title").text("View Notification");
-
-                // Now fill out the proper information.
-                fillInMessage(null);
-
-                // And disable the form, disallowing the user to edit.
-                disableView();
-
-                // Display the proper buttons.                
-                $("#trashview-buttons").show();
-            }
-
-        };
-
-
-
-
-
-        var notificationTypeInit = function (type) {
-
-            clearInvalids();
-
-            if ( type === "message" ) {
-                $eventDateContainer.hide();
-                $eventTimeContainer.hide();
-                $eventPlaceContainer.hide();
-                $taskDueDateContainer.hide();
-                $messageRequiredNo.attr("checked", "checked");
-                $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
-                $("#composenotification_required", $rootElement).hide();
-            } else if (type === "task") {
-                $eventDateContainer.hide();
-                $eventTimeContainer.hide();
-                $eventPlaceContainer.hide();
-
-                $messageTaskDueDate.val("");
-                $taskDueDateContainer.show();
-
-                $messageRequiredYes.attr("checked", "checked");
-                $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
-                $("#composenotification_required", $rootElement).show();
-
-            } else {
-                eventTimeInit(null, null, null);
-                $eventTimeContainer.show();
-
-                $messageEventDate.val("");
-                $eventDateContainer.show();
-
-                $messageEventPlace.val("");
-                $eventPlaceContainer.show();
-
-                $taskDueDateContainer.hide();
-
-                $messageRequiredYes.removeAttr("checked");
-                $messageRequiredNo.removeAttr("checked");
-                $("#composenotification_required", $rootElement).show();
-                $("#composenotification_required .right input", $rootElement).removeAttr("disabled");
-            }
-
         };
 
 
@@ -1023,25 +1057,25 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         });
 
         // Copying message to drafts...
-        $("#cn-archivecopytodrafts-button").click(function() {
+        $("#cn-archivecopytodrafts-button", $rootElement).click(function() {
             postNotification(saveData("drafts", true), backToArchive, null, true, "Copy");
         });
 
         // Event handler for when user clicks on DLC "Save" button.
-        $("#dlc-save").click(function() {
+        $("#dlc-save", $rootElement).click(function() {
             // Check that the subject field isn't empty before saving
-            if ($messageFieldSubject.val() !== "") {
-                // Save the draft.
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), switchToDynamicListsCreationWidget, currentMessage, null, null);
-            } else {
+            if ($messageFieldSubject.val() === "") {
                 // If subject field is empty, cancel jqm dialog and highlight subject field.
                 $saveReminderDialog.jqmHide();
                 $messageFieldSubject.addClass(invalidClass);
+            } else {
+                // Save the draft.
+                postNotification(saveData("drafts", checkFieldsForErrors(false)), switchToDynamicListsCreationWidget, currentMessage, null, null);
             }
         });
 
         // Event handler for when you click on the "Don't Save" button on DLC dialog.
-        $("#dlc-dontsave").click(function() {
+        $("#dlc-dontsave", $rootElement).click(function() {
             // Hide jqm dialog before moving, so that clicking Back button on browser doesn't take you
             // back to this page with the dialog box still open
             $saveReminderDialog.jqmHide();
@@ -1049,31 +1083,31 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         });
 
         // Queueing this draft...
-        $("#cn-queuedraft-button").click(function() {
+        $("#cn-queuedraft-button", $rootElement).click(function() {
             if (checkFieldsForErrors(true)) {
                 postNotification(saveData("queue", true), backToDrafts, currentMessage, null, "Queue");
             }
         });
 
         // Updating and re-saving this draft...
-        $("#cn-updatedraft-button").click(function() {
+        $("#cn-updatedraft-button", $rootElement).click(function() {
             postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, currentMessage, null, "Save");
         });
 
         // Deleting the draft...
-        $("#cn-deletedraft-button").click(function() {
+        $("#cn-deletedraft-button", $rootElement).click(function() {
             postNotification(saveData("trash", false), backToDrafts, currentMessage, null, "Delete");
         });
 
         // When someone clicks on the 'Queue' button from base panel.
-        $("#cn-queue-button").click(function() {
+        $("#cn-queue-button", $rootElement).click(function() {
             if (checkFieldsForErrors(true)) {
                 postNotification(saveData("queue", true), backToDrafts, null, null, "Queue");
             }
         });
 
         // When someone clicks on the 'Save as Draft' button from base panel.
-        $("#cn-saveasdraft-button").click(function() {
+        $("#cn-saveasdraft-button", $rootElement).click(function() {
             if ($messageFieldSubject.val() === "") {
                 $messageFieldSubject.addClass(invalidClass);
             } else {
@@ -1081,33 +1115,33 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
         });
 
-        $("#cn-cancel-button").click(function(){
+        $("#cn-cancel-button", $rootElement).click(function(){
              $.bbq.removeState(['new', 'edit']);
             //return false;
         });
 
         // Moving message from queue to drafts...
-        $("#cn-movetodrafts-button").click(function() {
+        $("#cn-movetodrafts-button", $rootElement).click(function() {
             postNotification(saveData("drafts", true), backToQueue, currentMessage, null, "Move");
         });
 
         // Copying message to drafts...
-        $("#cn-queuecopytodrafts-button").click(function() {
+        $("#cn-queuecopytodrafts-button", $rootElement).click(function() {
             postNotification(saveData("drafts", true), backToQueue, null, true, "Copy");
         });
 
         // Deleting message...
-        $("#cn-deletequeued-button").click(function() {
+        $("#cn-deletequeued-button", $rootElement).click(function() {
             postNotification(saveData("trash", false), backToQueue, currentMessage, null, "Delete");
         });
 
         // Enable editing of message (move it to drafts and re-initialise widget).
-        $("#cn-editrashed-button").click(function() {
+        $("#cn-editrashed-button", $rootElement).click(function() {
             postNotification(saveData("drafts", checkFieldsForErrors(false)), loadNotification("drafts", currentMessageId), currentMessage, false, null);
         });
 
         // Hard delete this message (delete it from the trash).
-        $("#cn-deletetrashed-button").click(function() {
+        $("#cn-deletetrashed-button", $rootElement).click(function() {
             var requests = [];
             var msgUrl = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + currentMessageId;
 
@@ -1126,12 +1160,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 data: {
                     requests: $.toJSON(requests)
                 },
-                success: function(data) {
-                    showGeneralMessage("Delete successful.");
+                success: function() {
+                    showGeneralMessage("Delete successful.", false);
                     backToTrash();
                 },
-                error: function(xhr, textStatus, thrownError) {
-                    showGeneralMessage("Delete failed.");
+                error: function() {
+                    showGeneralMessage("Delete failed.", true);
                 }
             });
         });
@@ -1250,50 +1284,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /**
-         * This will reset the whole widget to its default state.
-         * It will clear any values or texts that might have been entered.
-         * Should be called every time the widget is initialised.
-         */
-        var resetForm = function() {
-
-            $(".compose-form-elm", $rootElement).each(function() {
-                clearElement(this);
-            });
-
-            clearInvalids();
-
-            hideAllButtonLists();
-
-            $messageFieldType.val("task");
-
-            eventTimeInit(null, null, null);
-
-            reenableView();
-            // Must be called after reenableView because it disables 'Required?' radio buttons
-            notificationTypeInit("task");
-
-            // Resetting dynamic lists
-            $messageFieldTo.empty();
-
-            isDirty = false;
-
-
-        };
-
+        ////////////////////////////////
+        // Hashchange events handling //
+        ////////////////////////////////
 
         /**
          * Sets current state of this component (list mode or edit mode).
@@ -1307,12 +1300,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             if(state.hasOwnProperty("new")) {
                 resetForm();
                 dynamicListInit(null);
-
-                //TODO: refactor this
-                $("#cn-widget-title").text("Create Notification");
-                $("#createnew-buttons").show();
+                $widgetTitle.text("Create Notification");
+                $("#createnew-buttons", $rootElement).show();
                 $rootElement.show();
-
             } else if(state.hasOwnProperty("edit")) {
 
                 resetForm();
@@ -1327,14 +1317,21 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     msgId = state.edit;
                 }
 
-                if (box === "notifications/drafts") {
-                    loadNotification("drafts", msgId);
-                } else if(box === "notifications/queue") {
-                    loadNotification("queue", msgId);
-                } else if(box === "notifications/archive") {
-                    loadNotification("archive", msgId);
-                } else if(box === "notifications/trash") {
-                    loadNotification("trash", msgId);
+                switch(box) {
+                    case "notifications/drafts":
+                        loadNotification("drafts", msgId);
+                        break;
+                    case "notifications/queue":
+                        loadNotification("queue", msgId);
+                        break;
+                    case "notifications/archive":
+                        loadNotification("archive", msgId);
+                        break;
+                    case "notifications/trash":
+                        loadNotification("trash", msgId);
+                        break;
+                    default:
+                        break;
                 }
 
                 $rootElement.show();
@@ -1368,20 +1365,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 return;
             }
 
-            //resetForm();
-
             setState();
 
-            // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
+            // HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
             $("div.composenotification_widget", $rootElement).show();
-
-
-
 
         };
 
         doInit();
-
 
     };
 
