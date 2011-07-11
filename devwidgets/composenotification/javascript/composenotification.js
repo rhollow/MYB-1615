@@ -584,35 +584,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
         /**
-         * Loads a notification by sending an AJAX request
+         * This function is called when a notification has been successfully loaded
          * @param {String} calledFrom What message box we called this function from so we know what mode to put it in.
-         * @param {String} messageId Id of a message to load
          */
-        var loadNotification = function(calledFrom, messageId) {
-
-            currentMessageId = messageId;
-            currentMessage = null;
-
-            var url = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + messageId + ".json";
-
-            $.ajax({
-                url: url,
-                cache: false,
-                async: false,
-                success: function(data){
-                    currentMessage = data;
-                    currentMessage.calendarWrapper = $.parseJSON(data.calendarWrapper);
-                    currentMessage.uxState = $.parseJSON(data.uxState);
-                },
-                error: function(){
-                    // $rootElement cannot be used in this selector because this message is out of root element's scope
-                    showGeneralMessage(translate("THE_MESSAGE_COULD_NOT_BE_LOADED"), true);
-                }
-            });
-
-
+        var onLoadNotification = function(calledFrom) {
             eventTimeInit(null, null, null);
             isDirty = false;
+
+            hideAllButtonLists();
 
             switch(calledFrom) {
                 case "drafts":
@@ -671,6 +650,37 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 default:
                     break;
             }
+
+            $rootElement.show();
+        };
+
+        /**
+         * Loads a notification by sending an AJAX request
+         * @param {String} calledFrom What message box we called this function from so we know what mode to put it in.
+         * @param {String} messageId Id of a message to load
+         */
+        var loadNotification = function(calledFrom, messageId) {
+
+            currentMessageId = messageId;
+            currentMessage = null;
+
+            var url = "/~" + me.user.userid + "/_myberkeley_notificationstore/" + messageId + ".json";
+
+            $.ajax({
+                url: url,
+                cache: false,
+                async: true,
+                success: function(data){
+                    currentMessage = data;
+                    currentMessage.calendarWrapper = $.parseJSON(data.calendarWrapper);
+                    currentMessage.uxState = $.parseJSON(data.uxState);
+                    onLoadNotification(calledFrom);
+                },
+                error: function(){
+                    // $rootElement cannot be used in this selector because this message is out of root element's scope
+                    showGeneralMessage(translate("THE_MESSAGE_COULD_NOT_BE_LOADED"), true);
+                }
+            });
         };
 
 
@@ -1302,7 +1312,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
          var setState = function(){
 
-            hideAllButtonLists();
             var state = $.bbq.getState();
 
             if(state.hasOwnProperty("new")) {
@@ -1342,7 +1351,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         break;
                 }
 
-                $rootElement.show();
+
 
             } else {
                 $rootElement.hide();
