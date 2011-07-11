@@ -124,7 +124,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
             whatToDo: [
                 {
                     "title": "EXPLORE_MYBERKELEY",
-                    "url": "/dev/explore.html"
+                    "url": "/"
                 },
                 {
                     "title": "BROWSE_MYBERKELEY_CATEGORIES",

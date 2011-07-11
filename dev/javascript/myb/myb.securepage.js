@@ -39,7 +39,7 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai,
         * they should be showing because the user in not a myBerkeley participant
         */
         var sendToNotAMyBerkeleyParticipantPage = function() {
-            document.location = "/dev/explore.html";
+            document.location = "/";
             return false;
         };
 
