@@ -415,7 +415,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         });
 
         $(window).bind("done.newaddcontent.sakai", function(e, data, library) {
-            if (data && data.length && library === sakai.data.me.user.userid) {
+            if (isMe && data && data.length && library === sakai.data.me.user.userid) {
                 newContent += data.length;
                 generateNav();
             }
