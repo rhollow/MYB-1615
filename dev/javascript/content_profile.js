@@ -349,6 +349,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                     $(window).trigger("content_profile_hash_change");
                 });
             }
+            showPreview = true;
         };
 
         /**

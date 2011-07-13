@@ -20,10 +20,6 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
     ];
     config.allowPasswordChange = false;
 
-    // Page titles for myB-unique pages
-    config.PageTitles.pages["/dev/inboxnotifier.html"] = "NOTIFICATIONS";
-    config.PageTitles.pages["/dev/listpage.html"] = "DYNAMIC_LISTS";
-
     // set our own default widget arrangement
     config.defaultprivstructure.id546341435.dashboard.columns.column1[1] = {
       "uid": "id7813904133752",
@@ -124,7 +120,7 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
             whatToDo: [
                 {
                     "title": "EXPLORE_MYBERKELEY",
-                    "url": "/dev/explore.html"
+                    "url": "/"
                 },
                 {
                     "title": "BROWSE_MYBERKELEY_CATEGORIES",

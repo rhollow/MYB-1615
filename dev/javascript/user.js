@@ -272,7 +272,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             }
             if (pageid === "library") {
                 pubdata.structure0[pageid]._count += newContent;
-                newContent = 0;
             }
         };
 
@@ -416,8 +415,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         });
 
         $(window).bind("done.newaddcontent.sakai", function(e, data, library) {
-            if (data && data.length && library === sakai.data.me.user.userid) {
-                newContent = data.length;
+            if (isMe && data && data.length && library === sakai.data.me.user.userid) {
+                newContent += data.length;
                 generateNav();
             }
         });
