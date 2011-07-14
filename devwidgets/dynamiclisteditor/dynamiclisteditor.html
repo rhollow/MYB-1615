@@ -29,6 +29,14 @@
 
         <div class="wrapper border_box" style="padding:10px;border-top-right-radius: 10px;border-top-left-radius: 10px;top: -15px;z-index: 2000;background-color: #fff;margin-bottom: -15px; width: 704px">
             <div class="main_title">Select Students</div>
+
+            <div class="details_link_container" style="display:none;"><a id="show_more_or_less">Show More</a></div>
+            <div class="title_information_container">
+                College <div id="dynamiclisteditor_college" class="readonly_textbox">N/A</div>
+                <div class="students_targeted_by_list_container" >Students now targeted by this list: <div id="dynamiclisteditor_number_of_students" class="readonly_textbox noStudentsTargeted">0</div></div>
+            </div>
+
+
             <div id="view">
                 <!-- TEMPLATE_PLACEHOLDER -->
             </div>
@@ -370,9 +378,6 @@
         ${renderDegrees()}
     {/macro}
 
-    <div class="details_link_container" style="display:none;"><a id="show_more_or_less">Show More</a></div>
-
-    <div class="title_information_container">College <div class="readonly_textbox">${data.college}</div> <div class="students_targeted_by_list_container" >Students now targeted by this list: <div class="readonly_textbox">0</div></div></div>
     <form name="frm_main_dynamic">
         <div class="wrapper">
         {if (typeof(data.undergraduates) !== 'undefined' && data.undergraduates != null ) && (typeof(data.graduates) !== 'undefined' && data.graduates != null) }
