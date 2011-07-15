@@ -485,11 +485,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
             // Make sure that the results only disappear when you click outside
             // of the search box and outside of the results box
-            $(window).click(function(ev){
-                if (ev.target.id !== "topnavigation_search_input") {
-                    $("#topnavigation_search_results").hide();
-                }
-            });
+            sakai.api.Util.hideOnClickOut("#topnavigation_search_results", "#topnavigation_search_results_container,#topnavigation_search_results_bottom_container,#topnavigation_search_input");
 
             $("#subnavigation_preferences_link").live("click", function(){
                 $(window).trigger("init.accountpreferences.sakai");
