@@ -27,10 +27,10 @@ define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     };
 
     /**
-     * Check if the user is a myBerkeley participant.
-     * There could be CED members who can log in, but are not myBerkeley participants.
+     * Check if the user is a CalCentral participant.
+     * There could be CED members who can log in, but are not CalCentral participants.
      * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
-     * @return true if the user is a myBerkeley participant, false otherwise
+     * @return true if the user is a CalCentral participant, false otherwise
      */
     security.isMyBerkeleyParticipant = function() {
         try {

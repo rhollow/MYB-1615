@@ -36,7 +36,7 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai,
 
         /**
         * Function that can be called by pages that don't have the permission to show the content
-        * they should be showing because the user in not a myBerkeley participant
+        * they should be showing because the user in not a CalCentral participant
         */
         var sendToNotAMyBerkeleyParticipantPage = function() {
             document.location = "/";
@@ -58,7 +58,7 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai,
             return;
           }
 
-          // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+          // If the user is a member of Berkeley's College of Environmental Design, but not a participant of CalCentral project,
           // redirect him to the participation explanation page
           if (!myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
             sendToNotAMyBerkeleyParticipantPage();

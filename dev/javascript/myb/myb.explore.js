@@ -46,7 +46,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         ///////////////////////
 
        /**
-        * Checks if user agreed to participate and enables/disables "Join myBerkeley" button
+        * Checks if user agreed to participate and enables/disables "Join CalCentral" button
         */
         function checkIfUserAgreed() {
 
@@ -125,7 +125,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 			},
 			success: function(data) {
 				$("#join_myberkeley_dialog").jqmHide();
-				showGeneralMessage("Welcome to myBerkeley portal!", false);
+				showGeneralMessage("Welcome to CalCentral portal!", false);
 			},
 			error: function(xhr, textStatus, thrownError) {
 
@@ -190,10 +190,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         /////////////////////////////
 
         var doInit = function() {
-            // If the user is a member of Berkeley's College of Environmental Design, but not a participant of myBerkeley project,
+            // If the user is a member of Berkeley's College of Environmental Design, but not a participant of CalCentral project,
             // redirect him to the participation explanation page
             if (isLoggedIn() && !myb.api.security.isMyBerkeleyParticipant()) {
-                // We will show a nice Join myBerkeley dialog on this page
+                // We will show a nice Join CalCentral dialog on this page
                 $("#join_myberkeley_dialog").jqm({
                          modal: true,
                          overlay: 20,

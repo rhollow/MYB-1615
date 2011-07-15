@@ -79,7 +79,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             pub.structure0.profile._ref = firstWidgetRef;
         };
 
-        // myBerkeley: We need a custom left-land navigation structure
+        // CalCentral: We need a custom left-land navigation structure
         var appendMyBerkeleyCustomItemsToDefaultPrivStructure = function(privdata) {
 
             // Add these items only for advisers
@@ -151,7 +151,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
 
         };
-        // end of myBerkeley specific code
+        // end of CalCentral specific code
 
         var continueLoadSpaceData = function(userid){
             var publicToStore = false;
@@ -176,10 +176,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                         if (!success2){
                             privdata = $.extend(true, {}, sakai.config.defaultprivstructure);
                             privateToStore = $.extend(true, {}, sakai.config.defaultprivstructure);
-                            // myBerkeley: add custom items to left-hand navigation widget
+                            // CalCentral: add custom items to left-hand navigation widget
                             appendMyBerkeleyCustomItemsToDefaultPrivStructure(privdata);
                             appendMyBerkeleyCustomItemsToDefaultPrivStructure(privateToStore);
-                            // end of myBerkeley specific code
+                            // end of CalCentral specific code
                         } else {
                             privdata = data2;
                             privdata = sakai.api.Server.cleanUpSakaiDocObject(privdata);

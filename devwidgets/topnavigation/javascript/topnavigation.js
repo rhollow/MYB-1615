@@ -362,21 +362,21 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
 
             if (sakai.config.Navigation[i].subnav) {
                 temp.subnav = [];
-                // myBerkeley custom begin
+                // CalCentral custom begin
                 var isAdviser = myb.api.security.isUserAnAdviser();
-                // myBerkeley custom end
+                // CalCentral custom end
 
                 for (var ii in sakai.config.Navigation[i].subnav) {
                     if (sakai.config.Navigation[i].subnav.hasOwnProperty(ii)) {
 
-                        // myBerkeley custom begin: some menu items might be flagged as advisers only, so check,
+                        // CalCentral custom begin: some menu items might be flagged as advisers only, so check,
                         // and skip if item is restricted and user's not an adviser.
                         if ( sakai.config.Navigation[i].subnav[ii].requiresAdviserMembership ) {
                             if (!isAdviser) {
                                 continue;
                             }
                         }
-                        // myBerkeley custom end
+                        // CalCentral custom end
 
                         temp.subnav.push(getNavItem(ii, sakai.config.Navigation[i].subnav));
                     }

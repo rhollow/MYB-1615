@@ -72,7 +72,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/misc/querystring.js"], func
             } else {
                 $(loadingMessage).hide();
 
-				// myBerkeley: We don't use register button
+				// CalCentral: We don't use register button
                 // check if internal is true or internal account creation is true show login
                 //if (sakai.config.Authentication.allowInternalAccountCreation){
                 //  $(registerLink).show();
@@ -87,7 +87,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/misc/querystring.js"], func
                     }
                     // Set the cursor in the username field
                     $("#" + usernameField).focus();
-                }/* myBerkeley: We don't use this template *//* else {
+                }/* CalCentral: We don't use this template *//* else {
                     $("#login-external-container").html(sakai.api.Util.TemplateRenderer("login-external-template", sakai.config.Authentication));
                     $(loginExternal).show();
                 }*/
