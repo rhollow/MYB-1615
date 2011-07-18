@@ -30,7 +30,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
      * @param {String} tuid Unique id of the widget
      * @param {Boolean} showSettings Show the settings of the widget or not
      */
-    sakai_global.dynamiclisteditor = function(tuid) {
+    sakai_global.dynamiclisteditor = function(tuid, showSettings) {
 
         /////////////////////////////
         // Configuration variables //
@@ -154,8 +154,25 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var $college = $("#dynamiclisteditor_college", $rootElement);
 
 
-        var $cohortStatusSpecifiedStudents = $("#cohort_status_specified_students", $cohortStatus)
-
+        var $cohortStatusSpecifiedStudents = $("#cohort_status_specified_students", $cohortStatus);
+        var $designateTermSemester = $("#designate_term_semester", $cohortStatus);
+        var $regStatusOnlyDesignatedStatuses = $("#reg_status_only_designated_statuses", $sectionC);
+        var $regStatusIncludeAll = $("#reg_status_include_all", $sectionC);
+        var $cohortStatusAllStudents = $("#cohort_status_all_students", $sectionC);
+        var $cohortStatusTermBefore = $("#cohort_status_term_before", $sectionC);
+        var $specialProgramAllStudents = $("#special_program_all_students", $sectionC);
+        var $studentStatusAllStudents = $("#student_status_all_students", $sectionC);
+        var $residencyStatusAllStudents = $("#residency_status_all_students", $sectionC);
+        var $listName = $("#list_name", $rootElement);
+        var $description = $("#description", $rootElement);
+        var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group', $sectionC);
+        var $currencyStatusSelectAllInGroup = $('#currency_status_select_all_in_group', $sectionC);
+        var $studentRegStatusSelectAllInGroup = $('#student_reg_status_select_all_in_group', $sectionC);
+        var $regStatusSubGroup = $(".reg_status .sub_group", $sectionC);
+        var $currentOrNotSubGroup  = $(".current_or_not .sub_group", $sectionC);
+        var $studentRegStatusSubGroup = $(".student_reg_status .sub_group", $sectionC);
+        var $specialProgramSpecifiedStudents = $("#special_program_specified_students", $sectionC);
+        var $specialPrograms = $(".special_programs", $sectionC);
 
         ////////////////////////////////////////////////////////////////////////
         // Functions for gathering the information about the selected options //
@@ -204,8 +221,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             var result = new Condition();
 
             if ($cohortStatusSpecifiedStudents.is(':checked')) {
-                var semester = $("#designate_term_semester", $cohortStatus).val();
-                var year = $("#designate_term_year", $cohortStatus).val();
+                var semester = $designateTermSemester.val();
+                var year = $designateTermYear.val();
                 var cohort = $("input[name=cohort_status_terms]:checked", $cohortStatus).val();
 
                 result.AND = [semester, "designate_term_year_" + year, cohort];
@@ -223,11 +240,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             var registrationStatus = new Condition();
 
-            if($("#reg_status_only_designated_statuses", $sectionC).is(':checked')) {
+            if($regStatusOnlyDesignatedStatuses.is(':checked')) {
 
-                var selectedRegisteredOR = buildSelectedOptionsObjectAsOR(null, $(".reg_status .sub_group", $sectionC));
-                var selectedCurrencyOR = buildSelectedOptionsObjectAsOR(null, $(".current_or_not .sub_group", $sectionC));
-                var selectedWithdrawnOR = buildSelectedOptionsObjectAsOR(null, $(".student_reg_status .sub_group", $sectionC));
+                var selectedRegisteredOR = buildSelectedOptionsObjectAsOR(null, $regStatusSubGroup);
+                var selectedCurrencyOR = buildSelectedOptionsObjectAsOR(null, $currentOrNotSubGroup);
+                var selectedWithdrawnOR = buildSelectedOptionsObjectAsOR(null, $studentRegStatusSubGroup);
 
                 registrationStatus = registrationStatus.joinTwoConditionsByAND(selectedRegisteredOR);
                 registrationStatus = registrationStatus.joinTwoConditionsByAND(selectedCurrencyOR);
@@ -392,11 +409,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             var curr_year = d.getFullYear();
             var yearsArr = [];
             for(var i = curr_year-4;i <= curr_year; i++) {
-                if (i != curr_year) {
-                    yearsArr.push("<option value='" + i + "'>" + i + "</option>");
-                }
-                else {
-                    yearsArr.push("<option value='" + i + "' selected='selected'>" + i + "</option>");
+                // escaping < and > with \x3C and \x3E
+                if (i === curr_year) {
+                    yearsArr.push("\x3Coption value='" + i + "' selected='selected'\x3E" + i + "\x3C/option\x3E");
+                } else {
+                    yearsArr.push("\x3Coption value='" + i + "'\x3E" + i + "\x3C/option\x3E");
                 }
             }
             $designateTermYear.append(yearsArr.join(''));
@@ -463,17 +480,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
 
             // section c
-            $("#reg_status_include_all", $sectionC).attr("checked", "checked");
-            $("#cohort_status_all_students", $sectionC).attr("checked", "checked");
-            $("#cohort_status_term_before", $sectionC).attr("checked", "checked");
+            $regStatusIncludeAll.attr("checked", "checked");
+            $cohortStatusAllStudents.attr("checked", "checked");
+            $cohortStatusTermBefore.attr("checked", "checked");
 
             $("#designate_term_semester option:first", $sectionC).attr("selected", "selected");
             $("#designate_term_year option:last", $sectionC).attr("selected", "selected");
 
 
-            $("#special_program_all_students", $sectionC).attr("checked", "checked");
-            $("#student_status_all_students", $sectionC).attr("checked", "checked");
-            $("#residency_status_all_students", $sectionC).attr("checked", "checked");
+            $specialProgramAllStudents.attr("checked", "checked");
+            $studentStatusAllStudents.attr("checked", "checked");
+            $residencyStatusAllStudents.attr("checked", "checked");
 
         };
 
@@ -590,9 +607,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * @return {Boolean} true if there are selected options in the registration status section in section C; otherwise false.
          */
         var isSomethingSelectedInRegistrationStatusSection = function () {
-            var totalOptionsSelected = getNumberOfSelectedOptionsInGroup($(".reg_status .sub_group", $sectionC)) +
-            getNumberOfSelectedOptionsInGroup($(".current_or_not .sub_group", $sectionC)) +
-            getNumberOfSelectedOptionsInGroup($(".student_reg_status .sub_group", $sectionC));
+            var totalOptionsSelected = getNumberOfSelectedOptionsInGroup($regStatusSubGroup) +
+            getNumberOfSelectedOptionsInGroup($currentOrNotSubGroup) +
+            getNumberOfSelectedOptionsInGroup($studentRegStatusSubGroup);
 
             return totalOptionsSelected	> 0;
         };
@@ -745,7 +762,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                         cache: false,
                         dataType:"json",
                         data: props,
-                        success: function(data){
+                        success: function(){
                             // If a callback function is specified in argument, call it.
                             if ($.isFunction(successCallback)) {
                                 successCallback();
@@ -762,10 +779,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             // Fill in input fields with list data
             if (copyMode) {
-                $("#list_name").val("Copy of " + currentList["sakai:name"]);
+                $listName.val("Copy of " + currentList["sakai:name"]);
             } else {
-                $("#list_name").val(currentList["sakai:name"]);
-                $("#description").val(currentList["sakai:description"]);
+                $listName.val(currentList["sakai:name"]);
+                $description.val(currentList["sakai:description"]);
             }
 
             loadTemplate(currentList.context);
@@ -777,8 +794,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             currentList = null;
             currentListId = null;
 
-            $("#list_name").val("");
-            $("#description").val("");
+            $listName.val("");
+            $description.val("");
 
             $college.text("N/A");
             $studentsTargetedByCurrentList.addClass("noStudentsTargeted").text("0");
@@ -789,7 +806,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
         /**
          * Resets the editing form and loads the list with specified id into it.
-         * @param {String} id    The id of a list
+         * @param {String} listId    The id of a list
          * @param {Boolean} copyMode    When set to true string "Copy of " is prepended to the name of the displayed list and description is cleared
          */
         var loadList = function(listId, copyMode) {
@@ -808,7 +825,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     currentList.criteria = $.parseJSON(data.criteria);
                     onLoadList(copyMode);
                 },
-                error: function(jqXHR, textStatus, errorThrown){
+                error: function(){
                     showGeneralMessage(translate("THE_LIST_COULD_NOT_BE_LOADED"), true);
                 }
             });
@@ -858,13 +875,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(cohortStatus);
 
 
-            var specialPrograms = buildSelectedOptionsObjectAsOR($("#special_program_all_students", $sectionC), $(".special_programs", $sectionC));
+            var specialPrograms = buildSelectedOptionsObjectAsOR($specialProgramAllStudents, $specialPrograms);
             dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(specialPrograms);
 
-            var studentStatus = buildSelectedOptionsObjectAsOR($("#student_status_all_students", $sectionC), $(".student_and_residency_status_col_left .sub_group", $sectionC));
+            var studentStatus = buildSelectedOptionsObjectAsOR($studentStatusAllStudents, $(".student_and_residency_status_col_left .sub_group", $sectionC));
             dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(studentStatus);
 
-            var residencyStatus = buildSelectedOptionsObjectAsOR($("#residency_status_all_students", $sectionC), $(".student_and_residency_status_col_right .sub_group", $sectionC));
+            var residencyStatus = buildSelectedOptionsObjectAsOR($residencyStatusAllStudents, $(".student_and_residency_status_col_right .sub_group", $sectionC));
             dynamicListCriteria = dynamicListCriteria.joinTwoConditionsByAND(residencyStatus);
 
             return dynamicListCriteria;
@@ -881,9 +898,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         var validateUserInput = function() {
-            var listName = $.trim($("#list_name").val());
+            var listName = $.trim($listName.val());
             if (listName === null || listName === "") {
-                $("#invalid_name").show();
+                $("#invalid_name", $rootElement).show();
                 return false;
             }
 
@@ -894,8 +911,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             var result = {};
 
             result.context = dynamicListContext.name;
-            result.listName = $.trim($("#list_name").val());
-            result.desc = $.trim($("#description").val());
+            result.listName = $.trim($listName.val());
+            result.desc = $.trim($description.val());
 
             // Gathering the data on standing
             //TODO: check for errors
@@ -1038,12 +1055,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var setupTemplateDependentVarsAndEventHandlers = function() {
 
-            $includeUndergradsCheckbox = $("#include_undergrads");
-            $includeGradsCheckbox = $("#include_grads");
+            $includeUndergradsCheckbox = $("#include_undergrads", $rootElement);
+            $includeGradsCheckbox = $("#include_grads", $rootElement);
 
             // Define undergrad and grad groups AFTER template has been rendered
-            $undergradsGroup = $(".undergrads_group");
-            $gradsGroup = $(".grads_group");
+            $undergradsGroup = $(".undergrads_group", $rootElement);
+            $gradsGroup = $(".grads_group", $rootElement);
 
             //Disabling all graduate and undergraduate controls
             if (hasUndergradsData && hasGradsData) {
@@ -1073,14 +1090,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             // TODO: ask Rachel if we need these two handlers (design has changed)
             $('input[id^="undergrad_major_"]').click(function(){
-                    $("#undergrad_majors_selected_majors").click();
+                    $("#undergrad_majors_selected_majors", $rootElement).click();
                 });
 
             $('input[id^="grad_program_"]').click(function(){
-                    $("#grad_programs_selected_programs").click();
+                    $("#grad_programs_selected_programs", $rootElement).click();
                 });
 
-            var $regStatusSelectAllInGroup = $('#reg_status_select_all_in_group', $sectionC);
             $regStatusSelectAllInGroup.click(function(){
                 if($regStatusSelectAllInGroup.is(':checked')) {
                     $(".reg_status .sub_group input", $sectionC).attr("checked", "checked");
@@ -1089,8 +1105,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 }
             });
 
-
-            var $currencyStatusSelectAllInGroup = $('#currency_status_select_all_in_group', $sectionC);
             $currencyStatusSelectAllInGroup.click(function(){
                 if($currencyStatusSelectAllInGroup.is(':checked')) {
                     $(".current_or_not .sub_group input", $sectionC).attr("checked", "checked");
@@ -1099,7 +1113,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 }
             });
 
-            var $studentRegStatusSelectAllInGroup = $('#student_reg_status_select_all_in_group', $sectionC);
             $studentRegStatusSelectAllInGroup.click(function(){
                 if($studentRegStatusSelectAllInGroup.is(':checked')) {
                     $(".student_reg_status .sub_group input", $sectionC).attr("checked", "checked");
@@ -1120,7 +1133,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             });
 
             //Show more/less button in section C
-            $showMoreOrLess = $("#show_more_or_less");
+            $showMoreOrLess = $("#show_more_or_less", $rootElement);
             // section C toggle button
             $showMoreOrLess.click(toggleSectionC);
         };
@@ -1234,27 +1247,27 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             // registration status radio buttons (section c)
             if (isSomethingSelectedInRegistrationStatusSection()) {
-                $("#reg_status_only_designated_statuses", $sectionC).attr("checked", "checked");
+                $regStatusOnlyDesignatedStatuses.attr("checked", "checked");
             }
 
 
             // processing 'select all' checkboxes (section c)
-            if (areAllOptionsInGroupSelected($(".reg_status .sub_group", $sectionC))) {
-                $('#reg_status_select_all_in_group', $sectionC).attr("checked", "checked");
+            if (areAllOptionsInGroupSelected($regStatusSubGroup)) {
+                $regStatusSelectAllInGroup.attr("checked", "checked");
             }
 
-            if (areAllOptionsInGroupSelected($(".current_or_not .sub_group", $sectionC))) {
-                $('#currency_status_select_all_in_group', $sectionC).attr("checked", "checked");
+            if (areAllOptionsInGroupSelected($currentOrNotSubGroup)) {
+                $currencyStatusSelectAllInGroup.attr("checked", "checked");
             }
 
-            if (areAllOptionsInGroupSelected($(".student_reg_status .sub_group", $sectionC))) {
-                $('#student_reg_status_select_all_in_group', $sectionC).attr("checked", "checked");
+            if (areAllOptionsInGroupSelected($studentRegStatusSubGroup)) {
+                $studentRegStatusSelectAllInGroup.attr("checked", "checked");
             }
 
 
             // special programs radio buttons (section c)
             if (isSomethingSelectedInSpecialProgramsSection()) {
-                $("#special_program_specified_students", $sectionC).attr("checked", "checked");
+                $specialProgramSpecifiedStudents.attr("checked", "checked");
             }
 
             // Student status radio buttons (section c)
@@ -1287,7 +1300,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
            hasGradsData = propExists(data.graduates);
 
             // Trimpath template for sections A and B of the list editing form (section C is static and doesn't require a templete)
-            var $listEditFormTemplate = $("#list_edit_form_template");
+            var $listEditFormTemplate = $("#list_edit_form_template", $rootElement);
 
            // rendering the loaded template
            $view.html(sakai.api.Util.TemplateRenderer($listEditFormTemplate, {data: data, propExists: propExists}));
