@@ -96,7 +96,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         /**
          * Section C wrapper DIV
          */
-        var $sectionC = $("#section_c");
+        var $sectionC = $("#section_c", $rootElement);
 
         /**
          * Section C cohort status wrapper DIV
@@ -131,12 +131,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         /**
          * Dynamic list 'Save' button
          */
-        var $dynListsSaveButton = $("#dyn_lists_save_button");
+        var $dynListsSaveButton = $("#dyn_lists_save_button", $rootElement);
 
         /**
          * Dynamic list 'Cancel' button (cancels editing and switches withe my to list mode)
          */
-        var $dynListsCancelEditingButton = $("#dyn_lists_cancel_button");
+        var $dynListsCancelEditingButton = $("#dyn_lists_cancel_button", $rootElement);
 
         /**
          * Show more/less button in section C (template must be loaded before using this variable)
@@ -152,6 +152,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * College name to display in the template
          */
         var $college = $("#dynamiclisteditor_college", $rootElement);
+
+
+        var $cohortStatusSpecifiedStudents = $("#cohort_status_specified_students", $cohortStatus)
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -200,7 +203,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             var result = new Condition();
 
-            if ($("#cohort_status_specified_students", $sectionC).is(':checked')) {
+            if ($cohortStatusSpecifiedStudents.is(':checked')) {
                 var semester = $("#designate_term_semester", $cohortStatus).val();
                 var year = $("#designate_term_year", $cohortStatus).val();
                 var cohort = $("input[name=cohort_status_terms]:checked", $cohortStatus).val();
@@ -652,15 +655,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             }
 
             var conditionArray;
+            // An object must have either AND or OR property, but not both at the same time,
+            // FILTER property is optional
             if (criteriaObj.hasOwnProperty("AND")) {
                 conditionArray = criteriaObj.AND;
             } else if (criteriaObj.hasOwnProperty("OR")) {
                 conditionArray = criteriaObj.OR;
             } else {
-                // empty object
+                // empty object, assume that FILTER cannot exist without corresponding AND or OR properties
                 return;
             }
-
 
             for (var i=0; i < conditionArray.length; i++) {
                 var arrayElement = conditionArray[i];
@@ -670,6 +674,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     // assuming the object is a container
                     dumpOptionIDs(arrayElement, idArray);
                 }
+            }
+
+            // Check if we have a FILTER node
+            if (criteriaObj.hasOwnProperty("FILTER")) {
+                dumpOptionIDs(criteriaObj.FILTER, idArray);
             }
 
         };
@@ -716,7 +725,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             return false;
         };
 
-        var createEmptyRootNodeForDynamicLists = function() {
+        /**
+         * Created empty root node for dynamic lists (needed to set the correct resource type for this node,
+         * otherwise things like counting the number of users targeted by dynamic list will not work).
+         *
+         * @param {Object} successCallback (optional) Function to call if successful post; usually redirect function.
+         */
+        var createEmptyRootNodeForDynamicLists = function(successCallback) {
 
             // create dynamic lists node
             var props = {
@@ -726,10 +741,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             $.ajax({
                         type: "POST",
                         url: dynamicListsBaseUrl,
-                        async: false,
+                        async: true,
                         cache: false,
                         dataType:"json",
                         data: props,
+                        success: function(data){
+                            // If a callback function is specified in argument, call it.
+                            if ($.isFunction(successCallback)) {
+                                successCallback();
+                            }
+                        },
                         error: function(xhr, textStatus, thrownError) {
                             showGeneralMessage(thrownError, true);
                         }
@@ -807,28 +828,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         *
         *
         * */
-
-        /*var loadDynamicListsFromServer = function() {
-
-         //  /~892685/private/dynamic_lists/dl-892685-1309216228009.1.json
-         //  sakai.data.me.user.userid
-
-
-
-            sakai.api.Server.loadJSON(dynamicListsBaseUrl, function(success, data) {
-                if (success) {
-                    allLists = data;
-                    //displayLoadedLists();
-                } else {
-                    allLists = [];
-                    createEmptyRootNodeForDynamicLists();
-                    //displayLoadedLists();
-                }
-                setTabState();
-                // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
-                $("div.dynamiclisteditor_widget", $rootElement).show();
-            });
-        };*/
 
 
 
@@ -941,11 +940,19 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     criteria: data.criteria
                   };
 
-            createEmptyRootNodeForDynamicLists();
-            sakai.api.Server.saveJSON(dynamicListsBaseUrl + "/" + id, list, function() {
-                $.bbq.removeState(["new","copy","edit","context"]);
-                //loadDynamicListsFromServer();
+
+            var url = dynamicListsBaseUrl + "/" + id;
+
+            // First try to create the root node with the correct resource type,
+            // if the node was created successfully try to save the list
+            createEmptyRootNodeForDynamicLists(function() {
+                    sakai.api.Server.saveJSON(url, list, function() {
+                    $.bbq.removeState(["new","copy","edit","context"]);
+                });
             });
+
+
+
         };
 
         /////////////////////////////
@@ -1192,7 +1199,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
                     // we need to select 'Only include students in designated cohort(s)' option if we got here,
                     // because we can have the year option only if this option is selected
-                    $("#cohort_status_specified_students", $cohortStatus).attr("checked", "checked");
+                    $cohortStatusSpecifiedStudents.attr("checked", "checked");
 
                     continue;
                 }
