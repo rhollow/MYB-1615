@@ -447,6 +447,8 @@ define(["/dev/configuration/config.js", "/dev/configuration/env.js"], function(c
             groupShortDescription: "asdf"
         };
 
+        // End custom configuration
+
         config.customizationComplete = true;
     }
 
