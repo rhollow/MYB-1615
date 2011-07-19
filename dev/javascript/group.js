@@ -194,7 +194,7 @@ require(["jquery","sakai/sakai.api.core", "/dev/javascript/myb/myb.securepage.js
                 members.push(member);
             }
             if(members){
-                sakai.api.Groups.removeUsersFromGroup(groupId, false, members, sakai.api.User.data.me, false);
+                sakai.api.Groups.removeUsersFromGroup(groupId, members, sakai.api.User.data.me, false);
             }
         });
 
