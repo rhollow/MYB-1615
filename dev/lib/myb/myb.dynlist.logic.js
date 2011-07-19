@@ -81,7 +81,7 @@ define([], function() {
 
 		/**
 		 * Joins two condition objects by AND condition.
-		 * This function tries to optimeze the output object to avoid excessive object wrapping.
+		 * This function tries to optimize the output object to avoid excessive object wrapping.
 		 * To avoid object cloning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
 		 *
 		 * @param b	condition object to join (must contain either AND or OR field)
@@ -152,7 +152,7 @@ define([], function() {
 
 		/**
 		 * Joins two condition objects by OR condition.
-		 * This function tries to optimeze the output object to avoid excessive object wrapping.
+		 * This function tries to optimize the output object to avoid excessive object wrapping.
 		 * To avoid object cloning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
 		 *
 		 * @param b	condition object to join (must contain either AND or OR field)
@@ -230,7 +230,7 @@ define([], function() {
 
         /**
          * Adds a filter condition to the condition object.
-         * This function tries to optimeze the output object to avoid excessive object wrapping.
+         * This function tries to optimize the output object to avoid excessive object wrapping.
          * To avoid object cloning the function operates on its arguments, there is no guarantee that the arguments will remain unchanged.
          *
          * @param b condition object to use as filter
