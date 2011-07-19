@@ -41,17 +41,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var messagesPerPage = 12; // The number of messages per page
         var allMessages = []; // Array that will hold all the messages
         var me = sakai.data.me;
-        var generalMessageFadeOutTime = 3000; // The amount of time it takes till the general message box fades out
         var selectedMessage = {}; // The current message
         var selectedType = 'drafts';
-        var selectedCategory = "";
         var sortOrder = "descending";
         var sortBy = "date";
         var currentPage = 0;
         var messagesForTypeCat; // The number of messages for this type/cat
-        var cats = "";
-        var chooseCategory = {"Message": "message", "Reminder": "reminder"};
-        var inboxComposeNewPanelOpen = false;
+
 
         //////////////////////
         // jQuery selectors //
@@ -1003,7 +999,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         // For when user clicks on "Create New" button.
         $("#inbox-new-button").live("click", function(){
             $.bbq.removeState("edit");
-            $.bbq.removeState("edit");
             $.bbq.pushState({"new": true});
         });
 
@@ -1028,51 +1023,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             $(inboxInboxCheckAll).attr("checked", false);
         };
 
-        sakai_global.groupnotificationmanager.showDrafts = function () {
-            //$.bbq.removeState(["new", "edit"]);
-            //$.bbq.pushState({l: "notifications/drafts"});
-            //setState();
-            //showFilteredList("drafts", inboxFilterDrafts);
-        };
-
-        sakai_global.groupnotificationmanager.showQueue = function () {
-            //$.bbq.removeState(["new", "edit"]);
-            //$.bbq.pushState({l: "notifications/queue"});
-            //setState();
-            //showFilteredList("queue", inboxFilterQueue);
-        };
-
-        sakai_global.groupnotificationmanager.showArchive = function () {
-            //$.bbq.removeState(["new", "edit"]);
-            //$.bbq.pushState({l: "notifications/archive"});
-            //setState();
-            //showFilteredList("archive", inboxFilterArchive);
-        };
-
-        sakai_global.groupnotificationmanager.showTrash = function () {
-            //$.bbq.removeState(["new", "edit"]);
-            //$.bbq.pushState({l: "notifications/trash"});
-            //setState();
-            //showFilteredList("trash", inboxFilterTrash);
-        };
-
-        /*
-        // Various filter functions.
-        $(inboxFilterDrafts).click(function(){
-            sakai_global.notificationsinbox.showDrafts();
-        });
-
-        $(inboxFilterQueue).click(function(){
-            sakai_global.notificationsinbox.showQueue();
-        });
-
-        $(inboxFilterArchive).click(function(){
-            sakai_global.notificationsinbox.showArchive();
-        });
-
-        $(inboxFilterTrash).click(function(){
-            sakai_global.notificationsinbox.showTrash();
-        });*/
 
         /**
          *
@@ -1187,29 +1137,33 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Sets current state of this component (list mode or edit mode).
          * This function is called when hashchange event fires.
          */
-         var setState = function(){
+         var setState = function() {
 
             var state = $.bbq.getState();
 
-            if(state.hasOwnProperty("new") || state.hasOwnProperty("edit")) {
+            if (!(state.hasOwnProperty("l") && state.l.indexOf("notifications/") === 0)) {
+                return;
+            }
+
+            if (state.hasOwnProperty("new") || state.hasOwnProperty("edit")) {
                 $rootElement.hide();
                 return;
             }
             var box;
-            if(state.hasOwnProperty("l")) {
+            if (state.hasOwnProperty("l")) {
                 box = state.l;
             }
 
             if (box === "notifications/drafts") {
                 showFilteredList("drafts", inboxFilterDrafts);
                 $("#inbox-new-button").show();
-            } else if(box === "notifications/queue") {
+            } else if (box === "notifications/queue") {
                 showFilteredList("queue", inboxFilterQueue);
                 $("#inbox-new-button").show();
-            } else if(box === "notifications/archive") {
+            } else if (box === "notifications/archive") {
                 showFilteredList("archive", inboxFilterArchive);
                 $("#inbox-new-button").show();
-            } else if(box === "notifications/trash") {
+            } else if (box === "notifications/trash") {
                 showFilteredList("trash", inboxFilterTrash);
                 $("#inbox-new-button").show();
             }
@@ -1222,14 +1176,14 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         $(window).bind('hashchange', function() {
             setState();
         });
+        
+        /////////////////////////////
+        // Initialization function //
+        /////////////////////////////
 
-        /**
-         *
-         * Init
-         *
-         */
+
         var doInit = function(){
-            debug.info("notificationsinbox init()");
+
             // if the user is not a member of the advisers group then bail
             if (!myb.api.security.isUserAnAdviser()) {
                 sakai.api.Security.send403();
@@ -1254,9 +1208,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 filterMessages("drafts", "", "all", inboxFilterDrafts);
             }
 
-            //sakai.api.Widgets.widgetLoader.insertWidgets("#"+tuid);
-
-            //$.bbq.removeState(["new", "edit"]);
             setState();
 
              // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
