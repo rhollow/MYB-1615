@@ -1355,6 +1355,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             var state = $.bbq.getState();
 
+            if (!(state.hasOwnProperty("l") && state.l === "dynlists")) {
+                return;
+            }
+
             if (state.hasOwnProperty("new")) {
 
 
@@ -1455,8 +1459,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 security.send403();
                 return;
             }
-
-            //reloadTemplate(null);
 
             populateDesignateTermYear();
 

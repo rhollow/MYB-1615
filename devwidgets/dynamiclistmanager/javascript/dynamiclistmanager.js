@@ -363,12 +363,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         ////////////////////////////////
 
         /**
-         * Sets current state of this component (list mode or edit mode).
+         * Sets current state of this component.
          * This function is called when hashchange event fires.
          */
-         var setTabState = function(){
+         var setState = function(){
 
             var state = $.bbq.getState();
+
+            if (!(state.hasOwnProperty("l") && state.l === "dynlists")) {
+                return;
+            }
 
             if (state.hasOwnProperty("new") || state.hasOwnProperty("edit") || state.hasOwnProperty("copy")) {
                  $rootElement.hide();
@@ -381,7 +385,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         };
 
          $(window).bind('hashchange', function() {
-            setTabState();
+            setState();
         });
 
 
@@ -405,7 +409,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
-            setTabState();
+            setState();
             loadDynamicListsFromServer();
 
             var contexts = sakai.data.me.dynamiclistcontexts;

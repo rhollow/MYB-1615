@@ -1314,6 +1314,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             var state = $.bbq.getState();
 
+            if (!(state.hasOwnProperty("l") && state.l.indexOf("notifications/") === 0)) {
+                return;
+            }
+
             if(state.hasOwnProperty("new")) {
                 resetForm();
                 dynamicListInit(null);
