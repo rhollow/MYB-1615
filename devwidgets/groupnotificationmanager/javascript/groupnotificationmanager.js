@@ -232,6 +232,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * test if the current browser supports the ellipsis overflow
          */
         var browserSupportsCSS3textOverflow = function () {
+            // TODO: Test in IE9
+            if($.browser.msie) return false; // ellipsis doesn't work correctly in IE8
             var style = document.documentElement.style;
             return ('textOverflow' in style || 'OTextOverflow' in style);
         }
@@ -243,15 +245,20 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          */
         var ellipsisSubjects = function(){
             if (browserSupportsCSS3textOverflow()) {
-                $(".subject-td").each(function(){
+                $(".subject-td p a.ellipsis_text").each(function(){
                     $(this).css({
+                        "text-overflow": "ellipsis",
+                        "-o-text-overflow": "ellipsis",
+                        // Encountered problems with Firefox, disabling the property below for now
+                        //"-moz-binding": "url('bindings.xml#ellipsis')",
                         "white-space": "nowrap",
-                        "overflow": "hidden"
-                        //"text-overflow": "ellipsis"
+                        "overflow": "hidden",
+                        "display": "inline-block",
+                        "max-width": "100%"
                     });
                 });
             } else {
-                $(".subject-td").each(function(){
+                $(".subject-td p").each(function(){
                     $(this).ThreeDots({
                         max_rows: 1
                     });
