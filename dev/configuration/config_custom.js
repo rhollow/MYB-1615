@@ -10,7 +10,7 @@ define(["config/config", "config/env"], function(config) {
         {
           label: "Login using your CalNet ID",
           login_btn: "LOGIN_BTN",
-          url: "/system/sling/cas/login?resource=/dev/me.html",
+          url: "/system/sling/cas/login?resource=/",
           description: "CAS_NOTE"
         }
     ];

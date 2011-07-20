@@ -25,7 +25,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
         var doInit = function() {
             $("#login-external-button").click(function (evt) {
-                window.location = "/system/sling/cas/login?resource=/dev/index.html";
+                window.location = "/system/sling/cas/login?resource=/";
             });
         };
 
