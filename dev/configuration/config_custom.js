@@ -236,11 +236,8 @@ define(["config/config", "config/env"], function(config) {
             }
         },
         social_sciences: {
-            title: "Student Groups",
-            children: {
-                academic: {
-                    title: "Academic"
-                },
+            title: "Social Sciences",
+            children: {                
                 economics: {
                     title: "Economics"
                 },
@@ -259,10 +256,12 @@ define(["config/config", "config/env"], function(config) {
             }
         },
         law: {
-            title: "Law"
+            title: "Law",
+            children: {}
         },
         medicine: {
-            title: "Medicine"
+            title: "Medicine",
+            children: {}
         },
         departments: {
             title: "Colleges and Departments",
@@ -276,7 +275,8 @@ define(["config/config", "config/env"], function(config) {
             }
         },
         col_groups: {
-            title: "Collaborative Groups"
+            title: "Collaborative Groups",
+            children: {}
         }
     };
 
