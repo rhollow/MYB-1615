@@ -1146,8 +1146,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
         });
 
-        $("#cn-cancel-button", $rootElement).click(function(){
-             $.bbq.removeState(['new', 'edit']);
+        $("#cn-cancel-button,#cn-editdraft-cancel-button,#cn-queueview-cancel-button,#cn-archiveview-cancel-button,#cn-trashview-cancel-button", $rootElement).click(function() {
+            $.bbq.removeState(['new', 'edit']);
             //return false;
         });
 
