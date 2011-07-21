@@ -45,8 +45,8 @@
 /* Footer on the login page */
 .footer_push{height:45px;}
 
-/* MyBerkeley custom begin */
+/* CalCentral custom begin */
 
-#footer_logo{background:url(/devwidgets/footer/images/myberkeley/myb-small-black-logotype.png) no-repeat scroll 0 0 transparent;width:114px;height:28px;float:left;margin-right:15px;}
+#footer_logo{background:url(/devwidgets/footer/images/myberkeley/CalC-footer-logo.png) no-repeat scroll 0 0 transparent;width:114px;height:28px;float:left;margin-right:15px;}
 
-/* MyBerkeley custom end */
+/* CalCentral custom end */
