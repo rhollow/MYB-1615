@@ -78,7 +78,7 @@ function geocodePosition(position) {
                 updateInfoWindow(html);
             }
             else {
-                alert("Cannot determine address at this location.");
+                alert($("#map_no_address").html());
             }
         });
     }
@@ -99,11 +99,11 @@ function geocodeAddress(address) {
                 map.setCenter(position);
                 marker.setMap(map);
                 marker.setPosition(position);
-                var html = address;
+                var html = results[0].formatted_address;
                 updateInfoWindow(html);
             }
             else {
-                alert("Cannot determine address at this location.");
+                alert($("#map_no_address").html());
             }
         });
     }
@@ -113,8 +113,11 @@ function geocodeAddress(address) {
  * Get the json object
  */
 var getJSON = function() {
-    json.lat = map.getCenter().lat();
-    json.lng = map.getCenter().lng();
+    // use marker rather than map because 
+    // map use 14 decimal places while marker uses only 6 decimal places 
+    // causing marker to appear on wrong spot
+    json.lat = marker.getPosition().lat();
+    json.lng = marker.getPosition().lng();
     json.mapzoom = map.getZoom();
     return json;
 };
@@ -146,7 +149,7 @@ function setMap(jsonTarget) {
 
     var latLng = new google.maps.LatLng(json.lat, json.lng);
     map.setCenter(latLng);
-    map.setZoom(json.mapzoom);
+    map.setZoom(parseInt(json.mapzoom, 10));
     marker.setPosition(latLng);
 
     // Init the infoWindow object and decide to open it or not

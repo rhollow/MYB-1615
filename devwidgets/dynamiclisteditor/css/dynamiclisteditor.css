@@ -1,0 +1,252 @@
+.dynamiclisteditor_widget .button-list {
+    float: right;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
+.dynamiclisteditor_widget div.group_header {
+	font-size:15px;
+	font-weight: 700;
+}
+
+.dynamiclisteditor_widget .sub_group{
+	margin-left: 20px;
+}
+
+.dynamiclisteditor_widget .checkbox input {
+	float:left;
+	display:block;
+	margin:2px 3px 0 0;
+	padding:0;
+	width:13px;
+	height:13px;
+}
+
+.dynamiclisteditor_widget .checkbox label {
+	display:block;
+	margin-left: 16px;
+	width:auto;
+}
+
+.dynamiclisteditor_widget .readonly_textbox {
+	background-color: #D7D7D7;
+	display: inline-block;
+	font-weight: bold;
+	margin: 0;
+	padding: 4px;
+}
+
+.dynamiclisteditor_widget .disabled {
+	-moz-opacity: 0.4;
+	filter:alpha(opacity=40);
+	opacity: 0.4;
+}
+
+.dynamiclisteditor_widget .wrapper{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 100%;
+}
+
+.dynamiclisteditor_widget .left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   border-right: 1px solid #000;
+   padding: 5px;
+}
+
+.dynamiclisteditor_widget .right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   padding: 5px;
+}
+
+.dynamiclisteditor_widget .onecolumn{
+   position: relative;
+   width: 98%;
+   padding: 5px;
+}
+
+
+
+
+/* Registration status layout */
+.dynamiclisteditor_widget .reg_status_col_left1{
+   position: relative;
+   float: left;
+   left: 0.5%;
+   width: 33%;
+   min-height: 175px;
+   margin-bottom:10px;
+   border-right: 1px solid #000;
+}
+.dynamiclisteditor_widget .reg_status_col_left2{
+   position: relative;
+   float: left;
+   left: 1.5%;
+   width: 33%;
+   min-height: 175px;
+   margin-bottom:10px;
+   border-right: 1px solid #000;
+
+}
+.dynamiclisteditor_widget .reg_status_col_right{
+   position: relative;
+   float: right;
+   right: 0.5%;
+   min-height: 175px;width: 31%;
+   margin-bottom:10px;
+
+}
+
+/* Registration status layout */
+
+
+/* Cohort status layout */
+.dynamiclisteditor_widget .cohort_status_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 40%;
+   margin-bottom:10px;
+   padding-top: 5px;
+}
+.dynamiclisteditor_widget .cohort_status_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 59%;
+   margin-bottom:10px;
+   padding-top: 5px;
+}
+/* Cohort status layout */
+
+
+/* Designate term layout */
+.dynamiclisteditor_widget .designate_term_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   padding-top:5px;
+}
+.dynamiclisteditor_widget .designate_term_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   padding-top:5px;
+}
+/* Designate term layout */
+
+
+
+/* Special programs layout */
+.dynamiclisteditor_widget .special_prog_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   margin-bottom:10px;
+}
+.dynamiclisteditor_widget .special_prog_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+   margin-bottom:10px;
+}
+/* Special programs layout */
+
+
+
+
+
+/* Student and residency status layout */
+.dynamiclisteditor_widget .student_and_residency_status_col_left{
+   position: relative;
+   float: left;
+   left: 0;
+   width: 48%;
+   padding-right: 10px;
+   border-right: 1px solid #000;
+}
+.dynamiclisteditor_widget .student_and_residency_status_col_right{
+   position: relative;
+   float: right;
+   right: 0;
+   width: 48%;
+}
+/* Student status layout */
+
+
+/* Main view layout */
+.dynamiclisteditor_widget #view{
+
+}
+
+.dynamiclisteditor_widget #section_c{
+	clear:both;
+}
+/* Main view layout */
+
+.dynamiclisteditor_widget .majors,
+.dynamiclisteditor_widget .levels,
+.dynamiclisteditor_widget .admittedAs,
+.dynamiclisteditor_widget .declared,
+.dynamiclisteditor_widget .programs,
+.dynamiclisteditor_widget .certificates,
+.dynamiclisteditor_widget .emphases,
+.dynamiclisteditor_widget .degrees,
+.dynamiclisteditor_widget .cohort_status,
+.dynamiclisteditor_widget .special_programs,
+.dynamiclisteditor_widget .student_and_residency_status {
+	border-top: 1px solid #000;
+	margin-top: 5px;
+	padding-top: 5px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.dynamiclisteditor_widget .main_title {
+	font-size: 20px;
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+.dynamiclisteditor_widget .sub_title {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.dynamiclisteditor_widget .details_link_container {
+	float:right;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.dynamiclisteditor_widget .students_targeted_by_list_container {
+	display:inline-block;
+	margin-left: 240px;
+}
+
+.dynamiclisteditor_widget .title_information_container{
+	border-bottom: 3px solid #000;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+}
+
+.dynamiclisteditor_widget .border_box {
+	border: 4px solid #D5DBDF;
+}
+
+.dynamiclisteditor_widget .noStudentsTargeted {
+	color: #F00;
+}
+
+.dynamiclisteditor_widget .invalid_span { padding-left: 10px; color: #CC0000; font-weight: bold; }

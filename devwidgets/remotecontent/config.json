@@ -1,0 +1,30 @@
+{
+    "userpages": true,
+    "userdashboard": true,
+    "grouppages": true,
+    "groupdashboard": true,
+    "sakaidocs": true,
+    "description":"Remote Content",
+    "i18n": {
+        "default": "/devwidgets/remotecontent/bundles/default.properties",
+        "en_US": "/devwidgets/remotecontent/bundles/en_US.properties"
+    },
+    "id":"remotecontent",
+    "img":"/devwidgets/remotecontent/images/remotecontent.png",
+    "name":"Remote Content",
+    "showinsakaigoodies":true,
+    "hasSettings": true,
+    "type":"sakai",
+    "enabled":true,
+    "url":"/devwidgets/remotecontent/remotecontent.html",
+    "defaultConfiguration": {
+        "remotecontent": {
+            "border_color": "cccccc",
+            "border_size": 0,
+            "height": "800",
+            "url": "http://sakaiproject.org",
+            "width": "100",
+            "width_unit": "%"
+        }
+    }
+}

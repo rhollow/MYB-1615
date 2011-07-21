@@ -1,0 +1,424 @@
+.mytasks .widget_title_icon {
+    background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat transparent;
+}
+
+.mytasks_overdue_tasks_msg {
+    background-color: #C4DAE8;
+    color: #BF0000;
+    font-weight: bold;
+    margin-top: -12px;
+    padding: 6px 0;
+    text-align: center;
+}
+
+.showing_archive_msg {
+    background-color: #C4DAE8;
+    color: #000000;
+    font-weight: bold;
+    margin-top: -12px;
+    padding: 6px 0;
+    text-align: center;
+}
+
+
+.s3d-widget .s3d-widget-content {
+    padding-bottom: 0;
+}
+/**
+    Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
+**/
+
+.noticewidget_listing_loading {
+    font-style: italic;
+    color: #333;
+	margin-left:20px;
+    padding-top: 6px;
+}
+
+table.noticewidget_listing {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 0;
+	width: 100%; /* needed for IE7 */
+    display: block;
+}
+
+.archiveView {
+    border-top: solid 1px #666;  
+}
+
+.mytasks_overdue_tasks_exist .archiveView {
+    margin-top: 0;
+}
+
+table.noticewidget_listing thead {
+    background-color: #EBEDEE;  
+    border-bottom: 1px solid #666;                 
+}
+
+table.noticewidget_listing th {
+    border-bottom: 1px solid #666;
+}
+
+table.noticewidget_listing th.ASC {
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-position: 100% -26px;
+	background-color: #D5DBDF;
+	
+}
+
+table.noticewidget_listing th.DESC {
+    background: url("/devwidgets/mytasks/images/arrow-sort.png") no-repeat scroll transparent;
+	background-position: 100% 0px;
+	background-color: #D5DBDF;
+}
+
+table.noticewidget_listing td, table.noticewidget_listing th {    
+    width: 56px;
+    text-align: center;
+    padding: 2px 20px 0px 20px;       
+}
+
+table.noticewidget_listing.scroller {
+    display:block;
+    height: 180px;
+    overflow: auto;
+    overflow-x: hidden;
+    border-bottom: 1px solid #555;
+}
+
+/* Fix inheritance problem with scroller in IE7 */
+table.noticewidget_listing tbody tr {
+    height: 40px;    
+}
+
+.rightbound {
+    border-right: solid 1px #333;
+}
+
+table.noticewidget_listing .subjectLine {
+    width: 58%;    
+    text-align: left;    
+    padding-left: 9px;    
+}
+
+table.noticewidget_listing .dueLine {
+    width: 16%;
+    text-align: left;   
+    padding-left: 20px; 
+}
+
+table.noticewidget_listing .dueDateLine {
+    width: 16%;
+    text-align: left;   
+    padding-left: 20px; 
+}
+
+table.noticewidget_listing .requiredLine {
+    width: 15%;
+    text-align: left;   
+    padding-left: 9px; 
+}
+
+table.noticewidget_listing .taskStateLine {
+    width: 17%;
+    text-align: left;   
+    padding-left: 9px; 
+}
+
+table.noticewidget_listing tr.empty_list td {
+    width: 100%;
+    text-align: center;
+    font-style: italic;
+	padding: 10px;
+}
+
+table.noticewidget_listing tr.notice_row {
+    cursor: pointer;
+}
+
+table.noticewidget_listing tr.notice_row td {
+    padding: 5px;
+}
+
+table.noticewidget_listing tr.alternate {
+    background-color: #F5F6F6;
+}
+
+table.noticewidget_listing tr.notice_row:hover {
+    background-color: #ccc;
+}
+
+.noticewidget_listing_sort {
+    cursor: pointer;
+    height: 26px;
+    border-bottom: solid 1px #333;    
+    width: auto;
+    font-weight: bold;
+    color: #333;
+}
+
+.noticewidget_filter_container {
+    border: 1px solid #666;
+    margin-top: -12px;   
+    width: inherit;    
+    height: auto;     
+    color: #333;
+    padding: 5px 0px; 
+}
+
+.mytasks_overdue_tasks_exist .noticewidget_filter_container {
+    margin-top: 0;
+}
+
+.noticewidget_filter {
+    background-color: #fff;
+    width: auto;           
+}
+
+.noticewidget_filter_status {
+    margin-left: 32px;           
+    line-height: 19px;      
+    width: inherit;
+    padding-top: 5px;
+}
+
+.noticewidget_filter_status input {
+    margin-left: 9px;    
+}
+
+.noticewidget_filter_status label {
+    color: #333;    
+}
+
+.noticewidget_filter_daterange {          
+    width: inherit;
+    line-height: 19px;
+    margin-left: 32px;
+    padding-top: 5px;
+}
+
+.noticewidget_filter_daterange input {
+    margin-left: 9px;    
+}
+
+.noticewidget_filter_daterange label {     
+    color: #333; 
+}
+
+.noticewidget_filter_control {     
+    color: #333;              
+}
+
+.noticewidget_filter_header {
+    font-style: normal;
+}
+
+.noticewidget_filter_message {
+    font-style: italic;
+}
+
+.noticewidget_filter_control_header {
+    cursor: pointer;    
+}
+
+.noticewidget_filter_control_indicator {
+    width: 10px;    
+    margin-left: 14px;    
+    margin-right: 8px;   
+    background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;   
+    display: inline-block;
+    float: left;    
+}
+
+.noticewidget_filter_control_indicator.open {
+    background-position: -16px top;
+}
+
+.noticewidget_filter_control_indicator.closed {
+    background-position: left top;
+}
+
+.noticewidget_checkmark {
+	display: inline-block;
+    width: 16px;
+    background: url("/devwidgets/mytasks/images/checkmark.png") no-repeat scroll transparent;
+	background-position: 0px -2px;
+}
+
+.noticewidget_detail_controls {
+    padding-left: 6px;
+}
+
+.myB-return-arrow {
+  background: url("/dev/images/dashboard_sprite.png") no-repeat scroll -443px -395px transparent;
+  display: block;
+  float: left;
+  padding-right: 22px;
+  height: 16px;
+  width: 8px;
+}
+
+
+.noticewidget_detail_controls .return_to_list_container:hover .return_to_list {
+    background-position: left -75px;
+}
+
+.noticewidget_detail_controls .return_to_list_container:hover .return_to_list_right_corner {
+    background-position: -202px -110px;
+}
+
+.noticewidget_detail_controls .noticewidget-arrows {
+    float: right;
+    margin-right: 14px;
+    margin-top: -6px;
+}
+
+.noticewidget_detail_controls .notice-nav {
+    height: 22px;
+    width: 24px;
+    background-color: #454A4E;
+    background-image: url("/devwidgets/mytasks/images/notice-arrow-nav.png");
+    background-attachment: scroll;
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin: 0 0 5px;
+    overflow: visible;
+    padding: 0;
+    position: relative;
+    border: none;
+    color: white;
+    outline: none;
+}
+
+.noticewidget_detail_controls .notice-nav:hover {
+    background-color: #006E96;
+}
+
+.noticewidget_detail_controls .notice-nav.disabled {
+    background-color: #999;
+}
+
+.noticewidget_detail_controls .notice-next {
+    background-position: 5px 7px;
+    margin-left: 1px;
+    -moz-border-radius: 0 10px 10px 0; 
+    border-radius: 0 10px 10px 0; 
+}
+
+.noticewidget_detail_controls .notice-prev {
+    background-position: 8px -18px;
+    -moz-border-radius: 10px 0 0 10px;
+    border-radius: 10px 0 0 10px;
+}
+
+.noticewidget_detail {
+    margin: 10px 1px 0 1px;
+    padding: 0 12px 0 6px;
+    border-top: 2px solid #ccc;
+    clear: both;
+}
+
+.noticewidget_detail_head {
+    padding-left: 4px;
+}
+
+.noticewidget_detail h3 {
+    font-size: 120%;
+    line-height: 110%;
+    margin: 0.7em 0 0.3em;
+}
+
+.noticewidget_detail h4.myB-unrequired {
+    font-weight: normal;
+}
+
+.noticewidget_detail fieldset {
+    float: right;
+    margin: 0.9em 0.1em 0.3em 0.3em;
+}
+
+.noticewidget_detail h5 {
+    float: right;
+}
+
+.noticewidget_detail textarea {
+    border: none;
+    border-top: 1px dotted #CCC;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 2px;
+    margin-top: 6px;
+    height: 150px;
+    width: 100%
+}
+
+.noticewidget_detail textarea:hover {
+    background-color: transparent;
+}
+
+.noticewidget_detail p {
+    border: 1px solid #ccc;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 2px;
+    height: 150px;
+}
+
+.mytasks_widget .fl-widget-options .widget-options-inner .left {
+    float: left;
+    margin-left: 10px;
+}
+
+.mytasks_widget .fl-widget-options .widget-options-inner .right {
+    float: right;
+    margin-right: -10px;
+}
+
+.s3d-widget-footer a.noticewidget_view_task_archive {
+    float: left;
+}
+
+.noticewidget_archive_tasks_button {
+    margin: -5px -5px 0 0;
+}
+
+table.noticewidget_listing tr.overDueTask {
+    color: #BF0000;
+}
+
+
+/* The last column in My Tasks and My Events widgets should be left-aligned because of the scroller */
+table.noticewidget_listing td.noticewidget_task_completed, table.noticewidget_listing td.noticewidget_event_required {
+	text-align: left;
+	padding-left: 9px !important;
+}
+
+table.noticewidget_listing td.noticewidget_event_required {
+	text-align: left;
+	padding-left: 15px !important;
+}
+
+
+/* Required task bullets */
+table.noticewidget_listing td span.required_task_bullet {
+	width: 16px;
+	height: 16px;
+	display: inline-block;	
+}
+
+table.noticewidget_listing tr td span.required_task_bullet {
+    background: url("/devwidgets/mytasks/images/bullet_black.png") no-repeat scroll transparent;
+	background-position: 0px 2px;	
+}
+
+table.noticewidget_listing tr.overDueTask td span.required_task_bullet {
+    background: url("/devwidgets/mytasks/images/bullet_red.png") no-repeat scroll transparent;
+	background-position: 0px 2px;
+}
+
+.myevents_widget table.noticewidget_listing .subjectLine {
+    width: 70%;        
+}

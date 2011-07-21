@@ -1,0 +1,117 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/contentcomments/css/contentcomments.css" />
+
+<!-- MAIN VIEW -->
+<div id="contentcomments_mainContainer" class="fl-widget-content s3d-widget-content" style="display:none;">
+    <div id="contentcomments_titlebar">
+        <span class="contentcomments_titleLeft">__MSG__COMMENTS__</span>
+    </div>
+
+    <div id="contentcomments_userCommentContainer">
+        <div id="contentcomments_userProfileAvatar">
+            <img id="contentcomments_userProfileAvatarPicture" alt="__MSG__AVATAR__" class="contentcomments_avatar" src="/dev/images/default_profile_picture_64.png" />
+        </div>
+        <div class="contentcomments_arrowLeftFiller"></div>
+        <div class="contentcomments_arrowLeft"></div>
+        <div id="contentcomments_fillInComment">
+            <div class="contentcomments_fillInCommentTopContainer">
+                <br />
+                <textarea id="contentcomments_txtMessage" class="contentcomments_inputFields" cols="20"></textarea>
+                <div class="dialog_buttons contentcomments_dialog_buttons right">
+                    <button id="contentcomments_postComment" class="s3d-button s3d-overlay-button comment_postCommentTopBottom">__MSG__COMMENT__</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contentcomments_nextButtons">
+        <div class="jq_pager contentcomments_jqpager" style="display:none;"><!-- In this container the pager on top will be shown --></div>
+    </div>
+
+    <div id="contentcomments_contentcommentsDisabled" style="display:none;">
+        <p>__MSG__COMMENTS_ARE_CURRENTLY_DISABLED__</p>
+    </div>
+
+    <div id="contentcomments_showComments">
+        <!-- In this container all contentcomments will be shown -->
+    </div>
+    <div id="contentcomments_showCommentsTemplate" style="display:none"><!--
+    <div>
+    <div class="contentcommentsTable">
+
+        {for i in comments}
+        <div class="contentcomments_comment">
+            <div class="contentcomments_leftCommentBar">
+                <img alt="__MSG__AVATAR__" class="contentcomments_avatar" src="${i.user.pictureUrl}" />
+            </div>
+            <div class="contentcomments_topCommentBar">
+                <div class="contentcomments_posterData s3d-regular-light-links">
+                    <span class="contentcomments_posterDataName s3d-regular-light-links"><a href="/~${i.user.uid}" target="_blank">${i.user.fullName}</a></span>
+                    <span class="contentcomments_dateComment">${i.formatDate}</span>
+                </div>
+                {if i.canDelete && i.canDelete === true || i.userid === sakai.data.me.user.userid}
+                    {if i["sakai:deleted"] && i["sakai:deleted"] === true}
+                        <button type="button" class="s3d-button contentcomments_undelete s3d-regular-light-links s3d-link-button" id="contentcomments_undelete_${i['sakai:id']}">__MSG__UNDELETE__</button>
+                    {else}
+                        <button type="button" class="s3d-button contentcomments_delete s3d-regular-light-links s3d-link-button" id="contentcomments_delete_${i['sakai:id']}">__MSG__DELETE__</button>
+                    {/if}
+                {/if}
+                <div class="contentcomments_commentMessage">
+                    <div class="contentcomments_commentLinks">
+                        <input type="hidden" id="contentcomments_path_${i['sakai:id']}" value="${i.commentId}" />
+                            {if i.canEdit && i.canEdit === true}
+                                <ul>
+                                    <span class="dialog_buttons right">
+                                        <li><button type="button" class="s3d-button s3d-button-link-2-state contentcomments_edit" id="contentcomments_edit_${i['sakai:id']}">
+                                                <span class="s3d-button-inner s3d-button-link-2-state-inner s3d-button-link-2-state-inner-secondary">__MSG__EDIT__</span>
+                                            </button>
+                                        </li>
+                                    </span>
+                                </ul>
+                            {/if}
+                    </div>
+
+                    {if i["sakai:deleted"] && i["sakai:deleted"] === true}
+                        <p class="contentcomments_infoDeleted">This comment has been deleted. Only site collaborators can see this comment.
+                        {if i.canDelete && i.canDelete === true}
+                            <br />You can return it by clicking the undelete link.
+                        {/if}
+                        </p>
+                    {/if}
+                    <div id="contentcomments_message_${i['sakai:id']}" class="contentcomments_message">
+                        <p>${i.message}</p>
+                    </div>
+                    <div id="contentcomments_message_editContainer_${i['sakai:id']}" style="display:none;">
+                        <textarea class="contentcomments_txtMessage" id="contentcomments_editComment_txt_${i['sakai:id']}" rows="7" cols="50">${i.messageTxt}</textarea><br />
+                        <div class="dialog_buttons right">
+                            <button type="button" class="s3d-button s3d-button-primary contentcomments_editComment_save" id="contentcomments_editComment_save${i['sakai:id']}"><span class="s3d-button-inner">__MSG__EDIT_COMMENT__</span></button>
+                            <button type="button" class="s3d-button contentcomments_editComment_cancel" id="contentcomments_editComment_cancel${i['sakai:id']}"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {forelse}
+            {if sakai.data.me.user.anon}
+                <div class="s3d-no-results-container">
+                    <div class="s3d-no-results-arrow-up"></div>
+                    <div class="s3d-no-results-icon s3d-no-results-search-content"></div>
+                    <h1>__MSG__NO_RESULTS_DESCRIPTION__</h1>
+                </div>
+            {/if}
+        {/for}
+    </div>
+
+    </div>
+    --></div>
+    <div class="contentcomments_nextButtons">
+        <button type="button" class="s3d-button" id="contentcomments_prevPage"><span class="s3d-button-inner">__MSG__PREVIOUS_PAGE__</span></button><br />
+        <div class="jq_pager contentcomments_jqpager" style="display:none;"><!-- In this container the pager will be shown (bottom) --></div>
+    </div>
+</div>
+
+<!-- WIDGET FOOTER-->
+<div class="s3d-widget-no-options"><div class="s3d-widget-no-options-inner"><!-- --></div></div>
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/contentcomments/javascript/contentcomments.js"></script>

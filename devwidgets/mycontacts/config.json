@@ -1,0 +1,15 @@
+{
+    "description":"My contacts",
+    "id":"mycontacts",
+    "multipleinstance": false,
+    "i18n": {
+        "default": "/devwidgets/mycontacts/bundles/default.properties",
+        "en_US": "/devwidgets/mycontacts/bundles/en_US.properties",
+        "zh_CN": "/devwidgets/mycontacts/bundles/zh_CN.properties"
+    },
+    "name":"My contacts",
+    "personalportal":true,
+    "type":"sakai",
+    "enabled":true,
+    "url":"/devwidgets/mycontacts/mycontacts.html"
+}

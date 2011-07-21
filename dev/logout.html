@@ -3,26 +3,11 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Sakai 3 R&amp;D - __MSG__LOGGING_OUT__ ...</title>
-
-        <!-- Sakai Config JS -->
-        <script type="text/javascript" src="_configuration/widgets.js"></script>
-        <script type="text/javascript" src="_configuration/config.js"></script>
-
-        <!-- Core 3rd-party JS -->
-        <script type="text/javascript" src="_lib/jquery/jquery.js"></script>
-        <script type="text/javascript" src="_lib/jquery/jquery-ui.full.js"></script>
-        <script type="text/javascript" src="_lib/Fluid/3akai_Infusion.js"></script>
-        <script type="text/javascript" src="_lib/jquery/plugins/jquery.json.js"></script>
-
-        <!-- Sakai Core JS -->
-        <script type="text/javascript" src="_lib/sakai_util/sakai_magic.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/i18n.js"></script>
-
+        <title></title>
     </head>
 
     <body class="i18nable">
-        <script type="text/javascript" src="_javascript/logout.js"></script>
+        <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
+        <script>require(["/dev/javascript/logout.js"]);</script>
     </body>
-
 </html>

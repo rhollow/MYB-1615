@@ -1,99 +1,321 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="/devwidgets/entity/css/entity.css" />
 
-<!-- CONTAINER -->
-<div id="entity_container" class="fl-container-900" style="display:none"><!-- --></div>
+<div id="entity_container"><span style="display:none;">__MSG__IE_PLACEHOLDER__</span></div>
 
-<!-- ACTIONS CONTAINER -->
-<div id="entity_container_actions" style="display:none"><!-- --></div>
-
-<div id="entity_container_template"><!--
-    <div class="fl-col entity_container_left">
-        {if mode === "myprofile" || mode === "profile"}
-            <div class="fl-force-left">
-                {if data.profile && data.profile.picture}
-                    <img class="entity_picture" id="entity_profile_picture" src="${data.profile.picture}" alt="__MSG__PROFILE_PICTURE_FOR__ ${data.profile.firstName} ${data.profile.lastName}" />
-                {else}
-                    <img class="entity_picture" id="entity_profile_picture" src="/dev/_images/default_profile_picture_96.png" alt="__MSG__PLACEHOLDER_PICTURE_FOR__ ${data.profile.firstName} ${data.profile.lastName}" />
-                {/if}
-                {if mode === "myprofile"}
-                    <br />
-                    <a href="javascript:;" class="s3d-action" id="changepic_container_trigger">__MSG__CHANGE_PHOTO__</a>
-                {/if}
-            </div>
-            <h2 class="entity_header">
-                <a href="/dev/profile.html?user=${data.profile["rep:userId"]}">${data.profile.firstName} ${data.profile.lastName}</a>
-            </h2>
-            <form method="POST" action="javascript:;">
-                <div>
-                    <label for="entity_profile_chatstatus">__MSG__CHAT_STATUS__: </label>
-                    {if mode === "myprofile"}
-                        <select id="entity_profile_chatstatus" title="__MSG__CHAT_STATUS__">
-                            <option value="online" {if data.profile.chatstatus === "online"}selected="selected"{/if}>__MSG__AVAILABLE__</option>
-                            <option value="busy" {if data.profile.chatstatus === "busy"}selected="selected"{/if}>__MSG__BUSY__</option>
-                            <option value="offline" {if data.profile.chatstatus === "offline"}selected="selected"{/if}>__MSG__OFFLINE__</option>
-                        </select>
-                    {else}
-                        {if data.profile.chatstatus === "online"}__MSG__AVAILABLE__{/if}
-                        {if data.profile.chatstatus === "busy"}__MSG__BUSY__{/if}
-                        {if data.profile.chatstatus === "offline"}>__MSG__OFFLINE__{/if}
-                    {/if}
-                </div>
-            </form>
-            <form id="entity_profile_status" method="POST" action="javascript:;">
-                {if mode === "myprofile"}
-                <div>
-                    <input id="entity_profile_status_input" title="__MSG__WHAT_ARE_YOU_DOING_NOW__" maxlength="255" type="text" {if !data.profile.status}class="entity_profile_status_input_dummy" value="__MSG__WHAT_ARE_YOU_DOING_NOW__"{else}value="${data.profile.status}"{/if} />
-                    <span id="entity_profile_status_input_dummy" style="display:none;">__MSG__WHAT_ARE_YOU_DOING_NOW__</span>
-                    <button type="submit" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__UPDATE__</span></button>
-                    <span id="entity_profile_status_input_saving" style="display:none;">__MSG__SAVING__...</span>
-                    <span id="entity_profile_status_input_saving_failed" style="display:none;">__MSG__SAVING_FAILED__</span>
-                </div>
-                {else}
-                    {if data.profile.status}
-                        ${data.profile.status}
-                    {/if}
-                {/if}
-            </form>
-        {/if}
-        {if mode === "content"}
-            <div class="fl-force-left">
-                {if data.profile}
-                    {if data.profile.mimetype === "image/jpeg" || data.profile.mimetype === "image/png" || data.profile.mimetype === "image/gif"}
-                        <img class="entity_picture" src="${data.profile.path}" alt="${sakai.config.MimeTypes[data.profile.mimetype].description}" width="96"/>
-                    {elseif sakai.config.MimeTypes[data.profile.mimetype]}
-                        <img class="entity_picture" src="${sakai.config.MimeTypes[data.profile.mimetype].URL}" alt="${sakai.config.MimeTypes[data.profile.mimetype].description}" />
-                    {else}
-                        <img class="entity_picture" src="${sakai.config.MimeTypes["other"].URL}" alt="${sakai.config.MimeTypes["other"].description}" />
-                    {/if}
-                {/if}
-            </div>
-            <div class="fl-force-left entity_content_information">
-                <p>${data.profile.name}</p>
-                <p>${data.profile.mimetype}</p>
-                <p>${data.profile.filesize}</p>
-                <p>__MSG__CREATED__ ${data.profile.created} __MSG__BY__ ${data.profile.createdby}</p>
-                <p>__MSG__LAST_MODIFIED__ ${data.profile.lastmodified} __MSG__BY__ ${data.profile.lastmodifiedby}</p>
-            </div>
-        {/if}
-    </div>
-    <div class="fl-col entity_container_right s3d-actions">
-        {if mode === "myprofile"}
-            <strong>__MSG__MESSAGES__:</strong>
-            <a href="/dev/inbox.html">${data.count.messages_unread|default:0} __MSG__UNREAD__</a>
-        {/if}
+<div id="entity_contentsettings_dropdown" style="display:none"><!--
+    <div id="entity_dropdown_wrapper" class="s3d-dropdown-list">
+        <div class="s3d-dropdown-list-arrow-up"></div>
+        <ul>
+            <li id="ew_permissions">
+                <button class="s3d-link-button">__MSG__PERMISSIONS__</button>
+            </li>
+            <hr class="s3d-split-line"/>
+            {if data && data.data && data.data.mimeType && data.data.mimeType !== "x-sakai/document"}
+                <li id="ew_upload">
+                    <button class="s3d-link-button">__MSG__UPLOAD_NEW_VERSION__</button>
+                </li>
+                <hr class="s3d-split-line"/>
+            {/if}
+            {if sakai_global.content_profile.content_data.data["sakai:custom-mimetype"] != "x-sakai/document"}
+                <li id="ew_revhistory">
+                    <button class="s3d-link-button">__MSG__REVISION_HISTORY__</button>
+                </li>
+                <hr class="s3d-split-line"/>
+            {/if}
+            <li id="ew_content_preview_delete">
+                <button class="s3d-link-button">__MSG__DELETE__</button>
+            </li>
+        <ul>
     </div>
 --></div>
 
-<div id="entity_container_actions_template"><!--
-    {if mode === "content"}
-        <div class="fl-push entity_actions">
-            <button type="button" class="s3d-button s3d-button-primary" id="entity_action_upload"><span class="s3d-button-inner">__MSG__ADD_RESOURCE__</span></button>
-            <button type="button" class="s3d-button s3d-button-primary" id="entity_action_download"><span class="s3d-button-inner">__MSG__DOWNLOAD_FILE__</span></button>
-            <button type="button" class="s3d-button s3d-button-primary" id="entity_action_delete"><span class="s3d-button-inner">__MSG__DELETE_FILE__</span></button>
+<div id="entity_groupsettings_dropdown" style="display:none"><!--
+    <div id="entity_dropdown_wrapper" class="s3d-dropdown-list">
+        <div class="s3d-dropdown-list-arrow-up"></div>
+        <ul>
+            <li id="ew_group_add_content">
+                <button class="s3d-link-button sakai_add_content_overlay">__MSG__ADD_CONTENT__</button>
+            </li>
+            <hr class="s3d-split-line"/>
+            <li id="ew_group_participants">
+                <button class="s3d-link-button addpeople_init">__MSG__MANAGE_PARTICIPANTS__</button>
+            </li>
+            <hr class="s3d-split-line"/>
+            <li id="ew_group_settings">
+                <button class="s3d-link-button" id="ew_group_settings_edit_link">__MSG__SETTINGS__</button>
+            </li>
+            <hr class="s3d-split-line"/>
+            <li id="ew_group_categories">
+                <button class="s3d-link-button" id="ew_group_categories_link">__MSG__CATEGORIES__</button>
+            </li>
+        <ul>
+    </div>
+--></div>
+
+<div id="entity_user_template" style="display:none"><!--
+    <div id="entity_actions">
+        {if !anon}
+            {if type != "user_anon" && type != "user_me"}
+                {if type == "user_other"}
+                    <button type="button" id="entity_user_add_to_contacts" class="s3d-button s3d-header-button sakai_addtocontacts_overlay" sakai-entityid="${data.userid}" sakai-entityname="${data.displayName}">__MSG__ADD_TO_CONTACTS__<span class="entity_add_to_contacts_icon entity_user_action_icon"></span></button>
+                {elseif type == "contact_invited"}
+                    <button type="button" id="entity_user_accept_invitation" class="s3d-button s3d-header-button">__MSG__ACCEPT_INVITATION__<span class="entity_add_to_contacts_icon entity_user_action_icon"></span></button>
+                {elseif type == "contact_pending"}
+                    <button type="button" class="s3d-button s3d-header-button entity_user_contact_pending" disabled="disabled">__MSG__CONTACT_INVITATION_SENT__<span class="entity_add_to_contacts_requested_icon entity_user_action_icon"></span></button>
+                {/if}
+                <button type="button" id="entity_user_message" class="s3d-button s3d-header-button sakai_sendmessage_overlay" sakai-entityid="${data.userid}" sakai-entityname="${data.displayName}" sakai-entitytype="user">__MSG__MESSAGE__<span class="entity_message_icon entity_user_action_icon"></span></button>
+            {/if}
+        {/if}
+    </div>
+    {if type && type == "user_me"}
+        <div id="entity_user_image">
+            <div class="entity_profilepic_internal">
+                <img id="entity_profile_picture" src="{if data.picture}${data.picture}{else}/dev/images/default_User_icon_50x50.png{/if}"/>
+            </div>
+            <div class="entity_profile_picture_down_arrow">&#9660;</div>
+            <div class="s3d-dropdown-menu-arrow"></div>
+            <div class="s3d-dropdown-list" style="display:none;">
+                <div class="s3d-dropdown-list-arrow-up"></div>
+                <ul>
+                    <li><a id="changepic_container_trigger" href="javascript:;" class="s3d-bold">__MSG__CHANGE_PICTURE__</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="s3d-bold entity_name_me">${data.displayName}</div>
+    {else}
+        <div id="entity_user_image" class="entity_other_profilepic">
+            <div class="entity_profilepic_internal">
+                <img id="entity_profile_picture" src="{if data.picture}${data.picture}{else}/dev/images/default_User_icon_50x50.png{/if}"/>
+            </div>
+        </div>
+        <div id="entity_name" class="s3d-bold">${data.displayName}</div>
+        <div id="entity_owns" class="s3d-regular-links">
+            <span class="entity_number">${data.profile.counts["contentCount"]}</span> <a href="#l=library" title="${data.profile.counts["contentCount"]} Documents">Documents</a>,
+            <span class="entity_number">${data.profile.counts["membershipsCount"]}</span> <a href="#l=memberships" title="${data.profile.counts["membershipsCount"]} Memberships">Memberships</a>,
+            <span class="entity_number">${data.profile.counts["contactsCount"]}</span> <a href="#l=contacts" title="${data.profile.counts["contactsCount"]} Contacts">Contacts</a>
         </div>
     {/if}
 --></div>
+
+<div id="entity_newaccount_template" style="display:none"><!--
+    <div class="s3d-bold entity_plaintitle">Create new account</div>
+--></div>
+
+<div id="entity_acknowledgements_template" style="display:none"><!--
+    <div class="s3d-bold entity_plaintitle">Acknowledgements</div>
+--></div>
+
+<div id="entity_search_template" style="display:none"><!--
+    <div class="s3d-bold entity_plaintitle">Search</div>
+--></div>
+
+<div id="entity_directory_template" style="display:none"><!--
+    <div id="entity_directory_image" class="entity_directory_image">
+        {if data.icon}
+            <img src="${data.icon}"/>
+        {else}
+            <img src="/dev/images/hierarchy.png"/>
+        {/if}
+    </div>
+    <div id="entity_name" class="s3d-bold entity_plaintitle">${data.title}</div>
+--></div>
+
+<div id="entity_content_template" style="display:none"><!--
+    <div id="entity_actions">
+        {if !anon}
+            {if type && type == "content_managed"}
+                <button type="button" id="entity_content_permissions" class="s3d-button s3d-button-no-text s3d-header-button"><span class="entity_permissions_icon">__MSG__DOWN_ARROW__</span></button>
+            {/if}
+            <button type="button" id="entity_content_save" class="s3d-button s3d-header-button savecontent_trigger" data-entityid="${data.data["_path"]}">__MSG__ADD_TO_LIBRARY__<span class="entity_add_to_library"></span></button>
+            <button type="button" id="entity_content_share" class="s3d-button s3d-header-button share_trigger_click" data-entityid="${data.data["_path"]}">__MSG__SHARE__<span class="entity_share_content"></span></button>
+        {/if}
+        {if data.data.mimeType === "x-sakai/link"}
+            <a id="contentpreview_download_button" href="${data.data["sakai:pooled-content-url"]}" class="s3d-button s3d-header-button fl-force-right s3d-margin-top-5" target="_blank">
+                Open Link<span class="entity_download_content"></span>
+            </a>
+        {elseif data.data.mimeType !== "x-sakai/document"}
+            <a id="contentpreview_download_button" href="${data.path}" class="s3d-button s3d-header-button fl-force-right s3d-margin-top-5" target="_blank">
+                Download<span class="entity_download_content"></span>
+            </a>
+        {/if}
+    </div>
+    <div id="entity_content_image" class="entity_content_image">
+        {if data.isManager}
+            <div id="entity_managed_content"></div>
+        {/if}
+        <img src="${data.data['iconURL']}"/>
+    </div>
+    <span id="entity_name" {if data.isManager}class="s3d-bold contentmetadata_editable"{/if}>${data.data["sakai:pooled-content-file-name"]}</span>
+    <span id="entity_name_edit" style="display:none">
+        <input id="entity_name_text" type="text" />
+    </span>
+    <div id="entity_owns" class="s3d-regular-links">
+        {var peopleCount = data.members.counts.people}
+        <div class="entity_number">
+            <div id="entity_used_by_icon" class="entity_content_details_icon"></div>
+            Used by
+            <a href="#" title="${peopleCount} {if peopleCount == 1} __MSG__PERSON_LC__{else} __MSG__PEOPLE_LC__{/if}" class="entity_content_people">
+                ${peopleCount}
+                {if peopleCount == 1}__MSG__PERSON_LC__{else}__MSG__PEOPLE_LC__{/if}
+            </a>
+        </div>
+        {var groupCount = data.members.counts.groups}
+        {if groupCount}
+            and
+            <a href="#" title="${groupCount} {if groupCount == 1} __MSG__GROUP_LC__{else} __MSG__GROUPS_LC__{/if}" class="entity_content_group">
+                ${groupCount}
+                {if groupCount == 1} __MSG__GROUP_LC__{else} __MSG__GROUPS_LC__{/if}
+            </a>
+        {/if}
+        <span class="entity_comments">
+            <img src="/devwidgets/entity/images/entity_comment_icon.png" alt="comments-icon" />
+            {var commentCount = sakai.api.Content.getCommentCount(data.data)}
+            <a id="entity_comments_link" href="#">${commentCount} {if commentCount == 1} __MSG__COMMENT__{else} __MSG__COMMENTS__{/if}</a>
+        </span>
+        <div class="entity_number entity_permissions_label">
+            {var permissions = data.data["sakai:permissions"]}
+            <div id="entity_${permissions}_privacy_icon" class="entity_content_details_icon"></div>
+            {if permissions == "public"}
+                __MSG__VISIBLE_TO_ANYONE__
+            {elseif permissions == "everyone"}
+                __MSG__VISIBLE_TO_LOGGED__
+            {else}
+                __MSG__PRIVATE_TO__ ${sakai.api.User.getDisplayName(sakai.data.me.profile)}
+                {if (peopleCount + groupCount) > 1}
+                    + ${groupCount + peopleCount - 1} __MSG__OTHERS__
+                {/if}
+            {/if}
+        </div>
+    </div>
+--></div>
+
+<div id="entity_group_template" style="display:none"><!--
+    <div id="entity_actions">
+        {if !anon}
+            {if type && type == "group_managed"}
+                <button type="button" id="entity_group_permissions" class="s3d-button s3d-header-button s3d-button-no-text"><span class="entity_permissions_icon">__MSG__DOWN_ARROW__</span></button>
+            {else}
+                <div id='widget_joinrequestbuttons' class='widget_inline'></div>
+            {/if}
+            <button sakai-entitytype="group" sakai-entityname="${data.authprofile["sakai:group-title"]}" sakai-entityid="${data.authprofile["sakai:group-id"]}" type="button" class="s3d-button s3d-header-button sakai_sendmessage_overlay">__MSG__MESSAGE__<span class="entity_message_icon entity_user_action_icon"></span></button>
+        {/if}
+    </div>
+    {if type && type == "group_managed"}
+        <div id="entity_group_image">
+            <div class="entity_profilepic_internal">
+                <img id="entity_profile_picture" src="{if data.authprofile.picture}${data.authprofile.picture}{else}/devwidgets/entity/images/entity_default_group.png{/if}"/>
+            </div>
+            <div class="entity_profile_picture_down_arrow">&#9660;</div>
+            <div class="s3d-dropdown-menu-arrow"></div>
+            <div class="s3d-dropdown-list" style="display:none;">
+                <div class="s3d-dropdown-list-arrow-up"></div>
+                <ul>
+                    <li><a id="changepic_container_trigger" href="javascript:;" class="s3d-bold">__MSG__CHANGE_PICTURE__</a></li>
+                </ul>
+            </div>
+        </div>
+
+    {else}
+        <div id="entity_group_image" class="entity_other_profilepic">
+            <div class="entity_profilepic_internal">
+                <img id="entity_profile_picture" src="{if data.authprofile.picture}${data.authprofile.picture}{else}/devwidgets/entity/images/entity_default_group.png{/if}"/>
+            </div>
+        </div>
+    {/if}
+    <div id="entity_name" class="s3d-bold">${data.authprofile["sakai:group-title"]}</div>
+    <div id="entity_owns" class="s3d-regular-links">
+        <span class="entity_number">${data.authprofile["contentCount"]} Documents</span>,
+        <span class="entity_number">${data.authprofile["membersCount"]} Participants</span> 
+    </div>
+    {if type && type == "group_managed"}
+        <div class="entity_user_picture_dropdown entity_user_dropdown" style="display:none;">
+            <div class="entity_dropdown_content s3d-dropdown-menu">
+                <ul>
+                    <li><a href="#" class="s3d-bold">__MSG__CHANGE_PICTURE__</a></li>
+                </ul>
+            </div>
+        </div>
+    {/if}
+--></div>
+
+<!-- <div id="entity_group_image" class="entity_group_image {if type && type == "group_managed"} entity_user_image_pointer{/if} "></div> -->
+
+<!-- DIALOG BOX FOR CONTENT PROFILE USERS -->
+<div id="entity_content_users_dialog" class="s3d-dialog s3d-dialog-container" style="width:500px; margin-left: -250px">
+    <div class="s3d-dialog-close jqmClose"></div>
+    <h1 id="entity_content_users_dialog_heading" class="s3d-dialog-header"><!-- --></h1>
+    <div>
+        <!-- CONTAINER -->
+        <div id="entity_content_users_dialog_list_container"><!-- --></div>
+
+        <!-- TEMPLATE -->
+        <div id="entity_content_users_dialog_list_template" style="display:none;"><!--
+            <ul class="entity_content_users_dialog_list">
+                {var userlist_groups_index = 0}
+                {var userlist_people_index = 0}
+                {for i in userList}
+                    {if i['sakai:group-id'] && type === "groups"}
+                        ${userlist_groups_index++|eat}
+                        {if userlist_groups_index%2} <li id="${i['sakai:group-id']}">
+                        {else} <li id="${i['sakai:group-id']}" class="entity_content_even">
+                        {/if}
+                        {if i.pseudoGroup}
+                            <a href="/~${i.parent['sakai:group-id']}" target="_blank"><img src="/dev/images/group_avatar_icon_35x35_nob.png" alt="__MSG__DEFAULT_GROUP_PICTURE__" class="s3d-icon-32 entity_content_picture"/></a>
+                            <span class="entity_content_name">
+                                <a class="s3d-regular-links s3d-bold" href="/~${i.parent['sakai:group-id']}" target="_blank">${i.parent['sakai:group-title']} <span class="entity_pseudogroup">${i.parent["sakai:role-title"]}</span></a>
+                            </span>
+                        {else}
+                            {if i.pictureUrl}
+                                <a href="/~${i['sakai:group-id']}" target="_blank"><img src="${i.pictureUrl}" alt="__MSG__GROUP_PICTURE_FOR__ ${i['sakai:group-title']}" class="entity_content_picture"/></a>
+                            {else}
+                                <a href="/~${i['sakai:group-id']}" target="_blank"><img src="/dev/images/group_avatar_icon_35x35_nob.png" alt="__MSG__DEFAULT_GROUP_PICTURE__" class="s3d-icon-32 entity_content_picture"/></a>
+                            {/if}
+                            <span class="entity_content_name">
+                                <a class="s3d-regular-links s3d-bold" href="/~${i['sakai:group-id']}" target="_blank">${i['sakai:group-title']}</a>
+                            </span>
+                         {/if}
+                        </li>
+                    {elseif i["rep:userId"] && type === "people"}
+                        ${userlist_people_index++|eat}
+                        {var displayName = unescape(sakai.api.User.getDisplayName(i))}
+                        {if !displayName}
+                            {var displayName = i.displayName}
+                        {/if}
+                        {if userlist_people_index%2} <li id="${i["rep:userId"]}">
+                        {else} <li id="${i["rep:userId"]}" class="entity_content_even">
+                        {/if}
+                        {if i.pictureUrl}
+                            <a href="/~${i["rep:userId"]}" target="_blank"><img src="${i.pictureUrl}" alt="__MSG__PROFILE_PICTURE_FOR__ ${displayName}" class="entity_content_picture"/></a>
+                        {else}
+                            <a href="/~${i["rep:userId"]}" target="_blank"><img src="/dev/images/default_User_icon_35x35.png" alt="__MSG__DEFAULT_PROFILE_PICTURE__" class="s3d-icon-32 entity_content_picture"/></a>
+                        {/if}
+                        <span class="entity_content_name">
+                            <a class="s3d-regular-links s3d-bold" href="/~${i["rep:userId"]}" target="_blank">${displayName}</a>
+                        </span>
+                        </li>
+                    {/if}
+                {/for}
+                {if type === "groups" && userlist_groups_index === 0}
+                    <div class="entity_content_list_empty">
+                        __MSG__NO_GROUPS_USING_CONTENT__
+                    </div>
+                {/if}
+            </ul>
+            --></div>
+
+        <div class="dialog_buttons fl-force-right">
+            <button type="button" class="s3d-button s3d-overlay-button jqmClose">__MSG__CLOSE__</button>
+        </div>
+        <hr class="fl-push fl-hidden">
+    </div>
+</div>
+
+<!-- i18n MESSAGES -->
+<div id="entity_notifications" style="display:none">
+    <span id="entity_content_groups">__MSG__THE_FOLLOWING_GROUPS_USING_CONTENT__</span>
+    <span id="entity_content_people">__MSG__THE_FOLLOWING_PEOPLE_USING_CONTENT__</span>
+</div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/entity/javascript/entity.js"></script>

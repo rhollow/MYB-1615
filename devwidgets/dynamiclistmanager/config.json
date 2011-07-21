@@ -1,0 +1,14 @@
+{
+    "description":"Dynamic list manager",
+    "name":"Dynamic list manager",
+    "id":"dynlistman",
+    "personalportal":true,
+    "url":"/devwidgets/dynamiclistmanager/dynamiclistmanager.html",
+    "i18n": {
+        "default": "/devwidgets/dynamiclistmanager/bundles/default.properties"
+    },
+    "multipleinstance": false,
+    "deletable":false,
+    "type":"sakai",
+    "enabled":true
+}

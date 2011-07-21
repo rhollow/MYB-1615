@@ -1,96 +1,115 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
-
     <head>
-
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Sakai 3 R&amp;D - __MSG__SIGN_IN__</title>
-
-        <!-- Sakai Core CSS -->
-        <link rel="stylesheet" type="text/css" href="_css/FSS/fss-base.css" />
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.base.css" />
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.core.2.css" />
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.3.css" />
-
-        <!-- Sakai Page CSS -->
-        <link rel="stylesheet" type="text/css" href="_css/sakai/sakai.index.css" />
-
-        <!-- 3rd party CSS -->
-
-        <!-- Sakai Config JS -->
-        <script type="text/javascript" src="_configuration/widgets.js"></script>
-        <script type="text/javascript" src="_configuration/config.js"></script>
-
-        <!-- Core 3rd-party JS -->
-        <script type="text/javascript" src="_lib/jquery/jquery.js"></script>
-        <script type="text/javascript" src="_lib/jquery/jquery-ui.full.js"></script>
-        <script type="text/javascript" src="_lib/Fluid/3akai_Infusion.js"></script>
-        <script type="text/javascript" src="_lib/jquery/plugins/jquery.json.js"></script>
-
-        <!-- Sakai Core JS -->
-        <script type="text/javascript" src="_lib/sakai_util/sakai_magic.js"></script>
-        <script type="text/javascript" src="_lib/sakai_util/i18n.js"></script>
-
-        <!-- 3rd party JS -->
-        <script type="text/javascript" src="/dev/_lib/sakai_util/trimpath.template.js"></script>
-        <script type="text/javascript" src="/dev/_lib/sakai_util/querystring.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jqmodal.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.cookie.js"></script>
-        <script type="text/javascript" src="/dev/_lib/jquery/plugins/jquery.pager.js"></script>
-
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.corev1.css" />
+        <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.explore.css" />
     </head>
-
-    <body class="fl-centered index i18nable">
-
-        <div class="index-container fl-centered">
-
-            <!-- HEADER -->
-            <div class="header-title">
-                <img src="_images/sakai_logo_index.png" alt="__MSG__INSTANCE_NAME__" />
+    <body class="fl-centered explore i18nable">
+        <!-- HEADER -->
+        <div class="fl-container-flex header s3d-header">
+            <div class="s3d-navigation-container">
+                <div id="widget_topnavigation" class="widget_inline"></div>
             </div>
-
-            <div class="header-byline">
-                __MSG__HEADER_BYLINE__
-            </div>
-
-            <div class="login-box">
-                <div class="preview-box">
-                    <div class="header-smallline">
-                        __MSG__HEADER_SMALLLINE__
+            <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
+                <div class="s3d-container-shadow-left"><!----></div>
+                <div class="s3d-container-shadow-right"><!----></div>
+                <div class="s3d-page-header">
+                    <div id="widget_institutionalskinning" class="widget_inline"></div>
+                    <div id="widget_categories" class="widget_inline"></div>
+                    <div id="explore_navigation">
                     </div>
-
-                    <!-- PREVIEW IMAGE -->
-                    <img src="_images/panel_thumb.jpg" alt="__MSG__INSTANCE_NAME__" />
                 </div>
-
-                <!-- LOGIN FUNCTIONALITY -->
-                <form class="login-container" id="login-container" method="post" action="javascript:;">
-                    <label for="username">__MSG__USERNAME__:</label><br/>
-                    <input type="text" alt="__MSG__USERNAME__" maxlength="255" id="username" name="username" class="login-container-textfield" /><br/>
-                    <label for="password">__MSG__PASSWORD__:</label><br/>
-                    <input type="password" alt="__MSG__PASSWORD__" maxlength="255" id="password" name="password" class="login-container-textfield" />
-
-                    <div id="login-failed">__MSG__LOGIN_FAILED__!<br/></div>
-
-                    <div class="login-container-button">
-                        <button id="loginbutton" type="submit" class="s3d-button s3d-button-primary"><span class="s3d-button-inner">__MSG__SIGN_IN__</span></button>
-
-                        <span id="login-loader">__MSG__SIGNING_IN__</span>
-                    </div>
-
-                    <div id="register_here">
-                        __MSG__NO_ACCOUNT_YET__? <a href="create_new_account.html" title="__MSG__CLICK_TO_REGISTER__">__MSG__REGISTER_HERE__</a>
-                    </div>
-                </form>
             </div>
-
-            <!-- FOOTER WIDGET -->
-            <div id="widget_footer" class="widget_inline footercontainer"></div>
-
         </div>
+        <div class="fl-fix fl-centered fixed-container s3d-main-container">
+            <div id="explore_content">
+                <div id="explore_content_second_column">
+                    <div id="widget_recentactivity" class="widget_inline"></div>
+                </div>
+                <div id="explore_content_first_column">
+                    <div id="widget_welcome" class="widget_inline"></div>
+                    <hr class="s3d-split-line"/>
+                    <div id="widget_featuredcontent" class="widget_inline"></div>
+                </div>
+            </div>
+            <div class="s3d-bottom-spacer"></div>
+        </div>
+        <!-- FOOTER WIDGET -->
+        <div id="widget_footer" class="widget_inline footercontainer"></div>
 
-        <script type="text/javascript" src="_javascript/index.js"></script>
+        <!-- MyBerkeley custom begin -->
+        <!-- BEGIN JOIN MYBERKELEY DIALOG -->
+        <div id="join_myberkeley_dialog" class="dialog">
+          <!-- Dialog Header -->
+          <div class="dialog_header">
+            <div class="dialog_header_inner">
+              <h1>Accept CalCentral Beta Program</h1>
+            </div>
+          </div>
+          <!-- Dialog Content -->
+          <div class="dialog_content">
+            <img alt="CalCentral Beta" src="/dev/images/myb/myb-beta-lrg-logotype.png">
+
+            <p>Welcome to the CalCentral Beta.</p>
+
+            <p><b>CalCentral</b> is a program designed to bring many campus online services under one roof. The current
+              beta has a limited number of features. It will allow Berkeley to send you reminders of important tasks and
+              events, as well as more general messages.</p>
+
+            <p><b>What you should know before joining this program:</b></p>
+            <ul>
+              <li>You may receive multiple messages for the same task or event.</li>
+              <li>Messages may be deleted at any time due to system or project events.</li>
+              <li>The design and features presented may change at any time.</li>
+              <li>By participating in this program you may be invited to participate in surveys and focus groups to help
+                us determine the effectiveness of the design and features presented here.
+              </li>
+              <li>Some settings allow some or all of the CalCentral information about you to be found and viewed by
+                anyone in the world. Please proceed accordingly.
+              </li>
+            </ul>
+            <p>
+              <input id="chk_agree_to_socu" type="checkbox"/> <label for="chk_agree_to_socu">I have read and agree to
+              the official</label> <a href="http://technology.berkeley.edu/policy/usepolicy.html" style="color:blue"
+                                      target="_blank">campus statement on computer use.</a><br/>
+              <input id="chk_agree_to_receive_adviser_messages" type="checkbox"/> <label
+                    for="chk_agree_to_receive_adviser_messages">I give permission for my adviser to send me messages via
+              this portal.</label>
+            </p>
+
+            <p>Please <a href="mailto:portal@berkeley.edu?subject=Feedback on CalCentral" style="color:blue">send us
+              feedback</a> about your first impressions, what you like or don't like, and ideas for future features and
+              functionality. There is a feedback link on each page of</p>
+
+            <p>To participate in this program, click <b>Join CalCentral</b> below, or click <b>Cancel</b> to sign
+              out.<br/>
+              (If you're not ready to join now, you may come back at any time.)</p>
+
+            <div class="dialog_buttons" style="text-align:right">
+              <button type="button" class="s3d-button" onclick="javascript:document.location='/dev/logout.html'"><span
+                      class="s3d-button-inner">__MSG__CANCEL__</span></button>
+              <button type="button" id="btn_join_my_berkeley" class="s3d-button s3d-button-primary" disabled="disabled">
+                <span class="s3d-button-inner">Join CalCentral</span></button>
+            </div>
+          </div>
+          <!-- Dialog Footer -->
+          <div class="dialog_footer">
+            <div class="dialog_footer_inner"><!--
+                    --></div>
+          </div>
+        </div>
+        <!-- END JOIN MYBERKELEY DIALOG -->
+        <!-- MyBerkeley custom end -->
+
+        <!-- Dependency JS -->
+        <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
+        <script>require(["/dev/javascript/explore.js"]);</script>
+
+        <!-- MyBerkeley custom JS -->
+        <script>require(["/dev/javascript/myb/myb.explore.js"]);</script>
 
     </body>
-
 </html>

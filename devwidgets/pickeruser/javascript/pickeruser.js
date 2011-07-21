@@ -16,369 +16,336 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/**
- * People Picker widget
- * This is a general widget which aims to display an arbitriary number of
- * people, loading dynamically if the list is very long and return the 
- * selected users in an object.
+/*
+ * Dependencies
+ *
+ * /dev/lib/jquery/plugins/jqmodal.sakai-edited.js
+ * /dev/lib/jquery/plugins/jquery.autoSuggest.sakai-edited.js (autoSuggest)
  */
 
-/*global $, Config, sdata */
+/*global $ */
 
 // Namespaces
-var sakai = sakai || {};
-sakai.api.UI.pickerUser = {};
+require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
-/**
- * Initialize the pickeruser widget
- * This is the widget loader's default callback, executing when the widget
- * is loaded on a page
- * @param tuid {String} Unique id of the widget
- * @param showSettings {Boolean} Show the settings of the widget or not
- */
-sakai.pickeruser = function(tuid, showSettings){
+    /**
+     * @name sakai.pickerUser
+     *
+     * @description
+     * Public functions for the people picker widget
+     */
+    sakai_global.pickerUser = {};
 
-    // Config defaults
-    var default_config = {
-        "mode": "search",
-        "type": "people",
-        "spaceName": "Space",
-        "items": 50,
-        "selectable": true,
-        "sortOn": "lastName",
-        "sortOrder": "ascending"
-    };
+    /**
+     * @name sakai_global.pickeruser
+     *
+     * @class pickeruser
+     *
+     * @description
+     * People Picker widget<br />
+     * This is a general widget which aims to display an arbitriary number of
+     * people, loading dynamically if the list is very long and return the
+     * selected users in an object.
+     *
+     * @version 0.0.1
+     * @param {String} tuid Unique id of the widget
+     * @param {Boolean} showSettings Show the settings of the widget or not
+     */
+    sakai_global.pickeruser = function(tuid, showSettings) {
 
-    // Create a config object for this instance
-    sakai.config.widgets.pickeruser = sakai.config.widgets.pickeruser || {};
-    sakai.config.widgets.pickeruser[tuid] = default_config;
+        var $rootel = $("#" + tuid);
 
-    // Create data object for this instance
-    sakai.data.pickeruser = sakai.data.pickeruser || {};
-    sakai.data.pickeruser[tuid] = {};
-    sakai.data.pickeruser[tuid].selected = {};
-    sakai.data.pickeruser[tuid].searchIn = "";
-    sakai.data.pickeruser[tuid].currentElementCount = 0;
-    sakai.data.pickeruser[tuid].selectCount = 0;
+        var $pickeruser_container = $("#pickeruser_container", $rootel);
+        var $pickeruser_container_search = $("#pickeruser_container_search", $rootel);
+        var $pickeruser_content_search = $("#pickeruser_content_search", $rootel);
+        var $pickeruser_search_query = $("#pickeruser_search_query", $rootel);
+        var $pickeruser_search_button = $("#pickeruser_search_button", $rootel);
+        var $pickeruser_close_button = $("#pickeruser_close_button", $rootel);
+        var $pickeruser_select_all_button = $("#pickeruser_select_all_button", $rootel);
+        var $pickeruser_content_search_form = $("#pickeruser_content_search_form", $rootel);
+        var $pickeruser_add_button = $("#pickeruser_add_button", $rootel);
+        var $pickeruser_sort_on = $("#pickeruser_sort_on", $rootel);
+        var $pickeruser_count = $("#pickeruser_count", $rootel);
+        var $pickeruser_count_person = $("#pickeruser_count_person", $rootel);
+        var $pickeruser_count_people = $("#pickeruser_count_people", $rootel);
+        var $pickeruser_count_of = $("#pickeruser_count_of", $rootel);
+        var $pickeruser_count_thousands = $("#pickeruser_count_thousands", $rootel);
+        var $pickeruser_add_header_what = $("#pickeruser_add_header_what", $rootel);
+        var $pickeruser_add_header_where = $("#pickeruser_add_header_where", $rootel);
+        var $pickeruser_copy_myself = $("#pickeruser_copy_myself", $rootel);
+        var $pickeruser_message = $("#pickeruser_message", $rootel);
+        var $pickeruser_init_search = $("#pickeruser_init_search", $rootel);
+        var $pickeruser_people_text = $("#pickeruser_people_text", $rootel);
+        var $pickeruser_content_text = $("#pickeruser_content_text", $rootel);
+        var $pickeruser_instruction = $("#pickeruser_instruction", $rootel);
+        var $pickeruser_send_message = $("#pickeruser_send_message", $rootel);
 
-    // Reset to defaults
-    sakai.api.UI.pickerUser.reset(tuid);
+        var $pickeruser_error_template = $("#pickeruser_error_template", $rootel);
+        var $pickeruser_content_search_pagetemplate = $("#pickeruser_content_search_pagetemplate", $rootel);
+        var $pickeruser_content_search_listtemplate = $("#pickeruser_content_search_listtemplate", $rootel);
 
-    // Send out an event that says the widget is ready to
-    // accept a search query to process and display. This event can be picked up
-    // in a page JS code
-    $(window).trigger("pickeruser_ready", [tuid]);
+        var $pickeruser_adding_titles = $(".pickeruser_adding_titles", $rootel);
+        var $pickeruser_adding_people = $("#pickeruser_adding_people", $rootel);
+        var $pickeruser_adding_files = $("#pickeruser_adding_files", $rootel);
 
-};
+        var pickeruser_page = ".pickeruser_page";
 
+        var callback = false;
 
-/**
- * Reset
- * Resets the people picker to a default state
- * @param tuid {String} Unique id of the widget
- * @returns void
- */
-sakai.api.UI.pickerUser.reset = function(tuid) {
+        var pickerData = {
+          "selected": {},
+          "searchIn": "",
+          "currentElementCount": 0,
+          "selectCount": 0,
+          "mode": "search",
+          "type": "people",
+          "spaceName": "Space",
+          "items": 50,
+          "selectable": true,
+          "sortOn": "lastName",
+          "sortOrder": "asc",
+          "what": "People",
+          "where": "Group",
+          "excludeList": []
+        };
 
-    $("#" + tuid + " .pickeruser_content_search").html("");
-    sakai.data.pickeruser[tuid].selected = {};
-    sakai.data.pickeruser[tuid].currentElementCount = 0;
-    sakai.data.pickeruser[tuid].selectCount = 0;
+        /**
+         * Reset
+         * Resets the people picker to a default state
+         * @returns void
+         */
+        var reset = function() {
+            $pickeruser_content_search.html("");
+            $pickeruser_content_search.unbind("scroll");
+            $pickeruser_message.val("");
+            pickerData.selected = {};
+            pickerData.currentElementCount = 0;
+            pickerData.selectCount = 0;
+            sakai.api.Util.AutoSuggest.reset($pickeruser_search_query);
+        };
 
-};
-
-
-sakai.api.UI.pickerUser.render = function(tuid, iConfig) {
-
-    // Merge user defined config with defaults
-    for (var element in iConfig) {
-        if (iConfig.hasOwnProperty(element)) {
-            sakai.config.widgets.pickeruser[tuid][element] = iConfig[element];
-        }
-    }
-
-    submitSearch = function(){
-//console.log("submitSearch #################################################");
-        sakai.api.UI.pickerUser.reset(tuid);
-        var searchQuery = $("#pickeruser_search_query").val();
-        if (!searchQuery) {
-            searchQuery = "*";
-        }
-
-        var pl_query = sakai.data.pickeruser[tuid]["searchIn"] + searchQuery + "&page=0&items=12&_=" + (Math.random() * 100000000000000000);
-        sakai.api.UI.pickerUser.renderSearch(tuid, pl_query);
-    };
-
-    sakai.api.UI.pickerUser.renderSearchList(tuid);
-    $("#pickeruser_space_name").html(sakai.config.widgets.pickeruser[tuid]['spaceName']);
-    $("#pickeruser_search_query").focus();
-    $("#pickeruser_search_button").click(submitSearch);
-    $("#pickeruser_content_search_form").submit(submitSearch);
-    $("#pickeruser_add_button").click(function(){
-        $(window).trigger("pickeruser_finished", [tuid]);
-    });
-};
-
-
-sakai.api.UI.pickerUser.renderSearchList = function(tuid) {
-
-    var $pl_listContainer = $("<ul id=\"pickeruser_list\" class=\"pickeruser_list loadinganim\"></ul>");
-    var $pl_container = $("#" + tuid + " .pickeruser_content_list");
-
-    // Display empty new container with loading anim
-    $pl_container.append($pl_listContainer);
-
-    var listData = {
-        people : [ { name: "All Contacts", id: sakai.config.URL.SEARCH_USERS_ACCEPTED },
-                   { name: "Everyone", id: sakai.config.URL.SEARCH_USERS + "?username=" }]
-    };
-
-    // Render the results data template
-    var pageHTML = $.TemplateRenderer("#" + tuid + " .pickeruser_content_search_listtemplate", listData);
-
-    // Remove loading animation
-    $pl_listContainer.removeClass("loadinganim");
-
-    // Inject results into DOM
-    $pl_listContainer.html(pageHTML);
-
-    $('[data-id='+sakai.config.URL.SEARCH_USERS_ACCEPTED+']').addClass("pickeruser_selected_list");
-    sakai.data.pickeruser[tuid]["searchIn"] = sakai.config.URL.SEARCH_USERS_ACCEPTED;
-    
-    $("#" + tuid + " .pickeruser_list li").live("click", function(e){
-        $(".pickeruser_selected_list").removeClass("pickeruser_selected_list");
-        $(this).addClass("pickeruser_selected_list");
-        sakai.data.pickeruser[tuid]["searchIn"] = $(this).attr("data-id");
-    });
-};
-
-/**
- * RenderSearch
- * Renders the people picker with a specified set of data. The function uses
- * a search query initially, then does the paginating and subsequent requests
- * for data automatically
- * @param tuid {String} Unique id of the widget
- * @param iSearchQuery {String} A Sakai search query
- * @returns void
- */
-sakai.api.UI.pickerUser.renderSearch = function(tuid, iSearchQuery) {
-    // Init
-    var $pl_container = $("#" + tuid + " .pickeruser_content_search");
-
-    // Parse search query
-    var searchQuery = {};
-    var main_parts = iSearchQuery.split("?");
-    searchQuery.url = main_parts[0];
-    var arguments = main_parts[1].split("&");
-    for (var i=0, il = arguments.length; i < il; i++) {
-        var kv_pair = arguments[i].split("=");
-        searchQuery[kv_pair[0]] = kv_pair[1];
-    }
-
-    // Alter search query according to config
-    searchQuery.items = sakai.config.widgets.pickeruser[tuid].items;
-
-    // Add hash to search query in case it's not there to prevent caching
-    if (!searchQuery["_"]) {
-        searchQuery["_"] = (Math.random() * 100000000000000000);
-    }
-
-    // Render the first page of results
-    sakai.api.UI.pickerUser.addPage(tuid, 0, searchQuery);
-
-};
-
-/**
- * addPage
- * Adds another page of search result to the People picker's result list
- * @param tuid {String} The instance ID of a widget
- * @pageNumber {Int} The page we want to load
- * @searchQuery {Object} An object containing the search query elements
- * @returns void
- */
-sakai.api.UI.pickerUser.addPage = function(tuid, pageNumber, searchQuery) {
-
-    // Create new container for the bit we load. This is then appended to the
-    // main container
-    var $pl_view = $("#" + tuid + " .pickeruser_display_as").val();
-    var $pl_pageContainer = $("<ul id=\"pickeruser_page_" + pageNumber + "\" class=\"pickeruser_page pickeruser_page_" + $pl_view + " loadinganim\"></ul>");
-    var $pl_container = $("#" + tuid + " .pickeruser_content_search");
-
-    // Aadd relevant config elements to the search query
-    searchQuery.page = pageNumber;
-    searchQuery.sortOn = sakai.config.widgets.pickeruser[tuid]["sortOn"];
-    searchQuery.sortOrder = sakai.config.widgets.pickeruser[tuid]["sortOrder"];
-
-    // Construct search query
-    var sq = searchQuery.url + "?";
-    for (var e in searchQuery) {
-        if (searchQuery.hasOwnProperty(e) && e !== "url") {
-            sq += e + "=" + searchQuery[e] + "&";
-        }
-    }
-
-    // Display empty new container with loading anim
-    $pl_container.append($pl_pageContainer);
-
-    // Make the request
-    $.ajax({
-        url: sq,
-        type: "GET",
-        success: function(rawData) {
-
-            // Eval profile data for now and extend it with additional info
-            for (var i = 0, il = rawData.results.length; i < il; i++) {
-                var resultObject = rawData.results[i];
-
-                // Eval json strings if any
-                for (var j in resultObject) {
-                    if (resultObject.hasOwnProperty(j) && typeof resultObject[j] === "string" && resultObject[j].charAt(0) === "{") {
-                        rawData.results[i][j] = $.parseJSON(resultObject[j]);
-                    }
+        /**
+         * Render
+         * Renders the people picker
+         * @param iConfig {String} Config element for the widget
+         * @returns void
+         */
+        var render = function(iConfig) {
+            $pickeruser_add_button.attr("disabled", "disabled");
+            sakai.api.Util.AutoSuggest.reset($pickeruser_search_query);
+            // Merge user defined config with defaults
+            for (var element in iConfig) {
+                if (iConfig.hasOwnProperty(element) && pickerData.hasOwnProperty(element)) {
+                    pickerData[element] = iConfig[element];
                 }
-
-                // Determine what to put under the name. See if specified key exists in main object or under basic profile info
-                var subNameInfo = "";
-                var iSubNameInfo = sakai.config.widgets.pickeruser[tuid]["subNameInfo"];
-                if (iSubNameInfo !== "" && typeof iSubNameInfo === "string") {
-                    if (rawData.results[i][iSubNameInfo]) {
-                        subNameInfo = rawData.results[i][iSubNameInfo];
-                    } else if (rawData.results[i]["basic"][iSubNameInfo]) {
-                        subNameInfo = rawData.results[i]["basic"][iSubNameInfo];
-                    }
-                }
-                rawData.results[i]["subNameInfo"] = subNameInfo;
             }
 
-            // Render the results data template
-            var pageHTML = $.TemplateRenderer("#" + tuid + " .pickeruser_content_search_pagetemplate", rawData);
-
-            // Remove loading animation
-            $pl_pageContainer.removeClass("loadinganim");
-
-            // Inject results into DOM
-            $pl_pageContainer.html(pageHTML);
-//console.log("pageNumber: "+pageNumber);
-            // Wire loading the next page when user scrolls to the bottom of the list
-            if ((rawData.total > searchQuery.items) || (rawData.total === -1)) {
-                $pl_container.bind("scroll", function(e){
-/*console.log("ACTUAL BIND");
-console.log("e.target.scrollHeight: "+e.target.scrollHeight);
-console.log("e.target.scrollTop: "+e.target.scrollTop);
-console.log("$(e.target).height(): "+$(e.target).height());
-console.log("Calculation:");
-console.log(e.target.scrollHeight - e.target.scrollTop - $(e.target).height());*/
-
-                    if ((e.target.scrollHeight - e.target.scrollTop - $(e.target).height() ) === 0) {
-                        $pl_container.unbind("scroll");
-                        sakai.api.UI.pickerUser.addPage(tuid, (pageNumber + 1), searchQuery);
-                    }
-                });
-            }
-/*                $pl_container.bind("scroll", function(e){
-console.log("TEST BIND");
-console.log("e.target.scrollHeight: "+e.target.scrollHeight);
-console.log("e.target.scrollTop: "+e.target.scrollTop);
-console.log("$(e.target).height(): "+$(e.target).height());
-console.log("Calculation:");
-console.log(e.target.scrollHeight - e.target.scrollTop - $(e.target).height());
-                });*/
-
-            // Wire item selection
-            if (sakai.config.widgets.pickeruser[tuid].selectable) {
-
-                $("#pickeruser_select_all_button").click(function(){
-                    sakai.data.pickeruser[tuid].selectCount = 0;
-                    $('.pickeruser_content_search ul li').each(function(index) {
-                        $(this).addClass("pickeruser_selected_user");
-                        sakai.data.pickeruser[tuid].selectCount += 1;
-                        sakai.data.pickeruser[tuid]["selected"][$(this).attr("data-userid")] = rawData.results[i];
-                    });
-                });
-
-                $("#" + tuid + " #pickeruser_page_" + pageNumber + " li").bind("click", function(e){
-                    // Check if user click on top of a link
-                    if (e.target.tagName.toLowerCase() !== "a") {
-                        // Remove from selected list
-                        if ($(this).hasClass("pickeruser_selected_user")) {
-                            $(this).removeClass("pickeruser_selected_user");
-                            delete sakai.data.pickeruser[tuid]["selected"][$(this).attr("data-userid")];
-                            for (var i = 0; i < rawData.results.length; i++) {
-                                if (rawData.results[i]['rep:userId'] == [$(this).attr("data-userid")]) {
-                                    delete sakai.data.pickeruser[tuid]["selected"][$(this).attr("data-userid")];
-                                    sakai.data.pickeruser[tuid].selectCount -= 1;
-                                }
-                            }
-                        } else {
-                            // Add to selected list
-                            $(this).addClass("pickeruser_selected_user");
-                            for (var i = 0; i < rawData.results.length; i++) {
-                                if (rawData.results[i]['rep:userId'] == [$(this).attr("data-userid")]) {
-                                    sakai.data.pickeruser[tuid].selectCount += 1;
-                                    sakai.data.pickeruser[tuid]["selected"][$(this).attr("data-userid")] = rawData.results[i];
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            //Update known total amount of displayed elements
-            sakai.data.pickeruser[tuid].currentElementCount += rawData.results.length;
-
-            //Set search result count
-            if ((rawData.total === -1) || (rawData.total > 1000)) {
-                // If we don't know the total display what we know
-                $("#" + tuid + " .pickeruser_count").html(sakai.data.pickeruser[tuid].currentElementCount);
-                $("#" + tuid + " .pickeruser_count").show();
-                $("#" + tuid + " .pickeruser_count_people").show();
-                $("#" + tuid + " .pickeruser_count_of").show();
-                $("#" + tuid + " .pickeruser_count_thousands").show();
-
+            // bind elements, replace some text
+            $pickeruser_adding_titles.hide();
+            if (pickerData.type === 'content') {
+                $pickeruser_instruction.html($pickeruser_content_text.html());
+                $pickeruser_send_message.hide();
+                $pickeruser_container_search.addClass("no_message");
+                $pickeruser_adding_files.show();
             } else {
-                // If we know the exact total display it
-                $("#" + tuid + " .pickeruser_count").html(rawData.total);
-                if (rawData.total === 1) {
-                    $("#" + tuid + " .pickeruser_count_person").show();
-                } else {
-                    $("#" + tuid + " .pickeruser_count_people").show();
+                $pickeruser_instruction.html($pickeruser_people_text.html());
+                $pickeruser_send_message.show();
+                $pickeruser_init_search.show();
+                $pickeruser_adding_people.show();
+                $pickeruser_container_search.removeClass("no_message");
+            }
+
+            $pickeruser_add_header_what.html(pickerData.what);
+            $pickeruser_add_header_where.html(pickerData.where);
+            $pickeruser_search_query.focus();
+            $pickeruser_add_button.unbind("click");
+            $pickeruser_add_button.bind("click", function(){
+                addPeople(iConfig);
+                //reset form
+                reset();
+            });
+        };
+
+        $pickeruser_container.jqm({
+            modal: true,
+            overlay: 20,
+            toTop: true,
+            zIndex: 3000
+        });
+
+        var getSelectedList = function() {
+            var list = $("#as-values-" + tuid).val();
+            // this value is a comma-delimited list
+            // split it and get rid of any empty values in the array
+            list = list.split(",");
+            $(list).each(function(i, val) {
+               if (val === "") {
+                   list.splice(i, 1);
+               }
+            });
+            return list;
+        };
+
+        var addPeople = function(iConfig) {
+
+          var userList = getSelectedList();
+
+          // send the message if its not empty
+          var messageText = $.trim($pickeruser_message.val());
+          if (messageText !== "") {
+              var messageList = getSelectedList();
+              if ($pickeruser_copy_myself.is(':checked')) {
+                messageList.push(sakai.data.me.profile["rep:userId"]);
+              }
+              if (iConfig.URL){
+                  messageText = messageText + "\n\n" + "<a href='" + iConfig.URL + "'>" + iConfig.URL + "</a>";
+              }
+              sakai.api.Communication.sendMessage(messageList, sakai.data.me, sakai.api.Security.saneHTML($("#pickeruser_subject_text").text())+ "," + iConfig.where, messageText);
+          }
+          $pickeruser_container.jqmHide();
+          $(window).trigger("finished.pickeruser.sakai", {"toAdd":userList});
+        };
+
+
+        sakai.api.Util.AutoSuggest.setup($pickeruser_search_query,{
+            asHtmlID: tuid,
+            retrieveLimit: 10,
+            resultClick: function(data) {
+                $pickeruser_add_button.removeAttr("disabled");
+            },
+            selectionRemoved: function(elem) {
+                elem.remove();
+                if ($(".as-selection-item").length === 0) {
+                    $pickeruser_add_button.attr("disabled", "disabled");
                 }
+            },
+            formatList: function(data, elem) {
+                // formats each line to be presented in autosuggest list
+                // add the correct image, wrap name in a class
+                var imgSrc = "/dev/images/user_avatar_icon_32x32.png";
+                if(data.type === "group") {
+                    imgSrc = "/dev/images/group_avatar_icon_32x32.png";
+                }
+                var line_item = elem.html(
+                    '<img class="sm_suggestion_img" src="' + imgSrc + '" />' +
+                    '<span class="sm_suggestion_name">' + data.name + '</span>');
+                return line_item;
+            },
+            source: function(query, add) {
+                var q = sakai.api.Server.createSearchString(query);
+                var options = {"page": 0, "items": 15};
+                var searchUrl = sakai.config.URL.SEARCH_USERS_GROUPS;
+                if (pickerData.type === 'content') {
+                    searchUrl = sakai.config.URL.POOLED_CONTENT_MANAGER;
+                    if (q === '*' || q === '**') {
+                        searchUrl = sakai.config.URL.POOLED_CONTENT_MANAGER_ALL;
+                    }
+                } else if (q === '*' || q === '**') {
+                    searchUrl = sakai.config.URL.SEARCH_USERS_GROUPS_ALL;
+                }
+                if (q !== '*' && q !== '**') {
+                    options['q'] = q;
+                }
+                sakai.api.Server.loadJSON(searchUrl.replace(".json", ""), function(success, data){
+                    if (success) {
+                        var suggestions = [];
+                        var name, value, type;
+                        $.each(data.results, function(i) {
+                            if (pickerData.type === 'content') {
+                                name = data.results[i]['sakai:pooled-content-file-name'];
+                                value = data.results[i]['_path'];
+                                type = "file";
+                            } else if (data.results[i]["rep:userId"]) {
+                                name = sakai.api.Security.saneHTML(sakai.api.User.getDisplayName(data.results[i]));
+                                value = data.results[i]["rep:userId"];
+                                type = "user";
+                            } else if (data.results[i]["sakai:group-id"]) {
+                                name = data.results[i]["sakai:group-title"];
+                                value = data.results[i]["sakai:group-id"];
+                                type = "group";
+                            }
+                            if (pickerData.excludeList.length === 0 || $.inArray(value, pickerData.excludeList) === -1) {
+                                suggestions.push({"value": value, "name": name, "type": type});
+                            }
+                        });
+                        add(suggestions);
+                    }
+                }, options);
+            }
+        });
+
+        var addChoicesFromPickeradvanced = function(data) {
+          $.each(data, function(i,val) {
+              var name = "";
+              var id = "";
+              if (val.entityType == "group") {
+                  name = val["sakai:group-title"];
+                  id = val["sakai:group-id"];
+              } else if (val.entityType == "user") {
+                  name = sakai.api.User.getDisplayName(val);
+                  id = val["rep:userId"];
+              } else if (val.entityType == "file") {
+                  name = val["sakai:pooled-content-file-name"];
+                  id = val["_path"];
+              }
+              $pickeruser_search_query.autoSuggest.add_selected_item({"name": name, "value": id}, id);
+              $pickeruser_add_button.removeAttr("disabled");
+          });
+          $("input#" + tuid).val('').focus();
+        };
+
+        ////////////
+        // Events //
+        ////////////
+
+        $(window).unbind("init.pickeruser.sakai");
+        $(window).bind("init.pickeruser.sakai", function(e, config, callbackFn) {
+
+            // position dialog box at users scroll position
+            var htmlScrollPos = $("html").scrollTop();
+            var docScrollPos = $(document).scrollTop();
+            if (htmlScrollPos > 0) {
+                $pickeruser_container.css({"top": htmlScrollPos + 50 + "px"});
+            } else if (docScrollPos > 0) {
+                $pickeruser_container.css({"top": docScrollPos + 50 + "px"});
             }
 
-            // Change result list layout
-            $("#" + tuid + " .pickeruser_display_as").bind("change", function(e){
-                $(".pickeruser_page").removeClass("pickeruser_page_list");
-                $(".pickeruser_page").removeClass("pickeruser_page_thumbnails");
-                $(".pickeruser_page").addClass("pickeruser_page_" + $("#" + tuid + " .pickeruser_display_as").val());
+            $pickeruser_container.jqmShow();
+            render(config);
+            $(window).unbind("finished.pickeradvanced.sakai");
+            $(window).bind("finished.pickeradvanced.sakai", function(e, data) {
+                addChoicesFromPickeradvanced(data.toAdd);
             });
- 
-            // Wire sorting select dropdown
-            $("#" + tuid + " .pickeruser_sort_on").bind("change", function(e){
-                // Reset everything
-                sakai.api.UI.pickerUser.reset(tuid);
+            callback = callbackFn;
+        });
 
-                // Set config to new sort key
-                sakai.config.widgets.pickeruser[tuid]["sortOn"] = $(this).val();
+        $pickeruser_init_search.bind("click", function() {
+            var currentSelections = getSelectedList();
+            $(window).trigger("init.pickeradvanced.sakai", {"list":currentSelections, "config": {"type": pickerData["type"]}});
+        });
 
-                // Start from scratch
-                sakai.api.UI.pickerUser.addPage(tuid, 0, searchQuery);
-
-            });
-        },
-        error: function(xhr, status, thrown) {
-
-            // If it's likely to be a genuine server error
-            if ($pl_pageContainer.length === 0) {
-                $pl_container.html($("#" + tuid + " .pickeruser_error_template").html());
-            } else {
-                // Probably it's the last page of the result set
-                $pl_pageContainer.last().remove();
-                $("#" + tuid + " .pickeruser_count_of").hide();
-                $("#" + tuid + " .pickeruser_count_thousands").hide();
-            }
-        }
-    });
-};
+        $pickeruser_close_button.bind("click", function() {
+            // reset form.
+            reset();
+            $pickeruser_container.jqmHide();
+            //$("li#as-values-" + tuid).val();
+        });
 
 
-sakai.api.Widgets.widgetLoader.informOnLoad("pickeruser");
+        // Reset to defaults
+        reset();
+
+        // Insert any inline widgets
+        sakai.api.Widgets.widgetLoader.insertWidgets(tuid,false);
+
+        // Send out an event that says the widget is ready to
+        // accept a search query to process and display. This event can be picked up
+        // in a page JS code
+
+        $(window).trigger("ready.pickeruser.sakai");
+        sakai_global.pickeruser.isReady = true;
+
+    };
+
+    sakai.api.Widgets.widgetLoader.informOnLoad("pickeruser");
+});

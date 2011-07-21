@@ -16,123 +16,164 @@
  * specific language governing permissions and limitations under the License.
  */
 
-/*global $, Config, sdata */
-
-var sakai = sakai || {};
-
-/**
- * Initialize the footer widget
- * @param {String} tuid Unique id of the widget
- * @param {Boolean} showSettings Show the settings of the widget or not
+/*
+ * Dependencies
+ *
  */
-sakai.footer = function(tuid,showSettings){
 
-
-    //////////////////////
-    // Helper functions //
-    //////////////////////
-
-    /*
-     * This helper function will
-     */
-    var getDocName = function() {
-        var url = document.URL;
-        var slash = "/";
-        if (url.match(/\\/)) {
-            slash = "\\";
-        }
-        return url.substring(url.lastIndexOf(slash) + 1);
-    };
-
+require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     /**
-     * Check whether this is the index page or not
+     * @name sakai_global.footer
+     *
+     * @class footer
+     *
+     * @description
+     * Initialize the footer widget
+     *
+     * @version 0.0.1
+     * @param {String} tuid Unique id of the widget
+     * @param {Boolean} showSettings Show the settings of the widget or not
      */
-    var checkIndexPage = function(){
-        return document.URL.match(/index.html[?a-zA-Z0-9=]*/);
+    sakai_global.footer = function(tuid,showSettings){
+
+
+        /////////////////////////////
+        // Configuration variables //
+        /////////////////////////////
+
+        var doc_name;
+        var $back_to_top_link = $(".footer_main .back-top");
+        var $footer_debug_info = $("#footer_debug_info");
+        var $footer_date_end = $("#footer_date_end");
+        var $footer_root = $(".footer_main");
+        var $footer_logo = $("#footer_logo_button");
+        var $footer_www = $("#footer_www");
+        var $footer_divider = $("#footer_divider");
+        var $footer_phone = $("#footer_phone");
+        var $footer_contactinfo = $("#footer_contactinfo");
+        var $footer_contactinfo_template = $("#footer_contactinfo_template");
+        var $footer_langloc_buttons = $('p.footer_langloc>button');
+
+
+        //////////////////////
+        // Helper functions //
+        //////////////////////
+
+        /**
+         * This helper function will return the name of the current document (e.g. my_sakai.html)
+         * @return {String} The name of the current document
+         */
+        var getDocName = function() {
+            var url = document.URL;
+            var slash = "/";
+            if (url.match(/\\/)) {
+                slash = "\\";
+            }
+            return decodeURIComponent(url.substring(url.lastIndexOf(slash) + 1));
+        };
+
+        ////////////////////
+        // Main functions //
+        ////////////////////
+
+        /**
+         * Render the debug info
+         * @param {Object} container jQuery selector where you want the debug info to appear in
+         */
+        var renderDebugInfo = function(container) {
+
+            $.ajax({
+                url: "/var/scm-version.json",
+                type: "GET",
+                cache: false,
+                dataType: "json",
+                success: function(data){
+                    // Construct debug info
+                    var debug_text = "DEBUG:";
+                    debug_text += " Nakamura Version: " + data["sakai:nakamura-version"];
+                    getUxVersion(debug_text, container);
+                }
+            });
+        };
+
+        var getUxVersion = function(debug_text, container) {
+            $.ajax({
+                url: "/var/ux-version/ux-version.json",
+                type: "GET",
+                cache: false,
+                dataType: "json",
+                success: function(data){
+                    debug_text += " | UX Version: " + data["sakai:ux-version"];
+                    debug_text += "<br/>DOC mod date: " + document.lastModified;
+                    debug_text += " | PLACE: " + (doc_name || "index.html");
+
+                    // Put text into holding tag
+                    container.html(sakai.api.Security.saneHTML(debug_text));
+                }
+            });
+        };
+
+        /**
+         * This event handler will make sure that the Top link
+         * that's available in every page footer will scroll back
+         * to the top of the page
+         */
+        $(".back-top").live("click", function(ev){
+            window.scrollTo(0,0);
+        });
+
+
+        /////////////////////////////
+        // Initialisation function //
+        /////////////////////////////
+
+        /**
+         * Main initialization function for the footer widget
+         */
+        var doInit = function(){
+
+            // Get the name of the current document
+            doc_name = getDocName();
+
+            // Display debug info if set in config
+            if (sakai.config.displayDebugInfo === true) {
+
+                // Add binding to the image
+                $footer_logo.toggle(function(){
+
+                    // Render the debug info
+                    renderDebugInfo($footer_debug_info);
+
+                    // Show the debug info
+                    $footer_debug_info.show();
+
+                },function(){
+
+                    // Hide the debug info
+                    $footer_debug_info.hide();
+
+                }).addClass("footer_clickable");
+
+            }
+            
+            if (!sakai.data.me.user.anon){
+                $(".footer_langloc").show();
+            }
+
+            // Set the end year of the copyright notice
+            var d = new Date();
+            $footer_date_end.text(d.getFullYear());
+            
+            $footer_langloc_buttons.click(function(e){
+                e.preventDefault();
+                $(window).trigger("init.accountpreferences.sakai");
+            });
+
+        };
+
+        doInit();
+
     };
 
-    /////////////////////////////
-    // Configuration variables //
-    /////////////////////////////
-
-    var doc_name = getDocName();
-    var $back_to_top_link = $("#footer_main .back-top");
-    var $debug_info = $("#debug_info");
-    var $footer_date_end = $("#footer_date_end");
-    var $footer_root = $("#footer_main");
-    var $footer_logo = $("#footer_logo");
-
-
-    ////////////////////
-    // Main functions //
-    ////////////////////
-
-    var renderDebugInfo = function(container) {
-
-        // Construct debug info | TODO: get current running kernel version from a service, maybe svn version of UX as well
-        var debug_text = "DEBUG:";
-        debug_text += " UX git: <a href='http://github.com/oszkarnagy/3akai-ux/tree/v_0.4.0_release'>v_0.4.0_release</a>";
-        debug_text += " | KERNEL git: <a href='http://github.com/ieb/open-experiments/tree/0.5' target='_blank'>0.5</a>";
-        debug_text += " | DOC mod date: " + document.lastModified;
-        debug_text += " | PLACE: " + doc_name;
-
-        // Put text into holding tag
-        container.html(debug_text);
-
-    };
-
-    /*
-     * This event handler will make sure that the Top link
-     * that's available in every page footer will scroll back
-     * to the top of the page
-     */
-    $(".back-top").live("click", function(ev){
-        window.scrollTo(0,0);
-    });
-
-
-    /////////////////////////////
-    // Initialisation function //
-    /////////////////////////////
-
-    var doInit = function(){
-
-        // Display debug info if set in config
-        if (sakai.config.displayDebugInfo === true) {
-
-            // Render the debug info
-            renderDebugInfo($debug_info);
-
-            // Add binding to the image
-            $footer_logo.bind("click", function(){
-
-                // Make space for debug info
-                $footer_root.height("65px");
-
-                // Show the debug info
-                $debug_info.show();
-
-            }).addClass("footer_clickable");
-
-        }
-
-        // Set the height of the footer
-        $footer_root.height("45px");
-
-        // index.html mods
-        if (checkIndexPage() || doc_name === "") {
-            $back_to_top_link.hide();
-            $footer_root.css({'z-index' : '99', 'bottom' : '0', 'height' : '40px', 'background' : 'url(_images/footer_index.png) center bottom no-repeat', 'position' : 'fixed', 'clear' : 'both', 'margin-bottom' : '0'});
-        }
-
-        // Set the end year of the copyright notice
-        var d = new Date();
-        $footer_date_end.text(d.getFullYear());
-
-    };
-
-    doInit();
-
-};
-
-sakai.api.Widgets.widgetLoader.informOnLoad("footer");
+    sakai.api.Widgets.widgetLoader.informOnLoad("footer");
+});

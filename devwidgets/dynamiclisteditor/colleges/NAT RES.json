@@ -1,0 +1,107 @@
+{
+    "college": "CNR",
+    "undergraduates": {
+        "id" : "/colleges/NAT RES/standings/undergrad",
+        "majors": {
+            "title": "Majors",
+            "items_array": [{
+                "id": "/colleges/NAT RES/standings/undergrad/majors/AGR & RES ECON",
+                "name": "Agricultural and Resource Economics"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/CONSERV&RSRC STUDIES",
+                "name": "Conservation and Resource Studies"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/ENV ECON & POLICY",
+                "name": "Environmental Economics and Policy"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/ENVIR SCIENCES",
+                "name": "Environmental Sciences"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/FOREST & NATURAL RES",
+                "name": "Forestry and Natural Resources"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/GENETICS & PLANT BIO",
+                "name": "Genetics and Plant Biology"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/MICROBIAL BIOLOGY",
+                "name": "Microbial Biology"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/MOL ENV BIOLOGY",
+                "name": "Molecular Environmental Biology"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/MOLECULAR TOXICOLOGY",
+                "name": "Molecular Toxicology"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/NUTRITION SCIENCE",
+                "name": "Nutritional Science"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/NUTR SCI-PHYS & MET",
+                "name": "Physiology & Metabolism (Metabolic Biology)"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/NUTR SCI-DIETETICS",
+                "name": "Dietetics"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/SOCIETY&ENVIRONMENT",
+                "name": "Society and Environment"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/undergrad/majors/UNDECLARED",
+                "name": "Undeclared"
+            }]
+        }
+     },
+    "graduates": {
+        "id" : "/colleges/NAT RES/standings/grad",
+        "programs": {
+            "title": "Programs",
+            "items_array": [{
+                "id": "/colleges/NAT RES/standings/grad/majors/AGR & RES ECON",
+                "name": "Agricultural and Resource Economics"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/AGRICULTURAL CHEM",
+                "name": "Agriculture & Environmental Chemistry"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/COMP BIOCHEMISTRY",
+                "name": "Comparative Biochemistry"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/ENV SCI POL AND MGMT",
+                "name": "Environmental Science, Policy, and Management"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/FORESTRY",
+                "name": "Forestry"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/NUTR SCI-PHYS & MET",
+                "name": "Metabolic Biology"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/MOLECULAR TOXICOLOGY",
+                "name": "Molecular Toxicology"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/PLANT BIOLOGY",
+                "name": "Plant Biology"
+            },
+            {
+                "id": "/colleges/NAT RES/standings/grad/majors/RANGE MANAGEMENT",
+                "name": "Range Management"
+            }]
+        }
+    }
+}

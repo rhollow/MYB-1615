@@ -1,0 +1,146 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/contentmetadata/css/contentmetadata.css" />
+
+
+<div id="contentmetadata_container">
+    <div class="contentmetadata_title">__MSG__DETAILS__</div>
+    <div id="contentmetadata_description_container" class="contentmetadata_editable_for_maintainers">
+        <!-- -->
+    </div>
+    <div id="contentmetadata_tags_container" class="contentmetadata_editable_for_maintainers">
+        <!-- -->
+    </div>
+    <div id="contentmetadata_url_container" class="contentmetadata_editable_for_maintainers" style="display:none;">
+        <!-- -->
+    </div>
+    <div id="contentmetadata_copyright_container" class="collapsible_container contentmetadata_editable_for_maintainers" style="display:none;">
+        <!-- -->
+    </div>
+    <div id="contentmetadata_locations_container" class="collapsible_container contentmetadata_editable_for_maintainers" style="display:none;">
+        <!-- -->
+    </div>
+    <div id="contentmetadata_details_container" class="collapsible_container" style="display:none;">
+        <!-- -->
+    </div>
+    <button type="button" id="contentmetadata_show_more" class="s3d-button s3d-link-button s3d-action">
+        <div id="contentmetadata_see_more"><span id="contentmetadata_show_more_arrow" class="s3d-dropdownlisttwo-arrow-down"><!-- --></span><span>__MSG__SEE_MORE__</span></div>
+        <div id="contentmetadata_see_less" style="display:none;"><span id="contentmetadata_show_less_arrow" class="s3d-dropdownlisttwo-arrow-up"><!-- --></span><span>__MSG__SEE_LESS__</span></div>
+    </button>
+    <hr class="fl-hidden fl-push">
+</div>
+
+<div id="contentmetadata_description_template" style="display:none;"><!--
+    {if data.mode === "edit"}
+        <textarea id="contentmetadata_description_description" class="contentmetadata_edit_input">${data.data["sakai:description"]}</textarea>
+    {else}
+        <span id="contentmetadata_description_display" class="contentmetadata_click">{if $.trim(data.data["sakai:description"]) != ""}${sakai.api.Security.escapeHTML(data.data["sakai:description"])}{else}{if data.isManager}<span class="contentmetadata_manager_edit">__MSG__CLICK_TO_EDIT_DESCRIPTION__</span>{else}__MSG__NO_DESCRIPTION__{/if}{/if}</span>
+    {/if}
+--></div>
+
+<div id="contentmetadata_tags_template" style="display:none;"><!--
+        {if data.mode === "edit"}
+            <textarea id="contentmetadata_tags_tags" class="contentmetadata_edit_input">{if tags && tags.length > 0}{for tag in tags}{if tag_index > 0},&nbsp;{/if}${tag}{/for}{/if}</textarea>
+        {else}
+            <span class="contentmetadata_first_column">__MSG__TAGS__:</span>
+            {if tags && tags.length > 0}
+                <span class="contentmetadata_second_column">
+                    {for tag in tags}
+                        {if tag_index > 0},{/if} 
+                        <a href="/search#q=${sakai.api.Security.escapeHTML(tag)}" class="s3d-action" title="__MSG__SEARCH_CONTENT_TAGGED_WITH__ '${sakai.api.Security.escapeHTML(tag)}'"">${sakai.api.Security.escapeHTML(tag)}</a>
+                    {/for}
+                </span>
+            {else}
+                <span class="contentmetadata_click">
+                {if data.isManager}<span class="contentmetadata_manager_edit">__MSG__CLICK_TO_EDIT_TAGS__</span>{else}__MSG__NO_TAGS__{/if}
+                </span>
+            {/if}
+        {/if}
+--></div>
+
+<div id="contentmetadata_url_template" style="display:none;"><!--
+    {if data.mode === "edit"}
+        <textarea id="contentmetadata_url_url" class="contentmetadata_edit_input">${data.data["sakai:pooled-content-url"]}</textarea>
+    {else}
+        <span class="contentmetadata_first_column">__MSG__URL__:</span>
+        <span id="contentmetadata_url_display" {if data.isManager}class="contentmetadata_click"{/if}>{if $.trim(data.data["sakai:pooled-content-url"]) != ""}<a class="s3d-action" target="_blank" href="${sakai.api.Security.escapeHTML(data.data["sakai:pooled-content-url"])}">${sakai.api.Security.escapeHTML(data.data["sakai:pooled-content-url"])}</a>{else}{if data.isManager}<span class="contentmetadata_manager_edit">__MSG__CLICK_TO_EDIT_URL__</span>{else}__MSG__NO_URL__{/if}{/if}</span>
+    {/if}
+--></div>
+
+<div id="contentmetadata_copyright_template" style="display:none;"><!--
+        {if data.mode === "edit"}
+            <select id="contentmetadata_copyright_copyright" class="contentmetadata_edit_input">
+                {for copyrightLabel in sakai.config.Permissions.Copyright}
+                    <option {if data.data["sakai:copyright"] === copyrightLabel_index} selected="selected"{/if} value="${copyrightLabel_index}">${sakai.api.i18n.Widgets.getValueForKey("contentmetadata", "", copyrightLabel.title)}</option>
+                {/for}
+            </select>
+        {else}
+            <span class="contentmetadata_first_column">__MSG__COPYRIGHT__: </span>
+            {for copyrightLabel in sakai.config.Permissions.Copyright}
+                {if data.data["sakai:copyright"] === copyrightLabel_index}
+                    <label class="content_profile_basic_info_form_anon_label">
+                        ${sakai.api.i18n.Widgets.getValueForKey("contentmetadata", "", copyrightLabel.title)}
+                    </label>
+                {/if}
+            {/for}
+        {/if}
+--></div>
+
+<div id="contentmetadata_locations_template" style="display:none;"><!--
+        <span class="contentmetadata_first_column">__MSG__DIRECTORY_LOCATIONS__:</span>
+        {if directorylocations.length != 0}
+            <ul>
+                {for dir in directorylocations}
+                    <li>
+                        <a href="/category#l=${data.saveddirectory[dir_index].toString().replace(",", "-")}" class="s3d-action contentmetadata_locations_link" title="Search content located at ${dir}">
+                            ${dir}
+                        </a>
+                    </li>
+                {/for}
+            </ul>
+        {else}
+            {if data.isManager}<span class="contentmetadata_manager_edit">__MSG__CLICK_TO_EDIT_LOCATIONS__</span>{else}__MSG__NO_LOCATIONS__{/if}
+        {/if}
+--></div>
+
+<div id="contentmetadata_details_template" style="display:none;"><!--
+        {var mimeType = sakai.api.Content.getMimeType(data.data)}
+        {if mimeType === "x-sakai/link"}
+            <div class="contentmetadata_content_row">
+                <span class="contentmetadata_first_column">__MSG__TYPE__: </span>
+                <span>Link</span>
+            </div>
+        {elseif mimeType === "x-sakai/document"}
+            <div class="contentmetadata_content_row">
+                <span class="contentmetadata_first_column">__MSG__TYPE__: </span>
+                <span>Document</span>
+            </div>
+        {else}
+            <div class="contentmetadata_content_row">
+                <span class="contentmetadata_first_column">__MSG__SIZE__: </span>
+                <span>${sakai.api.Util.convertToHumanReadableFileSize(data.data["_length"]) || sakai.api.Util.convertToHumanReadableFileSize(data.data["length"])}</span>
+            </div>
+            <div class="contentmetadata_content_row">
+                <span class="contentmetadata_first_column">__MSG__TYPE__: </span>
+                <span>${data.data["_mimeType"]}</span>
+            </div>
+        {/if}
+        <div class="contentmetadata_content_row">
+            <span class="contentmetadata_first_column">__MSG__CREATED_BY__: </span>
+            <span>
+                <a href="${creator.homePath}" class="s3d-regular-links">
+                    ${sakai.api.User.getDisplayName(creator)}
+                </a>
+            </span>
+        </div>
+        <div class="contentmetadata_content_row">
+            <span class="contentmetadata_first_column">__MSG__CREATED__: </span>
+            <span>${sakai.api.l10n.transformDate(sakai.api.l10n.fromEpoch(data.data["_created"], sakai.data.me))}</span>
+        </div>
+        <div class="contentmetadata_content_row">
+            <span class="contentmetadata_first_column">__MSG__LAST_MODIFIED__: </span>
+            <span>${sakai.api.l10n.transformDate(sakai.api.l10n.fromEpoch(data.data["_lastModified"]), sakai.data.me)}</span>
+        </div>
+--></div>
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/contentmetadata/javascript/contentmetadata.js"></script>

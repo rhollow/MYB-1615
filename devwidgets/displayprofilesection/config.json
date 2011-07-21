@@ -1,0 +1,18 @@
+{
+    "userpages": true,
+    "userdashboard": true,
+    "grouppages": false,
+    "groupdashboard": false,
+    "hasSettings": true,
+    "showinsakaigoodies": true,
+    "type": "sakai",
+	"img":"/devwidgets/displayprofilesection/images/displayprofilesection.png",
+    "description":"Profile Section",
+    "name":"Profile Section",
+    "id":"displayprofilesection",
+    "i18n": {
+        "default": "/devwidgets/displayprofilesection/bundles/default.properties"
+    },
+    "enabled": true,
+    "url":"/devwidgets/displayprofilesection/displayprofilesection.html"
+}

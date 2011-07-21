@@ -8,31 +8,30 @@
 </div>
 
 <!-- CONTENT -->
-<div class="recentmessages_widget">
+    <div id="recentmessages_container"></div>
 
-    <div class="fl-widget-content" id="recentmessages_container">
-    </div>
     <div id="recentmessages_template"><!--
         <ul>
             {for message in results}
                 <li {if message_index % 2} class="recentmessages_alterrow"{/if}>
-                    <span {if message["sakai:read"]==="false"} class="recentmessages_notread" {/if} title="${message.userFrom[0].firstName} ${message.userFrom[0].lastName}">${message.userFrom[0].firstName} {if message.userFrom.length > 1} and others...{/if}:</span>
-                    
-                    <a href="inbox.html?message=${message.id}">
-                        <span class="ellipsis_text" title="${message["sakai:subject"]}">
-                            ${message["sakai:subject"]}
-                        </span>
-                    </a>
+                    <span class="recentmessages_sendername" title="${sakai.api.User.getDisplayName(message.userFrom[0])}">${message.dotteduserFrom} {if message.userFrom.length > 1} __MSG__AND_OTHERS__...{/if}:</span>
+                        <a href="/inbox#message=${message.id}" class="s3d-regular-links {if message["sakai:read"]==="false" || message["sakai:read"]===false} s3d-bold{/if}">
+                            <div class="recentmessages_ellipsis_container">
+                            <span class="recentmessages_ellipsis_text">
+                            {if message["sakai:type"] === "chat"}
+                                    __MSG__CHAT_MESSAGE__
+                            {else}
+                                    ${message["sakai:subject"]}
+                            {/if}
+                            </span>
+                            </div>
+                        </a>
                 </li>
             {/for}
         </ul>
     --></div>
-    <div class="fl-widget-options fl-fix">
-        <div class="widget-options-inner">
-            <ul>
-                <li><a href="inbox.html">__MSG__ALL_MESSAGES__</a></li>
-            </ul>
-        </div>
+    <div class="s3d-widget-footer">
+        <a href="/me#l=messages/inbox" class="s3d-regular-links s3d-action-seeall">__MSG__VIEW_AND_MANAGE_ALL_MY_MESSAGES__</a>
     </div>
 </div>
 

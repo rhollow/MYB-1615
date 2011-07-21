@@ -1,0 +1,64 @@
+/*
+ * Licensed to the Sakai Foundation (SF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The SF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
+/* MyBerkeley custom begin */
+
+.welcome_widget {margin:12px;}
+
+.welcome-body {
+	float: right;
+	width: 414px;
+}
+
+.welcome-body .tag-line {
+    font-size: 1.25em;
+	padding-top: 0.2em;
+}
+
+.welcome-body .message-defined {
+    color: #555;
+    font-size: 1.25em;
+	line-height: 116%;
+}
+
+.welcome-body .message-defined span.strong {
+    font-size: 1.10em;
+    font-weight: bold;
+}
+
+.welcome-body .feedback {
+    font-size: 1.1em;
+}
+
+.header-smallline .preview-tag {
+    display: inline;
+    padding: 13px 41px;
+    background: url(/dev/images/myb/beta-tag.png) no-repeat 0 0 scroll;
+}
+
+.myb-frontdoor-image {
+	float: left;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    width: 234px;
+    height: 234px;
+    background: url(/dev/images/myb/ucb-45-pano.jpg) no-repeat 3% 50% scroll;
+}
+/* MyBerkeley custom end */

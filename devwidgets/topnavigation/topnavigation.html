@@ -1,0 +1,217 @@
+<link rel="stylesheet" type="text/css" href="/devwidgets/topnavigation/css/topnavigation.css"/>
+
+<div id="topnavigation_container">
+    <ul class="topnavigation_explore"><!----></ul>
+    <div class="topnavigation_user_container"></div>
+    <div class="topnavigation_usersection_splitter">|</div>
+    <div class="topnavigation_search">
+        <input type="text" id="topnavigation_search_input" title="__MSG__PLEASE_INPUT_SEARCH_KEYWORD__" />
+        <div id="topnavigation_search_results" style="display:none;">
+            <div id="topnavigation_search_results_container"><!----></div>
+            <div id="topnavigation_search_results_bottom_container"><!----></div>
+        </div>
+    </div>
+</div>
+
+<div id="navigation_template" style="display:none"><!--
+    {for i in links}
+        <li class="s3d-bold s3d-dropdown-menu{if i.subnav} hassubnav{/if}">
+            <a class="s3d-bold" {if i.id}id="${i.id}" {/if} href="${i.url}" title="${i.label}">${i.label} </a>
+            <div id="${i.id}_dropdown" class="s3d-dropdown-container" style="display:none;">
+                {if i.subnav}
+                    <ul>
+                        {for subnav in i.subnav}
+                            {if subnav !== "hr"}
+                            <li>
+                                <a href="${subnav.url}" title="${subnav.label}" id="${subnav.id}" class="s3d-bold">${subnav.label}</a>
+                            </li>
+                            {else}
+                                <hr class="s3d-split-line"/>
+                            {/if}
+                        {/for}
+                    </ul>
+                {/if}
+            </div>
+        </li>
+    {/for}
+--></div>
+
+<div id="search_template" style="display:none"><!--
+        {if files && files.length}
+            <a href="/search#l=content&q=${query}" class="topnavigation_search_results_section_header">__MSG__CONTENT__</a>
+            <ul>
+               {for file in files}
+                    <li>
+                        <div class="topnav_content_icon_container fl-force-left">
+                            <span class="topnav_content_icon ${file.css_class}"></span>
+                        </div>
+                        <a href="${file.url}" title="${file.name}" class="s3d-bold">${file.dottedname}</a>
+                    </li>
+                    {if file_index != files.length -1}<hr class="s3d-split-line"/>{/if}
+                {/for}
+            </ul>
+        {/if}
+        {if people && people.length}
+            <a href="/search#l=people&q=${query}" class="topnavigation_search_results_section_header">__MSG__PEOPLE__</a>
+            <ul>
+                {for person in people}
+                    <li>
+                        <div class="topnav_content_icon_container fl-force-left">
+                            <span class="topnav_person_icon"></span>
+                        </div>
+                        <a href="${person.url}" title="${person.name}" class="s3d-bold">${person.dottedname}</a>
+                    </li>
+                    {if person_index != people.length -1}<hr class="s3d-split-line"/>{/if}
+                {/for}
+            </ul>
+        {/if}
+        {for c in sakai.config.worldTemplates}
+            {if groups[c.id] && groups[c.id].length}
+                <a href="/search#l=${c.id}&category=${c.id}&q=${query}" class="topnavigation_search_results_section_header">${sakai.api.i18n.General.getValueForKey(c.title)}</a>
+                <ul>
+                    {for group in groups[c.id]}
+                        <li>
+                            <div class="topnav_content_icon_container fl-force-left">
+                                <span class="${group.css_class}"></span>
+                            </div>
+                            <a href="${group.url}" title="${group.name}" class="s3d-bold">${group.dottedname}</a>
+                        </li>
+                        {if group_index != groups.length -1}<hr class="s3d-split-line"/>{/if}
+                    {/for}
+                </ul>
+            {/if}
+        {/for}
+--></div>
+
+<div id="search_bottom_template" style="display:none;"><!--
+    {if people.length || groups.length || files.length && people.length + groups.length + files.length != peopletotal + groupstotal + filestotal}
+        <a href="/search#q=${query}&filter=&facet=&page=1" id="topnavigation_search_see_all">
+            <button class="s3d-button s3d-overlay-button">__MSG__SEE_ALL__</button>
+        </a>
+    {/if}
+    <span id="topnavigation_search_results_bottom_content">
+        {var totalresults = 0}
+        {if people.length || files.length}
+            ${totalresults = peopletotal + filestotal|eat} 
+        {/if}
+        {for c in sakai.config.worldTemplates}
+            {if groups[c.id] && groups[c.id].length}
+                ${totalresults += groups[c.id + "total"]|eat} 
+            {/if}
+        {/for}
+        {if totalresults > 0}
+            ${totalresults} __MSG__RESULTS__
+        {else}
+            __MSG__NO_RESULTS__
+        {/if}
+    </span>
+--></div>
+
+<!-- myberkeley custom: sign in is just a link to CAS -->
+<div id="topnavigation_user_template"><!--
+    {if anon}
+        <div class="s3d-dropdown-menu" id="topnavigation_user_options_login_wrapper">
+            <span class="s3d-bold" id="topnavigation_user_options_login">
+              <a href="#" class="s3d-bold" title="__MSG__SIGN_IN__" id="topnavigation_user_options_login_link">__MSG__SIGN_IN__</a>
+            </span>
+            <div id="topnavigation_user_options_login_fields" class="s3d-dropdown-container{if auth.externalAuth} topnavigation_external_login{/if}" style="display:none;">
+                {if auth.externalAuth}
+                    <ul>
+                        {for i in auth.Authentication.external}
+                            <li>
+                                <div class="topnav_content_icon_container fl-force-left">
+                                    <span class="topnav_content_icon ${i.css_class}"></span>
+                                </div>
+                                <a href="${i.url}" title="${i.label}" class="s3d-bold">${i.label}</a>
+                            </li>
+                        {/for}
+                    </ul>
+                {else}
+                <form id="topnavigation_user_options_login_form" method="POST">
+                    <div id="topnavigation_user_options_login_fields_container" class="s3d-dropdown-menu-content-container">
+                        <div id="topnavigation_user_options_login_error" style="display:none;">
+                            <div id="topnavigation_user_options_login_error_icon"></div>
+                            <span>__MSG__INVALID_USERNAME_OR_PASSWORD__</span>
+                        </div>
+                        <label for="topnavigation_user_options_login_fields_username">__MSG__USERNAME__</label>
+                        <input type="text" alt="__MSG__USERNAME__" maxlength="255" id="topnavigation_user_options_login_fields_username" name="topnav_login_username" class="login-container-textfield" />
+                        <label for="topnavigation_user_options_login_fields_password">__MSG__PASSWORD__</label>
+                        <input type="password" alt="__MSG__PASSWORD__" maxlength="255" id="topnavigation_user_options_login_fields_password" name="topnav_login_password" class="login-container-textfield" />
+                        <button type="button" id="topnavigation_user_options_login_forgotten" class="s3d-link-button" style="display:none;">__MSG__FORGOTTEN_YOUR_USERNAME_OR_PASSWORD__?</button>
+                        <hr class="s3d-split-line fl-push"/>
+                        {if auth.Authentication.allowInternalAccountCreation}
+                            <span class="topnavigation_sign_up_link">__MSG__NO_ACCOUNT_YET__</span>
+                            <a class="s3d-regular-links topnavigation_sign_up_link" href="/register">__MSG__SIGN_UP__</a>
+                        {/if}
+                        <button type="submit" class="s3d-button s3d-overlay-button" id="topnavigation_user_options_login_button_login">__MSG__SIGN_IN__</button>
+                        <span id="topnavigation_user_options_login_button_signing_in" style="display:none;">__MSG__SIGNING_IN__</span>
+                        <hr class="fl-push fl-hidden"/>
+                    </div>
+                </form>
+                {/if}
+            </div>
+        </div>
+    {else}
+        <a href="/me#l=messages/inbox" title="__MSG__INBOX__" id="topnavigation_user_inbox_container">
+            <div id="topnavigation_user_inbox_icon"></div>
+            <div id="topnavigation_user_inbox_messages"></div>
+        </a>
+        <ul id="topnavigation_user_options_list">
+            <li class="s3d-bold s3d-dropdown-menu hassubnav">
+                <a href="/me#l=profile" id="topnavigation_user_options_name" class="s3d-bold"></a>
+                <div class="topnavigation_user_dropdown s3d-dropdown-container" style="display:none;">
+                    <ul>
+                        <li><a href="#" id="subnavigation_preferences_link" class="s3d-regular-links s3d-bold">__MSG__MY_PREFERENCES__</a></li>
+                        <li><a href="/logout" class="s3d-regular-links s3d-bold">__MSG__SIGN_OUT__</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <div class="topnavigation_usersection_splitter">|</div>
+    {/if}
+--></div>
+
+<!-- OVERLAYS -->
+
+<!-- Upload Content Widget Container -->
+<div id="fileupload_container" style="display:none;">
+    <div id="widget_fileupload" class="widget_inline"></div>
+</div>
+
+<!-- Upload Content Widget Container -->
+<div id="newaddcontentcontainer" style="display:none;">
+    <div id="widget_newaddcontent" class="widget_inline"></div>
+</div>
+
+<!-- Send Message Widget Container -->
+<div id="widget_sendmessage" class="widget_inline"></div>
+
+<!-- Add To Contacts Widget Container -->
+<div id="widget_addtocontacts" class="widget_inline"></div>
+
+<!-- Join Group Widget Container -->
+<div id="widget_joingroup" class="widget_inline"></div>
+
+<!-- Join Request Buttons Widget Container -->
+<div id="widget_joinrequestbuttons" class="widget_inline"></div>
+
+<!-- Tooltip Widget Container -->
+<div id="widget_tooltip" class="widget_inline"></div>
+
+<!-- My Preferences Widget Container -->
+<div id="widget_accountpreferences" class="widget_inline"></div>
+
+<!-- Change Picture Widget Container -->
+<div id="widget_changepic" class="widget_inline"></div>
+
+<!-- Save Content Widget Container -->
+<div id="widget_savecontent" class="widget_inline"></div>
+
+<!-- Share Content Widget Container -->
+<div id="widget_newsharecontent" class="widget_inline"></div>
+
+<!-- Personinfo Widget Container -->
+<div id="widget_personinfo" class="widget_inline"></div>
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/topnavigation/javascript/topnavigation.js"></script>

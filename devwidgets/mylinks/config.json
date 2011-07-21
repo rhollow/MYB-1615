@@ -1,0 +1,14 @@
+{
+    "description":"Quick Links: a list of your favorite Berkeley websites",
+    "id":"mylinks",
+    "name":"Quick Links",
+    "personalportal":true,
+    "url":"/devwidgets/mylinks/mylinks.html",
+    "i18n": {
+        "default": "/devwidgets/mylinks/bundles/default.properties"     
+    },
+    "multipleinstance": false,    
+    "deletable":false,
+    "type":"sakai",
+    "enabled":true
+}

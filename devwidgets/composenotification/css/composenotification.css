@@ -1,0 +1,76 @@
+/*
+ * Licensed to the Sakai Foundation (SF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The SF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
+/* Radiobox and checkbox formatting */
+.radioboxes {margin-right: 5px; position: relative; top: 2px;}
+.checkboxes {margin-right: 5px; position: relative; top: 2px;}
+
+/* Reminder check and task or event detail formatting */
+.task_or_event {position: relative; left: 20px;}
+.composenotification_taskorevent .header {position: relative; left: 23px; font-size: 16px; top: -5px;}
+.cn-task {position: relative; left: 23px;}
+.cn-event {position: relative; left: 23px;}
+
+/*#composenotification_box {width: 575px;} */
+.composenotification_error_message {font-weight:bold;margin:10px;padding:10px;border:1px solid #ff0000;background-color:#f7d8d8;}
+.composenotification_normal_message {margin:10px;padding:10px;border:1px solid #00ff00;background-color:#d9f7d8;}
+.composenotification_invalid {background-color:#FFCCCC !important;}
+
+#composenotification_box .compose-form label {
+  display: inline;
+}
+
+/* send_message_lightbox.html */
+.send_message .compose-form input, .send_message .compose-form textarea {font-weight:normal;}
+.send_message .compose-form div {padding-bottom:10px;}
+.send_message .compose-form .compose-subject {width:500px;}
+.send_message .compose-form .compose-body {height:150px; width:500px;}
+#send_message {font-weight:bold}
+
+
+.datepicker img
+{ float:right; margin-left: 5px; margin-top: -3px; cursor: pointer; }
+.datepicker input
+{ width: 70px; }
+
+#ui-datepicker-div {display: none;}
+
+#composenotification_box span.left{
+     display:block;
+     text-align:right;
+     width:140px;
+     float:left;
+     margin-bottom:10px;
+ }
+#composenotification_box span.right{
+    float:left;
+
+    margin-left:10px;
+    margin-bottom:10px;
+}
+#composenotification_required span {
+    margin-left:0;
+}
+
+#composenotification_required input[type=radio] {
+     top: -1px;
+}
+
+.composenotification_widget .disabled {
+    opacity: 0.4;
+}

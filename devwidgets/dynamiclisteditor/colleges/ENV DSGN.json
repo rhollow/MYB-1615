@@ -1,0 +1,63 @@
+{
+    "college": "CED",
+    "undergraduates": {
+        "id" : "/colleges/ENV DSGN/standings/undergrad",
+        "majors": {
+            "title": "Majors",
+            "items_array": [{
+                "id": "/colleges/ENV DSGN/standings/undergrad/majors/ARCHITECTURE",
+                "name": "Architecture"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/undergrad/majors/LANDSCAPE ARCH",
+                "name": "Landscape Architecture"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/undergrad/majors/URBAN STUDIES",
+                "name": "Urban Studies"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/undergrad/majors/INDIVIDUAL",
+                "name": "Individual"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/grad/majors/LIMITED",
+                "name": "Limited"
+            }]
+        }
+     },
+    "graduates": {
+        "id" : "/colleges/ENV DSGN/standings/grad",
+        "programs": {
+            "title": "Programs",
+            "items_array": [{
+                "id": "/colleges/ENV DSGN/standings/grad/majors/ARCHITECTURE",
+                "name": "Architecture"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/grad/majors/CITY REGIONAL PLAN",
+                "name": "City and Regional Planning"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/grad/majors/DESIGN",
+                "name": "Design"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/grad/majors/LAND ARCH &amp; ENV PLAN",
+                "name": "Landscape Architecture and Environmental Planning"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/grad/majors/LANDSCAPE ARCH",
+                "name": "Landscape Architecture"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/grad/majors/URBAN DESIGN",
+                "name": "Urban Design"
+            },
+            {
+                "id": "/colleges/ENV DSGN/standings/grad/majors/LIMITED",
+                "name": "Limited"
+            }]
+        }
+    }
+}

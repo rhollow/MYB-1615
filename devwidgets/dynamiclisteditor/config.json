@@ -1,0 +1,14 @@
+{
+    "description":"Dynamic list editor",
+    "name":"Dynamic list editor",
+    "id":"dynlisteditor",
+    "personalportal":true,
+    "url":"/devwidgets/dynamiclisteditor/dynamiclisteditor.html",
+    "i18n": {
+        "default": "/devwidgets/dynamiclisteditor/bundles/default.properties"
+    },
+    "multipleinstance": false,
+    "deletable":false,
+    "type":"sakai",
+    "enabled":true
+}
