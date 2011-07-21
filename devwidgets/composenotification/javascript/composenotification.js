@@ -103,6 +103,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             'PM' : 'PM'
         };
 
+        var saveEnabled = true;
+
         /**
          * The overlay transparency as a percentage. If 0 the overlay is disabled, and the page will remain interactive.
          * If 100 the overlay will be 100% opaque.
@@ -316,6 +318,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $messageFieldTo.empty();
 
             isDirty = false;
+
+            saveEnabled = true;
+            $("#composenotification_box .s3d-button", $rootElement).removeClass("disabled");
         };
 
 
@@ -1009,6 +1014,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * @param {String} msgTxt String to be used in the popup message text indicating success or failure.
          */
         var postNotification = function (toPost, successCallback, original, copyCheck, msgTxt) {
+
+            // don't save twice if user is rapidly double-clicking
+            if (!saveEnabled) {
+                return;
+            }
+            saveEnabled = false;
+            $("#composenotification_box .s3d-button", $rootElement).addClass("disabled");
+
             var url = "/user/" + me.user.userid + "/.myb-notificationstore.html";
 
             // Are we creating a copy of an existing notification?
