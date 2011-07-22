@@ -49,14 +49,19 @@
 
 /* Begin CalCentral Customization */
 
+.allcategories_widget .allcategories_item .allcategories_item_header .allcategories_item_raquo {
+    margin-top: 12px;
+}
+
+
 .allcategories_widget li .allcategories_item .allcategories_item_header {
-  background: none repeat scroll 0 0 #1c3e76;
+  background: none repeat scroll 0 0 #333;
   color: white;
   font-size: 10px;
 }
 
 .allcategories_widget li:nth-child(n+8) .allcategories_item .allcategories_item_header { 
-  background: none repeat scroll 0 0 #475187;
+  background: none repeat scroll 0 0 #1c3e76;
 }
 
 .allcategories_widget li:nth-child(n+8) .allcategories_item .allcategories_item_header:hover {
