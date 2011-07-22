@@ -58,6 +58,7 @@
   background: none repeat scroll 0 0 #333;
   color: white;
   font-size: 10px;
+  padding-top: 7px;
 }
 
 .allcategories_widget li:nth-child(n+8) .allcategories_item .allcategories_item_header { 
@@ -67,7 +68,6 @@
 .allcategories_widget li:nth-child(n+8) .allcategories_item .allcategories_item_header:hover {
     background:url("/devwidgets/allcategories/images/allcategories_item_header_hover_bg.png") repeat-x scroll left top #3572a7;
 }
-
 
 .allcategories_widget li:nth-child(-n+7) .allcategories_item .allcategories_item_header:before { 
   content: "By topic";
@@ -79,13 +79,7 @@
 
 .allcategories_widget .allcategories_item .allcategories_item_header_link {
     font-size: 17px;
-    margin-top: 2px;
+    margin-top: 4px;
 }
-
-
-
-/*:before {
-   content: "Email address: ";
-}*/
 
 /* End CalCentral Customization */
