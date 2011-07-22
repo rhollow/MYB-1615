@@ -544,6 +544,10 @@ define(["config/config", "config/env"], function(config) {
         groupShortDescription: "asdf"
     };
 
+
+    // Custom CSS Files to load in
+    config.skinCSS = ["/dev/skins/myb/skin.css"];
+
     // End custom configuration
 
     return config;
