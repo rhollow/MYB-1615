@@ -17,7 +17,8 @@
  */
 /* global $, Config, jQuery, sakai, sdata */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_custom", "/dev/javascript/myb/myb.securepage.js"],
+        function($, sakai, myb, config) {
     /**
      * @name sakai_global.groupnotificationmanager
      *
@@ -45,7 +46,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var selectedType = 'drafts';
         var sortOrder = "descending";
         var sortBy = "date";
-        var currentPage = 0;
         var messagesForTypeCat; // The number of messages for this type/cat
 
 
@@ -75,7 +75,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
         // Global vars
         var inboxGeneralMessage = inboxID + "_general_message";
-        var inboxPager = inboxID + "_pager";
         var inboxResults = inboxID + "_results";
         var inboxArrow = inboxClass + "_arrow";
 
@@ -164,12 +163,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          *
          */
         var unreadMessages = 0;
-
-        /**
-         * If we delete all messages from the last page, the number of pages decreases
-         * and we cannot reload the same page, instead we need to use the previous page.
-         */
-        var goToPreviousPageAfterDeletion = false;
 
         /**
          * This will show the preloader.
@@ -274,7 +267,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             selectedType = type;
 
             // Display the first page of msgs.
-            showPage(1);
+            showPage();
 
             // Show the inbox pane.
             showPane(inboxPaneInbox);
@@ -507,9 +500,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             allMessages = response.results;
 
-            // response.total is not actually total number of messages, but the number of messages remaining
-            // We need to add the number of messages already shown to it in order to get the total number of messages
-            messagesForTypeCat = response.total + (currentPage * messagesPerPage);
+            messagesForTypeCat = response.total;
 
             // show messages
             var tplData = {
@@ -531,40 +522,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         };
 
         /**
-         *
-         * PAGER
-         *
-         **/
-
-        /**
          * Show a certain page of messages.
-         * @param {int} pageNumber The page number you want to display.
          */
-        var showPage = function(pageNumber){
+        var showPage = function(){
             // Remove all messages.
             // remove previous messages.
             removeAllMessagesOutDOM();
 
-            // Remember which page were on.
-            currentPage = pageNumber - 1;
             // Show set of messages.
             // Using callback function to update the pager AFTER all messages have been loaded.
-            getAllMessages(function() {
-                pageMessages(currentPage + 1);
-                currentPage = pageNumber - 1;
-            });
-        };
-
-        /**
-         * Draw up the pager at the bottom of the page.
-         * @param {int} pageNumber The number of the current page
-         */
-        pageMessages = function(pageNumber){
-            $(inboxPager).pager({
-                pagenumber: pageNumber,
-                pagecount: Math.ceil(messagesForTypeCat / messagesPerPage),
-                buttonClickCallback: showPage
-            });
+            getAllMessages();
         };
 
         /**
@@ -577,7 +544,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Gets all the messages from the JCR.
          */
         getAllMessages = function(callback){
-            var url = "/var/notifications/search.json?box=" + selectedType;
+            var url = "/var/notifications/search.json?items=" +
+                    config.Search.MAX_CORRECT_SEARCH_RESULT_COUNT + "&box=" + selectedType;
 
             $.ajax({
                 url: url,
@@ -661,13 +629,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          */
         var deleteMessagesFinished = function(pathToMessages, success){
             if (success) {
-                // Repage the inbox.
-
-                if (goToPreviousPageAfterDeletion) {
-                    currentPage = currentPage - 1;
-                } // else using the same page
-
-                showPage(currentPage);
+                showPage();
 
                 var txt = "";
                 if (pathToMessages.length === 1) {
@@ -761,30 +723,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         };
 
         /**
-         * Paging related method that checks whether we need to go to the previous page
-         * when something is deleted from the current page.
-         * @param {int} totalMessages Total messages before deletion.
-         * @param {int} numberOfMessagesToRemove Number of messages to delete
-         */
-        var isGoToPreviousPage = function(totalMessages, numberOfMessagesToRemove) {
-
-            var messageCountAfterDeletion = (totalMessages - numberOfMessagesToRemove >= 0) ? totalMessages - numberOfMessagesToRemove : 0;
-            var pageCountBeforeDeletion = Math.ceil(totalMessages / messagesPerPage);
-            var pageCountAfterDeletion = Math.ceil(messageCountAfterDeletion / messagesPerPage);
-            var isLastPage = (currentPage === pageCountBeforeDeletion);
-
-            // Setting a flag for deleteMessagesFinished moveMessagesFinished functions
-            // The function needs to know whether to reload the same page or the previous page
-            if (pageCountAfterDeletion === pageCountBeforeDeletion || !isLastPage) {
-                //It is safe to use the same current page
-                return false;
-            }
-
-            // We need to go back one page
-            return true;
-        };
-
-        /**
          * Delete all checked messages on current page.
          */
         var deleteChecked = function(){
@@ -795,8 +733,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 pathToMessages.push(pathToMessage);
             });
 
-            goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);
-
             // Reset 'Check All' checkbox just in case it's clicked.
             $(inboxInboxCheckAll).attr("checked", false);
 
@@ -806,12 +742,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
         var moveMessagesFinished = function(pathToMessages, success, toWhere){
             if (success) {
-                // Repage the inbox.
-                if (goToPreviousPageAfterDeletion) {
-                    currentPage = currentPage - 1;
-                } // else using the same page
 
-                showPage(currentPage);
+                showPage();
 
                 var txt = "";
                 if (pathToMessages.length === 1) {
@@ -864,8 +796,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 pathToMessages.push(pathToMessage);
             });
 
-            goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);
-
             // Reset 'Check All' checkbox just in case it's clicked.
             $(inboxInboxCheckAll).attr("checked", false);
 
@@ -902,8 +832,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 }
             });
 
-            goToPreviousPageAfterDeletion = isGoToPreviousPage(messagesForTypeCat, pathToMessages.length);
-
             // Reset 'Check All' checkbox just in case it's clicked.
             $(inboxInboxCheckAll).attr("checked", false);
 
@@ -916,9 +844,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
         var copyMessagesFinished = function(pathToMessages, success, toWhere){
             if (success) {
-                // Repage the inbox.
-                //currentPage = currentPage - 1;
-                showPage(currentPage);
+                showPage();
 
                 var txt = "";
                 if (pathToMessages.length === 1) {
