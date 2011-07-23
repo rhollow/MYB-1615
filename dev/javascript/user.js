@@ -211,8 +211,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             } else {
                 userid = entityID;
             }
-            privurl = "/~" + userid + "/private/privspace/";
-            puburl = "/~" + userid + "/public/pubspace/";
+            privurl = "/~" + sakai.api.Util.urlSafe(userid) + "/private/privspace/";
+            puburl = "/~" + sakai.api.Util.urlSafe(userid) + "/public/pubspace/";
             if (isMe){
                 sakai.api.Communication.getUnreadMessagesCountOverview("inbox", function(success, counts){
                     messageCounts = counts;
@@ -278,7 +278,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             var picture = "";
             if (profile.picture) {
                 var picture_name = $.parseJSON(profile.picture).name;
-                picture = "/~" + userid + "/public/profile/" + picture_name;
+                picture = "/~" + sakai.api.Util.urlSafe(userid) + "/public/profile/" + picture_name;
             }
             return picture;
         };
