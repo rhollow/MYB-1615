@@ -46,3 +46,40 @@
 .allcategories_widget .allcategories_content_comments_icon {background:url("/devwidgets/recentactivity/images/recentactivity_comment_icon.png") no-repeat scroll left top transparent;}
 .allcategories_widget .allcategories_content_tags {font-size:11px !important;display:block;margin-top:5px;color:#424242;padding-left:20px;background:url("/dev/images/tag_icon.png") no-repeat scroll left center transparent; clear: both;}
 .allcategories_widget .allcategories_content_tags a {font-size:11px !important;font-weight:normal !important;}
+
+/* Begin CalCentral Customization */
+
+.allcategories_widget .allcategories_item .allcategories_item_header .allcategories_item_raquo {
+    margin-top: 12px;
+}
+
+
+.allcategories_widget li .allcategories_item .allcategories_item_header {
+  background: none repeat scroll 0 0 #333;
+  color: white;
+  font-size: 10px;
+  padding-top: 7px;
+}
+
+.allcategories_widget li:nth-child(n+8) .allcategories_item .allcategories_item_header { 
+  background: none repeat scroll 0 0 #1c3e76;
+}
+
+.allcategories_widget li:nth-child(n+8) .allcategories_item .allcategories_item_header:hover {
+    background:url("/devwidgets/allcategories/images/allcategories_item_header_hover_bg.png") repeat-x scroll left top #3572a7;
+}
+
+.allcategories_widget li:nth-child(-n+7) .allcategories_item .allcategories_item_header:before { 
+  content: "By topic";
+}
+
+.allcategories_widget li:nth-child(n+8) .allcategories_item .allcategories_item_header:before { 
+  content: "By campus organization";
+}
+
+.allcategories_widget .allcategories_item .allcategories_item_header_link {
+    font-size: 17px;
+    margin-top: 4px;
+}
+
+/* End CalCentral Customization */

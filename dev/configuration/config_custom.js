@@ -98,90 +98,188 @@ define(["config/config", "config/env"], function(config) {
     );
 
     config.Directory = {
-        ced: {
-            title: "Environmental Design",
+        architecture: {
+            title: "Architecture, Landscape, Building & Planning",
             children: {
                 architecture: {
                     title: "Architecture"
                 },
-                cityregionalplanning: {
-                    title: "City &amp; Regional Planning"
+                cityplanning: {
+                    title: "City Planning"
+                },
+                housing: {
+                    title: "Housing Studies"
                 },
                 landscapearchitecture: {
-                    title: "Landscape Architecture & Environmental Planning"
+                    title: "Landscape Architecture"
                 },
-                urbandesign: {
-                    title: "Urban Design"
+                transportation: {
+                    title: "Transportation Studies"
+                },
+                urbanstudies: {
+                    title: "Urban Studies"
                 }
             }
         },
-        cnr: {
-            title: "Natural Resources",
+        creativearts: {
+            title: "Creative Arts & Design",
             children: {
-                agriculturaleconomics: {
-                    title: "Agricultural and Resource Economics"
+                design: {
+                    title: "Design Studies"
                 },
-                environmentalscience: {
-                    title: "Environmental Science, Policy, &amp; Management"
+                drawing: {
+                    title: "Drawing"
                 },
-                nutritionalscience: {
-                    title: "Nutritional Science &amp; Toxicology"
-                },
-                plantmicrobialbiology: {
-                    title: "Plant &amp; Microbial Biology"
+                photography: {
+                    title: "Photography"
                 }
             }
         },
-        studentservices: {
-            title: "Student Groups",
+        environment: {
+            title: "The Environment",
             children: {
-                stg_academic: {
-                    title: "Academic"
+                agriculture: {
+                    title: "Agriculture"
                 },
-                stg_arts: {
-                    title: "Arts"
+                Conservation: {
+                    title: "Conservation"
                 },
-                stg_cultural: {
-                    title: "Cultural"
+                energy: {
+                    title: "Energy"
                 },
-                stg_political: {
-                    title: "Political"
+                env_economics: {
+                    title: "Environmental Economics "
                 },
-                stg_professional: {
-                    title: "Professional"
+                env_planning: {
+                    title: "Environmental Planning"
                 },
-                stg_sport: {
-                    title: "Sport"
+                env_policy: {
+                    title: "Environmental Policy"
                 },
-                stg_religious: {
-                    title: "Religious"
+                env_sciences: {
+                    title: "Environmental Sciences"
                 },
-                stg_service: {
-                    title: "Service"
+                env_studies: {
+                    title: "Environmental Studies"
                 },
-                stg_other: {
-                    title: "Other"
+                ethics_law: {
+                    title: "Ethics and Law"
+                },
+                forestry: {
+                    title: "Forestry"
+                },
+                habitat: {
+                    title: "Habitat Restoration"
+                },
+                hydrology: {
+                    title: "Hydrology"
+                },
+                int_env_issues: {
+                    title: "International Environmental Issues"
+                },
+                resources: {
+                    title: "Natural Resources"
+                },
+                land_management: {
+                    title: "Resource/Land Management"
+                },
+                sustainability: {
+                    title: "Sustainability"
+                },
+                urban_forestry: {
+                    title: "Urban Forestry"
+                },
+                urban_gardens: {
+                    title: "Urban Gardens"
                 }
             }
         },
-        studentgroups: {
-            title: "Student Services",
+        biology: {
+            title: "Biology",
             children: {
-                ss_academic: {
-                    title: "Academic"
+                biochemistry: {
+                    title: "Biochemistry"
                 },
-                sd_career: {
-                    title: "Career"
+                genetics: {
+                    title: "Genetics"
                 },
-                ss_financial: {
-                    title: "Financial"
+                ecology: {
+                    title: "Ecology"
                 },
-                ss_campuslife: {
-                    title: "Campus Life"
+                env_biology: {
+                    title: "Environmental Biology"
+                },
+                human_health: {
+                    title: "Human Health"
+                },
+                microbiology: {
+                    title: "Microbiology"
+                },
+                molecular_biology: {
+                    title: "Molecular Biology"
+                },
+                nutrition: {
+                    title: "Nutrition"
+                },
+                plant_biology: {
+                    title: "Plant Biology"
+                },
+                public_health: {
+                    title: "Public Health"
+                },
+                toxicology: {
+                    title: "Toxicology"
+                },
+                zoology: {
+                    title: "Zoology"
                 }
             }
+        },
+        social_sciences: {
+            title: "Social Sciences",
+            children: {                
+                economics: {
+                    title: "Economics"
+                },
+                justice: {
+                    title: "Justice"
+                },
+                international: {
+                    title: "International"
+                },
+                poverty: {
+                    title: "Poverty"
+                },
+                policy: {
+                    title: "Social Policy"
+                }
+            }
+        },
+        law: {
+            title: "Law",
+            children: {}
+        },
+        medicine: {
+            title: "Medicine",
+            children: {}
+        },
+        departments: {
+            title: "Colleges and Departments",
+            children: {
+                ced: {
+                    title: "College of Environmental Design"
+                },
+                cnr: {
+                    title: "College of Natural Resources"
+                }
+            }
+        },
+        col_groups: {
+            title: "Collaborative Groups",
+            children: {}
         }
     };
+
 
     config.Profile = {
         /*
@@ -445,6 +543,10 @@ define(["config/config", "config/env"], function(config) {
         userShortDescription: "${role} in ${department} at ${college}",
         groupShortDescription: "asdf"
     };
+
+
+    // Custom CSS Files to load in
+    config.skinCSS = ["/dev/skins/myb/skin.css"];
 
     // End custom configuration
 

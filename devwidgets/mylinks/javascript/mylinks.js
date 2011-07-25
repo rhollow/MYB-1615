@@ -85,6 +85,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var cancelEditMode = function() {
+            validator.resetForm();
             currentLinkIndex = null;
             addEditPanel.hide();
             linkTitleInput.attr("value", "").removeClass("error");

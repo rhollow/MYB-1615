@@ -70,3 +70,7 @@
 #composenotification_required input[type=radio] {
      top: -1px;
 }
+
+.composenotification_widget .disabled {
+    opacity: 0.4;
+}

@@ -556,6 +556,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             // Show/hide appropriate buttons
             $dynListsCancelEditingButton.show();
+            $dynListsSaveButton.removeClass("disabled");
             $dynListsSaveButton.show();
         };
 
@@ -1032,6 +1033,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             if(!validateUserInput()) {
                 return;
             }
+
+            if ($dynListsSaveButton.is(".disabled")) {
+                // prevent double-clicking of save button
+                return;
+            }
+            $dynListsSaveButton.addClass("disabled");
+
             var data = getDataFromInput();
 
             // In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()

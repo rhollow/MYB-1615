@@ -13,6 +13,10 @@
 	margin-left: 20px;
 }
 
+.dynamiclisteditor_widget .checkbox {
+    padding: 1px;
+}
+
 .dynamiclisteditor_widget .checkbox input {
 	float:left;
 	display:block;
