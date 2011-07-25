@@ -184,11 +184,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                             appendMyBerkeleyCustomItemsToDefaultPrivStructure(privdata);
                             appendMyBerkeleyCustomItemsToDefaultPrivStructure(privateToStore);
                             // end of CalCentral specific code
-=======
-                            var refid = {"refid": sakai.api.Util.generateWidgetId()};
-                            privdata = sakai.api.Util.replaceTemplateParameters(refid, privdata);
-                            privateToStore = $.extend(true, {}, privdata);
->>>>>>> central/master
+
                         } else {
                             privdata = data2;
                             privdata = sakai.api.Server.cleanUpSakaiDocObject(privdata);
