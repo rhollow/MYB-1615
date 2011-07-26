@@ -1094,10 +1094,12 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Event handler for when user clicks on DLC "Save" button.
         $("#dlc-save", $rootElement).click(function() {
+
+            $saveReminderDialog.jqmHide();
+
             // Check that the subject field isn't empty before saving
             if ($messageFieldSubject.val() === "") {
                 // If subject field is empty, cancel jqm dialog and highlight subject field.
-                $saveReminderDialog.jqmHide();
                 $messageFieldSubject.addClass(invalidClass);
             } else {
                 // Save the draft.

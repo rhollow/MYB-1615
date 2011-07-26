@@ -225,6 +225,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          * test if the current browser supports the ellipsis overflow
          */
         var browserSupportsCSS3textOverflow = function () {
+            // TODO: Test in IE9
+            if($.browser.msie) return false; // ellipsis doesn't work correctly in IE8
             var style = document.documentElement.style;
             return ('textOverflow' in style || 'OTextOverflow' in style);
         }
@@ -236,17 +238,23 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          */
         var ellipsisSubjects = function(){
             if (browserSupportsCSS3textOverflow()) {
-                $(".subject-td").each(function(){
+                $(".subject-td p a.ellipsis_text").each(function(){
                     $(this).css({
+                        "text-overflow": "ellipsis",
+                        "-o-text-overflow": "ellipsis",
+                        // Encountered problems with Firefox, disabling the property below for now
+                        //"-moz-binding": "url('bindings.xml#ellipsis')",
                         "white-space": "nowrap",
-                        "overflow": "hidden"
-                        //"text-overflow": "ellipsis"
+                        "overflow": "hidden",
+                        "display": "inline-block",
+                        "max-width": "100%"
                     });
                 });
             } else {
-                $(".subject-td").each(function(){
+                $(".subject-td p").each(function(){
                     $(this).ThreeDots({
-                        max_rows: 1
+                        max_rows: 1,
+                        whole_word: false
                     });
                 });
             }
@@ -543,7 +551,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
         /**
          * Gets all the messages from the JCR.
          */
-        getAllMessages = function(callback){
+        var getAllMessages = function(callback){
             var url = "/var/notifications/search.json?items=" +
                     config.Search.MAX_CORRECT_SEARCH_RESULT_COUNT + "&box=" + selectedType;
 
@@ -1114,24 +1122,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             if (!myb.api.security.isUserAnAdviser()) {
                 sakai.api.Security.send403();
                 return;
-            }
-
-            // We are logged in. Do all the necessary stuff.
-            // Load the list of messages.
-            getAllMessages();
-
-            var qs = new Querystring();
-            var qs_messageid = qs.get("message");
-
-            if (qs_messageid) {
-                var callback = function(){
-                    displayMessage(qs_messageid);
-                };
-                getAllMessages(callback);
-            }
-            else {
-                // Show messages by default (as if click on "Inbox").
-                filterMessages("drafts", "", "all", inboxFilterDrafts);
             }
 
             setState();

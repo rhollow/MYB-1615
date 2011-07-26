@@ -28,7 +28,7 @@
 
 
                     <!-- Main -->
-                <div class="col-main">
+                <div>
 
                     <!-- INBOXES OF NOTIFICATIONS (DEFAULT VIEW) -->
                     <div id="inbox_pane_inbox" class="inbox_pane">
@@ -109,12 +109,12 @@
                                             {/if}
                                         {/if}
                                         <td id="inbox_table_subject_${m.id}" class="subject-td">
-                                            <a href="javascript:;" class="inbox_inbox_message ellipsis_text" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a>
+                                            <p><a href="javascript:;" class="inbox_inbox_message ellipsis_text" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></p>
                                         </td>
                                         <td>${m.date}</td>
                                 </tr>
                             {forelse}
-                                <tr class="inbox_message">
+                                <tr class="inbox_message message_none_row">
                                     <td colspan="5" class="inbox_message_none">__MSG__NO_MESSAGES_FOUND__.</td>
                                 </tr>
                             {/for}
