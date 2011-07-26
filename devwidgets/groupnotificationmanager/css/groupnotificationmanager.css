@@ -1,6 +1,3 @@
-.current_tab
-{ background-color: #C6DEFF; margin: 0px; padding: 0px; }
-
 /** CONTAINER **/
 
 .fixed-container
@@ -8,39 +5,8 @@
 
 /** LAYOUT **/
 
-.groupnotificationmanager_widget .main_container
-{ border:medium none; margin:0 0 20px; padding:0; }
-
-.groupnotificationmanager_widget .side_panel
-{ padding: 0; }
-
-.groupnotificationmanager_widget .col-main
-{   }
-
 .button-list
 { margin-top: 10px; float: right; }
-
-
-/** SIDE NAV **/
-
-/** Side Folders **/
-.groupnotificationmanager_widget .fl-widget .fl-widget-titlebar .widget_title_icon{background:url(/dev/images/icons_sprite.png) no-repeat scroll -420px -17px transparent;}
-.groupnotificationmanager_widget .inbox-folders{width:230px;margin:0;padding:0;overflow:hidden;}
-.groupnotificationmanager_widget .inbox-folders .if_titlebar_inner{padding:18px 0 0 17px;}
-.groupnotificationmanager_widget .inbox-folders .if_title{color:#878A8C;font-size:1em;padding-left:25px;margin:0;}
-.groupnotificationmanager_widget .inbox-folders .if_content ul{padding:0 0 0 20px;margin:0;}
-.groupnotificationmanager_widget .inbox-folders .if_content ul li{list-style-type:none;padding:3px 0;}
-.groupnotificationmanager_widget .inbox-folders .if_content ul li a{font-weight:normal;}
-.groupnotificationmanager_widget .inbox-folders .if_content ul li span{font-weight:normal;color:#999;}
-.groupnotificationmanager_widget .inbox-folders .if_content .tab{height: 25px; margin: 5px 0px;}
-.groupnotificationmanager_widget .inbox-folders .if_content .tab a{font-size:1.2em; position: relative; top: 5px;}
-.if_content .inbox_filter .inbox_icon{float: left;height: 17px;margin-right: 10px;width: 16px;}
-
-.groupnotificationmanager_widget .inbox-folders .if_bottom
-{ background:transparent url(/dev/images/content_bl.png) no-repeat scroll left bottom; height: 5px; padding: 0 0 0 10px; }
-.groupnotificationmanager_widget .inbox-folders .if_bottom_inner
-{ background:transparent url(/dev/images/content_br.png) no-repeat scroll right bottom; height: 5px; }
-
 
 /** INBOX PANE & DEFAULT SETUP **/
 
@@ -49,7 +15,7 @@
 
 /** Table **/
 .groupnotificationmanager_widget .main_content_container
-{  border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 300px; height: 400px; overflow: auto; }
+{  border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 300px; overflow: auto; }
 
 .groupnotificationmanager_widget .inbox-table
 { width:100%; margin:0; border-spacing:0; border-collapse:collapse; }
@@ -82,8 +48,13 @@
 {color:#333;text-align:left;height:26px;border:none;padding:3px 5px;}
 .groupnotificationmanager_widget .inbox-table tr
 { color: #666; }
+
 .groupnotificationmanager_widget .inbox-table tr.inbox_message:hover
 { background-color:#d9eaf5; cursor:pointer; }
+
+.groupnotificationmanager_widget .inbox-table tr.message_none_row:hover
+{ background-color:#fff !important; cursor:auto !important; }
+
 .groupnotificationmanager_widget .inbox-table td
 { border:none;color:#666;text-align:left;font-size:1em;border-bottom:1px solid #d5dbdf;padding:4px 4px 4px 4px; }
 .groupnotificationmanager_widget .inbox-table tr.inbox-subject-read *
@@ -92,7 +63,7 @@
 { font-weight: bold; }
 .groupnotificationmanager_widget .inbox-table td a.inbox_inbox_message {color:#058EC4}
 .groupnotificationmanager_widget .inbox-table .inbox_message_none
-{ text-align: center; border: none; height: 370px; }
+{ text-align: center; border: none; height: 100%; padding-top:  130px; }
 .groupnotificationmanager_widget .inbox-table tr.inbox-message-unvalidated *
 { font-weight: normal; font-style: italic; }
 .groupnotificationmanager_widget .inbox-table {
@@ -103,90 +74,6 @@
 .groupnotificationmanager_widget .bottom_decor
 { border: 3px solid #e6e6e6;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;height:41px; }
 
-
-/** NOTIFICATION DETAIL **/
-
-.groupnotificationmanager_widget .compose-notification
-{ background: #fff; width: 613px; height: auto; text-align: left; padding: 20px 20px 20px 37px; }
-
-.groupnotificationmanager_widget .compose-reply
-{ background: #fff; width: 500px; height: auto; position: relative; top:-15px;}
-
-.groupnotificationmanager_widget .compose-form
-{ padding: 0; color: #333; font-size: 13px; }
-.groupnotificationmanager_widget .compose-form .compose-to, .compose-subject, .compose-body
-{ border-top: 1px solid #ccc; border-left: 1px solid #ccc; border-bottom: 1px solid #e6e6e6; border-right: 1px solid #e6e6e6; }
-.groupnotificationmanager_widget .compose-form .compose-to
-{ width:575px; height: 50px; padding:3px; margin:0; }
-.groupnotificationmanager_widget .compose-form .compose-subject
-{ width: 575px; padding: 2px; margin: 5px 3px 10px 3px; }
-.groupnotificationmanager_widget .compose-form .compose-body
-{height: 140px; width:575px; padding:2px; margin: 5px 3px 10px 3px; }
-
-.groupnotificationmanager_widget .compose-cancel
-{padding-left: 7px;}
-
-
-
-
-/** INBOX MESSAGE VIEW PANE **/
-
-.inbox_detail .top_toolbar
-{ padding: 0; }
-
-.inbox_detail .sender-options
-{ color:#058ec4; font-size: 1em; padding: 0 12px 5px 0; }
-.inbox_detail .sender-options a
-{ color:#058ec4; font-size: 1em; }
-.inbox_detail .sender_details
-{ height: 32px; background: #f4f4f4; border-bottom: 3px solid #D4DADE; padding: 5px; }
-.inbox_detail .sender_picture_container
-{ float: left; margin: 0 0 0 3px; }
-.inbox_detail .sender-picture
-{ width:32px; height:32px; }
-
-.inbox_detail .inbox-heading a
-{ color: #058ec4; font-size: 13px; }
-.inbox_detail .inbox-heading span
-{ font-size: 16px; }
-
-.inbox_detail .sender-name
-{ color: #058ec4; font-weight: bold; }
-.inbox_detail .sender-timestamp
-{ color: #999999; font-size: 11px; }
-.inbox_detail .sender-body
-{ position: relative; }
-.inbox_detail .sender-message
-{ display:inline; height: auto; width: 100%; }
-
-.inbox_detail .message-arrow
-{ background: url(/dev/images/message_arrow.gif) no-repeat 0 0; position: relative; top: -7px; left: 15px; }
-.inbox_detail .message-body
-{ padding: 20px 37px 30px; color:#333; font-size: 13px; }
-.inbox_detail .message-header
-{ font-weight: bold; font-size: 16px; padding-bottom: 5px; margin-top: 5px; margin-left: 5px; }
-.inbox_detail .message-options
-{ padding: 15px 15px 0 0; }
-.inbox_detail .message-options a
-{ color:#058ec4; font-weight: bold; }
-
-.inbox_detail .pipe-divider
-{ color:#d2d2d2; padding: 0 10px 0 10px; }
-
-.inbox_detail .reply-options
-{ padding: 15px 0 0 0; }
-.inbox_detail .reply-options a
-{ color:#058ec4; font-weight: bold; }
-
-.inbox_detail .inbox_message_user
-{ position:relative; margin-left: 42px; }
-
-.inbox_detail #inbox_message_previous_messages
-{ margin: 0 0 0 38px; }
-.inbox_detail #inbox_message_replies
-{ margin: 0 0 0 38px; background: #f4f4f4; }
-.inbox_detail #inbox_compose_replies_template_chats
-{ margin: 0 0 0 38px; background: #f4f4f4; }
 
 
 /** NOTIFICATIONS, ERROR MESSAGES **/
