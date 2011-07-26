@@ -24,8 +24,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
     noticeWidgets.DATE_FORMAT_ISO8601 = "yyyyMMddTHHmmssZ";
     noticeWidgets.ONE_DAY = 24 * 60 * 60 * 1000;
-    noticeWidgets.BEGINNING_OF_TIME = new Date(2000, 0, 1, 0, 0, 0, 0);
-    noticeWidgets.END_OF_TIME = new Date(3000, 0, 1, 0, 0, 0, 0);
+    noticeWidgets.BEGINNING_OF_TIME = sakai.api.Util.Datetime.toGMT(new Date(2000, 0, 1, 0, 0, 0, 0));
+    noticeWidgets.END_OF_TIME = sakai.api.Util.Datetime.toGMT(new Date(3000, 0, 1, 0, 0, 0, 0));
 
     noticeWidgets.utils = {};
 
