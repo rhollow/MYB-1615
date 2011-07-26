@@ -253,7 +253,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             } else {
                 $(".subject-td p").each(function(){
                     $(this).ThreeDots({
-                        max_rows: 1
+                        max_rows: 1,
+                        whole_word: false
                     });
                 });
             }

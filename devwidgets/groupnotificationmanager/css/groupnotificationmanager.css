@@ -247,4 +247,5 @@
 .groupnotificationmanager_widget .subject-td p {
     max-width: 337px;
     margin: 0;
+    overflow: auto;
 }
