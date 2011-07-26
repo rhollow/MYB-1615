@@ -248,4 +248,10 @@
     max-width: 337px;
     margin: 0;
     overflow: auto;
+    overflow-y: hidden; /* For Chrome on Windows */
+}
+
+.groupnotificationmanager_widget .subject-td p a {
+    max-width: 100%;
+    display: inline-block;
 }
