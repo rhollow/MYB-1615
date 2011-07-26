@@ -80,9 +80,10 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             today.setMinutes(0);
             today.setSeconds(0);
             today.setMilliseconds(0);
+            today = sakai.api.Util.Datetime.toGMT(today);
 
-            var startDate = new Date();
-            var endDate = new Date();
+            var startDate = sakai.api.Util.Datetime.toGMT(new Date());
+            var endDate = sakai.api.Util.Datetime.toGMT(new Date());
 
             if (isArchiveMode) {
                 startDate = noticeWidgets.BEGINNING_OF_TIME;
