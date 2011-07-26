@@ -230,7 +230,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                         var tempFile = {
                             "dottedname": sakai.api.Util.applyThreeDots(data.results[i]["sakai:pooled-content-file-name"], 100),
                             "name": data.results[i]["sakai:pooled-content-file-name"],
-                            "url": "/content#p=" + data.results[i]["_path"] + "/" + data.results[i]["sakai:pooled-content-file-name"],
+                            "url": "/content#p=" + sakai.api.Util.urlSafe(data.results[i]["_path"]) + "/" + sakai.api.Util.urlSafe(data.results[i]["sakai:pooled-content-file-name"]),
                             "css_class": mimeType
                         };
                         files.push(tempFile);
@@ -262,6 +262,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             }
 
             renderObj.query = searchText;
+            searchText = sakai.api.Server.createSearchString(searchText);
             var requests = [];
             requests.push({
                 "url": filesUrl,

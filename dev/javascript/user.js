@@ -161,6 +161,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             sakai.api.Server.loadJSON(puburl, function(success, data){
                 if (!success){
                     pubdata = $.extend(true, {}, sakai.config.defaultpubstructure);
+                    var refid = {"refid": sakai.api.Util.generateWidgetId()};
+                    pubdata = sakai.api.Util.replaceTemplateParameters(refid, pubdata);
                     setupProfile(pubdata);
                     publicToStore = $.extend(true, {}, pubdata);
                 } else {
@@ -174,11 +176,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     sakai.api.Server.loadJSON(privurl, function(success2, data2){
                         if (!success2){
                             privdata = $.extend(true, {}, sakai.config.defaultprivstructure);
-                            privateToStore = $.extend(true, {}, sakai.config.defaultprivstructure);
+                            var refid = {"refid": sakai.api.Util.generateWidgetId()};
+                            privdata = sakai.api.Util.replaceTemplateParameters(refid, privdata);
+                            privateToStore = $.extend(true, {}, privdata);
+
                             // CalCentral: add custom items to left-hand navigation widget
                             appendMyBerkeleyCustomItemsToDefaultPrivStructure(privdata);
                             appendMyBerkeleyCustomItemsToDefaultPrivStructure(privateToStore);
                             // end of CalCentral specific code
+
                         } else {
                             privdata = data2;
                             privdata = sakai.api.Server.cleanUpSakaiDocObject(privdata);
@@ -211,8 +217,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             } else {
                 userid = entityID;
             }
-            privurl = "/~" + userid + "/private/privspace/";
-            puburl = "/~" + userid + "/public/pubspace/";
+            privurl = "/~" + sakai.api.Util.urlSafe(userid) + "/private/privspace/";
+            puburl = "/~" + sakai.api.Util.urlSafe(userid) + "/public/pubspace/";
             if (isMe){
                 sakai.api.Communication.getUnreadMessagesCountOverview("inbox", function(success, counts){
                     messageCounts = counts;
@@ -278,7 +284,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             var picture = "";
             if (profile.picture) {
                 var picture_name = $.parseJSON(profile.picture).name;
-                picture = "/~" + userid + "/public/profile/" + picture_name;
+                picture = "/~" + sakai.api.Util.urlSafe(userid) + "/public/profile/" + picture_name;
             }
             return picture;
         };
