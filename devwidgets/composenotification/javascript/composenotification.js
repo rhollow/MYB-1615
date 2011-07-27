@@ -123,6 +123,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var $rootElement = $("#" + tuid);
 
+        var $formElement = $(".compose-form", $rootElement); // Used for validation
+
         var $messageFieldType = $("#cn-notification-type", $rootElement);
         var $messageFieldRequiredCheck = $("#composenotification_required", $rootElement);
         var $messageRequiredYes = $("#cn-requiredyes", $rootElement);
@@ -1134,9 +1136,27 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // When someone clicks on the 'Queue' button from base panel.
         $("#cn-queue-button", $rootElement).click(function() {
-            if (checkFieldsForErrors(true)) {
+            $formElement.validate({
+               debug: true,
+                 errorPlacement: function(error, element) {
+                     var elName = element.attr("name");
+                     if (elName === "taskduedate-text" || elName === "senddate-text" || elName === "dynamiclistselect" ||
+                         elName === "eventdate-text") {
+                       error.insertAfter(element.next());
+
+                     }
+                     else if (elName === "required-check") {
+                         error.insertAfter($messageRequiredNo.next());
+                     }
+                     else {
+                       error.insertAfter(element);
+                     }
+                   }
+            });
+            $formElement.submit();
+            /*if (checkFieldsForErrors(true)) {
                 postNotification(saveData("queue", true), backToDrafts, null, null, translate("QUEUE"));
-            }
+            }*/
         });
 
         // When someone clicks on the 'Save as Draft' button from base panel.

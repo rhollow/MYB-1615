@@ -31,7 +31,7 @@
 .composenotification_normal_message {margin:10px;padding:10px;border:1px solid #00ff00;background-color:#d9f7d8;}
 .composenotification_invalid {background-color:#FFCCCC !important;}
 
-#composenotification_box .compose-form label {
+#composenotification_box .compose-form label.name {
   display: inline;
 }
 
@@ -44,7 +44,8 @@
 
 
 .datepicker img
-{ float:right; margin-left: 5px; margin-top: -3px; cursor: pointer; }
+{ position: relative; top: 6px; margin-left: 5px; margin-top: -10px;  cursor: pointer; }
+
 .datepicker input
 { width: 70px; }
 
@@ -73,4 +74,16 @@
 
 .composenotification_widget .disabled {
     opacity: 0.4;
+}
+
+.composenotification_widget label.error {
+    text-align: left;
+    margin-top: 3px;
+}
+
+/* See sakai.base.css */
+.composenotification_widget select.error
+{
+    background-color: #FFDEDE;
+    border-color: #9F3333;
 }
