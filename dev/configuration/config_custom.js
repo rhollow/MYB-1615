@@ -544,6 +544,8 @@ define(["config/config", "config/env"], function(config) {
         groupShortDescription: "asdf"
     };
 
+    // we only want the 'simple group' template
+    config.worldTemplates = config.worldTemplates.slice(0,1);
 
     // Custom CSS Files to load in
     config.skinCSS = ["/dev/skins/myb/skin.css"];
