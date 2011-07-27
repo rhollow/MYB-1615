@@ -324,7 +324,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             tickMessages();
 
             // Display new list
-            $.bbq.pushState({"copy": listIds[0]});
+            $.bbq.pushState({"cp": listIds[0]});
 
         });
 
@@ -374,7 +374,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 return;
             }
 
-            if (state.hasOwnProperty("new") || state.hasOwnProperty("edit") || state.hasOwnProperty("copy")) {
+            if (state.hasOwnProperty("new") || state.hasOwnProperty("edit") || state.hasOwnProperty("cp")) {
                  $rootElement.hide();
             } else {
                 loadDynamicListsFromServer();

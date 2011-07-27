@@ -965,7 +965,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             // if the node was created successfully try to save the list
             createEmptyRootNodeForDynamicLists(function() {
                     sakai.api.Server.saveJSON(url, list, function() {
-                    $.bbq.removeState(["new","copy","edit","context"]);
+                    $.bbq.removeState(["new","cp","edit","context"]);
                 });
             });
 
@@ -1023,7 +1023,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         ////////////////////
 
         $dynListsCancelEditingButton.live("click", function(){
-            $.bbq.removeState(["new","copy","edit","context"]);
+            $.bbq.removeState(["new","cp","edit","context"]);
         });
 
         $dynListsSaveButton.live("click", function(){
@@ -1052,7 +1052,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 saveList(data, state.edit);
             } else if(state.hasOwnProperty("new")) {
                 saveList(data, null);
-            } else if(state.hasOwnProperty("copy")) {
+            } else if(state.hasOwnProperty("cp")) {
                 saveList(data, null);
             }
         });
@@ -1390,10 +1390,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 loadList(state.edit, false);
                 switchToEditMode();
                 $rootElement.show();
-            }  else if (state.hasOwnProperty("copy")) {
+            }  else if (state.hasOwnProperty("cp")) {
 
 
-                loadList(state.copy, true);
+                loadList(state.cp, true);
                 switchToEditMode();
                 $rootElement.show();
             } else {
