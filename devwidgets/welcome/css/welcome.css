@@ -18,47 +18,56 @@
 
 /* MyBerkeley custom begin */
 
-.welcome_widget {margin:12px;}
-
-.welcome-body {
-	float: right;
-	width: 414px;
+.welcome-block {
+    background: url(/devwidgets/welcome/images/calcentral_welcome_bkgnd.jpg) no-repeat top left scroll;
+    margin: 0 12px 12px 0;
+    padding: 12px;
+    height: 433px;
 }
 
-.welcome-body .tag-line {
-    font-size: 1.25em;
+.welcome-block .tag-line {
+    color: #333;
+    font-size: 2.3em;
+    font-weight: bolder;
 	padding-top: 0.2em;
+    margin-bottom: 0.5em;
 }
 
-.welcome-body .message-defined {
-    color: #555;
+.welcome-block .welcome-body {
+	float: right;
+	width: 460px;
+    color: #666;
     font-size: 1.25em;
-	line-height: 116%;
+	line-height: 120%;
 }
 
-.welcome-body .message-defined span.strong {
-    font-size: 1.10em;
-    font-weight: bold;
+.welcome-block .gearbox {
+    margin-top: 12px;
+    background: white url(/dev/images/settings_icon.png) no-repeat 13px 13px scroll;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 8px 12px 12px 36px;
+    -moz-border-radius:5px;
+    border-radius:5px;
 }
 
-.welcome-body .feedback {
-    font-size: 1.1em;
+.welcome-body .message-defined, .welcome-body ul, .welcome-body p {
+    color: #666;
+	line-height: 120%;
+    margin-top: 0.2em;
+    margin-bottom: 0.5em;
 }
 
-.header-smallline .preview-tag {
-    display: inline;
-    padding: 13px 41px;
-    background: url(/dev/images/myb/beta-tag.png) no-repeat 0 0 scroll;
+.welcome-block .welcome-body .gearbox .message-defined {
+    font-size: 0.9em;
 }
 
-.myb-frontdoor-image {
-	float: left;
-    -moz-border-radius: 6px;
-    -khtml-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-    width: 234px;
-    height: 234px;
-    background: url(/dev/images/myb/ucb-45-pano.jpg) no-repeat 3% 50% scroll;
+.welcome-block .welcome-body .topline {
+    font-size: 110%;
 }
+
+.welcome-block .welcome-body .feedback, .welcome_widget .welcome-body .topline {
+    color: #333;
+    font-weight: bolder;
+}
+
 /* MyBerkeley custom end */

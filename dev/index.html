@@ -42,64 +42,53 @@
 
         <!-- MyBerkeley custom begin -->
         <!-- BEGIN JOIN MYBERKELEY DIALOG -->
-        <div id="join_myberkeley_dialog" class="dialog">
+        <div id="join_myberkeley_dialog" class="s3d-dialog s3d-dialog-container">
           <!-- Dialog Header -->
-          <div class="dialog_header">
-            <div class="dialog_header_inner">
-              <h1>Accept CalCentral Beta Program</h1>
-            </div>
-          </div>
+          <h1 class="s3d-dialog-header">Accept CalCentral Pilot Program</h1>
+          
           <!-- Dialog Content -->
-          <div class="dialog_content">
-            <img alt="CalCentral Beta" src="/dev/images/myb/myb-beta-lrg-logotype.png">
+            <p class="welcome-opt-in"><span class="fl-offScreen-hidden">Welcome to CalCentral Pilot.</span></p>
 
-            <p>Welcome to the CalCentral Beta.</p>
+            <p><b>CalCentral</b> is a pilot program designed to bring many campus online services under one roof over time.</p>
 
-            <p><b>CalCentral</b> is a program designed to bring many campus online services under one roof. The current
-              beta has a limited number of features. It will allow Berkeley to send you reminders of important tasks and
-              events, as well as more general messages.</p>
-
-            <p><b>What you should know before joining this program:</b></p>
+            <p><strong>What you should know before joining this pilot:</strong></p>
             <ul>
               <li>You may receive multiple messages for the same task or event.</li>
               <li>Messages may be deleted at any time due to system or project events.</li>
               <li>The design and features presented may change at any time.</li>
-              <li>By participating in this program you may be invited to participate in surveys and focus groups to help
-                us determine the effectiveness of the design and features presented here.
-              </li>
+              <li>By participating in this pilot you may be invited to participate in surveys and focus groups to help
+                us determine the effectiveness of the design and features presented here.</li>
               <li>Some settings allow some or all of the CalCentral information about you to be found and viewed by
-                anyone in the world. Please proceed accordingly.
-              </li>
+              anyone in the world. Please edit your sharing settings and/or your content with this in mind.</li>
+              <li>This system is in active development. While it has been tested and is believed to be ready for your
+              use, in the course of improving this pilot some data loss may occur. Please make backups of all documents
+              and content that you create or share in CalCentral</li>
             </ul>
-            <p>
+            <p class="opt-in-checkbox">
               <input id="chk_agree_to_socu" type="checkbox"/> <label for="chk_agree_to_socu">I have read and agree to
-              the official</label> <a href="http://technology.berkeley.edu/policy/usepolicy.html" style="color:blue"
+              the official</label> <a href="http://technology.berkeley.edu/policy/usepolicy.html" class="s3d-regular-links"
                                       target="_blank">campus statement on computer use.</a><br/>
               <input id="chk_agree_to_receive_adviser_messages" type="checkbox"/> <label
                     for="chk_agree_to_receive_adviser_messages">I give permission for my adviser to send me messages via
-              this portal.</label>
+              this program.</label>
             </p>
 
-            <p>Please <a href="mailto:portal@berkeley.edu?subject=Feedback on CalCentral" style="color:blue">send us
-              feedback</a> about your first impressions, what you like or don't like, and ideas for future features and
-              functionality. There is a feedback link on each page of</p>
+            <p>Please <a href="http://ets.berkeley.edu/calcentral-feedback/" class="s3d-regular-links"
+                                      target="_blank">send us feedback</a> about your first impressions, what you like or don't like, and ideas for future
+            features and functionality. There is a feedback link on each page of CalCentral.</p>
 
             <p>To participate in this program, click <b>Join CalCentral</b> below, or click <b>Cancel</b> to sign
               out.<br/>
               (If you're not ready to join now, you may come back at any time.)</p>
 
             <div class="dialog_buttons" style="text-align:right">
-              <button type="button" class="s3d-button" onclick="javascript:document.location='/dev/logout.html'"><span
+              <button type="button" class="s3d-link-button s3d-bold" onclick="javascript:document.location='/dev/logout.html'"><span
                       class="s3d-button-inner">__MSG__CANCEL__</span></button>
-              <button type="button" id="btn_join_my_berkeley" class="s3d-button s3d-button-primary" disabled="disabled">
+              <button type="button" id="btn_join_my_berkeley" class="s3d-button s3d-overlay-button" disabled="disabled">
                 <span class="s3d-button-inner">Join CalCentral</span></button>
             </div>
           </div>
-          <!-- Dialog Footer -->
-          <div class="dialog_footer">
-            <div class="dialog_footer_inner"><!--
-                    --></div>
-          </div>
+          
         </div>
         <!-- END JOIN MYBERKELEY DIALOG -->
         <!-- MyBerkeley custom end -->
