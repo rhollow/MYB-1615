@@ -94,17 +94,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var push_member_to_list = function (member, list, role) {
             var link, picsrc, displayname = "";
             if (member["sakai:category"] == "group") {
-                picsrc = "/dev/images/group_avatar_icon_35x35_nob.png";
-                if (member.basic.elements.picture && member.basic.elements.picture.name && member.basic.elements.picture.name.value) {
-                    picsrc = member.basic.elements.picture.name.value;
-                }
+                picsrc = sakai.api.Groups.getProfilePicture(member);
+                link = "~" + member.groupid;
                 displayname = member["sakai:group-title"];
             }
             else {
-                picsrc = "/dev/images/default_profile_picture_32.png";
-                if (member.basic.elements.picture && member.basic.elements.picture.name && member.basic.elements.picture.name.value) {
-                    picsrc = member.basic.elements.picture.name.value;
-                }
+                picsrc = sakai.api.User.getProfilePicture(member);
+                link = "~" + member.userid;
                 displayname = sakai.api.User.getDisplayName(member);
             }
             list.push({
@@ -152,11 +148,16 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                         group.groupMembers = members;
 
                         $.each(members, function(role, users) {
-                            $.each(users.results, function(index, user) {
-                                push_member_to_list(user, participants, role);
-                            });
+                            if (users.results) {
+                                $.each(users.results, function(index, user) {
+                                    push_member_to_list(user, participants, role);
+                                });
+                            }
                         });
 
+                        if (group.groupMembers.Manager && group.groupMembers.Manager.results){
+                            group.managerCount = group.groupMembers.Manager.results.length;
+                        }
                         group.totalParticipants = participants.length;
                         if (participants.length > 1) {
                             participants = participants.sort(participantSort);

@@ -681,7 +681,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
                 var person = {
                     "uuid": el.attr("sakai-entityid"),
                     "username": el.attr("sakai-entityname"),
-                    "picture": el.attr("sakai-entitypicture") || false
+                    "pictureLink": el.attr("sakai-entitypicture") || false
                 };
                 $(window).trigger("initialize.addToContacts.sakai", [person]);
             }

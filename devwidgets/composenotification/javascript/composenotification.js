@@ -113,6 +113,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         var datePickerButtonImageUrl = "/devwidgets/composenotification/images/calendar_icon.gif";
 
+        var validatorObj = null;
 
          //////////////////////
         // jQuery selectors //
@@ -411,6 +412,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function() {
+                if(validatorObj){validatorObj.element($messageFieldSendDate);}
                 $messageFieldSendDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
@@ -422,6 +424,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function() {
+                if(validatorObj){validatorObj.element($messageTaskDueDate);}
                 $messageTaskDueDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
@@ -433,6 +436,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function() {
+                if(validatorObj){validatorObj.element($messageEventDate);}
                 $messageEventDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
@@ -1136,7 +1140,38 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // When someone clicks on the 'Queue' button from base panel.
         $("#cn-queue-button", $rootElement).click(function() {
-            $formElement.validate({
+
+
+            $.validator.addMethod(
+                "mmddyyyy",
+                function(value, element) {
+                    var d = Globalize.parseDate(value)
+                    return d;
+                },
+                "Please enter a date in the format mm/dd/yyyy"
+            );
+
+            $.validator.addMethod(
+                "checkSendDate",
+                function(value, element) {
+                    var d = Globalize.parseDate(value)
+                    if(!d) { return false; }
+
+                    var today = new Date();
+                    var month = today.getMonth();
+                    var day = today.getDate();
+                    var year = today.getFullYear();
+                    var todayMidnight = new Date(year, month, day); // today's date with 00:00:00 time
+
+                    return (d >= todayMidnight);
+                },
+                "Please enter a date in the format mm/dd/yyyy, the date must not be earlier than today"
+            );
+
+
+
+
+            validatorObj = $formElement.validate({
                debug: true,
                  errorPlacement: function(error, element) {
                      var elName = element.attr("name");
@@ -1151,7 +1186,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                      else {
                        error.insertAfter(element);
                      }
-                   }
+                   },
+
+                 rules : {
+                    "taskduedate-text": { mmddyyyy : true },
+                    "senddate-text": { checkSendDate : true },
+                    "eventdate-text": { mmddyyyy : true }
+                 }
+
             });
             $formElement.submit();
             /*if (checkFieldsForErrors(true)) {
@@ -1334,6 +1376,22 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
