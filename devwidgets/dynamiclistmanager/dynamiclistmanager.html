@@ -36,7 +36,7 @@
 
         <div id="list_list_lists_template" title=""><!--
             {for m in links}
-                {var dateString = Globalization.format(sakai.api.Util.parseSakaiDate(m['_lastModified']), "MMM d, yyyy hh:mm tt")}
+                {var dateString = sakai.api.l10n.transformDateTime(sakai.api.Util.parseSakaiDate(m['_lastModified']))}
                 {var _path = m['_path']}
                 {var listId = _path.substring(_path.lastIndexOf('/')+1)}
 

@@ -176,7 +176,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         var formatISO8601 = function(date) {
             var gmtDate = sakai.api.Util.Datetime.toGMT(date);
-            return Globalization.format(gmtDate, "yyyy-MM-ddTHH:mm:ssZ"); // eg 2011-06-30T00:00:00-07:00
+            return Globalize.format(gmtDate, "yyyy-MM-ddTHH:mm:ssZ"); // eg 2011-06-30T00:00:00-07:00
         };
 
         /**

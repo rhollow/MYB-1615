@@ -39,8 +39,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             }));
         };
 
-        renderWidget();
-
+        // renderWidget(); // wrapped in an if block for CalCentral
+        if (sakai.data.me.user.anon) {
+            renderWidget();
+        }
     };
 
     sakai.api.Widgets.widgetLoader.informOnLoad("welcome");

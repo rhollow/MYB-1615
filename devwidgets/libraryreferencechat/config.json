@@ -2,8 +2,11 @@
     "description": "Chat with the library for research help",
     "name": "Ask A Librarian 24/7",
     "id": "libraryreferencechat",
-    "personalportal": true,
-    "url":"/devwidgets/libraryreferencechat/libraryreferencechat.html",
+    "personalportal": false,
+    "userpages": true,
+    "userdashboard": true,
+    "grouppages": true,
+    "groupdashboard": true,
 	"i18n": {
         "default": "/devwidgets/libraryreferencechat/bundles/default.properties",
         "en_US": "/devwidgets/libraryreferencechat/bundles/en_US.properties",
@@ -11,5 +14,5 @@
     },
     "multipleinstance": false,
     "type":"sakai",
-    "enabled":true
+    "enabled":false
 }

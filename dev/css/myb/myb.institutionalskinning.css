@@ -20,3 +20,18 @@
     height: 90px;
     background: url('/dev/images/myb/central_tmp_banner_inst.png') no-repeat;
 }
+
+#join_myberkeley_dialog .welcome-opt-in {
+    margin-top: 1em;
+    width: 100%;
+    height: 86px;
+    background: url(/dev/images/myb/welcome-opt-in.png) no-repeat;
+}
+
+#join_myberkeley_dialog ul li {
+    margin-top: 4px;
+}
+
+#join_myberkeley_dialog .opt-in-checkbox {
+    line-height: 160%;
+}

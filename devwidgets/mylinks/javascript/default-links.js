@@ -57,7 +57,7 @@ define(function() {
                     {
                         "id": "schedule_planning",
                         "name": "Schedule Planning Tools",
-                        "url": "http://asuc.org/newsite2010/student-services/schedule-planning-tools/",
+                        "url": "http://asuc.org/newsite2010/resources/academic-resources/schedule-planning-tools/",
                         "popup_description": "Tools to help you plan your class schedule."
                     },
                     {
