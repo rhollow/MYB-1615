@@ -36,7 +36,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
     noticeWidgets.utils.formatDate = function(date, format) {
         if (!date) return null;
         date = sakai.api.Util.parseSakaiDate(date);
-        return Globalization.format(date, format);
+        return Globalize.format(date, format);
     };
 
     /**

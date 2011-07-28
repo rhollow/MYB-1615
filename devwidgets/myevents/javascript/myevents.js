@@ -109,8 +109,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
             }
 
             return "&mode=" + mode
-                    + "&start_date=" + Globalization.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
-                    + "&end_date=" + Globalization.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601);
+                    + "&start_date=" + Globalize.format(startDate, noticeWidgets.DATE_FORMAT_ISO8601)
+                    + "&end_date=" + Globalize.format(endDate, noticeWidgets.DATE_FORMAT_ISO8601);
         };
 
         var doInit = function() {
