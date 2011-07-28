@@ -17,14 +17,22 @@
  */
 
 /* Main */
+
+.mylinks .s3d-contentpage-title {
+    margin-bottom: 0;
+}
+
+.mylinks .s3d-widget-footer {
+    margin-top: 0;
+}
+
+
 .mylinks .widget_title_icon {
     background: url("/devwidgets/mylinks/images/mylinks_widget_icon.png") no-repeat transparent;
 }
 
-.mylinks_widget .fl-widget-content {
+.mylinks_widget {
     position: relative;
-    padding: 0;
-    margin: 0;
 }
 
 /* Accordion */
@@ -51,7 +59,7 @@
 .mylinks_widget .section_label {
     display: block;
     font-weight: bold;
-    border-top: 2px solid #D5DBDF;
+    border-bottom: 2px solid #D5DBDF;
     cursor: pointer;
     padding: 5px 5px 5px 7px;
 }
@@ -76,6 +84,7 @@
     -moz-border-radius: 3px;
     border-radius: 3px;
     -webkit-border-radius: 3px;
+    overflow: hidden;
 }
 
 .mylinks_widget .link_list .link_grid li {
@@ -117,8 +126,8 @@
 .mylinks_widget .link_list li .edit_buttons {
     display: none;
     position: absolute;
-    bottom: -20px;
-    left: 0;
+    top: 0;
+    right: 0;
     z-index: 100;
     padding: 3px;
     background-color: #EFEFEF;
@@ -216,4 +225,5 @@ label.error {
 .mylinks_widget .addedit_link_panel .link-form-element {
     padding: 0 6%;
 }
+
 
