@@ -5,6 +5,10 @@
         "majors": {
             "title": "Majors",
             "items_array": [{
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/CHARMAINE",
+                "name": "Charmaine"
+            },
+            {
                 "id": "/colleges/ETS TEST/standings/undergrad/majors/JON",
                 "name": "Jon Hays"
             },
@@ -31,6 +35,10 @@
             {
                 "id": "/colleges/ETS TEST/standings/undergrad/majors/ROMAN",
                 "name": "Roman"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/TONY",
+                "name": "Tony"
             }]
         }
      },
@@ -41,6 +49,10 @@
             "items_array": [{
                 "id": "/colleges/ETS TEST/standings/grad/majors/ALLISON",
                 "name": "Allison"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/grad/majors/BERNIE",
+                "name": "Bernie"
             },
             {
                 "id": "/colleges/ETS TEST/standings/grad/majors/CARINA",
