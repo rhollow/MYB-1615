@@ -214,8 +214,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          /**
          * This will do a DELETE request to the specified paths and delete each list.
          * @param {String[]} paths The array of dynamic lists that you want to delete.
+         * @param successCallback Function to call if deletion was successful.
          */
-        var batchDeleteLists = function(paths) {
+        var batchDeleteLists = function(paths, successCallback) {
             var requests = [];
             $(paths).each(function(i,val) {
                 var req = {
@@ -234,6 +235,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 data: {
                     requests: $.toJSON(requests)
                 },
+                success: function(){
+                    if ($.isFunction(successCallback)){
+                        successCallback();
+                    }
+                },
                 error: function() {
                    showGeneralMessage("Error deleting lists.", true);
                 }
@@ -243,9 +249,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         /**
          * Removes lists with provided IDs from DOM and sends batch delete AJAX request.
          *
-         *  @param listIds {Array} IDs of lists to delete
+         *  @param listIds {Array} IDs of lists to delete.
+         *  @param successCallback Function to call if deletion was successful.
          */
-        var deleteLists = function(listIds) {
+        var deleteLists = function(listIds, successCallback) {
 
             var paths = []; // paths to nodes to delete
             for (var i = 0, j = listIds.length; i < j; i++) {
@@ -269,7 +276,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
 
             // batch delete nodes selected for deletion
-            batchDeleteLists(paths);
+            batchDeleteLists(paths, successCallback);
         };
 
 
@@ -304,8 +311,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             if (listId.length < 1) {
                 showGeneralMessage($("#list_generalmessages_none_selected").text(), true);
             } else {
-                deleteLists(listId);
-                loadDynamicListsFromServer();
+                deleteLists(listId, loadDynamicListsFromServer);
             }
         });
 
