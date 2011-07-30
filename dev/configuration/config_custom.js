@@ -571,6 +571,45 @@ define(["config/config", "config/env"], function(config) {
     // Custom CSS Files to load in
     config.skinCSS = ["/dev/skins/myb/skin.css"];
 
+
+    // CalCentral custom Relationships
+    config.Relationships = {
+        /*
+         * Relationships used by the add contacts widget to define what relationship the contacts can have
+         */
+        "contacts": [{
+            "name": "Shares Interests",
+            "definition": "shares an interest with me",
+            "selected": true
+        }, {
+            "name": "Friend",
+            "definition": "is my friend",
+            "selected": false
+        }, {
+            "name": "Contact",
+            "definition": "is my contact",
+            "selected": false
+        }, {
+            "name": "Classmate",
+            "definition": "is my classmate",
+            "selected": false
+        }, {
+            "name": "Professor",
+            "inverse": "Student",
+            "definition": "is my professor",
+            "selected": false
+        }, {
+            "name": "Student",
+            "inverse": "Professor",
+            "definition": "is my student",
+            "selected": false
+        }, {
+            "name": "Colleague",
+            "definition": "is my colleague",
+            "selected": false
+        }]
+    };
+
     // End custom configuration
 
     return config;
