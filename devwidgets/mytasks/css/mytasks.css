@@ -1,12 +1,35 @@
-.mytasks .widget_title_icon {
-    background: url("/devwidgets/mytasks/images/mytasks_widget_icon.png") no-repeat transparent;
+/* Main */
+
+.mytasks .s3d-contentpage-title, .myevents .s3d-contentpage-title {
+    margin-bottom: 0;
 }
+
+.mytasks .s3d-widget-footer, .myevents .s3d-widget-footer {
+    margin-top: 0;
+}
+
+.mytasks .s3d-widget-footer .s3d-button.s3d-overlay-button {
+    height:22px;
+    margin-left:10px;
+}
+
+
+/*.s3d-button.s3d-overlay-button {
+    background:url("/dev/images/button_overlay_default.png") repeat-x scroll left top transparent;
+    border:1px solid #E0E3E5;
+    font-size:11px;
+    font-weight:bold;
+    height:24px;
+    margin-left:15px;
+    box-shadow:0 1px 1px 0 #999;
+    text-shadow:0 2px 3px #fff;
+    color: #2683bc;
+}*/
 
 .mytasks_overdue_tasks_msg {
     background-color: #C4DAE8;
     color: #BF0000;
     font-weight: bold;
-    margin-top: -12px;
     padding: 6px 0;
     text-align: center;
 }
@@ -15,7 +38,6 @@
     background-color: #C4DAE8;
     color: #000000;
     font-weight: bold;
-    margin-top: -12px;
     padding: 6px 0;
     text-align: center;
 }
@@ -36,7 +58,9 @@
 }
 
 table.noticewidget_listing {
+    font-size: 12px;
     border-collapse: collapse;
+    border-top: 1px solid #CCC;
     border-spacing: 0;
     margin-bottom: 0;
 	width: 100%; /* needed for IE7 */
@@ -159,12 +183,9 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_filter_container {
-    border: 1px solid #666;
-    margin-top: -12px;   
-    width: inherit;    
-    height: auto;     
     color: #333;
-    padding: 5px 0px; 
+    padding: 4px 0px;
+    font-size: 12px;
 }
 
 .mytasks_overdue_tasks_exist .noticewidget_filter_container {
@@ -177,7 +198,7 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_filter_status {
-    margin-left: 32px;           
+    margin-left: 26px;           
     line-height: 19px;      
     width: inherit;
     padding-top: 5px;
@@ -194,7 +215,7 @@ table.noticewidget_listing tr.notice_row:hover {
 .noticewidget_filter_daterange {          
     width: inherit;
     line-height: 19px;
-    margin-left: 32px;
+    margin-left: 26px;
     padding-top: 5px;
 }
 
@@ -207,11 +228,13 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_filter_control {     
-    color: #333;              
+    color: #333;
+    padding: 0 6px 0 26px;
 }
 
 .noticewidget_filter_header {
     font-style: normal;
+    font-weight: bolder;
 }
 
 .noticewidget_filter_message {
@@ -219,16 +242,16 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_filter_control_header {
-    cursor: pointer;    
+    cursor: pointer;
 }
 
 .noticewidget_filter_control_indicator {
+    position: absolute;
     width: 10px;    
-    margin-left: 14px;    
+    margin-left: 8px;    
     margin-right: 8px;   
     background: url("/devwidgets/mytasks/images/arrow-disclosure.png") no-repeat scroll 0 top transparent;   
-    display: inline-block;
-    float: left;    
+    display: inline-block;    
 }
 
 .noticewidget_filter_control_indicator.open {
@@ -246,19 +269,18 @@ table.noticewidget_listing tr.notice_row:hover {
 	background-position: 0px -2px;
 }
 
-.noticewidget_detail_controls {
-    padding-left: 6px;
-}
-
 .myB-return-arrow {
-  background: url("/dev/images/dashboard_sprite.png") no-repeat scroll -443px -395px transparent;
+  background: url("/dev/images/dashboard_sprite.png") no-repeat scroll -448px -395px transparent;
   display: block;
   float: left;
-  padding-right: 22px;
+  padding-right: 15px;
   height: 16px;
   width: 8px;
 }
 
+.noticewidget_detail_controls {
+    padding: 6px 0 4px;    
+}
 
 .noticewidget_detail_controls .return_to_list_container:hover .return_to_list {
     background-position: left -75px;
@@ -270,19 +292,19 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_detail_controls .noticewidget-arrows {
     float: right;
-    margin-right: 14px;
-    margin-top: -6px;
+    margin-right: 7px;
+    margin-top: -1px;
 }
 
 .noticewidget_detail_controls .notice-nav {
-    height: 22px;
-    width: 24px;
+    height: 16px;
+    width: 22px;
     background-color: #454A4E;
     background-image: url("/devwidgets/mytasks/images/notice-arrow-nav.png");
     background-attachment: scroll;
     background-repeat: no-repeat;
     display: inline-block;
-    margin: 0 0 5px;
+    margin: 0;
     overflow: visible;
     padding: 0;
     position: relative;
@@ -300,33 +322,35 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail_controls .notice-next {
-    background-position: 5px 7px;
+    background-position: 4px 4px;
     margin-left: 1px;
-    -moz-border-radius: 0 10px 10px 0; 
-    border-radius: 0 10px 10px 0; 
+    -moz-border-radius: 0 8px 8px 0; 
+    border-radius: 0 8px 8px 0; 
 }
 
 .noticewidget_detail_controls .notice-prev {
-    background-position: 8px -18px;
-    -moz-border-radius: 10px 0 0 10px;
-    border-radius: 10px 0 0 10px;
+    background-position: 7px -21px;
+    -moz-border-radius: 8px 0 0 8px;
+    border-radius: 8px 0 0 8px;
 }
 
 .noticewidget_detail {
-    margin: 10px 1px 0 1px;
-    padding: 0 12px 0 6px;
-    border-top: 2px solid #ccc;
+    border-top: 1px solid #ccc;
     clear: both;
-}
-
-.noticewidget_detail_head {
-    padding-left: 4px;
+    color: #444;
 }
 
 .noticewidget_detail h3 {
-    font-size: 120%;
+    padding: 4px 10px;
+    font-size: 100%;
     line-height: 110%;
-    margin: 0.7em 0 0.3em;
+    margin: 0;
+    background-color: #F5F6F6;
+}
+
+.noticewidget_detail h4 {
+    padding: 2px 10px;
+    font-size: 90%;
 }
 
 .noticewidget_detail h4.myB-unrequired {
@@ -343,15 +367,20 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_detail textarea {
+    color: #444;
     border: none;
     border-top: 1px dotted #CCC;
     overflow: auto;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 2px;
-    margin-top: 6px;
+    padding: 2px 10px;
+    margin-top: 1px;
     height: 150px;
-    width: 100%
+    width: 100%;
+    max-width: 100%;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;
 }
 
 .noticewidget_detail textarea:hover {
