@@ -98,35 +98,184 @@ define(["config/config", "config/env"], function(config) {
     );
 
     config.Directory = {
+        agriculture_and_related_sciences: {
+            title: "Agriculture & Related Sciences",
+            children: {
+                agriculture: {
+                    title: "Agriculture"
+                },
+                soil_chemistry: {
+                    title: "Soil Chemistry and Physics"
+                }
+            }
+        },
         architecture: {
-            title: "Architecture, Landscape, Building & Planning",
+            title: "Architecture, Landscape & Planning",
             children: {
                 architecture: {
                     title: "Architecture"
                 },
-                cityplanning: {
-                    title: "City Planning"
+                city_and_urban_planning: {
+                    title: "City/Urban, Community & Regional Planning"
                 },
-                housing: {
-                    title: "Housing Studies"
-                },
-                landscapearchitecture: {
+                landscape_architecture: {
                     title: "Landscape Architecture"
-                },
-                transportation: {
-                    title: "Transportation Studies"
-                },
-                urbanstudies: {
-                    title: "Urban Studies"
                 }
             }
         },
-        creativearts: {
-            title: "Creative Arts & Design",
+        bio_med_sciences: {
+            title: "Biological & Biomedical Sciences",
             children: {
-                design: {
-                    title: "Design Studies"
+                biochemistry: {
+                    title: "Biochemistry"
                 },
+                bioinformatics: {
+                    title: "Bioinformatics"
+                },
+                biology: {
+                    title: "Biology"
+                },
+                Biotechnology: {
+                    title: "Biotechnology"
+                },
+                botany_plant_biology: {
+                    title: "Botany/Plant Biology"
+                },
+                cell_and_molecular_biology: {
+                    title: "Cell & Molecular Biology"
+                },
+                conservation_biology: {
+                    title: "Conservation Biology"
+                },
+                ecology: {
+                    title: "Ecology"
+                },
+                entomology: {
+                    title: "Entomology"
+                },
+                environmental_biology: {
+                    title: "Environmental Biology"
+                },
+                genetics: {
+                    title: "Genetics"
+                },
+                marine_biology_and_biological_oceanography: {
+                    title: "Marine Biology & Biological Oceanography"
+                },
+                microbiology: {
+                    title: "Microbiology"
+                },
+                nutrition: {
+                    title: "Nutrition"
+                },
+                physiology: {
+                    title: "Physiology"
+                },
+                toxicology: {
+                    title: "Toxicology"
+                },
+                virology: {
+                    title: "Virology"
+                },
+                zoology_and_animal_biology: {
+                    title: "Zoology/Animal Biology"
+                }
+            }
+        },
+        engineering: {
+            title: "Engineering",
+            children: {}
+        },
+        law: {
+            title: "Law",
+            children: {}
+        },
+        medicine_and_related_clinical_sciences: {
+            title: "Medicine & Related Clinical Sciences",
+            children: {
+                environmental_health: {
+                    title: "Environmental Health"
+                },
+                medicine: {
+                    title: "Medicine"
+                },
+                nursing: {
+                    title: "Nursing"
+                },
+                optometry: {
+                    title: "Optometry"
+                },
+                pharmacy: {
+                    title: "Pharmacy"
+                },
+                physical_therapy: {
+                    title: "Physical Therapy"
+                },
+                public_health: {
+                    title: "Public Health"
+                },
+                veterinary_medicine: {
+                    title: "Veterinary Medicine"
+                }
+            }
+        },
+        natural_resources_and_conservation: {
+            title: "Natural Resources & Conservation",
+            children: {
+                environmental_science: {
+                    title: "Environmental Science"
+                },
+                environmental_studies: {
+                    title: "Environmental Studies"
+                },
+                forestry: {
+                    title: "Forestry"
+                },
+                land_use_planning_and_management: {
+                    title: "Land Use Planning & Management/Development"
+                },
+                natural_resources_management_policy: {
+                    title: "Natural Resources Management & Policy"
+                },
+                wildlife_and_wetlands_science: {
+                    title: "Wildlife & Wetlands Science & Management"
+                },
+                urban_forestry: {
+                    title: "Urban Forestry"
+                }
+            }
+        },
+        physical_sciences: {
+            title: "Physical Sciences",
+            children: {
+                hydrology_and_water_resources: {
+                    title: "Hydrology & Water Resources Science"
+                },
+                atmospheric_chemistry_and_climatology: {
+                    title: "Atmospheric Chemistry & Climatology"
+                }
+            }
+        },
+        social_sciences: {
+            title: "Social Sciences",
+            children: {
+                economics: {
+                    title: "Economics"
+                },
+                international_and_global_studies: {
+                    title: "International & Global Studies"
+                },
+                sociology: {
+                    title: "Sociology"
+                },
+                urban_studies_and_affairs: {
+                    title: "Urban Studies/Affairs"
+                }
+            }
+        },
+        visual_and_performing_arts: {
+            title: "Visual & Performing Arts",
+            children: {
                 drawing: {
                     title: "Drawing"
                 },
@@ -135,136 +284,8 @@ define(["config/config", "config/env"], function(config) {
                 }
             }
         },
-        environment: {
-            title: "The Environment",
-            children: {
-                agriculture: {
-                    title: "Agriculture"
-                },
-                Conservation: {
-                    title: "Conservation"
-                },
-                energy: {
-                    title: "Energy"
-                },
-                env_economics: {
-                    title: "Environmental Economics "
-                },
-                env_planning: {
-                    title: "Environmental Planning"
-                },
-                env_policy: {
-                    title: "Environmental Policy"
-                },
-                env_sciences: {
-                    title: "Environmental Sciences"
-                },
-                env_studies: {
-                    title: "Environmental Studies"
-                },
-                ethics_law: {
-                    title: "Ethics and Law"
-                },
-                forestry: {
-                    title: "Forestry"
-                },
-                habitat: {
-                    title: "Habitat Restoration"
-                },
-                hydrology: {
-                    title: "Hydrology"
-                },
-                int_env_issues: {
-                    title: "International Environmental Issues"
-                },
-                resources: {
-                    title: "Natural Resources"
-                },
-                land_management: {
-                    title: "Resource/Land Management"
-                },
-                sustainability: {
-                    title: "Sustainability"
-                },
-                urban_forestry: {
-                    title: "Urban Forestry"
-                },
-                urban_gardens: {
-                    title: "Urban Gardens"
-                }
-            }
-        },
-        biology: {
-            title: "Biology",
-            children: {
-                biochemistry: {
-                    title: "Biochemistry"
-                },
-                genetics: {
-                    title: "Genetics"
-                },
-                ecology: {
-                    title: "Ecology"
-                },
-                env_biology: {
-                    title: "Environmental Biology"
-                },
-                human_health: {
-                    title: "Human Health"
-                },
-                microbiology: {
-                    title: "Microbiology"
-                },
-                molecular_biology: {
-                    title: "Molecular Biology"
-                },
-                nutrition: {
-                    title: "Nutrition"
-                },
-                plant_biology: {
-                    title: "Plant Biology"
-                },
-                public_health: {
-                    title: "Public Health"
-                },
-                toxicology: {
-                    title: "Toxicology"
-                },
-                zoology: {
-                    title: "Zoology"
-                }
-            }
-        },
-        social_sciences: {
-            title: "Social Sciences",
-            children: {                
-                economics: {
-                    title: "Economics"
-                },
-                justice: {
-                    title: "Justice"
-                },
-                international: {
-                    title: "International"
-                },
-                poverty: {
-                    title: "Poverty"
-                },
-                policy: {
-                    title: "Social Policy"
-                }
-            }
-        },
-        law: {
-            title: "Law",
-            children: {}
-        },
-        medicine: {
-            title: "Medicine",
-            children: {}
-        },
         departments: {
-            title: "Colleges and Departments",
+            title: "Colleges & Departments",
             children: {
                 ced: {
                     title: "College of Environmental Design"
@@ -549,6 +570,45 @@ define(["config/config", "config/env"], function(config) {
 
     // Custom CSS Files to load in
     config.skinCSS = ["/dev/skins/myb/skin.css"];
+
+
+    // CalCentral custom Relationships
+    config.Relationships = {
+        /*
+         * Relationships used by the add contacts widget to define what relationship the contacts can have
+         */
+        "contacts": [{
+            "name": "Shares Interests",
+            "definition": "shares an interest with me",
+            "selected": true
+        }, {
+            "name": "Friend",
+            "definition": "is my friend",
+            "selected": false
+        }, {
+            "name": "Contact",
+            "definition": "is my contact",
+            "selected": false
+        }, {
+            "name": "Classmate",
+            "definition": "is my classmate",
+            "selected": false
+        }, {
+            "name": "Professor",
+            "inverse": "Student",
+            "definition": "is my professor",
+            "selected": false
+        }, {
+            "name": "Student",
+            "inverse": "Professor",
+            "definition": "is my student",
+            "selected": false
+        }, {
+            "name": "Colleague",
+            "definition": "is my colleague",
+            "selected": false
+        }]
+    };
 
     // End custom configuration
 
