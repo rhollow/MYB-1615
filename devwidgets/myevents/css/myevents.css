@@ -1,13 +1,4 @@
-.myevents .widget_title_icon {
-    background: url("/devwidgets/myevents/images/myevents_widget_icon.png") no-repeat transparent;
-}
+/* My Events and My Tasks share a common css file, /devwidgets/mytasks/css/mytasks.css */
 
-.myevents_widget .noticewidget_detail h3 {
-    margin-bottom: 0;
-}
+/* unique to myevents */
 
-.myevents_widget .noticewidget_detail h4.event-location {
-    color: #444;
-    margin: 0 0 0.3em;
-    font-weight: normal;
-}
