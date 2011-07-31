@@ -204,7 +204,7 @@ table.noticewidget_listing tr.notice_row:hover {
 }
 
 .noticewidget_filter_status, .noticewidget_filter_daterange  {
-    width: 42%;          
+    width: 40%;          
     line-height: 19px;      
     margin: 5px 0;
     float: left;
@@ -298,7 +298,8 @@ table.noticewidget_listing tr.notice_row:hover {
 .noticewidget_detail_controls .noticewidget-arrows {
     float: right;
     margin-right: 7px;
-    margin-top: -1px;
+    margin-top: 0;
+    line-height: 0;
 }
 
 .noticewidget_detail_controls .notice-nav {
