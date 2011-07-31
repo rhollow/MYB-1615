@@ -19,23 +19,23 @@
             <div id="mytasks_filter" class="noticewidget_filter" style="display:none;">
                 <form>
                     <div class="noticewidget_filter_status">
-                        Display item status:
+                        Item status:
                         <div>
                             <input type="radio" name="mytasks_item_status" id="mytasks_item_status_all" value="all" checked="checked">
                             <label for="mytasks_item_status_all">All</label>
                         </div>
                         <div>
                             <input type="radio" name="mytasks_item_status" id="mytasks_item_status_required" value="required">
-                            <label for="mytasks_item_status_required">Only required</label>
+                            <label for="mytasks_item_status_required">Required</label>
                         </div>
 
                         <div>
                             <input type="radio" name="mytasks_item_status" id="mytasks_item_status_unrequired" value="unrequired">
-                            <label for="mytasks_item_status_unrequired">Only unrequired</label>
+                            <label for="mytasks_item_status_unrequired">Not Required</label>
                         </div>
                     </div>
                     <div class="noticewidget_filter_daterange">
-                        Display date range:
+                        Date range:
                         <div>
                             <input type="radio" name="mytasks_date_range" id="mytasks_date_range_all" value="all">
                             <label for="mytasks_date_range_all">All</label>
@@ -54,10 +54,13 @@
                         </div>
                     </div>
                 </form>
+                <div class="fl-push noticewidget_filter_done"><button class="s3d-button s3d-overlay-button fl-force-right filter_done_button">
+                        <span class="s3d-button-inner">Done</span>
+                    </button></div>
             </div>
         </div>
 
-        <div class="noticewidget_listing_loading noTopMargin">__MSG__SEARCHING__</div>
+        <div class="noticewidget_listing_loading noTopMargin fl-push">__MSG__SEARCHING__</div>
 
         <table class="noticewidget_listing mytasks_listing" style="display:none">
             <caption class="fl-offScreen-hidden">__MSG__LIST_CAPTION__</caption>
@@ -144,6 +147,7 @@
     <div id="mytasks_detail_template" style="display:none"><!--
         {var dateString = noticeWidgetUtils.formatDate(detail.icalData.DUE, "M/d/yy")}
         <div class="noticewidget_detail_head">
+            <h3>${detail.icalData.SUMMARY}</h3>
             <fieldset>
                 <input type="checkbox" class="task-completed-checkbox"
                     id="taskDone_${index}"
@@ -158,10 +162,11 @@
 				/>
                 <label for="taskDone_${index}">__MSG__COMPLETED__</label>
             </fieldset>
-            <h3>${detail.icalData.SUMMARY}</h3>
-            <h4>__MSG__DUE_DATE__ ${dateString} 
+            <p>__MSG__DUE_DATE__ ${dateString}</p>
             {if detail.isRequired}
-                __MSG__THIS_TASK_IS_REQUIRED__
+                <p class="myB-isrequired">&bull; __MSG__REQUIRED__</p>
+            {else}
+                <p class="myB-isNOTrequired"><strong>&#9702; __MSG__NOT__</strong> __MSG__REQUIRED__</p>
             {/if}
             </h4>
         </div>

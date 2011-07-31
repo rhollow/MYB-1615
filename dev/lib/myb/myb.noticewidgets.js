@@ -60,6 +60,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         var filterContainer = $(".noticewidget_filter_container", config.rootContainer);
+        var filterDone = $(".noticewidget_filter_done", config.rootContainer);
         var filterControl = $(".noticewidget_filter_control", config.rootContainer);
         var filterControlContainer = $(".noticewidget_filter", config.rootContainer);
         var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
@@ -115,11 +116,11 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
              */
             var subjectLines = function() {
                 var subjectCells = $("td.subjectLine", config.rootContainer);
-                var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
+                var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 8;
                 var currCell = {};
                 $(subjectCells).each(function () {
                     currCell = $(this);
-                    currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 1,whole_word: false}));
+                    currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 2,whole_word: false}));
                 });
             };
 
@@ -162,20 +163,28 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             });
 
         };
+        
+        var filterControlToggle = function () {
+            if (filterControlContainer.is(":visible")) {
+                filterControlContainer.hide();
+                filterControlIndicator.removeClass("open");
+                filterControlIndicator.addClass("closed");
+            } else {
+                filterControlContainer.show();
+                filterControlIndicator.removeClass("closed");
+                filterControlIndicator.addClass("open");
+            }
+        };
 
         var setupListeners = function() {
 
             var filters = function() {
                 filterControlHeader.live("click", function() {
-                    if (filterControlContainer.is(":visible")) {
-                        filterControlContainer.hide();
-                        filterControlIndicator.removeClass("open");
-                        filterControlIndicator.addClass("closed");
-                    } else {
-                        filterControlContainer.show();
-                        filterControlIndicator.removeClass("closed");
-                        filterControlIndicator.addClass("open");
-                    }
+                    filterControlToggle();
+                });
+                
+                filterDone.live("click", function() {
+                    filterControlToggle();
                 });
 
                 $("input:radio", config.rootContainer).live("click", function() {
