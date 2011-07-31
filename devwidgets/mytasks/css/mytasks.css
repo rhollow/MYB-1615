@@ -148,8 +148,9 @@ table.noticewidget_listing .requiredLine {
 }
 
 table.noticewidget_listing .taskStateLine {
-    width: 17%;
-    text-align: left;   
+    width: 12%;
+    text-align: left;
+    padding-right: 15px;
 }
 
 table.noticewidget_listing tr.empty_list td {

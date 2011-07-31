@@ -116,7 +116,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
              */
             var subjectLines = function() {
                 var subjectCells = $("td.subjectLine", config.rootContainer);
-                var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 8;
+                var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
                 var currCell = {};
                 $(subjectCells).each(function () {
                     currCell = $(this);
@@ -398,7 +398,11 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             var scroller = function() {
                 var tbody = $("table.noticewidget_listing", config.rootContainer);
-                tbody.toggleClass("scroller", (tbody.height() > 180));
+                // toggleClass won't work here because the class must be removed to get an accurate height on the element
+                tbody.removeClass("scroller");
+                if (tbody.height() > 180) {
+                    tbody.addClass("scroller");
+                }
             };
 
             var filterStatus = function() {
