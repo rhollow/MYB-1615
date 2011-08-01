@@ -3,66 +3,68 @@
 
 <div class="mytasks_widget">
 
-    <div class="fl-widget-content s3d-widget-content">
+    <div class="noticewidget_list_view">
 
-        <div class="noticewidget_list_view">
-
-            <div class="mytasks_overdue_tasks_msg" style="display:none;">__MSG__YOU_HAVE_OVERDUE_TASKS__</div>
-			<div class="showing_archive_msg" style="display:none;">__MSG__ARCHIVE_CAPTION__</div>
-            <div class="noticewidget_filter_container">
-                <div class="noticewidget_filter_control_header">
-                    <div class="noticewidget_filter_control_indicator closed">&nbsp;</div>               
-                    <div class="noticewidget_filter_control">
-                        <span class="noticewidget_filter_header">Filter:</span>
-                        <span class="noticewidget_filter_message"><!-- Filled in with JavaScript. --></span>
-                    </div>
+        <div class="mytasks_overdue_tasks_msg" style="display:none;">__MSG__YOU_HAVE_OVERDUE_TASKS__</div>
+        <div class="showing_archive_msg" style="display:none;">__MSG__ARCHIVE_CAPTION__</div>
+        <div class="noticewidget_filter_container">
+            <div class="noticewidget_filter_control_header">
+                <div class="noticewidget_filter_control_indicator closed">&nbsp;</div>               
+                <div class="noticewidget_filter_control">
+                    <span class="noticewidget_filter_header">Filter:</span>
+                    <span class="noticewidget_filter_message"><!-- Filled in with JavaScript. --></span>
                 </div>
-
-                <div id="mytasks_filter" class="noticewidget_filter" style="display:none;">
-                    <form>
-						<div class="noticewidget_filter_status">
-	                        Display item status:
-	                        <div>
-	                            <input type="radio" name="mytasks_item_status" id="mytasks_item_status_all" value="all" checked="checked">
-	                            <label for="mytasks_item_status_all">All</label>
-	                        </div>
-	                        <div>
-	                            <input type="radio" name="mytasks_item_status" id="mytasks_item_status_required" value="required">
-	                            <label for="mytasks_item_status_required">Only required</label>
-	                        </div>
-	
-	                        <div>
-	                            <input type="radio" name="mytasks_item_status" id="mytasks_item_status_unrequired" value="unrequired">
-	                            <label for="mytasks_item_status_unrequired">Only unrequired</label>
-	                        </div>
-	                    </div>
-	                    <div class="noticewidget_filter_daterange">
-	                        Display date range:
-	                        <div>
-	                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_all" value="all">
-	                            <label for="mytasks_date_range_all">All</label>
-	                        </div>
-	                        <div>
-	                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_overdue" value="overdue">
-	                            <label for="mytasks_date_range_overdue">Overdue</label>
-	                        </div>
-	                        <div>
-	                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next7" value="next7">
-	                            <label for="mytasks_date_range_next7">Next 7 days</label>
-	                        </div>
-	                        <div>
-	                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next30" value="next30" checked="checked">
-	                            <label for="mytasks_date_range_next30">Next 30 days</label>
-	                        </div>
-	                    </div>
-                	</form>
-				</div>
             </div>
 
-            <div class="noticewidget_listing_loading noTopMargin">__MSG__SEARCHING__</div>
+            <div id="mytasks_filter" class="noticewidget_filter" style="display:none;">
+                <form>
+                    <div class="noticewidget_filter_status">
+                        Item status:
+                        <div>
+                            <input type="radio" name="mytasks_item_status" id="mytasks_item_status_all" value="all" checked="checked">
+                            <label for="mytasks_item_status_all">All</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="mytasks_item_status" id="mytasks_item_status_required" value="required">
+                            <label for="mytasks_item_status_required">Required</label>
+                        </div>
 
+                        <div>
+                            <input type="radio" name="mytasks_item_status" id="mytasks_item_status_unrequired" value="unrequired">
+                            <label for="mytasks_item_status_unrequired">Not Required</label>
+                        </div>
+                    </div>
+                    <div class="noticewidget_filter_daterange">
+                        Date range:
+                        <div>
+                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_all" value="all">
+                            <label for="mytasks_date_range_all">All</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_overdue" value="overdue">
+                            <label for="mytasks_date_range_overdue">Overdue</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next7" value="next7">
+                            <label for="mytasks_date_range_next7">Next 7 days</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="mytasks_date_range" id="mytasks_date_range_next30" value="next30" checked="checked">
+                            <label for="mytasks_date_range_next30">Next 30 days</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="fl-push noticewidget_filter_done"><button class="s3d-button s3d-overlay-button fl-force-right filter_done_button">
+                        <span class="s3d-button-inner">Done</span>
+                    </button></div>
+            </div>
+        </div>
+
+        <div class="noticewidget_listing_loading noTopMargin fl-push">__MSG__SEARCHING__</div>
+
+        <div class="noticewidget_listing_wrapper">
             <table class="noticewidget_listing mytasks_listing" style="display:none">
-            	<caption class="fl-offScreen-hidden">__MSG__LIST_CAPTION__</caption>
+                <caption class="fl-offScreen-hidden">__MSG__LIST_CAPTION__</caption>
                 <thead>
                     <tr>
                         <th class="noticewidget_task_selector rightbound"></th>
@@ -74,22 +76,22 @@
                         </th>
                     </tr>
                 </thead>
-
+    
                 <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
             </table>
         </div>
+    </div>
 
-        <div class="noticewidget_detail_view" style="display:none">
-            <div class="noticewidget_detail_controls">
-                <a href="javascript:;" class="return_to_list_container s3d-action">
-                    <span class="myB-return-arrow"></span><span class="noticewidget_detail_return_link_msg"></span>   
-                </a>
-                <span class="noticewidget-arrows">
-                    <button class="notice-nav notice-prev"><span class="fl-offScreen-hidden">__MSG__PREVIOUS__</span></button><button class="notice-nav notice-next"><span class="fl-offScreen-hidden">__MSG__NEXT__</span></button>
-                </span>
-            </div>
-            <div class="noticewidget_detail"><!-- filled by trimpath --></div>
+    <div class="noticewidget_detail_view" style="display:none">
+        <div class="noticewidget_detail_controls">
+            <a href="javascript:;" class="return_to_list_container s3d-widget-links"">
+                <span class="myB-return-arrow"></span><span class="noticewidget_detail_return_link_msg"></span>   
+            </a>
+            <span class="noticewidget-arrows">
+                <button class="notice-nav notice-prev"><span class="fl-offScreen-hidden">__MSG__PREVIOUS__</span></button><button class="notice-nav notice-next"><span class="fl-offScreen-hidden">__MSG__NEXT__</span></button>
+            </span>
         </div>
+        <div class="noticewidget_detail"><!-- filled by trimpath --></div>
     </div>
       
     <div id="mytasks_template" style="display:none"><!--
@@ -147,6 +149,7 @@
     <div id="mytasks_detail_template" style="display:none"><!--
         {var dateString = noticeWidgetUtils.formatDate(detail.icalData.DUE, "M/d/yy")}
         <div class="noticewidget_detail_head">
+            <h3>${detail.icalData.SUMMARY}</h3>
             <fieldset>
                 <input type="checkbox" class="task-completed-checkbox"
                     id="taskDone_${index}"
@@ -161,10 +164,11 @@
 				/>
                 <label for="taskDone_${index}">__MSG__COMPLETED__</label>
             </fieldset>
-            <h3>${detail.icalData.SUMMARY}</h3>
-            <h4>__MSG__DUE_DATE__ ${dateString} 
+            <p>__MSG__DUE_DATE__ ${dateString}</p>
             {if detail.isRequired}
-                __MSG__THIS_TASK_IS_REQUIRED__
+                <p class="myB-isrequired">&bull; __MSG__REQUIRED__</p>
+            {else}
+                <p class="myB-isNOTrequired"><strong>&#9702; __MSG__NOT__</strong> __MSG__REQUIRED__</p>
             {/if}
             </h4>
         </div>

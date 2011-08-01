@@ -60,12 +60,14 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         var filterContainer = $(".noticewidget_filter_container", config.rootContainer);
+        var filterDone = $(".noticewidget_filter_done", config.rootContainer);
         var filterControl = $(".noticewidget_filter_control", config.rootContainer);
         var filterControlContainer = $(".noticewidget_filter", config.rootContainer);
         var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
         var filterControlHeader = $(".noticewidget_filter_control_header", config.rootContainer);
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
+        var listingTableWrapper = $(".noticewidget_listing_wrapper", config.rootContainer);
 
 
         // This function is used to notify mytasks.js and myevents.js about model changes
@@ -119,7 +121,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 var currCell = {};
                 $(subjectCells).each(function () {
                     currCell = $(this);
-                    currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 1,whole_word: false}));
+                    currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 2,whole_word: false}));
                 });
             };
 
@@ -162,20 +164,28 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             });
 
         };
+        
+        var filterControlToggle = function () {
+            if (filterControlContainer.is(":visible")) {
+                filterControlContainer.hide();
+                filterControlIndicator.removeClass("open");
+                filterControlIndicator.addClass("closed");
+            } else {
+                filterControlContainer.show();
+                filterControlIndicator.removeClass("closed");
+                filterControlIndicator.addClass("open");
+            }
+        };
 
         var setupListeners = function() {
 
             var filters = function() {
                 filterControlHeader.live("click", function() {
-                    if (filterControlContainer.is(":visible")) {
-                        filterControlContainer.hide();
-                        filterControlIndicator.removeClass("open");
-                        filterControlIndicator.addClass("closed");
-                    } else {
-                        filterControlContainer.show();
-                        filterControlIndicator.removeClass("closed");
-                        filterControlIndicator.addClass("open");
-                    }
+                    filterControlToggle();
+                });
+                
+                filterDone.live("click", function() {
+                    filterControlToggle();
                 });
 
                 $("input:radio", config.rootContainer).live("click", function() {
@@ -388,8 +398,11 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             };
 
             var scroller = function() {
-                var tbody = $("table.noticewidget_listing", config.rootContainer);
-                tbody.toggleClass("scroller", (tbody.height() > 180));
+                // toggleClass won't work here because the class must be removed to get an accurate height on the element
+                listingTableWrapper.removeClass("noticewidget_scroller");
+                if (listingTableWrapper.height() > 180) {
+                    listingTableWrapper.addClass("noticewidget_scroller");
+                }
             };
 
             var filterStatus = function() {
