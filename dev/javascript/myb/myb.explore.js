@@ -125,7 +125,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 			},
 			success: function(data) {
 				$("#join_myberkeley_dialog").jqmHide();
-				showGeneralMessage("Welcome to CalCentral portal!", false);
+				showGeneralMessage("Welcome to CalCentral!", false);
 			},
 			error: function(xhr, textStatus, thrownError) {
 

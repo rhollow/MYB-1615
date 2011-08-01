@@ -701,6 +701,17 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         //////////////////////////
 
         /**
+         * Checks if adate can be parsed
+         */
+        var isValidDate = function(strDate) {
+            if(!strDate) {
+                return false;
+            }
+            var d = Globalize.parseDate(strDate, ["MM/dd/yyyy", "M/d/yyyy"]);
+            return d !== null;
+        };
+
+        /**
          * This method will check if there are any required fields that are not filled in.
          * If a field is not filled in the invalidClass will be added to that field.
          * Returns a boolean that determines if the fields are valid or not.
@@ -747,11 +758,20 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 valid = false;
                 $messageFieldSendDate.addClass(invalidClass);
             }
-            else if (modtoday > sendDateObj) {
-                if (!displayErrors) return false;
-                valid = false;
-                $messageFieldSendDate.addClass(invalidClass);
+            else {
+                if(!isValidDate(sendDate)) {
+                    if (!displayErrors) return false;
+                    valid = false;
+                    $messageFieldSendDate.addClass(invalidClass);
+                } else if (modtoday > sendDateObj) {
+                    if (!displayErrors) return false;
+                    valid = false;
+                    $messageFieldSendDate.addClass(invalidClass);
+                }
             }
+
+
+
             if (!sendTo) {
                 if (!displayErrors) return false;
                 valid = false;
@@ -779,15 +799,21 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         valid = false;
                         $messageTaskDueDate.addClass(invalidClass);
                     }
-                    else if (modtoday > taskDueDateObj) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageTaskDueDate.addClass(invalidClass);
-                    }
-                    else if (sendDateObj > taskDueDateObj) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageTaskDueDate.addClass(invalidClass);
+                    else {
+                        if(!isValidDate(taskDueDate)) {
+                            if (!displayErrors) return false;
+                            valid = false;
+                            $messageTaskDueDate.addClass(invalidClass);
+                        } else if (modtoday > taskDueDateObj) {
+                            if (!displayErrors) return false;
+                            valid = false;
+                            $messageTaskDueDate.addClass(invalidClass);
+                        }
+                        else if (sendDateObj > taskDueDateObj) {
+                            if (!displayErrors) return false;
+                            valid = false;
+                            $messageTaskDueDate.addClass(invalidClass);
+                        }
                     }
                     break;
 
@@ -797,40 +823,46 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         valid = false;
                         $messageEventDate.addClass(invalidClass);
                     }
-                    else if (modtoday > eventDateObj) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageEventDate.addClass(invalidClass);
-                    }
-                    else if (sendDateObj > eventDateObj) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageEventDate.addClass(invalidClass);
-                    }
                     else {
-                        // If the event date is today, check that the time hasn't already passed.
-                        if ((eventDateObj.getTime() - modtoday.getTime()) === 0) {
-                            if (eventTimeHour && eventTimeMinute && eventTimeAMPM) {
-                                var compareToHour = parseInt(eventTimeHour);
-                                var compareToMin = parseInt(eventTimeMinute);
+                        if(!isValidDate(eventDate)) {
+                            if (!displayErrors) return false;
+                            valid = false;
+                            $messageEventDate.addClass(invalidClass);
+                        } else if (modtoday > eventDateObj) {
+                            if (!displayErrors) return false;
+                            valid = false;
+                            $messageEventDate.addClass(invalidClass);
+                        }
+                        else if (sendDateObj > eventDateObj) {
+                            if (!displayErrors) return false;
+                            valid = false;
+                            $messageEventDate.addClass(invalidClass);
+                        }
+                        else {
+                            // If the event date is today, check that the time hasn't already passed.
+                            if ((eventDateObj.getTime() - modtoday.getTime()) === 0) {
+                                if (eventTimeHour && eventTimeMinute && eventTimeAMPM) {
+                                    var compareToHour = parseInt(eventTimeHour);
+                                    var compareToMin = parseInt(eventTimeMinute);
 
-                                // Convert to military time.
-                                if (eventTimeAMPM == "PM") {
-                                    if (compareToHour < 12) {
-                                        compareToHour += 12;
+                                    // Convert to military time.
+                                    if (eventTimeAMPM == "PM") {
+                                        if (compareToHour < 12) {
+                                            compareToHour += 12;
+                                        }
                                     }
-                                }
 
-                                eventDateObj.setHours(compareToHour);
-                                eventDateObj.setMinutes(compareToMin);
+                                    eventDateObj.setHours(compareToHour);
+                                    eventDateObj.setMinutes(compareToMin);
 
-                                // If the event is today and the time of the event has already passed...
-                                if (today.getTime() > eventDateObj.getTime()) {
-                                    if (!displayErrors) return false;
-                                    valid = false;
-                                    $messageEventTimeHour.addClass(invalidClass);
-                                    $messageEventTimeMinute.addClass(invalidClass);
-                                    $messageEventTimeAMPM.addClass(invalidClass);
+                                    // If the event is today and the time of the event has already passed...
+                                    if (today.getTime() > eventDateObj.getTime()) {
+                                        if (!displayErrors) return false;
+                                        valid = false;
+                                        $messageEventTimeHour.addClass(invalidClass);
+                                        $messageEventTimeMinute.addClass(invalidClass);
+                                        $messageEventTimeAMPM.addClass(invalidClass);
+                                    }
                                 }
                             }
                         }
