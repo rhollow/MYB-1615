@@ -67,6 +67,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var filterControlHeader = $(".noticewidget_filter_control_header", config.rootContainer);
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
+        var listingTableWrapper = $(".noticewidget_listing_wrapper", config.rootContainer);
 
 
         // This function is used to notify mytasks.js and myevents.js about model changes
@@ -397,11 +398,10 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             };
 
             var scroller = function() {
-                var tbody = $("table.noticewidget_listing", config.rootContainer);
                 // toggleClass won't work here because the class must be removed to get an accurate height on the element
-                tbody.removeClass("scroller");
-                if (tbody.height() > 180) {
-                    tbody.addClass("scroller");
+                listingTableWrapper.removeClass("noticewidget_scroller");
+                if (listingTableWrapper.height() > 180) {
+                    listingTableWrapper.addClass("noticewidget_scroller");
                 }
             };
 
