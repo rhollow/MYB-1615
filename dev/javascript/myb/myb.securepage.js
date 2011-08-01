@@ -51,16 +51,9 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai,
             useRedirect = myb.api.security.allowRedirectToParticipantPage;
           }
 
-          if (!isLoggedIn()) {
-            if ( useRedirect ) {
-              sakai.api.Security.sendToLogin();
-            }
-            return;
-          }
-
           // If the user is a member of Berkeley's College of Environmental Design, but not a participant of CalCentral project,
           // redirect him to the participation explanation page
-          if (!myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
+          if (isLoggedIn() && !myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
             sendToNotAMyBerkeleyParticipantPage();
           }
 
