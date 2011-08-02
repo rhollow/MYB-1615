@@ -31,7 +31,7 @@
                     <div id="composenotification_task_due_date" style="clear:both">
                         <span class="left"><label for="datepicker-taskduedate-text" class="name">__MSG__TASK_DUE_DATE__</label><span class="asterisk">*</span></span>
                         <span class="right datepicker">
-                            <input class="compose-form-elm text-field required" type="text" id="datepicker-taskduedate-text" name="taskduedate-text" />
+                            <input class="compose-form-elm text-field" type="text" id="datepicker-taskduedate-text" name="taskduedate-text" />
                         </span>
                     </div>
 
@@ -39,7 +39,7 @@
                     <div id="composenotification_event_date"style="clear:both;display:none;">
                         <span class="left"><label for="datepicker-eventdate-text" class="name">__MSG__EVENT_DATE__</label><span class="asterisk">*</span></span>
                         <span class="right datepicker">
-                            <input class="compose-form-elm text-field required" type="text" id="datepicker-eventdate-text" name="eventdate-text" />
+                            <input class="compose-form-elm text-field" type="text" id="datepicker-eventdate-text" name="eventdate-text" />
                         </span>
                     </div>
 
@@ -48,25 +48,25 @@
                         <span class="left"><label for="cn-event-timehour" class="name">__MSG__TIME__</label><span class="asterisk">*</span></span>
                         <span class="right">
                             <!-- EVENT: Time (Hour) -->
-                            <select class="compose-form-elm required" id="cn-event-timehour" name="event-timehour"></select> :
+                            <select class="compose-form-elm" id="cn-event-timehour" name="event-timehour"></select> :
                             <!-- EVENT: Time (Minute) -->
-                            <select class="compose-form-elm required" id="cn-event-timeminute" name="event-timeminute"></select>
+                            <select class="compose-form-elm" id="cn-event-timeminute" name="event-timeminute"></select>
                             <!-- EVENT: Time (AM/PM) -->
-                            <select class="compose-form-elm required" id="cn-event-timeampm" name="event-timeampm"></select>
+                            <select class="compose-form-elm" id="cn-event-timeampm" name="event-timeampm"></select>
                         </span>
                     </div>
 
                     <!-- EVENT: Place -->
                     <div id="composenotification_event_place" style="clear:both;display:none;">
                         <span class="left"><label for="cn-event-place" class="name">__MSG__PLACE__</label><span class="asterisk">*</span></span>
-                        <span class="right"><input class="compose-form-elm text-field required" type="text" id="cn-event-place" style="width:500px;" name="event-place" /></span>
+                        <span class="right"><input class="compose-form-elm text-field" type="text" id="cn-event-place" style="width:500px;" name="event-place" /></span>
                     </div>
 
                     <!-- REQUIRED CHECK -->
                     <div id="composenotification_required" style="clear:both">
                         <span class="left">__MSG__REQUIRED__<span class="asterisk">*</span></span>
                         <span class="right">
-                            <input class="compose-form-elm radioboxes required" type="radio" name="required-check" id="cn-requiredyes" /><label for="cn-requiredyes" class="name">__MSG__YES__</label>
+                            <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredyes" /><label for="cn-requiredyes" class="name">__MSG__YES__</label>
                             <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredno" /><label for="cn-requiredno" class="name">__MSG__NO__</label>
                         </span>
                     </div>
@@ -87,7 +87,7 @@
                     <div  id="composenotification_senddate">
                         <span class="left"><label for="datepicker-senddate-text" class="name">__MSG__SEND_DATE__</label><span class="asterisk">*</span></span>
                         <span class="right datepicker">
-                            <input class="compose-form-elm text-field required" type="text" id="datepicker-senddate-text" name="senddate-text" />
+                            <input class="compose-form-elm text-field" type="text" id="datepicker-senddate-text" name="senddate-text" />
                         </span>
                     </div>
 
@@ -95,7 +95,7 @@
                     <div id="composenotification_dynamiclist" style="clear:both">
                         <span class="left" style="margin-top:6px"><label for="cn-dynamiclistselect" class="name">__MSG__DYNAMIC_LIST__</label><span class="asterisk">*</span></span>
                         <span class="right">
-                            <select class="compose-form-elm required" id="cn-dynamiclistselect" name="dynamiclistselect"></select>
+                            <select class="compose-form-elm" id="cn-dynamiclistselect" name="dynamiclistselect"></select>
                             <button id="create-new-dynamic-list-button" class="s3d-button s3d-overlay-button">__MSG__CREATE_OR_EDIT_DYNAMIC_LISTS__</button>
                         </span>
                     </div>
@@ -103,13 +103,13 @@
                     <!-- SUBJECT-->
                     <div id="composenotification_subject" style="clear:both">
                         <span class="left"><label for="cn-subject" class="name">__MSG__SUBJECT__</label><span class="asterisk">*</span></span>
-                        <span class="right"><input type="text" style="width:500px;" class="compose-form-elm text-field required" id="cn-subject" name="subject" /></span>
+                        <span class="right"><input type="text" style="width:500px;" class="compose-form-elm text-field" id="cn-subject" name="subject" /></span>
                     </div>
 
                     <!-- BODY-->
                     <div id="composenotification_body" style="clear:both">
                         <span class="left"><label for="cn-body" class="name">__MSG__BODY__</label><span class="asterisk">*</span></span>
-                        <span class="right"><textarea class="compose-form-elm text-field required" id="cn-body" style="width:500px; height:150px;" name="body" ></textarea></span>
+                        <span class="right"><textarea class="compose-form-elm text-field" id="cn-body" style="width:500px; height:150px;" name="body" ></textarea></span>
                     </div>
                     <div style="clear:both;padding: 0;margin: 0"></div>
 
