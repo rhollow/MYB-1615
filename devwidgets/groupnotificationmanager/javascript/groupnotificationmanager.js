@@ -39,7 +39,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          *
          */
 
-        var messagesPerPage = 12; // The number of messages per page
+        var MESSAGES_PER_PAGE = 10; // The number of messages per page
         var allMessages = []; // Array that will hold all the messages
         var me = sakai.data.me;
         var selectedMessage = {}; // The current message
@@ -48,6 +48,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
         var sortBy = "date";
         var messagesForTypeCat; // The number of messages for this type/cat
 
+        var currentPage = 0;
 
         //////////////////////
         // jQuery selectors //
@@ -104,6 +105,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
         var inboxTableMessageID = inboxTable + "_message_";
         var inboxTableMessagesTemplate = inbox + "_" + inbox + "_messages_template";
         var inboxTableSubject = inboxTable + "_subject_";
+        var inbox_pager = $("#inbox_pager", $rootElement);
 
         var inboxInbox = inboxID + "_inbox";
         var inboxInboxClass = inboxClass + "_inbox";
@@ -553,13 +555,24 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          */
         var getAllMessages = function(callback){
             var url = "/var/notifications/search.json?items=" +
-                    config.Search.MAX_CORRECT_SEARCH_RESULT_COUNT + "&box=" + selectedType;
+                    MESSAGES_PER_PAGE + "&page=" + currentPage + "&box=" + selectedType;
 
             $.ajax({
                 url: url,
                 cache: false,
                 success: function(data){
                     if (data.results) {
+
+                        // only show pager if needed
+                        if (data.total > MESSAGES_PER_PAGE) {
+                            // pagenumber is 1-indexed, currentPage is 0-indexed
+                            inbox_pager.pager({ pagenumber: currentPage+1, pagecount: Math.ceil(data.total/MESSAGES_PER_PAGE), buttonClickCallback: handlePageClick });
+                            inbox_pager.show();
+                        } else {
+                            currentPage=0;
+                            inbox_pager.hide();
+                        }
+
                         // Render the messages
                         renderMessages(data);
                     }
@@ -579,6 +592,15 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             });
         };
 
+        /**
+         * Handle click on paging controls, the pager callback function
+         */
+        var handlePageClick = function(pageNum) {
+            if (pageNum-1 !== currentPage) {
+                currentPage = pageNum-1;
+            }
+            getAllMessages();
+        };
 
         /**
          *

@@ -50,7 +50,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                         },
                         "link-url" : {
                             required : true,
-                            url : true
+                            url : true,
+                            appendhttp : true
                         }
                     }
                 });
