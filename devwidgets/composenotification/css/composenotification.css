@@ -87,3 +87,7 @@
     background-color: #FFDEDE;
     border-color: #9F3333;
 }
+
+.composenotification_widget span.asterisk {
+    color:red;
+}

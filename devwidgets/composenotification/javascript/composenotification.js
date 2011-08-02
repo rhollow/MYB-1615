@@ -227,6 +227,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var clearInvalids = function() {
             $("." + invalidClass, $rootElement).removeClass(invalidClass);
+            // HACK: jQuery validation plugin's resetForm calls jQuery's resetForm method which in turn calls form's reset method,
+            // this causes problems in our code because it resets all elements to their default values.
+            // We don't need such behavior. Just hide all errors instead.
+            $("label.error", $rootElement).hide();
+            $(".error", $rootElement).removeClass("error");
         };
 
         /**
@@ -412,7 +417,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function() {
-                if(validatorObj){validatorObj.element($messageFieldSendDate);}
+                if(validatorObj){
+                    validatorObj.element($messageFieldSendDate);
+                    // validity of Task Due Date depends on Send Date, recheck it
+                    validatorObj.element($messageTaskDueDate);
+                }
                 $messageFieldSendDate.removeClass(invalidClass);
                 isDirty = true;
             } // Clearing validation errors
@@ -1174,60 +1183,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         $("#cn-queue-button", $rootElement).click(function() {
 
 
-            $.validator.addMethod(
-                "mmddyyyy",
-                function(value, element) {
-                    var d = Globalize.parseDate(value)
-                    return d;
-                },
-                "Please enter a date in the format mm/dd/yyyy"
-            );
-
-            $.validator.addMethod(
-                "checkSendDate",
-                function(value, element) {
-                    var d = Globalize.parseDate(value)
-                    if(!d) { return false; }
-
-                    var today = new Date();
-                    var month = today.getMonth();
-                    var day = today.getDate();
-                    var year = today.getFullYear();
-                    var todayMidnight = new Date(year, month, day); // today's date with 00:00:00 time
-
-                    return (d >= todayMidnight);
-                },
-                "Please enter a date in the format mm/dd/yyyy, the date must not be earlier than today"
-            );
-
-
-
-
-            validatorObj = $formElement.validate({
-               debug: true,
-                 errorPlacement: function(error, element) {
-                     var elName = element.attr("name");
-                     if (elName === "taskduedate-text" || elName === "senddate-text" || elName === "dynamiclistselect" ||
-                         elName === "eventdate-text") {
-                       error.insertAfter(element.next());
-
-                     }
-                     else if (elName === "required-check") {
-                         error.insertAfter($messageRequiredNo.next());
-                     }
-                     else {
-                       error.insertAfter(element);
-                     }
-                   },
-
-                 rules : {
-                    "taskduedate-text": { mmddyyyy : true },
-                    "senddate-text": { checkSendDate : true },
-                    "eventdate-text": { mmddyyyy : true }
-                 }
-
-            });
             $formElement.submit();
+            alert(validatorObj.valid());
             /*if (checkFieldsForErrors(true)) {
                 postNotification(saveData("queue", true), backToDrafts, null, null, translate("QUEUE"));
             }*/
@@ -1392,18 +1349,30 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         });
 
         $messageEventTimeHour.change(function() {
+            if(validatorObj) {
+                // validity of Event Date depends on Send Date, recheck it
+                validatorObj.element($messageEventDate);
+            }
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageEventTimeMinute.change(function() {
+            if(validatorObj) {
+                // validity of Event Date depends on Send Date, recheck it
+                validatorObj.element($messageEventDate);
+            }
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageEventTimeAMPM.change(function() {
+            if(validatorObj) {
+                // validity of Event Date depends on Send Date, recheck it
+                validatorObj.element($messageEventDate);
+            }
             // Clearing validation errors
             $(this).removeClass(invalidClass);
             isDirty = true;
@@ -1491,6 +1460,163 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             setState();
         });
 
+        //////////////////////////
+        // Validation functions //
+        //////////////////////////
+
+        $.validator.addMethod(
+            "checkSendDate",
+            function(value, element) {
+                var sendDate = Globalize.parseDate(value);
+                if(!sendDate) { return false; }
+
+                var today = new Date();
+                // today's date with 00:00:00 time
+                var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+                return (sendDate >= todayMidnight);
+            },
+            "Please enter a date in the format mm/dd/yyyy, the date must not be earlier than today."
+        );
+
+        $.validator.addMethod(
+            "checkTaskDueDate",
+            function(value, element) {
+                var taskDueDate = Globalize.parseDate(value);
+                if(!taskDueDate) { return false; }
+
+                var today = new Date();
+                // today's date with 00:00:00 time
+                var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                var sendDate = Globalize.parseDate($messageFieldSendDate.val())
+
+                if (taskDueDate < todayMidnight) {
+                    return false;
+                } else if (sendDate && sendDate > taskDueDate) {
+                    return false;
+                }
+
+                return true;
+            },
+            "Please enter a date in the format mm/dd/yyyy,<br /> the date must not be earlier than 'Send Date'."
+        );
+
+        $.validator.addMethod(
+            "checkEventDate",
+            function(value, element) {
+                var eventDate = Globalize.parseDate(value);
+                if(!eventDate) { return false; }
+
+                var today = new Date();
+                // today's date with 00:00:00 time
+                var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                var sendDate = Globalize.parseDate($messageFieldSendDate.val())
+
+                if (eventDate < todayMidnight) {
+                    return false;
+                } else if (sendDate && sendDate > eventDate) {
+                    return false;
+                }
+
+                // If the event date is today, check that the time hasn't already passed.
+                if ((eventDate.getTime() - todayMidnight.getTime()) === 0) {
+
+                    var hours = $messageEventTimeHour.val();
+                    var minutes = $messageEventTimeMinute.val();
+                    var ampm = $messageEventTimeAMPM.val();
+                    if (hours && minutes && ampm) {
+                        var compareToHour = parseInt(hours);
+                        var compareToMin = parseInt(minutes);
+
+                        // Convert to military time.
+                        if (ampm === "PM") {
+                            if (compareToHour < 12) {
+                                compareToHour += 12;
+                            }
+                        }
+
+                        eventDate.setHours(compareToHour);
+                        eventDate.setMinutes(compareToMin);
+
+                        // If the event is today and the time of the event has already passed...
+                        if (today.getTime() > eventDate.getTime()) {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            },
+            "Please enter a date in the format mm/dd/yyyy,<br /> the date must not be earlier than 'Send Date'<br s/> and not earlier than current time (please check 'Time' field) ."
+        );
+
+        var validationErrorPlacement = function(error, element) {
+            var elName = element.attr("name");
+            switch(elName) {
+                case "taskduedate-text":
+                case "senddate-text":
+                case "dynamiclistselect":
+                case "eventdate-text":
+                    // Fall-through is intentional here
+                    error.insertAfter(element.next());
+                    break;
+                case "event-timehour":
+                case "event-timeminute":
+                case "event-timeampm":
+                    // Fall-through is intentional here
+                    error.insertAfter($messageEventTimeAMPM);
+                    break;
+                case "required-check":
+                    error.insertAfter($messageRequiredNo.next());
+                    break;
+                default:
+                    error.insertAfter(element);
+                break;
+            }
+        };
+
+        var validationGroups = {
+             "event-time": "event-timehour event-timeminute event-timeampm"
+        };
+
+        var taskRule = {
+            depends: function(element) {
+                return $messageFieldType.val() === "task";
+            }
+        };
+
+        var eventRule = {
+            depends: function(element) {
+                return $messageFieldType.val() === "event";
+            }
+        };
+
+        var validationRules = {
+            "taskduedate-text": {
+                checkTaskDueDate: taskRule,
+                required: taskRule
+            },
+            "senddate-text": { checkSendDate : true },
+            "eventdate-text": {
+                checkEventDate: eventRule,
+                required:  eventRule
+            },
+            "event-timehour": {required: eventRule},
+            "event-timeminute": {required: eventRule},
+            "event-timeampm": {required: eventRule},
+            "event-place": {required: eventRule}
+        };
+
+
+
+        var setupValidation = function() {
+            validatorObj = $formElement.validate({
+                debug: true,
+                errorPlacement: validationErrorPlacement,
+                groups: validationGroups,
+                rules: validationRules
+            });
+        };
 
 
         /////////////////////////////
@@ -1512,7 +1638,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             setState();
-
+            setupValidation();
             // HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
             $("div.composenotification_widget", $rootElement).show();
 
