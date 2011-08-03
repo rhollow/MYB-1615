@@ -49,10 +49,69 @@
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
+
+        <!-- MyBerkeley custom begin -->
+        <!-- BEGIN JOIN MYBERKELEY DIALOG -->
+        <div id="join_myberkeley_dialog" class="s3d-dialog s3d-dialog-container">
+          <!-- Dialog Header -->
+          <h1 class="s3d-dialog-header">Accept CalCentral Pilot Program</h1>
+
+          <!-- Dialog Content -->
+            <p class="welcome-opt-in"><span class="fl-offScreen-hidden">Welcome to CalCentral Pilot.</span></p>
+
+            <p><b>CalCentral</b> is a pilot program designed to bring many campus online services under one roof over time.</p>
+
+            <p><strong>What you should know before joining this pilot:</strong></p>
+            <ul>
+              <li>You may receive multiple messages for the same task or event.</li>
+              <li>Messages may be deleted at any time due to system or project events.</li>
+              <li>The design and features presented may change at any time.</li>
+              <li>By participating in this pilot you may be invited to participate in surveys and focus groups to help
+                us determine the effectiveness of the design and features presented here.</li>
+              <li>Some settings allow some or all of the CalCentral information about you to be found and viewed by
+              anyone in the world. Please edit your sharing settings and/or your content with this in mind.</li>
+              <li>This system is in active development. While it has been tested and is believed to be ready for your
+              use, in the course of improving this pilot some data loss may occur. Please make backups of all documents
+              and content that you create or share in CalCentral</li>
+            </ul>
+            <p class="opt-in-checkbox">
+              <input id="chk_agree_to_socu" type="checkbox"/> <label for="chk_agree_to_socu">I have read and agree to
+              the official</label> <a href="http://technology.berkeley.edu/policy/usepolicy.html" class="s3d-regular-links"
+                                      target="_blank">campus statement on computer use.</a><br/>
+              <input id="chk_agree_to_receive_adviser_messages" type="checkbox"/> <label
+                    for="chk_agree_to_receive_adviser_messages">I give permission for my adviser to send me messages via
+              this program.</label>
+            </p>
+
+            <p>Please <a href="http://ets.berkeley.edu/calcentral-feedback/" class="s3d-regular-links"
+                                      target="_blank">send us feedback</a> about your first impressions, what you like or don't like, and ideas for future
+            features and functionality. There is a feedback link on each page of CalCentral.</p>
+
+            <p>To participate in this program, click <b>Join CalCentral</b> below, or click <b>Cancel</b> to sign
+              out.<br/>
+              (If you're not ready to join now, you may come back at any time.)</p>
+
+            <div class="dialog_buttons" style="text-align:right">
+              <button type="button" class="s3d-link-button s3d-bold" onclick="javascript:document.location='/dev/logout.html'"><span
+                      class="s3d-button-inner">__MSG__CANCEL__</span></button>
+              <button type="button" id="btn_join_my_berkeley" class="s3d-button s3d-overlay-button" disabled="disabled">
+                <span class="s3d-button-inner">Join CalCentral</span></button>
+            </div>
+          </div>
+
+        </div>
+        <!-- END JOIN MYBERKELEY DIALOG -->
+        <!-- MyBerkeley custom end -->
+
+
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
 
         <!-- GROUP JS -->
         <script>require(["/dev/javascript/user.js", "/devwidgets/video/jwplayer/swfobject.js"]);</script>
+
+        <!-- MyBerkeley custom JS -->
+        <script>require(["/dev/javascript/myb/myb.checkparticipant.js"]);</script>
+
     </body>
 </html>
