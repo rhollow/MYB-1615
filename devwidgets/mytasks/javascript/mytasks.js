@@ -96,16 +96,16 @@ require(["jquery", "sakai/sakai.api.core", "/dev/lib/myb/myb.noticewidgets.js"],
                         endDate = noticeWidgets.END_OF_TIME;
                         break;
                     case "next7" :
-                        startDate = new Date();
+                        startDate = today;
                         endDate.setTime(today.getTime() + 7 * noticeWidgets.ONE_DAY);
                         break;
                     case "next30" :
-                        startDate = new Date();
+                        startDate = today;
                         endDate.setTime(today.getTime() + 30 * noticeWidgets.ONE_DAY);
                         break;
                     case "overdue" :
                         startDate = noticeWidgets.BEGINNING_OF_TIME;
-                        endDate = new Date();
+                        endDate = today;
                         break;
                 }
             }
