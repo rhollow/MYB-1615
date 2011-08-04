@@ -1,6 +1,6 @@
 {
     "description":        "JISC Content",
-    "enabled":            true,
+    "enabled":            false,
     "groupdashboard":     false,
     "grouppages":         false,
     "hasSettings":        false,
@@ -10,12 +10,12 @@
     "id":                 "jisccontent",
     "img":                "/devwidgets/jisccontent/images/jisccontent.png",
     "name":               "JISC Content",
-    "personalportal":     true,
-    "showinsakaigoodies": true,
+    "personalportal":     false,
+    "showinsakaigoodies": false,
     "type":               "contrib",
     "url":                "/devwidgets/jisccontent/jisccontent.html",
     "userdashboard":      false,
     "userpages":          false,
-	"sakaidocs":          true,
+	"sakaidocs":          false,
     "settingsWidth":      256
 }
