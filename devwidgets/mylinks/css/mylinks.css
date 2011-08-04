@@ -226,4 +226,9 @@ label.error {
     padding: 0 6%;
 }
 
+.mylinks_widget .s3d-button.disabled {
+	-moz-opacity: 0.4;
+	filter:alpha(opacity=40);
+	opacity: 0.4;
+}
 
