@@ -366,8 +366,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     // Iterate through data and make new array for createOptions.
                     var dynamicListOptions = {};
                     for (var element in data) {
-                      var optionValue = data[element]["_path"];
-                      dynamicListOptions[optionValue] = data[element]["sakai:name"];
+                      if ( typeof data[element]["_path"] != 'undefined') {
+                          var optionValue = data[element]["_path"];
+                          dynamicListOptions[optionValue] = data[element]["sakai:name"];
+                      }
                     }
 
                     // Call createOptions with our new array.
@@ -1078,9 +1080,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 type: "POST",
                 data: { notification : $.toJSON(toPost) },
                 success: function() {
-                    if (msgTxt != null) {
-                        showGeneralMessage(msgTxt + " " + translate("SUCCESSFUL") + ".", false);
-                    }
                     // If a callback function is specified in argument, call it.
                     if ($.isFunction(successCallback)) {
                         successCallback(true);
@@ -1226,7 +1225,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     requests: $.toJSON(requests)
                 },
                 success: function() {
-                    showGeneralMessage(translate("DELETE_SUCCESSFUL"), false);
                     backToTrash();
                 },
                 error: function() {
