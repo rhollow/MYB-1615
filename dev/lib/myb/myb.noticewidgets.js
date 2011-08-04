@@ -86,7 +86,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 if (success) {
                     // user has saved filter prefs, use 'em
                     model.filterSettings = data;
-                    if ( model.filterSettings.sortOn.indexOf("sakai:") > -1 ) {
+                    if (model.filterSettings.sortOn.indexOf("sakai:") > -1) {
                         // obsolete filter critiera; revert to default
                         model.filterSettings.sortOn = config.defaultSortOn;
                         model.filterSettings.sortOrder = "ASC";
@@ -103,6 +103,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         that.saveFilterSettingsAndGetNotices = function(callback) {
+            model.currentNotice = 0;
             model.filterSettings.dateRange = config.getDateRange();
             model.filterSettings.itemStatus = config.getItemStatus();
             sakai.api.Server.saveJSON(config.filterSettingsURL, model.filterSettings, function() {
@@ -111,26 +112,22 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             });
         };
 
-        that.getNotices = function(callback) {
-            /**
-             * uses OEA applyThreeDots function to force the width of the object used for truncation
-             */
-            var subjectLines = function() {
-                var subjectCells = $("td.subjectLine", config.rootContainer);
-                var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
-                var currCell = {};
-                $(subjectCells).each(function () {
-                    currCell = $(this);
-                    currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 2,whole_word: false}));
-                });
-            };
+        that.getNotices = function(callback, needsRendering) {
+
+            var fullUIRefresh = true;
+            if (typeof(needsRendering) != 'undefined') {
+                fullUIRefresh = needsRendering;
+            }
 
             var dataURL = config.dataURL;
 
             var url = dataURL + "&sort=" + model.filterSettings.sortOn + "_" + model.filterSettings.sortOrder
                     + config.buildExtraQueryParams(model.archiveMode);
-            loadingIndicator.show();
-            listingTable.hide();
+
+            if (fullUIRefresh) {
+                loadingIndicator.show();
+                listingTable.hide();
+            }
 
             $.ajax({
                 url: url,
@@ -140,14 +137,11 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     listingTable.show();
                     if (data.results) {
                         model.data = data;
-                        model.currentNotice = 0;
-                        config.container.html(sakai.api.Util.TemplateRenderer(config.template, {
-                            results : model.data.results,
-                            noticeWidgetUtils : noticeWidgets.utils,
-                            sakaiUtil : sakai.api.Util
-                        }));
-                        that.updateUI();
-                        subjectLines();
+
+                        if (fullUIRefresh) {
+                            renderTemplateAndUpdateUI();
+                        }
+
                         if ($.isFunction(callback)) {
                             callback();
                         }
@@ -164,7 +158,16 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             });
 
         };
-        
+
+        var renderTemplateAndUpdateUI = function() {
+            config.container.html(sakai.api.Util.TemplateRenderer(config.template, {
+                results : model.data.results,
+                noticeWidgetUtils : noticeWidgets.utils,
+                sakaiUtil : sakai.api.Util
+            }));
+            that.updateUI();
+        };
+
         var filterControlToggle = function () {
             if (filterControlContainer.is(":visible")) {
                 filterControlContainer.hide();
@@ -183,7 +186,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 filterControlHeader.live("click", function() {
                     filterControlToggle();
                 });
-                
+
                 filterDone.live("click", function() {
                     filterControlToggle();
                 });
@@ -236,6 +239,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     var rowIndex = this.id.replace(/\w+_/gi, "");
                     var rowData = model.data.results[rowIndex];
                     rowData.isCompleted = !rowData.isCompleted;
+                    renderTemplateAndUpdateUI();
 
                     postNotice(
                             config.dataURL,
@@ -246,9 +250,10 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     isArchived : rowData.isArchived}
                             ])},
                             function() {
-                                that.getNotices();
+                                that.getNotices(function() {
+                                }, false);
                             }
-                            );
+                    );
                 });
             };
 
@@ -308,7 +313,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 function() {
                                     that.getNotices();
                                 }
-                                );
+                        );
                         return;
                     }
 
@@ -412,12 +417,12 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             var showCurrentDetail = function() {
                 $(".noticewidget_detail", config.rootContainer).html(sakai.api.Util.TemplateRenderer(config.detailTemplate,
-                {
-                    detail : model.data.results[model.currentNotice],
-                    index : model.currentNotice,
-                    noticeWidgetUtils : noticeWidgets.utils,
-                    archiveMode: model.archiveMode
-                }));
+                        {
+                            detail : model.data.results[model.currentNotice],
+                            index : model.currentNotice,
+                            noticeWidgetUtils : noticeWidgets.utils,
+                            archiveMode: model.archiveMode
+                        }));
                 if (model.currentNotice < model.data.results.length - 1) {
                     $(".notice-next", config.rootContainer).removeClass("disabled");
                 } else {
@@ -461,10 +466,25 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 }
             };
 
+
+            /**
+             * uses OEA applyThreeDots function to force the width of the object used for truncation
+             */
+            var subjectLines = function() {
+                var subjectCells = $("td.subjectLine", config.rootContainer);
+                var theWidth = $("th.subjectLine", config.rootContainer).innerWidth() - 10;
+                var currCell = {};
+                $(subjectCells).each(function () {
+                    currCell = $(this);
+                    currCell.text(sakai.api.Util.applyThreeDots(currCell.text(), theWidth, {max_rows: 2,whole_word: false}));
+                });
+            };
+
             detailMode();
             archiveControls();
             scroller();
             filterStatus();
+            subjectLines();
         };
 
         var updateFilterControls = function() {
