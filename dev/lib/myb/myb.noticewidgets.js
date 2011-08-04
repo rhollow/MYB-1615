@@ -103,6 +103,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         that.saveFilterSettingsAndGetNotices = function(callback) {
+            model.currentNotice = 0;
             model.filterSettings.dateRange = config.getDateRange();
             model.filterSettings.itemStatus = config.getItemStatus();
             sakai.api.Server.saveJSON(config.filterSettingsURL, model.filterSettings, function() {
@@ -136,7 +137,6 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     listingTable.show();
                     if (data.results) {
                         model.data = data;
-                        model.currentNotice = 0;
 
                         if (fullUIRefresh) {
                             renderTemplateAndUpdateUI();
