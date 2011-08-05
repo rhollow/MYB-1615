@@ -427,6 +427,10 @@ table.noticewidget_listing tr.overDueTask {
     color: #BF0000;
 }
 
+table.noticewidget_listing tr.unread {
+    font-weight: bold;
+}
+
 table.noticewidget_listing .task-completed-checkbox {
     margin-top: 3px;
 }

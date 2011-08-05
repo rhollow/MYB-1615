@@ -96,12 +96,13 @@
       
     <div id="mytasks_template" style="display:none"><!--
         {var isEmpty = true}
-		{var nowDate = new Date()}
+		    {var nowDate = new Date()}
         {for i in results}
             {var isEmpty = false}
-			{var dueDate = sakaiUtil.parseSakaiDate(i.icalData.DUE)}
+			      {var dueDate = sakaiUtil.parseSakaiDate(i.icalData.DUE)}
             {var overDue = dueDate < nowDate}
-            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if !i.isArchived && !i.isCompleted && overDue} overDueTask{/if}">
+            {var unread = i.isRead ? "" : "unread"}
+            <tr class="${unread} notice_row{if i_index % 2 === 0} alternate{/if}{if !i.isArchived && !i.isCompleted && overDue} overDueTask{/if}">
                     <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
                     {if i.isArchived}
                         <input type="checkbox" class="task-selected-checkbox"
