@@ -247,7 +247,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 {
                                     uri : rowData.uri,
                                     isCompleted : rowData.isCompleted,
-                                    isArchived : rowData.isArchived}
+                                    isArchived : rowData.isArchived,
+                                    isRead : rowData.isRead
+                                }
                             ])},
                             function() {
                                 that.getNotices(function() {
@@ -307,7 +309,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     {
                                         uri : rowData.uri,
                                         isCompleted : rowData.isCompleted,
-                                        isArchived : rowData.isArchived
+                                        isArchived : rowData.isArchived,
+                                        isRead : rowData.isRead
                                     }
                                 ]) },
                                 function() {
@@ -326,7 +329,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 calendars[calendars.length] = {
                                     uri : rowData.uri,
                                     isCompleted : rowData.isCompleted,
-                                    isArchived : rowData.isArchived
+                                    isArchived : rowData.isArchived,
+                                    isRead : rowData.isRead
                                 };
                             }
                         });
@@ -337,7 +341,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 calendars[calendars.length] = {
                                     uri : rowData.uri,
                                     isCompleted : rowData.isCompleted,
-                                    isArchived : rowData.isArchived
+                                    isArchived : rowData.isArchived,
+                                    isRead : rowData.isRead
                                 };
                             }
                         });
