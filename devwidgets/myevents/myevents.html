@@ -92,7 +92,8 @@
         {var isEmpty = true}
         {for i in results}
             {var isEmpty = false}
-            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}">
+            {var unread = i.isRead ? "" : "unread"}
+            <tr class="${unread} notice_row{if i_index % 2 === 0} alternate{/if}">
                     {var dateString = noticeWidgetUtils.formatDate(i.icalData.DTSTART, "M/d")}
                     <td id="myeventstddate_${i_index}" class="dateLine detailTrigger">${dateString}</td>
                     <td id="myeventstdsubj_${i_index}" class="subjectLine detailTrigger" title="${i.icalData.SUMMARY}">

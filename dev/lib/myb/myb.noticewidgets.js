@@ -214,6 +214,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".noticewidget_listing td.detailTrigger", config.rootContainer).live("click", function() {
                     model.currentNotice = this.id.replace(/\w+_/gi, "");
                     model.detailMode = true;
+                    markAsRead(model.currentNotice);
                     that.updateUI();
                 });
                 $(".return_to_list_container", config.rootContainer).live("click", function() {
@@ -223,15 +224,40 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 $(".notice-next", config.rootContainer).live("click", function() {
                     if (model.currentNotice < model.data.results.length - 1) {
                         model.currentNotice++;
+                        markAsRead(model.currentNotice);
                         that.updateUI();
                     }
                 });
                 $(".notice-prev", config.rootContainer).live("click", function() {
                     if (model.currentNotice > 0) {
                         model.currentNotice--;
+                        markAsRead(model.currentNotice);
                         that.updateUI();
                     }
                 });
+            };
+
+            var markAsRead = function(noticeIndex) {
+                var rowData = model.data.results[noticeIndex];
+                if ( rowData.isRead ) {
+                    return; // don't bother updating a msg already read
+                }
+
+                rowData.isRead = true;
+                renderTemplateAndUpdateUI();
+
+                postNotice(
+                        config.dataURL,
+                        { calendars : $.toJSON([
+                            {
+                                uri : rowData.uri,
+                                isCompleted : rowData.isCompleted,
+                                isArchived : rowData.isArchived,
+                                isRead : rowData.isRead
+                            }
+                        ])},
+                        function() {}
+                );
             };
 
             var completedCheckboxes = function() {
@@ -247,7 +273,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 {
                                     uri : rowData.uri,
                                     isCompleted : rowData.isCompleted,
-                                    isArchived : rowData.isArchived}
+                                    isArchived : rowData.isArchived,
+                                    isRead : rowData.isRead
+                                }
                             ])},
                             function() {
                                 that.getNotices(function() {
@@ -307,7 +335,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     {
                                         uri : rowData.uri,
                                         isCompleted : rowData.isCompleted,
-                                        isArchived : rowData.isArchived
+                                        isArchived : rowData.isArchived,
+                                        isRead : rowData.isRead
                                     }
                                 ]) },
                                 function() {
@@ -326,7 +355,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 calendars[calendars.length] = {
                                     uri : rowData.uri,
                                     isCompleted : rowData.isCompleted,
-                                    isArchived : rowData.isArchived
+                                    isArchived : rowData.isArchived,
+                                    isRead : rowData.isRead
                                 };
                             }
                         });
@@ -337,7 +367,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                 calendars[calendars.length] = {
                                     uri : rowData.uri,
                                     isCompleted : rowData.isCompleted,
-                                    isArchived : rowData.isArchived
+                                    isArchived : rowData.isArchived,
+                                    isRead : rowData.isRead
                                 };
                             }
                         });
