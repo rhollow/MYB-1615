@@ -126,3 +126,9 @@
     height: 8px;
     width: 12px;
 }
+
+.dynamiclistmanager_widget .disabled {
+	-moz-opacity: 0.4;
+	filter:alpha(opacity=40);
+	opacity: 0.4;
+}
