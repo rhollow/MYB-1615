@@ -276,6 +276,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             // Remember the type we want to see.
             selectedType = type;
 
+            currentPage = 0;
+
             // Display the first page of msgs.
             showPage();
 
