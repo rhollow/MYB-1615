@@ -1178,18 +1178,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             applyDraftValidationRules();
 
             if (validatorObj.form()) {
-                // OK, this message complies to draft rules, now we need to check if it is ready to be queued
-                applyQueueValidationRules();
-                //$('head').append('<link id="composenotification_validation_css" rel="stylesheet" type="text/css" href="/devwidgets/composenotification/css/validation.css" />');
-                //$("label.error", $rootElement).live().addClass("hide");
-                var $formClone = $formElement.clone(false);
-                alert($("#cn-subject", $formClone).val());
-
-                var readyForQueue = $formClone.valid();
-                alert(readyForQueue);
-                return; //!!!!!!!4 221@@
-
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, currentMessage, null, translate("SAVE"));
+                postNotification(saveData("drafts", validateClonedForm()), backToDrafts, currentMessage, null, translate("SAVE"));
             }
         });
 
@@ -1216,7 +1205,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             applyDraftValidationRules();
 
             if (validatorObj.form()) {
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, translate("SAVE"));
+                postNotification(saveData("drafts", true), backToDrafts, null, null, translate("SAVE"));
             }
         });
 
@@ -1242,7 +1231,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Enable editing of message (move it to drafts and re-initialise widget).
         $("#cn-editrashed-button", $rootElement).click(function() {
-            postNotification(saveData("drafts", checkFieldsForErrors(false)), loadNotification("drafts", currentMessageId), currentMessage, false, null);
+            postNotification(saveData("drafts", validateClonedForm()), loadNotification("drafts", currentMessageId), currentMessage, false, null);
         });
 
         // Hard delete this message (delete it from the trash).
@@ -1477,7 +1466,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 var today = new Date();
                 // today's date with 00:00:00 time
                 var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
+                console.log("checkSendDate:" + (sendDate >= todayMidnight));
                 return (sendDate >= todayMidnight);
             },
             "Please enter a date in the format mm/dd/yyyy, the date must not be earlier than today."
@@ -1499,7 +1488,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 } else if (sendDate && sendDate > taskDueDate) {
                     return false;
                 }
-
+                 console.log("checkTaskDueDate :true");
                 return true;
             },
             "Please enter a date in the format mm/dd/yyyy,<br /> the date must not be earlier than 'Send Date'."
@@ -1548,7 +1537,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         }
                     }
                 }
-
+                  console.log("checkEventDate :true");
                 return true;
             },
             "Please enter a date in the format mm/dd/yyyy,<br /> the date must not be earlier than 'Send Date'<br s/> and not earlier than current time (please check 'Time' field) ."
@@ -1632,6 +1621,61 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $messageFieldBody.rules("add", "required");
         };
 
+        var applyQueueValidationRulesForClonedForm = function($frm) {
+
+            // Apply queue rules
+            $("#datepicker-taskduedate-text", $frm).rules("add", {checkTaskDueDate: taskRule, required: taskRule});
+
+            $("#datepicker-eventdate-text", $frm).rules("add", {checkEventDate: eventRule, required:  eventRule});
+            $("#cn-event-timehour", $frm).rules("add", {required: eventRule});
+            $("#cn-event-timeminute", $frm).rules("add", {required: eventRule});
+            $("#cn-event-timeampm", $frm).rules("add", {required: eventRule});
+            $("#cn-event-place", $frm).rules("add", {required: eventRule});
+
+            $("#cn-requiredyes", $frm).rules("add", "required");
+            $("#datepicker-senddate-text", $frm).rules("add", { checkSendDate : true, required: true });
+            $("#cn-dynamiclistselect", $frm).rules("add", "required");
+            $("#cn-subject", $frm).rules("add", "required");
+            $("#cn-body", $frm).rules("add", "required");
+        };
+
+        var validateClonedForm = function() {
+
+                var $formClone = $formElement.clone(false);
+                $formClone.css("display", "none");
+
+                // jQuery validate bug workaround, appending this cloned form to the current document
+                 $("body").append($formClone);
+
+                // BUG: There is a bug in jQuery: the value is not cloned
+                // See here for details http://bugs.jquery.com/ticket/3016
+                $("#cn-body", $formClone).val($messageFieldBody.val());
+
+                // BUG: There is a bug in jQuery: combobox value and selected option are reset to their defaults
+                // http://bugs.jquery.com/ticket/2941
+                $("#cn-dynamiclistselect", $formClone).val($messageFieldDynamicList.val());
+                $("#cn-event-timehour", $formClone).val($messageEventTimeHour.val());
+                $("#cn-event-timeminute", $formClone).val($messageEventTimeMinute.val());
+                $("#cn-event-timeampm", $formClone).val($messageEventTimeAMPM.val());
+
+                var v = setupValidation($formClone, validationErrorPlacementNone);
+                applyQueueValidationRulesForClonedForm($formClone);
+
+                var readyForQueue = v.form();//$formClone.valid();
+
+                // jQuery validate bug workaround, removing the cloned form from the current document
+                $formClone.remove();
+                $formClone = null;
+
+                alert("Form ready for queue: " + readyForQueue);
+
+                return readyForQueue;
+        };
+
+        var validationErrorPlacementNone = function(error, element) {
+            // Empty on purpose
+        };
+
         var applyDraftValidationRules = function() {
             // Remove all rules
             removeAllValidationRules();
@@ -1642,12 +1686,13 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
 
 
-        var setupValidation = function($frm) {
-            validatorObj = $frm.validate({
+        var setupValidation = function($frm, errorPlacement) {
+            var validator = $frm.validate({
                 debug: true,
-                errorPlacement: validationErrorPlacement,
+                errorPlacement: errorPlacement,
                 groups: validationGroups
             });
+            return validator;
         };
 
 
@@ -1670,7 +1715,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             setState();
-            setupValidation($formElement);
+            validatorObj = setupValidation($formElement, validationErrorPlacement);
             // HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
             $("div.composenotification_widget", $rootElement).show();
 
