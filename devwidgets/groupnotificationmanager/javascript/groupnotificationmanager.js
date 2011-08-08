@@ -276,6 +276,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             // Remember the type we want to see.
             selectedType = type;
 
+            currentPage = 0;
+
             // Display the first page of msgs.
             showPage();
 
@@ -878,7 +880,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
 
                 var txt = "";
                 if (pathToMessages.length === 1) {
-                    txt = $(inboxGeneralMessagesCopied_1).text()+toWhere+".";
+                    txt = $(inboxGeneralMessagesCopied_1).text()+" "+toWhere+".";
                 }
                 else {
                     txt = pathToMessages.length+" "+$(inboxGeneralMessagesCopied_x).text()+" "+toWhere+".";

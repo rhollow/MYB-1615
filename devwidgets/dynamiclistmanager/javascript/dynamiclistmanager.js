@@ -185,16 +185,25 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
           var num = getNumberOfSelectedLists();
           if(num === 0) {
               $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsEditButton.addClass("disabled");
               $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.addClass("disabled");
               $dynListsDeleteButton.attr('disabled', 'disabled');
+              $dynListsDeleteButton.addClass("disabled");
           } else if(num === 1){
               $dynListsEditButton.removeAttr('disabled');
+              $dynListsEditButton.removeClass("disabled");
               $dynListsCopyButton.removeAttr('disabled');
+              $dynListsCopyButton.removeClass("disabled");
               $dynListsDeleteButton.removeAttr('disabled');
+              $dynListsDeleteButton.removeClass("disabled");
           } else if(num > 1){
               $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsEditButton.addClass("disabled");
               $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.addClass("disabled");
               $dynListsDeleteButton.removeAttr('disabled');
+              $dynListsDeleteButton.removeClass("disabled");
           }
         };
 
