@@ -118,6 +118,9 @@ define(["config/config", "config/env"], function(config) {
                 city_and_urban_planning: {
                     title: "City/Urban, Community & Regional Planning"
                 },
+                environmental_design: {
+                    title: "Environmental Design"
+                },
                 landscape_architecture: {
                     title: "Landscape Architecture"
                 }
