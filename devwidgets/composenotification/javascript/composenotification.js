@@ -942,6 +942,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     var readyForQueue = validatorObj.form();
                     postNotification(saveData("drafts", readyForQueue), switchToDynamicListsCreationWidget, false, null);
                 });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
@@ -962,6 +964,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $rootElement.fadeOut(fadeOutTimeMs, function () {
                     postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
                 });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
@@ -977,6 +981,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     var readyForQueue = validatorObj.form();
                     postNotification(saveData("drafts", readyForQueue), backToDrafts, false, translate("SAVE"));
                 });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
@@ -997,6 +1003,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $rootElement.fadeOut(fadeOutTimeMs, function () {
                     postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
                 });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
@@ -1010,6 +1018,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $rootElement.fadeOut(fadeOutTimeMs, function () {
                     postNotification(saveData("drafts", true), backToDrafts, false, translate("SAVE"));
                 });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
@@ -1255,7 +1265,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 console.log("checkSendDate:" + (sendDate >= todayMidnight));
                 return (sendDate >= todayMidnight);
             },
-            "Please enter a date in the format mm/dd/yyyy, the date must not be earlier than today."
+            "Please enter a date in the format mm/dd/yyyy,<br />the date must not be earlier than today."
         );
 
         $.validator.addMethod(
