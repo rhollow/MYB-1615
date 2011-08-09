@@ -10,7 +10,7 @@
 
 .mytasks .s3d-button.s3d-overlay-button, .myevents .s3d-button.s3d-overlay-button  {
     height:22px;
-    margin-left:10px;
+    margin-left:0;
 }
 
 
@@ -107,10 +107,10 @@ table.noticewidget_listing th.DESC {
 
 table.noticewidget_listing td, table.noticewidget_listing th {    
     text-align: center;
-    padding: 1px 20px 0 5px;       
+    padding: 1px 18px 0 5px;
 }
 
-table.noticewidget_listing.scroller {
+.noticewidget_scroller {
     display:block;
     height: 180px;
     overflow: auto;
@@ -425,6 +425,10 @@ table.noticewidget_listing tr.notice_row:hover {
 
 table.noticewidget_listing tr.overDueTask {
     color: #BF0000;
+}
+
+table.noticewidget_listing tr.unread {
+    font-weight: bold;
 }
 
 table.noticewidget_listing .task-completed-checkbox {

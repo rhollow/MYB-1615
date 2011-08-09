@@ -31,6 +31,7 @@
                           <a href="${link.url}"
                             id="${link.id}"
                             target="_blank"
+                            class="s3d-widget-links"
                             title="${link.popup_description}">${link.name|default:"no name"}</a>
                             {if section.isEditable}
                               <div class="edit_buttons">
@@ -70,7 +71,7 @@
             </div>
             <div class="link-form-element">
                 <label class="elm-label" for="link-url">Link URL:</label>
-                <input type="text" id="link-url" name="link-url" aria-required="true" />
+                <input type="text" id="link-url" name="link-url" aria-required="true" class="appendhttp url required"/>
             </div>
         </form>
       

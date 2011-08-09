@@ -62,22 +62,24 @@
 
         <div class="noticewidget_listing_loading noTopMargin fl-push">__MSG__SEARCHING__</div>
 
-        <table class="noticewidget_listing mytasks_listing" style="display:none">
-            <caption class="fl-offScreen-hidden">__MSG__LIST_CAPTION__</caption>
-            <thead>
-                <tr>
-                    <th class="noticewidget_task_selector rightbound"></th>
-                    <th id="mytasks_sortOn_DATE" class="noticewidget_listing_sort dueDateLine rightbound" title="__MSG__DUE__">__MSG__DUE__</th>
-                    <th id="mytasks_sortOn_SUMMARY" class="noticewidget_listing_sort subjectLine rightbound" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
-                    <th id="mytasks_sortOn_REQUIRED" class="noticewidget_listing_sort requiredLine rightbound" title="__MSG__REQUIRED__">__MSG__REQ__</th>
-                    <th id="mytasks_sortOn_COMPLETED" class="noticewidget_listing_sort taskStateLine" title="__MSG__COMPLETED__">
-                        <span class="noticewidget_checkmark" alt="__MSG__COMPLETED__">&nbsp;<span class="fl-offScreen-hidden">__MSG__COMPLETED__</span></span>
-                    </th>
-                </tr>
-            </thead>
-
-            <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
-        </table>
+        <div class="noticewidget_listing_wrapper">
+            <table class="noticewidget_listing mytasks_listing" style="display:none">
+                <caption class="fl-offScreen-hidden">__MSG__LIST_CAPTION__</caption>
+                <thead>
+                    <tr>
+                        <th class="noticewidget_task_selector rightbound"></th>
+                        <th id="mytasks_sortOn_DATE" class="noticewidget_listing_sort dueDateLine rightbound" title="__MSG__DUE__">__MSG__DUE__</th>
+                        <th id="mytasks_sortOn_SUMMARY" class="noticewidget_listing_sort subjectLine rightbound" title="__MSG__SUBJECT__">__MSG__SUBJECT__</th>
+                        <th id="mytasks_sortOn_REQUIRED" class="noticewidget_listing_sort requiredLine rightbound" title="__MSG__REQUIRED__">__MSG__REQ__</th>
+                        <th id="mytasks_sortOn_COMPLETED" class="noticewidget_listing_sort taskStateLine" title="__MSG__COMPLETED__">
+                            <span class="noticewidget_checkmark" alt="__MSG__COMPLETED__">&nbsp;<span class="fl-offScreen-hidden">__MSG__COMPLETED__</span></span>
+                        </th>
+                    </tr>
+                </thead>
+    
+                <tbody class="noticewidget_list tasks_list"><!-- filled by trimpath --></tbody>
+            </table>
+        </div>
     </div>
 
     <div class="noticewidget_detail_view" style="display:none">
@@ -94,12 +96,13 @@
       
     <div id="mytasks_template" style="display:none"><!--
         {var isEmpty = true}
-		{var nowDate = new Date()}
+		    {var nowDate = new Date()}
         {for i in results}
             {var isEmpty = false}
-			{var dueDate = sakaiUtil.parseSakaiDate(i.icalData.DUE)}
+			      {var dueDate = sakaiUtil.parseSakaiDate(i.icalData.DUE)}
             {var overDue = dueDate < nowDate}
-            <tr class="notice_row{if i_index % 2 === 0} alternate{/if}{if !i.isArchived && !i.isCompleted && overDue} overDueTask{/if}">
+            {var unread = i.isRead ? "" : "unread"}
+            <tr class="${unread} notice_row{if i_index % 2 === 0} alternate{/if}{if !i.isArchived && !i.isCompleted && overDue} overDueTask{/if}">
                     <td class="noticewidget_task_selector" id="mytaskstdselect_${i_index}">
                     {if i.isArchived}
                         <input type="checkbox" class="task-selected-checkbox"

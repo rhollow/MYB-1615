@@ -14,7 +14,7 @@
 }
 
 .dynamiclisteditor_widget .checkbox {
-    padding: 1px;
+    padding: 2px;
 }
 
 .dynamiclisteditor_widget .checkbox input {
@@ -254,3 +254,7 @@
 }
 
 .dynamiclisteditor_widget .invalid_span { padding-left: 10px; color: #CC0000; font-weight: bold; }
+
+#list_name {
+    width: 17em;
+}

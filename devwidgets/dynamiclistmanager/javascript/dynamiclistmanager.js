@@ -36,6 +36,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         // Configuration variables //
         /////////////////////////////
 
+        var LISTS_PER_PAGE = 10;
+
+        var currentPage = 0;
+
         /**
          * Hashtable of all the lists
          */
@@ -86,6 +90,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var $dynListsCreateButtonContainer = $("#dlm_create_button_multiple_choice_container");
 
         var $tableOfLists = $("#list_table");
+
+        var list_pager = $("#list_pager", $rootElement);
 
         //////////////////////////
         // UI related functions //
@@ -147,7 +153,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             var listsArray = [];
             for(var key in allLists){
                 if(allLists.hasOwnProperty(key)) {
-                    listsArray.push(allLists[key]);
+                    if ( key.substr(0, 3) === "dl-") {
+                        listsArray.push(allLists[key]);
+                    }
                 }
             }
             listsArray.sort(sortByDateFunction);
@@ -177,21 +185,31 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
           var num = getNumberOfSelectedLists();
           if(num === 0) {
               $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsEditButton.addClass("disabled");
               $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.addClass("disabled");
               $dynListsDeleteButton.attr('disabled', 'disabled');
+              $dynListsDeleteButton.addClass("disabled");
           } else if(num === 1){
               $dynListsEditButton.removeAttr('disabled');
+              $dynListsEditButton.removeClass("disabled");
               $dynListsCopyButton.removeAttr('disabled');
+              $dynListsCopyButton.removeClass("disabled");
               $dynListsDeleteButton.removeAttr('disabled');
+              $dynListsDeleteButton.removeClass("disabled");
           } else if(num > 1){
               $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsEditButton.addClass("disabled");
               $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.addClass("disabled");
               $dynListsDeleteButton.removeAttr('disabled');
+              $dynListsDeleteButton.removeClass("disabled");
           }
         };
 
         var loadDynamicListsFromServer = function() {
-            sakai.api.Server.loadJSON(dynamicListsBaseUrl, function(success, data) {
+            var url = dynamicListsBaseUrl + ".1.json?items=" + LISTS_PER_PAGE + "&page=" + currentPage;
+            sakai.api.Server.loadJSON(url, function(success, data) {
                 if (success) {
                     allLists = data;
                     displayLoadedLists();
@@ -200,12 +218,31 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     displayLoadedLists();
                 }
 
+                // only show pager if needed
+                if (data.total > LISTS_PER_PAGE) {
+                    // pagenumber is 1-indexed, currentPage is 0-indexed
+                    list_pager.pager({ pagenumber: currentPage+1, pagecount: Math.ceil(data.total/LISTS_PER_PAGE), buttonClickCallback: handlePageClick });
+                    list_pager.show();
+                } else {
+                    currentPage = 0;
+                    list_pager.hide();
+                }
+
                 // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
                 $("div.dynamiclistmanager_widget", $rootElement).show();
 
             });
         };
 
+        /**
+         * Handle click on paging controls, the pager callback function
+         */
+        var handlePageClick = function(pageNum) {
+            if (pageNum-1 !== currentPage) {
+                currentPage = pageNum-1;
+            }
+            loadDynamicListsFromServer();
+        };
 
         ////////////////////////////
         // Dynamic lists deletion //

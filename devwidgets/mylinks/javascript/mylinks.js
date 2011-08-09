@@ -50,7 +50,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                         },
                         "link-url" : {
                             required : true,
-                            url : true
+                            url : true,
+                            appendhttp : true
                         }
                     }
                 });
@@ -91,6 +92,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             linkTitleInput.attr("value", "").removeClass("error");
             linkUrlInput.attr("value", "").removeClass("error");
             $("label.error").hide();
+            addLinkButton.removeClass("disabled");
+            saveLinkButton.removeClass("disabled");
         };
 
         var enterAddMode = function() {
@@ -116,8 +119,13 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var saveLink = function() {
+            if ( addLinkButton.is(".disabled")) {
+                return;
+            }
             var isValid = validator.form();
             if (isValid) {
+                addLinkButton.addClass("disabled");
+                saveLinkButton.addClass("disabled");
                 var index = currentLinkIndex;
                 if (index === null) {
                     index = userLinkData.links.length;
