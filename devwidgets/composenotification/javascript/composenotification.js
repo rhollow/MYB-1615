@@ -303,6 +303,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var resetForm = function() {
 
+            currentMessageId = null;
+            currentMessage = null;
+
             $(".compose-form-elm", $rootElement).each(function() {
                 clearElement(this);
             });
@@ -859,9 +862,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 } else {
                     toPost.calendarWrapper.icalData.SUMMARY = translate("COPY_OF") + " " + toPost.calendarWrapper.icalData.SUMMARY;
                 }
+                // A copy shouldn't have an id
 
             } else {
                 // Are we modifying an existing notification?
+                // When creating a new message currentMessageId is null
                 if (currentMessageId !== null) {
                     toPost.id = currentMessageId;
 
@@ -1010,7 +1015,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         $("#cn-cancel-button,#cn-editdraft-cancel-button,#cn-queueview-cancel-button,#cn-archiveview-cancel-button,#cn-trashview-cancel-button", $rootElement).click(function() {
             $.bbq.removeState(['new', 'edit']);
-            //return false;
         });
 
         // Moving message from queue to drafts...
@@ -1186,6 +1190,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             if(state.hasOwnProperty("new")) {
+
                 resetForm();
 
                 dynamicListInit(null);
