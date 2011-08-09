@@ -20,6 +20,7 @@
 .dynamiclistmanager_widget .main_content_container {
     border: 3px solid #d5dbdf;
     min-height: 300px;
+    height: 300px;
     padding-bottom: 10px;
 }
 
