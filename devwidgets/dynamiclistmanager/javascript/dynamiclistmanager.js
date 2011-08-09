@@ -238,9 +238,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Handle click on paging controls, the pager callback function
          */
         var handlePageClick = function(pageNum) {
-            if (pageNum-1 !== currentPage) {
-                currentPage = pageNum-1;
-            }
+            currentPage = pageNum - 1;
+            $.bbq.pushState({"currentPage": currentPage});
             loadDynamicListsFromServer();
         };
 
@@ -415,6 +414,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             if (!(state.hasOwnProperty("l") && state.l === "dynlists")) {
                 return;
+            }
+
+            if ( state.hasOwnProperty("currentPage")) {
+                currentPage = parseInt(state.currentPage);
             }
 
             if (state.hasOwnProperty("new") || state.hasOwnProperty("edit") || state.hasOwnProperty("cp")) {
