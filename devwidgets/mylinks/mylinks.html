@@ -26,13 +26,13 @@
                   {var i = 0}
   
                     {for link in section.links}
-  
+                        {var popText = section.isEditable ? link.url : link.popup_description}
                       <li class="link featuredcontent_content featuredcontent_content_medium">
                           <a href="${link.url}"
                             id="${link.id}"
                             target="_blank"
                             class="s3d-widget-links"
-                            title="${link.popup_description}">${link.name|default:"no name"}</a>
+                            title="${popText}">${link.name|default:"no name"}</a>
                             {if section.isEditable}
                               <div class="edit_buttons">
                                 <div class="icon_button delete_icon" id="mylinks_delete_${i}"><span class="fl-offScreen-hidden">Delete link: ${link.name|default:"no name"}</div>
