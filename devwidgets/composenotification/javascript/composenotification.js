@@ -184,13 +184,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * Shows a general message on the top screen.
          * @param {String} msg The message you want to display.
          * @param {Boolean} isError True for error (red block) or false for normal message(green block).
+         * @param {String} title Message title to display.
          */
-        var showGeneralMessage = function(msg, isError) {
+        var showGeneralMessage = function(msg, isError, title) {
             // Check whether to show an error type message or an information one.
             var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
 
             // Show the message to the user.
-            sakai.api.Util.notification.show("", msg, type);
+            sakai.api.Util.notification.show(title? title : "", msg, type);
         };
 
         /**
@@ -221,7 +222,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         };
 
         /**
-         * Removes invalidClass from all elements that are currently within that class.
+         * Removes errors from all elements
          */
         var clearInvalids = function() {
             // HACK: jQuery validation plugin's resetForm calls jQuery's resetForm method which in turn calls form's reset method,
@@ -942,7 +943,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     postNotification(saveData("drafts", readyForQueue), switchToDynamicListsCreationWidget, false, null);
                 });
             } else {
-                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
+                showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
             }
         });
 
@@ -964,7 +965,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
                 });
             } else {
-                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
+                showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
             }
         });
 
@@ -981,7 +982,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     postNotification(saveData("drafts", readyForQueue), backToDrafts, false, translate("SAVE"));
                 });
             } else {
-                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
+                showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
             }
         });
 
@@ -1003,7 +1004,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
                 });
             } else {
-                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
+                showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
             }
         });
 
@@ -1018,7 +1019,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     postNotification(saveData("drafts", true), backToDrafts, false, translate("SAVE"));
                 });
             } else {
-                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
+                showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
             }
         });
 

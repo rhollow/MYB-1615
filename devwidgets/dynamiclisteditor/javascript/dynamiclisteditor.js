@@ -79,6 +79,19 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var lastUsedCriteriaString = "";
 
+        /**
+         * Number of students targeted by the last criteria string
+          */
+        var lastNumberOfTargetedStudents = 0;
+
+        var validatorObj = null;
+
+        /**
+         * The overlay transparency as a percentage. If 0 the overlay is disabled, and the page will remain interactive.
+         * If 100 the overlay will be 100% opaque.
+         */
+        var dialogOverlayTransparency = 20;
+
 
         //////////////////////
         // jQuery selectors //
@@ -89,6 +102,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var $rootElement = $("#" + tuid);
 
+        var $formElement = $("#dyn-list-form", $rootElement); // Used for validation
 
         // View to render the template for sections A and B
         var $view = $("#view", $rootElement);
@@ -173,6 +187,20 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var $studentRegStatusSubGroup = $(".student_reg_status .sub_group", $sectionC);
         var $specialProgramSpecifiedStudents = $("#special_program_specified_students", $sectionC);
         var $specialPrograms = $(".special_programs", $sectionC);
+
+        var $noStudentsWarningDialogSaveButton = $("#dialog-save-button", $rootElement);
+
+        /**
+          * For dialog-overlay to remind user to save their draft.
+          * (When user clicks on 'Create New DyNamic List' button.)
+          */
+         var $noStudentsWarningDialog = $("#no_students_warning_dialog", $rootElement).jqm({
+             modal: true,
+             overlay: dialogOverlayTransparency,
+             toTop: true,
+             onShow: null
+         }).css("position", "absolute").css("top", "250px");
+
 
         ////////////////////////////////////////////////////////////////////////
         // Functions for gathering the information about the selected options //
@@ -456,6 +484,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
 
             lastUsedCriteriaString = "";
+            lastNumberOfTargetedStudents = 0;
 
 
             hideSectionC();
@@ -523,6 +552,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             }
 
             lastUsedCriteriaString = criteriaString;
+            lastNumberOfTargetedStudents = 0;
 
             $.ajax({
                 url: dynamicListContextUrl + ".json",
@@ -537,7 +567,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                   } else {
                     $studentsTargetedByCurrentList.addClass("noStudentsTargeted");
                   }
-                  $studentsTargetedByCurrentList.text(data.count);
+                  lastNumberOfTargetedStudents = data.count;
+
+                  $studentsTargetedByCurrentList.text(lastNumberOfTargetedStudents);
                 },
                 error: function() {
                   $studentsTargetedByCurrentList.addClass("noStudentsTargeted").text("N/A");
@@ -795,6 +827,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             currentList = null;
             currentListId = null;
 
+            clearInvalids();
+
             $listName.val("");
             $description.val("");
 
@@ -831,23 +865,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 }
             });
         };
-
-
-        /*
-        *
-        *
-        * if(jqXHR.status === 404) {
-                        // We don't have dynamic lists node, create it
-                        createEmptyRootNodeForDynamicLists();
-                    } else {
-                        // Anything else is an error
-                        showGeneralMessage(translate("THE_LIST_COULD_NOT_BE_LOADED"), true);
-                    }
-        *
-        *
-        * */
-
-
 
 
         //////////////////////////
@@ -899,13 +916,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         var validateUserInput = function() {
-            var listName = $.trim($listName.val());
-            if (listName === null || listName === "") {
-                $("#invalid_name", $rootElement).show();
-                return false;
-            }
-
-            return true;
+            return validatorObj.form();
         };
 
         var getDataFromInput = function() {
@@ -914,9 +925,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             result.context = dynamicListContext.name;
             result.listName = $.trim($listName.val());
             result.desc = $.trim($description.val());
-
-            // Gathering the data on standing
-            //TODO: check for errors
 
             result.criteria = buildCriteriaStringFromListEditingForm();
 
@@ -968,8 +976,26 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     $.bbq.removeState(["new","cp","edit","context"]);
                 });
             });
+        };
 
+        /**
+         * Gathers all data from current form and calls the save list function with the appropriate arguments.
+         */
+        var getDataAndSaveList = function() {
 
+            $dynListsSaveButton.addClass("disabled");
+
+            var data = getDataFromInput();
+
+            var state = $.bbq.getState();
+
+            if(state.hasOwnProperty("edit") ) {
+                saveList(data, state.edit);
+            } else if(state.hasOwnProperty("new")) {
+                saveList(data, null);
+            } else if(state.hasOwnProperty("cp")) {
+                saveList(data, null);
+            }
 
         };
 
@@ -1022,13 +1048,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         // Click handlers //
         ////////////////////
 
-        $dynListsCancelEditingButton.live("click", function(){
+        $dynListsCancelEditingButton.click(function(){
             $.bbq.removeState(["new","cp","edit","context"]);
         });
 
-        $dynListsSaveButton.live("click", function(){
-            $("#invalid_name").hide();
-            $("#invalid_major").hide();
+
+        // Event handler for when user clicks on warning dialog's "Save" button.
+        $noStudentsWarningDialogSaveButton.click(function() {
+            $noStudentsWarningDialog.jqmHide();
+            getDataAndSaveList();
+        });
+
+        $dynListsSaveButton.click(function(){
 
             if(!validateUserInput()) {
                 return;
@@ -1038,22 +1069,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 // prevent double-clicking of save button
                 return;
             }
-            $dynListsSaveButton.addClass("disabled");
 
-            var data = getDataFromInput();
-
-            // In IE browser jQuery.trim() function doesn't work this way $('#selector').text().trim()
-            // It should be called like this $.trim($('#selector').text())
-            // See http://bit.ly/d8mDx2
-
-            var state = $.bbq.getState();
-
-            if(state.hasOwnProperty("edit") ) {
-                saveList(data, state.edit);
-            } else if(state.hasOwnProperty("new")) {
-                saveList(data, null);
-            } else if(state.hasOwnProperty("cp")) {
-                saveList(data, null);
+            if (lastNumberOfTargetedStudents > 0) {
+                getDataAndSaveList();
+            } else {
+                $noStudentsWarningDialog.jqmShow();
             }
         });
 
@@ -1369,13 +1389,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             if (state.hasOwnProperty("new")) {
 
-
-
                 resetForm();
 
                 loadTemplate();
-
-                //resetListEditingForm();
 
                 // When only undergraduates or graduates data exists in the template, we need to update the users count.
                 // This is necessary because include undergrads/grads checkbox is checked by default in this case, but hidden.
@@ -1449,6 +1465,42 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             //console.log("pattern = " + pattern);
             dynamicListContextAllowed = new RegExp(pattern);
         };
+
+
+
+        var clearInvalids = function() {
+            $("label.error", $rootElement).hide();
+            $(".error", $rootElement).removeClass("error");
+        };
+
+        var validationErrorPlacement = function(error, element) {
+            var elName = element.attr("name");
+            switch(elName) {
+                default:
+                    error.insertAfter(element);
+                break;
+            }
+        };
+
+        var errorMessages = {
+			list_name: translate("PLEASE_ENTER_A_NAME_FOR_THIS_LIST")
+		};
+
+        var setupValidation = function($frm, errorPlacement) {
+            var validator = $frm.validate({
+                debug: true,
+                messages: errorMessages
+                /*errorPlacement: errorPlacement,*/
+                /*groups: validationGroups*/
+            });
+            return validator;
+        };
+
+
+
+
+
+
         
         /////////////////////////////
         // Initialization function //
@@ -1470,12 +1522,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             populateDesignateTermYear();
 
-            // this is needed for the situation when we reload this page with some hash parameter, like #new
-            //resetListEditingForm();
-
             dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
-            //loadDynamicListsFromServer();
+            validatorObj = setupValidation($formElement, validationErrorPlacement);
+
             setState();
 
         };
