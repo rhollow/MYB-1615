@@ -158,9 +158,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     }
                 }
             }
+            
             listsArray.sort(sortByDateFunction);
-
-
 
             var data = {
                 links: listsArray, //allLists,
@@ -172,14 +171,31 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             // Add them to the DOM
             $tableOfLists.children("tbody").append(sakai.api.Util.TemplateRenderer("#list_list_lists_template", data));
-
+            /**
+            * uses OEA applyThreeDots function to force the width of the object used for truncation
+            */
+            var truncateElemText = function(containerSelector, widthAdjustment, numRows, wholeWordBool) {
+                widthAdjustment = (widthAdjustment) ? Number(widthAdjustment) : 0;
+                numRows = (numRows) ? Number(numRows) : 1;
+                var jQElements = $(containerSelector, $rootElement);
+                var theWidth = jQElements.eq(0).innerWidth() + widthAdjustment;
+                var currElem = {};
+                $(jQElements).each(function () {
+                    currElem = $(this);
+                    currElem.text(sakai.api.Util.applyThreeDots(currElem.text(), theWidth, {max_rows: numRows, whole_word: wholeWordBool}));
+                });
+            };
+ 
             // do checkboxes
             tickMessages();
+            
+            // apply threedots truncation of list names
+            truncateElemText("td.s3s-dynamiclist-name a", -10, 2, false);
         };
 
         var getNumberOfSelectedLists = function() {
             return $(".list_list_check_list:checked").length;
-           };
+        };
 
         var updateEditCopyDeleteButtonsStatus = function() {
           var num = getNumberOfSelectedLists();
