@@ -276,8 +276,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             // Remember the type we want to see.
             selectedType = type;
 
-            currentPage = 0;
-
             // Display the first page of msgs.
             showPage();
 
@@ -598,9 +596,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          * Handle click on paging controls, the pager callback function
          */
         var handlePageClick = function(pageNum) {
-            if (pageNum-1 !== currentPage) {
-                currentPage = pageNum-1;
-            }
+            currentPage = pageNum - 1;
+            $.bbq.pushState({"currentPage": currentPage});
             getAllMessages();
         };
 
@@ -1110,6 +1107,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             var box;
             if (state.hasOwnProperty("l")) {
                 box = state.l;
+            }
+
+            if (state.hasOwnProperty("currentPage")) {
+                currentPage = parseInt(state.currentPage);
+            } else {
+                currentPage = 0;
             }
 
             if (box === "notifications/drafts") {

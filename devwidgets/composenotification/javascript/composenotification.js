@@ -64,10 +64,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var isDirty = false;
 
-        /**
-         * Invalid class for field validation.
-         */
-        var invalidClass = "composenotification_invalid";
 
         /**
          *
@@ -113,6 +109,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         var datePickerButtonImageUrl = "/devwidgets/composenotification/images/calendar_icon.gif";
 
+        var validatorObj = null;
+
+        var fadeOutTimeMs = 300;
 
          //////////////////////
         // jQuery selectors //
@@ -123,12 +122,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var $rootElement = $("#" + tuid);
 
+        var $formElement = $(".compose-form", $rootElement); // Used for validation
+
         var $messageFieldType = $("#cn-notification-type", $rootElement);
         var $messageFieldRequiredCheck = $("#composenotification_required", $rootElement);
         var $messageRequiredYes = $("#cn-requiredyes", $rootElement);
         var $messageRequiredNo = $("#cn-requiredno", $rootElement);
         var $messageFieldSendDate = $("#datepicker-senddate-text", $rootElement);
-        var $messageFieldTo = $("#cn-dynamiclistselect", $rootElement);
+        var $messageFieldDynamicList = $("#cn-dynamiclistselect", $rootElement);
         var $messageFieldSubject = $("#cn-subject", $rootElement);
         var $messageFieldBody = $("#cn-body", $rootElement);
         var $messageTaskDueDate = $("#datepicker-taskduedate-text", $rootElement);
@@ -223,7 +224,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * Removes invalidClass from all elements that are currently within that class.
          */
         var clearInvalids = function() {
-            $("." + invalidClass, $rootElement).removeClass(invalidClass);
+            // HACK: jQuery validation plugin's resetForm calls jQuery's resetForm method which in turn calls form's reset method,
+            // this causes problems in our code because it resets all elements to their default values.
+            // We don't need such behavior. Just hide all errors instead.
+            $("label.error", $rootElement).hide();
+            $(".error", $rootElement).removeClass("error");
         };
 
         /**
@@ -298,12 +303,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var resetForm = function() {
 
+            currentMessageId = null;
+            currentMessage = null;
+
             $(".compose-form-elm", $rootElement).each(function() {
                 clearElement(this);
             });
 
             clearInvalids();
-
+            applyDraftValidationRules();
             hideAllButtonLists();
 
             $messageFieldType.val("task");
@@ -315,7 +323,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             notificationTypeInit("task");
 
             // Resetting dynamic lists
-            $messageFieldTo.empty();
+            $messageFieldDynamicList.empty();
 
             isDirty = false;
 
@@ -377,7 +385,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 }
 
                 // Clear any old values and then append the new dynamic list options.          
-                $messageFieldTo.empty().append(optionsHTML);
+                $messageFieldDynamicList.empty().append(optionsHTML);
             });
         };
 
@@ -411,7 +419,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function() {
-                $messageFieldSendDate.removeClass(invalidClass);
+                if(validatorObj){
+                    validatorObj.element($messageFieldSendDate);
+                    // validity of Task Due Date depends on Send Date, recheck it
+                    validatorObj.element($messageTaskDueDate);
+                }
                 isDirty = true;
             } // Clearing validation errors
         });
@@ -422,7 +434,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function() {
-                $messageTaskDueDate.removeClass(invalidClass);
+                if(validatorObj){validatorObj.element($messageTaskDueDate);}
                 isDirty = true;
             } // Clearing validation errors
         });
@@ -433,7 +445,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             buttonImageOnly: true,
             buttonText: 'Click to pick a date.',
             onSelect: function() {
-                $messageEventDate.removeClass(invalidClass);
+                if(validatorObj){validatorObj.element($messageEventDate);}
                 isDirty = true;
             } // Clearing validation errors
         });
@@ -446,6 +458,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // Return to drafts panel.
         var backToDrafts = function () {
             $.bbq.pushState({l: "notifications/drafts"}, 2);
+        };
+
+        // Return to drafts and open current message for editing there
+        var editCurrentDraft = function() {
+            $.bbq.pushState({l:"notifications/drafts", edit: currentMessageId}, 2);
         };
 
         // Return to queue panel.
@@ -555,7 +572,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         /**
          * Fill in the notification detail page with the message's information.
          */
-        var fillInMessage = function(callback) {
+        var fillInMessage = function() {
 
             // Fill out all the common fields.
             if (currentMessage["sendDate"] != null && currentMessage["sendDate"] !== "null") {
@@ -584,10 +601,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 default:
                     break;
             }
-
-            if ($.isFunction(callback)) {
-                callback(true);
-            }
         };
 
         /**
@@ -609,7 +622,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     reenableView();
 
                     // Fill out the proper information.
-                    fillInMessage(checkFieldsForErrors(false));
+                    fillInMessage();
 
                     // Show the proper button list
                     $("#editdraft-buttons", $rootElement).show();
@@ -622,7 +635,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     disableView();
 
                     // Now fill out the proper information.
-                    fillInMessage(null);
+                    fillInMessage();
 
                     // Display the proper buttons.
                     $("#queueview-buttons", $rootElement).show();
@@ -635,7 +648,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     disableView();
 
                     // Now fill out the proper information.
-                    fillInMessage(null);
+                    fillInMessage();
 
                     // Display the proper buttons.
                     $("#archiveview-buttons", $rootElement).show();
@@ -646,7 +659,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     $widgetTitle.text(translate("WIDGET_TITLE_VIEW_NOTIFICATION"));
 
                     // Now fill out the proper information.
-                    fillInMessage(null);
+                    fillInMessage();
 
                     // And disable the form, disallowing the user to edit.
                     disableView();
@@ -688,219 +701,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                     showGeneralMessage(translate("THE_MESSAGE_COULD_NOT_BE_LOADED"), true);
                 }
             });
-        };
-
-
-
-        //////////////////////////
-        // Validation functions //
-        //////////////////////////
-
-        /**
-         * Checks if adate can be parsed
-         */
-        var isValidDate = function(strDate) {
-            if(!strDate) {
-                return false;
-            }
-            var d = Globalize.parseDate(strDate, ["MM/dd/yyyy", "M/d/yyyy"]);
-            return d !== null;
-        };
-
-        /**
-         * This method will check if there are any required fields that are not filled in.
-         * If a field is not filled in the invalidClass will be added to that field.
-         * Returns a boolean that determines if the fields are valid or not.
-         * @param {boolean} displayErrors Do we need to display errors or just do a check?
-         * @return valid True = no errors, false = errors found.
-         */
-        var checkFieldsForErrors = function(displayErrors) {
-            var valid = true;
-            var today = new Date(); // full today's date
-            var month = today.getMonth();
-            var day = today.getDate();
-            var year = today.getFullYear();
-            var modtoday = new Date(year, month, day); // today's date with 00:00:00 time
-
-            // Collect the values of each of the elements that require validation.
-            var requiredYes = $messageRequiredYes.attr("checked");
-            var requiredNo = $messageRequiredNo.attr("checked");
-            var sendDate = $messageFieldSendDate.val();
-            var sendTo = $messageFieldTo.val();
-            var subject = $messageFieldSubject.val();
-            var body = $messageFieldBody.val();
-            var taskDueDate = $messageTaskDueDate.val();
-            var eventDate = $messageEventDate.val();
-            var eventTimeHour = $messageEventTimeHour.val();
-            var eventTimeMinute = $messageEventTimeMinute.val();
-            var eventTimeAMPM = $messageEventTimeAMPM.val();
-            var eventPlace = $messageEventPlace.val();
-
-            var sendDateObj = $($messageFieldSendDate).datepicker("getDate");
-            var taskDueDateObj = $($messageTaskDueDate).datepicker("getDate");
-            var eventDateObj = $($messageEventDate).datepicker("getDate");
-
-            // Remove the invalidClass from each element first.
-            if (displayErrors) clearInvalids();
-
-            // Check for invalid values.
-            if (!requiredYes && !requiredNo) {
-                if (!displayErrors) return false;
-                valid = false;
-                $(".right", $messageFieldRequiredCheck).addClass(invalidClass);
-            }
-            if (!sendDate) {
-                if (!displayErrors) return false;
-                valid = false;
-                $messageFieldSendDate.addClass(invalidClass);
-            }
-            else {
-                if(!isValidDate(sendDate)) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    $messageFieldSendDate.addClass(invalidClass);
-                } else if (modtoday > sendDateObj) {
-                    if (!displayErrors) return false;
-                    valid = false;
-                    $messageFieldSendDate.addClass(invalidClass);
-                }
-            }
-
-
-
-            if (!sendTo) {
-                if (!displayErrors) return false;
-                valid = false;
-                $messageFieldTo.addClass(invalidClass);
-            }
-
-            if (!subject) {
-                if (!displayErrors) return false;
-                valid = false;
-                $messageFieldSubject.addClass(invalidClass);
-            }
-            if (!body) {
-                if (!displayErrors) return false;
-                valid = false;
-                $messageFieldBody.addClass(invalidClass);
-            }
-
-
-            var type = $messageFieldType.val();
-
-            switch(type) {
-                case "task":
-                    if (!taskDueDate) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageTaskDueDate.addClass(invalidClass);
-                    }
-                    else {
-                        if(!isValidDate(taskDueDate)) {
-                            if (!displayErrors) return false;
-                            valid = false;
-                            $messageTaskDueDate.addClass(invalidClass);
-                        } else if (modtoday > taskDueDateObj) {
-                            if (!displayErrors) return false;
-                            valid = false;
-                            $messageTaskDueDate.addClass(invalidClass);
-                        }
-                        else if (sendDateObj > taskDueDateObj) {
-                            if (!displayErrors) return false;
-                            valid = false;
-                            $messageTaskDueDate.addClass(invalidClass);
-                        }
-                    }
-                    break;
-
-                case "event":
-                    if (!eventDate) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageEventDate.addClass(invalidClass);
-                    }
-                    else {
-                        if(!isValidDate(eventDate)) {
-                            if (!displayErrors) return false;
-                            valid = false;
-                            $messageEventDate.addClass(invalidClass);
-                        } else if (modtoday > eventDateObj) {
-                            if (!displayErrors) return false;
-                            valid = false;
-                            $messageEventDate.addClass(invalidClass);
-                        }
-                        else if (sendDateObj > eventDateObj) {
-                            if (!displayErrors) return false;
-                            valid = false;
-                            $messageEventDate.addClass(invalidClass);
-                        }
-                        else {
-                            // If the event date is today, check that the time hasn't already passed.
-                            if ((eventDateObj.getTime() - modtoday.getTime()) === 0) {
-                                if (eventTimeHour && eventTimeMinute && eventTimeAMPM) {
-                                    var compareToHour = parseInt(eventTimeHour);
-                                    var compareToMin = parseInt(eventTimeMinute);
-
-                                    // Convert to military time.
-                                    if (eventTimeAMPM == "PM") {
-                                        if (compareToHour < 12) {
-                                            compareToHour += 12;
-                                        }
-                                    }
-
-                                    eventDateObj.setHours(compareToHour);
-                                    eventDateObj.setMinutes(compareToMin);
-
-                                    // If the event is today and the time of the event has already passed...
-                                    if (today.getTime() > eventDateObj.getTime()) {
-                                        if (!displayErrors) return false;
-                                        valid = false;
-                                        $messageEventTimeHour.addClass(invalidClass);
-                                        $messageEventTimeMinute.addClass(invalidClass);
-                                        $messageEventTimeAMPM.addClass(invalidClass);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!eventTimeHour) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageEventTimeHour.addClass(invalidClass);
-                    }
-                    if (!eventTimeMinute) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageEventTimeMinute.addClass(invalidClass);
-                    }
-                    if (!eventTimeAMPM) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageEventTimeAMPM.addClass(invalidClass);
-                    }
-                    if (!eventPlace) {
-                        if (!displayErrors) return false;
-                        valid = false;
-                        $messageEventPlace.addClass(invalidClass);
-                    }
-
-                    break;
-
-                case "message":
-                     //TODO: Add validation for messages
-
-                default:
-
-                    break;
-            }
-
-            // Displays an error message if displayErrors is true and valid is false.
-            if (!valid && displayErrors) {
-                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
-            }
-
-            // Return the status of the form.
-            return valid;
         };
 
 
@@ -981,7 +781,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          */
         var saveData = function(box, isValidated) {
             // Filling out all common fields.
-            var msgTo = $messageFieldTo.val() || "";
+            var msgTo = $messageFieldDynamicList.val() || "";
 
             var toPost = {
                 "dynamicListID": msgTo,
@@ -1043,11 +843,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * is null (and therefore has a valid id) or not.
          * @param {Object} toPost Message to post; usually created via saveData() function.
          * @param {Object} successCallback (optional) Function to call if successful post; usually redirect function.
-         * @param {String} original (optional) The original message, if this is an update.
          * @param {boolean} copyCheck (optional) Are we copying? If we are, we need to append "Copy to" to the subject.
          * @param {String} msgTxt String to be used in the popup message text indicating success or failure.
          */
-        var postNotification = function (toPost, successCallback, original, copyCheck, msgTxt) {
+        var postNotification = function (toPost, successCallback, copyCheck, msgTxt) {
 
             // don't save twice if user is rapidly double-clicking
             if (!saveEnabled) {
@@ -1065,13 +864,15 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 } else {
                     toPost.calendarWrapper.icalData.SUMMARY = translate("COPY_OF") + " " + toPost.calendarWrapper.icalData.SUMMARY;
                 }
+                // A copy shouldn't have an id
 
-            }
+            } else {
+                // Are we modifying an existing notification?
+                // When creating a new message currentMessageId is null
+                if (currentMessageId !== null) {
+                    toPost.id = currentMessageId;
 
-            // Are we modifying an existing notification?
-            if (original !== null) {
-                toPost.id = original.id;
-
+                }
             }
 
             // Post all the data in an Ajax call.
@@ -1120,21 +921,28 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Copying message to drafts...
         $("#cn-archivecopytodrafts-button", $rootElement).click(function() {
-            postNotification(saveData("drafts", true), backToArchive, null, true, translate("COPY"));
+            $rootElement.fadeOut(fadeOutTimeMs, function () {
+                postNotification(saveData("drafts", true), backToArchive, true, translate("COPY"));
+            });
         });
 
         // Event handler for when user clicks on DLC "Save" button.
         $("#dlc-save", $rootElement).click(function() {
-
             $saveReminderDialog.jqmHide();
 
-            // Check that the subject field isn't empty before saving
-            if ($messageFieldSubject.val() === "") {
-                // If subject field is empty, cancel jqm dialog and highlight subject field.
-                $messageFieldSubject.addClass(invalidClass);
+            clearInvalids();
+            applyDraftValidationRules();
+
+            if(validatorObj.form()) {
+
+                applyQueueValidationRules();
+
+                $rootElement.fadeOut(fadeOutTimeMs, function () {
+                    var readyForQueue = validatorObj.form();
+                    postNotification(saveData("drafts", readyForQueue), switchToDynamicListsCreationWidget, false, null);
+                });
             } else {
-                // Save the draft.
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), switchToDynamicListsCreationWidget, currentMessage, null, null);
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
@@ -1148,60 +956,108 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Queueing this draft...
         $("#cn-queuedraft-button", $rootElement).click(function() {
-            if (checkFieldsForErrors(true)) {
-                postNotification(saveData("queue", true), backToDrafts, currentMessage, null, translate("QUEUE"));
+            clearInvalids();
+            applyQueueValidationRules();
+
+            if (validatorObj.form()) {
+                $rootElement.fadeOut(fadeOutTimeMs, function () {
+                    postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
+                });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
         // Updating and re-saving this draft...
         $("#cn-updatedraft-button", $rootElement).click(function() {
-            postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, currentMessage, null, translate("SAVE"));
+            clearInvalids();
+            applyDraftValidationRules();
+
+            if (validatorObj.form()) {
+                applyQueueValidationRules();
+
+                $rootElement.fadeOut(fadeOutTimeMs, function () {
+                    var readyForQueue = validatorObj.form();
+                    postNotification(saveData("drafts", readyForQueue), backToDrafts, false, translate("SAVE"));
+                });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
+            }
         });
 
         // Deleting the draft...
         $("#cn-deletedraft-button", $rootElement).click(function() {
-            postNotification(saveData("trash", false), backToDrafts, currentMessage, null, translate("DELETE"));
+            $rootElement.fadeOut(fadeOutTimeMs, function () {
+                postNotification(saveData("trash", false), backToDrafts, false, translate("DELETE"));
+            });
         });
 
         // When someone clicks on the 'Queue' button from base panel.
         $("#cn-queue-button", $rootElement).click(function() {
-            if (checkFieldsForErrors(true)) {
-                postNotification(saveData("queue", true), backToDrafts, null, null, translate("QUEUE"));
+
+            clearInvalids();
+            applyQueueValidationRules();
+
+            if (validatorObj.form()) {
+                $rootElement.fadeOut(fadeOutTimeMs, function () {
+                    postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
+                });
+            } else {
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
         // When someone clicks on the 'Save as Draft' button from base panel.
         $("#cn-saveasdraft-button", $rootElement).click(function() {
-            if ($messageFieldSubject.val() === "") {
-                $messageFieldSubject.addClass(invalidClass);
+
+            clearInvalids();
+            applyDraftValidationRules();
+
+            if (validatorObj.form()) {
+                $rootElement.fadeOut(fadeOutTimeMs, function () {
+                    postNotification(saveData("drafts", true), backToDrafts, false, translate("SAVE"));
+                });
             } else {
-                postNotification(saveData("drafts", checkFieldsForErrors(false)), backToDrafts, null, null, translate("SAVE"));
+                showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
             }
         });
 
         $("#cn-cancel-button,#cn-editdraft-cancel-button,#cn-queueview-cancel-button,#cn-archiveview-cancel-button,#cn-trashview-cancel-button", $rootElement).click(function() {
             $.bbq.removeState(['new', 'edit']);
-            //return false;
         });
 
         // Moving message from queue to drafts...
         $("#cn-movetodrafts-button", $rootElement).click(function() {
-            postNotification(saveData("drafts", true), backToQueue, currentMessage, null, translate("MOVE"));
+            $rootElement.fadeOut(fadeOutTimeMs, function () {
+                postNotification(saveData("drafts", true), backToQueue, false, translate("MOVE"));
+            });
         });
 
         // Copying message to drafts...
         $("#cn-queuecopytodrafts-button", $rootElement).click(function() {
-            postNotification(saveData("drafts", true), backToQueue, null, true, translate("COPY"));
+            $rootElement.fadeOut(fadeOutTimeMs, function () {
+                postNotification(saveData("drafts", true), backToQueue, true, translate("COPY"));
+            });
         });
 
         // Deleting message...
         $("#cn-deletequeued-button", $rootElement).click(function() {
-            postNotification(saveData("trash", false), backToQueue, currentMessage, null, translate("DELETE"));
+            $rootElement.fadeOut(fadeOutTimeMs, function () {
+                postNotification(saveData("trash", false), backToQueue, false, translate("DELETE"));
+            });
         });
 
         // Enable editing of message (move it to drafts and re-initialise widget).
         $("#cn-editrashed-button", $rootElement).click(function() {
-            postNotification(saveData("drafts", checkFieldsForErrors(false)), loadNotification("drafts", currentMessageId), currentMessage, false, null);
+
+            applyQueueValidationRules();
+
+            $rootElement.fadeOut(fadeOutTimeMs, function () {
+                var readyForQueue = validatorObj.form();
+                postNotification(saveData("drafts", readyForQueue), editCurrentDraft, false, null);
+
+            });
+
         });
 
         // Hard delete this message (delete it from the trash).
@@ -1240,111 +1096,89 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         ///////////////////////////////
 
         $messageRequiredNo.change(function() {
-            // Clearing validation errors
-            $("#composenotification_required .right", $rootElement).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageRequiredYes.change(function() {
-            // Clearing validation errors
-            $("#composenotification_required .right", $rootElement).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageFieldSendDate.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
         $messageFieldSendDate.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageTaskDueDate.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
         $messageTaskDueDate.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageEventDate.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageEventDate.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageFieldSubject.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageFieldSubject.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageFieldBody.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageFieldBody.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageEventPlace.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
         $messageEventPlace.keypress(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
             isDirty = true;
         });
 
-        $messageFieldTo.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
+        $messageFieldDynamicList.change(function() {
             isDirty = true;
         });
 
         $messageEventTimeHour.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
+            if(validatorObj) {
+                // validity of Event Date depends on Send Date, recheck it
+                validatorObj.element($messageEventDate);
+            }
+
             isDirty = true;
         });
 
         $messageEventTimeMinute.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
+            if(validatorObj) {
+                // validity of Event Date depends on Send Date, recheck it
+                validatorObj.element($messageEventDate);
+            }
+
             isDirty = true;
         });
 
         $messageEventTimeAMPM.change(function() {
-            // Clearing validation errors
-            $(this).removeClass(invalidClass);
+            if(validatorObj) {
+                // validity of Event Date depends on Send Date, recheck it
+                validatorObj.element($messageEventDate);
+            }
+
             isDirty = true;
         });
-
 
 
         ////////////////////////////////
@@ -1364,7 +1198,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             }
 
             if(state.hasOwnProperty("new")) {
+
                 resetForm();
+
                 dynamicListInit(null);
                 $widgetTitle.text(translate("WIDGET_TITLE_CREATE_NOTIFICATION"));
                 $("#createnew-buttons", $rootElement).show();
@@ -1411,6 +1247,201 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             setState();
         });
 
+        //////////////////////////
+        // Validation functions //
+        //////////////////////////
+
+        $.validator.addMethod(
+            "checkSendDate",
+            function(value, element) {
+                var sendDate = Globalize.parseDate(value);
+                if(!sendDate) { return false; }
+
+                var today = new Date();
+                // today's date with 00:00:00 time
+                var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                console.log("checkSendDate:" + (sendDate >= todayMidnight));
+                return (sendDate >= todayMidnight);
+            },
+            "Please enter a date in the format mm/dd/yyyy,<br />the date must not be earlier than today."
+        );
+
+        $.validator.addMethod(
+            "checkTaskDueDate",
+            function(value, element) {
+                var taskDueDate = Globalize.parseDate(value);
+                if(!taskDueDate) { return false; }
+
+                var today = new Date();
+                // today's date with 00:00:00 time
+                var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                var sendDate = Globalize.parseDate($messageFieldSendDate.val())
+
+                if (taskDueDate < todayMidnight) {
+                    return false;
+                } else if (sendDate && sendDate > taskDueDate) {
+                    return false;
+                }
+                 console.log("checkTaskDueDate :true");
+                return true;
+            },
+            "Please change the Task Due Date above, and/or the Send Date below so that:" +
+                "<ul>" +
+                    "<li>The Task Due Date is in the format mm/dd/yyyy</li>" +
+                    "<li>The Task Due Date is not earlier than the Send Date below.</li>" +
+                "</ul>"
+        );
+
+        $.validator.addMethod(
+            "checkEventDate",
+            function(value, element) {
+                var eventDate = Globalize.parseDate(value);
+                if(!eventDate) { return false; }
+
+                var today = new Date();
+                // today's date with 00:00:00 time
+                var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                var sendDate = Globalize.parseDate($messageFieldSendDate.val())
+
+                if (eventDate < todayMidnight) {
+                    return false;
+                } else if (sendDate && sendDate > eventDate) {
+                    return false;
+                }
+
+                // If the event date is today, check that the time hasn't already passed.
+                if ((eventDate.getTime() - todayMidnight.getTime()) === 0) {
+
+                    var hours = $messageEventTimeHour.val();
+                    var minutes = $messageEventTimeMinute.val();
+                    var ampm = $messageEventTimeAMPM.val();
+                    if (hours && minutes && ampm) {
+                        var compareToHour = parseInt(hours);
+                        var compareToMin = parseInt(minutes);
+
+                        // Convert to military time.
+                        if (ampm === "PM") {
+                            if (compareToHour < 12) {
+                                compareToHour += 12;
+                            }
+                        }
+
+                        eventDate.setHours(compareToHour);
+                        eventDate.setMinutes(compareToMin);
+
+                        // If the event is today and the time of the event has already passed...
+                        if (today.getTime() > eventDate.getTime()) {
+                            return false;
+                        }
+                    }
+                }
+                  console.log("checkEventDate :true");
+                return true;
+            },
+            "Please change the Event Date above, the Time below, and/or the Send Date below<br /> so that:" +
+                "<ul>" +
+                    "<li>The Event Date is in the format mm/dd/yyyy.</li>" +
+                    "<li>The Event Date is not earlier than the Send Date below.</li>" +
+                    "<li>The Time is not earlier than the present time.</li>" +
+                "</ul>"
+        );
+
+        var validationErrorPlacement = function(error, element) {
+            var elName = element.attr("name");
+            switch(elName) {
+                case "taskduedate-text":
+                case "senddate-text":
+                case "dynamiclistselect":
+                case "eventdate-text":
+                    // Fall-through is intentional here
+                    error.insertAfter(element.next());
+                    break;
+                case "event-timehour":
+                case "event-timeminute":
+                case "event-timeampm":
+                    // Fall-through is intentional here
+                    error.insertAfter($messageEventTimeAMPM);
+                    break;
+                case "required-check":
+                    error.insertAfter($messageRequiredNo.next());
+                    break;
+                default:
+                    error.insertAfter(element);
+                break;
+            }
+        };
+
+        var validationGroups = {
+             "event-time": "event-timehour event-timeminute event-timeampm"
+        };
+
+        var taskRule = {
+            depends: function(element) {
+                return $messageFieldType.val() === "task";
+            }
+        };
+
+        var eventRule = {
+            depends: function(element) {
+                return $messageFieldType.val() === "event";
+            }
+        };
+
+        var removeAllValidationRules = function() {
+            $messageTaskDueDate.rules("remove", "checkTaskDueDate required");
+
+            $messageEventDate.rules("remove", "checkEventDate required");
+            $messageEventTimeHour.rules("remove", "required");
+            $messageEventTimeMinute.rules("remove", "required");
+            $messageEventTimeAMPM.rules("remove", "required");
+            $messageEventPlace.rules("remove", "required");
+
+            $messageRequiredYes.rules("remove", "required");
+            $messageFieldSendDate.rules("remove", "checkSendDate required");
+            $messageFieldDynamicList.rules("remove", "required");
+            $messageFieldSubject.rules("remove", "required");
+            $messageFieldBody.rules("remove", "required");
+
+        };
+
+        var applyQueueValidationRules = function() {
+            // Remove all rules
+            removeAllValidationRules();
+
+            // Apply queue rules
+            $messageTaskDueDate.rules("add", {checkTaskDueDate: taskRule, required: taskRule});
+
+            $messageEventDate.rules("add", {checkEventDate: eventRule, required:  eventRule});
+            $messageEventTimeHour.rules("add", {required: eventRule});
+            $messageEventTimeMinute.rules("add", {required: eventRule});
+            $messageEventTimeAMPM.rules("add", {required: eventRule});
+            $messageEventPlace.rules("add", {required: eventRule});
+
+            $messageRequiredYes.rules("add", "required");
+            $messageFieldSendDate.rules("add", { checkSendDate : true, required: true });
+            $messageFieldDynamicList.rules("add", "required");
+            $messageFieldSubject.rules("add", "required");
+            $messageFieldBody.rules("add", "required");
+        };
+
+
+        var applyDraftValidationRules = function() {
+            // Remove all rules
+            removeAllValidationRules();
+
+            // Apply queue rules
+            $messageFieldSubject.rules("add", "required");
+        };
+
+
+        var setupValidation = function($frm, errorPlacement) {
+            var validator = $frm.validate({
+                debug: false,
+                errorPlacement: errorPlacement,
+                groups: validationGroups
+            });
+            return validator;
+        };
 
 
         /////////////////////////////
@@ -1431,8 +1462,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 return;
             }
 
+            validatorObj = setupValidation($formElement, validationErrorPlacement);
             setState();
-
             // HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
             $("div.composenotification_widget", $rootElement).show();
 

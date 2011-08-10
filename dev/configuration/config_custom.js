@@ -118,6 +118,9 @@ define(["config/config", "config/env"], function(config) {
                 city_and_urban_planning: {
                     title: "City/Urban, Community & Regional Planning"
                 },
+                environmental_design: {
+                    title: "Environmental Design"
+                },
                 landscape_architecture: {
                     title: "Landscape Architecture"
                 }
@@ -364,6 +367,7 @@ define(["config/config", "config/env"], function(config) {
                     "access": "everybody",
                     "modifyacl": false,
                     "order": 1,
+                    "permission": "private",
                     "elements": {
                         "email": {
                             "label": "Email",
@@ -381,6 +385,7 @@ define(["config/config", "config/env"], function(config) {
                     "access": "everybody",
                     "modifyacl": false,
                     "order": 2,
+                    "permission": "everyone",
                     "elements": {
                         "role": {
                             "label": "Role/position",
@@ -412,6 +417,7 @@ define(["config/config", "config/env"], function(config) {
                     "access": "everybody",
                     "modifyacl": true,
                     "order": 3,
+                    "permission": "everyone",
                     "elements": {
                         "aboutme": {
                             "label": "__MSG__PROFILE_ABOUTME_LABEL__",
@@ -455,6 +461,7 @@ define(["config/config", "config/env"], function(config) {
                     "directory": true,
                     "multipleLabel": "__MSG__PROFILE_LOCATION_LABEL__",
                     "order": 4,
+                    "permission": "everyone",
                     "elements": {
                         "locationtitle": {
                             "label": "__MSG__PROFILE_LOCATION_LABEL__",
@@ -473,6 +480,7 @@ define(["config/config", "config/env"], function(config) {
                     "multiple": true,
                     "multipleLabel": "__MSG__PROFILE_PUBLICATION_LABEL__",
                     "order": 5,
+                    "permission": "everyone",
                     //"template": "profile_section_publications_template",
                     "elements": {
                         "maintitle": {
