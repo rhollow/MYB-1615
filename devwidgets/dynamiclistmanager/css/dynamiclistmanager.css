@@ -90,7 +90,7 @@
     text-align: left;
     font-size: 1em;
     border-bottom: 1px solid #d5dbdf;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     overflow: hidden;
     padding: 5px;
     vertical-align: top;
