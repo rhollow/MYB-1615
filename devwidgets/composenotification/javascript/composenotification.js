@@ -1014,8 +1014,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             applyDraftValidationRules();
 
             if (validatorObj.form()) {
+                applyQueueValidationRules();
+
                 $rootElement.fadeOut(fadeOutTimeMs, function () {
-                    postNotification(saveData("drafts", true), backToDrafts, false, translate("SAVE"));
+                    var readyForQueue = validatorObj.form();
+                    postNotification(saveData("drafts", readyForQueue), backToDrafts, false, translate("SAVE"));
                 });
             } else {
                 showGeneralMessage(translate("PLEASE_CORRECT_INVALID_FIELDS"), true);
