@@ -143,6 +143,29 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             return a['_lastModified'] - b['_lastModified'];
         };
+        
+        /**
+        * uses OEA applyThreeDots function to force the width of the object used for truncation
+        * not currently used but left here in case we want to bring back the description or truncate something else
+        *
+        * @param {String} containerSelector a valid jQuery select to find all the text elements
+        * @param {Integer} widthAdjustment  adjustment usually down to make the truncation a little more aggressive, -10 is a nice number
+        * @param {Integer} numRows          how many rows to show in the container
+        * @param {Bool}    wholeWordBool    true or false, break on whole words or no
+        * 
+        */
+        var truncateElemText = function(containerSelector, widthAdjustment, numRows, wholeWordBool) {
+            widthAdjustment = (widthAdjustment) ? Number(widthAdjustment) : 0;
+            numRows = (numRows) ? Number(numRows) : 1;
+            var jQElements = $(containerSelector, $rootElement);
+            var theWidth = jQElements.eq(0).innerWidth() + widthAdjustment;
+            var currElem = {};
+            $(jQElements).each(function () {
+                currElem = $(this);
+                currElem.text(sakai.api.Util.applyThreeDots(currElem.text(), theWidth, {max_rows: numRows, whole_word: wholeWordBool}));
+            });
+        };
+   
 
         /**
          * Renders loaded lists to the lists table
@@ -158,9 +181,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     }
                 }
             }
+            
             listsArray.sort(sortByDateFunction);
-
-
 
             var data = {
                 links: listsArray, //allLists,
@@ -179,7 +201,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
         var getNumberOfSelectedLists = function() {
             return $(".list_list_check_list:checked").length;
-           };
+        };
 
         var updateEditCopyDeleteButtonsStatus = function() {
           var num = getNumberOfSelectedLists();
@@ -456,7 +478,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
             setState();
-            loadDynamicListsFromServer();
 
             var contexts = sakai.data.me.dynamiclistcontexts;
 
