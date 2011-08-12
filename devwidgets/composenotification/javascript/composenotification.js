@@ -1260,7 +1260,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 var today = new Date();
                 // today's date with 00:00:00 time
                 var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                console.log("checkSendDate:" + (sendDate >= todayMidnight));
                 return (sendDate >= todayMidnight);
             },
             "Please enter a date in the format mm/dd/yyyy,<br />the date must not be earlier than today."
@@ -1282,7 +1281,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 } else if (sendDate && sendDate > taskDueDate) {
                     return false;
                 }
-                 console.log("checkTaskDueDate :true");
                 return true;
             },
             "Please change the Task Due Date above, and/or the Send Date below so that:" +
@@ -1335,7 +1333,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                         }
                     }
                 }
-                  console.log("checkEventDate :true");
                 return true;
             },
             "Please change the Event Date above, the Time below, and/or the Send Date below<br /> so that:" +
