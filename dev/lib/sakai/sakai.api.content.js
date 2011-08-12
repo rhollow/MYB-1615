@@ -21,9 +21,9 @@
 define(
     [
         "jquery",
-        "../../configuration/config.js",
+        "config/config_custom",
         "sakai/sakai.api.server",
-        "../misc/parseuri.js"
+        "misc/parseuri"
     ],
     function($, sakai_conf, sakai_serv) {
 
@@ -88,7 +88,16 @@ define(
                             "url": contentPath + ".modifyAce.html",
                             "method": "POST",
                             "parameters": {
-                                "principalId": ["everyone", "anonymous"],
+                                "principalId": ["everyone"],
+                                "privilege@jcr:read": "granted"
+                            }
+                        };
+                        data[data.length] = item;
+                        item = {
+                            "url": contentPath + ".modifyAce.html",
+                            "method": "POST",
+                            "parameters": {
+                                "principalId": ["anonymous"],
                                 "privilege@jcr:read": "granted"
                             }
                         };
@@ -108,7 +117,16 @@ define(
                             "url": contentPath + ".modifyAce.html",
                             "method": "POST",
                             "parameters": {
-                                "principalId": ["everyone", "anonymous"],
+                                "principalId": ["everyone"],
+                                "privilege@jcr:read": "denied"
+                            }
+                        };
+                        data[data.length] = item;
+                        item = {
+                            "url": contentPath + ".modifyAce.html",
+                            "method": "POST",
+                            "parameters": {
+                                "principalId": ["anonymous"],
                                 "privilege@jcr:read": "denied"
                             }
                         };
@@ -127,7 +145,16 @@ define(
                             "url": contentPath + ".modifyAce.html",
                             "method": "POST",
                             "parameters": {
-                                "principalId": ["everyone", "anonymous"],
+                                "principalId": ["everyone"],
+                                "privilege@jcr:read": "denied"
+                            }
+                        };
+                        data[data.length] = item;
+                        item = {
+                            "url": contentPath + ".modifyAce.html",
+                            "method": "POST",
+                            "parameters": {
+                                "principalId": ["anonymous"],
                                 "privilege@jcr:read": "denied"
                             }
                         };
@@ -152,6 +179,163 @@ define(
                 error: function(xhr, textStatus, thrownError){
                     if (callback) {
                         callback(false);
+                    }
+                }
+            });
+        },
+
+        /**
+         * Sets ACLs on a specified path and executes a callback if specified.
+         * @param {String} path The path on which the ACLs need to be set
+         * @param {String} permission 'anonymous', 'everyone', 'contacts' or 'private' determining what ACLs need to be set
+         * @param {String} me Userid of the currently logged in user
+         * @param {Function} callback Function to execute when permissions have been set or failed to be set
+         */
+        setACLsOnPath: function(path, permission, me, callback){
+            var path = path + ".modifyAce.html";
+            var ACLs = [];
+            switch (permission) {
+                case "anonymous":
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "everyone",
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "anonymous",
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "g-contacts-" + me,
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    break;
+                case "everyone":
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "g-contacts-" + me,
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "everyone",
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "anonymous",
+                            "privilege@jcr:read": "denied"
+                        }
+                    });
+                    break;
+                case "contacts":
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": me,
+                            "privilege@jcr:write": "granted",
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "g-contacts-" + me,
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "everyone",
+                            "privilege@jcr:read": "denied"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "anonymous",
+                            "privilege@jcr:read": "denied"
+                        }
+                    });
+                    break;
+                case "private":
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": me,
+                            "privilege@jcr:write": "granted",
+                            "privilege@jcr:read": "granted"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "g-contacts-" + me,
+                            "privilege@jcr:read": "denied"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "everyone",
+                            "privilege@jcr:read": "denied"
+                        }
+                    });
+                    ACLs.push({
+                        "url": path,
+                        "method": "POST",
+                        "parameters": {
+                            "principalId": "anonymous",
+                            "privilege@jcr:read": "denied"
+                        }
+                    });
+                    break;
+            }
+
+            $.ajax({
+                url: sakai_conf.URL.BATCH,
+                traditional: true,
+                type: "POST",
+                cache: false,
+                data: {
+                    requests: $.toJSON(ACLs)
+                },
+                success: function(data){
+                    if ($.isFunction(callback)) {
+                       callback(true, data);
+                    }
+                },
+                error: function(xhr, textStatus, thrownError){
+                    debug.error(xhr, textStatus, thrownError);
+                    if ($.isFunction(callback)) {
+                       callback(false, xhr);
                     }
                 }
             });
@@ -402,23 +586,21 @@ define(
             var mimeType = "other";
             if (content['_mimeType']){
                 mimeType = content['_mimeType'];
-            } else if (content['sakai:custom-mimetype']){
-                mimeType = content['sakai:custom-mimetype'];
             }
             return mimeType;
         },
 
         getThumbnail : function(content){
             var thumbnail = "";
-            if (content['_mimeType/page1-small']) {
-                thumbnail = "/p/" + content['_path'] + ".page1-small.jpg";
+            if (content['sakai:pagecount'] && content['sakai:pagecount'] !== "0") {
+                thumbnail = "/p/" + content['_path'] + "/page1.small.jpg";
             } else if (sakai_content.getMimeType(content).indexOf("image") !== -1) {
                 thumbnail = "/p/" + content['_path'];
             } else if (content["sakai:preview-url"]) {
-                    if (content["sakai:preview-avatar"]) {
-                        thumbnail = content["sakai:preview-avatar"];
-                    }
+                if (content["sakai:preview-avatar"]) {
+                    thumbnail = content["sakai:preview-avatar"];
                 }
+            }
             return thumbnail;
         },
 
@@ -457,6 +639,7 @@ define(
                     sakai_content.getThumbnail(content) ||
                     mimeType.substring(0,6) === "image/" ||
                     mimeType.substring(0,5) === "text/" ||
+                    mimeType === "application/x-shockwave-flash" ||
                     sakai_content.isJwPlayerSupportedVideo(mimeType)) {
                 result = true;
             }
@@ -496,6 +679,50 @@ define(
                 }
             }
             return count;
+        },
+
+        /**
+         * getNewList: get a new list of content based on newly uploaded or saved content
+         *
+         * @param {Array} _data The data that the caller already has
+         * @param {String} library The library to get the data for
+         * @param {Number} page The current page desired
+         * @param {Number} perPage The number of results per page
+         *
+         * @return {Object} the passed-in data combined with the newly shared/uploaded content
+         */
+        getNewList : function(_data, library, page, perPage) {
+            var data = $.extend({}, _data),
+                newData = [],
+                newlyAdded = 0;
+
+            if (sakai_global.newaddcontent && sakai_global.newaddcontent.getNewContent) {
+                var newlyUploadedData = sakai_global.newaddcontent.getNewContent(library);
+                $.merge(newData, newlyUploadedData);
+            }
+            if (sakai_global.savecontent && sakai_global.savecontent.getNewContent) {
+                var newlySavedData = sakai_global.savecontent.getNewContent(library);
+                $.merge(newData, newlySavedData);
+            }
+            // because newData is newer than _data, start after the paging offset
+            // for the newData
+            newData = _.rest(newData, page * perPage);
+            $.each(newData, function(i, elt) {
+                var exists = false;
+                $.each(data.results, function(j, result) {
+                    if (result._path === elt._path) {
+                        exists = true;
+                    }
+                });
+                if (!exists) {
+                    // put the element as the first result
+                    data.results = $.merge([elt], data.results);
+                    newlyAdded++;
+                }
+            });
+            data.results = _.first(data.results, perPage);
+            data.total += newlyAdded;
+            return data;
         }
     };
     return sakai_content;

@@ -38,7 +38,8 @@ define(
         "sakai/sakai.api.i18n",
         "sakai/sakai.api.util",
         "sakai/sakai.api.server",
-        "../../configuration/config.js"
+        "config/config_custom",
+        "jquery-plugins/jquery.autolink"
     ],
     function($, sakai_user, sakai_l10n, sakai_i18n, sakai_util, sakai_server, sakai_conf) {
 
@@ -57,9 +58,10 @@ define(
          * @param {Function} [callback] A callback function which is executed at the end of the operation
          * @param {Boolean} [sendMail] True if a mail needs to be sent, False if no mail is needed. Unles specified false the default will be true and a mail will be sent
          * @param {Boolean|String} [context] String used in switch to set sakai:templatePath and sakai:templateParams
+         * @param {Object} [optionalParams] Passed in when out of the group context to provide data necessary to send the message (Ids, titles) that can't be retrieved from the global object
          *
          */
-        sendMessage : function(to, meData, subject, body, category, reply, callback, sendMail, context) {
+        sendMessage : function(to, meData, subject, body, category, reply, callback, sendMail, context, optionalParams) {
 
             var toUsers = "";              // aggregates all message recipients
             var sendDone = false;          // has the send been issued?
@@ -101,6 +103,20 @@ define(
                     "_charset_": "utf-8"
                 };
 
+                // These checks are needed to work in every area (created group or on group creation)
+                var groupTitle = "";
+                var groupId = "";
+                if(sakai_global.group && sakai_global.group.groupData && sakai_global.group.groupData["sakai:group-title"]){
+                    groupTitle = sakai_global.group.groupData["sakai:group-title"];
+                } else if(optionalParams && optionalParams.groupTitle){
+                    groupTitle = optionalParams.groupTitle;
+                }
+                if (sakai_global.group && sakai_global.group.groupData && sakai_global.group.groupData["sakai:group-id"]) {
+                    groupId = sakai_global.group.groupData["sakai:group-id"];
+                } else if (optionalParams && optionalParams.groupId){
+                    groupId = optionalParams.groupId;
+                }
+
                 switch(context){
                     case "new_message":
                         toSend["sakai:templatePath"] = "/var/templates/email/new_message";
@@ -109,31 +125,31 @@ define(
                         break;
                     case "join_request":
                         toSend["sakai:templatePath"] = "/var/templates/email/join_request";
-                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value + 
-                        "|system=Sakai|name=" + sakai_global.currentgroup.data.authprofile["sakai:group-title"] +
-                        "|profilelink=" + sakai_conf.SakaiDomain + "/~" + meData.user.userid + 
-                        "|acceptlink=" + sakai_conf.SakaiDomain + sakai_conf.URL.GROUP_EDIT_URL + "?id=" +  sakai_global.currentgroup.id;
+                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value +
+                        "|system=Sakai|name=" + groupTitle +
+                        "|profilelink=" + sakai_conf.SakaiDomain + "/~" + sakai_util.urlSafe(meData.user.userid) +
+                        "|acceptlink=" + sakai_conf.SakaiDomain + "/~" +  groupId;
                         break;
                     case "group_invitation":
                         toSend["sakai:templatePath"] = "/var/templates/email/group_invitation";
-                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value + 
-                        "|system=Sakai|name=" + sakai_global.currentgroup.data.authprofile["sakai:group-title"] +
-                        "|body=" + body + 
-                        "|link=" + sakai_conf.SakaiDomain + "/~" + sakai_global.currentgroup.id;
+                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value +
+                        "|system=Sakai|name=" + groupTitle +
+                        "|body=" + body +
+                        "|link=" + sakai_conf.SakaiDomain + "/~" + groupId;
                         break;
                     case "shared_content":
                         toSend["sakai:templatePath"] = "/var/templates/email/shared_content";
-                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value + 
+                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value +
                         "|system=Sakai|name=" + sakai_global.content_profile.content_data.data["sakai:pooled-content-file-name"] +
                         "|description=" + (sakai_global.content_profile.content_data.data["sakai:description"] || "none")+
-                        "|body=" + body + 
+                        "|body=" + body +
                         "|link=" + sakai_global.content_profile.content_data.url;
                         break;
                     case "contact_invitation":
                         toSend["sakai:templatePath"] = "/var/templates/email/contact_invitation";
-                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value + 
+                        toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value +
                         "|system=Sakai|body=" + body +
-                        "|link=" + sakai_conf.SakaiDomain + "/~" + meData.user.userid +"?accepttrue";
+                        "|link=" + sakai_conf.SakaiDomain + "/~" + sakai_util.urlSafe(meData.user.userid) +"?accepttrue";
                         break;
                 }
                 return toSend;
@@ -144,7 +160,7 @@ define(
                 var toSend = buildEmailParams();
                 // Send message
                 $.ajax({
-                    url: "/~" + meData.user.userid + "/message.create.html",
+                    url: "/~" + sakai_util.urlSafe(meData.user.userid) + "/message.create.html",
                     type: "POST",
                     data: toSend,
                     success: function(data) {
@@ -187,7 +203,7 @@ define(
                 }
                 // Send message
                 $.ajax({
-                    url: "/~" + meData.user.userid + "/message.create.html",
+                    url: "/~" + sakai_util.urlSafe(meData.user.userid) + "/message.create.html",
                     type: "POST",
                     data: toSend,
                     success: function(data){
@@ -221,7 +237,7 @@ define(
             if (typeof(to) === "object") {
                 for (i = 0; i < to.length; i++) {
                     reqs[reqs.length] = {
-                        "url": "/~" + to[i] + "/public/authprofile.json",
+                        "url": "/~" + to[i] + "/public/authprofile.profile.json",
                         "method": "GET"
                     };
                 }
@@ -250,26 +266,28 @@ define(
             });
         },
 
-        deleteMessages : function(messagePaths, hardDelete, callback) {
+        deleteMessages : function(messages, hardDelete, callback) {
             var requests = [],
-                params = {};
+                params = {},
+                unreads = [];
 
             if (hardDelete) {
                 params = {":operation": "delete"};
             } else {
                 params = {"sakai:messagebox": "trash"};
             }
-            if (typeof messagePaths === 'string'){
-                messagePaths = [messagePaths];
-            }
-            $.each(messagePaths, function(i, val){
+            $.each(messages, function(i, val){
+                if (!val.read || val.read === "false") {
+                    unreads.push(val);
+                }
                 var req = {
-                    "url": val,
+                    "url": val.path,
                     "method": "POST",
                     "parameters": params
                 };
                 requests.push(req);
             });
+            sakaiCommunicationsAPI.updateLocalCounts(unreads);
             sakai_server.batch(requests, function(success, data) {
                 if ($.isFunction(callback)) {
                     if (success) {
@@ -279,6 +297,26 @@ define(
                     }
                 }
             });
+        },
+
+        updateLocalCounts : function(messages) {
+            sakai_user.data.me.messages.unread -= $.grep(messages, function(message, index){
+                return message.box === "inbox";
+            }).length;
+            if (sakai_user.data.me.messages.countOverview) {
+                $.each(sakai_user.data.me.messages.countOverview.count, function(index, countObj){
+                    var catFilter = function(message, index){
+                        return (message.box === "inbox" && message.category === countObj.group);
+                    };
+                    var messageCount = $.grep(messages, catFilter).length;
+                    var count = {
+                        count: countObj.count - messageCount,
+                        group: countObj.group
+                    };
+                    sakai_user.data.me.messages.countOverview.count[index] = count;
+                });
+            }
+            $(window).trigger("updated.messageCount.sakai");
         },
 
         markMessagesAsRead : function(messages, callback) {
@@ -294,10 +332,10 @@ define(
             });
             sakai_server.batch(requests, function(success, data) {
                 if (success) {
-                    sakai_user.data.me.messages.unread -= $.grep(messages, function(message, index){
-                        return message.box === "inbox";
-                    }).length;
-                    $(window).trigger("updated.messageCount.sakai");
+                    $.each(messages, function(i, message) {
+                        message.read = true;
+                    });
+                    sakaiCommunicationsAPI.updateLocalCounts(messages);
                     if ($.isFunction(callback)) {
                         callback(true, data);
                     }
@@ -323,6 +361,7 @@ define(
                     newMsg.from = {
                         name:  userFrom.userid ? sakai_user.getDisplayName(userFrom) : userFrom["sakai:group-title"],
                         picture: sakai_util.constructProfilePicture(userFrom),
+                        connectionState: userFrom["sakai:state"] ? userFrom["sakai:state"] : false,
                         userObj : {
                             uuid: userFrom.userid ? userFrom.userid : userFrom.groupid,
                             username: userFrom.userid ? sakai_user.getDisplayName(userFrom) : userFrom["sakai:group-title"],
@@ -350,10 +389,15 @@ define(
                         newMsg.toList.push(tmpUsr.name);
                         newMsg.to.push(tmpUsr);
                     });
-                    newMsg.body = sakai_util.Security.replaceURL($.trim(msg["sakai:body"].replace(/\n/gi, "<br />")));
+                    // We are adding the div to force jQuery to interpret this
+                    // as html and not a selector (in case there are no tags
+                    // in the messsage body).
+                    var bodyToAutolink = $('<div>'+msg["sakai:body"].replace(/\n/gi, "<br />")+'</div>');
+                    newMsg.body = bodyToAutolink.autolink().html();
                     newMsg.body_nolinebreaks = $.trim(msg["sakai:body"].replace(/\n/gi, " "));
                     newMsg.subject = msg["sakai:subject"];
                     newMsg.box = msg["sakai:messagebox"];
+                    newMsg.category = msg["sakai:category"];
                     newMsg.date = sakai_l10n.transformDateTimeShort(sakai_l10n.fromEpoch(msg["_created"], sakai_user.data.me));
                     newMsg.id = msg.id;
                     newMsg.read = msg["sakai:read"];
@@ -373,7 +417,7 @@ define(
 
         /**
         * Gets all messages from a box
-        * 
+        *
         * @param {String} box The name of the box to get messages from
         * @param {String} category The type of messages to get from the box
         * @param {Number} messagesPerPage The number of messages to fetch
@@ -384,7 +428,7 @@ define(
         * @param {Boolean} doProcessing process the messages after they come back to make them easier to deal with
         *                               defaults to true
         * @param {Boolean} doFlip Flip the to and from
-        */  
+        */
         getAllMessages : function(box, category, search, messagesPerPage, currentPage, sortBy, sortOrder, callback, doProcessing, doFlip) {
             var parameters = {
                 "box": box,
@@ -413,11 +457,14 @@ define(
             $.ajax({
                 url: url,
                 data: parameters,
-                cache: true,
+                cache: false,
                 success: function(data){
                     if (box === "inbox") {
-                        sakai_user.data.me.messages.unread = data.unread;
-                        $(window).trigger("updated.messageCount.sakai");
+                        sakaiCommunicationsAPI.getUnreadMessageCount(box, function() {
+                            sakaiCommunicationsAPI.getUnreadMessagesCountOverview(box, function(){
+                                $(window).trigger("updated.messageCount.sakai");
+                            }, false);
+                        });
                     }
                     if (doProcessing !== false) {
                         data.results = sakaiCommunicationsAPI.processMessages(data.results, doFlip);
@@ -435,7 +482,7 @@ define(
         },
 
         getMessage : function(id, callback){
-            var url = "/~" + sakai_user.data.me.user.userid + "/message/inbox/" + id + ".json";
+            var url = "/~" + sakai_util.urlSafe(sakai_user.data.me.user.userid) + "/message/inbox/" + id + ".json";
             $.ajax({
                 url: url,
                 cache: false,
@@ -462,59 +509,74 @@ define(
          * Gets a count of the unread messages for each box belonging to
          * the current user
          */
-        getUnreadMessagesCountOverview : function(box, callback) {
-            var url = "/~" + sakai_user.data.me.user.userid + "/message.count.json?filters=sakai:messagebox,sakai:read&values=" + box + ",false&groupedby=sakai:category";
-            $.ajax({
-                url: url,
-                cache: false,
-                success: function(data){
-                    if ($.isFunction(callback)) {
-                        callback(true, data);
+        getUnreadMessagesCountOverview : function(box, callback, ignoreCache) {
+            if (!ignoreCache && sakai_user.data.me.messages.countOverview && $.isFunction(callback)) {
+                callback(true, sakai_user.data.me.messages.countOverview);
+            } else {
+                var url = "/~" + sakai_util.urlSafe(sakai_user.data.me.user.userid) + "/message.count.json?filters=sakai:messagebox,sakai:read&values=" + box + ",false&groupedby=sakai:category";
+                $.ajax({
+                    url: url,
+                    cache: false,
+                    success: function(data){
+                        sakai_user.data.me.messages.countOverview = data;
+                        if ($.isFunction(callback)) {
+                            callback(true, data);
+                        }
+                    },
+                    error: function(xhr, textStatus, thrownError) {
+                        if ($.isFunction(callback)) {
+                            callback(false,{});
+                        }
                     }
-                },
-                error: function(xhr, textStatus, thrownError) {
-                    if ($.isFunction(callback)) {
-                        callback(false,{});
-                    }
-                }
-            });
+                });
+            }
         },
 
         /**
-         * Gets a count of the unread messages in a box belonging 
+         * Gets a count of the unread messages in a box belonging
          * to the current user
          */
         getUnreadMessageCount : function(box, callback, category) {
-            var url = "/~" + sakai_user.data.me.user.userid + "/message.count.json?filters=sakai:messagebox,sakai:read&values=" + box + ",false&groupedby=sakai:category";
-            $.ajax({
-                url: url,
-                cache: false,
-                success: function(data){
-                    var count = 0;
-                    if (category){
-                        // {"count":[{"group":"message","count":3},{"group":"invitation","count":2}]}
-                        if (data.count && data.count.length){
-                            for (var i = 0; i < data.count.length; i++){
-                                if (data.count[i].group && data.count[i].group === category && data.count[i].count){
-                                    count = data.count[i].count;
+            if (box === "inbox" && sakai_user.data.me.messages.unread) {
+                if ($.isFunction(callback)) {
+                    callback(true, sakai_user.data.me.messages.unread);
+                }
+            } else {
+                var url = "/~" + sakai_util.urlSafe(sakai_user.data.me.user.userid) + "/message.count.json?filters=sakai:messagebox,sakai:read&values=" + box + ",false&groupedby=sakai:category";
+                $.ajax({
+                    url: url,
+                    cache: false,
+                    success: function(data){
+                        var count = 0;
+                        if (category){
+                            /*
+                             * Data format for this return is:
+                             * {"count":[{"group":"message","count":3},{"group":"invitation","count":2}]}
+                             */
+                            if (data.count && data.count.length){
+                                for (var i = 0; i < data.count.length; i++){
+                                    if (data.count[i].group && data.count[i].group === category && data.count[i].count){
+                                        count = data.count[i].count;
+                                    }
                                 }
                             }
-                        }
-                    } else {
-                        if (data.count && data.count[0] && data.count[0].count) {
+                        } else if (data.count && data.count[0] && data.count[0].count) {
                             count = data.count[0].count;
                         }
+                        if (box === "inbox") {
+                            sakai_user.data.me.messages.unread = count;
+                        }
+                        if ($.isFunction(callback)) {
+                            callback(true, count);
+                        }
+                    },
+                    error: function(xhr, textStatus, thrownError) {
+                        if ($.isFunction(callback)) {
+                            callback(false,{});
+                        }
                     }
-                    if ($.isFunction(callback)) {
-                        callback(true, count);
-                    }
-                },
-                error: function(xhr, textStatus, thrownError) {
-                    if ($.isFunction(callback)) {
-                        callback(false,{});
-                    }
-                }
-            });
+                });
+            }
         },
 
         /**
