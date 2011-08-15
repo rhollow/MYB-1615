@@ -65,6 +65,11 @@ define(
 
             var toUsers = "";              // aggregates all message recipients
             var sendDone = false;          // has the send been issued?
+            
+            // Begin CalCentral change
+            // Block email delivery of OAE Messages for now.
+            sendMail = false;
+            // End CalCentral change
 
             ///////////////////////
             // UTILITY FUNCTIONS //
