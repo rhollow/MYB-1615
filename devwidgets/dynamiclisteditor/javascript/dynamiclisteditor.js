@@ -85,6 +85,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var lastNumberOfTargetedStudents = 0;
 
         var validatorObj = null;
+        var validatorObjTemplate = null;
 
         /**
          * The overlay transparency as a percentage. If 0 the overlay is disabled, and the page will remain interactive.
@@ -321,8 +322,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             var grads = new Condition();
             var gradsFilter = new Condition();
 
-            var selectedGradProgramsOR = buildSelectedOptionsObjectAsOR(null, $(".programs"));
-            var selectedDegreesOR = buildSelectedOptionsObjectAsOR(null, $(".degrees"));
+            var selectedGradProgramsOR = buildSelectedOptionsObjectAsOR(null, $(".programs", $rootElement));
+            var selectedDegreesOR = buildSelectedOptionsObjectAsOR(null, $(".degrees", $rootElement));
 
             grads = grads.joinTwoConditionsByAND(selectedGradProgramsOR);
             if(grads.isConditionObjectEmpty()) {
@@ -916,7 +917,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         var validateUserInput = function() {
-            return validatorObj.form();
+            return validatorObj.form() && validatorObjTemplate.form();
         };
 
         var getDataFromInput = function() {
@@ -1160,10 +1161,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 updateNumberOfPeopleSelectedByCriteria(criteriaString);
             });
 
+            // Apply validation rules to section B
+            var $formElementTemplate = $("#frm_main_dynamic", $rootElement); // Used for validation
+            validatorObjTemplate = setupDynamicTemplateValidation($formElementTemplate, validationTemplateErrorPlacement);
+
+
             //Show more/less button in section C
             $showMoreOrLess = $("#show_more_or_less", $rootElement);
             // section C toggle button
             $showMoreOrLess.click(toggleSectionC);
+
         };
         
         var filterTemplateDataByContext = function(data) {
@@ -1496,6 +1503,68 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             return validator;
         };
 
+
+
+
+
+
+        $.validator.addMethod("atLeastOneChecked", function(value, element) {
+            return ($(".degrees input:checked", $rootElement).length > 0);
+        });
+
+        var errorMessagesTemplate = {
+            undergrad_major: translate("PLEASE_SELECT_AT_LEAST_ONE_MAJOR"),
+            undergrad_level: translate("PLEASE_SELECT_AT_LEAST_ONE_LEVEL"),
+            undergrad_admitted_as: translate("PLEASE_SELECT_AT_LEAST_ONE_ADMISSION_AS_ITEM"),
+            undergrad_declared: translate("PLEASE_SELECT_AT_LEAST_ONE_DECLARED_ITEM"),
+            grad_program: translate("PLEASE_SELECT_AT_LEAST_ONE_PROGRAM"),
+			grad_degree: translate("PLEASE_SELECT_AT_LEAST_ONE_DEGREE_ITEM")
+		};
+
+        var validationTemplateErrorPlacement = function(error, element) {
+            var elName = element.attr("name");
+            switch(elName) {
+                case "undergrad_major":
+                    $(".majors", $rootElement).append(error);
+                    break;
+                case "undergrad_level":
+                    $(".levels", $rootElement).append(error);
+                    break;
+                case "undergrad_admitted_as":
+                    $(".admittedAs", $rootElement).append(error);
+                    break;
+                case "undergrad_declared":
+                    $(".declared", $rootElement).append(error);
+                    break;
+                case "grad_program":
+                    $(".programs", $rootElement).append(error);
+                    break;
+                case "grad_degree":
+                    $(".degrees", $rootElement).append(error);
+                    break;
+                default:
+                    error.insertAfter(element);
+                break;
+            }
+        };
+
+        var setupDynamicTemplateValidation = function($frm, errorPlacement) {
+            var validator = $frm.validate({
+                debug: true,
+                rules: {
+                    undergrad_major: { atLeastOneChecked: true },
+                    undergrad_level: { atLeastOneChecked: true },
+                    undergrad_admitted_as: { atLeastOneChecked: true },
+                    undergrad_declared: { atLeastOneChecked: true },
+                    grad_program: { atLeastOneChecked: true },
+                    grad_degree: { atLeastOneChecked: true }
+                },
+                messages: errorMessagesTemplate,
+                errorPlacement: errorPlacement
+                /*groups: validationGroups*/
+            });
+            return validator;
+        };
 
 
 
