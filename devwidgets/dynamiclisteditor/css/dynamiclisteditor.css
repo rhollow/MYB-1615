@@ -253,11 +253,20 @@
 	color: #F00;
 }
 
-#list_name {
+.dynamiclisteditor_widget #list_name {
     width: 17em;
 }
 
 .dynamiclisteditor_widget label.error {
     margin-top: 3px;
     display: block;
+}
+
+#no_students_ever_warning_dialog .save_reminder_dialog_actions,
+#no_students_warning_dialog .save_reminder_dialog_actions
+{
+    bottom: -6px;
+    margin: 0 19px 20px 0;
+    position: absolute;
+    right: 0;
 }

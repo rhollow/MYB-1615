@@ -376,13 +376,13 @@
         <div class="wrapper">
         {if (typeof(data.undergraduates) !== 'undefined' && data.undergraduates != null ) && (typeof(data.graduates) !== 'undefined' && data.graduates != null) }
             <div class="left">
-                <div class="checkbox"><input type="checkbox" id="include_undergrads" value="{if propExists(data.undergraduates.id)}${data.undergraduates.id}{/if}" /><label for="include_undergrads">Include Undergraduates</label></div>
+                <div class="checkbox"><input type="checkbox" id="include_undergrads" name="include_undergrads" value="{if propExists(data.undergraduates.id)}${data.undergraduates.id}{/if}" /><label for="include_undergrads">Include Undergraduates</label></div>
                 <div class="undergrads_group">
                     ${renderUndergraduates()}
                 </div>
             </div>
             <div class="right">
-                <div class="checkbox"><input type="checkbox" id="include_grads" value="{if propExists(data.graduates.id)}${data.graduates.id}{/if}" /><label for="include_grads">Include Graduate Students</label></div>
+                <div class="checkbox"><input type="checkbox" id="include_grads" name="include_grads" value="{if propExists(data.graduates.id)}${data.graduates.id}{/if}" /><label for="include_grads">Include Graduate Students</label></div>
                 <div class="grads_group">
                     ${renderGraduates()}
                 </div>
@@ -390,12 +390,12 @@
         {else}
             <div class="onecolumn">
                 {if typeof(data.undergraduates) !== 'undefined' && data.undergraduates != null }
-                    <input type="hidden" id="include_undergrads" value="{if propExists(data.undergraduates.id)}${data.undergraduates.id}{/if}" />
+                    <input type="hidden" id="include_undergrads" name="include_undergrads" value="{if propExists(data.undergraduates.id)}${data.undergraduates.id}{/if}" />
                     <div class="undergrads_group">
                         ${renderUndergraduates()}
                     </div>
                 {elseif typeof(data.graduates) !== 'undefined' && data.graduates != null }
-                    <input type="hidden" id="include_grads" value="{if propExists(data.graduates.id)}${data.graduates.id}{/if}" />
+                    <input type="hidden" id="include_grads" name="include_grads" value="{if propExists(data.graduates.id)}${data.graduates.id}{/if}" />
                     <div class="grads_group">
                         ${renderGraduates()}
                     </div>
@@ -413,9 +413,21 @@
         <h1 class="s3d-dialog-header">__MSG__WARNING__</h1>
         <p style="margin-bottom: 40px;">__MSG__THIS_LIST_HAS_NO_STUDENTS_DO_YOU_WANT_TO_SAVE_IT_AS_IS__</p>
 
-        <div id="save_reminder_dialog_container_actions" style="bottom: -6px;margin: 0 19px 20px 0; position: absolute;right: 0;">
+        <div class="save_reminder_dialog_actions">
             <button type="button" class="s3d-link-button jqmClose s3d-bold">__MSG__CANCEL__</button>
             <button type="button" id="dialog-save-button" class="s3d-button s3d-overlay-button" style="margin-left: 15px;">__MSG__SAVE__</button>
+        </div>
+    </div>
+
+    <!-- 'This list will not have any students... Ever!' WARNING DIALOG -->
+    <div class="s3d-dialog s3d-dialog-container" id="no_students_ever_warning_dialog" style="z-index: 9999; display: none;">
+        <div class="s3d-dialog-close jqmClose"></div>
+        <h1 class="s3d-dialog-header">__MSG__WARNING__</h1>
+        <p style="margin-bottom: 40px;">__MSG__THIS_LIST_CAN_NEVER_HAVE_ANY_STUDENTS_DO_YOU_WANT_TO_SAVE_IT_AS_IS__</p>
+
+        <div class="save_reminder_dialog_actions">
+            <button type="button" class="s3d-link-button jqmClose s3d-bold">__MSG__CANCEL__</button>
+            <button type="button" id="dialog-save-button-for-no-students-ever" class="s3d-button s3d-overlay-button" style="margin-left: 15px;">__MSG__SAVE__</button>
         </div>
     </div>
 

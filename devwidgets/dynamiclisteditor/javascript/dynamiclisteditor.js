@@ -88,6 +88,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var validatorObjTemplate = null;
 
         /**
+         * This parameter is passed to jQuery validate plugin
+         */
+        var debugValidation = true;
+
+        /**
          * The overlay transparency as a percentage. If 0 the overlay is disabled, and the page will remain interactive.
          * If 100 the overlay will be 100% opaque.
          */
@@ -190,12 +195,24 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         var $specialPrograms = $(".special_programs", $sectionC);
 
         var $noStudentsWarningDialogSaveButton = $("#dialog-save-button", $rootElement);
+        var $noStudentsEverWarningDialogSaveButton = $("#dialog-save-button-for-no-students-ever", $rootElement);
 
         /**
           * For dialog-overlay to remind user to save their draft.
           * (When user clicks on 'Create New DyNamic List' button.)
           */
          var $noStudentsWarningDialog = $("#no_students_warning_dialog", $rootElement).jqm({
+             modal: true,
+             overlay: dialogOverlayTransparency,
+             toTop: true,
+             onShow: null
+         }).css("position", "absolute").css("top", "250px");
+
+        /**
+          * For dialog-overlay to remind user to save their draft.
+          * (When user clicks on 'Create New DyNamic List' button.)
+          */
+         var $noStudentsEverWarningDialog = $("#no_students_ever_warning_dialog", $rootElement).jqm({
              modal: true,
              overlay: dialogOverlayTransparency,
              toTop: true,
@@ -525,18 +542,17 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         /**
-         * Shows a general message on the top screen
-         * @param {String} msg    the message you want to display
-         * @param {Boolean} isError    true for error (red block)/false for normal message(green block)
+         * Shows a general message on the top screen.
+         * @param {String} msg The message you want to display.
+         * @param {Boolean} isError True for error (red block) or false for normal message(green block).
+         * @param {String} title Message title to display.
          */
-        var showGeneralMessage = function(msg, isError){
-
-            // Check whether to show an error type message or an information one
+        var showGeneralMessage = function(msg, isError, title) {
+            // Check whether to show an error type message or an information one.
             var type = isError ? sakai.api.Util.notification.type.ERROR : sakai.api.Util.notification.type.INFORMATION;
 
-            // Show the message to the user
-            sakai.api.Util.notification.show("", msg, type);
-
+            // Show the message to the user.
+            sakai.api.Util.notification.show(title? title : "", msg, type);
         };
 
         /**
@@ -917,7 +933,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         var validateUserInput = function() {
-            return validatorObj.form() && validatorObjTemplate.form();
+            // single ampersand is used for full-circuit evaluation
+            return validatorObj.form() & validatorObjTemplate.form();
         };
 
         var getDataFromInput = function() {
@@ -1060,9 +1077,16 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             getDataAndSaveList();
         });
 
+        // Event handler for when user clicks on 'no students ever' warning dialog's "Save" button.
+        $noStudentsEverWarningDialogSaveButton.click(function() {
+            $noStudentsEverWarningDialog.jqmHide();
+            getDataAndSaveList();
+        });
+
         $dynListsSaveButton.click(function(){
 
             if(!validateUserInput()) {
+                showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
                 return;
             }
 
@@ -1073,7 +1097,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             if (lastNumberOfTargetedStudents > 0) {
                 getDataAndSaveList();
+            } else if(lastUsedCriteriaString.length === 0 || lastUsedCriteriaString === "{}"){
+                console.log("No students! Ever!");
+                $noStudentsEverWarningDialog.jqmShow();
             } else {
+                console.log("Someday you may have students here...");
                 $noStudentsWarningDialog.jqmShow();
             }
         });
@@ -1099,6 +1127,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                             $("input", $gradsGroup).removeAttr("disabled");
                             $gradsGroup.removeClass("disabled");
                         } else {
+                            clearInvalidsInSection($gradsGroup);
                             $("input", $gradsGroup).attr("disabled", "disabled");
                             $gradsGroup.addClass("disabled");
                         }
@@ -1110,21 +1139,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                             $("input", $undergradsGroup ).removeAttr("disabled");
                             $undergradsGroup.removeClass("disabled");
                         } else {
+                            clearInvalidsInSection($undergradsGroup);
                             $("input", $undergradsGroup ).attr("disabled", "disabled");
                             $undergradsGroup.addClass("disabled");
                         }
 
                 });
             }
-
-            // TODO: ask Rachel if we need these two handlers (design has changed)
-            $('input[id^="undergrad_major_"]').click(function(){
-                    $("#undergrad_majors_selected_majors", $rootElement).click();
-                });
-
-            $('input[id^="grad_program_"]').click(function(){
-                    $("#grad_programs_selected_programs", $rootElement).click();
-                });
 
             $regStatusSelectAllInGroup.click(function(){
                 if($regStatusSelectAllInGroup.is(':checked')) {
@@ -1155,6 +1176,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             $("input:checkbox, input:radio", $listEditingDiv).click(function() {
                 var criteriaString = buildCriteriaStringFromListEditingForm();
                 updateNumberOfPeopleSelectedByCriteria(criteriaString);
+
+                // Removing validation errors if nothing was selected in undergrads and grads sections
+                // This is just a UI tweak
+                clearValidationErrorsInDisabledTemplateSections();
+
             });
             $("select", $listEditingDiv).change(function() {
                 var criteriaString = buildCriteriaStringFromListEditingForm();
@@ -1163,7 +1189,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             // Apply validation rules to section B
             var $formElementTemplate = $("#frm_main_dynamic", $rootElement); // Used for validation
-            validatorObjTemplate = setupDynamicTemplateValidation($formElementTemplate, validationTemplateErrorPlacement);
+            validatorObjTemplate = setupValidationForTemplate($formElementTemplate);
 
 
             //Show more/less button in section C
@@ -1474,54 +1500,86 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
 
+        //////////////////////////
+        // Validation functions //
+        //////////////////////////
 
         var clearInvalids = function() {
             $("label.error", $rootElement).hide();
             $(".error", $rootElement).removeClass("error");
         };
 
-        var validationErrorPlacement = function(error, element) {
-            var elName = element.attr("name");
-            switch(elName) {
-                default:
-                    error.insertAfter(element);
-                break;
-            }
+        var clearInvalidsInSection = function($section) {
+            $("label.error", $section).hide();
+            $(".error", $section).removeClass("error");
         };
 
-        var errorMessages = {
+
+        // List name validation
+
+        var errorMessagesForListNameValidation = {
 			list_name: translate("PLEASE_ENTER_A_NAME_FOR_THIS_LIST")
 		};
 
-        var setupValidation = function($frm, errorPlacement) {
-            var validator = $frm.validate({
-                debug: true,
-                messages: errorMessages
-                /*errorPlacement: errorPlacement,*/
-                /*groups: validationGroups*/
+        var setupValidationForListName = function($frm) {
+            return $frm.validate({
+                debug: debugValidation,
+                messages: errorMessagesForListNameValidation
             });
-            return validator;
         };
 
 
+        // Dynamic list template validation
 
+        // Validation rules for dynamic list template
+        $.validator.addMethod("atLeastOneMajorChecked", function(value, element) {
+            return ($(".majors input:checked", $rootElement).length > 0);
+        });
 
+        $.validator.addMethod("atLeastOneLevelChecked", function(value, element) {
+            return ($(".levels input:checked", $rootElement).length > 0);
+        });
 
+        $.validator.addMethod("atLeastOneLevelChecked", function(value, element) {
+            return ($(".levels input:checked", $rootElement).length > 0);
+        });
 
-        $.validator.addMethod("atLeastOneChecked", function(value, element) {
+        $.validator.addMethod("atLeastOneAdmittedAsChecked", function(value, element) {
+            return ($(".admittedAs input:checked", $rootElement).length > 0);
+        });
+
+        $.validator.addMethod("atLeastOneDeclaredChecked", function(value, element) {
+            return ($(".declared input:checked", $rootElement).length > 0);
+        });
+
+        $.validator.addMethod("atLeastOneProgramChecked", function(value, element) {
+            return ($(".programs input:checked", $rootElement).length > 0);
+        });
+
+        $.validator.addMethod("atLeastOneCertificateChecked", function(value, element) {
+            return ($(".certificates input:checked", $rootElement).length > 0);
+        });
+
+        $.validator.addMethod("atLeastOneEmphasisChecked", function(value, element) {
+            return ($(".emphases input:checked", $rootElement).length > 0);
+        });
+
+        $.validator.addMethod("atLeastOneDegreeChecked", function(value, element) {
             return ($(".degrees input:checked", $rootElement).length > 0);
         });
 
-        var errorMessagesTemplate = {
+        var errorMessagesForTemplateValidation = {
             undergrad_major: translate("PLEASE_SELECT_AT_LEAST_ONE_MAJOR"),
             undergrad_level: translate("PLEASE_SELECT_AT_LEAST_ONE_LEVEL"),
             undergrad_admitted_as: translate("PLEASE_SELECT_AT_LEAST_ONE_ADMISSION_AS_ITEM"),
             undergrad_declared: translate("PLEASE_SELECT_AT_LEAST_ONE_DECLARED_ITEM"),
             grad_program: translate("PLEASE_SELECT_AT_LEAST_ONE_PROGRAM"),
+            grad_certificate: translate("PLEASE_SELECT_AT_LEAST_ONE_CERTIFICATE"),
+            grad_emphasis: translate("PLEASE_SELECT_AT_LEAST_ONE_EMPHASIS"),
 			grad_degree: translate("PLEASE_SELECT_AT_LEAST_ONE_DEGREE_ITEM")
 		};
 
-        var validationTemplateErrorPlacement = function(error, element) {
+        var errorPlacementForTemplateValidation = function(error, element) {
             var elName = element.attr("name");
             switch(elName) {
                 case "undergrad_major":
@@ -1539,6 +1597,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 case "grad_program":
                     $(".programs", $rootElement).append(error);
                     break;
+                case "grad_certificate":
+                    $(".certificates", $rootElement).append(error);
+                    break;
+                case "grad_emphasis":
+                    $(".emphases", $rootElement).append(error);
+                    break;
                 case "grad_degree":
                     $(".degrees", $rootElement).append(error);
                     break;
@@ -1548,27 +1612,48 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             }
         };
 
-        var setupDynamicTemplateValidation = function($frm, errorPlacement) {
-            var validator = $frm.validate({
-                debug: true,
+        // These two rules below make validation happen only when something is checked in undergrads or grads sections
+        var undergradDependencyRuleForTemplateValidation = {
+            depends: function(element) {
+                return isSomethingSelectedInUndergradsSection();
+            }
+        };
+
+        var gradDependencyRuleForTemplateValidation = {
+            depends: function(element) {
+                return isSomethingSelectedInGradsSection();
+            }
+        };
+
+        var setupValidationForTemplate = function($frm) {
+            return $frm.validate({
+                debug: debugValidation,
                 rules: {
-                    undergrad_major: { atLeastOneChecked: true },
-                    undergrad_level: { atLeastOneChecked: true },
-                    undergrad_admitted_as: { atLeastOneChecked: true },
-                    undergrad_declared: { atLeastOneChecked: true },
-                    grad_program: { atLeastOneChecked: true },
-                    grad_degree: { atLeastOneChecked: true }
+                    undergrad_major: { atLeastOneMajorChecked: undergradDependencyRuleForTemplateValidation },
+                    undergrad_level: { atLeastOneLevelChecked: undergradDependencyRuleForTemplateValidation },
+                    undergrad_admitted_as: { atLeastOneAdmittedAsChecked: undergradDependencyRuleForTemplateValidation },
+                    undergrad_declared: { atLeastOneDeclaredChecked: undergradDependencyRuleForTemplateValidation },
+                    grad_program: { atLeastOneProgramChecked: gradDependencyRuleForTemplateValidation },
+                    grad_emphasis: { atLeastOneEmphasisChecked: gradDependencyRuleForTemplateValidation },
+                    grad_certificate: { atLeastOneCertificateChecked: gradDependencyRuleForTemplateValidation },
+                    grad_degree: { atLeastOneDegreeChecked: gradDependencyRuleForTemplateValidation }
                 },
-                messages: errorMessagesTemplate,
-                errorPlacement: errorPlacement
-                /*groups: validationGroups*/
+                messages: errorMessagesForTemplateValidation,
+                errorPlacement: errorPlacementForTemplateValidation
             });
-            return validator;
         };
 
 
+        var clearValidationErrorsInDisabledTemplateSections = function() {
 
+            if(!isSomethingSelectedInUndergradsSection()){
+                clearInvalidsInSection($undergradsGroup);
+            }
 
+            if(!isSomethingSelectedInGradsSection()){
+                clearInvalidsInSection($gradsGroup);
+            }
+        };
 
         
         /////////////////////////////
@@ -1593,7 +1678,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
             dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
-            validatorObj = setupValidation($formElement, validationErrorPlacement);
+            // This is only for static form validation, validation for a template is applied when it has been loaded.
+            validatorObj = setupValidationForListName($formElement);
 
             setState();
 
