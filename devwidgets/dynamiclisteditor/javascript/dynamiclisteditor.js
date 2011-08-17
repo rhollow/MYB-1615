@@ -302,7 +302,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
         /**
          * Gathers all undergraduates related information and returns it as an object.
-         * Returned information includes: undergraduate majors, levels, 'admitted as' status and 'declared' status.
+         * Returned information includes: undergraduate majors, levels and 'admitted as' status.
          *
          * @return {Object} a condition object containing all undergraduates related information in the AND field.
          */
@@ -330,7 +330,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
         /**
          * Gathers all graduate students related information and returns it as an object.
-         * Returned information includes: graduate programs, certificates, emphases, degrees.
+         * Returned information includes: graduate programs, degrees.
          *
          * @return {Object} a condition object containing all graduate students related information in the AND field.
          */
@@ -1098,10 +1098,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             if (lastNumberOfTargetedStudents > 0) {
                 getDataAndSaveList();
             } else if(lastUsedCriteriaString.length === 0 || lastUsedCriteriaString === "{}"){
-                console.log("No students! Ever!");
                 $noStudentsEverWarningDialog.jqmShow();
             } else {
-                console.log("Someday you may have students here...");
                 $noStudentsWarningDialog.jqmShow();
             }
         });
@@ -1548,20 +1546,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             return ($(".admittedAs input:checked", $rootElement).length > 0);
         });
 
-        $.validator.addMethod("atLeastOneDeclaredChecked", function(value, element) {
-            return ($(".declared input:checked", $rootElement).length > 0);
-        });
-
         $.validator.addMethod("atLeastOneProgramChecked", function(value, element) {
             return ($(".programs input:checked", $rootElement).length > 0);
-        });
-
-        $.validator.addMethod("atLeastOneCertificateChecked", function(value, element) {
-            return ($(".certificates input:checked", $rootElement).length > 0);
-        });
-
-        $.validator.addMethod("atLeastOneEmphasisChecked", function(value, element) {
-            return ($(".emphases input:checked", $rootElement).length > 0);
         });
 
         $.validator.addMethod("atLeastOneDegreeChecked", function(value, element) {
@@ -1572,10 +1558,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             undergrad_major: translate("PLEASE_SELECT_AT_LEAST_ONE_MAJOR"),
             undergrad_level: translate("PLEASE_SELECT_AT_LEAST_ONE_LEVEL"),
             undergrad_admitted_as: translate("PLEASE_SELECT_AT_LEAST_ONE_ADMISSION_AS_ITEM"),
-            undergrad_declared: translate("PLEASE_SELECT_AT_LEAST_ONE_DECLARED_ITEM"),
             grad_program: translate("PLEASE_SELECT_AT_LEAST_ONE_PROGRAM"),
-            grad_certificate: translate("PLEASE_SELECT_AT_LEAST_ONE_CERTIFICATE"),
-            grad_emphasis: translate("PLEASE_SELECT_AT_LEAST_ONE_EMPHASIS"),
 			grad_degree: translate("PLEASE_SELECT_AT_LEAST_ONE_DEGREE_ITEM")
 		};
 
@@ -1591,17 +1574,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 case "undergrad_admitted_as":
                     $(".admittedAs", $rootElement).append(error);
                     break;
-                case "undergrad_declared":
-                    $(".declared", $rootElement).append(error);
-                    break;
                 case "grad_program":
                     $(".programs", $rootElement).append(error);
-                    break;
-                case "grad_certificate":
-                    $(".certificates", $rootElement).append(error);
-                    break;
-                case "grad_emphasis":
-                    $(".emphases", $rootElement).append(error);
                     break;
                 case "grad_degree":
                     $(".degrees", $rootElement).append(error);
@@ -1632,10 +1606,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                     undergrad_major: { atLeastOneMajorChecked: undergradDependencyRuleForTemplateValidation },
                     undergrad_level: { atLeastOneLevelChecked: undergradDependencyRuleForTemplateValidation },
                     undergrad_admitted_as: { atLeastOneAdmittedAsChecked: undergradDependencyRuleForTemplateValidation },
-                    undergrad_declared: { atLeastOneDeclaredChecked: undergradDependencyRuleForTemplateValidation },
                     grad_program: { atLeastOneProgramChecked: gradDependencyRuleForTemplateValidation },
-                    grad_emphasis: { atLeastOneEmphasisChecked: gradDependencyRuleForTemplateValidation },
-                    grad_certificate: { atLeastOneCertificateChecked: gradDependencyRuleForTemplateValidation },
                     grad_degree: { atLeastOneDegreeChecked: gradDependencyRuleForTemplateValidation }
                 },
                 messages: errorMessagesForTemplateValidation,
