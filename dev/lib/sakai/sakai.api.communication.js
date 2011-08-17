@@ -65,6 +65,11 @@ define(
 
             var toUsers = "";              // aggregates all message recipients
             var sendDone = false;          // has the send been issued?
+            
+            // Begin CalCentral change
+            // Block email delivery of OAE Messages for now.
+            sendMail = false;
+            // End CalCentral change
 
             ///////////////////////
             // UTILITY FUNCTIONS //
@@ -149,7 +154,7 @@ define(
                         toSend["sakai:templatePath"] = "/var/templates/email/contact_invitation";
                         toSend["sakai:templateParams"] = "sender=" + meData.profile.basic.elements.firstName.value + " " + meData.profile.basic.elements.lastName.value +
                         "|system=Sakai|body=" + body +
-                        "|link=" + sakai_conf.SakaiDomain + "/~" + sakai_util.urlSafe(meData.user.userid) +"?accepttrue";
+                        "|link=" + sakai_conf.SakaiDomain + sakai_conf.URL.INVITATIONS_URL;
                         break;
                 }
                 return toSend;
