@@ -1497,7 +1497,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             dynamicListContextAllowed = new RegExp(pattern);
         };
 
-
         //////////////////////////
         // Validation functions //
         //////////////////////////
@@ -1516,8 +1515,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         // List name validation
 
         var errorMessagesForListNameValidation = {
-			list_name: translate("PLEASE_ENTER_A_NAME_FOR_THIS_LIST")
-		};
+            list_name: translate("PLEASE_ENTER_A_NAME_FOR_THIS_LIST")
+        };
 
         var setupValidationForListName = function($frm) {
             return $frm.validate({
@@ -1530,56 +1529,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         // Dynamic list template validation
 
         // Validation rules for dynamic list template
-        $.validator.addMethod("atLeastOneMajorChecked", function(value, element) {
-            return ($(".majors input:checked", $rootElement).length > 0);
-        });
-
-        $.validator.addMethod("atLeastOneLevelChecked", function(value, element) {
-            return ($(".levels input:checked", $rootElement).length > 0);
-        });
-
-        $.validator.addMethod("atLeastOneLevelChecked", function(value, element) {
-            return ($(".levels input:checked", $rootElement).length > 0);
-        });
-
-        $.validator.addMethod("atLeastOneAdmittedAsChecked", function(value, element) {
-            return ($(".admittedAs input:checked", $rootElement).length > 0);
-        });
-
-        $.validator.addMethod("atLeastOneProgramChecked", function(value, element) {
-            return ($(".programs input:checked", $rootElement).length > 0);
-        });
-
-        $.validator.addMethod("atLeastOneDegreeChecked", function(value, element) {
-            return ($(".degrees input:checked", $rootElement).length > 0);
-        });
 
         var errorMessagesForTemplateValidation = {
-            undergrad_major: translate("PLEASE_SELECT_AT_LEAST_ONE_MAJOR"),
-            undergrad_level: translate("PLEASE_SELECT_AT_LEAST_ONE_LEVEL"),
-            undergrad_admitted_as: translate("PLEASE_SELECT_AT_LEAST_ONE_ADMISSION_AS_ITEM"),
-            grad_program: translate("PLEASE_SELECT_AT_LEAST_ONE_PROGRAM"),
-			grad_degree: translate("PLEASE_SELECT_AT_LEAST_ONE_DEGREE_ITEM")
-		};
+        };
 
         var errorPlacementForTemplateValidation = function(error, element) {
             var elName = element.attr("name");
             switch(elName) {
-                case "undergrad_major":
-                    $(".majors", $rootElement).append(error);
-                    break;
-                case "undergrad_level":
-                    $(".levels", $rootElement).append(error);
-                    break;
-                case "undergrad_admitted_as":
-                    $(".admittedAs", $rootElement).append(error);
-                    break;
-                case "grad_program":
-                    $(".programs", $rootElement).append(error);
-                    break;
-                case "grad_degree":
-                    $(".degrees", $rootElement).append(error);
-                    break;
                 default:
                     error.insertAfter(element);
                 break;
@@ -1603,11 +1559,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             return $frm.validate({
                 debug: debugValidation,
                 rules: {
-                    undergrad_major: { atLeastOneMajorChecked: undergradDependencyRuleForTemplateValidation },
-                    undergrad_level: { atLeastOneLevelChecked: undergradDependencyRuleForTemplateValidation },
-                    undergrad_admitted_as: { atLeastOneAdmittedAsChecked: undergradDependencyRuleForTemplateValidation },
-                    grad_program: { atLeastOneProgramChecked: gradDependencyRuleForTemplateValidation },
-                    grad_degree: { atLeastOneDegreeChecked: gradDependencyRuleForTemplateValidation }
                 },
                 messages: errorMessagesForTemplateValidation,
                 errorPlacement: errorPlacementForTemplateValidation
@@ -1616,7 +1567,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
 
 
         var clearValidationErrorsInDisabledTemplateSections = function() {
-
             if(!isSomethingSelectedInUndergradsSection()){
                 clearInvalidsInSection($undergradsGroup);
             }
@@ -1625,7 +1575,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
                 clearInvalidsInSection($gradsGroup);
             }
         };
-
         
         /////////////////////////////
         // Initialization function //
