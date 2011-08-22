@@ -262,6 +262,17 @@
     display: block;
 }
 
+#no_students_ever_warning_dialog, #no_students_warning_dialog
+{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -250px; /* half-width */
+    min-width: 500px;
+    margin-top: -63px; /* half-height */
+    min-height: 126px;
+}
+
 #no_students_ever_warning_dialog .save_reminder_dialog_actions,
 #no_students_warning_dialog .save_reminder_dialog_actions
 {
