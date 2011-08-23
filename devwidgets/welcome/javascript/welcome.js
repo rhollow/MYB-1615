@@ -32,16 +32,25 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
         var $welcomeWidget = $(".welcome_widget");
         var welcomeTemplate = "welcome_template";
+        var welcomeAuthTemplate = "welcome_authenticated";
 
         var renderWidget = function(){
             $welcomeWidget.html(sakai.api.Util.TemplateRenderer(welcomeTemplate, {
                 "anon": sakai.data.me.user.anon || false
             }));
         };
+        
+        var renderAuthenticateWidget = function(){
+            $welcomeWidget.html(sakai.api.Util.TemplateRenderer(welcomeAuthTemplate, {
+                "anon": sakai.data.me.user.anon || true
+            }));
+        };
 
         // renderWidget(); // wrapped in an if block for CalCentral
         if (sakai.data.me.user.anon) {
             renderWidget();
+        } else {
+            renderAuthenticateWidget();
         }
     };
 
