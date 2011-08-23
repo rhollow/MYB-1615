@@ -265,9 +265,29 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     var savedScroll = listingTableWrapper.scrollTop(); // save the scroll to restore after the table has been rerendered
                     var rowIndex = this.id.replace(/\w+_/gi, "");
                     var rowData = model.data.results[rowIndex];
+                    
+                    var updateDataModelCallback = {};
+                    
+                    // if sort is not by completed, refresh the local model from server data and resort
+                    if (model.filterSettings.sortOn !== "COMPLETED") {
+                        updateDataModelCallback = function() {
+                            that.getNotices(function() {
+                            }, false);
+                        };
+                    } else {
+                        // updateDataModelCallback is already empty
+                        
+                        // if this the first time calling this as indicated by the sort class still in place
+                        // then reverse the sort order so that the next time it is called it get set the right way
+                        if ($("#mytasks_sortOn_COMPLETED", config.rootContainer).is(".DESC, .ASC")) {
+                            model.filterSettings.sortOrder = model.filterSettings.sortOrder === "ASC" ? "DESC" : "ASC";
+                        }
+                        // remove the sort arrow so that the UI indicates that the sort is invalid
+                        removeSortIndicators();
+                    }
+                    
                     rowData.isCompleted = !rowData.isCompleted;
                     renderTemplateAndUpdateUI();
-                    listingTableWrapper.scrollTop(savedScroll); // restore the scroll
                     postNotice(
                             config.dataURL,
                             { calendars : $.toJSON([
@@ -278,11 +298,10 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                                     isRead : rowData.isRead
                                 }
                             ])},
-                            function() {
-                                that.getNotices(function() {
-                                }, false);
-                            }
+                            updateDataModelCallback
                     );
+                    // restore the scroll
+                    listingTableWrapper.scrollTop(savedScroll); 
                 });
             };
 
@@ -518,15 +537,20 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
             filterStatus();
             subjectLines();
         };
+        
+        var removeSortIndicators = function () {
+            // remove sort arrows from all table header columns
+            $(".noticewidget_listing." + config.widgetName + "_listing thead th", config.rootContainer).each(function() {
+                $(this).removeClass("ASC").removeClass("DESC");
+            });
+        };
 
         var updateFilterControls = function() {
             // move the sort arrow to the current sort column
             var currentSortCol = $("#" + config.widgetName + "_sortOn_" + model.filterSettings.sortOn.replace(/:/gi, "\\:"), config.rootContainer);
 
             // remove sort arrows from all table header columns
-            $(".noticewidget_listing." + config.widgetName + "_listing thead th", config.rootContainer).each(function() {
-                $(this).removeClass("ASC").removeClass("DESC");
-            });
+            removeSortIndicators();
 
             // add sort arrow to the current column
             currentSortCol.addClass(model.filterSettings.sortOrder);
