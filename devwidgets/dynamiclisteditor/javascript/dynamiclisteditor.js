@@ -206,7 +206,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
              overlay: dialogOverlayTransparency,
              toTop: true,
              onShow: null
-         }).css("position", "absolute").css("top", "250px");
+         });
 
         /**
           * For dialog-overlay to remind user to save their draft.
@@ -217,7 +217,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
              overlay: dialogOverlayTransparency,
              toTop: true,
              onShow: null
-         }).css("position", "absolute").css("top", "250px");
+         });
 
 
         ////////////////////////////////////////////////////////////////////////
