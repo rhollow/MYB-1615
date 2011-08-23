@@ -262,11 +262,12 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
             var completedCheckboxes = function() {
                 $(".task-completed-checkbox", config.rootContainer).live("click", function() {
+                    var savedScroll = listingTableWrapper.scrollTop(); // save the scroll to restore after the table has been rerendered
                     var rowIndex = this.id.replace(/\w+_/gi, "");
                     var rowData = model.data.results[rowIndex];
                     rowData.isCompleted = !rowData.isCompleted;
                     renderTemplateAndUpdateUI();
-
+                    listingTableWrapper.scrollTop(savedScroll); // restore the scroll
                     postNotice(
                             config.dataURL,
                             { calendars : $.toJSON([
