@@ -19,10 +19,22 @@
 /* MyBerkeley custom begin */
 
 .welcome-block {
-    background: url(/devwidgets/welcome/images/calcentral_welcome_bkgnd.jpg) no-repeat top left scroll;
+    background-color: #DDE9F5;
     margin: 0 12px 12px 0;
     padding: 12px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+}
+
+.welcome-block p {
+    margin-bottom: 4px;
+}
+
+.welcome-unauth {
+    background: url(/devwidgets/welcome/images/calcentral_welcome_bkgnd.jpg) no-repeat top left scroll;
     height: 433px;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 
 .welcome-block .tag-line {
