@@ -91,7 +91,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
         var $tableOfLists = $("#list_table");
 
-        var list_pager = $("#list_pager", $rootElement);
+        var $listPager = $("#list_pager", $rootElement);
+        var $listPagerContainer = $(".bottom_decor", $rootElement);
 
         //////////////////////////
         // UI related functions //
@@ -243,11 +244,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 // only show pager if needed
                 if (data.total > LISTS_PER_PAGE) {
                     // pagenumber is 1-indexed, currentPage is 0-indexed
-                    list_pager.pager({ pagenumber: currentPage+1, pagecount: Math.ceil(data.total/LISTS_PER_PAGE), buttonClickCallback: handlePageClick });
-                    list_pager.show();
+                    $listPager.pager({ pagenumber: currentPage+1, pagecount: Math.ceil(data.total/LISTS_PER_PAGE), buttonClickCallback: handlePageClick });
+                    $listPagerContainer.show();
                 } else {
                     currentPage = 0;
-                    list_pager.hide();
+                    $listPagerContainer.hide();
                 }
 
                 // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
@@ -369,6 +370,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             if (listId.length < 1) {
                 showGeneralMessage($("#list_generalmessages_none_selected").text(), true);
             } else {
+                // TODO: Temporary fix for MYB-1016
+                currentPage = 0;
+                $.bbq.removeState("currentPage");
+
                 deleteLists(listId, loadDynamicListsFromServer);
             }
         });
