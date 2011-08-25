@@ -182,8 +182,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     }
                 }
             }
-            
-            listsArray.sort(sortByDateFunction);
+
+            // TODO: commented out till the issues with paging and sorting are resolved
+            // See MYB-1022
+            // listsArray.sort(sortByDateFunction);
 
             var data = {
                 links: listsArray, //allLists,

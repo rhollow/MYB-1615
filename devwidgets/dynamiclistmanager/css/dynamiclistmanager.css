@@ -6,15 +6,6 @@
     padding-bottom: 10px;
 }
 
-/** LIST MAIN PANE **/
-
-.dynamiclistmanager_widget .list-heading {
-    font-weight: bold;
-    color: #333;
-    font-size: 17px;
-    padding-left: 5px;
-}
-
 /** Table **/
 
 .dynamiclistmanager_widget .main_content_container {
@@ -36,12 +27,6 @@
 
     border-collapse: collapse;
     margin: 0;
-}
-
-/** Header **/
-.dynamiclistmanager_widget .list_list_header {
-    padding: 5px 5px 5px 7px;
-    border-bottom: 3px solid #D4DADE;
 }
 
 .dynamiclistmanager_widget .list-table .different {
