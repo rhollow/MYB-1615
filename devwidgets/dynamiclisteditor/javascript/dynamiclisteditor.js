@@ -1029,22 +1029,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          */
         var listAlreadyExists = function(listToCheck) {
 
-            //TODO: rewrite!!!!!
-
-            /*for (var key in allLists) {
-                if(!allLists.hasOwnProperty(key)) {
-                    continue;
-                }
-                var existingList = allLists[key];
-                var existingListObj = {
-                    "context" : existingList.context,
-                    "listName": existingList["sakai:name"],
-                    "desc": existingList["sakai:description"],
-                    "criteria": existingList.criteria
-                };
-
-                if(listEquals(existingListObj, listToCheck)) return true;
-            }*/
+            //TODO: rewrite this feature
+            // I think duplicate checks should be done on the server-side without loading all available lists to the client
 
             return false;
         };
@@ -1086,7 +1072,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         $dynListsSaveButton.click(function(){
 
             if(!validateUserInput()) {
-                showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
+                showGeneralMessage(translate("PLEASE_CORRECT_THE_FIELDS_AS_SPECIFIED_BY_THE_RED_ERROR_TEXT"), true, translate("ERROR_LIST_CANNOT_BE_CREATED"));
                 return;
             }
 
