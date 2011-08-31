@@ -77,7 +77,7 @@
 
     <div class="noticewidget_detail_view" style="display:none">
         <div class="noticewidget_detail_controls">
-            <a href="javascript:;" class="return_to_list_container s3d-widget-links"">
+            <a href="javascript:;" class="return_to_list_container s3d-widget-links">
                 <span class="myB-return-arrow"></span><span class="noticewidget_detail_return_link_msg"></span>  
             </a>
             <span class="noticewidget-arrows">
@@ -121,14 +121,21 @@
         
         <div class="noticewidget_detail_head">
             <h3>${detail.icalData.SUMMARY}</h3>
-            <p class="event-date">__MSG__EVENT_DATE__ ${dateString}</p>
-            <p class="event-time">__MSG__TIME__ ${timeString}<p>
-            <p class="event-location">__MSG__LOCATION__ ${detail.icalData.LOCATION}</p>
+            <div>
+                <span class="detail-element event-date">__MSG__EVENT_DATE__ ${dateString}</span>
+                <span class="detail-element event-time">__MSG__TIME__ ${timeString}</span>
+            </div>
+            <div class="clear">
+                <span class="detail-element event-location">__MSG__LOCATION__ ${detail.icalData.LOCATION}</span>
+            </div>
+            <div class="clear">
             {if detail.isRequired}
-                <p class="myB-isrequired">&bull; __MSG__REQUIRED__</p>
+                <span class="detail-element myB-isrequired">&bull; __MSG__REQUIRED__</span>
             {else}
-                <p class="myB-isNOTrequired"><strong>&#9702; __MSG__NOT__</strong> __MSG__REQUIRED__</p>                
+                <span class="detail-element myB-isNOTrequired"><strong>&#9702; __MSG__NOT__</strong> __MSG__REQUIRED__</span>
             {/if}
+
+            </div>
         </div>
         <textarea readonly="readonly">${detail.icalData.DESCRIPTION}</textarea>
         -->
