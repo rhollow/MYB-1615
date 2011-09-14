@@ -11,12 +11,12 @@
   the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sakaiproject.nakamura</groupId>
   <artifactId>org.sakaiproject.nakamura.uxloader-myberkeley</artifactId>
   <packaging>bundle</packaging>
-  <version>0.7-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <name>Sakai 3 UX Loader</name>
   <description>Loads the Sakai 3 UI into the JCR</description>
   <url>http://github.com/sakaiproject/3akai-ux</url>
@@ -115,7 +115,7 @@
       </snapshots>
     </repository>
   </repositories>
-  <pluginRepositories> 
+  <pluginRepositories>
     <pluginRepository>
       <id>default</id>
       <name>Maven Repository Switchboard</name>
@@ -132,8 +132,8 @@
   <properties>
     <ant.target>dev_light</ant.target>
     <dev.content>
-      SLING-INF/content/tests;path:=/tests;uninstall:=false;overwrite:=true,
-      SLING-INF/content/jsdoc;path:=/jsdoc;uninstall:=false;overwrite:=true,
+        SLING-INF/content/tests;path:=/tests;uninstall:=false;overwrite:=true,
+        SLING-INF/content/jsdoc;path:=/jsdoc;uninstall:=false;overwrite:=true,
     </dev.content>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
@@ -212,14 +212,14 @@
         <configuration>
           <instructions>
             <Sling-Initial-Content>
-              SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
-              SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
-              SLING-INF/content/var/templates/site;path:=/var/templates/site;uninstall:=false;overwrite:=true,
-              SLING-INF/content/var/templates/email;path:=/var/templates/email;uninstall:=false;overwrite:=true,
-              SLING-INF/content/var/ux-version;path:=/var/ux-version;uninstall:=false;overwriteProperties:=true;overwrite:=true,
-              SLING-INF/content/apps;path:=/apps;uninstall:=false;overwrite:=true,
-              ${dev.content}
-              SLING-INF/content/root;path:=/;uninstall:=false;overwrite:=true
+                SLING-INF/content/dev;path:=/dev;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
+                SLING-INF/content/devwidgets;path:=/devwidgets;ignoreImportProviders:="xml,json,html,jar,zip";uninstall:=false;overwrite:=true,
+                SLING-INF/content/var/templates/site;path:=/var/templates/site;uninstall:=false;overwrite:=true,
+                SLING-INF/content/var/templates/email;path:=/var/templates/email;uninstall:=false;overwrite:=true,
+                SLING-INF/content/var/ux-version;path:=/var/ux-version;uninstall:=false;overwriteProperties:=true;overwrite:=true,
+                SLING-INF/content/apps;path:=/apps;uninstall:=false;overwrite:=true,
+                ${dev.content}
+                SLING-INF/content/root;path:=/;uninstall:=false;overwrite:=true
             </Sling-Initial-Content>
           </instructions>
         </configuration>
@@ -235,7 +235,7 @@
             <phase>generate-resources</phase>
             <configuration>
               <tasks>
-                <ant target="${ant.target}" inheritRefs="true" antfile="./build.xml"/>
+                <ant target="${ant.target}" inheritRefs="true" antfile="./build.xml" />
               </tasks>
             </configuration>
             <goals>
@@ -246,13 +246,13 @@
             <phase>initialize</phase>
             <configuration>
               <tasks>
-                <exec outputproperty="git.version" executable="git" failifexecutionfails="false" searchpath="true">
-                  <arg line="describe"/>
+                <exec outputproperty="git.version" executable="git" failifexecutionfails="false" searchpath="true" >
+                  <arg line="describe" />
                 </exec>
-                <condition property="git.version.value" value="${git.version}" else="UnknownVersion">
-                  <isset property="git.version"/>
+                <condition property="git.version.value" value="${git.version}" else="UnknownVersion" >
+                  <isset property="git.version" />
                 </condition>
-                <echo file="${project.basedir}/target/scm-version.properties">
+                <echo file="${basedir}/target/scm-version.properties" >
                   scm.version=${git.version.value}
                 </echo>
               </tasks>
