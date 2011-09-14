@@ -294,7 +294,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * part of resetting the page).
          */
         var hideAllButtonLists = function() {
-            $(".notifdetail-buttons", $rootElement).hide();
+            $(".dialog_buttons", $rootElement).hide();
         };
 
         /**

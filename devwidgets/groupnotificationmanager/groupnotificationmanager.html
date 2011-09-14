@@ -20,11 +20,15 @@
 
 
 <div class="groupnotificationmanager_widget" style="display: none;">
-
-    <button type="button" id="inbox-new-button" class="s3d-button" style="float:right"><span class="s3d-button-inner">Create Notification</span></button>
-
     <!-- TITLE -->
-    <div class="s3d-contentpage-title">__MSG__GROUP_NOTIFICATION_MANAGER__</div>
+    <div class="s3d-contentpage-title">
+
+        __MSG__GROUP_NOTIFICATION_MANAGER__:
+        <span id="inbox_drafts" class="inbox_inbox_header">__MSG__DRAFTS__</span>
+        <span id="inbox_queue" class="inbox_inbox_header">__MSG__QUEUE__</span>
+        <span id="inbox_archive" class="inbox_inbox_header">__MSG__ARCHIVE__</span>
+        <span id="inbox_trash" class="inbox_inbox_header">__MSG__TRASH__</span>
+    </div>
 
 
                     <!-- Main -->
@@ -35,12 +39,10 @@
 
                         <form name="my-inbox" action="" method="post">
 
-                            <!-- HEADERS -->
-                            <div class="top_decor">
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_drafts">__MSG__DRAFTS__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_queue" style="display:none;">__MSG__QUEUE__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_archive" style="display:none;">__MSG__ARCHIVE__</div>
-                                <div class="inbox-heading inbox_inbox_header" id="inbox_trash" style="display:none;">__MSG__TRASH__</div>
+                            <!-- HEADER -->
+
+                            <div class="inbox-heading">
+                                <a href="#l=notifications/drafts" id="inbox-new-button" class="s3d-no-margin-top s3d-button s3d-overlay-button grey fl-force-right">Create Notification</a>
                             </div>
 
                             <!-- INBOX -->
@@ -55,9 +57,7 @@
 
                             </div>
 
-                            <div class="bottom_decor">
                               <div id="inbox_pager" class="jq_pager inbox-message-list-view" style="display:none"></div>
-                            </div>
 
                             <div id="inbox_inbox_sort_up" style="display:none;"><!--img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /--></div>
                             <div id="inbox_inbox_sort_down" style="display:none;"><!--img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /--></div>
@@ -103,21 +103,21 @@
 
                         <!-- BUTTON LISTS-->
 						<div class="button-list" id="buttons-drafts">
-						    <button id="inbox-movetoqueue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-							<button id="inbox-draftsdelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_TRASH__</span></button>
-                            <button id="inbox-draftscopy-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY__</span></button>
+						    <button id="inbox-movetoqueue-button" class="s3d-button s3d-overlay-button grey">__MSG__QUEUE__</button>
+							<button id="inbox-draftsdelete-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_TRASH__</button>
+                            <button id="inbox-draftscopy-button" class="s3d-button s3d-overlay-button grey">__MSG__COPY__</button>
 					   </div>
 					   <div class="button-list" id="buttons-queue" style="display:none;">
-                            <button id="inbox-queuetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
-						    <button id="inbox-queuecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
-                            <button id="inbox-queuedelete-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_TRASH__</span></button>
+                            <button id="inbox-queuetodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_DRAFTS__</button>
+						    <button id="inbox-queuecopytodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__COPY_TO_DRAFTS__</button>
+                            <button id="inbox-queuedelete-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_TRASH__</button>
 					   </div>
                        <div class="button-list" id="buttons-archive" style="display:none;">
-                            <button id="inbox-archivetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
+                            <button id="inbox-archivetodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__COPY_TO_DRAFTS__</button>
 					   </div>
                        <div class="button-list" id="buttons-trash" style="display:none;">
-						    <button id="inbox-emptytrash-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-                            <button id="inbox-trashtodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
+						    <button id="inbox-emptytrash-button" class="s3d-button s3d-overlay-button grey">__MSG__DELETE__</button>
+                            <button id="inbox-trashtodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_DRAFTS__</button>
 					   </div>
 
                     </div>

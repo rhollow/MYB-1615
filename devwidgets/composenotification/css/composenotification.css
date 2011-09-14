@@ -16,9 +16,47 @@
  * specific language governing permissions and limitations under the License.
  */
 
+.edit-notification-wrapper {
+    padding:10px;
+    background-color: #f4f4f4;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius:6px;
+    box-shadow: 0px 0px 5px 0px #ccc;
+    -moz-box-shadow:0px 0px 5px 0px #ccc;
+    -webkit-box-shadow:0px 0px 5px 0px #ccc;
+}
+
+.compose-form div {
+    margin-bottom: 8px;
+}
+
+.compose-form fieldset {
+    padding: 15px 10px 0;
+    margin-bottom: 0; 
+}
+
+.compose-form .edit-notification-type {
+   background-color: #fff;
+   border-radius: 6px;
+   border: 2px solid #e6e6e6;
+}
+
+select.compose-form-elm {
+    margin-top: 0;
+}
+
+.compose-form .dialog_buttons {
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
 /* Radiobox and checkbox formatting */
-.radioboxes {margin-right: 5px; position: relative; top: 2px;}
-.checkboxes {margin-right: 5px; position: relative; top: 2px;}
+.radioboxes, .checkboxes {
+    margin-right: 5px;
+    position: relative;
+    top: 1px;
+}
 
 /* Reminder check and task or event detail formatting */
 .task_or_event {position: relative; left: 20px;}
@@ -32,14 +70,22 @@
 .composenotification_invalid {background-color:#FFCCCC !important;}
 
 #composenotification_box .compose-form label.name {
-  display: inline;
+  display: inline-block;
 }
 
 /* send_message_lightbox.html */
 .send_message .compose-form input, .send_message .compose-form textarea {font-weight:normal;}
-.send_message .compose-form div {padding-bottom:10px;}
-.send_message .compose-form .compose-subject {width:500px;}
-.send_message .compose-form .compose-body {height:150px; width:500px;}
+
+.send_message .compose-form .compose-subject {
+    width:500px;
+    height: 22px;
+
+}
+
+.send_message .compose-form .compose-body {
+    height:150px; width:500px;
+}
+
 #send_message {font-weight:bold}
 
 
@@ -56,20 +102,14 @@
      text-align:right;
      width:140px;
      float:left;
-     margin-bottom:10px;
  }
+
 #composenotification_box span.right{
     float:left;
-
     margin-left:10px;
-    margin-bottom:10px;
 }
 #composenotification_required span {
     margin-left:0;
-}
-
-#composenotification_required input[type=radio] {
-     top: -1px;
 }
 
 .composenotification_widget .disabled {

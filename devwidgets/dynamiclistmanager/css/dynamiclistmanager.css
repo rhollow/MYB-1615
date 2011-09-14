@@ -9,8 +9,13 @@
 /** Table **/
 
 .dynamiclistmanager_widget .main_content_container {
-    border: 3px solid #d5dbdf;
-    height: 298px;
+    border: 1px solid #d5dbdf;
+    border-width: 2px 0;
+    width: 100%;
+    margin-top: 12px;
+    min-height: 300px;
+    height: 300px;
+    overflow: auto;
 }
 
 .dynamiclistmanager_widget .bottom_decor
@@ -34,7 +39,7 @@
 }
 
 .dynamiclistmanager_widget .list-table .different th {
-    border-bottom: 3px solid #d5dbdf;
+    border-bottom: 2px solid #d5dbdf;
     padding-left: 5px;
 }
 
@@ -83,7 +88,7 @@
     border-bottom: 1px solid #d5dbdf;
     /*white-space: nowrap;*/
     overflow: hidden;
-    padding: 5px;
+    padding: 8px 4px;
     vertical-align: top;
 }
 

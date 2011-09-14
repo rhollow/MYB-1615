@@ -8,14 +8,14 @@
     <div id="cn-widget-title" class="s3d-contentpage-title">__MSG__WIDGET_TITLE_CREATE_NOTIFICATION__</div>
 
     <!-- FORM -->
-    <div id="message_form" style="background-color: #efefef;border: 3px solid #e6e6e6;border-radius: 10px;padding:  10px;padding-bottom: 0px;">
+    <div id="message_form" class="edit-notification-wrapper">
     
         <div id="composenotification_box" class="send_message">
             <form class="compose-form">
 
-                <div style="background-color: #fff;border-radius: 10px;border: 3px solid #e6e6e6;padding: 15px 10px 10px 10px;margin-bottom:15px;">
+                <fieldset class="edit-notification-type">
                     <!-- TYPE -->
-                    <div id="composenotification_type">
+                    <div id="composenotification_type" class="fl-fix">
                         <span class="left"><label for="cn-notification-type" class="name">Type</label></span>
                         <span class="right">
                             <select class="compose-form-elm" id="cn-notification-type" name="notification-type">
@@ -28,7 +28,7 @@
                     </div>
 
                     <!-- TASK: Due Date -->
-                    <div id="composenotification_task_due_date" style="clear:both">
+                    <div id="composenotification_task_due_date" class="fl-fix">
                         <span class="left"><label for="datepicker-taskduedate-text" class="name">__MSG__TASK_DUE_DATE__</label><span class="asterisk">*</span></span>
                         <span class="right datepicker">
                             <input class="compose-form-elm text-field" type="text" id="datepicker-taskduedate-text" name="taskduedate-text" />
@@ -36,7 +36,7 @@
                     </div>
 
                     <!-- EVENT: Date -->
-                    <div id="composenotification_event_date"style="clear:both;display:none;">
+                    <div id="composenotification_event_date" class="fl-fix" style="display:none;">
                         <span class="left"><label for="datepicker-eventdate-text" class="name">__MSG__EVENT_DATE__</label><span class="asterisk">*</span></span>
                         <span class="right datepicker">
                             <input class="compose-form-elm text-field" type="text" id="datepicker-eventdate-text" name="eventdate-text" />
@@ -44,7 +44,7 @@
                     </div>
 
                     <!-- EVENT: Time -->
-                    <div id="composenotification_event_time" style="clear:both;display:none;">
+                    <div id="composenotification_event_time" class="fl-fix" style="display:none;">
                         <span class="left"><label for="cn-event-timehour" class="name">__MSG__TIME__</label><span class="asterisk">*</span></span>
                         <span class="right">
                             <!-- EVENT: Time (Hour) -->
@@ -57,13 +57,13 @@
                     </div>
 
                     <!-- EVENT: Place -->
-                    <div id="composenotification_event_place" style="clear:both;display:none;">
+                    <div id="composenotification_event_place" class="fl-fix" style="display:none;">
                         <span class="left"><label for="cn-event-place" class="name">__MSG__PLACE__</label><span class="asterisk">*</span></span>
                         <span class="right"><input class="compose-form-elm text-field" type="text" id="cn-event-place" style="width:500px;" name="event-place" /></span>
                     </div>
 
                     <!-- REQUIRED CHECK -->
-                    <div id="composenotification_required" style="clear:both">
+                    <div id="composenotification_required" class="fl-fix">
                         <span class="left">__MSG__REQUIRED__<span class="asterisk">*</span></span>
                         <span class="right">
                             <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredyes" /><label for="cn-requiredyes" class="name">__MSG__YES__</label>
@@ -72,19 +72,15 @@
                     </div>
 
                     <!-- CONSEQUENCES -->
-                    <div id="composenotification_consequence" style="clear:both; display:none;">
+                    <div id="composenotification_consequence" class="fl-fix" style="display:none;">
                         <span class="left"><label for="cn-consequence" class="name">Consequence(s) for Not Completing This Task</label></span>
                         <span class="right"><textarea class="compose-form-elm text-field" id="cn-consequence" style="width:500px" rows="1" name="consequence" ></textarea></span>
                     </div>
-                    <!-- HACK: cosmetic fix for messages -->
-                    <div style="clear:both;height:0;margin:0;padding:0;"></div>
+                </fieldset>
 
-                </div>
-
-                <div style="background-color: #efefef;border: 3px solid #efefef;padding: 0px 10px 10px 10px;margin-bottom:0px;">
-
+                <fieldset class="compose-lower-fields">
                     <!-- SEND DATE -->
-                    <div  id="composenotification_senddate">
+                    <div  id="composenotification_senddate" class="fl-fix">
                         <span class="left"><label for="datepicker-senddate-text" class="name">__MSG__SEND_DATE__</label><span class="asterisk">*</span></span>
                         <span class="right datepicker">
                             <input class="compose-form-elm text-field" type="text" id="datepicker-senddate-text" name="senddate-text" />
@@ -92,29 +88,28 @@
                     </div>
 
                     <!-- DYNAMIC LIST -->
-                    <div id="composenotification_dynamiclist" style="clear:both">
+                    <div id="composenotification_dynamiclist" class="fl-fix">
                         <span class="left" style="margin-top:6px"><label for="cn-dynamiclistselect" class="name">__MSG__DYNAMIC_LIST__</label><span class="asterisk">*</span></span>
                         <span class="right">
                             <select class="compose-form-elm" id="cn-dynamiclistselect" name="dynamiclistselect"></select>
-                            <button id="create-new-dynamic-list-button" class="s3d-button s3d-overlay-button" type="button">__MSG__CREATE_OR_EDIT_DYNAMIC_LISTS__</button>
+                            <button id="create-new-dynamic-list-button" class="s3d-button s3d-overlay-button grey" type="button">__MSG__CREATE_OR_EDIT_DYNAMIC_LISTS__</button>
                         </span>
                     </div>
 
                     <!-- SUBJECT-->
-                    <div id="composenotification_subject" style="clear:both">
+                    <div id="composenotification_subject" class="fl-fix">
                         <span class="left"><label for="cn-subject" class="name">__MSG__SUBJECT__</label><span class="asterisk">*</span></span>
-                        <span class="right"><input type="text" style="width:500px;" class="compose-form-elm text-field" id="cn-subject" name="subject" /></span>
+                        <span class="right"><input type="text" class="compose-subject compose-form-elm text-field" id="cn-subject" name="subject" /></span>
                     </div>
 
                     <!-- BODY-->
-                    <div id="composenotification_body" style="clear:both">
+                    <div id="composenotification_body" class="fl-fix">
                         <span class="left"><label for="cn-body" class="name">__MSG__BODY__</label><span class="asterisk">*</span></span>
-                        <span class="right"><textarea class="compose-form-elm text-field" id="cn-body" style="width:500px; height:150px;" name="body" ></textarea></span>
+                        <span class="right"><textarea class="compose-body compose-form-elm text-field" id="cn-body" name="body" ></textarea></span>
                     </div>
-                    <div style="clear:both;padding: 0;margin: 0"></div>
 
                     <!-- CONTACT PERSON -->
-                    <div id="composenotification_contactperson" style="clear:both; display:none;">
+                    <div id="composenotification_contactperson" class="fl-fix" style="display:none;">
                         <span class="left"><label for="cn-email" class="name">Contact Person</label></span>
                         <span class="right"><input type="text" style="width:500px;" class="compose-form-elm text-field" id="cn-email" name="email" /></span>
                     </div>
@@ -124,39 +119,40 @@
                         <span class="left"><label for="cn-link" class="name">Link</label></span>
                         <span class="right"><input type="text" style="width:500px;" class="compose-form-elm text-field" id="cn-link" name="link" /></span>
                     </div>
+                    
+                    <!-- Button Lists-->
+                    <div class="dialog_buttons fl-force-right" id="createnew-buttons" style="display:none;">
+                        <button id="cn-cancel-button" class="s3d-button s3d-link-button s3d-bold">__MSG__CANCEL__</button>
+                        <button id="cn-queue-button" class="s3d-button s3d-overlay-button">__MSG__QUEUE__</button>
+                        <button id="cn-saveasdraft-button" class="s3d-button s3d-overlay-button">__MSG__SAVE_AS_DRAFT__</button>
+                    </div>
+                    <div class="dialog_buttons fl-force-right" id="editdraft-buttons" style="display:none;">
+                        <button id="cn-editdraft-cancel-button" class="s3d-link-button s3d-bold">__MSG__CANCEL__</button>
+                        <button id="cn-queuedraft-button" class="s3d-button s3d-overlay-button">__MSG__QUEUE__</button>
+                        <button id="cn-updatedraft-button" class="s3d-button s3d-overlay-button">__MSG__SAVE__</button>
+                        <button id="cn-deletedraft-button" class="s3d-button s3d-overlay-button">__MSG__DELETE__</button>
+                    </div>
+                    <div class="dialog_buttons fl-force-right" id="queueview-buttons" style="display:none;">
+                        <button id="cn-queueview-cancel-button" class="s3d-link-button s3d-bold">__MSG__CANCEL__</button>
+                        <button id="cn-movetodrafts-button" class="s3d-button s3d-overlay-button">__MSG__MOVE_TO_DRAFTS__</button>
+                        <button id="cn-queuecopytodrafts-button" class="s3d-button s3d-overlay-button">__MSG__COPY_TO_DRAFTS__</button>
+                        <button id="cn-deletequeued-button" class="s3d-button s3d-overlay-button">__MSG__DELETE__</button>
+                    </div>
+                    <div class="dialog_buttons fl-force-right" id="archiveview-buttons" style="display:none;">
+                        <button id="cn-archiveview-cancel-button" class="s3d-link-button s3d-bold">__MSG__CANCEL__</button>
+                        <button id="cn-archivecopytodrafts-button" class="s3d-button s3d-overlay-button">__MSG__COPY_TO_DRAFTS__</button>
+                    </div>
+                    <div class="dialog_buttons fl-force-right" id="trashview-buttons" style="display:none;">
+                        <button id="cn-trashview-cancel-button" class="s3d-link-button s3d-bold">__MSG__CANCEL__</button>
+                        <button id="cn-editrashed-button" class="s3d-button s3d-overlay-button">__MSG__ENABLE_EDITING__</button>
+                        <button id="cn-deletetrashed-button" class="s3d-button s3d-overlay-button">__MSG__DELETE__</button>
+                    </div>
 
-                </div>
+
+                </fieldset>
 
             </form>
-
-            <!-- Button Lists-->
-            <div class="button-list notifdetail-buttons" id="createnew-buttons" style="display:none;margin-top:15px;">
-                <button id="cn-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                <button id="cn-queue-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-                <button id="cn-saveasdraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE_AS_DRAFT__</span></button>
-            </div>
-            <div class="button-list notifdetail-buttons" id="editdraft-buttons" style="display:none;margin-top:15px;">
-                <button id="cn-editdraft-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                <button id="cn-queuedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__QUEUE__</span></button>
-                <button id="cn-updatedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__SAVE__</span></button>
-                <button id="cn-deletedraft-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-            </div>
-            <div class="button-list notifdetail-buttons" id="queueview-buttons" style="display:none;margin-top:15px;">
-                <button id="cn-queueview-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                <button id="cn-movetodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__MOVE_TO_DRAFTS__</span></button>
-                <button id="cn-queuecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
-                <button id="cn-deletequeued-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-            </div>
-            <div class="button-list notifdetail-buttons" id="archiveview-buttons" style="display:none;margin-top:15px;">
-                <button id="cn-archiveview-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                <button id="cn-archivecopytodrafts-button" class="s3d-button"><span class="s3d-button-inner">__MSG__COPY_TO_DRAFTS__</span></button>
-            </div>
-            <div class="button-list notifdetail-buttons" id="trashview-buttons" style="display:none;margin-top:15px;">
-                <button id="cn-trashview-cancel-button" class="s3d-button"><span class="s3d-button-inner">__MSG__CANCEL__</span></button>
-                <button id="cn-editrashed-button" class="s3d-button"><span class="s3d-button-inner">__MSG__ENABLE_EDITING__</span></button>
-                <button id="cn-deletetrashed-button" class="s3d-button"><span class="s3d-button-inner">__MSG__DELETE__</span></button>
-            </div>
-
+            <hr class="fl-push fl-hidden">
         </div>                             
     
     </div>

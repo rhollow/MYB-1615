@@ -61,14 +61,12 @@
     font-weight: bold;
     border-bottom: 2px solid #D5DBDF;
     cursor: pointer;
-    padding: 5px 5px 5px 7px;
-}
-
-
-.mylinks_widget .section_label {
+    padding: 8px 5px 5px 7px;
     background-color: #EBEDEE;
-    color: #555
+    color: #555;
+    font-size: 0.9em;
 }
+
 
 .mylinks_widget .accordion_open .section_label {
     background-color: #D5DBDF;

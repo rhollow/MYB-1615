@@ -10,12 +10,31 @@
 
 /** INBOX PANE & DEFAULT SETUP **/
 
-.groupnotificationmanager_widget .inbox-heading
-{ font-weight: bold; color: #333; font-size: 17px; padding: 4px 0 0 5px; }
+.groupnotificationmanager_widget .s3d-contentpage-title {
+    margin-bottom: 8px;
+}
+
+.groupnotificationmanager_widget .inbox-heading {
+    font-weight: bold;
+    color: #424242;
+    font-size: 17px;
+    padding-bottom: 20px;
+}
+
+.groupnotificationmanager_widget .inbox_inbox_header {
+    font-weight: bold;
+}
 
 /** Table **/
-.groupnotificationmanager_widget .main_content_container
-{  border-left: 3px solid #d5dbdf; border-right: 3px solid #d5dbdf; min-height: 300px; height: 300px; overflow: auto; }
+.groupnotificationmanager_widget .main_content_container {
+    border: 1px solid #d5dbdf;
+    border-width: 2px 0;
+    width: 100%;
+    margin-top: 12px;
+    min-height: 300px;
+    height: 300px;
+    overflow: auto;
+}
 
 .groupnotificationmanager_widget .inbox-table
 { width:100%; margin:0; border-spacing:0; border-collapse:collapse; }
@@ -26,8 +45,10 @@
 /** Header **/
 .groupnotificationmanager_widget .inbox-table .different
 { background: #eaedef; }
-.groupnotificationmanager_widget .inbox-table .different th
-{ border-bottom: 3px solid #d5dbdf; }
+
+.groupnotificationmanager_widget .inbox-table .different th {
+    border-bottom: 2px solid #d5dbdf;
+}
 
 .groupnotificationmanager_widget .inbox-table #inbox_table_header_chk
 { width:3%; }
@@ -55,8 +76,15 @@
 .groupnotificationmanager_widget .inbox-table tr.message_none_row:hover
 { background-color:#fff !important; cursor:auto !important; }
 
-.groupnotificationmanager_widget .inbox-table td
-{ border:none;color:#666;text-align:left;font-size:1em;border-bottom:1px solid #d5dbdf;padding:4px 4px 4px 4px; }
+.groupnotificationmanager_widget .inbox-table td {
+    border:none;
+    color:#666;
+    text-align:left;
+    font-size:1em;
+    border-bottom:1px solid #d5dbdf;
+    padding: 8px 4px;
+}
+
 .groupnotificationmanager_widget .inbox-table tr.inbox-subject-read *
 { font-weight:normal;}
 .groupnotificationmanager_widget .inbox-table tr.inbox-subject-unread *
