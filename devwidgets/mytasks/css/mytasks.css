@@ -1,31 +1,3 @@
-/* Main */
-
-.mytasks .s3d-contentpage-title, .myevents .s3d-contentpage-title {
-    margin-bottom: 0;
-}
-
-.mytasks .s3d-widget-footer, .myevents .s3d-widget-footer {
-    margin-top: 0;
-}
-
-.mytasks .s3d-button.s3d-overlay-button, .myevents .s3d-button.s3d-overlay-button  {
-    height:22px;
-    margin-left:0;
-}
-
-
-/*.s3d-button.s3d-overlay-button {
-    background:url("/dev/images/button_overlay_default.png") repeat-x scroll left top transparent;
-    border:1px solid #E0E3E5;
-    font-size:11px;
-    font-weight:bold;
-    height:24px;
-    margin-left:15px;
-    box-shadow:0 1px 1px 0 #999;
-    text-shadow:0 2px 3px #fff;
-    color: #2683bc;
-}*/
-
 .mytasks_overdue_tasks_msg {
     background-color: #C4DAE8;
     color: #BF0000;
@@ -56,18 +28,14 @@
     color: #666;
     padding: 6px;
     text-align: center;
-    border-top: 1px solid #DFDFDF;
     background-color: #E0EEF5;
     font-weight: bolder;
     clear: both;
 }
 
-
-
 table.noticewidget_listing {
     font-size: 12px;
     border-collapse: collapse;
-    border-top: 1px solid #BBB;
     border-spacing: 0;
     margin-bottom: 0;
 	width: 100%; /* needed for IE7 */
@@ -108,6 +76,10 @@ table.noticewidget_listing th.DESC {
 table.noticewidget_listing td, table.noticewidget_listing th {    
     text-align: center;
     padding: 1px 18px 0 5px;
+}
+
+.noticewidget_listing_wrapper {
+    border-top: 1px solid #BBB;
 }
 
 .noticewidget_scroller {

@@ -60,7 +60,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         var filterContainer = $(".noticewidget_filter_container", config.rootContainer);
-        var filterDone = $(".noticewidget_filter_done", config.rootContainer);
+        var filterDone = $(".noticewidget_filter_done button", config.rootContainer);
         var filterControl = $(".noticewidget_filter_control", config.rootContainer);
         var filterControlContainer = $(".noticewidget_filter", config.rootContainer);
         var filterControlIndicator = $(".noticewidget_filter_control_indicator", config.rootContainer);
