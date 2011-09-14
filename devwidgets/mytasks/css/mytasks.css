@@ -42,10 +42,6 @@ table.noticewidget_listing {
     display: block;
 }
 
-.archiveView {
-    border-top: solid 1px #666;  
-}
-
 .mytasks_overdue_tasks_exist .archiveView {
     margin-top: 0;
 }

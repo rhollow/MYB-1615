@@ -68,6 +68,8 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         var loadingIndicator = $(".noticewidget_listing_loading", config.rootContainer);
         var listingTable = $("table.noticewidget_listing", config.rootContainer);
         var listingTableWrapper = $(".noticewidget_listing_wrapper", config.rootContainer);
+        
+        var taskArchiveButton = $(".noticewidget_archive_tasks_button", config.rootContainer);
 
 
         // This function is used to notify mytasks.js and myevents.js about model changes
@@ -340,7 +342,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         }
                     });
                 });
-                $(".noticewidget_archive_tasks_button", config.rootContainer).live("click", function() {
+                taskArchiveButton.live("click", function() {
                     if ($(this).is(":disabled")) {
                         // don't attempt to archive a task whose archive button is disabled
                         return;
@@ -412,18 +414,17 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         that.updateUI = function() {
 
             var archiveControls = function() {
-                var archiveTasksButtonText = $(".noticewidget_archive_tasks_button span", config.rootContainer);
                 var viewArchiveButton = $(".noticewidget_view_task_archive", config.rootContainer);
                 var noTasksMessage = $(".empty_list td:first", config.rootContainer);
                 var selectorCells = $(".noticewidget_task_selector", config.rootContainer);
 
                 if (model.archiveMode) {
-                    archiveTasksButtonText.html(translate("MOVE_SELECTED_BACK_TO_LIST"));
+                    taskArchiveButton.text(translate("MOVE_SELECTED_BACK_TO_LIST"));
                     viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.archiveMode));
                     noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.archiveMode));
                     selectorCells.show();
                 } else {
-                    archiveTasksButtonText.html(translate("ARCHIVE_COMPLETED_TASKS"));
+                    taskArchiveButton.text(translate("ARCHIVE_COMPLETED_TASKS"));
                     viewArchiveButton.html(translate(config.buttonMessages.viewArchiveButton.listMode));
                     noTasksMessage.html(translate(config.buttonMessages.noItemsMessage.listMode));
                     selectorCells.hide();
@@ -431,9 +432,9 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                 var enabled = model.data.results.length > 0;
                 if (model.detailMode) {
                     if (model.archiveMode) {
-                        archiveTasksButtonText.html(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
+                        taskArchiveButton.text(translate("MOVE_THIS_TASK_BACK_TO_LIST"));
                     } else {
-                        archiveTasksButtonText.html(translate("ARCHIVE_THIS_TASK"));
+                        taskArchiveButton.text(translate("ARCHIVE_THIS_TASK"));
                     }
 
                     if (model.data.results[model.currentNotice]) {
@@ -445,11 +446,10 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         }
                     }
                 }
-                var parent = archiveTasksButtonText.parent();
                 if (enabled) {
-                    parent.removeAttr("disabled");
+                    taskArchiveButton.removeAttr("disabled");
                 } else {
-                    parent.attr("disabled", true);
+                    taskArchiveButton.attr("disabled", true);
                 }
             };
 
