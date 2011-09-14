@@ -391,10 +391,6 @@ table.noticewidget_listing tr.notice_row:hover {
     float: left;
 }
 
-.noticewidget_archive_tasks_button {
-    margin: -5px -5px 0 0;
-}
-
 table.noticewidget_listing tr.overDueTask {
     color: #BF0000;
 }
