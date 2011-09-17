@@ -31,114 +31,103 @@
     </div>
 
 
-                    <!-- Main -->
-                <div>
+    <!-- Main -->
+    <div>
 
-                    <!-- INBOXES OF NOTIFICATIONS (DEFAULT VIEW) -->
-                    <div id="inbox_pane_inbox" class="inbox_pane">
+        <!-- INBOXES OF NOTIFICATIONS (DEFAULT VIEW) -->
+        <div id="inbox_pane_inbox" class="inbox_pane">
 
-                        <form name="my-inbox" action="" method="post">
+            <form name="my-inbox" action="" method="post">
 
-                            <!-- HEADER -->
+                <!-- HEADER -->
+                
+                <!-- ACTION BUTTONS -->
 
-                            <div class="inbox-heading">
-                                <a href="#l=notifications/drafts" id="inbox-new-button" class="s3d-no-margin-top s3d-button s3d-overlay-button grey fl-force-right">Create Notification</a>
-                            </div>
+                <div class="button-list fl-force-left">
+                    <button class="queue_checked_btn s3s-action-button s3d-button s3d-header-button s3d-header-smaller-button">__MSG__QUEUE__</button>
+                    <button class="copy_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__COPY_TO_DRAFTS__</button>
+                    <button class="move_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__MOVE_TO_DRAFTS__</button>
+                    <button class="trash_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__MOVE_TO_TRASH__</button>
+                    <button class="delete_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__DELETE__</button>
+                 </div>
 
-                            <!-- INBOX -->
-                            <div class="main_content_container">
-                                <table class="inbox-table" id="inbox_table" summary="All of your notification drafts.">
-                                    <tr class="different">
-                                        <th id="inbox_table_header_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__" /></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_subject"><span>__MSG__SUBJECT__</span></th>
-                                        <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__SEND_DATE__</span></th>
-                                    </tr>
-                                </table>
+                <div class="inbox-heading">
+                    <a href="#l=notifications/drafts" id="inbox-new-button" class="s3d-no-margin-top s3d-button s3d-overlay-button grey fl-force-right">Create Notification</a>
+                </div>
 
-                            </div>
-
-                              <div id="inbox_pager" class="jq_pager inbox-message-list-view" style="display:none"></div>
-
-                            <div id="inbox_inbox_sort_up" style="display:none;"><!--img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /--></div>
-                            <div id="inbox_inbox_sort_down" style="display:none;"><!--img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /--></div>
-
-                            <div id="inbox_inbox_messages_template" title=""><!--
-                            {for m in messages}
-                                {var readClass="inbox-subject-unread"}
-                                {if m.read}
-                                    {var readClass="inbox-subject-read"}
-                                {/if}
-								{var validatedClass=""}
-								{if !m.validated && m.messagebox === "drafts"}
-                                    {var validatedClass="inbox-message-unvalidated"}
-                                {/if}
-
-                                <tr class="inbox_message ${readClass} ${validatedClass}" id="inbox_table_message_${m['jcr:name']}">
-                                    <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
-
-                                {if m.messagebox === "drafts"}
-          												<input type="hidden" value="${m['uxState']['validated']}" id="drafts_message_validated_${m['jcr:name']}" />
-					                      {/if}
-
-                                        <td id="inbox_table_subject_${m.id}" class="subject-td">
-                                            <p><a href="javascript:;" class="inbox_inbox_message ellipsis_text" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></p>
-                                        </td>
-                                        <td>${m.date}</td>
-                                </tr>
-                            {forelse}
-                                <tr class="inbox_message message_none_row">
-                                    <td colspan="5" class="inbox_message_none">__MSG__NO_MESSAGES_FOUND__.</td>
-                                </tr>
-                            {/for}
-                            --></div>
-
-                            <div id="inbox_table_preloader"><!--
-                                <tr class="inbox_message">
-                                    <td colspan="5" class="inbox_message_none"><img src="/dev/images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
-                                </tr>
-                            --></div>
-
-                            <div id="inbox_results"></div>
-                        </form>
-
-                        <!-- BUTTON LISTS-->
-						<div class="button-list" id="buttons-drafts">
-						    <button id="inbox-movetoqueue-button" class="s3d-button s3d-overlay-button grey">__MSG__QUEUE__</button>
-							<button id="inbox-draftsdelete-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_TRASH__</button>
-                            <button id="inbox-draftscopy-button" class="s3d-button s3d-overlay-button grey">__MSG__COPY__</button>
-					   </div>
-					   <div class="button-list" id="buttons-queue" style="display:none;">
-                            <button id="inbox-queuetodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_DRAFTS__</button>
-						    <button id="inbox-queuecopytodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__COPY_TO_DRAFTS__</button>
-                            <button id="inbox-queuedelete-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_TRASH__</button>
-					   </div>
-                       <div class="button-list" id="buttons-archive" style="display:none;">
-                            <button id="inbox-archivetodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__COPY_TO_DRAFTS__</button>
-					   </div>
-                       <div class="button-list" id="buttons-trash" style="display:none;">
-						    <button id="inbox-emptytrash-button" class="s3d-button s3d-overlay-button grey">__MSG__DELETE__</button>
-                            <button id="inbox-trashtodrafts-button" class="s3d-button s3d-overlay-button grey">__MSG__MOVE_TO_DRAFTS__</button>
-					   </div>
-
-                    </div>
-
-                    <!-- NOTIFICATION COMPOSING & DETAILS -->
-                    <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
-
-                        <!-- Button Lists-->
-
-
-
-
-
-
-
-
-
-
-                    </div>
+                <!-- INBOX -->
+                <div class="main_content_container">
+                    <table class="inbox-table" id="inbox_table" summary="All of your notification drafts.">
+                        <tr class="different">
+                            <th id="inbox_table_header_chk"><input type="checkbox" id="inbox_inbox_checkAll" title="__MSG__CHECK_ALL__" /></th>
+                            <th class="inbox_inbox_table_header_sort" id="inbox_table_header_subject"><span>__MSG__SUBJECT__</span></th>
+                            <th class="inbox_inbox_table_header_sort" id="inbox_table_header_date"><span>__MSG__SEND_DATE__</span></th>
+                        </tr>
+                    </table>
 
                 </div>
+
+                  <div id="inbox_pager" class="jq_pager inbox-message-list-view" style="display:none"></div>
+
+                <div id="inbox_inbox_sort_up" style="display:none;"><!--img src="/dev/images/arrow_up_inbox.png" alt="__MSG__UP__" class="inbox_arrow" /--></div>
+                <div id="inbox_inbox_sort_down" style="display:none;"><!--img src="/dev/images/arrow_down_inbox.png" alt="__MSG__DOWN__" class="inbox_arrow" /--></div>
+
+                <div id="inbox_inbox_messages_template" title=""><!--
+                {for m in messages}
+                    {var readClass="inbox-subject-unread"}
+                    {if m.read}
+                        {var readClass="inbox-subject-read"}
+                    {/if}
+                    {var validatedClass=""}
+                    {if !m.validated && m.messagebox === "drafts"}
+                        {var validatedClass="inbox-message-unvalidated"}
+                    {/if}
+
+                    <tr class="inbox_message ${readClass} ${validatedClass}" id="inbox_table_message_${m['jcr:name']}">
+                        <td><input type="checkbox" class="inbox_inbox_check_message" value="${m['jcr:path']}" id="inbox_check_delete_${m['jcr:name']}" title="__MSG__DELETE__" /></td>
+
+                    {if m.messagebox === "drafts"}
+                                            <input type="hidden" value="${m['uxState']['validated']}" id="drafts_message_validated_${m['jcr:name']}" />
+                              {/if}
+
+                            <td id="inbox_table_subject_${m.id}" class="subject-td">
+                                <p><a href="javascript:;" class="inbox_inbox_message ellipsis_text" id="inbox_inbox_message_${m['jcr:name']}">${m.subject}</a></p>
+                            </td>
+                            <td>${m.date}</td>
+                    </tr>
+                {forelse}
+                    <tr class="inbox_message message_none_row">
+                        <td colspan="5" class="inbox_message_none">__MSG__NO_MESSAGES_FOUND__.</td>
+                    </tr>
+                {/for}
+                --></div>
+
+                <div id="inbox_table_preloader"><!--
+                    <tr class="inbox_message">
+                        <td colspan="5" class="inbox_message_none"><img src="/dev/images/ajax-loader-gray.gif" alt="__MSG__LOADING_PLEASE_HOLD_ON__." /></td>
+                    </tr>
+                --></div>
+
+                <div id="inbox_results"></div>
+            </form>
+           <!-- Button Lists-->
+            <div class="button-list s3d-margin-top-5 fl-force-left">
+                <button class="queue_checked_btn s3s-action-button s3d-button s3d-header-button s3d-header-smaller-button">__MSG__QUEUE__</button>
+                <button class="copy_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__COPY_TO_DRAFTS__</button>
+                <button class="move_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__MOVE_TO_DRAFTS__</button>
+                <button class="trash_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__MOVE_TO_TRASH__</button>
+                <button class="delete_checked_btn s3d-button s3d-header-button s3d-header-smaller-button">__MSG__DELETE__</button>
+             </div>
+
+        </div>
+
+        <!-- NOTIFICATION COMPOSING & DETAILS -->
+        <div id="inbox_pane_compose" class="inbox_pane" style="display:none;">
+
+
+        </div>
+
+    </div>
 
 
 

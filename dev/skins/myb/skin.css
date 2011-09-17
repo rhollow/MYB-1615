@@ -37,3 +37,10 @@
 .calc_widget .s3d-widget-footer .s3d-button.s3d-overlay-button {
     margin: -5px -5px 0 0;
 }
+
+/** CalCentral Button customization **/
+
+.s3d-button.s3d-header-button.s3d-header-smaller-button {
+    padding: 0 8px;
+    font-size: 11px;
+}

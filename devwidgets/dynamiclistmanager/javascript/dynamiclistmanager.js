@@ -60,34 +60,30 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var $rootElement = $("#" + tuid);
 
         /**
-         * Dynamic list 'Edit' button
+         * Dynamic list Action buttons
          */
-        var $dynListsEditButton = $("#dyn_lists_edit_button");
+        var $dynListsEditButton = $(".dyn_lists_edit_button", $rootElement);
+        var $dynListsCopyButton = $(".dyn_lists_copy_button", $rootElement);
+        var $dynListsDeleteButton = $(".dyn_lists_delete_button", $rootElement);
 
         /**
-         * Dynamic list 'Copy' button
-         */
-        var $dynListsCopyButton = $("#dyn_lists_copy_button");
-
-        /**
-         * Dynamic list 'delete' button
-         */
-        var $dynListsDeleteButton = $("#dyn_lists_delete_button");
-
-        /**
-         * Dynamic list 'Create' button (multiple contexts)
+         * Dynamic list 'Create' button
          */
         var $dynListsCreateButton = $("#dynamic_lists_create_new");
 
         /**
-         * Dynamic list 'Create' button (single context)
-         */
-        var $dynListsCreateButtonSingleChoice = $("#dynamic_lists_create_new_single_choice");
-
-        /**
          * Dynamic list 'Create' button container for multiple contexts
          */
-        var $dynListsCreateButtonContainer = $("#dlm_create_button_multiple_choice_container");
+        var $dynListsContextSelectContainer = $("#dlm_context_select_container", $rootElement);
+
+        /**
+         * Dynamic list dropdown
+         */
+        var $dynListsContextSelect = $("#dlm_context_choice_select");
+        
+        var contexts = sakai.data.me.dynamiclistcontexts;
+        var multipleContexts = contexts.length > 1;
+
 
         var $tableOfLists = $("#list_table");
 
@@ -346,13 +342,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         ////////////////////
 
         $dynListsCreateButton.click(function() {
-            $.bbq.pushState({"new": true, "context": sakai.data.me.dynamiclistcontexts[0].name});
+            var context = (multipleContexts) ? $dynListsContextSelect.val() : sakai.data.me.dynamiclistcontexts[0].name;
+            $.bbq.pushState({"new": true, "context": context});
         });
-
-        $dynListsCreateButtonSingleChoice.click(function() {
-            $.bbq.pushState({"new": true, "context": sakai.data.me.dynamiclistcontexts[0].name});
-        });
-
 
         $(".list_list_check_list").live("click", function(){
             updateEditCopyDeleteButtonsStatus();
@@ -485,32 +477,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             dynamicListsBaseUrl = "/~" + sakai.data.me.user.userid + "/private/dynamic_lists";
 
             setState();
+            
+            /* Initialize context menu */
 
-            var contexts = sakai.data.me.dynamiclistcontexts;
-
-            if(contexts.length>1) {
+            if (multipleContexts) {
                 // Display multiple choice drop-down menu
-                $dynListsCreateButtonContainer.hover(function(){
-                    var $popup = $("#dlm_create_button_dropdown");
-                    $popup.show();
-                }, function(){
-                    var $popup = $("#dlm_create_button_dropdown");
-                    $popup.hide();
-                });
-
-                var $list = $("#dlm_create_button_multiple_choice_container #dlm_create_button_dropdown ul", $rootElement);
-                for(var key in contexts) {
+                
+                for (var key in contexts) {
                     var c = contexts[key];
-                    $list.append('<li><a  class="dynlist_context" style="font-weight: bold;">'+c.name+'</a></li>');
+                    $dynListsContextSelect.append('<option value="' + c.name + '">'+c.name+'</option>');
                 }
 
-                $("a.dynlist_context", $list).click(function() {
-                    var $a=$(this);
-                    $.bbq.pushState({"new": true, "context": $a.text()});
-                });
-                $dynListsCreateButtonContainer.show();
-            } else {
-                $dynListsCreateButtonSingleChoice.show();
+                $dynListsContextSelectContainer.show();
             }
         };
 

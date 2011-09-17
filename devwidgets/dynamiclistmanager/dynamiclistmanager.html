@@ -4,26 +4,33 @@
 
 <div class="dynamiclistmanager_widget" style="display: none;">
 
-    <button type="button" id="dynamic_lists_create_new_single_choice" class="s3d-button" style="float:right;display:none;"><span class="s3d-button-inner">Create New</span></button>
-
-    <div id="dlm_create_button_multiple_choice_container" class="s3d-dropdown-menu" style="float:right;padding: 0 !important;margin: 0 !important;display:none;">
-        <div id="dlm_create_button_and_arrow_div" style="padding: 7px 4px 4px 4px"><span id="dynamic_lists_create_new" class="s3d-button">Create New</span><span id="small_arrow"></span></div>
-        <div id="dlm_create_button_dropdown" class="s3d-dropdown-container" style="display:none" >
-            <ul></ul>
-        </div>
-    </div>
-
     <!-- TITLE -->
     <div class="s3d-contentpage-title">__MSG__DYNAMIC_LIST_MANAGER__</div>
+    
+    <div class="dlm_list_controls">
+        <button type="button" id="dynamic_lists_create_new" class="s3d-no-margin-top s3d-button s3d-margin-top-3 s3d-overlay-button grey fl-force-right">Create New</button>
 
+         <div id="dlm_multiple_choice_container" class="fl-force-right">
+            <label for="dlm_context_select_container">List context:</label>
+            <select name="year" id="dlm_context_choice_select">
+                <!-- populated by JavaScript -->
+            </select>
+        </div>
+ 
+        <!-- List of buttons -->
+        <div class="button-list fl-force-left">
+            <button type="button" class="dyn_lists_edit_button s3d-button s3d-header-button s3d-header-smaller-button s3d-margin-top-5" disabled="disabled">__MSG__EDIT__</button>
+            <button type="button" class="dyn_lists_copy_button s3d-button s3d-header-button s3d-header-smaller-button s3d-margin-top-5" disabled="disabled">__MSG__COPY__</button>
+            <button type="button" class="dyn_lists_delete_button s3d-button s3d-header-button s3d-header-smaller-button s3d-margin-top-5" disabled="disabled">__MSG__DELETE__</button>
+        </div>
+    </div>
+    
 
     <div id="existing_lists list_main">
-        <div class="search_tab_content_top">
-            <div class="search_tab_content_top_inner"><!-- --></div>
-        </div>
 
         <div class="main_content_container">
             <table class="list-table" id="list_table" summary="Your existing lists.">
+                <thead>
                 <tr class="different">
                     <th class="list-checkbox" id="list_tableHeader_chk"><input type="checkbox" id="list_list_checkAll" title="__MSG__CHECK_ALL__"/></th>
                     <th class="list_list_table_header_sort" id="list_table_header_date_modified"><span>__MSG__DATE_MODIFIED__</span></th>
@@ -31,12 +38,11 @@
                     <!--th class="list_list_table_header_sort" id="list_table_header_description"><span>__MSG__DESCRIPTION__</span></th-->
                     <th class="list_list_table_header_sort" id="list_table_header_size"><span>__MSG__LIST_SIZE__</span></th>
                 </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
 
-        </div>
-
-        <div class="bottom_decor" style="display:none">
-          <div id="list_pager" class="jq_pager inbox-message-list-view"></div>
         </div>
 
         <div id="list_list_lists_template" title=""><!--
@@ -64,9 +70,9 @@
 
     <!-- List of buttons -->
     <div class="button-list">
-        <button type="button" id="dyn_lists_delete_button" class="s3d-button s3d-overlay-button grey" disabled="disabled">__MSG__DELETE__</button>
-        <button type="button" id="dyn_lists_copy_button" class="s3d-button s3d-overlay-button grey" disabled="disabled">__MSG__COPY__</button>
-        <button type="button" id="dyn_lists_edit_button" class="s3d-button s3d-overlay-button grey" disabled="disabled">__MSG__EDIT__</button>
+        <button type="button" class="dyn_lists_edit_button s3d-button s3d-header-button s3d-header-smaller-button s3d-margin-top-5" disabled="disabled">__MSG__EDIT__</button>
+        <button type="button" class="dyn_lists_copy_button s3d-button s3d-header-button s3d-header-smaller-button s3d-margin-top-5" disabled="disabled">__MSG__COPY__</button>
+        <button type="button" class="dyn_lists_delete_button s3d-button s3d-header-button s3d-header-smaller-button s3d-margin-top-5" disabled="disabled">__MSG__DELETE__</button>
     </div>
 
 </div>

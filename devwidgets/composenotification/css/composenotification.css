@@ -31,6 +31,10 @@
     margin-bottom: 8px;
 }
 
+.compose-form select {
+    border: 1px solid #CCC;
+}
+
 .compose-form fieldset {
     padding: 15px 10px 0;
     margin-bottom: 0; 

@@ -1,9 +1,27 @@
 /** LAYOUT **/
 
 .dynamiclistmanager_widget .button-list {
-    float: right;
-    margin-top: 10px;
-    padding-bottom: 10px;
+    display: inline;
+}
+
+/** Controls **/
+
+.dlm_list_controls {
+    float: left;
+    width: 100%;
+    padding: 0px 0 13px;
+}
+
+#dlm_multiple_choice_container {
+    padding-top: 3px;
+}
+
+#dlm_multiple_choice_container select {
+    border: 1px solid #CCC;
+}
+
+button.s3d-button.s3d-no-margin-top {
+    height: 21px !important;
 }
 
 /** Table **/
@@ -114,26 +132,8 @@
     text-decoration: underline;
 }
 
-/* For context selection drop-down menu */
-.dynamiclistmanager_widget #dlm_create_button_multiple_choice_container:hover span#dynamic_lists_create_new {
-    color: #fff;
-}
-
-.dynamiclistmanager_widget #dlm_create_button_multiple_choice_container:hover #dlm_create_button_and_arrow_div span#small_arrow{
-    display:inline-block;
-    background:url('/devwidgets/entity/images/entity_changepic_hover_arrow.png') no-repeat top left transparent;
-    height: 8px;
-    width: 12px;
-}
-.dynamiclistmanager_widget #dlm_create_button_multiple_choice_container #dlm_create_button_and_arrow_div span#small_arrow{
-    display:inline-block;
-    background:url('/devwidgets/entity/images/entity_changepic_arrow.png') no-repeat top left transparent;
-    height: 8px;
-    width: 12px;
-}
-
-.dynamiclistmanager_widget .disabled {
+/*.dynamiclistmanager_widget .disabled {
 	-moz-opacity: 0.4;
 	filter:alpha(opacity=40);
 	opacity: 0.4;
-}
+}*/

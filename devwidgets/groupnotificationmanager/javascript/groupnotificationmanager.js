@@ -59,12 +59,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          */
         var $rootElement = $("#" + tuid);
 
-
-
-
-
-
-
         /**
          *
          * CSS IDS
@@ -152,10 +146,18 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
         var inboxGeneralMessagesSendFailed = inboxGeneralMessages + "_send_fail";
         var inboxGeneralMessagesMovedFailed = inboxGeneralMessagesMoved + "_failed";
         var inboxGeneralMessagesCopiedFailed = inboxGeneralMessagesCopied + "_copied";
+        
+        var draftsButtons = $(".queue_checked_btn, .copy_checked_btn, .trash_checked_btn", $rootElement);
+        var queueButtons = $(".move_checked_btn, .copy_checked_btn, .trash_checked_btn", $rootElement);
+        var archiveButtons = $(".copy_checked_btn", $rootElement);
+        var trashButtons = $(".move_checked_btn, .delete_checked_btn", $rootElement);
+        
+        var allButtons = $(".button-list .s3d-button", $rootElement);
 
         // Keep JSLint.com happy...
         var getCount = function(){
         };
+        
         var getAllMessages = function(){
         };
 
@@ -989,48 +991,28 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             tickMessages();
         });
 
-        // Delete all checked messages on drafts page.
-        $("#inbox-draftsdelete-button").click(function() {
+        // Delete or trash all checked messages.
+        $(".delete_checked_btn, .trash_checked_btn", $rootElement).live("click", function() {
             deleteChecked();
         });
 
-        // Copy the checked messages on the drafts page to drafts.
-        $("#inbox-draftscopy-button").click(function() {
+        // Copy the checked messages to drafts.
+        $(".copy_checked_btn", $rootElement).live("click", function() {
             copyChecked("drafts");
         });
 
         // Move the checked messages to queue.
-        $("#inbox-movetoqueue-button").click(function(){
+        $(".queue_checked_btn", $rootElement).live("click", function(){
             moveSelectedDraftsToQueue();
         });
 
-        // Move all checked messages from queue to drafts.
-        $("#inbox-queuetodrafts-button").click(function() {
-            moveChecked("drafts");
-        });
-
-        // Copy all checked messages from queue to drafts.
-        $("#inbox-queuecopytodrafts-button").click(function() {
-            copyChecked("drafts");
-        });
-
-        // Delete all checked messages on queue page.
-        $("#inbox-queuedelete-button").click(function() {
-            deleteChecked();
-        });
-
-        // Copy all checked messages from archive to drafts.
-        $("#inbox-archivetodrafts-button").click(function(){
-            copyChecked("drafts");
-        });
-
-        // Move all checked messages from trash to drafts.
-        $("#inbox-trashtodrafts-button").click(function(){
+        // Move all checked messages to drafts.
+        $(".move_checked_btn", $rootElement).live("click", function() {
             moveChecked("drafts");
         });
 
         // Empty the trash. (currently acts only on checked messages)
-        $("#inbox-emptytrash-button").click(function(){
+        $(".delete_checked_btn", $rootElement).live("click", function(){
             deleteChecked();
         });
 
@@ -1061,8 +1043,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          * @param {Object} type The type of filter whose button list we want visible.
          */
         var correctButtonList = function(type) {
-            $("[id|=buttons]").hide();
-            $("#buttons-"+type).show();
+            var buttonGroup = eval(type + "Buttons");
+            allButtons.hide();
+            buttonGroup.show();
         };
 
         // Sorters for the inbox.
@@ -1117,16 +1100,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
 
             if (box === "notifications/drafts") {
                 showFilteredList("drafts", inboxFilterDrafts);
-                $("#inbox-new-button").show();
             } else if (box === "notifications/queue") {
                 showFilteredList("queue", inboxFilterQueue);
-                $("#inbox-new-button").show();
             } else if (box === "notifications/archive") {
                 showFilteredList("archive", inboxFilterArchive);
-                $("#inbox-new-button").show();
             } else if (box === "notifications/trash") {
                 showFilteredList("trash", inboxFilterTrash);
-                $("#inbox-new-button").show();
             }
 
             $rootElement.show();
