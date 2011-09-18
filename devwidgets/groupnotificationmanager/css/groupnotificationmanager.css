@@ -87,7 +87,6 @@
 { font-weight:normal;}
 .groupnotificationmanager_widget .inbox-table tr.inbox-subject-unread *
 { font-weight: bold; }
-.groupnotificationmanager_widget .inbox-table td a.inbox_inbox_message {color:#058EC4}
 .groupnotificationmanager_widget .inbox-table .inbox_message_none
 { text-align: center; border: none; height: 100%; padding-top:  130px; }
 .groupnotificationmanager_widget .inbox-table tr.inbox-message-unvalidated *

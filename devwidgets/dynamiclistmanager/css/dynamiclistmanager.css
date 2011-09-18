@@ -83,9 +83,6 @@ button.s3d-button.s3d-no-margin-top {
 }
 
 /** List **/
-.dynamiclistmanager_widget .list-table a:hover {
-    text-decoration: none;
-}
 
 .dynamiclistmanager_widget .list-table th {
     color: #333;
@@ -96,6 +93,10 @@ button.s3d-button.s3d-no-margin-top {
 
 .dynamiclistmanager_widget .list-table tr {
     color: #666;
+}
+
+.dynamiclistmanager_widget .list-table tr:hover {
+    background-color:#d9eaf5; cursor:pointer;
 }
 
 .dynamiclistmanager_widget .list-table td {
@@ -126,10 +127,6 @@ button.s3d-button.s3d-no-margin-top {
 
 .dynamiclistmanager_widget .list_list_table_header_sort span {
     float: left;
-}
-
-.dynamiclistmanager_widget a.editLink:link {
-    text-decoration: underline;
 }
 
 /*.dynamiclistmanager_widget .disabled {
