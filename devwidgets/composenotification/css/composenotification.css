@@ -27,6 +27,10 @@
     -webkit-box-shadow:0px 0px 5px 0px #ccc;
 }
 
+.cn-form-header {
+    padding-bottom: 20px;   
+}
+
 .compose-form div {
     margin-bottom: 8px;
 }
@@ -148,6 +152,6 @@
 }
 
 .composenotification_widget span.asterisk {
-    color:red;
+    color: #C00;
 }
 

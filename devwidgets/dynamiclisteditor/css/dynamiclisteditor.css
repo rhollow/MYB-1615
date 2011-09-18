@@ -9,6 +9,16 @@
     -webkit-box-shadow:0px 0px 5px 0px #ccc;
 }
 
+.dyn-form-header {
+    padding-bottom: 20px;   
+}
+
+.dynamiclisteditor_widget span.asterisk {
+    color: #C00;
+}
+
+
+
 .dynamiclisteditor_widget .dialog_buttons {
     margin-top: 10px;
     margin-bottom: 0px;
@@ -301,7 +311,7 @@
 }
 
 .dynamiclisteditor_widget .noStudentsTargeted {
-	color: #F00;
+	color: #C00;
 }
 
 .dynamiclisteditor_widget #list_name {
