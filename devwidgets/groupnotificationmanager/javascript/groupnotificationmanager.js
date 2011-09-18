@@ -217,12 +217,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
                 $(pane).show();
             }
         };
+        
+        var updateButtonState = function () {
+            if (anyChecked()) {
+                allButtons.removeAttr('disabled').removeClass("disabled");
+            } else {
+                allButtons.attr('disabled', 'disabled').addClass("disabled");
+            }
+        };
 
         /**
          * Check or uncheck all messages depending on the top checkbox.
          */
         var tickMessages = function(){
             $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
+            updateButtonState();
         };
 
         /**
@@ -764,9 +773,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
                 pathToMessages.push(pathToMessage);
             });
 
-            // Reset 'Check All' checkbox just in case it's clicked.
-            $(inboxInboxCheckAll).attr("checked", false);
-
+            // Reset 'Check All' checkbox
+            uncheckCheckAllCheckbox();
+            
             // If we are in trash we hard delete the messages.
             deleteMessages(pathToMessages, (selectedType === sakai.config.Messages.Types.trash));
         };
@@ -827,9 +836,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
                 pathToMessages.push(pathToMessage);
             });
 
-            // Reset 'Check All' checkbox just in case it's clicked.
-            $(inboxInboxCheckAll).attr("checked", false);
-
+            // Reset 'Check All' checkbox
+            uncheckCheckAllCheckbox();
+            
             moveMessages(pathToMessages, toWhere);
         }
 
@@ -863,9 +872,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
                 }
             });
 
-            // Reset 'Check All' checkbox just in case it's clicked.
-            $(inboxInboxCheckAll).attr("checked", false);
-
+            // Reset 'Check All' checkbox
+            uncheckCheckAllCheckbox();
+            
             moveMessages(pathToMessages, "queue");
 
             if (numberOfSkippedMessages !== 0) {
@@ -941,8 +950,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
                 pathToMessages.push(pathToMessage);
             });
 
-            // Reset 'Check All' checkbox just in case it's clicked.
-            $(inboxInboxCheckAll).attr("checked", false);
+            // Reset 'Check All' checkbox
+            uncheckCheckAllCheckbox();
 
             copyMessages(pathToMessages, toWhere);
         };
@@ -968,7 +977,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
                     correctHighlightedTab($(this).attr("id").substring(6, $(this).attr("id").length));
                 }
             });
-            $(inboxInboxCheckAll).attr("checked", false);
+            
+            // Reset 'Check All' checkbox
+            uncheckCheckAllCheckbox();
+            
             $("#inbox-new-button").show();
         });*/
 
@@ -977,7 +989,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             filterMessages(filter, "all", boxID);
             correctButtonList(filter);
             correctHighlightedTab(filter);
-            $(inboxInboxCheckAll).attr("checked", false);
+            // Reset 'Check All' checkbox
+            uncheckCheckAllCheckbox();
         };
 
 
@@ -987,10 +1000,26 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          *
          */
         // Check all messages.
-        $(inboxInboxCheckAll).change(function(){
+        $(inboxInboxCheckAll, $rootElement).change(function(){
             tickMessages();
         });
-
+        
+        $(inboxInboxCheckMessage, $rootElement).live("change", function () {
+            updateButtonState();
+        });
+        
+        var uncheckCheckAllCheckbox = function () {
+            $(inboxInboxCheckAll, $rootElement).attr("checked", false); 
+        };
+        
+        var uncheckAllCheckboxs = function () {
+            $(inboxInboxCheckMessage, $rootElement).attr("checked", false);
+        };
+        
+        var anyChecked = function () {
+            return ($(inboxInboxCheckMessage + ":checked", $rootElement).length > 0); 
+        };
+        
         // Delete or trash all checked messages.
         $(".delete_checked_btn, .trash_checked_btn", $rootElement).live("click", function() {
             deleteChecked();
