@@ -34,6 +34,7 @@ button.s3d-button.s3d-no-margin-top {
     min-height: 300px;
     height: 300px;
     overflow: auto;
+    clear: both;
 }
 
 .dynamiclistmanager_widget .bottom_decor

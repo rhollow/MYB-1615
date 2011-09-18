@@ -963,7 +963,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             if (validatorObj.form()) {
                 $rootElement.fadeOut(fadeOutTimeMs, function () {
-                    postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
+                    postNotification(saveData("queue", true), backToQueue, false, translate("QUEUE"));
                 });
             } else {
                 showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
@@ -1002,7 +1002,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             if (validatorObj.form()) {
                 $rootElement.fadeOut(fadeOutTimeMs, function () {
-                    postNotification(saveData("queue", true), backToDrafts, false, translate("QUEUE"));
+                    postNotification(saveData("queue", true), backToQueue, false, translate("QUEUE"));
                 });
             } else {
                 showGeneralMessage(translate("PLEASE_ADD_OR_EDIT_YOUR_ENTRIES_AS_NOTED_IN_RED_TEXT"), true, translate("SOME_ITEMS_ARE_MISSING_OR_INCORRECT"));
@@ -1034,14 +1034,14 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         // Moving message from queue to drafts...
         $("#cn-movetodrafts-button", $rootElement).click(function() {
             $rootElement.fadeOut(fadeOutTimeMs, function () {
-                postNotification(saveData("drafts", true), backToQueue, false, translate("MOVE"));
+                postNotification(saveData("drafts", true), backToDrafts, false, translate("MOVE"));
             });
         });
 
         // Copying message to drafts...
         $("#cn-queuecopytodrafts-button", $rootElement).click(function() {
             $rootElement.fadeOut(fadeOutTimeMs, function () {
-                postNotification(saveData("drafts", true), backToQueue, true, translate("COPY"));
+                postNotification(saveData("drafts", true), backToDrafts, true, translate("COPY"));
             });
         });
 
