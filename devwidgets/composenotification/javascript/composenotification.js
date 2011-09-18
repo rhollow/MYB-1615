@@ -273,7 +273,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $messageRequiredYes.attr("checked", "checked");
                 $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
                 $messageFieldRequiredCheck.show();
-
+                $("#composenotification_subject label", $rootElement).text("Task");
             } else {
                 eventTimeInit(null, null, null);
                 $eventTimeContainer.show();
@@ -286,6 +286,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $messageRequiredNo.removeAttr("checked");
                 $messageFieldRequiredCheck.show();
                 $("#composenotification_required .right input", $rootElement).removeAttr("disabled");
+                $("#composenotification_subject label", $rootElement).text("Event");
             }
         };
 
