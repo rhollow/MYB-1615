@@ -47,6 +47,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
         var sortOrder = "descending";
         var sortBy = "date";
         var messagesForTypeCat; // The number of messages for this type/cat
+        var savedRowID = "";
 
         var currentPage = 0;
 
@@ -459,6 +460,26 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             }
             return returnStr;
         };
+        
+        var removeRowHilite = function (jqRowObj) {
+            jqRowObj.removeClass("saved-elm-hilite");
+        };
+        
+        
+        /**
+         * highlights the last saved message in the table if the id is set in the namespace.
+         */
+        var hiliteRow = function () {
+            if (savedRowID) {
+                var jqRowObj = $("tr" + inboxTableMessageID + savedRowID);
+                jqRowObj.addClass("saved-elm-hilite");
+                setTimeout(function () {
+                    removeRowHilite(jqRowObj);
+                }, 1500);
+            }
+            savedRowID = "";
+        };
+
 
         /**
          * Adds the correct format to a message.
@@ -540,15 +561,20 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
 
             // do ellipsis
             ellipsisSubjects();
+            
+            // hilight the last saved message if it is set
+            if (savedRowID !== "") {
+                hiliteRow(); // id is set in the function namespace
+            }
         };
-
+        
         /**
          * Show a certain page of messages.
          */
         var showPage = function(){
             // Remove all messages.
             // remove previous messages.
-            removeAllMessagesOutDOM();
+            //removeAllMessagesOutDOM();
 
             // Show set of messages.
             // Using callback function to update the pager AFTER all messages have been loaded.
@@ -992,8 +1018,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             // Reset 'Check All' checkbox
             uncheckCheckAllCheckbox();
         };
-
-
+            
         /**
          *
          * OPERATIONS ON MULTIPLE CHECKED MESSAGES
@@ -1126,6 +1151,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             } else {
                 currentPage = 0;
             }
+            
+            savedRowID = (state.hasOwnProperty("saved")) ? state.saved : "";
 
             if (box === "notifications/drafts") {
                 showFilteredList("drafts", inboxFilterDrafts);
@@ -1136,9 +1163,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             } else if (box === "notifications/trash") {
                 showFilteredList("trash", inboxFilterTrash);
             }
+            
 
             $rootElement.show();
-
 
         };
 

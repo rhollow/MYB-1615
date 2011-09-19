@@ -65,11 +65,27 @@
 /** List **/
 .groupnotificationmanager_widget .inbox-table th
 {color:#333;text-align:left;height:26px;border:none;padding:3px 5px;}
-.groupnotificationmanager_widget .inbox-table tr
-{ color: #666; }
 
-.groupnotificationmanager_widget .inbox-table tr.inbox_message:hover
-{ background-color:#d9eaf5; cursor:pointer; }
+.groupnotificationmanager_widget .inbox-table tr {
+    color: #666;
+    background-color: #ffffff;
+}
+
+.groupnotificationmanager_widget .inbox-table tr td {
+    transition: background-color 1s linear;
+    -moz-transition: background-color 1s linear;    /* FF3.7+ */
+    -o-transition: background-color 1s linear;      /* Opera 10.5 */
+    -webkit-transition: background-color 1s linear; /* Saf3.2+, Chrome */
+}
+
+.groupnotificationmanager_widget .inbox-table tr.saved-elm-hilite td {
+    background-color:#FFE9BA;
+}
+
+.groupnotificationmanager_widget .inbox-table tr.inbox_message:hover {
+    background-color:#d9eaf5;
+    cursor:pointer;
+}
 
 .groupnotificationmanager_widget .inbox-table tr.message_none_row:hover
 { background-color:#fff !important; cursor:auto !important; }
