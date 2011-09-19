@@ -13,6 +13,7 @@
 }
 
 #dlm_multiple_choice_container {
+    display: none;
     padding-top: 3px;
 }
 

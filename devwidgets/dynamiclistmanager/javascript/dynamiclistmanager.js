@@ -72,11 +72,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var $dynListsCreateButton = $("#dynamic_lists_create_new");
 
         /**
-         * Dynamic list 'Create' button container for multiple contexts
-         */
-        var $dynListsContextSelectContainer = $("#dlm_context_select_container", $rootElement);
-
-        /**
          * Dynamic list dropdown
          */
         var $dynListsContextSelect = $("#dlm_context_choice_select");
@@ -488,7 +483,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     $dynListsContextSelect.append('<option value="' + c.name + '">'+c.name+'</option>');
                 }
 
-                $dynListsContextSelectContainer.show();
+                $("#dlm_multiple_choice_container", $rootElement).show();
             }
         };
 
