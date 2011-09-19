@@ -459,7 +459,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Return to drafts panel.
         var backToDrafts = function () {
-            $.bbq.pushState({l: "notifications/drafts"}, 2);
+            $.bbq.pushState({l: "notifications/drafts", saved: currentMessageId}, 2);
         };
 
         // Return to drafts and open current message for editing there
@@ -469,7 +469,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Return to queue panel.
         var backToQueue = function () {
-            $.bbq.pushState({l: "notifications/queue"}, 2);
+            console.log(currentMessageId); // DEBUG
+            $.bbq.pushState({l: "notifications/queue", saved: currentMessageId}, 2);
         };
 
         // Return to archive panel.
