@@ -39,6 +39,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var LISTS_PER_PAGE = 10;
 
         var currentPage = 0;
+        
+        var savedRowID = "";
+
 
         /**
          * Hashtable of all the lists
@@ -191,6 +194,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
             // do checkboxes
             tickMessages();
+            
+            hiliteRow();
         };
 
         var getNumberOfSelectedLists = function() {
@@ -246,7 +251,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
 
                 // TODO: HACK: To prevent flickering this widget was made invisible in HTML code, need to undo this
                 $("div.dynamiclistmanager_widget", $rootElement).show();
-
+                
             });
         };
 
@@ -414,6 +419,27 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         $("#list_list_checkAll").change(function(){
             tickMessages();
         });
+        
+                
+        var removeRowHilite = function (jqRowObj) {
+            jqRowObj.removeClass("saved-elm-hilite");
+        };
+        
+        
+        /**
+         * highlights the last saved message in the table if the id is set in the namespace.
+         */
+        var hiliteRow = function () {
+            if (savedRowID) {
+                var jqRowObj = $("tr#list_table_list_" + savedRowID, $rootElement);
+                jqRowObj.addClass("saved-elm-hilite");
+                setTimeout(function () {
+                    removeRowHilite(jqRowObj);
+                }, 1500);
+            }
+            savedRowID = "";
+        };
+
 
 
         ////////////////////////////////
@@ -427,6 +453,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          var setState = function(){
 
             var state = $.bbq.getState();
+            
+            savedRowID = (state.hasOwnProperty("saved")) ? state.saved : "";
 
             if (!(state.hasOwnProperty("l") && state.l === "dynlists")) {
                 return;

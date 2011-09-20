@@ -991,7 +991,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             // if the node was created successfully try to save the list
             createEmptyRootNodeForDynamicLists(function() {
                     sakai.api.Server.saveJSON(url, list, function() {
-                    $.bbq.removeState(["new","cp","edit","context"]);
+                    //$.bbq.removeState(["new","cp","edit","context"]);
+                    $.bbq.pushState({l: "dynlists", saved: id}, 2);
                 });
             });
         };

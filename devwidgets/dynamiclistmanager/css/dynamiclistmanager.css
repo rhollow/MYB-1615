@@ -93,6 +93,18 @@ button.s3d-button.s3d-no-margin-top {
     border: none;
 }
 
+.dynamiclistmanager_widget .list-table tr td {
+    transition: background-color 1s linear;
+    -moz-transition: background-color 1s linear;    /* FF3.7+ */
+    -o-transition: background-color 1s linear;      /* Opera 10.5 */
+    -webkit-transition: background-color 1s linear; /* Saf3.2+, Chrome */
+}
+
+.dynamiclistmanager_widget .list-table tr.saved-elm-hilite td {
+    background-color:#FFE9BA;
+}
+
+
 .dynamiclistmanager_widget .list-table tr {
     color: #666;
 }
