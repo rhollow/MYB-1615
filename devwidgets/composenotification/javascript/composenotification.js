@@ -469,7 +469,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
         // Return to queue panel.
         var backToQueue = function () {
-            console.log(currentMessageId); // DEBUG
             $.bbq.pushState({l: "notifications/queue", saved: currentMessageId}, 2);
         };
 
