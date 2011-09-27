@@ -840,9 +840,8 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         /**
          * Post the notification's data via an Ajax call, either to create a new
          * notification or to update an existing one. The only difference between the
-         * two will be the URL to which we make the post, and we can determine which
-         * case we are handling via whether or not the optional original parameter
-         * is null (and therefore has a valid id) or not.
+         * two will be whether the "id" of the existing notification is included
+         * as a parameter.
          * @param {Object} toPost Message to post; usually created via saveData() function.
          * @param {Object} successCallback (optional) Function to call if successful post; usually redirect function.
          * @param {boolean} copyCheck (optional) Are we copying? If we are, we need to append "Copy to" to the subject.
@@ -857,7 +856,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             saveEnabled = false;
             $("#composenotification_box .s3d-button", $rootElement).addClass("disabled");
 
-            var url = "/user/" + me.user.userid + "/.myb-notificationstore.html";
+            var url = "/user/" + me.user.userid + "/.myb-notificationstore.json";
 
             // Are we creating a copy of an existing notification?
             if (copyCheck) {
@@ -882,7 +881,11 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 url: url,
                 type: "POST",
                 data: { notification : $.toJSON(toPost) },
-                success: function() {
+                success: function(data) {
+                    // Remember the ID of the saved notification.
+                    if (data.id) {
+                        currentMessageId = data.id;
+                    }
                     // If a callback function is specified in argument, call it.
                     if ($.isFunction(successCallback)) {
                         successCallback(true);

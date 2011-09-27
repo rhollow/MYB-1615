@@ -949,7 +949,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
                 delete newMessage["jcr:name"];
 
                 $.ajax({
-                    url: "/user/" + me.user.userid + "/.myb-notificationstore.html",
+                    url: "/user/" + me.user.userid + "/.myb-notificationstore.json",
                     type: "POST",
                     data: { notification : $.toJSON(newMessage) },
                     success: function(data){
