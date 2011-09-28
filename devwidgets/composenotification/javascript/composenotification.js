@@ -880,7 +880,6 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $.ajax({
                 url: url,
                 type: "POST",
-                dataType: "json",
                 data: { notification : $.toJSON(toPost) },
                 success: function(response) {
                     // Remember the ID of the saved notification.
