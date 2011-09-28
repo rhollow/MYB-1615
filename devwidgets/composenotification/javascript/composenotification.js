@@ -880,18 +880,19 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             $.ajax({
                 url: url,
                 type: "POST",
+                dataType: "json",
                 data: { notification : $.toJSON(toPost) },
-                success: function(data) {
+                success: function(response) {
                     // Remember the ID of the saved notification.
-                    if (data.id) {
-                        currentMessageId = data.id;
+                    if (response.id) {
+                        currentMessageId = response.id;
                     }
                     // If a callback function is specified in argument, call it.
                     if ($.isFunction(successCallback)) {
                         successCallback(true);
                     }
                 },
-                error: function(data) {
+                error: function(response) {
                     if (msgTxt != null) {
                         showGeneralMessage(msgTxt + " failed.", true);
                     }

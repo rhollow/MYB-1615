@@ -563,7 +563,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
             ellipsisSubjects();
             
             // hilight the last saved message if it is set
-            if (savedRowID !== "") {
+            if (savedRowID !== null && savedRowID !== "") {
                 hiliteRow(); // id is set in the function namespace
             }
         };
