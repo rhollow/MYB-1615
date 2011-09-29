@@ -143,6 +143,12 @@ define(function() {
                         "popup_description": "Learn about UCPD services."
                     },
                     {
+                        "id": "graduate_assembly",
+                        "name": "Graduate Assembly",
+                        "url": "http://ga.berkeley.edu",
+                        "popup_description": "The Graduate Assembly sponsors projects and provides resources to improve the lives of graduate students and foster a vibrant, inclusive graduate student community."
+                    },
+                    {
                         "id": "parking_and_transportation",
                         "name": "Parking & Transportation",
                         "url": "http://pt.berkeley.edu/park",
