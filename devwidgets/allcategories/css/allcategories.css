@@ -49,37 +49,17 @@
 
 /* Begin CalCentral Customization */
 
-.allcategories_widget .allcategories_item .allcategories_item_header .allcategories_item_raquo {
-    margin-top: 12px;
-}
-
-
-.allcategories_widget li .allcategories_item .allcategories_item_header {
-  background: none repeat scroll 0 0 #333;
-  color: white;
-  font-size: 10px;
-  padding-top: 7px;
-}
-
-.allcategories_widget li:nth-child(n+11) .allcategories_item .allcategories_item_header {
+.myb-cat-by-org .allcategories_item .allcategories_item_header {
   background: none repeat scroll 0 0 #1c3e76;
 }
 
-.allcategories_widget li:nth-child(n+11) .allcategories_item .allcategories_item_header:hover {
+.myb-cat-by-org .allcategories_item .allcategories_item_header:hover {
     background:url("/devwidgets/allcategories/images/allcategories_item_header_hover_bg.png") repeat-x scroll left top #3572a7;
 }
 
-.allcategories_widget li:nth-child(-n+10) .allcategories_item .allcategories_item_header:before {
-  content: "By topic";
-}
-
-.allcategories_widget li:nth-child(n+11) .allcategories_item .allcategories_item_header:before {
-  content: "By Berkeley Campus Organization";
-}
-
-.allcategories_widget .allcategories_item .allcategories_item_header_link {
-    font-size: 17px;
-    margin-top: 4px;
-}
+/*#allcategories_items_content .s3d-contentpage-title {
+    border-bottom:none; override default
+    border-top:2px solid #E4C495;
+}*/
 
 /* End CalCentral Customization */

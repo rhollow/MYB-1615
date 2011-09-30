@@ -98,6 +98,11 @@ define(["config/config", "config/env"], function(config) {
     );
 
     config.Directory = {
+        topic_devider: {
+            divider: true,
+            title: "By Topic",
+            class: "myb-cat-by-topic"
+        },
         agriculture_and_related_sciences: {
             title: "Agriculture & Related Sciences",
             children: {
@@ -286,6 +291,11 @@ define(["config/config", "config/env"], function(config) {
                     title: "Photography"
                 }
             }
+        },
+        by_org_divider: {
+            divider: true,
+            title: "By Berkeley Campus Organization",
+            class: "myb-cat-by-org"
         },
         departments: {
             title: "Colleges & Departments",
