@@ -52,8 +52,12 @@
 { width:3%; }
 .groupnotificationmanager_widget .inbox-table #inbox_table_header_from
 { width:25%; border-left: 1px solid #D4DADE; color: #666666; }
-.groupnotificationmanager_widget .inbox-table #inbox_table_header_subject
-{ width:49%; border-left: 1px solid #D4DADE; color: #666666; }
+.groupnotificationmanager_widget .inbox-table #inbox_table_header_subject {
+    width: auto;
+    border-left: 1px solid #D4DADE;
+    color: #666666;
+}
+
 .groupnotificationmanager_widget .inbox-table #inbox_table_header_date
 { width:25%; border-left: 1px solid #D4DADE; color: #666666; }
 
