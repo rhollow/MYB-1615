@@ -143,7 +143,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 "archive": {
                     "_ref": "id1307490615",
                     "_order": 2,
-                    "_title": "Sent",
+                    "_title": "Archive",
                     "_canEdit": true,
                     "_canSubedit": true,
                     "_nonEditable": true
