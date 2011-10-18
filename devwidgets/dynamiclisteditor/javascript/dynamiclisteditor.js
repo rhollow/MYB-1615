@@ -426,13 +426,37 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
         };
 
         /**
+         * used to toggle or set checkbox sets
+         * @param {jQuery Object} $masterCheck the master checkbox
+         * @param {jQuery Object} $subGroup the group of subcheckbox boxes
+         * @param {bool} setActive enable or disable the set, if undefined set to the checked state of $masterCheck
+         * @param {bool} setMaster set the checkedState of $masterCheck to setActive state
+         */
+        
+        var toggleControlSet = function ($masterCheck, $subGroup, setActive, setMaster) {
+            setActive = setActive || $masterCheck.is(':checked');
+            if (setMaster) {
+                if (setActive) {
+                    $masterCheck.attr("checked", "checked");
+                } else {
+                    $masterCheck.removeAttr("checked");
+                }
+            }
+            if (setActive) {
+                $("input", $subGroup).removeAttr("disabled");
+                $subGroup.removeClass("disabled");
+            } else {
+                $("input", $subGroup).attr("disabled", "disabled");
+                $subGroup.addClass("disabled");
+            }
+        };
+
+        /**
          * Enables all graduate students section of the form programmatically.
          * Must be called AFTER loading template.
          */
         var enableGradsSection = function() {
-            $includeGradsCheckbox.attr("checked", "checked");
-            $("input", $gradsGroup).removeAttr("disabled");
-            $gradsGroup.removeClass("disabled");
+            toggleControlSet($includeGradsCheckbox, $gradsGroup, true, true);
         };
 
         /**
@@ -440,9 +464,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * Must be called AFTER loading template.
          */
         var enableUndergradsSection = function() {
-            $includeUndergradsCheckbox.attr("checked", "checked");
-            $("input", $undergradsGroup).removeAttr("disabled");
-            $undergradsGroup.removeClass("disabled");
+            toggleControlSet($includeUndergradsCheckbox, $undergradsGroup, true, true);
         };
 
         /**
@@ -1108,27 +1130,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
             if (hasUndergradsData && hasGradsData) {
 
                 $includeGradsCheckbox.click(function(){
-                        if($includeGradsCheckbox.is(':checked')){
-                            $("input", $gradsGroup).removeAttr("disabled");
-                            $gradsGroup.removeClass("disabled");
-                        } else {
-                            clearInvalidsInSection($gradsGroup);
-                            $("input", $gradsGroup).attr("disabled", "disabled");
-                            $gradsGroup.addClass("disabled");
-                        }
-
+                    toggleControlSet($includeGradsCheckbox, $gradsGroup);
+                    clearInvalidsInSection($gradsGroup);
                 });
 
                 $includeUndergradsCheckbox.click(function(){
-                        if($includeUndergradsCheckbox.is(':checked')){
-                            $("input", $undergradsGroup ).removeAttr("disabled");
-                            $undergradsGroup.removeClass("disabled");
-                        } else {
-                            clearInvalidsInSection($undergradsGroup);
-                            $("input", $undergradsGroup ).attr("disabled", "disabled");
-                            $undergradsGroup.addClass("disabled");
-                        }
-
+                    toggleControlSet($includeUndergradsCheckbox, $undergradsGroup);
+                    clearInvalidsInSection($undergradsGroup);
                 });
             }
 
