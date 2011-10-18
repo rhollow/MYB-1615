@@ -33,6 +33,7 @@
 
 .compose-form div {
     margin-bottom: 8px;
+    overflow: hidden;
 }
 
 .compose-form select {
@@ -75,7 +76,7 @@
 
 #composenotification_box .compose-form label.name {
     display: inline-block;
-    margin: 5px 0 0;
+    padding: 5px 0 0;
 }
 
 /* send_message_lightbox.html */
