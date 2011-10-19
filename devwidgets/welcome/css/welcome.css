@@ -26,6 +26,15 @@
     border-radius:5px;
 }
 
+.welcome-block h2 {
+    margin: 0.2em 0 0.5em;
+    padding: 0.2em 0 0;
+    color: #333;
+    font-size: 2.3em;
+    font-weight: bolder;
+
+}
+
 .welcome-block p {
     margin-bottom: 4px;
 }
@@ -35,14 +44,6 @@
     height: 433px;
     -moz-border-radius: 0;
     border-radius: 0;
-}
-
-.welcome-block .tag-line {
-    color: #333;
-    font-size: 2.3em;
-    font-weight: bolder;
-	padding-top: 0.2em;
-    margin-bottom: 0.5em;
 }
 
 .welcome-block .welcome-body {
@@ -73,22 +74,20 @@
     font-size: 0.9em;
 }
 
-.welcome-block .welcome-body .topline {
-    font-size: 110%;
-}
-
-.welcome-block .welcome-body .feedback, .welcome_widget .welcome-body .topline {
-    color: #333;
-    font-weight: bolder;
-}
-
-.feedback a {
+.gearbox a {
     display: inline-block;
-    background-image: url(/dev/images/leftarrow_18.png);
+    background-image: url(/dev/images/myb/blue_right_arrow_sm.png);
     background-repeat: no-repeat;
     background-attachment: scroll;
-    background-position: left center;
+    background-position: 2px 3px;
     padding-left: 20px;
+    font-size: 0.9em;
+}
+
+.gearbox h4 {
+    color: #333;    
+    font-weight: bolder;
+    margin-top: 0.3em;
 }
 
 /* MyBerkeley custom end */
