@@ -36,7 +36,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         // Configuration variables //
         /////////////////////////////
 
-        var LISTS_PER_PAGE = 10;
+        var LISTS_PER_PAGE = 100;
 
         var currentPage = 0;
         
