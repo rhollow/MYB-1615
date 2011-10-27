@@ -1,3 +1,20 @@
+/**
+ * Licensed to the Sakai Foundation (SF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The SF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 /* Title */
 #inbox_box_title_wrapper{text-transform:capitalize;font-weight:normal;}
 .inbox_main, .inbox_main .inbox_name button{font-size:12px;}
@@ -9,9 +26,9 @@
 /* Message Header */
 #inbox_message_header{float:left;width:100%;padding:5px 0 18px;}
 #inbox_select span{font-size:9px;}
-#inbox_search_messages{width:34%;padding:2px;float:right;margin-right:50px;}
-#inbox_search_messages:disabled{background-color:#fff;}
-#inbox_search_messages{background:url(/devwidgets/topnavigation/images/topnav_search_icon.png) 98% 2px no-repeat;}
+#inbox_search_messages{width:290px;}
+.s3d-search-container.inbox-message-list-view {float:right;margin-top:5px;}
+#inbox_search_messages[disabled]{background-color:#fff;opacity:0.4;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";filter: alpha(opacity=40);}
 #inbox_select_options{position:absolute;top:-10000px;left:-10000px;width:60px;background-color:#F4F4F4;z-index:999;box-shadow:0px 0px 5px 0px #aaa;-moz-box-shadow:0px 0px 5px 0px #aaa;-webkit-box-shadow:0px 0px 5px 0px #aaa;}
 #inbox_select_options ul{margin:0;padding:2px;}
 #inbox_select_options ul li{list-style:none;}

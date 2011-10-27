@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Sakai Foundation (SF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-
 /* Dropdown */
 .addarea_widget .addarea_dropdown span.s3d-link-button {background-color:#fff;border-radius:5px 5px 0 0;border-top:1px solid #eee;box-shadow:0 10px 10px #888;color:#919191;font-size:12px;margin:12px 12px 0;padding:5px 10px;text-decoration:none;}
 .addarea_widget .addarea_dropdown .addarea_plus_icon {}
@@ -46,7 +45,7 @@
 .addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocscontainer li {list-style:none;padding:8px 12px;clear:both;color:#424242;cursor:pointer;}
 .addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocs #addarea_sakaidoc_search {padding:5px 0 8px 12px;border-bottom:1px solid #CCC;}
 .addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocs #addarea_sakaidoc_search_clear {font-size:11px;margin-top:3px;}
-.addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocs input#addarea_sakaidoc_searchfield {width:150px;}
+.addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocs input#addarea_sakaidoc_searchfield {width:150px;margin-right:0;padding:0 4px;}
 .addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocs #addarea_sakaidoc_existingdocs_sort {float:right;}
 .addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocs .s3d-icon-16 {display:block;float:left;margin-right:5px;}
 .addarea_widget #addarea_contents_container #addarea_contents_container_form #addarea_sakaidoc_existingdocs #addarea_sakaidoc_search label {color:#424242;font-size:12px;margin:3px 7px 0 0;clear:none;}

@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Sakai Foundation (SF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -15,9 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *
  */
-
 /**
  * @class Groups
  *
@@ -154,10 +151,12 @@ define(
                     data["sakai:category"] = group.category;
                     data["sakai:templateid"] = group.template.id;
                     data["sakai:joinRole"] = group.template.joinRole;
+                    data["sakai:creatorRole"] = group.template.creatorRole;
                     data["sakai:roles"] = $.toJSON(group.template.roles);
                 } else {
                     data["sakai:excludeSearch"] = true;
                     data["sakai:pseudoGroup"] = true;
+                    data["sakai:pseudoGroup@TypeHint"] = "Boolean";
                     data["sakai:pseudogroupparent"] = group.parentgroup;
                 }
                 $.ajax({
@@ -590,13 +589,13 @@ define(
             var sendJoinRequestMessage = function(managerArray) {
                 var userString = sakai_user.getDisplayName(meData.profile);
                 var groupString = groupProfile["sakai:group-title"];
-                var systemString = sakai_i18n.General.getValueForKey("SAKAI");
+                var systemString = sakai_i18n.getValueForKey("SAKAI");
                 var profileLink = sakai_conf.SakaiDomain + "/~" + sakai_util.safeURL(meData.user.userid);
                 var acceptLink = sakai_conf.SakaiDomain + "/~" + groupProfile["sakai:group-id"];
-                var subject = sakai_i18n.General.getValueForKey("GROUP_JOIN_REQUEST_TITLE")
+                var subject = sakai_i18n.getValueForKey("GROUP_JOIN_REQUEST_TITLE")
                      .replace(/\$\{sender\}/g, userString)
                      .replace(/\$\{group\}/g, groupString);
-                var body = sakai_i18n.General.getValueForKey("GROUP_JOIN_REQUEST_BODY")
+                var body = sakai_i18n.getValueForKey("GROUP_JOIN_REQUEST_BODY")
                      .replace(/\$\{sender\}/g, userString)
                      .replace(/\$\{group\}/g, groupString)
                      .replace(/\$\{system\}/g, systemString)
@@ -929,7 +928,6 @@ define(
                             }
                         });
                     }
-
                     var parseRoles = function(data) {
                         var isMatch = function(user, index){
                             return user.userid === userId;
@@ -939,7 +937,7 @@ define(
                             if (data.results.hasOwnProperty(i)) {
                                 var members = $.parseJSON(data.results[i].body);
                                 if ($.grep(members, isMatch).length > 0){
-                                    role = roles[i].id;
+                                    role = roles[i];
                                     break;
                                 }
                             }
@@ -972,7 +970,7 @@ define(
         leave : function(groupId, role, meData, callback){
             var reqs = [
                 {
-                    url: "/system/userManager/group/"+ groupId + "-" + role + ".leave.json",
+                    url: "/system/userManager/group/"+ groupId + "-" + role.id + ".leave.json",
                     method: "POST"
                 },
                 {

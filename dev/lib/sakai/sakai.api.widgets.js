@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Sakai Foundation (SF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -15,9 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *
  */
-
 /**
  * @class Widgets
  *
@@ -395,14 +392,14 @@ define(
                             if ($.isPlainObject(sakai.widgets[widgetname].i18n)) {
                                 if (sakai.widgets[widgetname].i18n["default"]){
                                     var bundleItem = {
-                                        "url" : sakai.widgets[widgetname].i18n["default"],
+                                        "url" : sakai.widgets[widgetname].i18n["default"].bundle,
                                         "method" : "GET"
                                     };
                                     bundles.push(bundleItem);
                                 }
                                 if (sakai.widgets[widgetname].i18n[current_locale_string]) {
                                     var item1 = {
-                                        "url" : sakai.widgets[widgetname].i18n[current_locale_string],
+                                        "url" : sakai.widgets[widgetname].i18n[current_locale_string].bundle,
                                         "method" : "GET"
                                     };
                                     bundles.push(item1);
@@ -476,7 +473,7 @@ define(
                                                 lastend = expression.lastIndex;
                                             }
                                             else {
-                                                toreplace = quotes + sakai_i18n.Widgets.getValueForKey(widgetName, current_locale_string, lastParen) + quotes;
+                                                toreplace = quotes + sakai_i18n.getValueForKey(lastParen, widgetName) + quotes;
                                                 translated_content += requestedURLsResults[i].body.substring(lastend, expression.lastIndex - replace.length) + toreplace;
                                                 lastend = expression.lastIndex;
                                             }
@@ -749,13 +746,17 @@ define(
             }
         },
 
-        canEditContainer: function(widgetData) {
+        canEditContainer: function(widgetData, tuid) {
             if (widgetData &&
                 widgetData.data &&
                 widgetData.data.currentPageShown &&
                 widgetData.data.currentPageShown.canEdit &&
                 !widgetData.data.currentPageShown.nonEditable) {
                 return true;
+            } else if (!widgetData && tuid) {
+                var ref = $("#" + tuid).parents("#s3d-page-container").children("div").attr("id");
+                var canEdit = $("li[data-sakai-ref='"+ ref +"']").data("sakai-manage");
+                return canEdit;
             } else {
                 return false;
             }
@@ -883,6 +884,50 @@ define(
                 return true;
             } else {
                 return widgetHashes[e];
+            }
+        },
+
+        /**
+         * This function will return the name of a widget in the current user's language
+         * @param {Object} widgetid  id of the widget as specified in the widget's config file
+         */
+        getWidgetTitle: function(widgetid){
+            // Get the user's current locale from the me object
+            var locale = sakai_i18n.getUserLocale();
+            if (locale === "lu_GB") {
+                return widgetid.toUpperCase();
+            } else {
+                if (sakai.widgets[widgetid]){
+                    if (sakai.widgets[widgetid].i18n[locale] && sakai.widgets[widgetid].i18n[locale].name){
+                        return sakai.widgets[widgetid].i18n[locale].name;
+                    } else {
+                        return sakai.widgets[widgetid].i18n["default"].name;
+                    }
+                } else {
+                    debug.error("A config file was not found for the following widget: " + widgetid);
+                }
+            }
+        },
+
+        /**
+         * This function will return the description of a widget in the current user's language
+         * @param {Object} widgetid  id of the widget as specified in the widget's config file
+         */
+        getWidgetDescription: function(widgetid){
+            // Get the user's current locale from the me object
+            var locale = sakai_i18n.getUserLocale();
+            if (locale === "lu_GB") {
+                return widgetid.toUpperCase();
+            } else {
+                if (sakai.widgets[widgetid]){
+                    if (sakai.widgets[widgetid].i18n[locale] && sakai.widgets[widgetid].i18n[locale].description){
+                        return sakai.widgets[widgetid].i18n[locale].description;
+                    } else {
+                        return sakai.widgets[widgetid].i18n["default"].description;
+                    }
+                } else {
+                    debug.error("A config file was not found for the following widget: " + widgetid);
+                }
             }
         },
 
