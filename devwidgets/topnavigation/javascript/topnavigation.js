@@ -188,6 +188,17 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "jquery-plugins/j
             return redirectURL;
         }
 
+       /**
+         * Check if a redirect should be performed
+         */
+        var checkForRedirect = function() {
+            var qs = new Querystring();
+            // Check for url param and if user is logged in
+            if (qs.get("url") && !sakai.api.User.isAnonymous(sakai.data.me)) {
+                window.location = qs.get("url");
+            }
+        };
+
         ////////////////////////
         /////// MESSAGES ///////
         ////////////////////////
@@ -905,6 +916,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "jquery-plugins/j
          * Initialise the topnavigation widget
          */
         var doInit = function(){
+            checkForRedirect();
             renderMenu();
             renderUser();
             setCountUnreadMessages();
