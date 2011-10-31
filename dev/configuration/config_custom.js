@@ -113,6 +113,23 @@ define(["config/config", "config/env"], function(config) {
             "requiresAdviserMembership": true
         }
     );
+    
+    /* CalCentral specific footer links */
+    config.Footer.leftLinks = [{
+            "title": "__MSG__HELP__",
+            "href": "/~Help-and-Support"
+        }, {
+            "title": "__MSG__FEEDBACK__",
+            "href": "http://ets.berkeley.edu/calcentral-feedback",
+            "newWindow": true
+        }, {
+            "title": "__MSG__ACKNOWLEDGEMENTS__",
+            "href": "/acknowledgements"
+        //}, {
+        //    "title": "__MSG__SUGGEST_AN_IMPROVEMENT__",
+        //    "href": "http://sakaioae.idea.informer.com/",
+        //    "newWindow": true
+        }];
 
     config.Directory = {
         topic_devider: {
