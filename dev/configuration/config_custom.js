@@ -115,7 +115,8 @@ define(["config/config", "config/env"], function(config) {
     );
     
     /* CalCentral specific footer links */
-    config.Footer.leftLinks = [{
+    config.Footer.leftLinks = [
+        {
             "title": "__MSG__HELP__",
             "href": "/~Help-and-Support"
         }, {
@@ -129,7 +130,8 @@ define(["config/config", "config/env"], function(config) {
         //    "title": "__MSG__SUGGEST_AN_IMPROVEMENT__",
         //    "href": "http://sakaioae.idea.informer.com/",
         //    "newWindow": true
-        }];
+        }
+    ];
 
     config.Directory = {
         topic_devider: {
