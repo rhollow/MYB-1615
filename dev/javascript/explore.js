@@ -16,8 +16,8 @@
  * specific language governing permissions and limitations under the License.
  */
 
-require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai) {
-    
+require(["jquery","sakai/sakai.api.core"], function($, sakai) {
+
     sakai_global.explore = function() {
         var doInit = function() {
             if (sakai.config.enableCategories) {
