@@ -1,11 +1,13 @@
 {
-    "description":"Dynamic list manager",
-    "name":"Dynamic list manager",
-    "id":"dynlistman",
-    "personalportal":true,
+    "id":"dynamiclistmanager",
+    "personalportal":false,
     "url":"/devwidgets/dynamiclistmanager/dynamiclistmanager.html",
     "i18n": {
-        "default": "/devwidgets/dynamiclistmanager/bundles/default.properties"
+        "default": {
+            "bundle":     "/devwidgets/dynamiclistmanager/bundles/default.properties",
+            "name":       "Dynamic list manager",
+            "description":"Dynamic list manager"
+        }
     },
     "multipleinstance": false,
     "deletable":false,

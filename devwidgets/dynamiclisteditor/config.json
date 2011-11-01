@@ -1,11 +1,13 @@
 {
-    "description":"Dynamic list editor",
-    "name":"Dynamic list editor",
     "id":"dynlisteditor",
-    "personalportal":true,
+    "personalportal": false,
     "url":"/devwidgets/dynamiclisteditor/dynamiclisteditor.html",
     "i18n": {
-        "default": "/devwidgets/dynamiclisteditor/bundles/default.properties"
+        "default": {
+            "bundle": "/devwidgets/dynamiclisteditor/bundles/default.properties",
+            "description":"Dynamic list editor",
+            "name":"Dynamic list editor"
+        }
     },
     "multipleinstance": false,
     "deletable":false,
