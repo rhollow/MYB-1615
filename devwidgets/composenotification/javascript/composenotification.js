@@ -172,7 +172,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
          * @param {String} key The key which you want to be translated
          */
         var translate = function(key) {
-            return sakai.api.i18n.Widgets.getValueForKey("composenotification", "default", key);
+            return sakai.api.i18n.getValueForKey(key, "composenotification");
         };
 
         var formatISO8601 = function(date) {
