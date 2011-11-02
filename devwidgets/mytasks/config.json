@@ -1,5 +1,5 @@
 {
-    "name":"My Tasks",
+    "id":"mytasks",
     "personalportal":true,
     "url":"/devwidgets/mytasks/mytasks.html",
     "i18n": { 
