@@ -582,7 +582,7 @@ define(["jquery","sakai/sakai.api.core"], function($, sakai) {
         };
 
         var translate = function(key) {
-            return sakai.api.i18n.Widgets.getValueForKey(config.widgetName, "default", key);
+            return sakai.api.i18n.getValueForKey(key, config.widgetName);
         };
 
         var announceError = function() {

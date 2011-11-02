@@ -1,12 +1,14 @@
 {
-    "description":"Group notification manager",
-    "name":"Group notification manager",
     "id":"groupnotifman",
-    "personalportal":true,
+    "personalportal": false,
     "url":"/devwidgets/groupnotificationmanager/groupnotificationmanager.html",
-    "i18n": {
-        "default": "/devwidgets/groupnotificationmanager/bundles/default.properties"
-    },
+    "i18n": { 
+        "default": { 
+            "bundle": "/devwidgets/groupnotificationmanager/bundles/default.properties", 
+            "description":"Group notification manager", 
+            "name":"Group notification manager" 
+        } 
+    }, 
     "multipleinstance": false,
     "deletable":false,
     "type":"sakai",

@@ -1,16 +1,16 @@
 {
-    "description": "Chat with the library for research help",
-    "name": "Ask A Librarian 24/7",
     "id": "libraryreferencechat",
     "personalportal": false,
     "userpages": true,
     "userdashboard": true,
     "grouppages": true,
     "groupdashboard": true,
-	"i18n": {
-        "default": "/devwidgets/libraryreferencechat/bundles/default.properties",
-        "en_US": "/devwidgets/libraryreferencechat/bundles/en_US.properties",
-        "zh_CN": "/devwidgets/libraryreferencechat/bundles/zh_CN.properties"
+    "i18n": { 
+        "default": { 
+            "bundle": "/devwidgets/libraryreferencechat/bundles/default.properties", 
+            "description":"Chat with the library for research help", 
+            "name":"Ask A Librarian 24/7" 
+        } 
     },
     "multipleinstance": false,
     "type":"sakai",
