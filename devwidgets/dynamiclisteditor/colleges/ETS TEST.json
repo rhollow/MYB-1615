@@ -39,6 +39,14 @@
             {
                 "id": "/colleges/ETS TEST/standings/undergrad/majors/TONY",
                 "name": "Tony"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/MICHAEL",
+                "name": "Michael"
+            },
+            {
+                "id": "/colleges/ETS TEST/standings/undergrad/majors/FAISAL",
+                "name": "Faisal"
             }]
         }
      },
