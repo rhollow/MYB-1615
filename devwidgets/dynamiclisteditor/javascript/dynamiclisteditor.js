@@ -422,7 +422,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/lib/myb/myb.
          * @param {String} key The key which you want to be translated
          */
         var translate = function(key) {
-            return sakai.api.i18n.Widgets.getValueForKey("dynamiclisteditor", "default", key);
+            return sakai.api.i18n.getValueForKey(key, "dynamiclisteditor");
         };
 
         /**
