@@ -68,7 +68,7 @@ define(["config/config", "config/env"], function(config) {
                 },
                 {
                     "title": "BROWSE_MYBERKELEY_CATEGORIES",
-                    "url": "/dev/allcategories.html"
+                    "url": "/categories"
                 },
                 {
                     "title": "GO_TO_BERKELEY_EDU",
@@ -78,7 +78,7 @@ define(["config/config", "config/env"], function(config) {
             getInTouch: [
                 {
                     "title": "SEND_US_YOUR_FEEDBACK",
-                    "url": "mailto:portal@berkeley.edu"
+                    "url": "http://ets.berkeley.edu/calcentral-feedback"
                 },
                 {
                     "title": "CONTACT_SUPPORT",
@@ -134,7 +134,7 @@ define(["config/config", "config/env"], function(config) {
     ];
 
     config.Directory = {
-        topic_devider: {
+        topic_divider: {
             divider: true,
             title: "By Topic",
             class: "myb-cat-by-topic"
@@ -591,32 +591,7 @@ define(["config/config", "config/env"], function(config) {
                     }
                 }
             }
-        },
-        /*
-         * set what name to display where only the first name is used
-         */
-        userFirstNameDisplay: "firstName",
-
-        /*
-         * set how the user's name is displayed across the entire system
-         * - values can be compound, like "firstName lastName" or singular like "displayName"
-         */
-        userNameDisplay: "firstName lastName",
-
-        /*
-         * the default, if the user doesn't have the userNameDisplay property set in their
-         * profile, use this one.
-         * Note: the value for userNameDisplay and this value can be the same.
-         *       If neither exists, nothing will show
-         */
-        userNameDefaultDisplay: "firstName lastName",
-
-        /*
-         * Set the user's short description to appear underneath their name
-         * in search results
-         */
-        userShortDescription: "${role} in ${department} at ${college}",
-        groupShortDescription: "asdf"
+        }
     };
 
     // we only want the 'simple group' template
