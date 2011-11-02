@@ -13,6 +13,5 @@
     "personalportal":true,
     "type":"sakai",
     "enabled":true,
-    "url":"/devwidgets/recentmessages/recentmessages.html",
-	"deletable":true    
+    "url":"/devwidgets/recentmessages/recentmessages.html"
 }
