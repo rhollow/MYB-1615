@@ -96,7 +96,7 @@ require(
             "jquery-plugins": "jquery/plugins",
             "jquery": "jquery/jquery-1.5.2",
             "jquery-ui": "jquery/jquery-ui-1.8.13.custom",
-            "config": "../configuration"
+            "config": "/dev/configuration"
         },
         priority: ["jquery"]
     }

@@ -5,7 +5,8 @@
  * THIS BUILD FILE WILL NOT WORK. It is referencing paths that probably
  * do not exist on your machine. Just use it as a guide.
  *
- *
+ * CALCENTRAL ADDITIONAL NOTE: Actually, this build file had better work,
+ * since our deployment builds use it.
  */
 
 ({
@@ -28,7 +29,7 @@
         "jquery-plugins": "jquery/plugins",
         "jquery": "jquery/jquery-1.5.2",
         "jquery-ui": "jquery/jquery-ui-1.8.13.custom",
-        "config": "../configuration"
+        "config": "/dev/configuration"
     },
 
     //The directory path to save the output. If not specified, then
