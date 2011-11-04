@@ -87,5 +87,10 @@
 .topnavigation_explore .s3d-dropdown-menu li a:focus, .topnavigation_user_container .s3d-dropdown-menu li a:focus, #topnavigation_user_options_login li a:focus, #navigation_anon_signup_link:focus{ -moz-border-radius: 2px 2px 2px 2px; background: url("/devwidgets/topnavigation/images/topnav_nav_hover.png") repeat-x scroll left top #3480B2; color:#fff !important;}
 #topnavigation_search_input:focus{outline:2px solid #2683BC;}
 
-/* myberkeley custom */
-#topnavigation_user_options_login_link { color: #fff }
+/* begin CalCentral custom */
+
+#topnavigation_user_options_login_link {
+    color: #fff
+}
+
+/* end CalCentral custom */
