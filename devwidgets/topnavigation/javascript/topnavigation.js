@@ -23,7 +23,7 @@
  */
 /*global Config, $, jQuery, get_cookie, delete_cookie, set_cookie, window, alert */
 
-require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "jquery-plugins/jquery.fieldselection"], function($, sakai, myb) {
+require(["jquery", "sakai/sakai.api.core", "jquery-plugins/jquery.fieldselection"], function($, sakai) {
 
 
     /**
@@ -409,22 +409,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "jquery-plugins/j
 
             if (sakai.config.Navigation[i].subnav) {
                 temp.subnav = [];
-                // CalCentral custom begin
-                var isAdviser = myb.api.security.isUserAnAdviser();
-                // CalCentral custom end
-
                 for (var ii in sakai.config.Navigation[i].subnav) {
                     if (sakai.config.Navigation[i].subnav.hasOwnProperty(ii)) {
-
-                        // CalCentral custom begin: some menu items might be flagged as advisers only, so check,
-                        // and skip if item is restricted and user's not an adviser.
-                        if ( sakai.config.Navigation[i].subnav[ii].requiresAdviserMembership ) {
-                            if (!isAdviser) {
-                                continue;
-                            }
-                        }
-                        // CalCentral custom end
-
                         temp.subnav.push(getNavItem(ii, sakai.config.Navigation[i].subnav));
                     }
                 }
@@ -441,7 +427,6 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "jquery-plugins/j
 
             for (var i in sakai.config.Navigation) {
                 if (sakai.config.Navigation.hasOwnProperty(i)) {
-
                     var temp = "";
                     if (sakai.data.me.user.anon) {
                         if (sakai.config.Navigation[i].anonymous) {
@@ -925,7 +910,9 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "jquery-plugins/j
             setUserName();
             addBinding();
             renderOverlays();
-            // myberkeley custom: sign in is link to CAS login
+            
+            /* begin CalCentral custom: sign in is link to CAS login */
+            
             var loginLink = $("#topnavigation_user_options_login_link");
             if ( loginLink[0] ) {
               loginLink[0].href = sakai.config.Authentication.external[0].url;
@@ -933,7 +920,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "jquery-plugins/j
                 $(topnavUserOptionsLoginFields).remove();
               }
             }
-            // end myberkeley custom
+            
+            /* end CalCentral custom */
         };
 
         doInit();
