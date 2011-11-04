@@ -15,8 +15,16 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
+ 
+/** CalCentral doesn't use any of this CSS currently 
+.welcome_widget .s3d-regular-links {color:#2683BC;font-size:11px;}
+.welcome_widget img {float:left;margin-right:12px;}
+.welcome_widget span {color:#424242;margin-bottom:12px;font-size:11px;}
+.welcome_widget h1 {font-weight:normal;color:#424242;font-size:24px;}
+.welcome_widget h2 {font-size: 14px;font-weight:normal;color:#777;margin:5px 0 0;}
+*/
 
-/* MyBerkeley custom begin */
+/* begin CalCentral custom  */
 
 .welcome-block {
     background-color: #DDE9F5;
@@ -32,7 +40,6 @@
     color: #333;
     font-size: 2.3em;
     font-weight: bolder;
-
 }
 
 .welcome-block p {
@@ -47,11 +54,11 @@
 }
 
 .welcome-block .welcome-body {
-	float: right;
-	width: 460px;
+    float: right;
+    width: 460px;
     color: #666;
     font-size: 1.2em;
-	line-height: 120%;
+    line-height: 120%;
 }
 
 .welcome-block .gearbox {
@@ -65,7 +72,7 @@
 
 .welcome-body .message-defined, .welcome-body ul, .welcome-body p {
     color: #666;
-	line-height: 120%;
+    line-height: 120%;
     margin-top: 0.2em;
     margin-bottom: 0.5em;
 }
@@ -90,4 +97,4 @@
     margin-top: 0.3em;
 }
 
-/* MyBerkeley custom end */
+/* end CalCentral custom */
