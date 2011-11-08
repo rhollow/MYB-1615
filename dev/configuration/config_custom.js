@@ -351,244 +351,238 @@ define(["config/config", "config/env"], function(config) {
     };
 
 
-    config.Profile = {
-        /*
-         * This is a collection of profile configuration functions and settings
-         * The structure of the config object is identical to the storage object
-         * When system/me returns profile data for the logged in user the profile_config and profile_data objects could be merged
-         * "label": the internationalizable message for the entry label in HTML
-         * "required": {Boolean} Whether the entry is compulsory or not
-         * "display": {Boolean} Show the entry in the profile or not
-         * "editable": {Boolean} Whether or not the entry is editable
-         * For a date entry field use "date" as the type for MM/dd/yyyy and "dateITA" as the type for dd/MM/yyyy
-         *
-         */
-        configuration: {
+    /*
+     * CalCentral Custom Profile settings
+     * CalCentral uses different fields and field settings for the Personal Profile than OAE
+     * "label": the internationalizable message for the entry label in HTML
+     * "required": {Boolean} Whether the entry is compulsory or not
+     * "display": {Boolean} Show the entry in the profile or not
+     * "editable": {Boolean} Whether or not the entry is editable
+     * For a date entry field use "date" as the type for MM/dd/yyyy and "dateITA" as the type for dd/MM/yyyy
+     *
+     */
 
-            defaultConfig: {
-
-                "basic": {
-                    "label": "__MSG__PROFILE_BASIC_LABEL__",
+    config.Profile.configuration.defaultConfig = {
+        "basic": {
+            "label": "__MSG__PROFILE_BASIC_LABEL__",
+            "required": true,
+            "display": true,
+            "access": "everybody",
+            "modifyacl": false,
+            "order": 0,
+            "elements": {
+                "firstName": {
+                    "label": "__MSG__PROFILE_BASIC_FIRSTNAME_LABEL__",
                     "required": true,
                     "display": true,
-                    "access": "everybody",
-                    "modifyacl": false,
-                    "order": 0,
-                    "elements": {
-                        "firstName": {
-                            "label": "__MSG__PROFILE_BASIC_FIRSTNAME_LABEL__",
-                            "required": true,
-                            "display": true,
-                            "limitDisplayLength": 50,
-                            "editable": false
-                        },
-                        "lastName": {
-                            "label": "__MSG__PROFILE_BASIC_LASTNAME_LABEL__",
-                            "required": true,
-                            "display": true,
-                            "limitDisplayLength": 50,
-                            "editable": false
-                        },
-                        "picture": {
-                            "label": "__MSG__PROFILE_BASIC_PICTURE_LABEL__",
-                            "required": false,
-                            "display": false
-                        },
-                        "preferredName": {
-                            "label": "__MSG__PROFILE_BASIC_PREFERREDNAME_LABEL__",
-                            "required": false,
-                            "display": true
-                        },
-                        "status": {
-                            "label": "__MSG__PROFILE_BASIC_STATUS_LABEL__",
-                            "required": false,
-                            "display": false
-                        }
-                    }
+                    "limitDisplayLength": 50,
+                    "editable": false
                 },
-                "email" :{
-                    "label": "Email Address",
+                "lastName": {
+                    "label": "__MSG__PROFILE_BASIC_LASTNAME_LABEL__",
                     "required": true,
                     "display": true,
-                    "access": "everybody",
-                    "modifyacl": false,
-                    "order": 1,
-                    "permission": "private",
-                    "elements": {
-                        "email": {
-                            "label": "Email",
-                            "required": true,
-                            "display": true,
-                            "limitDisplayLength": 50,
-                            "editable": false
-                        }
-                    }
+                    "limitDisplayLength": 50,
+                    "editable": false
                 },
-                "institutional" : {
-                    "label": "Institutional Information",
+                "picture": {
+                    "label": "__MSG__PROFILE_BASIC_PICTURE_LABEL__",
+                    "required": false,
+                    "display": false
+                },
+                "preferredName": {
+                    "label": "__MSG__PROFILE_BASIC_PREFERREDNAME_LABEL__",
+                    "required": false,
+                    "display": true
+                },
+                "status": {
+                    "label": "__MSG__PROFILE_BASIC_STATUS_LABEL__",
+                    "required": false,
+                    "display": false
+                }
+            }
+        },
+        "email" :{
+            "label": "Email Address",
+            "required": true,
+            "display": true,
+            "access": "everybody",
+            "modifyacl": false,
+            "order": 1,
+            "permission": "private",
+            "elements": {
+                "email": {
+                    "label": "Email",
                     "required": true,
                     "display": true,
-                    "access": "everybody",
-                    "modifyacl": false,
-                    "order": 2,
-                    "permission": "everyone",
-                    "elements": {
-                        "role": {
-                            "label": "Role/position",
-                            "required": true,
-                            "display": true,
-                            "limitDisplayLength": 50,
-                            "editable": false
-                        },
-                        "college": {
-                            "label": "College",
-                            "required": true,
-                            "display": true,
-                            "limitDisplayLength": 50,
-                            "editable": false
-                        },
-                        "major": {
-                            "label": "Major",
-                            "required": true,
-                            "display": true,
-                            "limitDisplayLength": 50,
-                            "editable": false
-                        }
-                    }
+                    "limitDisplayLength": 50,
+                    "editable": false
+                }
+            }
+        },
+        "institutional" : {
+            "label": "Institutional Information",
+            "required": true,
+            "display": true,
+            "access": "everybody",
+            "modifyacl": false,
+            "order": 2,
+            "permission": "everyone",
+            "elements": {
+                "role": {
+                    "label": "Role/position",
+                    "required": true,
+                    "display": true,
+                    "limitDisplayLength": 50,
+                    "editable": false
                 },
+                "college": {
+                    "label": "College",
+                    "required": true,
+                    "display": true,
+                    "limitDisplayLength": 50,
+                    "editable": false
+                },
+                "major": {
+                    "label": "Major",
+                    "required": true,
+                    "display": true,
+                    "limitDisplayLength": 50,
+                    "editable": false
+                }
+            }
+        },
+        "aboutme": {
+            "label": "__MSG__PROFILE_ABOUTME_LABEL__",
+            "required": true,
+            "display": true,
+            "access": "everybody",
+            "modifyacl": true,
+            "order": 3,
+            "permission": "everyone",
+            "elements": {
                 "aboutme": {
                     "label": "__MSG__PROFILE_ABOUTME_LABEL__",
+                    "required": false,
+                    "display": true,
+                    "type": "textarea"
+                },
+                "academicinterests": {
+                    "label": "__MSG__PROFILE_ABOUTME_ACADEMICINTERESTS_LABEL__",
+                    "required": false,
+                    "display": true,
+                    "type": "textarea"
+                },
+                "personalinterests": {
+                    "label": "__MSG__PROFILE_ABOUTME_PERSONALINTERESTS_LABEL__",
+                    "required": false,
+                    "display": true,
+                    "type": "textarea"
+                },
+                "hobbies": {
+                    "label": "__MSG__PROFILE_ABOUTME_HOBBIES_LABEL__",
+                    "required": false,
+                    "display": true
+                },
+                "tags": {
+                    "label": "__MSG__TAGS__",
+                    "required": false,
+                    "display": true,
+                    "type": "textarea",
+                    "tagField": true
+                }
+            }
+        },
+        "locations": {
+            "label": "__MSG__PROFILE_LOCATIONS_LABEL__",
+            "required": false,
+            "display": true,
+            "access": "everybody",
+            "modifyacl": true,
+            "multiple": true,
+            "directory": true,
+            "multipleLabel": "__MSG__PROFILE_LOCATION_LABEL__",
+            "order": 4,
+            "permission": "everyone",
+            "elements": {
+                "locationtitle": {
+                    "label": "__MSG__PROFILE_LOCATION_LABEL__",
                     "required": true,
                     "display": true,
-                    "access": "everybody",
-                    "modifyacl": true,
-                    "order": 3,
-                    "permission": "everyone",
-                    "elements": {
-                        "aboutme": {
-                            "label": "__MSG__PROFILE_ABOUTME_LABEL__",
-                            "required": false,
-                            "display": true,
-                            "type": "textarea"
-                        },
-                        "academicinterests": {
-                            "label": "__MSG__PROFILE_ABOUTME_ACADEMICINTERESTS_LABEL__",
-                            "required": false,
-                            "display": true,
-                            "type": "textarea"
-                        },
-                        "personalinterests": {
-                            "label": "__MSG__PROFILE_ABOUTME_PERSONALINTERESTS_LABEL__",
-                            "required": false,
-                            "display": true,
-                            "type": "textarea"
-                        },
-                        "hobbies": {
-                            "label": "__MSG__PROFILE_ABOUTME_HOBBIES_LABEL__",
-                            "required": false,
-                            "display": true
-                        },
-                        "tags": {
-                            "label": "__MSG__TAGS__",
-                            "required": false,
-                            "display": true,
-                            "type": "textarea",
-                            "tagField": true
-                        }
-                    }
+                    "type": "location"
+                }
+            }
+        },
+        "publications": {
+            "label": "__MSG__PROFILE_PUBLICATIONS_LABEL__",
+            "required": false,
+            "display": true,
+            "access": "everybody",
+            "modifyacl": true,
+            "multiple": true,
+            "multipleLabel": "__MSG__PROFILE_PUBLICATION_LABEL__",
+            "order": 5,
+            "permission": "everyone",
+            //"template": "profile_section_publications_template",
+            "elements": {
+                "maintitle": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
+                    "required": true,
+                    "display": true,
+                    "example": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE_EXAMPLE__"
                 },
-                "locations": {
-                    "label": "__MSG__PROFILE_LOCATIONS_LABEL__",
+                "mainauthor": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_AUTHOR__",
+                    "required": true,
+                    "display": true
+                },
+                "coauthor": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR__",
                     "required": false,
                     "display": true,
-                    "access": "everybody",
-                    "modifyacl": true,
-                    "multiple": true,
-                    "directory": true,
-                    "multipleLabel": "__MSG__PROFILE_LOCATION_LABEL__",
-                    "order": 4,
-                    "permission": "everyone",
-                    "elements": {
-                        "locationtitle": {
-                            "label": "__MSG__PROFILE_LOCATION_LABEL__",
-                            "required": true,
-                            "display": true,
-                            "type": "location"
-                        }
-                    }
+                    "example": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR_EXAMPLE__"
                 },
-                "publications": {
-                    "label": "__MSG__PROFILE_PUBLICATIONS_LABEL__",
+                "publisher": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_PUBLISHER__",
+                    "required": true,
+                    "display": true
+                },
+                "placeofpublication": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_PLACE_OF_PUBLICATION__",
+                    "required": true,
+                    "display": true
+                },
+                "volumetitle": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_TITLE__",
+                    "required": false,
+                    "display": true
+                },
+                "volumeinformation": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION__",
                     "required": false,
                     "display": true,
-                    "access": "everybody",
-                    "modifyacl": true,
-                    "multiple": true,
-                    "multipleLabel": "__MSG__PROFILE_PUBLICATION_LABEL__",
-                    "order": 5,
-                    "permission": "everyone",
-                    //"template": "profile_section_publications_template",
-                    "elements": {
-                        "maintitle": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
-                            "required": true,
-                            "display": true,
-                            "example": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE_EXAMPLE__"
-                        },
-                        "mainauthor": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_AUTHOR__",
-                            "required": true,
-                            "display": true
-                        },
-                        "coauthor": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR__",
-                            "required": false,
-                            "display": true,
-                            "example": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR_EXAMPLE__"
-                        },
-                        "publisher": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_PUBLISHER__",
-                            "required": true,
-                            "display": true
-                        },
-                        "placeofpublication": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_PLACE_OF_PUBLICATION__",
-                            "required": true,
-                            "display": true
-                        },
-                        "volumetitle": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_TITLE__",
-                            "required": false,
-                            "display": true
-                        },
-                        "volumeinformation": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION__",
-                            "required": false,
-                            "display": true,
-                            "example": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION_EXAMPLE__"
-                        },
-                        "year": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_YEAR__",
-                            "required": true,
-                            "display": true
-                        },
-                        "number": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_NUMBER__",
-                            "required": false,
-                            "display": true
-                        },
-                        "series title": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_SERIES_TITLE__",
-                            "required": false,
-                            "display": true
-                        },
-                        "url": {
-                            "label": "__MSG__PROFILE_PUBLICATIONS_URL__",
-                            "required": false,
-                            "display": true,
-                            "validation": "appendhttp url"
-                        }
-                    }
+                    "example": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION_EXAMPLE__"
+                },
+                "year": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_YEAR__",
+                    "required": true,
+                    "display": true
+                },
+                "number": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_NUMBER__",
+                    "required": false,
+                    "display": true
+                },
+                "series title": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_SERIES_TITLE__",
+                    "required": false,
+                    "display": true
+                },
+                "url": {
+                    "label": "__MSG__PROFILE_PUBLICATIONS_URL__",
+                    "required": false,
+                    "display": true,
+                    "validation": "appendhttp url"
                 }
             }
         }
