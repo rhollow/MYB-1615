@@ -137,7 +137,7 @@ define(["config/config", "config/env"], function(config) {
         topic_divider: {
             divider: true,
             title: "By Topic",
-            class: "myb-cat-by-topic"
+            cssClass: "myb-cat-by-topic"
         },
         agriculture_and_related_sciences: {
             title: "Agriculture & Related Sciences",
@@ -331,7 +331,7 @@ define(["config/config", "config/env"], function(config) {
         by_org_divider: {
             divider: true,
             title: "By Berkeley Campus Organization",
-            class: "myb-cat-by-org"
+            cssClass: "myb-cat-by-org"
         },
         departments: {
             title: "Colleges & Departments",
