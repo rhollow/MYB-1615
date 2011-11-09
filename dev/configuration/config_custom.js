@@ -592,6 +592,7 @@ define(["config/config", "config/env"], function(config) {
     config.worldTemplates = config.worldTemplates.slice(0,1);
 
     // Custom CSS Files to load in
+    // config.skinCSS = ["/dev/skins/default/skin.css"];
     config.skinCSS = ["/dev/skins/myb/skin.css"];
 
 
@@ -634,6 +635,16 @@ define(["config/config", "config/env"], function(config) {
     };
 
     // End custom configuration
+
+    /**
+     * Kaltura Settings
+     */
+    config.kaltura = {
+        enabled: false, // Enable/disable Kaltura player
+        serverURL:  "http://www.kaltura.com", //INSERT_KALTURA_INSTALLATION_URL_HERE
+        partnerId:  100, //INSERT_YOUR_PARTNER_ID_HERE
+        playerId: 100 //INSERT_YOUR_PLAYER_ID_HERE
+    };
 
     return config;
 });
