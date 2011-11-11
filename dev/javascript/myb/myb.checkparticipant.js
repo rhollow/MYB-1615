@@ -190,20 +190,21 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         /////////////////////////////
 
         var doInit = function() {
-            // If the user is a member of Berkeley's College of Environmental Design, but not a participant of CalCentral project,
+            // If the user is a member of a CalCentral pilot college, but not a participant of CalCentral project,
             // redirect him to the participation explanation page
             if (isLoggedIn() && !myb.api.security.isMyBerkeleyParticipant()) {
                 // We will show a nice Join CalCentral dialog on this page
-                $("#join_myberkeley_dialog").jqm({
+                $optinDialog = $("#join_myberkeley_dialog");
+                $optinDialog.jqm({
                          modal: true,
                          overlay: 20,
                          toTop: true,
                          onShow: null
                      });
 
-                $("#join_myberkeley_dialog").css("margin-left","-285px");
-                $("#join_myberkeley_dialog").css("width","570px");
-                $("#join_myberkeley_dialog").jqmShow();
+                $optinDialog.css("margin-left","-285px");
+                $optinDialog.css("width","570px");
+                $optinDialog.jqmShow();
             }
         };
 

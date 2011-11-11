@@ -39,7 +39,9 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai,
         * they should be showing because the user in not a CalCentral participant
         */
         var sendToNotAMyBerkeleyParticipantPage = function() {
-            document.location = "/me";
+            if (document.location.pathname !== "/me") {
+                document.location = "/me";
+            }
             return false;
         };
 
