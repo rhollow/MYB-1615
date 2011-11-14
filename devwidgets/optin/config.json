@@ -1,0 +1,20 @@
+{
+    "enabled":            false,
+    "groupdashboard":     false,
+    "grouppages":         false,
+    "hasSettings":        true,
+    "i18n": {
+        "default": {
+            "bundle":     "/devwidgets/optin/bundles/default.properties",
+            "name":       "CalCentral Opt-in widget",
+            "description":"CalCentral Opt-in widget"
+        }
+    },
+    "id":                 "optin",
+    "personalportal":     false,
+    "showinsakaigoodies": false,
+    "type":               "sakai",
+    "url":                "/devwidgets/optin/optin.html",
+    "userdashboard":      false,
+    "userpages":          false
+}
