@@ -181,7 +181,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     "items": items,
                     "sakai": sakai
                 });
-            }, handleEmptyLibrary, sakai.config.URL.INFINITE_LOADING_ICON , handleLibraryItems, sakai.api.Content.getNewList(mylibrary.contextId));
+            }, handleEmptyLibrary, sakai.config.URL.INFINITE_LOADING_ICON, handleLibraryItems, sakai.api.Content.getNewList(mylibrary.contextId));
         };
 
         ////////////////////
@@ -418,7 +418,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 userIds.push(content["sakai:pool-content-created-for"] || content["_lastModifiedBy"]);
             });
             if (userIds.length) {
-                sakai.api.User.getMultipleUsers(userIds, function(getMultipleUsersSuccess, users){
+                sakai.api.User.getMultipleUsers(userIds, function(users){
                     var currentItems = [];
                     $.each(results, function(i, result){
                         var mimetypeObj = sakai.api.Content.getMimeTypeData(result["_mimeType"]);
