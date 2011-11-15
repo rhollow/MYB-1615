@@ -276,7 +276,7 @@ define(["config/config", "config/env"], function(config) {
                     title: "Forestry"
                 },
                 land_use_planning_and_management: {
-                    title: "Land Use Planning & Management/Development"
+                    title: "Land Use Planning, Management and Development"
                 },
                 natural_resources_management_policy: {
                     title: "Natural Resources Management & Policy"
