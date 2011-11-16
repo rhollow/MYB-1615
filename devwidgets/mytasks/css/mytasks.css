@@ -95,7 +95,8 @@ table.noticewidget_listing tbody tr {
 }
 
 table.noticewidget_listing .subjectLine {
-    text-align: left;    
+    text-align: left;
+    width: 80%;
 }
 
 table.noticewidget_listing .dueLine {
@@ -427,8 +428,4 @@ table.noticewidget_listing tr td span.required_task_bullet {
 table.noticewidget_listing tr.overDueTask td span.required_task_bullet {
     background: url("/devwidgets/mytasks/images/bullet_red.png") no-repeat scroll transparent;
 	background-position: 0 0;
-}
-
-.myevents_widget table.noticewidget_listing .subjectLine {
-    width: 80%;        
 }
