@@ -650,7 +650,7 @@ define(["config/config", "config/env"], function(config) {
     
     config.defaultprivstructure.structure0["sakai2sites"] =  {
         "_ref": "${refid}2345",
-        "_title": "My Sakai 2 sites",
+        "_title": "My bSpace sites",
         "_order": 2,
         "_canEdit": true,
         "_reorderOnly": true,
@@ -658,7 +658,7 @@ define(["config/config", "config/env"], function(config) {
         "main": {
             "_ref": "${refid}2345",
             "_order": 0,
-            "_title": "My Sakai 2 sites"
+            "_title": "My bSpace sites"
         }
     };
     
