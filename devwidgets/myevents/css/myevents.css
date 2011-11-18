@@ -2,33 +2,18 @@
 
 /* unique to myevents */
 
-.noticewidget_detail .detail-element {
-    font-size: 90%;
-    margin: 0;
+.noticewidget_detail_head div {
+    margin-top: 4px;
 }
 
-.noticewidget_detail .event-date {
+.noticewidget_detail_head span {
     float: left;
-    margin-top: 4px;
+    margin-right: 10px;
     margin-left: 10px;
 }
+
 .noticewidget_detail .event-time {
     float: right;
-    margin-top: 4px;
-    margin-right: 10px;
-
-}
-
-.noticewidget_detail .event-location {
-    float: left;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.noticewidget_detail .myB-isrequired,
-.noticewidget_detail .myB-isNOTrequired {
-    float: left;
-    margin-left: 10px;
 }
 
 .noticewidget_detail .clear {

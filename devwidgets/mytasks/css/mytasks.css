@@ -15,10 +15,6 @@
     text-align: center;
 }
 
-
-.s3d-widget .s3d-widget-content {
-    padding-bottom: 0;
-}
 /**
     Selectors that contain "noticewidget_" are shared between mytasks and myevents widgets.
 **/
@@ -252,6 +248,10 @@ table.noticewidget_listing tr.notice_row:hover {
   width: 8px;
 }
 
+.noticewidget_detail {
+    font-size: 90%;
+}
+
 .noticewidget_detail_controls {
     padding: 6px 0 4px;    
 }
@@ -323,16 +323,14 @@ table.noticewidget_listing tr.notice_row:hover {
     background-color: #EDEDED;
 }
 
-.noticewidget_detail h4 {
-    padding: 4px 10px;
-    font-size: 90%;
-    font-weight: normal;
-}
-
 .noticewidget_detail p {
     margin: 0;
     padding: 4px 10px 0;
-    font-size: 90%;
+}
+
+.noticewidget_detail .myB-isrequired,
+.noticewidget_detail .myB-isNOTrequired {
+    margin-left: 10px;
 }
 
 .noticewidget_detail .myB-isNOTrequired {
@@ -346,7 +344,6 @@ table.noticewidget_listing tr.notice_row:hover {
 .noticewidget_detail fieldset {
     float: right;
     margin: 4px;
-    font-size: 90%;
 }
 
 .noticewidget_detail h5 {
@@ -372,16 +369,6 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .noticewidget_detail textarea:hover {
     background-color: transparent;
-}
-
-.mytasks_widget .fl-widget-options .widget-options-inner .left {
-    float: left;
-    margin-left: 10px;
-}
-
-.mytasks_widget .fl-widget-options .widget-options-inner .right {
-    float: right;
-    margin-right: -10px;
 }
 
 .s3d-widget-footer a.noticewidget_view_task_archive {
