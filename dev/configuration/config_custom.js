@@ -21,8 +21,6 @@ define(["config/config", "config/env"], function(config) {
 
     // myberkeley custom begin
     
-    // hybrid config is in the evironment specific env.js
- 
     // This is our custom CAS log in information.
     config.Authentication.internal = config.isDev;
     config.Authentication.external = [
