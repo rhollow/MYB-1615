@@ -2,13 +2,13 @@
     "i18n": {
         "default": {
             "bundle": "/devwidgets/mysakai2/bundles/default.properties",
-            "name":" My Sakai 2 favorites",
-            "description":" My Sakai 2 favorites"
+            "name":" My bSpace favorites",
+            "description":" My bSpace favorites"
         },
         "en_GB": {
             "bundle": "/devwidgets/mysakai2/bundles/en_GB.properties",
-            "name":"My Sakai 2 favourites",
-            "description":"My Sakai 2 favourites"
+            "name":"My bSpace favourites",
+            "description":"My bSpace favourites"
         }
     },
     "id":"mysakai2",
