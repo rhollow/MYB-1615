@@ -162,9 +162,7 @@
     top: 2.4em;
     left: 4%;
     width: 92%;
- 
-    display: none;
-    
+    display: none;    
     background-color: white;
     border: 1px solid darkGray;
     -moz-border-radius: 5px;
@@ -178,11 +176,7 @@
 .mylinks_widget .addedit_link_panel label {
     display: block;
     font-size: 0.9em;
-    padding: 0.3em;
-}
-
-.mylinks_widget .addedit_link_panel .elm-label {
-    color: #555;
+    padding: 0.6em 0 0.3em;
 }
 
 .mylinks_widget .addedit_link_panel .link-form input {
@@ -192,7 +186,7 @@
 
 .mylinks_widget .addedit_link_panel .button-list {
     float: right;
-    padding: 9px 6% 6px;
+    padding: 9px 10px;
 }
 
 .mylinks_widget .s3d-link-button {
@@ -205,15 +199,13 @@
 
 .mylinks_widget .addedit_link_panel h2.s3d-addlink-header {
     border-bottom: 1px dotted #D4D4D4;
-    color: #666;
     font-size: 1.1em;
-    font-weight: normal;
     padding-bottom: 6px;
-    margin: 9px 6% 6px;
+    margin: 9px 10px 2px;
 }
 
 .mylinks_widget .addedit_link_panel .link-form-element {
-    padding: 0 6%;
+    padding: 0 10px;
 }
 
 .mylinks_widget .s3d-button.disabled {

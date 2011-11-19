@@ -151,27 +151,30 @@
         {var dateString = noticeWidgetUtils.formatDate(detail.icalData.DUE, "M/d/yy")}
         <div class="noticewidget_detail_head">
             <h3>${detail.icalData.SUMMARY}</h3>
-            <fieldset>
-                <input type="checkbox" class="task-completed-checkbox"
-                    id="taskDone_${index}"
-                    {if detail.isCompleted}
-                        checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
-                    {else}
-                        title="__MSG__CHECK_TO_MARK_COMPLETED__"
-                    {/if}
-                	{if archiveMode}
-						disabled="disabled"
-					{/if}
-				/>
-                <label for="taskDone_${index}">__MSG__COMPLETED__</label>
-            </fieldset>
-            <p>__MSG__DUE_DATE__ ${dateString}</p>
-            {if detail.isRequired}
-                <div class="myB-isrequired">&bull; __MSG__REQUIRED__</div>
-            {else}
-                <div class="myB-isNOTrequired"><strong>&#9702; __MSG__NOT__</strong> __MSG__REQUIRED__</div>
-            {/if}
-            </h4>
+            <div>
+                <fieldset class="is-done">
+                    <input type="checkbox" class="task-completed-checkbox"
+                        id="taskDone_${index}"
+                        {if detail.isCompleted}
+                            checked="checked" title="__MSG__UNCHECK_TO_MARK_UNCOMPLETED__"
+                        {else}
+                            title="__MSG__CHECK_TO_MARK_COMPLETED__"
+                        {/if}
+                        {if archiveMode}
+                            disabled="disabled"
+                        {/if}
+                    />
+                    <label for="taskDone_${index}">__MSG__COMPLETED__</label>
+                </fieldset>
+                <span>__MSG__DUE_DATE__ ${dateString}</span>
+            </div>
+            <div>
+                {if detail.isRequired}
+                    <span class="myB-isrequired">&bull; __MSG__REQUIRED__</span>
+                {else}
+                    <span class="myB-isNOTrequired"><strong>&#9702; __MSG__NOT__</strong> __MSG__REQUIRED__</span>
+                {/if}
+            </div>
         </div>
         <textarea readonly="readonly">${detail.icalData.DESCRIPTION}</textarea>
         -->
