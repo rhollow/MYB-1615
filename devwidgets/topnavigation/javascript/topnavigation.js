@@ -154,6 +154,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 "externalAuth": externalAuth,
                 "Authentication": sakai.config.Authentication
             };
+            
+            auth['CalCentralCASSignIn'] = (sakai.config.Authentication.external.length === 1); // CalCentralSpecific
+            
             $(topnavUserContainer).html(sakai.api.Util.TemplateRenderer(topnavUserTemplate, {
                 "anon" : sakai.data.me.user.anon,
                 "auth": auth,
@@ -901,13 +904,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             
             /* begin CalCentral custom: sign in is link to CAS login */
             
-            var loginLink = $("#topnavigation_user_options_login_link");
-            if ( loginLink[0] ) {
-              loginLink[0].href = sakai.config.Authentication.external[0].url;
-              if ( ! sakai.config.Authentication.internal ) {
-                $(topnavUserOptionsLoginFields).remove();
-              }
-            }
+            var $loginLink = $("#topnavigation_user_options_login");
+            $loginLink.click(function (){
+                location.href = sakai.config.Authentication.external[0].url;
+            });
             
             /* end CalCentral custom */
         };

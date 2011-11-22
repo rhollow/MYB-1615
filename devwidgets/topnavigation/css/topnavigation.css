@@ -92,8 +92,8 @@
 
 /* begin CalCentral custom */
 
-#topnavigation_user_options_login_link {
-    color: #fff
+.topnavigation_user_container #topnavigation_user_options_login_external, .topnavigation_user_container #topnavigation_user_options_login  {
+    cursor:pointer;
 }
 
 /* end CalCentral custom */

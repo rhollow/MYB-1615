@@ -115,6 +115,11 @@
 <div id="topnavigation_user_template"><!--
     {if anon}
         {if auth.externalAuth}
+            {if auth.CalCentralCASSignIn}
+            <div class="s3d-dropdown-menu" id="topnavigation_user_options_login_wrapper">
+                <a href="#" id="topnavigation_user_options_login" class="s3d-bold">__MSG__SIGN_IN__</a>
+            </div>
+            {else}
         <ul id="subnavigation_login_list" role="menu">
             <li class="s3d-bold s3d-dropdown-menu hassubnav">
                 <a role="menuitem" aria-haspopup="true" href="#" id="topnavigation_user_options_login_external" class="s3d-bold">__MSG__SIGN_IN__</a>
@@ -129,6 +134,7 @@
                 </div>
             </li>
         </ul>
+            {/if}
         {else}
         <div class="s3d-dropdown-menu" id="topnavigation_user_options_login_wrapper">
             <button id="topnavigation_user_options_login">__MSG__SIGN_IN__</button>
