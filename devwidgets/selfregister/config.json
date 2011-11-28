@@ -1,0 +1,21 @@
+{
+    "enabled":            false,
+    "groupdashboard":     false,
+    "grouppages":         false,
+    "hasSettings":        true,
+    "hashParams": ["selfregister"],
+    "i18n": {
+        "default": {
+            "bundle":     "/devwidgets/selfregister/bundles/default.properties",
+            "name":       "CalCentral Self-Registration widget",
+            "description":"CalCentral Self-Registration widget"
+        }
+    },
+    "id":                 "selfregister",
+    "personalportal":     false,
+    "showinsakaigoodies": false,
+    "type":               "sakai",
+    "url":                "/devwidgets/selfregister/selfregister.html",
+    "userdashboard":      false,
+    "userpages":          false
+}

@@ -1,0 +1,57 @@
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/devwidgets/selfregister/css/selfregister.css" />
+
+<!-- BEGIN JOIN MYBERKELEY DIALOG -->
+        <div id="join_myberkeley_dialog" class="s3d-dialog s3d-dialog-container">
+          <!-- No Dialog Header -->
+
+          <!-- Dialog Content -->
+            <p class="welcome-opt-in"><span class="fl-offScreen-hidden">Welcome to the CalCentral Pilot.</span></p>
+
+            <h1>Your Personal Information</h1>
+            
+            <p>Certain personal information CalCentral stores about you will be viewable by others.
+            However, you may change your permissions in each section of "My Profile" after sign-in.</p>
+            
+            <p>Using the default permissions settings, your information will be shared as follows:</p>
+            
+            <dl id="selfregister_attributes">
+            <dt><span class="selfregister_attribute"><span class="firstName"> </span> <span class="lastName"> </span></span> <i>(your full name)</i></dt>
+            <dd>Public to anyone in the world <span class="selfregister_attribute_warn">(this cannot be changed)</span></dd>
+            <dt style="display:none;" id="selfregister_dt_email"><span class="selfregister_attribute"> </span></span> <i>(your email address)</i></dt>
+            <dd style="display:none;" id="selfregister_dd_email">Private, only used by the system to deliver messages</dd>
+            <dt style="display:none;" id="selfregister_dt_role"><span class="selfregister_attribute"> </span></span> <i>(your role/position)</i></dt>
+            <dd style="display:none;" id="selfregister_dd_role">Only viewable by UC Berkeley CalCentral users</dd>
+            <dt style="display:none;" id="selfregister_dt_major"><span class="selfregister_attribute"> </span></span> <i>(your major)</i></dt>
+            <dd style="display:none;" id="selfregister_dd_major">Only viewable by UC Berkeley CalCentral users</dd>
+            <dt style="display:none;" id="selfregister_dt_college"><span class="selfregister_attribute"> </span></span> <i>(your college)</i></dt>
+            <dd style="display:none;" id="selfregister_dd_college">Only viewable by UC Berkeley CalCentral users</dd>
+            </dl>
+            
+            <h1>Limitations of CalCentral Pilot Program</h1>
+
+            <ul>
+              <li><i>This system is in active development.</i> The design and features presented may change at any time.</li>
+              <li>As we improve CalCentral it may be necessary to delete documents, messages, or content from the system.
+              <i>Please make backups of all documents and content that you create or share in CalCentral.</i></li>
+            </ul>
+            <p class="opt-in-checkbox">
+              <input id="chk_agree_to_socu" type="checkbox"/> <label for="chk_agree_to_socu">I have read and agree to
+              the official</label> <a href="http://technology.berkeley.edu/policy/usepolicy.html" class="s3d-regular-links"
+                                      target="_blank">campus statement on computer use.</a><br/>
+              <input id=chk_agree_to_share_data type="checkbox"/> <label
+                    for="chk_agree_to_share_data">I give permission to share my personal data in CalCentral as outlined above.</label>
+            </p>
+
+            <div class="dialog_buttons" style="text-align:right">
+              <button type="button" class="s3d-link-button" onclick="javascript:document.location='/dev/logout.html'"><span
+                      class="s3d-button-inner">Cancel &amp; sign out of CalNet</span></button>
+              <button type="button" id="btn_join_my_berkeley" class="s3d-button s3d-overlay-button" disabled="disabled">
+                <span class="s3d-button-inner">Join CalCentral</span></button>
+            </div>
+        </div>
+        <!-- END JOIN MYBERKELEY DIALOG -->
+
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript" src="/devwidgets/selfregister/javascript/selfregister.js"></script>
