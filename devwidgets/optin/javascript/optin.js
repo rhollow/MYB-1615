@@ -40,12 +40,14 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
         var $chkAgreeToSocu = $("#chk_agree_to_socu", $parentElm);
         var $chkAgreeToReceiveAdviserMessages = $("#chk_agree_to_receive_adviser_messages", $parentElm);
         var $btnJoinMyBerkeley = $("#btn_join_my_berkeley", $parentElm);
+        var $btnOptOut = $("#btn_cancel_optin", $parentElm);
 
         var ajaxPostTryNumber = 0;				// Counts failed AJAX POST tries before giving up
         var ajaxPostMaxTries = 3;				// Number of tries before giving up
         var ajaxPostRetryIntervalMs = 500;		// Retry interval in milliseconds
         var ajaxPostTimeBeforeLogOutMs = 3000;	// Time in milliseconds before logging user out (for reading an error message)
-
+        
+        var optoutURL = '/dev/logout.html';
 
         ///////////////////////
         // Utility functions //
@@ -169,6 +171,10 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
                 showGeneralMessage("Error: User profile data is not available.", true);
             }
 
+        });
+        
+        $btnOptOut.click(function () {
+           document.location = optoutURL; 
         });
 
         var isLoggedIn = function() {

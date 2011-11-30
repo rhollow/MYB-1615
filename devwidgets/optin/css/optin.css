@@ -6,7 +6,8 @@
 }
 
 #join_myberkeley_dialog .welcome-opt-in {
-    margin-top: 1em;
+    font-size: 1em;
+    margin: 1.2em 0 1.5em;
     width: 100%;
     height: 77px;
     background: url(/dev/images/myb/welcome-opt-in.png) no-repeat;
