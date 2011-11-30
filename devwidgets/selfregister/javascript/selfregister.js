@@ -160,7 +160,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
         var checkRegistrationState = function(success, data) {
             if (success) {
                 personAttributes = data;
-                renderDialog();
+                // If the self-provision servlet is not running, Sling may automatically
+                // return an empty JSON object rather than a 404 status. Check for the
+                // most basic of the person attributes before proceeding.
+                if (personAttributes[":name"]) {
+                    renderDialog();
+                }
             }
         }
         
