@@ -1,8 +1,8 @@
 /** CalCentral Self-Register Dialog **/
 
 #join_myberkeley_dialog {
-    margin-left: -285px;
-    width: 570px;
+    margin-left: -300px;
+    width: 550px;
 }
 
 #join_myberkeley_dialog .welcome-opt-in {
@@ -21,7 +21,7 @@
     line-height: 160%;
 }
 
-#join_myberkeley_dialog h1 {
+#join_myberkeley_dialog h3 {
 	  font-size: 14px;
 }
 
@@ -39,4 +39,8 @@
     font-weight: bold;
     font-style: italic;
     color: #ff2600;
+}
+
+.selfregister_attribute_explain {
+    font-style: italic;
 }

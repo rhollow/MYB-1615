@@ -40,11 +40,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
         var $chkAgreeToSocu = $("#chk_agree_to_socu", $parentElm);
         var $chkAgreeToShareData = $("#chk_agree_to_share_data", $parentElm);
         var $btnJoinMyBerkeley = $("#btn_join_my_berkeley", $parentElm);
-
-        var personAttributes = {};
+        var $btnOptOut = $("#btn_cancel_optin", $parentElm);
 
         var ajaxPostTimeBeforeLogOutMs = 3000;	// Time in milliseconds before logging user out (for reading an error message)
+        var optoutURL = '/dev/logout.html';
 
+        var personAttributes = {};
 
         ///////////////////////
         // Utility functions //
@@ -139,6 +140,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
         $btnJoinMyBerkeley.click(function() {
             makeParticipant();
         });
+        $btnOptOut.click(function () {
+            document.location = optoutURL; 
+         });
 
         var isLoggedIn = function() {
             var person = sakai.data.me;
