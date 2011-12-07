@@ -14,7 +14,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sakaiproject.nakamura</groupId>
-  <artifactId>org.sakaiproject.nakamura.uxloader</artifactId>
+  <artifactId>org.sakaiproject.nakamura.uxloader-myberkeley</artifactId>
   <packaging>bundle</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>Sakai 3 UX Loader</name>
@@ -33,16 +33,16 @@
         <downloadUrl>http://source.sakaiproject.org/maven2/</downloadUrl>
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
-            <id>sakai-maven-snapshots-scp</id>
-            <name>Sakai snapshot Repo</name>
-            <url>scp://source.sakaiproject.org/var/www/html/maven2-snapshots</url>
+            <id>myberkeley-snapshots-scp</id>
+            <name>MyBerkeley snapshot Repo</name>
+            <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley-snapshots/</url>
             <layout>default</layout>
         </snapshotRepository>
         <repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>sakai-maven2-scp</id>
-            <name>Sakai maven2 repository</name>
-            <url>scp://source.sakaiproject.org/var/www/html/maven2</url>
+            <id>myberkeley</id>
+            <name>MyBerkeley maven2 repository</name>
+            <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley/</url>
             <layout>default</layout>
         </repository>
         <site>
@@ -52,6 +52,30 @@
         </site>
   </distributionManagement>
   <repositories>
+        <repository>
+            <id>myberkeley-releases</id>
+            <name>MyBerkeley Releases</name>
+            <layout>default</layout>
+            <url>http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>myberkeley-snapshots</id>
+            <name>MyBerkeley Snapshots</name>
+            <layout>default</layout>
+            <url>http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>sakai-maven2</id>
             <name>Sakai Maven Repository</name>
