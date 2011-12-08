@@ -109,7 +109,7 @@
     modules: [
         {
             name: "sakai/sakai.dependencies",
-            exclude: [
+            excludeShallow: [
                 "config/env"
             ]
         }
