@@ -29,7 +29,7 @@
         "jquery-plugins": "jquery/plugins",
         "jquery": "jquery/jquery-1.7.0",
         "jquery-ui": "jquery/jquery-ui-1.8.16.custom",
-        "config": "/dev/configuration"
+        "config": "../configuration"
     },
 
     //The directory path to save the output. If not specified, then
