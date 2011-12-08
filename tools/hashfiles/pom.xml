@@ -20,6 +20,22 @@
     <version>1.1-SNAPSHOT</version>
     <name>Sakai 3 UX File Hasher</name>
     <description>Hashes files and appends the hash to the name to trigger proper caching</description>
+    <distributionManagement>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>myberkeley-snapshots</id>
+            <name>MyBerkeley snapshot Repo</name>
+            <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley-snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>myberkeley</id>
+            <name>MyBerkeley maven2 repository</name>
+            <url>dav:http://svn.media.berkeley.edu/nexus/content/repositories/myberkeley</url>
+            <layout>default</layout>
+        </repository>
+    </distributionManagement>
     <build>
       <plugins>
         <plugin>
