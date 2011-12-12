@@ -368,6 +368,7 @@ table.noticewidget_listing tr.notice_row:hover {
 
 .s3d-widget-footer a.noticewidget_view_task_archive {
     float: left;
+    margin-left:-2px;
 }
 
 table.noticewidget_listing tr.overDueTask {
