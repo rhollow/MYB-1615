@@ -17,14 +17,26 @@
  */
 
 /*
- global $, Config, jQuery, sakai, sdata, fluid
+ global $, jQuery, sakai, myb
  */
 
 require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/mylinks/javascript/default-links.js"], function($, sakai, myb, defaultLinks) {
 
+   /**
+     * @name sakai_global.mylinks
+     *
+     * @class mylinks
+     *
+     * @description
+     * The 'mylinks' widget displays "Quicklinks" a set of campus links  
+     * and allows the user to add thier own links to the My Links pane
+     *
+     * @version 0.0.1
+     * @param {String} tuid Unique id of the widget
+     */
     sakai_global.mylinks = function (tuid) {
 
-        // page elements
+        // DOM elements
         var widgetContainer = $("#" + tuid);
         var linkTitleInput = $("#link-title", widgetContainer);
         var linkUrlInput = $("#link-url", widgetContainer);
@@ -33,6 +45,8 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var addLinkButton = $("#addlink-button", widgetContainer);
         var addEditPanelTitle = $(".addedit_link_panel_title", widgetContainer);
         var accordionContainer = $("#accordion", widgetContainer);
+        var $addLinkModeBtn = $("#add-link-mode", widgetContainer);
+        var $cancelButton = $("#cancel-button", widgetContainer);
 
         // index of the link currently being edited
         var currentLinkIndex = null;
@@ -44,17 +58,17 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         var userLinkData = defaultLinks.sections[defaultLinks.userSectionIndex];
 
         var validator = $("#mylinks-form").validate({
-                    rules : {
-                        "link-title" : {
-                            required: true
-                        },
-                        "link-url" : {
-                            required : true,
-                            url : true,
-                            appendhttp : true
-                        }
-                    }
-                });
+            rules : {
+                "link-title" : {
+                    required: true
+                },
+                "link-url" : {
+                    required : true,
+                    url : true,
+                    appendhttp : true
+                }
+            }
+        });
 
         var renderLinkList = function(data) {
             accordionContainer.html(sakai.api.Util.TemplateRenderer("accordion_template", data));
@@ -150,15 +164,19 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
         };
 
         var setupEventHandlers = function() {
-            $("#add-link-mode", widgetContainer).click(function() {
+            
+            $addLinkModeBtn.on("click", function() {
                 enterAddMode();
             });
-            $("#cancel-button", widgetContainer).click(function() {
+            
+            $cancelButton.on("click", function() {
                 cancelEditMode();
             });
+            
             addLinkButton.click(function() {
                 saveLink();
             });
+            
             saveLinkButton.click(function() {
                 saveLink();
             });
@@ -168,40 +186,34 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
                     saveLink();
                 }
             });
+            
             linkUrlInput.keydown(function(event) {
                 if (event.keyCode === 13) {
                     event.preventDefault();
                     saveLink();
                 }
             });
+            
         };
 
         var setupEditIcons = function() {
-            for (var i = 0; i < userLinkData.links.length; i++) {
-
-                // edit button
-                var editIcon = $("#mylinks_edit_" + i, widgetContainer);
-                editIcon.click(function() {
-                    var idx = this.id.replace("mylinks_edit_", "");
-                    enterEditMode(idx);
-                });
-
-                // delete button
-                var deleteIcon = $("#mylinks_delete_" + i, widgetContainer);
-                deleteIcon.click(function() {
-                    var idx = this.id.replace("mylinks_delete_", "");
-                    userLinkData.links.splice(idx, 1);
-                    defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
-                    sakai.api.Server.saveJSON(linksDataPath, userLinkData, function(success) {
-                        if (success) {
-                            renderLinkList(defaultLinks);
-                        } else {
-                            sakai.api.Util.notification.show("", "A server error occurred while trying to delete your link.",
-                                    sakai.api.Util.notification.type.ERROR, false);
-                        }
-                    }, true);
-                });
-            }
+            $(".myb-edit-mylink", widgetContainer).on("click", function() {
+                var idx = this.id.replace("mylinks_edit_", "");
+                enterEditMode(idx);
+            });
+            
+            $(".myb-delete-mylink", widgetContainer).on("click", function() {
+                var idx = this.id.replace("mylinks_delete_", "");
+                userLinkData.links.splice(idx, 1);
+                defaultLinks.sections[defaultLinks.userSectionIndex] = userLinkData;
+                sakai.api.Server.saveJSON(linksDataPath, userLinkData, function(success) {
+                    if (success) {
+                        renderLinkList(defaultLinks);
+                    } else {
+                        sakai.api.Util.notification.show("", "A server error occurred while trying to delete your link.", sakai.api.Util.notification.type.ERROR, false);
+                    }
+                }, true);
+            });            
         };
 
         var showPane = function (pane) {
@@ -239,12 +251,12 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
 
         var setupAccordion = function() {
 
-            $(".section_label", accordionContainer).click(function() {
+            $(".section_label", accordionContainer).on("click", function() {
                 showPane($(this).parent());
             });
 
             // Add Google Analytics outbound links tracking
-            $("li.link a", accordionContainer).click(function () {
+            $("li.link a", accordionContainer).on("click", function () {
                 myb.api.google.recordOutboundLink(this, 'Outbound Links', $(this).attr('href'));
                 return false;
             });
@@ -262,6 +274,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core", "/devwidgets/myli
             setupEventHandlers();
         };
 
+        // run doInit() function when sakai_global.mylinks object loads
         doInit();
 
     };

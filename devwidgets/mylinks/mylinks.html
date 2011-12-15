@@ -35,8 +35,8 @@
                             title="${popText}">${link.name|default:"no name"}</a>
                             {if section.isEditable}
                               <div class="edit_buttons">
-                                <div class="icon_button delete_icon" id="mylinks_delete_${i}"><span class="fl-offScreen-hidden">Delete link: ${link.name|default:"no name"}</div>
-                                <div class="icon_button edit_icon" id="mylinks_edit_${i}"><span class="fl-offScreen-hidden">Edit link: ${link.name|default:"no name"}</div>
+                                <div class="icon_button delete_icon myb-delete-mylink" id="mylinks_delete_${i}"><span class="fl-offScreen-hidden">Delete link: ${link.name|default:"no name"}</div>
+                                <div class="icon_button edit_icon myb-edit-mylink" id="mylinks_edit_${i}"><span class="fl-offScreen-hidden">Edit link: ${link.name|default:"no name"}</div>
                               </div>
                             {/if}
   
@@ -84,7 +84,7 @@
   </div>
 
   <div class="s3d-widget-footer">
-      <button class="s3d-button s3d-overlay-button fl-force-right calc_dash_widget_btn calc_dash_widget_footer_btn"  id="add-link-mode">Add a Link</button>
+      <button class="s3d-button s3d-overlay-button fl-force-right calc_dash_widget_btn calc_dash_widget_footer_btn" id="add-link-mode">Add a Link</button>
   </div>
 
 </div>
