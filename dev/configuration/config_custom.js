@@ -37,19 +37,6 @@ define(["config/config", "config/env"], function(config) {
     ];
     config.allowPasswordChange = false;
 
-    // set our own default widget arrangement
-    config.defaultprivstructure["${refid}5"].dashboard.columns.column1[1] = {
-      "uid": "id7813904133752",
-      "visible": "block",
-      "name": "mytasks"
-    };
-
-    config.defaultprivstructure["${refid}5"].dashboard.columns.column2[1] = {
-        "uid": "id12893445620912",
-        "visible": "block",
-        "name": "myevents"
-    };
-
     config.defaultprivstructure["${refid}5"].dashboard.columns.column3[1] = {
         "uid": "id63754673110789",
         "visible": "block",

@@ -5,12 +5,14 @@
     "i18n": { 
         "default": { 
             "bundle": "/devwidgets/myevents/bundles/default.properties", 
-            "description":"My Events: A list of events", 
+            "description":"My events", 
             "name":"My Events" 
         } 
     },
     "multipleinstance": false,
-    "deletable":false,
+    "deletable":true,
     "type":"sakai",
-    "enabled":true
+    "enabled":true,
+    "userdashboard":true,
+    "personalportal":true
 }
