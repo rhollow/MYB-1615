@@ -64,8 +64,7 @@ define(
             var sendDone = false;          // has the send been issued?
             
             // Begin CalCentral change
-            // Block email delivery of OAE Messages for now.
-            sendMail = false;
+            // Removing Block of email delivery of OAE Messages - see MYB-1239
             // End CalCentral change
 
             ///////////////////////
