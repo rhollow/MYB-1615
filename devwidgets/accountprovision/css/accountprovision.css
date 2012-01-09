@@ -1,0 +1,12 @@
+th, td {
+    text-align:left;
+    padding-left:1em;
+    padding-right:1em;
+}
+#new_user_ids {
+    height:10em;
+}
+
+.provisioned_data_header, .added_accounts_header {
+    margin-top:2em;
+}
