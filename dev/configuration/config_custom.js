@@ -480,26 +480,6 @@ define(["config/config", "config/env"], function(config) {
                 }
             }
         },
-        "locations": {
-            "label": "__MSG__PROFILE_LOCATIONS_LABEL__",
-            "required": false,
-            "display": true,
-            "access": "everybody",
-            "modifyacl": true,
-            "multiple": true,
-            "directory": true,
-            "multipleLabel": "__MSG__PROFILE_LOCATION_LABEL__",
-            "order": 4,
-            "permission": "everyone",
-            "elements": {
-                "locationtitle": {
-                    "label": "__MSG__PROFILE_LOCATION_LABEL__",
-                    "required": true,
-                    "display": true,
-                    "type": "location"
-                }
-            }
-        },
         "publications": {
             "label": "__MSG__PROFILE_PUBLICATIONS_LABEL__",
             "required": false,
