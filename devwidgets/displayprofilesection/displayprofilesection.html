@@ -46,11 +46,14 @@
     {/if}
         <div class="s3d-form-field-wrapper">
         {for field in section.elements}
-            {if field.display}
+            {if field.display} 
+                {if field.required}
+                    {var show_legend = true}
+                {/if}
                 {var field_data = data && data[ field_index ] ? data[ field_index ] : false}
                 {var field_id = unique ? field_index + "_" + unique : field_index}
                 <div class="displayprofilesection_field">
-                    <label for="${field_id}" class="s3d-input-label{if field.type === "tags"} tagslabel{/if}">${field.label}:</label>
+                    <label for="${field_id}" class="s3d-input-label{if field.type === "tags"} tagslabel{/if}">{if field.required} <span class="req">*</span>{/if} ${field.label}:</label>
                     {if field.type === "select"}
                         ${renderDropdown(field, field_id, field_data)}
                     {elseif field.type === "textarea"}
@@ -67,7 +70,10 @@
             {/if}
         {/for}
         </div>
-    {if !section.multiple}
+    {if show_legend}   
+        <p id="form_legend" class="form_legend"><span class="req">*</span> Required</p>
+    {/if}
+    {if !section.multiple}  
         <button type="submit" class="s3d-button s3d-overlay-button grey profile-section-save-button">__MSG__UPDATE__</button>
     </form>
     {else}
@@ -76,6 +82,7 @@
     </div>
     {/if}
 --></div>
+   
 
 <div id="displayprofilesection_edit_multiple_template"><!--
     <form id="displayprofilesection_form_${sectionid}">
@@ -134,8 +141,7 @@
     <hr/>
     {/if}
 --></div>
-
-
+       
 <!-- ERROR CONTAINER -->
 <div id="profile_error" style="display:none;">
     <div id="profile_error_form_error_server">__MSG__THERE_WAS_AN_ERROR_TRYING_TO_SAVE_YOUR_DATA_ON_THE_SERVER__. __MSG__PLEASE_TRY_AGAIN_LATER_OR_CALL_HELPDESK__.</div>

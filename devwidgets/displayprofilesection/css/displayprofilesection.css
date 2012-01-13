@@ -38,3 +38,9 @@
 
 /* Validation */
 #displayprofilesection_container .s3d-form-field-wrapper span.s3d-error{margin-left:132px;}
+
+/* CalCentral begin: Add nowrap so text doesn't wrap on longer labels */                                                          
+.s3d-form-field-wrapper .displayprofilesection_field label.s3d-input-label, .displayprofilesection_field span.s3d-input-label {
+  white-space: nowrap;
+}
+/* CalCentral end */

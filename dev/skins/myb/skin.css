@@ -4,7 +4,6 @@
 
 
 /** CalCentral widget customizations **/
-
 .mytasks .s3d-contentpage-title, .myevents .s3d-contentpage-title, .mylinks .s3d-contentpage-title {
     margin-bottom: 0;
 }
@@ -23,8 +22,24 @@
 }
 
 /** CalCentral Button customization **/
-
 .s3d-button.s3d-header-button.s3d-header-smaller-button {
     padding: 0 8px;
     font-size: 11px;
-}
+} 
+
+/* Asterisks for required fields */
+span.req {
+  font-size:1.3em;
+  font-weight:bold;
+  color:#CC0000; 
+}    
+
+/* Instructional legends/text beneath forms */
+.form_legend { 
+  clear:both;
+  color:#666;
+  font-size: 11.5px;
+  margin:20px 0 10px 137px;
+  padding:10px 3px 3px 3px;
+} 
+
