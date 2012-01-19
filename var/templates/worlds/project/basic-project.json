@@ -1,8 +1,8 @@
 {
-    "id": "research-support",
+    "id": "basic-project",
     "title": "PROJECT",
-    "img": "/var/templates/worlds/research/research-support/researchsupport.png",
-    "fullImg": "/var/templates/worlds/research/research-support/researchsupport-full.png",
+    "img": "",
+    "fullImg": "",
     "perfectFor": "PROJECT_GROUP_PERFECT_FOR",
     "order": 0,
     "roles": [
@@ -12,7 +12,8 @@
             "titlePlural": "ORGANIZERS_ROLE",
             "isManagerRole": true,
             "manages": [
-                "participants, follower"
+                "participant",
+                "follower"
             ]
         },
         {
