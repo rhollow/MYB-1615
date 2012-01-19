@@ -91,10 +91,12 @@
             "_docref": "${pid}0",
             "_nonEditable": true,
             "_view": [
-                "everyone"
+                "everyone",
+                "anonymous",
+                "-follower"
             ],
             "_edit": [
-                "-follower"
+                "-participant"
             ]
         },
         "participants": {
@@ -103,7 +105,9 @@
             "_docref": "${pid}1",
             "_nonEditable": true,
             "_view": [
-                "everyone"
+                "everyone",
+                "anonymous",
+                "-follower"
             ],
             "_edit": [
                 "-participant"
