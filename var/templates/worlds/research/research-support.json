@@ -1,29 +1,35 @@
 {
     "id": "research-support",
-    "title": "RESEARCH_SUPPORT_GROUP",
+    "title": "PROJECT",
     "img": "/var/templates/worlds/research/research-support/researchsupport.png",
     "fullImg": "/var/templates/worlds/research/research-support/researchsupport-full.png",
-    "perfectFor": "RESEARCH_SUPPORT_GROUP_PERFECT_FOR",
-    "order": 1,
+    "perfectFor": "PROJECT_GROUP_PERFECT_FOR",
+    "order": 0,
     "roles": [
+        {
+            "id": "organizer",
+            "title": "ORGANIZER_ROLE",
+            "titlePlural": "ORGANIZERS_ROLE",
+            "isManagerRole": true,
+            "manages": [
+                "participants, follower"
+            ]
+        },
         {
             "id": "participant",
             "title": "PARTICIPANT_ROLE",
             "titlePlural": "PARTICIPANTS_ROLE",
-            "isManagerRole": true,
-            "manages": [
-                "lurker"
-            ]
+            "isManagerRole": false
         },
         {
-            "id": "lurker",
-            "title": "LURKER",
-            "titlePlural": "LURKERS",
+            "id": "follower",
+            "title": "FOLLOWER",
+            "titlePlural": "FOLLOWERS",
             "isManagerRole": false
         }
     ],
-    "joinRole": "lurker",
-    "creatorRole": "participant",
+    "joinRole": "follower",
+    "creatorRole": "organizer",
     "defaultaccess": "public",
     "defaultjoin": "yes",
     "docs": {
@@ -85,12 +91,10 @@
             "_docref": "${pid}0",
             "_nonEditable": true,
             "_view": [
-                "everyone",
-                "anonymous",
-                "-lurker"
+                "everyone"
             ],
             "_edit": [
-                "-participant"
+                "-follower"
             ]
         },
         "participants": {
@@ -99,9 +103,7 @@
             "_docref": "${pid}1",
             "_nonEditable": true,
             "_view": [
-                "everyone",
-                "anonymous",
-                "-lurker"
+                "everyone"
             ],
             "_edit": [
                 "-participant"

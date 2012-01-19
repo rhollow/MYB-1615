@@ -1,6 +1,6 @@
 {
     "id": "basic-course",
-    "title": "BASIC_COURSE",
+    "title": "COURSE",
     "img": "/var/templates/worlds/course/basic-course/basiccourse.png",
     "fullImg": "/var/templates/worlds/course/basic-course/basiccourse-full.png",
     "perfectFor": "BASIC_COURSE_PERFECT_FOR",
