@@ -12,9 +12,9 @@
         }
     },
     "id":"mysakai2",
-    "personalportal":true,
+    "personalportal":false,
     "type":"sakai",
-    "enabled":true,
+    "enabled":false,
     "hasSettings":false,
     "url":"/devwidgets/mysakai2/mysakai2.html"
 }
