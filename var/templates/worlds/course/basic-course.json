@@ -14,8 +14,8 @@
         },
         {
             "id": "ta",
-            "title": "TEACHING_ASSISTANT",
-            "titlePlural": "TEACHING_ASSISTANTS",
+            "title": "GSI_ROLE",
+            "titlePlural": "GSIS_ROLE",
             "isManagerRole": true,
             "manages": [
                 "student"
@@ -23,8 +23,8 @@
         },
         {
             "id": "lecturer",
-            "title": "LECTURER",
-            "titlePlural": "LECTURERS",
+            "title": "INSTRUCTOR_ROLE",
+            "titlePlural": "INSTRUCTORS_ROLE",
             "isManagerRole": true,
             "manages": [
                 "student",

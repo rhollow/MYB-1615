@@ -20,12 +20,12 @@
             "id": "participant",
             "title": "PARTICIPANT_ROLE",
             "titlePlural": "PARTICIPANTS_ROLE",
-            "isManagerRole": false
+            "isManagerRole": true
         },
         {
             "id": "follower",
-            "title": "FOLLOWER",
-            "titlePlural": "FOLLOWERS",
+            "title": "FOLLOWER_ROLE",
+            "titlePlural": "FOLLOWERS_ROLE",
             "isManagerRole": false
         }
     ],
@@ -97,6 +97,7 @@
                 "-follower"
             ],
             "_edit": [
+                "-organizer",
                 "-participant"
             ]
         },
@@ -111,7 +112,7 @@
                 "-follower"
             ],
             "_edit": [
-                "-participant"
+                "-organizer"
             ]
         }
     }
