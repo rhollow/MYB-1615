@@ -1,29 +1,36 @@
 {
-    "id": "research-support",
-    "title": "RESEARCH_SUPPORT_GROUP",
-    "img": "/var/templates/worlds/research/research-support/researchsupport.png",
-    "fullImg": "/var/templates/worlds/research/research-support/researchsupport-full.png",
-    "perfectFor": "RESEARCH_SUPPORT_GROUP_PERFECT_FOR",
-    "order": 1,
+    "id": "basic-project",
+    "title": "PROJECT",
+    "img": "",
+    "fullImg": "",
+    "perfectFor": "PROJECT_GROUP_PERFECT_FOR",
+    "order": 0,
     "roles": [
+        {
+            "id": "organizer",
+            "title": "ORGANIZER_ROLE",
+            "titlePlural": "ORGANIZERS_ROLE",
+            "isManagerRole": true,
+            "manages": [
+                "participant",
+                "follower"
+            ]
+        },
         {
             "id": "participant",
             "title": "PARTICIPANT_ROLE",
             "titlePlural": "PARTICIPANTS_ROLE",
-            "isManagerRole": true,
-            "manages": [
-                "lurker"
-            ]
+            "isManagerRole": true
         },
         {
-            "id": "lurker",
-            "title": "LURKER",
-            "titlePlural": "LURKERS",
+            "id": "follower",
+            "title": "FOLLOWER_ROLE",
+            "titlePlural": "FOLLOWERS_ROLE",
             "isManagerRole": false
         }
     ],
-    "joinRole": "lurker",
-    "creatorRole": "participant",
+    "joinRole": "follower",
+    "creatorRole": "organizer",
     "defaultaccess": "public",
     "defaultjoin": "yes",
     "docs": {
@@ -87,9 +94,10 @@
             "_view": [
                 "everyone",
                 "anonymous",
-                "-lurker"
+                "-follower"
             ],
             "_edit": [
+                "-organizer",
                 "-participant"
             ]
         },
@@ -101,10 +109,10 @@
             "_view": [
                 "everyone",
                 "anonymous",
-                "-lurker"
+                "-follower"
             ],
             "_edit": [
-                "-participant"
+                "-organizer"
             ]
         }
     }

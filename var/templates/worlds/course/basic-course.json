@@ -1,10 +1,10 @@
 {
     "id": "basic-course",
-    "title": "BASIC_COURSE",
+    "title": "COURSE",
     "img": "/var/templates/worlds/course/basic-course/basiccourse.png",
     "fullImg": "/var/templates/worlds/course/basic-course/basiccourse-full.png",
     "perfectFor": "BASIC_COURSE_PERFECT_FOR",
-    "order": 1,
+    "order": 0,
     "roles": [
         {
             "id": "student",
@@ -14,8 +14,8 @@
         },
         {
             "id": "ta",
-            "title": "TEACHING_ASSISTANT",
-            "titlePlural": "TEACHING_ASSISTANTS",
+            "title": "GSI_ROLE",
+            "titlePlural": "GSIS_ROLE",
             "isManagerRole": true,
             "manages": [
                 "student"
@@ -23,8 +23,8 @@
         },
         {
             "id": "lecturer",
-            "title": "LECTURER",
-            "titlePlural": "LECTURERS",
+            "title": "INSTRUCTOR_ROLE",
+            "titlePlural": "INSTRUCTORS_ROLE",
             "isManagerRole": true,
             "manages": [
                 "student",
