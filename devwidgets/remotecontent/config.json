@@ -20,13 +20,13 @@
     "hasSettings": true,
     "type":"sakai",
     "enabled":true,
-    "url":"/devwidgets/remotecontent/remotecontent.html",
+    "url":"http://sakaiproject.org",
     "defaultConfiguration": {
         "remotecontent": {
             "border_color": "cccccc",
             "border_size": 0,
             "height": "800",
-            "url": "/devwidgets/remotecontent/default_remote.html",
+            "url": "http://sakaiproject.org",
             "width": "100",
             "width_unit": "%"
         }
