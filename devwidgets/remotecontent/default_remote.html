@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Default Remote Instructions</title> 
+    <title></title> 
 
     <!-- Sakai Core CSS -->
     <link rel="stylesheet" type="text/css" href="/dev/css/sakai/main.css" />
@@ -12,21 +12,21 @@
     <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.corev1.css" />    
 </head>
 
-<body> 
+<body class="i18nable">  
+
                
-    <h1>Your Remote Page Here</h1>
-    
-    <p>This page is just a placeholder for remote content. To replace this page with an external website, do the following:</p>
+    <h1>__MSG__DEFAULT_REMOTE_HEADLINE__</h1>  
+
+    <p>__MSG__DEFAULT_REMOTE_INTRO__</p>
     
     <ol>
-        <li>Click the <strong>Edit Page</strong> button </li>
-        <li>Click the widget box you'll see in the content area </li>
-        <li>Click the <strong>Settings</strong> link </li>
-        <li>Paste in the URL of the remote page you want to display </li>
-        <li>Click <strong>Save</strong> at the bottom of the page  </li>
+        __MSG__DEFAULT_REMOTE_INSTRUCTIONS__
     </ol>     
     
       <img src="/dev/images/mimetypes/html.png" width="128" height="128" alt="Default remote content icon">   
+
+      <!-- Dependency JS -->
+      <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
 
 </body>
 
