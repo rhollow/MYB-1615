@@ -20,7 +20,10 @@
             "id": "participant",
             "title": "PARTICIPANT_ROLE",
             "titlePlural": "PARTICIPANTS_ROLE",
-            "isManagerRole": true
+            "isManagerRole": true,
+            "manages": [
+                "follower"
+            ]
         },
         {
             "id": "follower",

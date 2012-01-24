@@ -231,9 +231,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "config/config_cus
          * Check or uncheck all messages depending on the top checkbox.
          */
         var tickMessages = function(){
-            $(inboxInboxCheckMessage).attr("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
+            $(inboxInboxCheckMessage).prop("checked", ($(inboxInboxCheckAll).is(":checked") ? "checked" : ''));
             updateButtonState();
-        };
+        }; 
 
         /**
          * test if the current browser supports the ellipsis overflow
