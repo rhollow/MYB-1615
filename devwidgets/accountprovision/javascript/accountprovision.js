@@ -46,7 +46,8 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
         };
 
         function fetchUserIds() {
-            userIds = $("#new_user_ids").val().split(/\s+/);
+            var inputVal = $.trim($("#new_user_ids").val());
+            userIds = inputVal.split(/\s+/);
             userIdsData = $.map(userIds, function(v) {
                 return {name:'userIds', value:v};
             });
