@@ -107,6 +107,38 @@ sakai_global.s23_site = function(){
     $(window).bind("hashchange", function(ev){
         loadPageTools();
     });
+    
+    var handleAuthAndRenderingTools = function(data){
+    	$.when()
+    	
+    }
+    
+    var handleAuthAndRenderingTools = function(){
+    	var userHasActiveSakai2Session = false;
+    	var myUserId = sakai.data.me.user.userid;
+    	var url = "/var/proxy/s23/session/current.json";
+	        $.ajax({
+	            url: url,
+                type : "GET",
+                dataType: "json",
+	            success: function(data){	            	
+	            	console.log(data);
+	            	var userId = data["userId"];
+	            	if(userId === myUserId) {
+	            		var successCallbacks = $.Callbacks();
+	            	} else {
+	            		var failureCallback = $.Callbacks();
+	            	}
+	            },
+                error: function(){
+                }
+	        });
+    	return userHasActiveSakai2Session;
+    }
+    
+    var ssoProxyTicketAuthenticate = function(){
+    	
+    }
 
     /**
      * Load the tools for a certain page
@@ -231,9 +263,13 @@ sakai_global.s23_site = function(){
                     });
                     if (sakai.config.hybridCasHost){
                         // check for CLE session cookie
-                        if ($.cookie('JSESSIONID')){
-                            firstFrame.attr("src", firstFrameSrcUrl);
-                        } else {
+                    	if (handleAuthAndRenderingTools()) {
+                    		firstFrame.attr("src", firstFrameSrcUrl);
+                    	} else {
+                    		
+//                        if ($.cookie('JSESSIONID')){
+//                            firstFrame.attr("src", firstFrameSrcUrl);
+//                        } else {
                             $.ajax({
                                 url: "/system/sling/cas/proxy?t=https://" + sakai.config.hybridCasHost + "/sakai-login-tool/container",
                                 success: function(data){
