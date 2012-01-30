@@ -6,37 +6,22 @@
 <div class="welcome_widget"></div>
 
 <div id="welcome_template" style="display:none;"><!--
-    <div class="welcome-block welcome-unauth">
-        <h2>Unifying the online experience at UC Berkeley</h2>
-        <div class="welcome-body">
-            <p class="message-defined"><strong>CalCentral</strong> is a new resource for the UC Berkeley community. <br/>In this release, pilot students and staff can:</p>
-            <ul>
-                <li>Create groups</li>
-                <li>Create and share information</li>
-                <li>Manage important tasks</li>
-                <li>Receive messages from school administrators</li>
-                <li>Participate in a network of classmates and colleagues</li>
-            </ul>
-            <div class="gearbox">
-                <h4><strong>Pilot Release</strong></h4>
-                <p class="message-defined">We are hard at work improving this pilot release of CalCentral! As we improve it you may notice some broken functionality, some data (such as your names) may appear garbled, and we may periodically need to remove all entered data from the system. This is all part of the development process, so stay tuned!</p>
-                <h4>We want to hear from you!</h4>
-                <p>
-                    <a class="s3d-regular-links" href="~CalCentral-Communications-Team#l=Get-involved-with-CalCentral/Get-involved-with-CalCentral">Get involved with CalCentral</a>
-                    <br /><a class="s3d-regular-links" href="http://ets.berkeley.edu/calcentral-feedback">Send feedback about CalCentral</a>
-                </p>
-            </div>
-        </div>
-        <hr class="fl-push fl-hidden"/>
-    </div>-->
-</div>
+    <h1>__MSG__WELCOME_HEADER__</h1>
+    <img src="/devwidgets/welcome/images/sakai_default.png" alt="__MSG__KEYWORDS__">
 
-<div id="welcome_authenticated" style="display:none;"><!--
-    <div class="welcome-block">
-        <p>You are part of the CalCentral Pilot. Help shape its future by <a class="s3d-regular-links" href="http://ets.berkeley.edu/calcentral-feedback" target="_blank">telling us what you what you think</a>.</p>
-        <p>To learn more about what CalCentral can do for you, visit <a class="s3d-regular-links" href="/~Help-and-Support">the Help and Support pages.</a></p>
-    </div>-->
-</div>
+    <h2>__MSG__WELCOME_ITEM1_TITLE__</h2>
+    {if !anon}<a class="s3d-regular-links" href="__MSG__WELCOME_ITEM1_LINK__">{else}<span class="s3d-regular-links">{/if}__MSG__WELCOME_ITEM1_LINK_TEXT__{if !anon}</a>{else}</span>{/if}<span> __MSG__WELCOME_ITEM1_OTHER_TEXT__</span>
+
+    <h2>__MSG__WELCOME_ITEM2_TITLE__</h2>
+    {if !anon}<a class="s3d-regular-links" href="__MSG__WELCOME_ITEM2_LINK__">{else}<span class="s3d-regular-links">{/if}__MSG__WELCOME_ITEM2_LINK_TEXT__{if !anon}</a>{else}</span>{/if}<span> __MSG__WELCOME_ITEM2_OTHER_TEXT__</span>
+
+    <h2>__MSG__WELCOME_ITEM3_TITLE__</h2>
+    {if !anon}<a class="s3d-regular-links" href="__MSG__WELCOME_ITEM3_LINK__">{else}<span class="s3d-regular-links">{/if}__MSG__WELCOME_ITEM3_LINK_TEXT__{if !anon}</a>{else}</span>{/if}<span> __MSG__WELCOME_ITEM3_OTHER_TEXT__</span>
+
+    <h2>__MSG__WELCOME_ITEM4_TITLE__</h2>
+    {if !anon}<a class="s3d-regular-links" href="__MSG__WELCOME_ITEM4_LINK__">{else}<span class="s3d-regular-links">{/if}__MSG__WELCOME_ITEM4_LINK_TEXT__{if !anon}</a>{else}</span>{/if}<span> __MSG__WELCOME_ITEM4_OTHER_TEXT__</span>
+    <hr class="fl-push fl-hidden"/>
+--></div>
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript" src="/devwidgets/welcome/javascript/welcome.js"></script>
