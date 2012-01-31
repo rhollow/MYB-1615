@@ -111,7 +111,7 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
          * Check or uncheck all messages depending on the top checkbox.
          */
         var tickMessages = function(){
-            $(".list_list_check_list").attr("checked", ($("#list_list_checkAll").is(":checked") ? "checked" : ''));
+            $(".list_list_check_list").prop("checked", ($("#list_list_checkAll").is(":checked") ? "checked" : ''));
             updateEditCopyDeleteButtonsStatus();
         };
 
@@ -205,11 +205,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var updateEditCopyDeleteButtonsStatus = function() {
           var num = getNumberOfSelectedLists();
           if(num === 0) {
-              $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsEditButton.prop('disabled', 'disabled');
               $dynListsEditButton.addClass("disabled");
-              $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.prop('disabled', 'disabled');
               $dynListsCopyButton.addClass("disabled");
-              $dynListsDeleteButton.attr('disabled', 'disabled');
+              $dynListsDeleteButton.prop('disabled', 'disabled');
               $dynListsDeleteButton.addClass("disabled");
           } else if(num === 1){
               $dynListsEditButton.removeAttr('disabled');
@@ -219,13 +219,13 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
               $dynListsDeleteButton.removeAttr('disabled');
               $dynListsDeleteButton.removeClass("disabled");
           } else if(num > 1){
-              $dynListsEditButton.attr('disabled', 'disabled');
+              $dynListsEditButton.prop('disabled', 'disabled');
               $dynListsEditButton.addClass("disabled");
-              $dynListsCopyButton.attr('disabled', 'disabled');
+              $dynListsCopyButton.prop('disabled', 'disabled');
               $dynListsCopyButton.addClass("disabled");
               $dynListsDeleteButton.removeAttr('disabled');
               $dynListsDeleteButton.removeClass("disabled");
-          }
+          }  
         };
 
         var loadDynamicListsFromServer = function() {
