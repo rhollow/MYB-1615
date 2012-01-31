@@ -273,7 +273,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $messageRequiredYes.attr("checked", "checked");
                 $("#composenotification_required .right input", $rootElement).attr("disabled", "disabled");
                 $messageFieldRequiredCheck.show();
-                $("#composenotification_subject label", $rootElement).text("Task");
+                $("#composenotification_subject label #cn-subject-text", $rootElement).text('Task');
             } else {
                 eventTimeInit(null, null, null);
                 $eventTimeContainer.show();
@@ -282,11 +282,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
                 $messageEventPlace.val("");
                 $eventPlaceContainer.show();
                 $taskDueDateContainer.hide();
-                $messageRequiredYes.removeAttr("checked");
-                $messageRequiredNo.removeAttr("checked");
+                $messageRequiredNo.attr("checked", "checked");
                 $messageFieldRequiredCheck.show();
                 $("#composenotification_required .right input", $rootElement).removeAttr("disabled");
-                $("#composenotification_subject label", $rootElement).text("Event");
+                $("#composenotification_subject label #cn-subject-text", $rootElement).text('Event');
             }
         };
 
