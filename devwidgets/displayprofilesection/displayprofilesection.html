@@ -53,7 +53,7 @@
                 {var field_data = data && data[ field_index ] ? data[ field_index ] : false}
                 {var field_id = unique ? field_index + "_" + unique : field_index}
                 <div class="displayprofilesection_field">
-                    <label for="${field_id}" class="s3d-input-label{if field.type === "tags"} tagslabel{/if}">{if field.required} <span class="req" aria-hidden="true">*</span>{/if} ${field.label}:</label>
+                    <label for="${field_id}" class="s3d-input-label{if field.type === "tags"} tagslabel{/if}">{if field.required} <span class="required" aria-hidden="true">*</span>{/if} ${field.label}:</label>
                     {if field.type === "select"}
                         ${renderDropdown(field, field_id, field_data)}
                     {elseif field.type === "textarea"}
@@ -71,7 +71,7 @@
         {/for}
         </div>
     {if show_legend}   
-        <p id="form_legend" class="form_legend" aria-hidden="true"><span class="req">*</span> Required</p>
+        <p id="form_legend" class="form_legend" aria-hidden="true"><span class="required">*</span> Required</p>
     {/if}
     {if !section.multiple}  
         <button type="submit" class="s3d-button s3d-overlay-button grey profile-section-save-button">__MSG__UPDATE__</button>

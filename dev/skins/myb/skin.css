@@ -28,7 +28,7 @@
 } 
 
 /* Asterisks for required fields */
-span.req {
+span.required {
   font-size:1.3em;
   font-weight:bold;
   color:#CC0000; 

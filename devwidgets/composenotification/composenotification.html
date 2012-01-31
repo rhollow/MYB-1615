@@ -7,7 +7,7 @@
     <!-- TITLE -->
     <div id="cn-widget-title" class="s3d-contentpage-title">__MSG__WIDGET_TITLE_CREATE_NOTIFICATION__</div>
 
-    <div class="cn-form-header fl-fix"><div class="fl-force-right"id="form_legend" class="form_legend" aria-hidden="true"><span class="req">*</span> Required field</div></div>
+    <div class="cn-form-header fl-fix"><div class="fl-force-right"id="form_legend" class="form_legend" aria-hidden="true"><span class="required">*</span> Required field</div></div>
     
     <!-- FORM -->
     <div id="message_form" class="edit-notification-wrapper">
@@ -31,7 +31,7 @@
 
                     <!-- TASK: Due Date -->
                     <div id="composenotification_task_due_date" class="fl-fix">
-                        <span class="left"><label for="datepicker-taskduedate-text" class="name"><span class="req" aria-hidden="true">*</span> __MSG__TASK_DUE_DATE__</label></span>
+                        <span class="left"><label for="datepicker-taskduedate-text" class="name"><span class="required" aria-hidden="true">*</span> __MSG__TASK_DUE_DATE__</label></span>
                         <span class="right datepicker">
                             <input class="compose-form-elm text-field" type="text" id="datepicker-taskduedate-text" name="taskduedate-text" aria-required="true" />
                         </span>
@@ -39,7 +39,7 @@
 
                     <!-- EVENT: Date -->
                     <div id="composenotification_event_date" class="fl-fix" style="display:none;">
-                        <span class="left"><label for="datepicker-eventdate-text" class="name"><span class="req" aria-hidden="true">*</span> __MSG__EVENT_DATE__</label></span>
+                        <span class="left"><label for="datepicker-eventdate-text" class="name"><span class="required" aria-hidden="true">*</span> __MSG__EVENT_DATE__</label></span>
                         <span class="right datepicker">
                             <input class="compose-form-elm text-field" type="text" id="datepicker-eventdate-text" name="eventdate-text" aria-required="true" />
                         </span>
@@ -47,7 +47,7 @@
 
                     <!-- EVENT: Time -->
                     <div id="composenotification_event_time" class="fl-fix" style="display:none;">
-                        <span class="left"><label for="cn-event-timehour" class="name"><span class="req" aria-hidden="true">*</span> __MSG__TIME__</label></span>
+                        <span class="left"><label for="cn-event-timehour" class="name"><span class="required" aria-hidden="true">*</span> __MSG__TIME__</label></span>
                         <span class="right">
                             <!-- EVENT: Time (Hour) -->
                             <select class="compose-form-elm" id="cn-event-timehour" name="event-timehour" aria-required="true"></select> :
@@ -60,13 +60,13 @@
 
                     <!-- EVENT: Place -->
                     <div id="composenotification_event_place" class="fl-fix" style="display:none;">
-                        <span class="left"><label for="cn-event-place" class="name"><span class="req" aria-hidden="true">*</span> __MSG__PLACE__</label></span>
+                        <span class="left"><label for="cn-event-place" class="name"><span class="required" aria-hidden="true">*</span> __MSG__PLACE__</label></span>
                         <span class="right"><input class="compose-form-elm text-field" type="text" id="cn-event-place" style="width:500px;" name="event-place" aria-required="true" /></span>
                     </div>
 
                     <!-- REQUIRED CHECK -->
                     <div id="composenotification_required" class="fl-fix">
-                        <span class="left"><label for="cn-event-timehour" class="name"><span class="req" aria-hidden="true">*</span> __MSG__REQUIRED__</label></span>
+                        <span class="left"><label for="cn-event-timehour" class="name"><span class="required" aria-hidden="true">*</span> __MSG__REQUIRED__</label></span>
                         <span class="right" aria-required="true">
                             <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredyes" /><label for="cn-requiredyes" class="name">__MSG__YES__</label>
                             <input class="compose-form-elm radioboxes" type="radio" name="required-check" id="cn-requiredno" /><label for="cn-requiredno" class="name">__MSG__NO__</label>
@@ -83,7 +83,7 @@
                 <fieldset class="compose-lower-fields">
                     <!-- SEND DATE -->
                     <div  id="composenotification_senddate" class="fl-fix">
-                        <span class="left"><label for="datepicker-senddate-text" class="name"><span class="req" aria-hidden="true">*</span> __MSG__SEND_DATE__</label></span>
+                        <span class="left"><label for="datepicker-senddate-text" class="name"><span class="required" aria-hidden="true">*</span> __MSG__SEND_DATE__</label></span>
                         <span class="right datepicker">
                             <input class="compose-form-elm text-field" type="text" id="datepicker-senddate-text" name="senddate-text" aria-required="true" />
                         </span>
@@ -91,7 +91,7 @@
 
                     <!-- DYNAMIC LIST -->
                     <div id="composenotification_dynamiclist" class="fl-fix">
-                        <span class="left" style="margin-top:6px"><label for="cn-dynamiclistselect" class="name"><span class="req" aria-hidden="true">*</span> __MSG__DYNAMIC_LIST__</label></span>
+                        <span class="left" style="margin-top:6px"><label for="cn-dynamiclistselect" class="name"><span class="required" aria-hidden="true">*</span> __MSG__DYNAMIC_LIST__</label></span>
                         <span class="right">
                             <select class="compose-form-elm dynamiclistselect" id="cn-dynamiclistselect" name="dynamiclistselect" aria-required="true"></select>
                             <button id="create-new-dynamic-list-button" class="new-dynamic-list-button s3d-button s3d-overlay-button grey" type="button">__MSG__CREATE_OR_EDIT_DYNAMIC_LISTS__</button>
@@ -100,13 +100,13 @@
 
                     <!-- SUBJECT-->
                     <div id="composenotification_subject" class="fl-fix">
-                        <span class="left"><label for="cn-subject" class="name"><span class="req" aria-hidden="true">*</span> <span id="cn-subject-text"></span></label></span>
+                        <span class="left"><label for="cn-subject" class="name"><span class="required" aria-hidden="true">*</span> <span id="cn-subject-text"></span></label></span>
                         <span class="right"><input type="text" class="compose-subject compose-form-elm text-field" id="cn-subject" name="subject" aria-required="true" /></span>
                     </div>
 
                     <!-- BODY-->
                     <div id="composenotification_body" class="fl-fix">
-                        <span class="left"><label for="cn-body" class="name"><span class="req" aria-hidden="true">*</span> __MSG__DESCRIPTION__</label></span>
+                        <span class="left"><label for="cn-body" class="name"><span class="required" aria-hidden="true">*</span> __MSG__DESCRIPTION__</label></span>
                         <span class="right"><textarea class="compose-body compose-form-elm text-field" id="cn-body" name="body" aria-required="true" ></textarea></span>
                     </div>
 
