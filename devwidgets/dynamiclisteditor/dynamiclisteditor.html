@@ -7,14 +7,14 @@
     <!-- TITLE -->
     <div class="s3d-contentpage-title">__MSG__DYNAMIC_LIST_EDITOR__</div>
 
-    <div class="dyn-form-header fl-fix"><div class="fl-force-right"><span class="asterisk">*</span> indicates a required field</div></div>
+    <div class="dyn-form-header fl-fix"><div class="fl-force-right"><span aria-hidden="true"><span class="req">*</span> Required field</span></div></div>
 
     <div id="create_new_list" >
         <form id="dyn-list-form">
             <fieldset class="dyn-list-section">
                 <div class="dyn-list-define fl-fix">
-                    <span class="label-left"><label for="list_name">List Name <span class="asterisk">*</span></label></span>
-                    <span class="field-right"><input type="text" id="list_name" name="list_name" size="40" maxlength="40" class="required" /></span>
+                    <span class="label-left"><label for="list_name"><span class="req" aria-hidden="true">*</span> List Name</label></span>
+                    <span class="field-right"><input type="text" id="list_name" name="list_name" size="40" maxlength="40" class="required" aria-required="true" /></span>
                 </div>
 
                 <div class="dyn-list-define fl-fix">
