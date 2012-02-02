@@ -1,7 +1,7 @@
 {
     "sakaidocs": true,
     "ca":true,
-    "hasSettings": false,
+    "hasSettings": true,
     "id":"basiclti",
     "i18n": {
         "default": {
