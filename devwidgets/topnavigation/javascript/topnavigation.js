@@ -207,10 +207,19 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
         };
 
         /**
+         * Open the login overlay even though the user is not hovering over it and if there is a URL redirect
+         */
+        var forceShowLoginUrl = function(){
+            if (qs.get("url")) {
+                forceShowLogin();
+            }
+        };
+
+        /**
          * Open the login overlay even though the user is not hovering over it
          */
         var forceShowLogin = function(){
-            if (qs.get("url") && sakai.api.User.isAnonymous(sakai.data.me)) {
+            if (sakai.api.User.isAnonymous(sakai.data.me)) {
                 $("#topnavigation_user_options_login_fields").addClass("topnavigation_force_submenu_display");
                 $("#topnavigation_user_options_login_wrapper").addClass("topnavigation_force_submenu_display_title");
                 $("#topnavigation_user_options_login_fields_username").focus();
@@ -1036,7 +1045,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             setUserName();
             addBinding();
             renderOverlays();
-            forceShowLogin();
+            forceShowLoginUrl();
             
             /* begin CalCentral custom: sign in is link to CAS login */
             
