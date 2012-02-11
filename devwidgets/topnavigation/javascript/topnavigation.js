@@ -938,6 +938,7 @@ require(["jquery", "sakai/sakai.api.core", "myb/myb.api.core"], function($, saka
             $(".topnavigation_trigger_login").live("click", forceShowLogin);
 
             $(window).bind("updated.messageCount.sakai", setCountUnreadMessages);
+            $(window).bind("displayName.profile.updated.sakai", setUserName);
         };
 
 
