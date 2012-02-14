@@ -24,22 +24,35 @@
 /** CalCentral Button customization **/
 .s3d-button.s3d-header-button.s3d-header-smaller-button {
     padding: 0 8px;
-    font-size: 11px;
 } 
 
 /* Asterisks for required fields */
 span.required {
-  font-size:1.3em;
-  font-weight:bold;
-  color:#CC0000; 
+    font-size:1.3em;
+    font-weight:bold;
+    color:#CC0000; 
 }    
 
 /* Instructional legends/text beneath forms */
 .form_legend { 
-  clear:both;
-  color:#666;
-  font-size: 11.5px;
-  margin:20px 0 10px 137px;
-  padding:10px 3px 3px 3px;
+    clear:both;
+    color:#666;
+    font-size: 11.5px;
+    margin:20px 0 10px 137px;
+    padding:10px 3px 3px 3px;
 } 
+
+/* Override horizontal rules (gold, not gray) */
+.s3d-contentpage-title {
+    border-bottom: 2px solid #e4c495;
+    font-size: 1.15em;
+    font-weight:bold;
+}
+
+/* Use darker background for selected LH nav menu */
+
+#lhnavigation_container ul li.lhnavigation_selected_item.lhnavigation_outer, #lhnavigation_container ul li ul li.lhnavigation_selected_item div.lhnavigation_subnav_item_content {
+  background: url("/devwidgets/lhnavigation/images/cc_lhnav_selected_item_bg.png") repeat-x left top #22aae7 !important;
+  color: #fff;
+}
 

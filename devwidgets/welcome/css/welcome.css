@@ -27,9 +27,8 @@
 /* begin CalCentral custom  */
 
 .welcome-block {
-    background-color: #DDE9F5;
     margin: 0 12px 12px 0;
-    padding: 12px;
+    padding: 12px 0px;
     -moz-border-radius:5px;
     border-radius:5px;
 }
@@ -46,8 +45,64 @@
     margin-bottom: 4px;
 }
 
+#welcome-block-a, #welcome-block-b {
+    width:339px;
+    height:424px;
+    border: 1px solid #b6c6d3;
+}
+
+/* Begin rules for landing page custom divs */
+
+#welcome-block-a {
+    float:left;
+}
+
+#welcome-block-b {
+    float:right;
+}
+
+#welcome-block-b h2 {
+    font-size:1.4em;
+    padding:10px;
+    border-bottom: 5px solid #3f8bbf;  
+}
+
+#welcome-block-b p, #welcome-block-b ul {
+    padding: 0px 20px 5px 10px;
+    letter-spacing:0.02em;
+    line-height:1.3em;
+}
+
+#welcome-block-b ul.welcomelist li {
+    list-style-image:url('/devwidgets/welcome/images/speech_bubble_tiny.png');
+    line-height:1.5em;
+}
+
+#welcome-block-a #top {
+    height:60px;
+    background-color:#c68811;
+    padding:10px 10px 0px 10px;
+    margin-bottom:0px;
+    color:#fff;
+    font-size:1.6em;
+    line-height:1.2em;
+    font-face:Arial;
+    border-bottom: 5px solid #3f8bbf;
+}
+
+#welcome-block-a #bottom {
+    height:350px;
+    padding:10px;
+    color: #2A2A2A;
+    font-size:1.3em;
+    letter-spacing:0.05em; 
+    line-height:1.2em;   
+    background: url('/devwidgets/welcome/images/calcentral_homepage_collage.png') no-repeat top left scroll;
+}
+/* End rules for landing page custom divs */
+
+
 .welcome-unauth {
-    background: url(/devwidgets/welcome/images/calcentral_welcome_bkgnd.jpg) no-repeat top left scroll;
     height: 433px;
     -moz-border-radius: 0;
     border-radius: 0;
@@ -63,7 +118,7 @@
 
 .welcome-block .gearbox {
     margin-top: 12px;
-    background: white url(/dev/images/settings_icon.png) no-repeat 13px 13px scroll;
+    background: white url('/dev/images/settings_icon.png') no-repeat 13px 13px scroll;
     background-color: rgba(255, 255, 255, 0.5);
     padding: 8px 12px 12px 36px;
     -moz-border-radius:5px;
@@ -81,20 +136,19 @@
     font-size: 0.9em;
 }
 
-.gearbox a {
-    display: inline-block;
-    background-image: url(/dev/images/myb/blue_right_arrow_sm.png);
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-position: 2px 3px;
-    padding-left: 20px;
-    font-size: 0.9em;
-}
-
 .gearbox h4 {
     color: #333;    
     font-weight: bolder;
     margin-top: 0.3em;
+}
+
+.gearbox img {
+    float:left;
+    margin-right:10px;
+}
+
+.gearbox p {
+    margin-top:3px;
 }
 
 /* end CalCentral custom */

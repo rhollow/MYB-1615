@@ -24,6 +24,8 @@ response.setStatus(403);
 
         <!-- HEADER -->
         <div class="fl-container-flex header s3d-header">
+            <!-- CalCentral moved institutionalskinning widget here -->
+            <div id="widget_institutionalskinning" class="widget_inline"></div>
             <div class="s3d-navigation-container">
                 <div id="widget_topnavigation" class="widget_inline"></div>
             </div>
@@ -31,7 +33,6 @@ response.setStatus(403);
                 <div class="s3d-container-shadow-left"><!----></div>
                 <div class="s3d-container-shadow-right"><!----></div>
                 <div class="s3d-page-header">
-                    <div id="widget_institutionalskinning" class="widget_inline"></div>
                 </div>
             </div>
         </div>

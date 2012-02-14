@@ -46,6 +46,9 @@
 
 /* CalCentral custom begin */
 
-#footer_logo{background:url(/devwidgets/footer/images/myberkeley/CalC-footer-logo.png) no-repeat scroll 0 0 transparent;width:114px;height:28px;float:left;margin-right:15px;}
+#footer_logo{background:url(/devwidgets/footer/images/myberkeley/UCB_footer_logo.png) no-repeat scroll 0 0 transparent;width:156px;height:45px;float:left;margin-right:15px;}
+.footer_main .fixed-container p.oae_msg{padding-top:10px;}
+.footer_main .fixed-container{padding:15px 0 10px;}
+
 
 /* CalCentral custom end */
