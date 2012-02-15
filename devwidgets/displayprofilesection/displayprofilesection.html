@@ -49,13 +49,16 @@
         <div class="s3d-form-field-wrapper">
         {for field in section.elements}
             {if field.display} 
-                {if field.required}
-                    {var show_legend = true}
-                {/if}
+              {if field.editable != false}
+                  {var has_editable_fields = true}
+              {/if}
+              {if field.required && field.editable != false}
+                  {var show_legend = true}
+              {/if}            
                 {var field_data = data && data[ field_index ] ? data[ field_index ] : false}
                 {var field_id = unique ? field_index + "_" + unique : field_index}
                 <div class="displayprofilesection_field">
-                    <label for="${field_id}" class="s3d-input-label{if field.type === "tags"} tagslabel{/if}">{if field.required} <span class="required" aria-hidden="true">*</span>{/if} ${field.label}:</label>
+                    <label for="${field_id}" class="s3d-input-label{if field.type === "tags"} tagslabel{/if}">{if field.required && field.editable} <span class="required" aria-hidden="true">*</span>{/if} ${field.label}:</label>
                     {if field.editable === false}
                         <span class="displayprofilesection_field_nonedtiable">${field_data.value}</span>
                     {else}
@@ -76,11 +79,13 @@
             {/if}
         {/for}
         </div>
-    {if show_legend}   
-        <p id="form_legend" class="form_legend" aria-hidden="true"><span class="required">*</span> Required</p>
+    {if show_legend && has_editable_fields}   
+        <p id="form_legend" class="form_legend" aria-hidden="true"><span class="required">*</span> Required field</p>
     {/if}
-    {if !section.multiple}  
-        <button type="submit" class="s3d-button s3d-overlay-button grey profile-section-save-button">__MSG__UPDATE__</button>
+    {if !section.multiple}
+        {if has_editable_fields == true}
+          <button type="submit" class="s3d-button s3d-overlay-button grey profile-section-save-button">__MSG__UPDATE__</button>
+        {/if}
     </form>
     {else}
         <button type="button" class="displayprofilesection_remove_section s3d-bold s3d-link-button" id="displayprofilesection_remove_link_${unique}"><span>__MSG__REMOVE_THIS__ ${section.multipleLabel}</span></button>
