@@ -22,3 +22,8 @@
     position:       relative;
     z-index:        1000;
 }
+
+/* CalCentral customizations */
+.branding_widget {
+    background:     url("/devwidgets/branding/images/cc_branding_strip.png") no-repeat center center #f4f4f4;
+}
