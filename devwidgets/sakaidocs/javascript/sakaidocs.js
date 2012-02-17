@@ -787,7 +787,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         $("#autosave_revert").die("click").live("click", revertAutosave);
 
         $("#autosave_keep").die("click").live("click", keepAutosave);
-
+        
+        /* Begin CalCentral customization */
+        $("#sakaidocs_widget_help_button").live("click", function(){
+            window.open('https://calcentral.berkeley.edu/~Help-and-Support#l=kvNgIGY3Ou/id8415575','Widget Help','width=1000,height=800,scrollbars=yes');
+        });
+        /* End CalCentral customization */
+        
         ////////////////////////////
         // External event binding //
         ////////////////////////////
