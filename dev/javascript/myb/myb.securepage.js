@@ -46,18 +46,21 @@ require(["jquery","sakai/sakai.api.core","myb/myb.api.core"], function($, sakai,
         };
 
         var doInit = function() {
-
           //HACK: You can disable redirection to 'not-a-participant' page by setting the global variable allowRedirectToParticipantPage = false
           var useRedirect = true;
+          
           if (typeof(myb.api.security.allowRedirectToParticipantPage) !== 'undefined') {
             useRedirect = myb.api.security.allowRedirectToParticipantPage;
           }
 
-          // If the user is a member of Berkeley's College of Environmental Design, but not a participant of CalCentral project,
-          // redirect him to the participation explanation page
-          if (isLoggedIn() && !myb.api.security.isMyBerkeleyParticipant() && useRedirect) {
-            sendToNotAMyBerkeleyParticipantPage();
-          }
+          // If the user is not an opted-in participant of CalCentral project, redirect him to the participation explanation page
+          if (isLoggedIn()) {
+              myb.api.security.isNotMyBerkeleyParticipant(function() {
+                  if (useRedirect){
+                      sendToNotAMyBerkeleyParticipantPage();
+                  }
+              });
+          };
 
         };
 

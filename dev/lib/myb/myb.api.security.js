@@ -27,20 +27,21 @@ define(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     };
 
     /**
-     * Check if the user is a CalCentral participant.
-     * There could be CED members who can log in, but are not CalCentral participants.
-     * This function checks 'sakai.data.me.profile.myberkeley.elements.participant' property.
-     * @return true if the user is a CalCentral participant, false otherwise
+     * Check if the user is NOT an opted-in CalCentral participant.
+     * This function checks 'sakai.data.me.user.userid.public.authprofile.data.myberkeley.elements.participant.value'.
+     * If false, call the callback.
      */
-    security.isMyBerkeleyParticipant = function() {
-        try {
-            if (sakai.data.me.profile.myberkeley.elements.participant &&
-                    sakai.data.me.profile.myberkeley.elements.participant.value === "true") {
-                return true;
-            }
-        } catch(ex) {
-            // Ignoring the exception
-        }
+     
+    security.isNotMyBerkeleyParticipant = function(callback) {
+            sakai.api.Server.loadJSON("/~" + sakai.data.me.user.userid + "/public/authprofile", function(success, data) {
+                if (success) {
+                    if (data.myberkeley === undefined || data.myberkeley.elements.participant.value !== "true") {
+                        if ($.isFunction(callback)) {
+                            callback();
+                        }
+                    };
+                };
+            });
 
         return false;
     };

@@ -184,9 +184,12 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
         };
 
         var doInit = function() {
-            // If the user is a member of a CalCentral pilot college, but not a participant of CalCentral project,
+            // If the user is not an opted-in participant of CalCentral project,
             // redirect him to the participation explanation page
-            if (isLoggedIn() && !myb.api.security.isMyBerkeleyParticipant()) {
+            if (isLoggedIn()) {
+              
+              myb.api.security.isNotMyBerkeleyParticipant(function(){
+              
                 // We will show a nice Join CalCentral dialog on this page
                 $optinDialog.jqm({
                          modal: true,
@@ -195,7 +198,9 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core"], function($, sakai
                          onShow: null
                      });
                 $optinDialog.jqmShow();
-            }
+                
+              });
+            } 
         };
         
         doInit();
