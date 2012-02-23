@@ -30,28 +30,22 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
      */
     sakai_global.welcome = function (tuid, showSettings) {
 
+        // Function rewritten by CalCentral for clarity - completely different from 
+        // OAE's approach (which is to do the conditional in the HTML).
         var $welcomeWidget = $(".welcome_widget");
         var welcomeTemplate = "welcome_template";
         var welcomeAuthTemplate = "welcome_authenticated";
 
-        var renderWidget = function(){
-            $welcomeWidget.html(sakai.api.Util.TemplateRenderer(welcomeTemplate, {
-                "anon": sakai.data.me.user.anon || false
-            }));
-        };
-        
-        var renderAuthenticateWidget = function(){
-            $welcomeWidget.html(sakai.api.Util.TemplateRenderer(welcomeAuthTemplate, {
-                "anon": sakai.data.me.user.anon || true
+        var anon_status = sakai.data.me.user.anon || false;
+        var template_name = anon_status ? welcomeTemplate : welcomeAuthTemplate;
+
+        var renderWidget = function(anon_status,template_name){
+            $welcomeWidget.html(sakai.api.Util.TemplateRenderer(template_name, {
+                "anon": anon_status
             }));
         };
 
-        // renderWidget(); // wrapped in an if block for CalCentral
-        if (sakai.data.me.user.anon) {
-            renderWidget();
-        } else {
-            renderAuthenticateWidget();
-        }
+        renderWidget(anon_status,template_name);
     };
 
     sakai.api.Widgets.widgetLoader.informOnLoad("welcome");
