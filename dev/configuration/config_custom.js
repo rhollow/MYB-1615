@@ -501,59 +501,70 @@ define(["config/config", "config/env"], function(config) {
                 "maintitle": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
                     "required": true,
+                    "editable": true,
                     "display": true,
                     "example": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE_EXAMPLE__"
                 },
                 "mainauthor": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_AUTHOR__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "coauthor": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR__",
                     "required": false,
+                    "editable": true,
                     "display": true,
                     "example": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR_EXAMPLE__"
                 },
                 "publisher": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_PUBLISHER__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "placeofpublication": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_PLACE_OF_PUBLICATION__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "volumetitle": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_TITLE__",
                     "required": false,
+                    "editable": true,
                     "display": true
                 },
                 "volumeinformation": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION__",
                     "required": false,
+                    "editable": true,
                     "display": true,
                     "example": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION_EXAMPLE__"
                 },
                 "year": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_YEAR__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "number": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_NUMBER__",
                     "required": false,
+                    "editable": true,
                     "display": true
                 },
                 "series title": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_SERIES_TITLE__",
                     "required": false,
+                    "editable": true,
                     "display": true
                 },
                 "url": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_URL__",
                     "required": false,
+                    "editable": true,
                     "display": true,
                     "validation": "appendhttp url"
                 }
