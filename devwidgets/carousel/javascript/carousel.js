@@ -369,7 +369,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         };
 
         var doInit = function(){
-            loadFeatured();
+            // Begin CalCentral customization
+            if (sakai.config.enabledCarousel) {
+                loadFeatured();
+            }
+            // End CalCentral customization
         };
 
         doInit();
