@@ -273,14 +273,17 @@ define(
                     uniqueUserArray.push(userArray[i]);
                 }
             }
+            var batchRequest = [];
             for (var ii in uniqueUserArray) {
                 if (uniqueUserArray.hasOwnProperty(ii)) {
-                    sakai_serv.bundleRequests("sakai.api.User.getMultipleUsers", uniqueUserArray.length, uniqueUserArray[ii], {
+                    batchRequest.push({
                         "url": "/~" + uniqueUserArray[ii] + "/public/authprofile.profile.json",
-                        "method": "GET"
-                    }, bundleReqFunction);
+                        "method":"GET",
+                        "dataType":"json"
+                    });
                 }
             }
+            sakai_serv.batch(batchRequest, bundleReqFunction, false);
         },
 
         /**
@@ -516,7 +519,7 @@ define(
                 nameToReturn += profile.basic.elements[configFirstName].value;
             }
 
-            return sakai_util.Security.saneHTML($.trim(nameToReturn));
+            return sakai_util.Security.safeOutput($.trim(nameToReturn));
         },
 
         /**
