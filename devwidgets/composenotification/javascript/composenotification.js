@@ -518,12 +518,9 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
         var fillInEventSpecificData = function () {
             $messageFieldType.val("event");
             notificationTypeInit("event");
-            // if(currentMessage.calendarWrapper.isRequired) {
-            // Hack to catch multiple ways of representing "required" status.
-            // Restore simple test above after MYB-1444 is fixed.                
-            if ((currentMessage.calendarWrapper.icalData.CATEGORIES && 
-                    currentMessage.calendarWrapper.icalData.CATEGORIES[0] === "MyBerkeley-Required") || 
-                    currentMessage.calendarWrapper.isRequired) {
+            // CalCentral customization - no longer using isRequired property.
+            if ((currentMessage.calendarWrapper.icalData.CATEGORIES &&
+                    currentMessage.calendarWrapper.icalData.CATEGORIES[0] === "MyBerkeley-Required") {
                 $messageRequiredYes.attr("checked", true);
             } else {
                 $messageRequiredNo.attr("checked", true);
