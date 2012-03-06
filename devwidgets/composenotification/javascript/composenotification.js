@@ -520,7 +520,7 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
             notificationTypeInit("event");
             // CalCentral customization - no longer using isRequired property.
             if ((currentMessage.calendarWrapper.icalData.CATEGORIES &&
-                    currentMessage.calendarWrapper.icalData.CATEGORIES[0] === "MyBerkeley-Required") {
+                    currentMessage.calendarWrapper.icalData.CATEGORIES[0] === "MyBerkeley-Required")) {
                 $messageRequiredYes.attr("checked", true);
             } else {
                 $messageRequiredNo.attr("checked", true);
