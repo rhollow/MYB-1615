@@ -557,16 +557,6 @@ require(["jquery", "sakai/sakai.api.core", "jquery-ui"], function($, sakai) {
                     pageSavePath: $elLI.data("sakai-pagesavepath"),
                     savePath: $elLI.data("sakai-savepath")
                 };
-<<<<<<< HEAD
-                $(".lhnavigation_selected_submenu", $el).show();
-            }
-        };
-
-        var onContextMenuLeave = function(){
-            if (!$("#lhnavigation_submenu").is(":visible")) {
-                $(".lhnavigation_selected_submenu").hide();
-                $(".lhnavigation_selected_submenu_image").removeClass("clicked");
-=======
                 $('.lhnavigation_selected_submenu', $el).show();
                 // Begin CalCentral customization
                 showAllArrows();
@@ -581,7 +571,6 @@ require(["jquery", "sakai/sakai.api.core", "jquery-ui"], function($, sakai) {
                 // Begin CalCentral customization
                 showAllArrows();
                 // End CalCentral customization                            
->>>>>>> 011f7d5... MYB-1431: Keep permissions arrows on Group page LH menus turned on if appropriate
             }
         };
 
