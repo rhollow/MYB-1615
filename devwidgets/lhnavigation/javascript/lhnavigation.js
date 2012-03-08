@@ -76,6 +76,9 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                 'parametersToCarryOver': parametersToCarryOver
             });
             $('#lhnavigation_container').html(lhnavHTML);
+            // Begin CalCentral customization
+            showAllArrows();
+            // End CalCentral customization            
         };
 
         ////////////////////////
@@ -557,6 +560,9 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                     savePath: $elLI.data('sakai-savepath')
                 };
                 $('.lhnavigation_selected_submenu', $el).show();
+                // Begin CalCentral customization
+                showAllArrows();
+                // End CalCentral customization            
             }
         };
 
@@ -564,6 +570,9 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             if (!$('#lhnavigation_submenu').is(':visible')) {
                 $('.lhnavigation_selected_submenu').hide();
                 $('.lhnavigation_selected_submenu_image').removeClass('clicked');
+                // Begin CalCentral customization
+                showAllArrows();
+                // End CalCentral customization                            
             }
         };
 
@@ -584,6 +593,13 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                 contextMenu.toggle();
             }
         };
+
+        // Begin CalCentral customization
+        var showAllArrows = function() {
+            $('.lhnavigation_selected_submenu','li[data-sakai-manage="true"][data-sakai-reorder-only=""]','#lhnavigation_container').show();
+        };
+        // End CalCentral customization            
+        
 
         //////////////////////
         // Area permissions //
