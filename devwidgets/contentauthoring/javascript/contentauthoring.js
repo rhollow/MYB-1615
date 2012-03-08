@@ -667,6 +667,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                 handle: '.contentauthoring_row_handle',
                 placeholder: 'contentauthoring_cell_reorder_highlight',
                 opacity: 0.4,
+                tolerance: 'pointer',
                 helper: generateDragHelper,
                 start: startWidgetOrdering,
                 stop: stopWidgetOrdering
@@ -987,6 +988,8 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
 
             // Shwow the edit page bar if I have edit permissions on this page
             $('#contentauthoring_inserterbar_container', $rootel).toggle(canEditCurrentPage());
+            //SAKIII-5248
+            $(window).trigger('position.inserter.sakai');
             updateColumnHeights();
         };
 
