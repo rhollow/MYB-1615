@@ -37,6 +37,13 @@ define(["config/config", "config/env"], function(config) {
     ];
     config.allowPasswordChange = false;
     
+    // Show mylinks dashboard widget by default for new users
+    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column3[1] = {
+        "uid": "id63754673110789",
+        "visible": "block",
+        "name": "mylinks"
+    };
+
     /*
     Temporarily using this approach to disabling the carousel - may change in future. See 
     https://github.com/jsloane/3akai-ux/commit/32447ece023166b2f94a1c0839ee6375665649df
