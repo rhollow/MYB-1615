@@ -90,24 +90,6 @@ define(["config/config", "config/env"], function(config) {
 
     config.Navigation[0].label = "ME";
 
-    // Add My Notification and My Dynamic Lists to Navigation
-    config.Navigation[0].subnav.splice(2,0,
-        {
-            "url": "/me#l=notifications/drafts",
-            "id": "subnavigation_notifications_link",
-            "label": "MY_NOTIFICATIONS",
-            "requiresAdviserMembership": true
-        }
-    );
-    config.Navigation[0].subnav.splice(3,0,
-        {
-            "url": "/me#l=dynlists",
-            "id": "subnavigation_dynlists_link",
-            "label": "MY_DYNAMIC_LISTS",
-            "requiresAdviserMembership": true
-        }
-    );
-    
     /* CalCentral specific footer links */
     config.Footer.leftLinks = [
         {
