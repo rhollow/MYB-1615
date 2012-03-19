@@ -211,12 +211,25 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                 }
             };
 
+            // Generates Notifications widget for/with Content Authoring meta-widget
             privdata.id1307490615 = {
-                "page": "<div id='widget_groupnotificationmanager_id1307490671' class='widget_inline'></div>" +
-                        "<div id='widget_composenotification_id1307666089' class='widget_inline'></div>"
+                'rows': [{
+                    'id': 'id9583409539834883',
+                    'columns': [{
+                        'width': 1,
+                        'elements': [{
+                            'id': 'idid1307490671',
+                            'type': 'groupnotificationmanager'
+                        }, {
+                            'id': 'id1307666089',
+                            'type': 'composenotification'
+                        }]
+                    }]
+                }]
             };
 
-            // My dynamic lists
+
+            // My dynamic lists (nav menu)
             privdata.structure0.dynlists = {
                     "_title": "__MSG__MY_DYNAMIC_LISTS__",
                     "_ref": "id1307386414",
@@ -226,12 +239,23 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                     "_nonEditable": true
             };
 
+
+            // Generates Dynamic Lists widget for/with Content Authoring meta-widget
             privdata.id1307386414 = {
-                "page": "<div id='widget_dynamiclistmanager_id1307386502' class='widget_inline'></div>" +
-                        "<div id='widget_dynamiclisteditor_id1307390214' class='widget_inline'></div>"
+                'rows': [{
+                    'id': 'id8965114838384',
+                    'columns': [{
+                        'width': 1,
+                        'elements': [{
+                            'id': 'id1307386502',
+                            'type': 'dynamiclistmanager'
+                        }, {
+                            'id': 'id1307390214',
+                            'type': 'dynamiclisteditor'
+                        }]
+                    }]
+                }]
             };
-
-
         };
         // end of CalCentral specific code
 
