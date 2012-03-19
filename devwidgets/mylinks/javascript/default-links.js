@@ -38,7 +38,7 @@ define(function() {
                     {
                         "id": "future_campus_calendars",
                         "name": "Future Campus Calendars",
-                        "url": "http://opa.berkeley.edu/AcademicCalendar",
+                        "url": "http://registrar.berkeley.edu/CalendarDisp.aspx?terms=current",
                         "popup_description": "Look at campus calendars for upcoming semesters."
                     },
                     {
@@ -56,9 +56,9 @@ define(function() {
 
                     {
                         "id": "schedule_planning",
-                        "name": "Schedule Planning Tools",
-                        "url": "http://asuc.org/newsite2010/resources/academic-resources/schedule-planning-tools/",
-                        "popup_description": "Tools to help you plan your class schedule."
+                        "name": "Schedule Planning",
+                        "url": "https://schedulebuilder.berkeley.edu/",
+                        "popup_description": "A tool to help you plan your class schedule."
                     },
                     {
                         "id": "tele_bears",
