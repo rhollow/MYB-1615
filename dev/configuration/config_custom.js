@@ -117,7 +117,7 @@ define(["config/config", "config/env"], function(config) {
             "label": "MY_NOTIFICATIONS", 
             "requiresAdviserMembership": true 
         } 
-        ); 
+    ); 
         config.Navigation[0].subnav.splice(3,0, 
         { 
             "url": "/me#l=dynlists", 
