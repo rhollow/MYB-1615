@@ -43,6 +43,14 @@ define(["config/config", "config/env"], function(config) {
         "visible": "block",
         "name": "mylinks"
     };
+    
+    
+    // Show walktime dashboard widget by default for new users
+    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column3[2] = {
+        "uid": "id46750934593210789",
+        "visible": "block",
+        "name": "walktime"
+    };    
 
     /*
     Temporarily using this approach to disabling the carousel - may change in future. See 
