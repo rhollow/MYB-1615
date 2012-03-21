@@ -1695,6 +1695,7 @@ define(
                 html4.ATTRIBS["p::aria-hidden"] = 0;                
                 html4.ATTRIBS["input::aria-required"] = 0;                
                 html4.ATTRIBS["ul::role"] = 0;
+                html4.ATTRIBS['iframe::src'] = 0;
 
                 // A slightly modified version of Caja's sanitize_html function to allow style="display:none;"
                 var sakaiHtmlSanitize = function(htmlText, opt_urlPolicy, opt_nmTokenPolicy) {
