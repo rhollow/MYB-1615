@@ -36,12 +36,27 @@ define(["config/config", "config/env"], function(config) {
         "/dev/create_new_account.html"
     ];
     config.allowPasswordChange = false;
-
-    config.defaultprivstructure["${refid}5"].dashboard.columns.column3[1] = {
+    
+    // Show mylinks dashboard widget by default for new users
+    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column3[1] = {
         "uid": "id63754673110789",
         "visible": "block",
         "name": "mylinks"
     };
+    
+    
+    // Show walktime dashboard widget by default for new users
+    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column3[2] = {
+        "uid": "id46750934593210789",
+        "visible": "block",
+        "name": "walktime"
+    };    
+
+    /*
+    Temporarily using this approach to disabling the carousel - may change in future. See 
+    https://github.com/jsloane/3akai-ux/commit/32447ece023166b2f94a1c0839ee6375665649df
+     */
+    enabledCarousel: false;
 
     /*
      * These links are displayed in the 403 and 404 error pages.
@@ -83,24 +98,6 @@ define(["config/config", "config/env"], function(config) {
 
     config.Navigation[0].label = "ME";
 
-    // Add My Notification and My Dynamic Lists to Navigation
-    config.Navigation[0].subnav.splice(2,0,
-        {
-            "url": "/me#l=notifications/drafts",
-            "id": "subnavigation_notifications_link",
-            "label": "MY_NOTIFICATIONS",
-            "requiresAdviserMembership": true
-        }
-    );
-    config.Navigation[0].subnav.splice(3,0,
-        {
-            "url": "/me#l=dynlists",
-            "id": "subnavigation_dynlists_link",
-            "label": "MY_DYNAMIC_LISTS",
-            "requiresAdviserMembership": true
-        }
-    );
-    
     /* CalCentral specific footer links */
     config.Footer.leftLinks = [
         {
@@ -119,6 +116,24 @@ define(["config/config", "config/env"], function(config) {
         //    "newWindow": true
         }
     ];
+    
+    // Add My Notification and My Dynamic Lists to TOP Navigation 
+    config.Navigation[0].subnav.splice(2,0, 
+        { 
+            "url": "/me#l=notifications/drafts", 
+            "id": "subnavigation_notifications_link", 
+            "label": "MY_NOTIFICATIONS", 
+            "requiresAdviserMembership": true 
+        } 
+    ); 
+        config.Navigation[0].subnav.splice(3,0, 
+        { 
+            "url": "/me#l=dynlists", 
+            "id": "subnavigation_dynlists_link", 
+            "label": "MY_DYNAMIC_LISTS", 
+            "requiresAdviserMembership": true 
+        } 
+    );
 
     config.Directory = {
         topic_divider: {
@@ -472,10 +487,10 @@ define(["config/config", "config/env"], function(config) {
                     "display": true
                 },
                 "tags": {
-                    "label": "__MSG__TAGS__",
+                    "label": "__MSG__TAGS_AND_CATEGORIES__",
                     "required": false,
                     "display": true,
-                    "type": "textarea",
+                    "type": "tags",
                     "tagField": true
                 }
             }
@@ -495,59 +510,70 @@ define(["config/config", "config/env"], function(config) {
                 "maintitle": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE__",
                     "required": true,
+                    "editable": true,
                     "display": true,
                     "example": "__MSG__PROFILE_PUBLICATIONS_MAIN_TITLE_EXAMPLE__"
                 },
                 "mainauthor": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_MAIN_AUTHOR__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "coauthor": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR__",
                     "required": false,
+                    "editable": true,
                     "display": true,
                     "example": "__MSG__PROFILE_PUBLICATIONS_CO_AUTHOR_EXAMPLE__"
                 },
                 "publisher": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_PUBLISHER__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "placeofpublication": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_PLACE_OF_PUBLICATION__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "volumetitle": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_TITLE__",
                     "required": false,
+                    "editable": true,
                     "display": true
                 },
                 "volumeinformation": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION__",
                     "required": false,
+                    "editable": true,
                     "display": true,
                     "example": "__MSG__PROFILE_PUBLICATIONS_VOLUME_INFORMATION_EXAMPLE__"
                 },
                 "year": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_YEAR__",
                     "required": true,
+                    "editable": true,
                     "display": true
                 },
                 "number": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_NUMBER__",
                     "required": false,
+                    "editable": true,
                     "display": true
                 },
                 "series title": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_SERIES_TITLE__",
                     "required": false,
+                    "editable": true,
                     "display": true
                 },
                 "url": {
                     "label": "__MSG__PROFILE_PUBLICATIONS_URL__",
                     "required": false,
+                    "editable": true,
                     "display": true,
                     "validation": "appendhttp url"
                 }

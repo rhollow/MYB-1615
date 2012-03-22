@@ -1,0 +1,20 @@
+{
+    "id":                 "walktime",
+    "name":               "Walk Time",
+    "description":        "Estimate time/distance between campus buildings.",
+    "type":               "contrib",
+    "enabled":            true,
+    "hasSettings":        false,
+    "url":                "/devwidgets/walktime/walktime.html",
+    "img":                "/devwidgets/walktime/images/walktime.png",
+    "i18n": {
+        "default": {
+            "bundle":        "/devwidgets/walktime/bundles/default.properties",
+            "name":           "Walk Time",
+            "description":    "Estimate time/distance between campus buildings."
+        }
+    },
+    "personalportal":     true,
+    "sakaidocs":          false,
+    "showinsakaigoodies": false
+}

@@ -13,10 +13,19 @@
     background: url(/dev/images/myb/welcome-opt-in.png) no-repeat;
 }
 
-#join_myberkeley_dialog ul li {
-    margin-top: 4px;
-}
-
 #join_myberkeley_dialog .opt-in-checkbox {
     line-height: 160%;
+    margin-left:10px;
+}
+
+#join_myberkeley_dialog .alert {
+    color:red;
+}
+
+#join_myberkeley_dialog section#privacy_settings {
+    margin:0px 20px;
+}
+
+#join_myberkeley_dialog section p + ul  {
+    margin-top:-10px;
 }
