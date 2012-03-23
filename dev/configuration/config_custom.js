@@ -63,9 +63,9 @@ define(["config/config", "config/env"], function(config) {
      */
 
     // Add these items only for advisers
-    if(!myb.api.security.isUserAnAdviser()) {
-        return;
-    }
+    // if(!myb.api.security.isUserAnAdviser()) {
+    //     return;
+    // }
 
     // My notifications
     config.defaultprivstructure.structure0.notifications = {

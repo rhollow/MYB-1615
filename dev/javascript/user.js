@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/myb/myb.securepage.js"], function($, sakai, myb) {
+require(["jquery","sakai/sakai.api.core"], function($, sakai) {
 
     sakai_global.profile = sakai_global.profile || {};
     sakai_global.profile.main = sakai_global.profile.main || {};
@@ -44,10 +44,11 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
         var contextData = false;
 
         var setupProfileSection = function( title, section ) {
+            var altTitle = section.altLabel || section.label;
             var ret = {
                 _ref: sakai.api.Util.generateWidgetId(),
                 _order: section.order,
-                _altTitle: section.label,
+                _altTitle: altTitle,
                 _title: section.label,
                 _nonEditable: true,
                 _view: section.permission
