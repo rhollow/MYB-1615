@@ -36,6 +36,11 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
         ///////////////////
         // CONFIGURATION //
         ///////////////////
+        
+        // Begin CalCentral customization
+        // Don't fire custom showAllArrows() function if URL includes "Me"
+        var URLsegment1 = window.location.pathname.split( '/' )[1];
+        // End CalCentral customization            
 
         // Classes
         var navSelectedItemClass = 'lhnavigation_selected_item';
@@ -603,7 +608,9 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
 
         // Begin CalCentral customization
         var showAllArrows = function() {
-            $('.lhnavigation_selected_submenu','li[data-sakai-manage="true"][data-sakai-reorder-only=""]','#lhnavigation_container').show();
+            if (URLsegment1 != "me") {
+                $('.lhnavigation_selected_submenu','li[data-sakai-manage="true"][data-sakai-reorder-only=""]','#lhnavigation_container').show();                
+            };
         };
         // End CalCentral customization            
         
