@@ -161,104 +161,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
             return updateStructure;
         };
 
-        // CalCentral: We need a custom left-land navigation structure
-        var appendMyBerkeleyCustomItemsToDefaultPrivStructure = function(privdata) {
-
-            // Add these items only for advisers
-            if(!myb.api.security.isUserAnAdviser()) {
-                return;
-            }
-
-            // My notifications
-            privdata.structure0.notifications = {
-                "_title": "__MSG__MY_NOTIFICATIONS__",
-                "_ref": "id1165301022",
-                "_order": 2,
-                "_canEdit": true,
-                "_canSubedit": true,
-                "_nonEditable": true,
-                "drafts": {
-                    "_ref": "id1307490615",
-                    "_order": 0,
-                    "_title": "Drafts",
-                    "_canEdit": true,
-                    "_canSubedit": true,
-                    "_nonEditable": true
-                },
-                "queue": {
-                    "_ref": "id1307490615",
-                    "_order": 1,
-                    "_title": "Queue",
-                    "_canEdit": true,
-                    "_canSubedit": true,
-                    "_nonEditable": true
-                },
-                "archive": {
-                    "_ref": "id1307490615",
-                    "_order": 2,
-                    "_title": "Archive",
-                    "_canEdit": true,
-                    "_canSubedit": true,
-                    "_nonEditable": true
-                },
-                "trash": {
-                    "_ref": "id1307490615",
-                    "_order": 3,
-                    "_title": "Trash",
-                    "_canEdit": true,
-                    "_canSubedit": true,
-                    "_nonEditable": true
-                }
-            };
-
-            // Generates Notifications widget for/with Content Authoring meta-widget
-            privdata.id1307490615 = {
-                'rows': [{
-                    'id': 'id9583409539834883',
-                    'columns': [{
-                        'width': 1,
-                        'elements': [{
-                            'id': 'idid1307490671',
-                            'type': 'groupnotificationmanager'
-                        }, {
-                            'id': 'id1307666089',
-                            'type': 'composenotification'
-                        }]
-                    }]
-                }]
-            };
-
-
-            // My dynamic lists (nav menu)
-            privdata.structure0.dynlists = {
-                    "_title": "__MSG__MY_DYNAMIC_LISTS__",
-                    "_ref": "id1307386414",
-                    "_order": 3,
-                    "_canEdit": true,
-                    "_canSubedit": true,
-                    "_nonEditable": true
-            };
-
-
-            // Generates Dynamic Lists widget for/with Content Authoring meta-widget
-            privdata.id1307386414 = {
-                'rows': [{
-                    'id': 'id8965114838384',
-                    'columns': [{
-                        'width': 1,
-                        'elements': [{
-                            'id': 'id1307386502',
-                            'type': 'dynamiclistmanager'
-                        }, {
-                            'id': 'id1307390214',
-                            'type': 'dynamiclisteditor'
-                        }]
-                    }]
-                }]
-            };
-        };
-        // end of CalCentral specific code
-
         var continueLoadSpaceData = function(userid) {
             var publicToStore = false;
             var requiresPublicMigration = false;
@@ -293,12 +195,6 @@ require(["jquery","sakai/sakai.api.core", "myb/myb.api.core", "/dev/javascript/m
                             var refid = {"refid": sakai.api.Util.generateWidgetId()};
                             privdata = sakai.api.Util.replaceTemplateParameters(refid, privdata);
                             privateToStore = $.extend(true, {}, privdata);
-
-                            // CalCentral: add custom items to left-hand navigation widget
-                            appendMyBerkeleyCustomItemsToDefaultPrivStructure(privdata);
-                            appendMyBerkeleyCustomItemsToDefaultPrivStructure(privateToStore);
-                            // end of CalCentral specific code
-
                         } else {
                             privdata = data2;
                             privdata = sakai.api.Server.cleanUpSakaiDocObject(privdata);
