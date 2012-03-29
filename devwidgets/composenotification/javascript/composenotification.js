@@ -1022,9 +1022,10 @@ require(["jquery", "/dev/lib/myb/jquery/jquery-ui-datepicker.min.js", "sakai/sak
 
             if (validatorObj.form()) {
                 applyQueueValidationRules();
-
+                var readyForQueue = validatorObj.form();
+                
                 $rootElement.fadeOut(fadeOutTimeMs, function () {
-                    var readyForQueue = validatorObj.form();
+
                     postNotification(saveData("drafts", readyForQueue), backToDrafts, false, translate("SAVE"));
                 });
             } else {
