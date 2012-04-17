@@ -82,8 +82,15 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                 'parametersToCarryOver': parametersToCarryOver
             });
             $('#lhnavigation_container').html(lhnavHTML);
+
             // Begin CalCentral customization
             showAllArrows();
+
+            if(!myb.api.security.isUserAnAdviser()) {
+                // Hide DynamicLists and Notifications from non-supervisors
+                $('li[data-sakai-path="notifications"]').hide();
+                $('li[data-sakai-path="dynlists"]').hide();
+            };
             // End CalCentral customization            
         };
 
