@@ -56,3 +56,7 @@ span.required {
   color: #fff;
 }
 
+/* Blue topnav for CalCentral */
+.s3d-navigation-container {
+    background: url("/devwidgets/topnavigation/images/topnav_cc_bg.png") repeat-x scroll left top transparent;
+}
