@@ -37,19 +37,19 @@ define(["config/config", "config/env"], function(config) {
     config.allowPasswordChange = false;
     
     // Show mylinks dashboard widget by default for new users
-    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column3[1] = {
+    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column3.push({
         "uid": "id63754673110789",
         "visible": "block",
         "name": "mylinks"
-    };
+    });
     
     
     // Show walktime dashboard widget by default for new users
-    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column1[2] = {
+    config.defaultprivstructure["${refid}0"]["${refid}5"].dashboard.columns.column1.push({
         "uid": "id46750934593210789",
         "visible": "block",
         "name": "walktime"
-    };    
+    });    
 
     /*
     Temporarily using this approach to disabling the carousel - may change in future.
