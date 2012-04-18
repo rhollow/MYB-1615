@@ -17,7 +17,7 @@
  */
 
 // load the master sakai object to access all Sakai OAE API methods
-require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function($, _, sakai) {
+require(['jquery', 'underscore', 'sakai/sakai.api.core', "myb/myb.api.core", 'jquery-ui'], function($, _, sakai, myb) {
 
     /**
      * @name sakai_global.lhnavigation
