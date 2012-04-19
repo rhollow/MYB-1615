@@ -17,7 +17,7 @@
  */
 
 // load the master sakai object to access all Sakai OAE API methods
-require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function($, _, sakai) {
+require(['jquery', 'underscore', 'sakai/sakai.api.core', "myb/myb.api.core", 'jquery-ui'], function($, _, sakai, myb) {
 
     /**
      * @name sakai_global.lhnavigation
@@ -36,6 +36,11 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
         ///////////////////
         // CONFIGURATION //
         ///////////////////
+        
+        // Begin CalCentral customization
+        // Don't fire custom showAllArrows() function if URL includes "Me"
+        var URLsegment1 = window.location.pathname.split( '/' )[1];
+        // End CalCentral customization            
 
         // Classes
         var navSelectedItemClass = 'lhnavigation_selected_item';
@@ -55,6 +60,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
         var privstructure = false;
         var pubstructure = false;
         var contextData = false;
+        var infinityStructuresPulled = []; // Contains a list of all the pages which are already loaded
 
         var parametersToCarryOver = {};
         var sakaiDocsInStructure = {};
@@ -76,8 +82,15 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                 'parametersToCarryOver': parametersToCarryOver
             });
             $('#lhnavigation_container').html(lhnavHTML);
+
             // Begin CalCentral customization
             showAllArrows();
+
+            if(!myb.api.security.isUserAnAdviser()) {
+                // Hide DynamicLists and Notifications from non-supervisors
+                $('li[data-sakai-path="notifications"]').hide();
+                $('li[data-sakai-path="dynlists"]').hide();
+            };
             // End CalCentral customization            
         };
 
@@ -189,13 +202,49 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             return pageCount;
         };
 
-        var getPageContent = function(ref) {
+        var returnStructure = function(ref) {
             if (privstructure.pages[ref]) {
                 return privstructure.pages[ref];
             } else if (pubstructure.pages[ref]) {
                 return pubstructure.pages[ref];
             } else {
                 return false;
+            }
+        };
+
+        var getPageContent = function(ref, callback) {
+            // Check whether a page has been loaded before
+            if ($.inArray(ref, infinityStructuresPulled) === -1) {
+                var toplevelref = ref.split('-')[0];
+                var subpageref = ref.split('-')[1];
+
+                if (toplevelref && subpageref) {
+                    $.ajax({
+                        url: '/p/' + toplevelref + '/' + subpageref + '.infinity.json',
+                        dataType: 'json',
+                        success: function(data) {
+                            infinityStructuresPulled.push(ref);
+                            sakai.api.Server.convertObjectToArray(data, null, null);
+                            if (data && data.rows && data.rows.length) {
+                                $.each(data.rows, function(index, row) {
+                                    if (!$.isPlainObject(row)) {
+                                        data.rows[index] = $.parseJSON(row);
+                                    }
+                                });
+                            }
+                            if (privstructure.pages.hasOwnProperty(toplevelref + '-_lastModified')) {
+                                privstructure.pages[ref] = data;
+                            } else {
+                                pubstructure.pages[ref] = data;
+                            }
+                            callback();
+                        }
+                    });
+                } else {
+                    callback();
+                }
+            } else {
+                callback();
             }
         };
 
@@ -319,7 +368,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             var batchRequests = [];
             for (var i = 0; i < pids.length; i++) {
                 batchRequests.push({
-                    'url': '/p/' + pids[i] + '.infinity.json',
+                    'url': '/p/' + pids[i] + '.json',
                     'method': 'GET'
                 });
             }
@@ -494,14 +543,16 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                     if (!menuitem.hasClass(navSelectedItemClass)) {
                         selectNavItem(menuitem, $(navSelectedItem));
                     }
-                    // Render page
-                    preparePageRender(ref, selected, savePath, pageSavePath, nonEditable, canEdit, newPageMode);
+
+                    getPageContent(ref, function() {
+                        preparePageRender(ref, selected, savePath, pageSavePath, nonEditable, canEdit, newPageMode);
+                    });
                 }
             }
         };
 
         var preparePageRender = function(ref, path, savePath, pageSavePath, nonEditable, canEdit, newPageMode) {
-            var content = getPageContent(ref);
+            var content = returnStructure(ref);
             var pageContent = content ? content : sakai.config.defaultSakaiDocContent;
             var lastModified = content && content._lastModified ? content._lastModified : null;
             var autosave = content && content.autosave ? content.autosave : null;
@@ -533,6 +584,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                     content: currentPageShown.content
                 };
                 editPageTitle();
+                $(window).on('click', '#inserterbar_action_add_page', addNewPage);
             } else {
                 $(window).trigger('showpage.contentauthoring.sakai', [currentPageShown]);
             }
@@ -603,7 +655,9 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
 
         // Begin CalCentral customization
         var showAllArrows = function() {
-            $('.lhnavigation_selected_submenu','li[data-sakai-manage="true"][data-sakai-reorder-only=""]','#lhnavigation_container').show();
+            if (URLsegment1 != "me") {
+                $('.lhnavigation_selected_submenu','li[data-sakai-manage="true"][data-sakai-reorder-only=""]','#lhnavigation_container').show();                
+            };
         };
         // End CalCentral customization            
         
@@ -663,6 +717,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
         };
 
         var addNewPage = function() {
+            $(window).off('click', '#inserterbar_action_add_page', addNewPage);
             if (contextData.addArea) {
                 addSubPage();
             } else {
@@ -795,13 +850,16 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
 
                     renderData();
                     addParametersToNavigation();
-                    $(window).trigger('sakai.contentauthoring.needsTwoColumns');
-                    $.bbq.pushState({
-                        'l': currentPageShown.path.split('/')[0] +
-                                '/' + newpageid,
-                        'newPageMode': 'true'
-                    }, 0);
-                    enableSorting();
+
+                    sakai.api.Server.saveJSON(currentPageShown.pageSavePath + '/' + newpageid + '/', pageContent, function() {
+                        $(window).trigger('sakai.contentauthoring.needsTwoColumns');
+                        $.bbq.pushState({
+                            'l': currentPageShown.path.split('/')[0] +
+                                    '/' + newpageid,
+                            'newPageMode': 'true'
+                        }, 0);
+                        enableSorting();
+                    }, true);
                 }
             });
         };
@@ -1185,9 +1243,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             onContextMenuHover($(this), $(this).parent('li'));
         });
 
-        $('#inserterbar_action_add_page').live('click', function() {
-            addNewPage();
-        });
+        $(window).on('click', '#inserterbar_action_add_page', addNewPage);
 
         $('#lhavigation_submenu_edittitle').live('click', function(ev) {
             editPageTitle();

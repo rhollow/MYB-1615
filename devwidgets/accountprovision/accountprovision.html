@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
     <head>
+
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title></title>
@@ -10,11 +12,12 @@
 
         <!-- Sakai Page CSS -->
         <link rel="stylesheet" type="text/css" href="/dev/css/sakai/sakai.corev1.css" />
-
         <link rel="stylesheet" type="text/css" href="/devwidgets/accountprovision/css/accountprovision.css" />
+
     </head>
     <body class="fl-centered me i18nable">
         <!-- HEADER -->
+        <div id="widget_branding" class="widget_inline"></div>
         <div class="fl-container-flex header s3d-header">
             <div class="s3d-navigation-container">
                 <div id="widget_topnavigation" class="widget_inline"></div>
@@ -22,97 +25,98 @@
             <div class="fl-fix fl-centered fixed-container s3d-fixed-container">
                 <div class="s3d-container-shadow-left"><!----></div>
                 <div class="s3d-container-shadow-right"><!----></div>
-                <div class="s3d-page-header">
-                    <div id="widget_collections" class="widget_inline"></div>
-                    <div id="widget_institutionalskinning" class="widget_inline"></div>
+                <div class="s3d-page-noheader"></div>
+            </div>
+        </div>
+
+        <!-- HEADER -->
+        <div class="fl-container-flex">
+            <div class="fl-fix fl-centered fixed-container s3d-main-container s3d-twocolumn">
+
+                <div class="s3d-page-fullcolumn-padding">
+                    
+                <h3>Add a user to CalCentral</h3>
+
+                <form>
+                <div class="new_user_input">
+                <div>Enter LDAP UIDs of new users, one per line:</div>
+                <textarea id="new_user_ids"></textarea>
+                <div class="new_user_button">
+                  <button type="button" id="btn_find_users" class="s3d-button s3d-overlay-button">
+                  <span class="s3d-button-inner">Find users</span>
+                  </button>
+                </div>
+                </div>
+
+                <div id="provisioned_data_container">
+                </div>
+
+                <div id="provisioned_data_container_template" style="display:none;"><!--
+                <div class="provisioned_data_header">Search Results</div>
+                <table class="provisioned_data_table">
+                <thead>
+                <tr><th>UID</th><th>First name</th><th>Last name</th><th>Email</th><th>Role</th></tr>
+                </thead>
+                <tbody id="provisioned_data_rows">
+                {for p in results}
+                <tr>
+                <td>${p[':name']}</td>
+                <td>${p.firstName}</td>
+                <td>${p.lastName}</td>
+                <td>${p.email}</td>
+                <td>${p.role}</td>
+                </tr>
+                {/for}
+                </tbody>
+                </table>
+                --></div>
+
+                <div id="new_user_confirm" style="display:none;">
+                <div class="new_user_button">
+                <button type="button" id="btn_add_users" class="s3d-button s3d-overlay-button">
+                <span class="s3d-button-inner">Add these users</span>
+                </button>
+                </div>
+                </div>
+
+                <div id="added_accounts_container">
+                </div>
+
+                <div id="added_accounts_container_template" style="display:none;"><!--
+                <div class="added_accounts_header">Created Accounts</div>
+                <table class="added_accounts_table">
+                <thead>
+                <tr><th>UID</th><th>First name</th><th>Last name</th><th>Status</tr>
+                </thead>
+                <tbody>
+                {for p in results}
+                {var userdata = p.user}
+                <tr>
+                {if userdata}
+                <td>${userdata.name}</td>
+                <td>${userdata.firstName}</td>
+                <td>${userdata.lastName}</td>
+                {else}
+                <td>ERROR</td>
+                <td></td>
+                <td></td>
+                {/if}
+                <td>${p.synchronizationState}</td>
+                </tr>
+                {/for}
+                </tbody>
+                </table>
+                --></div>
+
+                </form>
                 </div>
             </div>
         </div>
 
-        <!-- CONTENT -->
-        <div class="fl-fix fl-centered fixed-container s3d-main-container">
-
-<div class="s3d-page-fullcolumn-padding">
-<h3>Add a user to CalCentral</h3>
-
-<form>
-<div class="new_user_input">
-<div>Enter LDAP UIDs of new users, one per line:</div>
-<textarea id="new_user_ids"></textarea>
-<div class="new_user_button">
-  <button type="button" id="btn_find_users" class="s3d-button s3d-overlay-button">
-  <span class="s3d-button-inner">Find users</span>
-  </button>
-</div>
-</div>
-
-<div id="provisioned_data_container">
-</div>
-
-<div id="provisioned_data_container_template" style="display:none;"><!--
-<div class="provisioned_data_header">Search Results</div>
-<table class="provisioned_data_table">
-<thead>
-<tr><th>UID</th><th>First name</th><th>Last name</th><th>Email</th><th>Role</th></tr>
-</thead>
-<tbody id="provisioned_data_rows">
-{for p in results}
-<tr>
-<td>${p[':name']}</td>
-<td>${p.firstName}</td>
-<td>${p.lastName}</td>
-<td>${p.email}</td>
-<td>${p.role}</td>
-</tr>
-{/for}
-</tbody>
-</table>
---></div>
-
-<div id="new_user_confirm" style="display:none;">
-<div class="new_user_button">
-<button type="button" id="btn_add_users" class="s3d-button s3d-overlay-button">
-<span class="s3d-button-inner">Add these users</span>
-</button>
-</div>
-</div>
-
-<div id="added_accounts_container">
-</div>
-
-<div id="added_accounts_container_template" style="display:none;"><!--
-<div class="added_accounts_header">Created Accounts</div>
-<table class="added_accounts_table">
-<thead>
-<tr><th>UID</th><th>First name</th><th>Last name</th><th>Status</tr>
-</thead>
-<tbody>
-{for p in results}
-{var userdata = p.user}
-<tr>
-{if userdata}
-<td>${userdata.name}</td>
-<td>${userdata.firstName}</td>
-<td>${userdata.lastName}</td>
-{else}
-<td>ERROR</td>
-<td></td>
-<td></td>
-{/if}
-<td>${p.synchronizationState}</td>
-</tr>
-{/for}
-</tbody>
-</table>
---></div>
-
-</form>
-</div>
-
-        </div>
-
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
+
+
 
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
@@ -120,13 +124,6 @@
         <!-- GROUP JS -->
         <script>require(["/devwidgets/accountprovision/javascript/accountprovision.js"]);</script>
         
-        <noscript>
-            <h1>Sorry!</h1>
-            <p>
-                JavaScript must be enabled to use this site. Please turn on JavaScript in your browser and refresh the page.
-                If you need assistance, please visit
-                <a href="http://activatejavascript.org/" title="Enable JavaScript in the most popular browsers">activatejavascript.org</a>.
-            </p>
-        </noscript>
+
     </body>
 </html>

@@ -43,6 +43,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
         var storePath = false;
         var isDragging = false;
         var editInterval = false;
+        var uniqueModifierId = sakai.api.Util.generateWidgetId();
 
         ///////////////////////
         // Utility functions //
@@ -1012,7 +1013,8 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             var editingContent = {};
             editingContent[currentPageShown.saveRef] = {
                 'editing': {
-                    'time': sakai.api.Util.Datetime.getCurrentGMTTime()
+                    'time': sakai.api.Util.Datetime.getCurrentGMTTime(),
+                    'sakai:modifierid': uniqueModifierId
                 }
             };
             sakai.api.Server.saveJSON(currentPageShown.pageSavePath, editingContent);
@@ -1039,7 +1041,11 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
          * Put the page into edit mode
          */
         var editPage = function() {
-            sakai.api.Content.checkSafeToEdit(currentPageShown.pageSavePath + '/' + currentPageShown.saveRef, function(success, data) {
+            sakai.api.Util.progressIndicator.showProgressIndicator(
+                sakai.api.i18n.getValueForKey('PROCESSING_YOUR_PAGE', 'contentauthoring'),
+                sakai.api.i18n.getValueForKey('PROCESSING_PAGE_TO_EDIT', 'contentauthoring'));
+            $rootel.off('click', '#inserterbar_action_edit_page', editPage);
+            sakai.api.Content.checkSafeToEdit(currentPageShown.pageSavePath + '/' + currentPageShown.saveRef, uniqueModifierId, function(success, data) {
                 if (data.safeToEdit) {
                     // Update the content based on the current state of the document
                     if (prevModification !== data._lastModified && currentPageShown.content._lastModified < data._lastModified) {
@@ -1056,6 +1062,8 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                             sakai.api.User.getDisplayName(data.editor) + ' ' +
                             sakai.api.i18n.getValueForKey('THIS_PAGE_HAS_BEEN_EDITED', 'contentauthoring')
                         );
+                        sakai.api.Util.progressIndicator.hideProgressIndicator();
+                        addEditButtonBinding();
                     } else {
                         setEditInterval();
                         $(window).trigger('edit.contentauthoring.sakai');
@@ -1068,11 +1076,13 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                         checkAutoSave(data);
                     }
                 } else {
+                    sakai.api.Util.progressIndicator.hideProgressIndicator();
                     sakai.api.Util.notification.show(
                         sakai.api.i18n.getValueForKey('CONCURRENT_EDITING', 'contentauthoring'),
                         sakai.api.User.getDisplayName(data.editor) + ' ' +
                         sakai.api.i18n.getValueForKey('IS_CURRENTLY_EDITING', 'contentauthoring')
                     );
+                    addEditButtonBinding();
                 }
             });
         };
@@ -1168,7 +1178,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             // emptyPageElements will later be overridden if the tinymce instances don't have any content after all
             $.each(currentPageShown.content.rows, function(rowIndex, row) {
                 $.each(row.columns, function(columnIndex, column) {
-                    if (column.elements.length) {
+                    if (column.elements && column.elements.length) {
                         $.each(column.elements, function(elIndex, element) {
                             // Check designed to look at specific storage types
                             if (element.type === 'htmlblock') {
@@ -1262,6 +1272,10 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
          * Store an editted page
          */
         var savePage = function() {
+            sakai.api.Util.progressIndicator.showProgressIndicator(
+                sakai.api.i18n.getValueForKey('SAVING_YOUR_PAGE', 'contentauthoring'),
+                sakai.api.i18n.getValueForKey('PROCESSING_PAGE', 'contentauthoring'));
+
             // Alert the widgets that they should be storing their widget data
             $(window).trigger('save.contentauthoring.sakai');
             // Generate the new row / column structure
@@ -1305,37 +1319,35 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
 
         /**
          * Save the page by moving the autosaved page to the main page. We also version the page
-         * @param {Array} rows          Array of rows in the page with its layout and widgets
-         * @param {Array} widgetIds     Array of widget ids for all the widgets in the current page
          */
-        var savePageData = function(rows, widgetIds) {
-            // Get the current saved data
-            sakai.api.Server.loadJSON(storePath, function(success, data) {
-                $.ajax({
-                    'url': storePath,
-                    'type': 'POST',
-                    'data': {
-                       ':operation': 'delete'
-                    }
-                });
-                var oldStorePath = storePath;
-                // Store the page in the main location
-                storePath = currentPageShown.pageSavePath + '/' + currentPageShown.saveRef;
-                updateWidgetURLs();
-                data.rows = rows;
-                // Set the version history variable
-                delete data.version;
-                data.version = $.toJSON(data);
-                data = sakai.api.Server.removeServerCreatedObjects(data, ['_']);
-                data = sakai.api.Util.replaceInObject(data,
-                        oldStorePath.replace('/p/', ''),
-                        storePath.replace('/p/', ''));
-                // Save the page data
-                sakai.api.Server.saveJSON(storePath, data, function() {
-                    currentPageShown.content._lastModified = Date.now();
-                    // Create a new version of the page
-                    var versionToStore = sakai.api.Server.removeServerCreatedObjects(data, ['_']);
+        var savePageData = function() {
+            var oldStorePath = storePath;
+            storePath = currentPageShown.pageSavePath + '/' + currentPageShown.saveRef;
+            updateWidgetURLs();
+
+            sakai.api.Server.loadJSON(oldStorePath, function(success, data) {
+                if (success && data) {
+                    data = sakai.api.Server.removeServerCreatedObjects(data, ['_']);
+                    delete data.version;
+
                     var batchRequests = [];
+                    batchRequests.push({
+                        'url': oldStorePath,
+                        'method': 'POST',
+                        'parameters': {
+                            'version': $.toJSON(data)
+                        }
+                    });
+                    batchRequests.push({
+                        'url': oldStorePath,
+                        'method': 'POST',
+                        'parameters': {
+                            // SAKIII-5486
+                            ':operation': 'publish-sakaidoc-page',
+                            ':dest': storePath,
+                            ':replace': true
+                        }
+                    });
                     batchRequests.push({
                         'url': storePath + '.save.json',
                         'method': 'POST'
@@ -1344,13 +1356,15 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                         'url': currentPageShown.pageSavePath,
                         'method': 'POST',
                         'parameters': {
-                            'sakai:forceupdate': (new Date).getTime()
+                            'sakai:forceupdate': true
                         }
                     });
                     sakai.api.Server.batch(batchRequests, function() {
+                        addEditButtonBinding();
                         $(window).trigger('update.versions.sakai', currentPageShown);
+                        sakai.api.Util.progressIndicator.hideProgressIndicator();
                     });
-                }, true);
+                }
             });
         };
 
@@ -1395,6 +1409,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             });
             updateWidgetURLs();
             renderPage(currentPageShown, true);
+            addEditButtonBinding();
         };
 
         //////////////
@@ -1427,18 +1442,22 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                 var tmpPageData = $.extend(true, {}, pageData);
                 var tmpAutosaveData = $.extend(true, {}, autoSaveData);
                 delete tmpPageData.editing;
+                delete tmpPageData.editor;
                 delete tmpPageData.version;
                 delete tmpPageData.safeToEdit;
                 delete tmpAutosaveData.editing;
+                delete tmpAutosaveData.editor;
                 delete tmpAutosaveData.version;
                 delete tmpAutosaveData.safeToEdit;
 
                 // Only show the restore overlay if there is an autosave version and the
                 // page content has changed
-                if (!success || _.isEqual(tmpPageData, tmpAutosaveData)) {
+                if (!success || _.isEqual(tmpPageData, tmpAutosaveData) ||
+                        !tmpAutosaveData.rows) {
                     makeTempCopy(pageData);
                 } else {
                     showRestoreAutoSaveDialog(pageData, autoSaveData);
+                    sakai.api.Util.progressIndicator.hideProgressIndicator();
                 }
             });
         };
@@ -1492,8 +1511,22 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
          * @param {Object} data     Page object to make a temporary copy of
          */
         var makeTempCopy = function(data) {
+
+            // SAKIII-5393 When you're using world templates, sometimes the
+            // items within rows are strings when they should be objects
+            // This makes versions work again
+            if (data.rows && _.isArray(data.rows)) {
+                for (var i = 0; i < data.rows.length; i++) {
+                    if (_.isString(data.rows[i])) {
+                        data.rows[i] = $.parseJSON(data.rows[i]);
+                    }
+                }
+            }
+
             // Make temporary copy 
-            sakai.api.Server.saveJSON(storePath, data, null, true);
+            sakai.api.Server.saveJSON(storePath, data, function(){
+                sakai.api.Util.progressIndicator.hideProgressIndicator();
+            }, true);
             // Get the widgets in this page and change their save URL
             updateWidgetURLs();
         };
@@ -1503,6 +1536,13 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
         // EVENT BINDING //
         ///////////////////
         ///////////////////
+
+        /**
+         * Add click handler to the edit button
+         */
+        var addEditButtonBinding = function() {
+            $rootel.on('click', '#inserterbar_action_edit_page', editPage);
+        };
 
         ////////////////////
         // PAGE RENDERING //
@@ -1524,7 +1564,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
         });
 
         // Edit page button
-        $rootel.on('click', '#inserterbar_action_edit_page', editPage);
+        addEditButtonBinding();
 
         ///////////////////
         // EDIT ROW MENU //
@@ -1680,7 +1720,6 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
             if (isInEditMode()) {
                 ev.preventDefault();
                 $('.contentauthoring_row_reorder_highlight.external_content', $rootel).remove();
-                var dt = ev.originalEvent.dataTransfer;
                 addExternal(ev, $(this));
             }
             return false;
@@ -1723,6 +1762,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                 sakai.api.Widgets.widgetLoader.insertWidgets('contentauthoring_widget', false, storePath + '/');
                 checkColumnsEmpty();
                 setPageEditActions();
+                storeCurrentPageLayout();
                 sakai.api.Util.progressIndicator.hideProgressIndicator();
             });
         };
@@ -1789,6 +1829,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                             checkColumnsEmpty();
                             sakai.api.Widgets.widgetLoader.insertWidgets('contentauthoring_widget', false, storePath + '/');
                             setPageEditActions();
+                            storeCurrentPageLayout();
                             sakai.api.Util.progressIndicator.hideProgressIndicator();
                             if (uploadError) {
                                 sakai.api.Util.notification.show(
@@ -1901,6 +1942,7 @@ require(['jquery', 'underscore', 'sakai/sakai.api.core', 'jquery-ui'], function(
                             checkColumnsEmpty();
                             sakai.api.Widgets.widgetLoader.insertWidgets('contentauthoring_widget', false, storePath + '/');
                             setPageEditActions();
+                            storeCurrentPageLayout();
                             sakai.api.Util.progressIndicator.hideProgressIndicator();
                         }, true);
                     });
