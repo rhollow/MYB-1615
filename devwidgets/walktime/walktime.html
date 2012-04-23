@@ -8,36 +8,35 @@
     <div id="walktime_main" style="display:none;">
 
         <p>
-            Select start and finish points for approximate distance
-            and walking time. Click map for a better view.
+            __MSG__WALKTIME_START_INSTRUCTIONS__
         </p>
 
-        <form action="" accept-charset="utf-8">
+        <form>
             <p>
-                <select id="StartPoint">
-                    <option value="0">Start</option>
+                <select id="walktime_startpoint">
+                    <option value="0">__MSG__WALKTIME_START__</option>
                 </select>
             </p>
 
             <p>
-                <select id="EndPoint">
-                    <option value="0">Finish</option>
+                <select id="walktime_endpoint">
+                    <option value="0">__MSG__WALKTIME_END__</option>
                 </select>
             </p>
         </form>
 
-        <p id="answer">
-            <span id="response">
-                <span id="distance_text"></span> meters (<span id="minutes_text"></span> minutes)
+        <p id="walktime_answer">
+            <span id="walktime_response">
+                <span id="walktime_distance_text"></span> __MSG__WALKTIME_METERS__ (<span id="walktime_minutes_text"></span> __MSG__WALKTIME_MINUTES__)
             </span>
         </p>
 
-        <a class="walktime_item_link" onclick="window.open(this.href,'map_large'); return false;" href=""><img id="walktime_googleimg" src=""></a>
+        <a class="walktime_item_link" id="walktime_map_link" href="#"><img id="walktime_googleimg" src="" alt="Small Google map image for selected location"></a>
     </div>
 </div>
 
 <div class="s3d-widget-footer">
-    <a class="walktime_item_link s3d-widget-links" id="walktime_map_link" onclick="window.open(this.href,'map_large'); return false;" href="">__MSG__VIEW_LARGER_MAP__</a>
+    <a class="walktime_item_link s3d-widget-links" id="walktime_footermap_link" href="#">__MSG__VIEW_LARGER_MAP__</a>
 </div>
 
 

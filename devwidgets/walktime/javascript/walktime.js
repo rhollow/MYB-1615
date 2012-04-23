@@ -4,21 +4,21 @@
  * distributed with this work for additional information
  * regarding copyright ownership. The SF licenses this file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * 'License'); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
 
 
 // load the master sakai object to access all Sakai OAE API methods
-require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
+require(['jquery', 'sakai/sakai.api.core'], function($, sakai) {
 
     /**
      * @name sakai.walktime
@@ -37,23 +37,25 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         /////////////////////////////
         // Configuration variables //
         /////////////////////////////
-        var $rootel = $("#" + tuid);  // unique container for each widget instance
-        var $mainContainer = $("#walktime_main", $rootel);
-        var $resultsDisplayContainer = $("#response", $rootel);
-        var $startPoint = $("#StartPoint", $rootel);
-        var $endPoint = $("#EndPoint", $rootel);
+        var $rootel = $('#' + tuid);  // unique container for each widget instance
+        var $mainContainer = $('#walktime_main', $rootel);
+        var $resultsDisplayContainer = $('#walktime_response', $rootel);
+        var $startPoint = $('#walktime_startpoint', $rootel);
+        var $endPoint = $('#walktime_endpoint', $rootel);
+        var $distanceText = $('#walktime_distance_text', $rootel);
+        var $minutesText = $('#walktime_minutes_text', $rootel);
 
         // Default position is Doe Library
-        var defaultCoords = [37.87243,-122.25955,37.87243,-122.25955]; 
-        
+        var defaultCoords = [37.87243,-122.25955,37.87243,-122.25955];
+
         ///////////////////////
         // Utility functions //
         ///////////////////////
 
         // If all four coords are available, calculate distance
         var findDistance = function(coords) {
-            
-            if (coords && coords.length == 4) {
+
+            if (coords && coords.length === 4) {
                 // Get vals out of coords array and cast strings to floats
                 lat1 = parseFloat(coords[0]);
                 lon1 = parseFloat(coords[1]);
@@ -61,11 +63,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 lon2 = parseFloat(coords[3]);
 
                 var R = 6371; // Radius of the earth in km
-                var dLat = (lat2-lat1).toRad();  // Javascript functions in radians
-                var dLon = (lon2-lon1).toRad();
+                var dLat = setToRad(lat2-lat1);  // Javascript functions in radians
+                var dLon = setToRad(lon2-lon1);
+
                 var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                        Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) *
-                        Math.sin(dLon/2) * Math.sin(dLon/2);
+                    Math.cos(setToRad(lat1)) * Math.cos(setToRad(lat2)) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
                 var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
                 var d = R * c * 1000; // Distance in meters
                 var distance = Math.round(d);
@@ -80,19 +83,16 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             // But you can never get there as the crow flies, so add 20% padding.
 
             meters = meters * 1.2;
-            var minutes = Math.round(parseInt(meters)/91);
+            var minutes = Math.round(parseInt(meters, 10)/91);
             return minutes;
         };
-        
-        var setToRad = function() {
-            // Convert numeric degrees to radians 
-            // (for older browsers lacking toRad() function in the Number lib)
-            if (typeof(Number.prototype.toRad) === "undefined") {
-                Number.prototype.toRad = function() {
-                    return this * Math.PI / 180;
-                }
-            };            
-        };
+
+
+
+        var setToRad = function(thenum) {
+            // Convert numeric degrees to radians
+            return thenum * Math.PI / 180;
+        };        
 
 
         /////////////////////////
@@ -106,12 +106,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         // Convert all currently selected coords into a single array
         var getStartEndPoints = function() {
 
-            var latLong = $startPoint.val();
-            var startPoint = latLong.split(',');
-            latLong = $endPoint.val();
-            var endPoint = latLong.split(',');            
+            var startPoint = $startPoint.val().split(',');
+            var endPoint = $endPoint.val().split(',');
 
-            return [startPoint[0],startPoint[1],endPoint[0],endPoint[1]];
+            return [startPoint[0], startPoint[1], endPoint[0], endPoint[1]];
         };
 
         // Update all display text by obtaining coords and calculating distance.
@@ -120,22 +118,22 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             var coords = getStartEndPoints();
             var distance = findDistance(coords);
 
-            if (startfinish == "start") {
+            if (startfinish === 'start') {
                 var selectlist = $startPoint;
             } else {
                 var selectlist = $endPoint;
             };
 
             // First use regex to add commas to long numeric strings
-            var distanceString = distance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            $("#distance_text").text(distanceString);
-            $("#minutes_text").text(metersToMinutes(distance));
+            var distanceString = distance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            $distanceText.text(distanceString);
+            $minutesText.text(metersToMinutes(distance));
 
             // Only show the response text if we have an actual distance
             if(isNaN(distance)){
-              $resultsDisplayContainer.hide();
+                $resultsDisplayContainer.hide();
             } else {
-              $resultsDisplayContainer.show();
+                $resultsDisplayContainer.show();
             };
         };
 
@@ -165,25 +163,34 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             var zoom = getZoom(coords);
 
             // Don't fire the map update if we don't have an end point (else we end up in the ocean!)
-            if (coords[3] != undefined) {
+            if (coords[3] !== undefined) {
                 updateDisplayStrings(startend);
                 updateLargeMapLink(coords,zoom);
             }
         };
-        
-        $startPoint.on("change", {startend: 'start'}, startUpdate);
-        $endPoint.on("change", {startend: 'end'}, startUpdate);        
+
+        $startPoint.on('change', {startend: 'start'}, startUpdate);
+        $endPoint.on('change', {startend: 'end'}, startUpdate);
 
 
         // Update linked map image and footer URL on load or when coords change
-        // function updateLargeMapLink(newLat,newLong) {
-        var updateLargeMapLink = function(coords,zoom) {            
+        var updateLargeMapLink = function(coords,zoom) {
             var goToURL = 'http://maps.google.com/maps?saddr='+coords[0]+','+coords[1]+'&daddr='+coords[2]+','+coords[3]+'&l=en&dirflg=w&t=m&z='+zoom;
-            $(".walktime_item_link").attr({href : goToURL});
+            $('.walktime_item_link').attr({href : goToURL});
+
+            $('#walktime_map_link').on('click',function(event){
+                event.preventDefault();
+                window.open(this.href,'map_large');
+            });
+
+            $('#walktime_footermap_link').on('click',function(event){
+                event.preventDefault();
+                window.open(this.href,'map_large');
+            });
 
             // Using the static maps image generator in the Google Maps API instead of iframe
             var imgURL = 'http://maps.googleapis.com/maps/api/staticmap?center='+coords[2]+','+coords[3]+'&zoom=16&size=200x200&maptype=roadmap&markers=color:blue%7C'+coords[2]+','+coords[3]+'&sensor=false';
-            $("#walktime_googleimg").attr({src : imgURL});
+            $('#walktime_googleimg').attr({src : imgURL});
         };
 
         /////////////////////////////
@@ -197,23 +204,23 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
             // Make sure all browsers have access to the ToRad() func
             setToRad();
-            
+
             // Initally hide the response text (until we have an actual distance to work with)
-            $("#distance_text").text(0);
-            $("#minutes_text").text(0);
+            $distanceText.text(0);
+            $minutesText.text(0);
 
             updateLargeMapLink(defaultCoords);
 
             // Read XML and draw select lists
             var select_string = '';
             $.ajax({
-                 type: "GET",
-                 url: "/devwidgets/walktime/map_coordinates.xml",
-                 dataType: "xml",
+                 type: 'GET',
+                 url: '/devwidgets/walktime/map_coordinates.xml',
+                 dataType: 'xml',
                  success: function(xml) {
                     $(xml).find('Locations').find('Location').each(function(){
                         var Name = $(this).find('Name').text();
-                        var LatLong = $(this).find('Lat').text() + "," + $(this).find('Lon').text();
+                        var LatLong = $(this).find('Lat').text() + ',' + $(this).find('Lon').text();
                         var newOpt = '<option value="'+ LatLong +'">'+ Name +'</option>\n';
                         select_string = select_string.concat(newOpt);
                     });
@@ -231,5 +238,5 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     };
 
     // inform Sakai OAE that this widget has loaded and is ready to run
-    sakai.api.Widgets.widgetLoader.informOnLoad("walktime");
+    sakai.api.Widgets.widgetLoader.informOnLoad('walktime');
 });
