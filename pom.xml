@@ -145,7 +145,7 @@
   </pluginRepositories>
   <modules>
     <module>pom-bundle.xml</module>
-    <!-- <module>tools/hashfiles</module> -->
+    <module>tools/hashfiles</module>
   </modules>
   <build>
     <extensions>
