@@ -52,7 +52,7 @@ span.required {
 /* Use darker background for selected LH nav menu */
 
 #lhnavigation_container ul li.lhnavigation_selected_item.lhnavigation_outer, #lhnavigation_container ul li ul li.lhnavigation_selected_item div.lhnavigation_subnav_item_content {
-  background: url("/devwidgets/lhnavigation/images/cc_lhnav_selected_item_bg.png") repeat-x left top #22aae7 !important;
+  background: url("/devwidgets/lhnavigation/images/cc_lhnav_selected_item_bg.png") repeat-x left top #012955 !important;
   color: #fff;
 }
 
