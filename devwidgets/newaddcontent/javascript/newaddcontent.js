@@ -1093,7 +1093,7 @@ require(['jquery', 'sakai/sakai.api.core', 'underscore', 'jquery-plugins/jquery.
          */
         var renderExistingContent = function(q, pagenum) {
             if (!q) {
-                q = '*';
+                q = '';
             }
             switch(currentExistingContext) {
                 case 'everything':
