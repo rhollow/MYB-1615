@@ -12,7 +12,7 @@
             "description":"Calendar Feed"
         }
     },
-    "personalportal":     false,
+    "personalportal":     true,
     "showinsakaigoodies": true,
     "userpages": true,
     "userdashboard": false,
