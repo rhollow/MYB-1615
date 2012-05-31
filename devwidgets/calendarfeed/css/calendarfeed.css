@@ -65,6 +65,10 @@
 /* padding around all your widget's content */
 .calendarfeed_widget .s3d-widget-content {
 	/* padding: 10px 20px; */
+	border-left: 0px;
+	border-right: 0px;
+	padding-right: 8px;
+	padding-left: 8px;
 	color: #333333;
 }
 
@@ -170,8 +174,7 @@ table { margin: 0; }
 
 .calendarfeed_widget .expandable, .calendarfeed_widget .contractable {
     background-repeat: no-repeat;
-    background-position-y: top;
-    background-position-x: right;
+    background-position: top right;
     padding-right: 22px;
 }
 .calendarfeed_widget .expandable {
