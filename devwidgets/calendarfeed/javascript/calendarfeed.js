@@ -332,7 +332,12 @@ sakai_global.calendarfeed = function (tuid, showSettings) {
      */
     parseEventDates = function (event) {
         event.DTSTART = localiseDate(dates.parseISO8601(event.DTSTART));
-        event.DTEND =   localiseDate(dates.parseISO8601(event.DTEND));
+
+		if (event.DTEND) {
+			console.log('DTEND found');
+        	event.DTEND = localiseDate(dates.parseISO8601(event.DTEND));
+		}
+
         return event;
     };
 
