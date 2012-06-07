@@ -30,7 +30,7 @@
           {for event in events}
             <tr class="agenda-row">
 
-              {if event_index == 0}
+              {if event_index === 0}
                 <td rowspan="${events.length}"
                 {if event.dayDelta < 2 && event.dayDelta >= -5}
                   class="date relative"
@@ -122,7 +122,7 @@
     </div>
     <!-- SETTINGS VIEW -->
     <div id="calendarfeed_settings" style="display:none;">
-      <p>__MSG__SETTINGS_HEADER_INTRO__</p>
+      <p><strong>__MSG__SETTINGS_HEADER_INTRO__</strong></p>
 
       <form id="calendarfeed_settings_form">
         <div class="s3d-form-field-wrapper">
@@ -130,9 +130,7 @@
                  class="s3d-input-label s3d-input-label-above">
             __MSG__SETTINGS_FORM_LABEL_CALENDAR_TITLE__:
           </label>
-          <input type="text" id="calendarfeed_settings_txtTitle"
-                 name="rss_settings_txtTitle"
-                 class="required s3d-input-full-width" />
+
           <label for="calendarfeed_settings_txtUrl"
                  class="s3d-input-label s3d-input-label-above">
             __MSG__SETTINGS_FORM_LABEL_CALENDAR_FEED_URL__:

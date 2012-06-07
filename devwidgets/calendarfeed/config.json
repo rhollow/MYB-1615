@@ -15,8 +15,6 @@
     "personalportal":     true,
     "showinsakaigoodies": true,
     "userpages": true,
-    "userdashboard": false,
     "grouppages": true,
-    "groupdashboard": false,
     "sakaidocs": true
 }

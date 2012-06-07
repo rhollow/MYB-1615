@@ -411,11 +411,13 @@ sakai_global.calendarfeed = function (tuid, showSettings) {
     /** Called when the calendar data has been updated. */
     updateCalendar = function () {
 
+	//usingList is the user setting for whether they want to view as list or grid.
         var rendered = sakai.api.Util.TemplateRenderer("#agenda_template", {
             title : _title,
             webcalFeedUrl : rewriteHttpUrlToWebcal(_feedUrl),
             days : _groupedDays,
-            totalFeedEvents : _totalFeedEvents
+            totalFeedEvents : _totalFeedEvents,
+			isViewingAsList : true
         });
 
         $(".ajax-content", root).html(rendered);

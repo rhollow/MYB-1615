@@ -20,6 +20,10 @@
  * is to organize your CSS into sections like these (or add new sections)
  */
 
+.calendarfeed_widget {
+	overflow: hidden;
+}
+
 /* Error handling styles */
 .calendarfeed_widget .info-box {
 	/* width: 40em; */
@@ -64,11 +68,9 @@
 
 /* padding around all your widget's content */
 .calendarfeed_widget .s3d-widget-content {
-	/* padding: 10px 20px; */
 	border-left: 0px;
 	border-right: 0px;
-	padding-right: 8px;
-	padding-left: 8px;
+	padding: 0 8px;
 	color: #333333;
 }
 
@@ -198,6 +200,22 @@ table { margin: 0; }
  * Settings View CSS
  */
 
+#calendarfeed_settings_form {
+	overflow: hidden;
+	padding-bottom: 10px;
+}
+
+#calendarfeed_settings_form label.s3d-input-label-above, #calendarfeed_settings_form input {
+	float: none;
+	margin: 0 0 10px;
+	width: 98%;
+}
+
+#calendarfeed_settings_form label.s3d-input-label-above {
+	display: block;
+	margin-bottom: 5px;
+}
+
 .ui-widget:focus, .ui-widget *:focus {
 	outline: none;
 }
@@ -259,12 +277,12 @@ table { margin: 0; }
 }
 
 .calendarfeed_widget .date-slider-wrapper {
+	float: none;
+	width: 98%;	
 	padding: 5px;
-	margin-bottom: 15px;
-	width: 98%;
-	float: left;
+	margin: 5px 0 0;
 	clear: both;
-	border: 1px solid darkGray;
+	border: 1px solid #666;
 }
 
 .loading {
