@@ -333,9 +333,9 @@ sakai_global.calendarfeed = function (tuid, showSettings) {
     parseEventDates = function (event) {
         event.DTSTART = localiseDate(dates.parseISO8601(event.DTSTART));
 
+		// event.DTEND is not used yet. But if it's not present, the data can't load.
 		if (event.DTEND) {
-			console.log('DTEND found');
-        	event.DTEND = localiseDate(dates.parseISO8601(event.DTEND));
+       		event.DTEND = localiseDate(dates.parseISO8601(event.DTEND));
 		}
 
         return event;
